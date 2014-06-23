@@ -1,0 +1,48 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                      http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>fr.lirmm.graphik</groupId>
+	<artifactId>graal-main-project</artifactId>
+	<packaging>pom</packaging>
+	<version>0.0.1</version>
+	<name>Generic Rule ApplicAtion Library</name>
+
+	<inceptionYear>2014</inceptionYear>
+
+	<organization>
+		<name>INRIA</name>
+		<url>http://www.inria.fr/</url>
+	</organization>
+
+	<developers>
+		<developer>
+			<name>Clément SIPIETER</name>
+			<email>clement@6pi.fr</email>
+			<organization>INRIA</organization>
+		</developer>
+	</developers>
+
+	<modules>
+		<module>graal-core</module>
+		<module>graal-parser</module>
+		<module>graal</module>
+		<module>graal-apps</module>
+		<module>graal-examples</module>
+	</modules>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
