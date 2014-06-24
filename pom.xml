@@ -5,10 +5,15 @@
 
 	<groupId>fr.lirmm.graphik</groupId>
 	<artifactId>graal-main-project</artifactId>
-	<packaging>pom</packaging>
-	<version>0.0.1</version>
+	<version>0.1.2-SNAPSHOT</version>
 	<name>Generic Rule ApplicAtion Library</name>
-
+	
+	<packaging>pom</packaging>
+	
+	<scm>
+		<developerConnection>scm:git:https://info-depot.lirmm.fr/repos/GraphIK/GRAAL</developerConnection>
+	</scm>
+	
 	<inceptionYear>2014</inceptionYear>
 
 	<organization>
