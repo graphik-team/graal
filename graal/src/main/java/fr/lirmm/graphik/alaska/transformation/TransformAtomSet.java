@@ -1,6 +1,5 @@
 package fr.lirmm.graphik.alaska.transformation;
 
-import fr.lirmm.graphik.alaska.store.Store;
 import fr.lirmm.graphik.kb.core.Atom;
 import fr.lirmm.graphik.kb.core.AtomSet;
 import fr.lirmm.graphik.kb.exception.AtomSetException;
@@ -11,14 +10,14 @@ import fr.lirmm.graphik.util.stream.ObjectReader;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public class WriteableTransformAtomSet extends TransformStore implements
+public class TransformAtomSet extends ReadOnlyTransformStore implements
         AtomSet {
 
     // /////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR
     // /////////////////////////////////////////////////////////////////////////
 
-    public WriteableTransformAtomSet(AtomSet store,
+    public TransformAtomSet(AtomSet store,
             AAtomTransformator transformator) {
         super(store, transformator);
     }
@@ -66,7 +65,7 @@ public class WriteableTransformAtomSet extends TransformStore implements
     }
 
     @Override
-    public void remove(ObjectReader stream) {
+    public void remove(ObjectReader<Atom> stream) {
         try {
             this.getStore().remove(
                     this.getAtomTransformator().transform(stream));

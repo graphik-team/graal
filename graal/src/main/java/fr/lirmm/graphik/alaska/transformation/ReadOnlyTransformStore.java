@@ -18,7 +18,7 @@ import fr.lirmm.graphik.kb.exception.AtomSetException;
 import fr.lirmm.graphik.kb.SymbolGenerator;
 import fr.lirmm.graphik.util.stream.ObjectReader;
 
-public class TransformStore implements ReadOnlyStore {
+public class ReadOnlyTransformStore implements ReadOnlyStore {
 
     private ReadOnlyAtomSet store;
     private AAtomTransformator transformator;
@@ -27,7 +27,7 @@ public class TransformStore implements ReadOnlyStore {
     // CONSTRUCTOR
     // /////////////////////////////////////////////////////////////////////////
 
-    public TransformStore(ReadOnlyAtomSet atomSet, AAtomTransformator transformator) {
+    public ReadOnlyTransformStore(ReadOnlyAtomSet atomSet, AAtomTransformator transformator) {
         this.store = atomSet;
         this.transformator = transformator;
     }

@@ -1,6 +1,5 @@
-package fr.lirmm.graphik.alaska.transformation.impl;
+package fr.lirmm.graphik.alaska.transformation;
 
-import fr.lirmm.graphik.alaska.transformation.AAtomTransformator;
 import fr.lirmm.graphik.kb.SymbolGenerator;
 import fr.lirmm.graphik.kb.Util;
 import fr.lirmm.graphik.kb.core.Atom;

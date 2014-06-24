@@ -4,7 +4,7 @@
 package fr.lirmm.graphik.alaska.solver;
 
 import fr.lirmm.graphik.alaska.store.rdbms.IRdbmsStore;
-import fr.lirmm.graphik.alaska.transformation.TransformStore;
+import fr.lirmm.graphik.alaska.transformation.ReadOnlyTransformStore;
 import fr.lirmm.graphik.alaska.transformation.TransformatorSolver;
 import fr.lirmm.graphik.kb.core.ConjunctiveQueriesUnion;
 import fr.lirmm.graphik.kb.core.ConjunctiveQuery;
@@ -31,7 +31,7 @@ public class DefaultSolverFactory extends SolverFactory {
             if (atomSet instanceof IRdbmsStore)
                 return new SqlSolver((ConjunctiveQuery) query,
                         (IRdbmsStore) atomSet);
-            if (atomSet instanceof TransformStore)
+            if (atomSet instanceof ReadOnlyTransformStore)
             	return new TransformatorSolver((ConjunctiveQuery) query, atomSet);
             else
                 return new RecursiveBacktrackSolver((ConjunctiveQuery) query,
@@ -40,7 +40,7 @@ public class DefaultSolverFactory extends SolverFactory {
         } else if (query instanceof ConjunctiveQueriesUnion) {
             if (atomSet instanceof IRdbmsStore)
                 return new SqlConjunctiveQueriesUnionSolver((ConjunctiveQueriesUnion) query, (IRdbmsStore) atomSet);
-            if (atomSet instanceof TransformStore)
+            if (atomSet instanceof ReadOnlyTransformStore)
             	return null;
             else
                 return new ConjunctiveQueriesUnionSolver((ConjunctiveQueriesUnion) query, atomSet);
