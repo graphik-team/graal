@@ -14,8 +14,8 @@ import org.openrdf.rio.Rio;
 
 import parser.DatalogGrammar;
 import parser.ParseException;
-import fr.lirmm.graphik.kb.core.Atom;
-import fr.lirmm.graphik.kb.core.DefaultAtom;
+import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.obda.ParseError;
 import fr.lirmm.graphik.util.stream.AbstractReader;
 import fr.lirmm.graphik.util.stream.ArrayBlockingStream;

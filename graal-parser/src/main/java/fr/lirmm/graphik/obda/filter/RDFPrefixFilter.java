@@ -5,9 +5,9 @@ package fr.lirmm.graphik.obda.filter;
 
 import java.util.Iterator;
 
-import fr.lirmm.graphik.kb.core.Atom;
-import fr.lirmm.graphik.kb.core.DefaultAtom;
-import fr.lirmm.graphik.kb.core.Predicate;
+import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.core.DefaultAtom;
+import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.util.stream.AbstractReader;
 
 /**

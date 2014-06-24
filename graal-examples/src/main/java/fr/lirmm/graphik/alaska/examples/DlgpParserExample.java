@@ -3,9 +3,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-import fr.lirmm.graphik.kb.core.Atom;
-import fr.lirmm.graphik.kb.core.Rule;
-import fr.lirmm.graphik.kb.exception.AtomSetException;
+import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.obda.io.dlgp.DlgpParser;
 import fr.lirmm.graphik.obda.io.dlgp.DlgpWriter;
 import fr.lirmm.graphik.obda.parser.ParseException;

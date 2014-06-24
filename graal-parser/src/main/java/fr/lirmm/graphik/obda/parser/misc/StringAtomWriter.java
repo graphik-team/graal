@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
 
-import fr.lirmm.graphik.kb.core.Atom;
+import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.util.stream.ObjectWriter;
 
 /**

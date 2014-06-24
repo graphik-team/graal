@@ -5,13 +5,13 @@ package fr.lirmm.graphik.obda.parser.semanticweb;
 
 import java.util.Iterator;
 
-import fr.lirmm.graphik.kb.core.Atom;
-import fr.lirmm.graphik.kb.core.DefaultAtom;
-import fr.lirmm.graphik.kb.core.DefaultRule;
-import fr.lirmm.graphik.kb.core.Predicate;
-import fr.lirmm.graphik.kb.core.Rule;
-import fr.lirmm.graphik.kb.core.Term;
-import fr.lirmm.graphik.kb.core.Term.Type;
+import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.core.DefaultAtom;
+import fr.lirmm.graphik.graal.core.DefaultRule;
+import fr.lirmm.graphik.graal.core.Predicate;
+import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.core.Term;
+import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.util.stream.AbstractReader;
 
 /**

@@ -3,12 +3,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedList;
 
-import fr.lirmm.graphik.alaska.store.rdbms.DefaultRdbmsStore;
-import fr.lirmm.graphik.alaska.store.rdbms.driver.MysqlDriver;
-import fr.lirmm.graphik.kb.core.Atom;
-import fr.lirmm.graphik.kb.core.AtomSet;
-import fr.lirmm.graphik.kb.core.Rule;
-import fr.lirmm.graphik.kb.exception.AtomSetException;
+import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.core.AtomSet;
+import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
+import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
+import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;
 import fr.lirmm.graphik.obda.io.dlgp.DlgpParser;
 import fr.lirmm.graphik.obda.io.dlgp.DlgpWriter;
 

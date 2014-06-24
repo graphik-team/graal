@@ -10,12 +10,12 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
-import fr.lirmm.graphik.kb.core.Atom;
-import fr.lirmm.graphik.kb.core.Predicate;
-import fr.lirmm.graphik.kb.core.ReadOnlyAtomSet;
-import fr.lirmm.graphik.kb.core.Rule;
-import fr.lirmm.graphik.kb.core.Term;
-import fr.lirmm.graphik.kb.core.Term.Type;
+import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.core.Predicate;
+import fr.lirmm.graphik.graal.core.ReadOnlyAtomSet;
+import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.core.Term;
+import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.obda.writer.AtomWriter;
 
 /**

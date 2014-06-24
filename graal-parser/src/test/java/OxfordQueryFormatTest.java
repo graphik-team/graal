@@ -6,7 +6,7 @@
 import org.junit.Assert;
 import org.junit.Test;
 
-import fr.lirmm.graphik.kb.core.DefaultConjunctiveQuery;
+import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.obda.parser.ParseException;
 import fr.lirmm.graphik.obda.parser.oxford.BasicOxfordQueryParserListener;
 import fr.lirmm.graphik.obda.parser.oxford.OxfordQueryParser;

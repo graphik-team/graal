@@ -10,13 +10,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import parser.ParserListener;
-import fr.lirmm.graphik.kb.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.kb.core.DefaultConjunctiveQuery;
-import fr.lirmm.graphik.kb.core.DefaultAtom;
-import fr.lirmm.graphik.kb.core.DefaultRule;
-import fr.lirmm.graphik.kb.core.NegativeConstraint;
-import fr.lirmm.graphik.kb.core.Predicate;
-import fr.lirmm.graphik.kb.core.Term;
+import fr.lirmm.graphik.graal.core.DefaultAtom;
+import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
+import fr.lirmm.graphik.graal.core.DefaultRule;
+import fr.lirmm.graphik.graal.core.NegativeConstraint;
+import fr.lirmm.graphik.graal.core.Predicate;
+import fr.lirmm.graphik.graal.core.Term;
+import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>

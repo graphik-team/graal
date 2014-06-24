@@ -7,7 +7,7 @@ import java.io.StringReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.kb.core.Atom;
+import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.util.stream.AbstractReader;
 
 /**

@@ -5,12 +5,12 @@ package fr.lirmm.graphik.alaska.examples;
 
 import java.io.IOException;
 
-import fr.lirmm.graphik.alaska.Alaska;
-import fr.lirmm.graphik.alaska.chase.ChaseException;
-import fr.lirmm.graphik.kb.atomset.graph.MemoryGraphAtomSet;
-import fr.lirmm.graphik.kb.core.AtomSet;
-import fr.lirmm.graphik.kb.core.LinkedListRuleSet;
-import fr.lirmm.graphik.kb.core.RuleSet;
+import fr.lirmm.graphik.graal.Alaska;
+import fr.lirmm.graphik.graal.chase.ChaseException;
+import fr.lirmm.graphik.graal.core.AtomSet;
+import fr.lirmm.graphik.graal.core.LinkedListRuleSet;
+import fr.lirmm.graphik.graal.core.RuleSet;
+import fr.lirmm.graphik.graal.core.atomset.graph.MemoryGraphAtomSet;
 import fr.lirmm.graphik.obda.io.dlgp.DlgpParser;
 import fr.lirmm.graphik.obda.io.dlgp.DlgpWriter;
 

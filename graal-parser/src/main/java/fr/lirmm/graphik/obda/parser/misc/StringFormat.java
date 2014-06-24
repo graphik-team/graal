@@ -4,8 +4,8 @@ import java.io.Reader;
 import java.io.IOException;
 import java.io.Serializable;
 
-import fr.lirmm.graphik.kb.core.Atom;
-import fr.lirmm.graphik.kb.core.AtomSet;
+import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.core.AtomSet;
 import fr.lirmm.graphik.util.stream.ObjectReader;
 
 /**

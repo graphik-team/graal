@@ -5,12 +5,12 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-import fr.lirmm.graphik.kb.core.Atom;
-import fr.lirmm.graphik.kb.core.DefaultAtom;
-import fr.lirmm.graphik.kb.core.Predicate;
-import fr.lirmm.graphik.kb.core.ReadOnlyAtomSet;
-import fr.lirmm.graphik.kb.core.Term;
-import fr.lirmm.graphik.kb.exception.AtomSetException;
+import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.core.DefaultAtom;
+import fr.lirmm.graphik.graal.core.Predicate;
+import fr.lirmm.graphik.graal.core.ReadOnlyAtomSet;
+import fr.lirmm.graphik.graal.core.Term;
+import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.obda.io.basic.BasicParser;
 import fr.lirmm.graphik.obda.parser.ParseException;
 import fr.lirmm.graphik.obda.parser.misc.BasicStringFormat;

@@ -6,12 +6,12 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import fr.lirmm.graphik.kb.AtomSetFactory;
-import fr.lirmm.graphik.kb.core.Atom;
-import fr.lirmm.graphik.kb.core.AtomSet;
-import fr.lirmm.graphik.kb.core.DefaultAtom;
-import fr.lirmm.graphik.kb.core.Predicate;
-import fr.lirmm.graphik.kb.core.Term;
+import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.core.AtomSet;
+import fr.lirmm.graphik.graal.core.DefaultAtom;
+import fr.lirmm.graphik.graal.core.Predicate;
+import fr.lirmm.graphik.graal.core.Term;
+import fr.lirmm.graphik.graal.core.factory.Factory;
 import fr.lirmm.graphik.util.stream.ObjectReader;
 
 /**
@@ -50,7 +50,7 @@ public class BasicStringFormat implements StringFormat {
 	 * TODO return Iterator<Atom>
 	 */
 	public AtomSet parse(String s) {
-	    AtomSet atomSet = AtomSetFactory.createWriteableAtomSet();
+	    AtomSet atomSet = Factory.getInstance().createAtomSet();
 	    for(Atom atom : new StringAtomReader(s, this))
 	        atomSet.add(atom);
 	    

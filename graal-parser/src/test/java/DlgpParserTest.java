@@ -4,11 +4,11 @@ import java.util.Iterator;
 import org.junit.Assert;
 import org.junit.Test;
 
-import fr.lirmm.graphik.kb.core.Atom;
-import fr.lirmm.graphik.kb.core.DefaultConjunctiveQuery;
-import fr.lirmm.graphik.kb.core.NegativeConstraint;
-import fr.lirmm.graphik.kb.core.Rule;
-import fr.lirmm.graphik.kb.core.Term;
+import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
+import fr.lirmm.graphik.graal.core.NegativeConstraint;
+import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.obda.io.dlgp.DlgpParser;
 
 /**

@@ -6,12 +6,12 @@ package fr.lirmm.graphik;
 import java.io.File;
 import java.io.IOException;
 
-import fr.lirmm.graphik.alaska.store.StoreException;
-import fr.lirmm.graphik.alaska.store.rdbms.DefaultRdbmsStore;
-import fr.lirmm.graphik.alaska.store.rdbms.driver.SqliteDriver;
-import fr.lirmm.graphik.kb.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.kb.atomset.graph.MemoryGraphAtomSet;
-import fr.lirmm.graphik.kb.core.AtomSet;
+import fr.lirmm.graphik.graal.core.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.graph.MemoryGraphAtomSet;
+import fr.lirmm.graphik.graal.store.StoreException;
+import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
+import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>

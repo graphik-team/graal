@@ -9,8 +9,8 @@ import java.io.FileReader;
 
 import org.junit.Test;
 
-import fr.lirmm.graphik.alaska.grd.GraphOfRuleDependencies;
-import fr.lirmm.graphik.kb.core.Rule;
+import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.obda.io.dlgp.DlgpParser;
 
 /**

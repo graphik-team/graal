@@ -7,13 +7,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-import fr.lirmm.graphik.alaska.Alaska;
-import fr.lirmm.graphik.kb.core.AtomSet;
-import fr.lirmm.graphik.kb.core.DefaultRule;
-import fr.lirmm.graphik.kb.core.HashMapSubstitution;
-import fr.lirmm.graphik.kb.core.Rule;
-import fr.lirmm.graphik.kb.core.Substitution;
-import fr.lirmm.graphik.kb.core.Term;
+import fr.lirmm.graphik.graal.Alaska;
+import fr.lirmm.graphik.graal.core.AtomSet;
+import fr.lirmm.graphik.graal.core.DefaultRule;
+import fr.lirmm.graphik.graal.core.HashMapSubstitution;
+import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.core.Substitution;
+import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.obda.io.dlgp.DlgpParser;
 import fr.lirmm.graphik.obda.io.dlgp.DlgpWriter;
 

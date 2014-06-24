@@ -1,19 +1,19 @@
 package fr.lirmm.graphik.alaska.trash;
 import java.io.File;
 
-import fr.lirmm.graphik.alaska.Alaska;
-import fr.lirmm.graphik.alaska.incubator.DataGenerator;
-import fr.lirmm.graphik.alaska.solver.SolverException;
-import fr.lirmm.graphik.alaska.solver.SolverFactoryException;
-import fr.lirmm.graphik.alaska.store.StoreException;
-import fr.lirmm.graphik.alaska.store.rdbms.DefaultRdbmsStore;
-import fr.lirmm.graphik.alaska.store.rdbms.driver.SqliteDriver;
-import fr.lirmm.graphik.kb.atomset.graph.MemoryGraphAtomSet;
-import fr.lirmm.graphik.kb.core.Atom;
-import fr.lirmm.graphik.kb.core.AtomSet;
-import fr.lirmm.graphik.kb.core.LinkedListRuleSet;
-import fr.lirmm.graphik.kb.core.Rule;
-import fr.lirmm.graphik.kb.core.RuleSet;
+import fr.lirmm.graphik.graal.Alaska;
+import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.core.AtomSet;
+import fr.lirmm.graphik.graal.core.LinkedListRuleSet;
+import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.core.RuleSet;
+import fr.lirmm.graphik.graal.core.atomset.graph.MemoryGraphAtomSet;
+import fr.lirmm.graphik.graal.incubator.DataGenerator;
+import fr.lirmm.graphik.graal.solver.SolverException;
+import fr.lirmm.graphik.graal.solver.SolverFactoryException;
+import fr.lirmm.graphik.graal.store.StoreException;
+import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
+import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
 import fr.lirmm.graphik.obda.io.dlgp.DlgpParser;
 
 /**

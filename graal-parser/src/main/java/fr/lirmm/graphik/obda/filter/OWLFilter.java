@@ -5,7 +5,7 @@ package fr.lirmm.graphik.obda.filter;
 
 import java.util.Iterator;
 
-import fr.lirmm.graphik.kb.core.Atom;
+import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.obda.parser.semanticweb.Owl2Rules;
 import fr.lirmm.graphik.obda.parser.semanticweb.RDFS2Rules;
 import fr.lirmm.graphik.util.stream.AbstractReader;

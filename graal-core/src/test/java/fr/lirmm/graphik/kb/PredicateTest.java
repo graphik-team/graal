@@ -3,7 +3,7 @@ package fr.lirmm.graphik.kb;
 import org.junit.Assert;
 import org.junit.Test;
 
-import fr.lirmm.graphik.kb.core.Predicate;
+import fr.lirmm.graphik.graal.core.Predicate;
 
 public class PredicateTest {
 
