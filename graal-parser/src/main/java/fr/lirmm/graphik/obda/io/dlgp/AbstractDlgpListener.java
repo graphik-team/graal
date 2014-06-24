@@ -76,6 +76,8 @@ public abstract class AbstractDlgpListener implements ParserListener {
 		List<Term> list = new LinkedList<Term>();
 		for (Object t : terms)
 			list.add((Term) t);
+		
+		predicate = removeQuotes(predicate);
 
 		atom = new DefaultAtom(new Predicate(predicate, terms.length), list);
 
@@ -90,6 +92,17 @@ public abstract class AbstractDlgpListener implements ParserListener {
 			break;
 		default:
 			break;
+		}
+	}
+
+	/**
+	 * @param predicate
+	 */
+	private String removeQuotes(String predicate) {
+		if(predicate.startsWith("\"") && predicate.endsWith("\"")) {
+			return predicate.substring(1, predicate.length() - 1);
+		} else {
+			return predicate;
 		}
 	}
 

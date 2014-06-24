@@ -64,4 +64,11 @@ public class DlgpParserTest {
 		Assert.assertEquals("N1", r.getLabel());
 
 	}
+	
+	@Test
+	public void parseWithQuotes() {
+		Atom a1 = DlgpParser.parseAtom("p(a).");
+		Atom a2 = DlgpParser.parseAtom("\"p\"(a).");
+		Assert.assertEquals(a1, a2);
+	}
 }
