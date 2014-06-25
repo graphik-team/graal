@@ -29,7 +29,7 @@
 
 	<modules>
 		<module>graal-core</module>
-		<module>graal-parser</module>
+		<module>graal-io</module>
 		<module>graal-solver</module>
 		<module>graal-store</module>
 		<module>graal</module>
