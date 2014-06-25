@@ -3,7 +3,7 @@ package fr.lirmm.graphik.graal.transformation;
 import java.util.Iterator;
 
 import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.ReadOnlyAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 import fr.lirmm.graphik.util.stream.ObjectReader;
 
 /**

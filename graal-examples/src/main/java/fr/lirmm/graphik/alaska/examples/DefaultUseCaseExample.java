@@ -7,10 +7,14 @@ import java.io.IOException;
 
 import fr.lirmm.graphik.graal.Alaska;
 import fr.lirmm.graphik.graal.chase.ChaseException;
-import fr.lirmm.graphik.graal.core.AtomSet;
 import fr.lirmm.graphik.graal.core.LinkedListRuleSet;
+import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.RuleSet;
+import fr.lirmm.graphik.graal.core.Substitution;
+import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.graph.MemoryGraphAtomSet;
+import fr.lirmm.graphik.graal.solver.SolverException;
+import fr.lirmm.graphik.graal.solver.SolverFactoryException;
 import fr.lirmm.graphik.obda.io.dlgp.DlgpParser;
 import fr.lirmm.graphik.obda.io.dlgp.DlgpWriter;
 
@@ -20,7 +24,7 @@ import fr.lirmm.graphik.obda.io.dlgp.DlgpWriter;
  */
 public class DefaultUseCaseExample {
 
-	public static void main(String[] args) throws ChaseException, IOException {
+	public static void main(String[] args) throws ChaseException, IOException, SolverFactoryException, SolverException {
 		
 		// /////////////////////////////////////////////////////////////////////
 		// create an atom set
@@ -31,6 +35,7 @@ public class DefaultUseCaseExample {
 		atomSet.add(DlgpParser.parseAtom("p(c)."));
 		atomSet.add(DlgpParser.parseAtom("q(b)."));
 		atomSet.add(DlgpParser.parseAtom("q(c)."));
+		atomSet.add(DlgpParser.parseAtom("s(z,z)."));
 		
 		// /////////////////////////////////////////////////////////////////////
 		// create a rule set
@@ -56,6 +61,14 @@ public class DefaultUseCaseExample {
 		//	   writer.write(a);
 		// }
 		writer.close();
+		
+		// /////////////////////////////////////////////////////////////////////
+		// execute query
+		Query query = DlgpParser.parseQuery("?(X) :- s(X, Y), p(X), q(Y).");
+		Iterable<Substitution> subReader = Alaska.execute(query, atomSet);
+		for(Substitution s : subReader) {
+			System.out.println(s);
+		}
 				
 	}
 }

@@ -7,11 +7,12 @@ import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.AtomComparator;
-import fr.lirmm.graphik.graal.core.AtomSet;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.TermValueComparator;
 import fr.lirmm.graphik.graal.core.Term.Type;
+import fr.lirmm.graphik.graal.core.atomset.AbstractReadOnlyAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.stream.IteratorAtomReader;
 import fr.lirmm.graphik.util.stream.ObjectReader;
@@ -19,7 +20,7 @@ import fr.lirmm.graphik.util.stream.ObjectReader;
 /**
  * Implementation of a graph in memory. Inherits directly from Fact.
  */
-public class MemoryGraphAtomSet implements AtomSet {
+public class MemoryGraphAtomSet extends AbstractReadOnlyAtomSet implements AtomSet {
 
     private TreeSet<TermVertex> terms;
     private TreeSet<PredicateVertex> predicates;

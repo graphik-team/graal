@@ -1,9 +1,9 @@
 package fr.lirmm.graphik.graal.transformation;
 
 import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.core.SymbolGenerator;
 import fr.lirmm.graphik.graal.core.Util;
+import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>

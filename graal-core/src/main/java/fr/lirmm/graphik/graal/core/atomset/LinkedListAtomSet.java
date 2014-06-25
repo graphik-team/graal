@@ -3,13 +3,11 @@ package fr.lirmm.graphik.graal.core.atomset;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.AtomComparator;
-import fr.lirmm.graphik.graal.core.AtomSet;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.stream.IteratorAtomReader;
@@ -19,7 +17,7 @@ import fr.lirmm.graphik.util.stream.ObjectReader;
  * 
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  */
-public class LinkedListAtomSet implements AtomSet, Collection<Atom> {
+public class LinkedListAtomSet extends AbstractReadOnlyAtomSet implements AtomSet, Collection<Atom> {
 
     private LinkedList<Atom> linkedList;
 

@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.Serializable;
 
 import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.util.stream.ObjectReader;
 
 /**

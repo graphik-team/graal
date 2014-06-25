@@ -12,10 +12,10 @@ import java.io.Writer;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.core.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.Term.Type;
+import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 import fr.lirmm.graphik.obda.writer.AtomWriter;
 
 /**
@@ -152,13 +152,13 @@ public class DlgpWriter extends Writer implements AtomWriter {
 			if(Type.VARIABLE.equals(t.getType())) {
 				if (term.charAt(0) < 65 || term.charAt(0) > 90) {
 					this.writer.write("VAR_");
-					this.writer.write(term);
 				}
+				this.writer.write(term);
 			} else if(Type.CONSTANT.equals(t.getType())) {
 				if (term.charAt(0) < 97 || term.charAt(0) > 122) {
 					this.writer.write("cst_");
-					this.writer.write(term);
 				}
+				this.writer.write(term);
 			} else {
 				this.writer.write(t.toString());
 			}

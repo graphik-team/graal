@@ -6,7 +6,7 @@ import java.io.IOException;
 import fr.lirmm.graphik.graal.chase.Chase;
 import fr.lirmm.graphik.graal.chase.ChaseException;
 import fr.lirmm.graphik.graal.chase.ChaseWithGRD;
-import fr.lirmm.graphik.graal.core.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.graph.MemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.obda.io.dlgp.DlgpParser;

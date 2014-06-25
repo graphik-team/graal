@@ -6,7 +6,7 @@ package fr.lirmm.graphik.obda.writer;
 import java.io.IOException;
 
 import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.ReadOnlyAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 import fr.lirmm.graphik.util.stream.ObjectWriter;
 
 /**

@@ -4,7 +4,7 @@
 package fr.lirmm.graphik.graal.solver;
 
 import fr.lirmm.graphik.graal.core.ConjunctiveQueriesUnion;
-import fr.lirmm.graphik.graal.core.ReadOnlyAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 
 /**

@@ -3,7 +3,9 @@ package fr.lirmm.graphik.graal.core;
 import java.util.LinkedList;
 import java.util.List;
 
+import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 
 public abstract class Util {
 

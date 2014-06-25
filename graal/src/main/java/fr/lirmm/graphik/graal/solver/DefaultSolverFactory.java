@@ -6,7 +6,7 @@ package fr.lirmm.graphik.graal.solver;
 import fr.lirmm.graphik.graal.core.ConjunctiveQueriesUnion;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Query;
-import fr.lirmm.graphik.graal.core.ReadOnlyAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.store.rdbms.IRdbmsStore;
 import fr.lirmm.graphik.graal.transformation.ReadOnlyTransformStore;
 import fr.lirmm.graphik.graal.transformation.TransformatorSolver;

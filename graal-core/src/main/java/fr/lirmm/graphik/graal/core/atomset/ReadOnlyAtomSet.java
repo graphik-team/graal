@@ -1,8 +1,11 @@
-package fr.lirmm.graphik.graal.core;
+package fr.lirmm.graphik.graal.core.atomset;
 
 import java.util.Set;
 
-import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
+import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.core.Predicate;
+import fr.lirmm.graphik.graal.core.Term;
+import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.util.stream.ObjectReader;
 
 

@@ -5,8 +5,8 @@ package fr.lirmm.graphik.graal.chase;
 
 import java.util.Set;
 
-import fr.lirmm.graphik.graal.core.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.core.Term;
+import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.solver.SolverException;
 import fr.lirmm.graphik.graal.solver.SolverFactoryException;
 

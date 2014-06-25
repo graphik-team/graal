@@ -8,8 +8,8 @@ import java.util.Iterator;
 import fr.lirmm.graphik.graal.core.ConjunctiveQueriesUnion;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Query;
-import fr.lirmm.graphik.graal.core.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.core.Substitution;
+import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 
 /**

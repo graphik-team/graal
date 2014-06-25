@@ -6,6 +6,8 @@ package fr.lirmm.graphik.graal.core;
 import java.util.Collection;
 import java.util.Iterator;
 
+import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+
 /**
  * Class representing a conjunctive query.
  * A conjunctive query is composed of a fact and a set of answer variables.

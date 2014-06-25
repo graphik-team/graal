@@ -6,7 +6,7 @@ package fr.lirmm.graphik;
 import java.io.File;
 import java.io.IOException;
 
-import fr.lirmm.graphik.graal.core.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.graph.MemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.store.StoreException;

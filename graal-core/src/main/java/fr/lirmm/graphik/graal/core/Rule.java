@@ -2,6 +2,8 @@ package fr.lirmm.graphik.graal.core;
 
 import java.util.Set;
 
+import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+
 public interface Rule {
 	
 	/**
