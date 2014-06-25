@@ -11,6 +11,8 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.core.NegativeConstraint;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Term;
@@ -76,15 +78,27 @@ public class DlgpWriter extends Writer implements AtomWriter {
 	}
 	
 	public void write(Rule rule) throws IOException {
-		String label = rule.getLabel();
-		if(!label.isEmpty()) {
-			this.write("[");
-			this.write(label);
-			this.write("] ");
-		}
+		this.writeLabel(rule.getLabel());
+
 		this.writeAtomSet(rule.getHead(), false);
 		this.writer.write(" :- ");
 		this.writeAtomSet(rule.getBody(), false);
+		this.writer.write(".\n");
+		this.writer.flush();
+	}
+	
+	public void write(NegativeConstraint constraint) throws IOException {
+		this.writeLabel(constraint.getLabel());
+		
+		this.writer.write(" ! :- ");
+		this.writeAtomSet(constraint.getBody(), false);
+		this.writer.write(".\n");
+		this.writer.flush();
+	}
+	
+	public void write(ConjunctiveQuery query) throws IOException {		
+		this.writer.write(" ? :- ");
+		this.writeAtomSet(query.getAtomSet(), false);
 		this.writer.write(".\n");
 		this.writer.flush();
 	}
@@ -120,6 +134,14 @@ public class DlgpWriter extends Writer implements AtomWriter {
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
+	
+	private void writeLabel(String label) throws IOException {
+		if(!label.isEmpty()) {
+			this.write("[");
+			this.write(label);
+			this.write("] ");
+		}
+	}
 	
 	private void writeAtomSet(ReadOnlyAtomSet atomSet, boolean addCarriageReturn) throws IOException {
 		boolean isFirst = true;
