@@ -20,7 +20,7 @@ public class GrdChaseExample {
 	public static void main(String[] args) throws IOException, ChaseException   {
 		
 		GraphOfRuleDependencies grd = new GraphOfRuleDependencies();
-		grd.parseGrd(new BufferedReader(new FileReader("./test-grd.grd")));
+		grd.parseGrd(new BufferedReader(new FileReader("./src/main/resources/test-grd.grd")));
 		
 		AtomSet facts = new MemoryGraphAtomSet();
 		facts.add(DlgpParser.parseAtom("r(a)."));
