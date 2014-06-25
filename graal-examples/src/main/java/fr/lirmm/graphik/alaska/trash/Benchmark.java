@@ -22,12 +22,12 @@ import fr.lirmm.graphik.graal.core.NegativeConstraint;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.io.dlgp.AbstractDlgpListener;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.IRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.NoConstraintRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
-import fr.lirmm.graphik.obda.io.dlgp.AbstractDlgpListener;
 import fr.lirmm.graphik.util.stream.ObjectReader;
 
 /**

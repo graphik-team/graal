@@ -16,11 +16,11 @@ import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
-import fr.lirmm.graphik.obda.io.basic.BasicParser;
-import fr.lirmm.graphik.obda.io.dlgp.DlgpParser;
-import fr.lirmm.graphik.obda.parser.misc.BasicStringFormat;
-import fr.lirmm.graphik.obda.parser.misc.StringAtomReader;
-import fr.lirmm.graphik.obda.parser.misc.StringFormat;
+import fr.lirmm.graphik.graal.io.basic.BasicParser;
+import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
+import fr.lirmm.graphik.graal.parser.misc.BasicStringFormat;
+import fr.lirmm.graphik.graal.parser.misc.StringAtomReader;
+import fr.lirmm.graphik.graal.parser.misc.StringFormat;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>

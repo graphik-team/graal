@@ -18,7 +18,7 @@ import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.Term.Type;
-import fr.lirmm.graphik.obda.parser.semanticweb.RDFParser;
+import fr.lirmm.graphik.graal.parser.semanticweb.RDFParser;
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *

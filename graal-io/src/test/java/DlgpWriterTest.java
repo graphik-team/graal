@@ -7,7 +7,7 @@ import org.junit.Test;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.obda.io.dlgp.DlgpWriter;
+import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
 
 
 /**

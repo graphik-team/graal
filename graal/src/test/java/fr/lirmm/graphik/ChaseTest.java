@@ -26,10 +26,10 @@ import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
+import fr.lirmm.graphik.graal.io.basic.BasicParser;
+import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
 import fr.lirmm.graphik.graal.solver.SolverException;
 import fr.lirmm.graphik.graal.solver.SolverFactoryException;
-import fr.lirmm.graphik.obda.io.basic.BasicParser;
-import fr.lirmm.graphik.obda.io.dlgp.DlgpParser;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>

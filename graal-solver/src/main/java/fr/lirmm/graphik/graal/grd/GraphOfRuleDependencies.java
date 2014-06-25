@@ -16,7 +16,7 @@ import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
-import fr.lirmm.graphik.obda.io.dlgp.DlgpParser;
+import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>

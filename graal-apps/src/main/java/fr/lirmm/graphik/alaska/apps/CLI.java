@@ -13,10 +13,10 @@ import fr.lirmm.graphik.graal.core.RuleSet;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
+import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
 import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
-import fr.lirmm.graphik.obda.io.dlgp.DlgpParser;
 import fr.lirmm.graphik.util.stream.ObjectReader;
 // execute query
 

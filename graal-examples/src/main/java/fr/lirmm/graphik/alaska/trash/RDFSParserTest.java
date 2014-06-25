@@ -4,9 +4,9 @@ import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import fr.lirmm.graphik.obda.io.dlgp.DlgpWriter;
-import fr.lirmm.graphik.obda.parser.semanticweb.Owl2Rules;
-import fr.lirmm.graphik.obda.parser.semanticweb.RDFParser;
+import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
+import fr.lirmm.graphik.graal.parser.semanticweb.Owl2Rules;
+import fr.lirmm.graphik.graal.parser.semanticweb.RDFParser;
 
 /**
  * 

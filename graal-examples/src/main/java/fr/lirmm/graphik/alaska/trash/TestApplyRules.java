@@ -20,14 +20,14 @@ import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.graph.MemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
+import fr.lirmm.graphik.graal.io.basic.BasicParser;
+import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
+import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
 import fr.lirmm.graphik.graal.solver.SolverException;
 import fr.lirmm.graphik.graal.solver.SolverFactoryException;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;
 import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
-import fr.lirmm.graphik.obda.io.basic.BasicParser;
-import fr.lirmm.graphik.obda.io.dlgp.DlgpParser;
-import fr.lirmm.graphik.obda.io.dlgp.DlgpWriter;
 
 
 

@@ -13,10 +13,10 @@ import fr.lirmm.graphik.graal.core.RuleSet;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.graph.MemoryGraphAtomSet;
+import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
+import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
 import fr.lirmm.graphik.graal.solver.SolverException;
 import fr.lirmm.graphik.graal.solver.SolverFactoryException;
-import fr.lirmm.graphik.obda.io.dlgp.DlgpParser;
-import fr.lirmm.graphik.obda.io.dlgp.DlgpWriter;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>

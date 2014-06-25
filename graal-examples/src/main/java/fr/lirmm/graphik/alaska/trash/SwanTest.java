@@ -13,14 +13,14 @@ import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
+import fr.lirmm.graphik.graal.parser.misc.BasicStringFormat;
+import fr.lirmm.graphik.graal.parser.misc.StringFormat;
 import fr.lirmm.graphik.graal.solver.SolverException;
 import fr.lirmm.graphik.graal.solver.SolverFactoryException;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;
 import fr.lirmm.graphik.graal.transformation.AAtomTransformator;
-import fr.lirmm.graphik.obda.io.dlgp.DlgpParser;
-import fr.lirmm.graphik.obda.parser.misc.BasicStringFormat;
-import fr.lirmm.graphik.obda.parser.misc.StringFormat;
 
 /**
  * 

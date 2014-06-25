@@ -9,12 +9,12 @@ import fr.lirmm.graphik.graal.core.RuleSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.graph.MemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.incubator.DataGenerator;
+import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
 import fr.lirmm.graphik.graal.solver.SolverException;
 import fr.lirmm.graphik.graal.solver.SolverFactoryException;
 import fr.lirmm.graphik.graal.store.StoreException;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
-import fr.lirmm.graphik.obda.io.dlgp.DlgpParser;
 
 /**
  * 

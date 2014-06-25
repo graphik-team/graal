@@ -5,11 +5,11 @@ import java.util.List;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
-import fr.lirmm.graphik.obda.parser.ParseException;
-import fr.lirmm.graphik.obda.parser.oxford.BasicOxfordQueryParserListener;
-import fr.lirmm.graphik.obda.parser.oxford.OxfordQueryParser;
-import fr.lirmm.graphik.obda.writer.SparqlConjunctiveQueryWriter;
-import fr.lirmm.graphik.obda.writer.WriterException;
+import fr.lirmm.graphik.graal.parser.ParseException;
+import fr.lirmm.graphik.graal.parser.oxford.BasicOxfordQueryParserListener;
+import fr.lirmm.graphik.graal.parser.oxford.OxfordQueryParser;
+import fr.lirmm.graphik.graal.writer.SparqlConjunctiveQueryWriter;
+import fr.lirmm.graphik.graal.writer.WriterException;
 
 
 /**

@@ -16,8 +16,8 @@ import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.stream.IteratorAtomReader;
+import fr.lirmm.graphik.graal.parser.misc.BasicStringFormat;
 import fr.lirmm.graphik.graal.store.impl.FileStore;
-import fr.lirmm.graphik.obda.parser.misc.BasicStringFormat;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>

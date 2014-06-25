@@ -18,9 +18,9 @@ import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
+import fr.lirmm.graphik.graal.parser.misc.StringAtomReader;
+import fr.lirmm.graphik.graal.parser.misc.StringFormat;
 import fr.lirmm.graphik.graal.store.Store;
-import fr.lirmm.graphik.obda.parser.misc.StringAtomReader;
-import fr.lirmm.graphik.obda.parser.misc.StringFormat;
 import fr.lirmm.graphik.util.stream.ObjectReader;
 
 @SuppressWarnings("all")

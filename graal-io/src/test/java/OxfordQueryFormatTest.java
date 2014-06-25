@@ -7,9 +7,9 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
-import fr.lirmm.graphik.obda.parser.ParseException;
-import fr.lirmm.graphik.obda.parser.oxford.BasicOxfordQueryParserListener;
-import fr.lirmm.graphik.obda.parser.oxford.OxfordQueryParser;
+import fr.lirmm.graphik.graal.parser.ParseException;
+import fr.lirmm.graphik.graal.parser.oxford.BasicOxfordQueryParserListener;
+import fr.lirmm.graphik.graal.parser.oxford.OxfordQueryParser;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>

@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
-import fr.lirmm.graphik.obda.io.dlgp.DlgpParser;
+import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
 
 /**
  * @author clement
