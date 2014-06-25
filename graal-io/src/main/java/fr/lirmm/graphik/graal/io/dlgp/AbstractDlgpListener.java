@@ -22,7 +22,7 @@ import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public abstract class AbstractDlgpListener implements ParserListener {
+abstract class AbstractDlgpListener implements ParserListener {
     
 	private static final Logger logger = LoggerFactory
 			.getLogger(AbstractDlgpListener.class);
