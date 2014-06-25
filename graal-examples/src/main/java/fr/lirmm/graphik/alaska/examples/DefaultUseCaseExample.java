@@ -5,7 +5,7 @@ package fr.lirmm.graphik.alaska.examples;
 
 import java.io.IOException;
 
-import fr.lirmm.graphik.graal.Alaska;
+import fr.lirmm.graphik.graal.Graal;
 import fr.lirmm.graphik.graal.chase.ChaseException;
 import fr.lirmm.graphik.graal.core.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.Query;
@@ -47,7 +47,7 @@ public class DefaultUseCaseExample {
 		
 		// /////////////////////////////////////////////////////////////////////
 		// run saturation
-		Alaska.executeChase(atomSet, ruleSet);
+		Graal.executeChase(atomSet, ruleSet);
 		// equivalent code:
 		// Chase chase = new DefaultChase(ruleSet, atomSet);
 		// chase.execute();
@@ -65,7 +65,7 @@ public class DefaultUseCaseExample {
 		// /////////////////////////////////////////////////////////////////////
 		// execute query
 		Query query = DlgpParser.parseQuery("?(X) :- s(X, Y), p(X), q(Y).");
-		Iterable<Substitution> subReader = Alaska.execute(query, atomSet);
+		Iterable<Substitution> subReader = Graal.executeQuery(query, atomSet);
 		for(Substitution s : subReader) {
 			System.out.println(s);
 		}

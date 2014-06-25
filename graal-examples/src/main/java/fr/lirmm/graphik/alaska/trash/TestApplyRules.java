@@ -1,7 +1,7 @@
 package fr.lirmm.graphik.alaska.trash;
 import java.util.LinkedList;
 
-import fr.lirmm.graphik.graal.Alaska;
+import fr.lirmm.graphik.graal.Graal;
 import fr.lirmm.graphik.graal.chase.Chase;
 import fr.lirmm.graphik.graal.chase.ChaseException;
 import fr.lirmm.graphik.graal.chase.DefaultChase;
@@ -46,7 +46,7 @@ public class TestApplyRules {
 		RuleSet ruleSet = new LinkedListRuleSet();
 		ruleSet.add(DlgpParser.parseRule("q(X,Y) :- p(X,Y)."));
 
-		Alaska.executeChase(atomSet, ruleSet);
+		Graal.executeChase(atomSet, ruleSet);
 	
 
 		System.out.println("#####################");
@@ -60,7 +60,7 @@ public class TestApplyRules {
 		Term a = new Term("a", Term.Type.CONSTANT);
 		Atom atom = new DefaultAtom(p, a, a);
 		
-		SubstitutionReader sub = Alaska.execute(query, atomSet);
+		SubstitutionReader sub = Graal.executeQuery(query, atomSet);
 		if(sub.hasNext()) {
 			sub.next();
 			System.out.println("ok");
@@ -72,7 +72,7 @@ public class TestApplyRules {
 	
 	public static void applyRule(Rule rule, AtomSet atomSet) throws AtomSetException, SolverFactoryException, SolverException {
 		Query query = new DefaultConjunctiveQuery(rule.getBody(), rule.getFrontier());
-		SubstitutionReader reader = Alaska.execute(query, atomSet);
+		SubstitutionReader reader = Graal.executeQuery(query, atomSet);
 		for(Substitution s : reader) {
 			System.out.print(s);
 			AtomSet tmp = substitute(s, rule.getHead());
@@ -97,7 +97,7 @@ public class TestApplyRules {
 		LinkedList<Rule> ruleSet = new LinkedList<Rule>();
 		ruleSet.add(DlgpParser.parseRule("q(X,Y) :- p(X,Y)."));
 
-		Alaska.executeChase(atomSet, ruleSet);
+		Graal.executeChase(atomSet, ruleSet);
 
 		
 		System.out.println("#####################");
@@ -106,7 +106,7 @@ public class TestApplyRules {
 		}
 		
 		Query query = DlgpParser.parseQuery("?(X,Y) :- p(X,Y).q(X,Y).");
-		if(Alaska.execute(query, atomSet).hasNext()) {
+		if(Graal.executeQuery(query, atomSet).hasNext()) {
 			System.out.println("ok");
 		} else {
 			System.out.println("nok");

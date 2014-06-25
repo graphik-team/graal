@@ -15,7 +15,7 @@ import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
-import fr.lirmm.graphik.graal.Alaska;
+import fr.lirmm.graphik.graal.Graal;
 import fr.lirmm.graphik.graal.chase.Chase;
 import fr.lirmm.graphik.graal.chase.ChaseException;
 import fr.lirmm.graphik.graal.chase.ChaseWithGRD;
@@ -54,7 +54,7 @@ public class ChaseTest {
 		chase.execute();
 		
 		Query query = DlgpParser.parseQuery("? :- p(X,Y),q(X,Y).");
-		Assert.assertTrue(Alaska.execute(query, atomSet).hasNext());
+		Assert.assertTrue(Graal.executeQuery(query, atomSet).hasNext());
 	}
 	
 	@Theory

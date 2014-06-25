@@ -2,7 +2,7 @@ package fr.lirmm.graphik.alaska.trash;
 import java.util.LinkedList;
 import java.util.List;
 
-import fr.lirmm.graphik.graal.Alaska;
+import fr.lirmm.graphik.graal.Graal;
 import fr.lirmm.graphik.graal.chase.ChaseException;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
@@ -95,7 +95,7 @@ public class SwanTest {
 			ruleSet.add((Rule)o);
 		}
 
-		Alaska.executeChase(atomSet, ruleSet);
+		Graal.executeChase(atomSet, ruleSet);
 
 		
 		System.out.println("#####################");

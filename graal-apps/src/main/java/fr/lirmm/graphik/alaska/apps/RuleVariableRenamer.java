@@ -7,7 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-import fr.lirmm.graphik.graal.Alaska;
+import fr.lirmm.graphik.graal.Graal;
 import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.HashMapSubstitution;
 import fr.lirmm.graphik.graal.core.Rule;
@@ -51,8 +51,8 @@ public class RuleVariableRenamer {
 					for(Term var : vars) {
 						substitution.put(var, new Term(var.toString() + "_" + objectNumber, Term.Type.VARIABLE));
 					}
-					AtomSet body = Alaska.substitut(rule.getBody(), substitution);
-					AtomSet head = Alaska.substitut(rule.getHead(), substitution);
+					AtomSet body = Graal.substitut(rule.getBody(), substitution);
+					AtomSet head = Graal.substitut(rule.getHead(), substitution);
 					String label = rule.getLabel();
 					if(label.isEmpty()) {
 						label = "R"+objectNumber;

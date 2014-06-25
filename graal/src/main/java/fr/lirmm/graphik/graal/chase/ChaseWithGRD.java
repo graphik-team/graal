@@ -13,7 +13,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.Alaska;
+import fr.lirmm.graphik.graal.Graal;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.HashMapSubstitution;
 import fr.lirmm.graphik.graal.core.Query;
@@ -75,7 +75,7 @@ public class ChaseWithGRD extends AbstractChase {
 					logger.debug("-- Query: " + query);
 				}
 				
-				for (Substitution substitution : Alaska.execute(query, atomSet)) {
+				for (Substitution substitution : Graal.executeQuery(query, atomSet)) {
 					if(logger.isDebugEnabled()) {
 						logger.debug("-- Found homomorphism: " + substitution );
 					}
@@ -85,7 +85,7 @@ public class ChaseWithGRD extends AbstractChase {
 					substitution.put(varGen.getExistentialSubstitution(unifiedRule.getExistentials()));
 
 					// the atom set producted by the rule application
-					ReadOnlyAtomSet deductedAtomSet = Alaska.substitute(substitution, unifiedRule.getHead());
+					ReadOnlyAtomSet deductedAtomSet = Graal.substitute(substitution, unifiedRule.getHead());
 	
 					if(stopCondition.canIAdd(deductedAtomSet, fixedTerm, this.atomSet)) {
 						this.atomSet.add(deductedAtomSet);

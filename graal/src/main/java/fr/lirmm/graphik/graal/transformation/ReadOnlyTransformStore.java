@@ -2,7 +2,7 @@ package fr.lirmm.graphik.graal.transformation;
 
 import java.util.Set;
 
-import fr.lirmm.graphik.graal.Alaska;
+import fr.lirmm.graphik.graal.Graal;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Predicate;
@@ -44,7 +44,7 @@ public class ReadOnlyTransformStore implements ReadOnlyStore {
     public boolean contains(Atom atom) throws StoreException {
         Query query = new DefaultConjunctiveQuery(this.transformator.transform(atom));
         try {
-			return Alaska.execute(query, this).hasNext();
+			return Graal.executeQuery(query, this).hasNext();
 		} catch (SolverFactoryException e) {
 			throw new StoreException(e);
 		} catch (SolverException e) {

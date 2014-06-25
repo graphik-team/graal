@@ -3,7 +3,7 @@ package fr.lirmm.graphik.alaska.apps;
 import java.io.File;
 import java.io.StringReader;
 
-import fr.lirmm.graphik.graal.Alaska;
+import fr.lirmm.graphik.graal.Graal;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQueriesUnion;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
@@ -215,7 +215,7 @@ public class CLI {
 		}
 
 		if (_mustSaturate == true) {
-			try { Alaska.executeChase(_atoms, _rules); }
+			try { Graal.executeChase(_atoms, _rules); }
 			catch (Exception e) {
 				System.err.println("An error occurs while parsing rules : " 
 			                   	   + e + " (" + e.getMessage() + ")");
@@ -235,7 +235,7 @@ public class CLI {
 			}
 
 			try {
-				SubstitutionReader answers = Alaska.execute(_query,_atoms);
+				SubstitutionReader answers = Graal.executeQuery(_query,_atoms);
 				for (Substitution s : answers)
 					System.out.println(s.toString());
 			}

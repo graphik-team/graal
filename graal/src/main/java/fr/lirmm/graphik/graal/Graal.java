@@ -32,9 +32,9 @@ import fr.lirmm.graphik.graal.solver.SolverFactoryException;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public abstract class Alaska {
+public abstract class Graal {
 
-	private static final Logger logger = LoggerFactory.getLogger(Alaska.class);
+	private static final Logger logger = LoggerFactory.getLogger(Graal.class);
 	
 	public static void executeChase(AtomSet atomSet, Iterable<Rule> ruleSet) throws ChaseException {
 		Chase chase = new DefaultChase(ruleSet, atomSet);
@@ -74,7 +74,7 @@ public abstract class Alaska {
 	 * @throws SolverFactoryException
 	 * @throws SolverException
 	 */
-	public static SubstitutionReader execute(Query query, ReadOnlyAtomSet atomSet)
+	public static SubstitutionReader executeQuery(Query query, ReadOnlyAtomSet atomSet)
 																		  throws SolverFactoryException,
 																		  SolverException {
 		if (logger.isDebugEnabled())
@@ -90,7 +90,7 @@ public abstract class Alaska {
 																		  throws SolverFactoryException,
 																		  SolverException {
 		Query query = new DefaultConjunctiveQuery(rule.getBody(), rule.getFrontier());
-		return execute(query, atomSet);
+		return executeQuery(query, atomSet);
 	}
 
 	public static ReadOnlyAtomSet substitute(Substitution s, ReadOnlyAtomSet atomSet) {

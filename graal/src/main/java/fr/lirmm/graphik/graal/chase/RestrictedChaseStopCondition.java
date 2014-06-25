@@ -8,7 +8,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.Alaska;
+import fr.lirmm.graphik.graal.Graal;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Query;
@@ -40,7 +40,7 @@ public class RestrictedChaseStopCondition implements ChaseStopCondition {
 		if(logger.isDebugEnabled()) {
 			logger.debug("Fixed Query:" + query);
 		}
-		if (Alaska.execute(query, base).hasNext()) {
+		if (Graal.executeQuery(query, base).hasNext()) {
 			return false;
 		}
 		return true;

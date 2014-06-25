@@ -9,7 +9,7 @@ import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
-import fr.lirmm.graphik.graal.Alaska;
+import fr.lirmm.graphik.graal.Graal;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.Term;
@@ -48,7 +48,7 @@ public class ConjunctiveQueryTest {
 			SubstitutionReader subReader;
 			Substitution sub;
 
-			subReader = Alaska.execute(query, store);
+			subReader = Graal.executeQuery(query, store);
 
 			Assert.assertTrue(subReader.hasNext());
 			sub = subReader.next();
@@ -73,7 +73,7 @@ public class ConjunctiveQueryTest {
 
 			SubstitutionReader subReader;
 
-			subReader = Alaska.execute(query, store);
+			subReader = Graal.executeQuery(query, store);
 			Assert.assertFalse(subReader.hasNext());
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);
@@ -98,7 +98,7 @@ public class ConjunctiveQueryTest {
 			SubstitutionReader subReader;
 			Substitution sub;
 
-			subReader = Alaska.execute(query, store);
+			subReader = Graal.executeQuery(query, store);
 
 			Assert.assertTrue(subReader.hasNext());
 			sub = subReader.next();
@@ -121,7 +121,7 @@ public class ConjunctiveQueryTest {
 			SubstitutionReader subReader;
 			Substitution sub;
 
-			subReader = Alaska.execute(query, store);
+			subReader = Graal.executeQuery(query, store);
 
 			Assert.assertTrue(subReader.hasNext());
 			sub = subReader.next();
@@ -153,7 +153,7 @@ public class ConjunctiveQueryTest {
 			SubstitutionReader subReader;
 			Substitution sub;
 
-			subReader = Alaska.execute(query, store);
+			subReader = Graal.executeQuery(query, store);
 
 			Assert.assertTrue(subReader.hasNext());
 			sub = subReader.next();
@@ -182,7 +182,7 @@ public class ConjunctiveQueryTest {
 			DefaultConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y) :- q(a,f,d),p(X,Y).");
 
 			SubstitutionReader subReader;
-			subReader = Alaska.execute(query, store);
+			subReader = Graal.executeQuery(query, store);
 			Assert.assertFalse(subReader.hasNext());
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);
@@ -202,7 +202,7 @@ public class ConjunctiveQueryTest {
 			SubstitutionReader subReader;
 			Substitution sub;
 
-			subReader = Alaska.execute(query, store);
+			subReader = Graal.executeQuery(query, store);
 
 			Assert.assertTrue(subReader.hasNext());
 			sub = subReader.next();
@@ -223,7 +223,7 @@ public class ConjunctiveQueryTest {
 			DefaultConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y) :- q(X,Y).");
 
 			SubstitutionReader subReader;
-			subReader = Alaska.execute(query, store);
+			subReader = Graal.executeQuery(query, store);
 			Assert.assertFalse(subReader.hasNext());
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);
