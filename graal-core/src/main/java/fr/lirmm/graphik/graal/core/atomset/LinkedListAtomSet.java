@@ -33,7 +33,7 @@ public class LinkedListAtomSet extends AbstractReadOnlyAtomSet implements AtomSe
 		this.linkedList = list;
 	}
 
-	public LinkedListAtomSet(Atom[] atoms) {
+	public LinkedListAtomSet(Atom... atoms) {
 		this();
 		for (Atom a : atoms)
 			this.linkedList.add(a);
