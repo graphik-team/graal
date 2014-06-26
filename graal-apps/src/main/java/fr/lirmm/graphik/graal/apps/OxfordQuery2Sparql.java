@@ -1,4 +1,4 @@
-package fr.lirmm.graphik.alaska.apps;
+package fr.lirmm.graphik.graal.apps;
 import java.util.LinkedList;
 import java.util.List;
 
