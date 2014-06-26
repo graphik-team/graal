@@ -9,8 +9,8 @@ import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.AtomComparator;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.graal.core.TermValueComparator;
 import fr.lirmm.graphik.graal.core.Term.Type;
+import fr.lirmm.graphik.graal.core.TermValueComparator;
 import fr.lirmm.graphik.graal.core.atomset.AbstractReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
@@ -174,9 +174,9 @@ public class MemoryGraphAtomSet extends AbstractReadOnlyAtomSet implements AtomS
 
     boolean addAtomEdge(AtomEdge atom) {
         boolean val = this.atoms.add(atom);
-        if (!val) {
-            for (Vertex v : atom.getVertices()) {
-                v.getEdges().add(atom);
+        if (val) {
+            for (Vertex term : atom.getVertices()) {
+                term.getEdges().add(atom);
             }
         }
         return val;
