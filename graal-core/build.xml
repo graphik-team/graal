@@ -4,14 +4,14 @@
 
 <!-- TODO MANIFEST, tests, etc... -->
 
-<project name="obda-kernel"
+<project name="graal-core"
          basedir="."
          default="jar">
 
 
 	<!-- properties -->
 
-	<property name="name"			value="obda-kernel"/>
+	<property name="name"			value="graal-core"/>
 	<property name="doc-window"     value=""/>
 	<property name="doc-title"      value=""/>
 	<property name="doc-header"     value=""/>

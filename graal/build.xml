@@ -17,7 +17,7 @@
 	<property name="doc-bottom"     value=""/>
 
 	<!-- TODO libs -->
-	<property name="lib"			value="../obda-kernel/target/release/obda-kernel.jar:../obda-parser/target/release/obda-parser.jar:lib/logback-classic.jar:lib/mysql-connector-java.jar:lib/slf4j-api.jar:lib/dlgp-parser.jar:lib/jcommander.jar:lib/logback-core.jar:lib/annotations.jar:lib/sqlite-jdbc.jar:lib/commons-lang3.jar"/>
+	<property name="lib"			value="../graal-core/target/release/graal-core.jar:../graal-io/target/release/graal-io.jar:lib/logback-classic.jar:lib/mysql-connector-java.jar:lib/slf4j-api.jar:lib/dlgp-parser.jar:lib/jcommander.jar:lib/logback-core.jar:lib/annotations.jar:lib/sqlite-jdbc.jar:lib/commons-lang3.jar"/>
 	<property name="lib-test"		value="${lib}:lib/junit-4.11.jar"/>
 
 	<property name="src"            value="src/main/java"/>

@@ -2,14 +2,14 @@
 <!-- build.xml -->
 
 
-<project name="graal-store-apps"
+<project name="graal"
          basedir="."
          default="jar">
 
 
 	<!-- properties -->
 
-	<property name="name"			value="graal-store-apps"/>
+	<property name="name"			value="graal"/>
 	<property name="doc-window"     value=""/>
 	<property name="doc-title"      value=""/>
 	<property name="doc-header"     value=""/>
@@ -17,10 +17,10 @@
 	<property name="doc-bottom"     value=""/>
 
 	<!-- TODO libs -->
-	<property name="lib"			value="../graal-solver/target/release/graal-solver.jar:../graal-store/target/release/graal-store.jar:../graal-core/target/release/graal-core.jar:../graal-io/target/release/graal-io.jar:lib/logback-classic.jar:lib/mysql-connector-java.jar:lib/slf4j-api.jar:lib/dlgp-parser.jar:lib/jcommander.jar:lib/logback-core.jar:lib/annotations.jar:lib/sqlite-jdbc.jar"/>
+	<property name="lib"			value="lib/logback-classic.jar:lib/mysql-connector-java.jar:lib/slf4j-api.jar:lib/dlgp-parser.jar:lib/jcommander.jar:lib/logback-core.jar:lib/annotations.jar:lib/sqlite-jdbc.jar:lib/commons-lang3.jar"/>
 	<property name="lib-test"		value="${lib}:lib/junit-4.11.jar"/>
 
-	<property name="src"            value="src/main/java"/>
+	<property name="src"            value="graal-apps/src/main/java:graal-core/src/main/java:graal-io/src/main/java:graal-solver/src/main/java:graal-store/src/main/java:graal/src/main/java"/>
 	<property name="src-test"       value="src/test/java"/>
 
 	<property name="target"         value="target"/>
