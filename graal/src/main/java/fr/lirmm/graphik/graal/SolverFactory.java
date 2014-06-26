@@ -13,7 +13,16 @@ import fr.lirmm.graphik.graal.solver.SolverFactoryException;
  *
  */
 public abstract class SolverFactory {
-
+	
+	public static SolverFactory DEFAULT_FACTORY = new SolverFactory() {
+		
+		@Override
+		public Solver getSolver(Query query, ReadOnlyAtomSet atomSet)
+				throws SolverFactoryException {
+			// TODO implement this method
+			throw new Error("This method isn't implemented");
+		}
+	};
     public static SolverFactory getFactory() {
         return new DefaultSolverFactory();
     }

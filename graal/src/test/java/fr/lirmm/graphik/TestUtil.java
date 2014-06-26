@@ -17,9 +17,11 @@ import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public abstract class TestUtil {
+public final class TestUtil {
 	
-	private static final String DB_TEST = "/tmp/test.db";
+	private TestUtil(){}
+	
+	public static final String DB_TEST = "/tmp/test.db";
 	
 	public static AtomSet[] writeableStore() {
 		File file = new File(DB_TEST);
