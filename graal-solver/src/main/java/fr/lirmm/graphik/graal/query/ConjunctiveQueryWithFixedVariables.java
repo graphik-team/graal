@@ -4,10 +4,10 @@
 package fr.lirmm.graphik.graal.query;
 
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.Iterator;
+import java.util.LinkedList;
 
-import fr.lirmm.graphik.graal.Alaska;
+import fr.lirmm.graphik.graal.Graal;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Substitution;
@@ -87,8 +87,8 @@ public class ConjunctiveQueryWithFixedVariables implements ConjunctiveQuery {
 	private static AtomSet computeFixedQuery(/*ReadOnly*/AtomSet atomSet,
 			Iterable<Term> fixedTerms) {
 		// create a Substitution for fixed query
-		AtomSet fixedQuery = Alaska.getFactory().createAtomSet();
-		Substitution fixSub = Alaska.getFactory().createSubstitution();
+		AtomSet fixedQuery = Graal.getFactory().createAtomSet();
+		Substitution fixSub = Graal.getFactory().createSubstitution();
 		for (Term t : fixedTerms) {
 			if (Type.VARIABLE.equals(t.getType()))
 				fixSub.put(t, t.transtypage(Type.CONSTANT));

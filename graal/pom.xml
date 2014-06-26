@@ -42,6 +42,16 @@
 			<artifactId>graal-io</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>fr.lirmm.graphik</groupId>
+			<artifactId>graal-store</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>fr.lirmm.graphik</groupId>
+			<artifactId>graal-solver</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
 		
 		<dependency>
 			<groupId>junit</groupId>

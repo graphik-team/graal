@@ -1,20 +1,16 @@
 package fr.lirmm.graphik.alaska.trash;
 import java.io.File;
 
-import fr.lirmm.graphik.graal.Graal;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.RuleSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.graph.MemoryGraphAtomSet;
-import fr.lirmm.graphik.graal.incubator.DataGenerator;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
 import fr.lirmm.graphik.graal.solver.SolverException;
 import fr.lirmm.graphik.graal.solver.SolverFactoryException;
 import fr.lirmm.graphik.graal.store.StoreException;
-import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
-import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
 
 /**
  * 
@@ -53,8 +49,6 @@ public class Main {
 			}
 		}
 		
-		DataGenerator dg = new DataGenerator(rules);
-		dg.run();
 		
 		
 		/*AtomSet head = new LinkedListAtomSet();
