@@ -283,7 +283,7 @@ public class CLI {
 	private File                      _dbFile = null;
 
 	// for arguments parsing
-	private String                    _filename = "_alaska_default.db";
+	private String                    _filename = "_graal_default.db";
 	private String                    _queryString = "";
 	private String                    _factString = "";
 	private String                    _ruleString = "";
