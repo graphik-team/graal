@@ -4,14 +4,14 @@
 
 <!-- TODO MANIFEST, tests, etc... -->
 
-<project name="obda-parser"
+<project name="graal-io"
          basedir="."
          default="jar">
 
 
 	<!-- properties -->
 
-	<property name="name"			value="obda-parser"/>
+	<property name="name"			value="graal-io"/>
 	<property name="doc-window"     value=""/>
 	<property name="doc-title"      value=""/>
 	<property name="doc-header"     value=""/>
@@ -19,7 +19,7 @@
 	<property name="doc-bottom"     value=""/>
 
 	<!-- TODO libs -->
-	<property name="lib"			value="../obda-kernel/target/release/obda-kernel.jar:lib/dlgp-parser.jar:lib/jcommander.jar:lib/logback-classic.jar:lib/logback-core.jar:lib/slf4j-api.jar:lib/sesame-model.jar:lib/sesame-rio-api.jar:lib/sesame-rio-datatypes.jar:lib/sesame-rio-languages.jar:lib/sesame-rio-rdfxml.jar:lib/sesame-util.jar"/>
+	<property name="lib"			value="../graal-core/target/release/graal-core.jar:lib/dlgp-parser.jar:lib/jcommander.jar:lib/logback-classic.jar:lib/logback-core.jar:lib/slf4j-api.jar:lib/sesame-model.jar:lib/sesame-rio-api.jar:lib/sesame-rio-datatypes.jar:lib/sesame-rio-languages.jar:lib/sesame-rio-rdfxml.jar:lib/sesame-util.jar"/>
 	<property name="lib-test"		value="${lib}:lib/junit-4.11.jar"/>
 
 	<property name="src"            value="src/main/java"/>
