@@ -35,6 +35,31 @@ public class ConjunctiveQueryTest {
 	}
 
 	/**
+	 * Test an empty query with an empty atomSet that must have an empty substitution 
+	 */
+	@Theory
+	public void emptyQueryAndEmptyAtomSetTest(AtomSet store) {
+		try {
+			AtomSet queryAtomSet = new LinkedListAtomSet();
+			DefaultConjunctiveQuery query = new DefaultConjunctiveQuery(queryAtomSet);
+
+			SubstitutionReader subReader;
+			Substitution sub;
+
+			subReader = Graal.executeQuery(query, store);
+
+			Assert.assertTrue(subReader.hasNext());
+			sub = subReader.next();
+			Assert.assertEquals(0, sub.getTerms().size());
+
+			Assert.assertFalse(subReader.hasNext());
+
+		} catch (Exception e) {
+			Assert.assertTrue(e.getMessage(), false);
+		}
+	}
+	
+	/**
 	 * Test an empty query that must have an empty substitution
 	 */
 	@Theory
@@ -60,7 +85,7 @@ public class ConjunctiveQueryTest {
 			Assert.assertTrue(e.getMessage(), false);
 		}
 	}
-
+	
 	/**
 	 * Test a query without answer
 	 */
@@ -81,18 +106,52 @@ public class ConjunctiveQueryTest {
 	}
 
 	/**
+	 * Test a query without answer
+	 */
+	@Theory
+	public void noAnswerQueryTest2(AtomSet store) {
+		try {
+			DefaultConjunctiveQuery query = DlgpParser.parseQuery("?(Y,X) :- p(Y,X).");
+
+			SubstitutionReader subReader;
+
+			subReader = Graal.executeQuery(query, store);
+			Assert.assertFalse(subReader.hasNext());
+		} catch (Exception e) {
+			Assert.assertTrue(e.getMessage(), false);
+		}
+	}
+	
+	/**
+	 * Test a query without answer
+	 */
+	@Theory
+	public void noAnswerQueryTest3(AtomSet store) {
+		try {
+			store.add(DlgpParser.parseAtomSet("p(a,b), r(c,c)."));
+			DefaultConjunctiveQuery query = DlgpParser.parseQuery("?(Y,X) :- p(a,X), q(X,Y).");
+
+			SubstitutionReader subReader;
+
+			subReader = Graal.executeQuery(query, store);
+			Assert.assertFalse(subReader.hasNext());
+		} catch (Exception e) {
+			Assert.assertTrue(e.getMessage(), false);
+		}
+	}
+	
+	
+
+	/**
 	 * Test a boolean query
 	 */
 	@Theory
 	public void booleanQueryTest(AtomSet store) {
 		try {
-			StringFormat stringRepresentation = new BasicStringFormat();
-			store.add(new StringAtomReader("p(a,b).p(b,c).q(a,c,d).q(d,c,a)",
-					stringRepresentation));
+			store.add(DlgpParser.parseAtomSet("p(a,b).p(b,c).q(a,c,d).q(d,c,a)."));
 
 			AtomSet queryAtomSet = new LinkedListAtomSet();
-			queryAtomSet.add(new StringAtomReader("q(a,c,d)",
-					stringRepresentation));
+			queryAtomSet.add(DlgpParser.parseAtom("q(a,c,d)."));
 			DefaultConjunctiveQuery query = new DefaultConjunctiveQuery(queryAtomSet);
 
 			SubstitutionReader subReader;
@@ -114,7 +173,7 @@ public class ConjunctiveQueryTest {
 	@Theory
 	public void basicQueryTest(AtomSet store) {
 		try {
-			store.add(BasicParser.parse("p(a,b).p(b,c)"));
+			store.add(DlgpParser.parseAtomSet("p(a,b).p(b,c)."));
 
 			DefaultConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y) :- p(X,Y),p(Y,c).");
 
@@ -138,6 +197,35 @@ public class ConjunctiveQueryTest {
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);
 		}
+	}
+	
+	public void variableFusionTest(AtomSet store) {
+		try {
+			store.add(BasicParser.parse("p(a,b).q(b,b)"));
+
+			DefaultConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y) :- p(a,X),q(X,Y),q(Y,X).");
+
+			SubstitutionReader subReader;
+			Substitution sub;
+
+			subReader = Graal.executeQuery(query, store);
+
+			Assert.assertTrue(subReader.hasNext());
+			sub = subReader.next();
+			Assert.assertEquals(2, sub.getTerms().size());
+			Assert.assertEquals(
+					sub.getSubstitut(new Term("X", Term.Type.VARIABLE)),
+					new Term("b", Term.Type.CONSTANT));
+			Assert.assertEquals(
+					sub.getSubstitut(new Term("Y", Term.Type.VARIABLE)),
+					new Term("b", Term.Type.CONSTANT));
+
+			Assert.assertFalse(subReader.hasNext());
+
+		} catch (Exception e) {
+			Assert.assertTrue(e.getMessage(), false);
+		}
+		
 	}
 
 	/**
@@ -230,20 +318,5 @@ public class ConjunctiveQueryTest {
 		}
 	}
 	
-//	@Theory 
-//	public void universalQuery(WriteableAtomSet store) {
-//		try {
-//			store.add(BasicParser.parse("p(a,b)"));
-//
-//			WriteableAtomSet queryAtomSet = new LinkedListAtomSet();
-//			queryAtomSet.add(BasicParser.parse("p(a,Y)"));
-//			ConjunctiveQuery query = new ConjunctiveQuery(queryAtomSet);
-//
-//			SubstitutionReader subReader;
-//			subReader = Util.execute(query, store);
-//			Assert.assertFalse(subReader.hasNext());
-//		} catch (Exception e) {
-//			Assert.assertTrue(e.getMessage(), false);
-//		}
-//	}
+
 }
