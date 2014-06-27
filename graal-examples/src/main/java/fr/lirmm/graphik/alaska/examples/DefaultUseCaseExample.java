@@ -60,11 +60,10 @@ public class DefaultUseCaseExample {
 		// for(Atom a : atomSet) {
 		//	   writer.write(a);
 		// }
-		writer.close();
 		
 		// /////////////////////////////////////////////////////////////////////
 		// execute query
-		Query query = DlgpParser.parseQuery("?(X) :- s(X, Y), p(X), q(Y).");
+		Query query = DlgpParser.parseQuery("?(X,Y) :- s(X, Y), p(X), q(Y).");
 		Iterable<Substitution> subReader = Graal.executeQuery(query, atomSet);
 		for(Substitution s : subReader) {
 			System.out.println(s);
