@@ -21,5 +21,4 @@ public interface AtomWriter extends ObjectWriter<Atom> {
 	@Override
 	void write(Iterable<Atom> objects) throws IOException;
 	
-	void write(ReadOnlyAtomSet AtomSet) throws IOException;
 }
