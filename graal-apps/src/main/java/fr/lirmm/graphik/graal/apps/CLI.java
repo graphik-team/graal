@@ -72,6 +72,8 @@ public class CLI {
 		                   "consider some rules");
 		System.out.println(ARG_SATURATE[0] + " | " + ARG_SATURATE[1] + "\t\t\t\t\t" + 
 		                   "saturate fact");
+		System.out.println(ARG_ONESTEPSAT[0] + " | " + ARG_ONESTEPSAT[1] + "\t\t\t" + 
+		                   "'one step' saturate fact");
 		System.out.println(ARG_PRINTFACT[0] + " | " + ARG_PRINTFACT[1] + "\t\t\t\t" + 
 		                   "print fact to stdout");
 	}
@@ -108,8 +110,12 @@ public class CLI {
 				++i;
 				if (i < n) parseDriver(args[i]);
 			}
+			else if (args[i].equals(ARG_ONESTEPSAT[0]) || args[i].equals(ARG_ONESTEPSAT[1])) {
+				if (!_mustSaturate) _mustOneStepSaturate = true;
+			}
 			else if (args[i].equals(ARG_SATURATE[0]) || args[i].equals(ARG_SATURATE[1])) {
 				_mustSaturate = true;
+				_mustOneStepSaturate = false;
 			}
 			else if (args[i].equals(ARG_PRINTFACT[0]) || args[i].equals(ARG_PRINTFACT[1])) {
 				_printFact = true;
@@ -214,10 +220,21 @@ public class CLI {
 			}
 		}
 
-		if (_mustSaturate == true) {
+		if (_mustSaturate) {
 			try { Graal.executeChase(_atoms, _rules); }
 			catch (Exception e) {
-				System.err.println("An error occurs while parsing rules : " 
+				System.err.println("An error occurs while saturating : " 
+			                   	   + e + " (" + e.getMessage() + ")");
+				e.printStackTrace();
+				err |= ERR_APPLYRULE;
+			}
+		}
+
+		if (_mustOneStepSaturate) {
+
+			try { Graal.executeOneStepChase(_atoms, _rules); }
+			catch (Exception e) {
+				System.err.println("An error occurs while one step saturating : " 
 			                   	   + e + " (" + e.getMessage() + ")");
 				e.printStackTrace();
 				err |= ERR_APPLYRULE;
@@ -277,7 +294,7 @@ public class CLI {
 		}
 	}
 
-	private AtomSet          _atoms = null;
+	private AtomSet                   _atoms = null;
 	private RuleSet                   _rules = new LinkedListRuleSet();
 	private ConjunctiveQueriesUnion   _query = new ConjunctiveQueriesUnion();
 	private File                      _dbFile = null;
@@ -290,6 +307,7 @@ public class CLI {
 	private String                    _inputFormat = "dlp";
 	private int                       _driver = DRIVER_SQLITE;
 	private boolean                   _mustSaturate = false;
+	private boolean                   _mustOneStepSaturate = false;
 	private boolean                   _printFact = false;
 
 
@@ -298,7 +316,8 @@ public class CLI {
 	private static final String ARG_QUERY[]         =   { "-q", "--query" };
 	private static final String ARG_RULE[]          =   { "-r", "--rules" };
 	private static final String ARG_ADDFACT[]       =   { "-F", "--fact" };
-	private static final String ARG_SATURATE[]      =   { "-s", "--saturate" };
+	private static final String ARG_SATURATE[]      =   { "-S", "--saturate" };
+	private static final String ARG_ONESTEPSAT[]    =   { "-s", "--one-step-saturate" };
 	private static final String ARG_PRINTFACT[]     =   { "-p", "--print-fact" };
 	private static final String ARG_INPUTFORMAT[]   =   { "-i", "--input-format" };
 	private static final String ARG_DRIVER[]        =   { "-d", "--driver" };

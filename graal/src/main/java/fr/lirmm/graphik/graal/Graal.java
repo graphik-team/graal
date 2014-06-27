@@ -45,6 +45,16 @@ public abstract class Graal {
 		chase.execute();
 	}
 	
+	public static void executeOneStepChase(AtomSet atomSet, Iterable<Rule> ruleSet) throws ChaseException {
+		Chase chase = new DefaultChase(ruleSet, atomSet);
+		chase.next();
+	}
+	
+	public static void executeOneStepChase(AtomSet atomSet, GraphOfRuleDependencies grd) throws ChaseException {
+		Chase chase = new ChaseWithGRD(grd, atomSet);
+		chase.next();
+	}
+	
 	// /////////////////////////////////////////////////////////////////////////
 	// @TODO to clean
 	// /////////////////////////////////////////////////////////////////////////
