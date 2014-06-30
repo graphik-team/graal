@@ -8,8 +8,22 @@ import fr.lirmm.graphik.util.stream.ObjectReader;
 
 public class LinkedListRuleSet implements RuleSet, Collection<Rule> {
 
-	private LinkedList<Rule> ruleList = new LinkedList<Rule>();
+	private LinkedList<Rule> ruleList;
 	
+	public LinkedListRuleSet() {
+		this.ruleList = new LinkedList<Rule>();
+	}
+	
+	/**
+	 * @param rules
+	 */
+	public LinkedListRuleSet(Iterable<Rule> rules) {
+		this();
+		for(Rule r : rules) {
+			this.ruleList.add(r);
+		}
+	}
+
 	@Override
 	public boolean contains(Rule rule) {
 		return ruleList.contains(rule);
