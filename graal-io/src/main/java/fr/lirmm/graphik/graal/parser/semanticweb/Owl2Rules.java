@@ -12,6 +12,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultRule;
@@ -27,6 +30,9 @@ import fr.lirmm.graphik.util.stream.AbstractReader;
  */
 public class Owl2Rules extends AbstractReader<Object> {
 
+	private static final Logger logger = LoggerFactory
+			.getLogger(Owl2Rules.class);
+	
 	public static final String OWL_PREFIX = "http://www.w3.org/2002/07/owl#";
 	
 	public static final String OWL_ONTOLOGY = OWL_PREFIX + "Ontology";
@@ -90,6 +96,10 @@ public class Owl2Rules extends AbstractReader<Object> {
 			if (o instanceof Atom) {
 				Atom a = (Atom) o;
 				String predicateStr = a.getPredicate().toString();
+				
+				if(logger.isDebugEnabled()) 
+					logger.debug(predicateStr);
+				
 				if (OWL_INVERSE_OF.equals(predicateStr)) {
 					Rule rule = new DefaultRule();
 					Predicate p1 = new Predicate(a.getTerm(0).toString(), 2);
