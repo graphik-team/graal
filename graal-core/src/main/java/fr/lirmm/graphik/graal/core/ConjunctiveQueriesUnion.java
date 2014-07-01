@@ -129,8 +129,21 @@ public class ConjunctiveQueriesUnion implements Query, Collection<ConjunctiveQue
 	 */
 	@Override
 	public boolean isBoolean() {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
+		return this.queries.isEmpty() || this.queries.iterator().next().isBoolean();
+	}
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// OBJECT METHODS
+	// /////////////////////////////////////////////////////////////////////////
+	
+	@Override
+	public String toString() {
+		StringBuilder s = new StringBuilder();
+		for(Query q : this.queries) {
+			s.append(q);
+			s.append(" | ");
+		}
+		return s.toString();
 	}
     
 }

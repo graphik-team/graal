@@ -318,5 +318,33 @@ public class ConjunctiveQueryTest {
 		}
 	}
 	
+	@Theory
+	public void wrongArityQuery(AtomSet atomset) {
+		try {
+			atomset.add(DlgpParser.parseAtom("p(a,b)."));
+			DefaultConjunctiveQuery query = DlgpParser.parseQuery("? :- p(X).");
+	
+			SubstitutionReader subReader;
+			subReader = Graal.executeQuery(query, atomset);
+			Assert.assertFalse(subReader.hasNext());
+		} catch (Exception e) {
+			Assert.assertTrue(e.getMessage(), false);
+		}
+	}
+	
+	@Theory
+	public void wrongArityQuery2(AtomSet atomset) {
+		try {
+			atomset.add(DlgpParser.parseAtom("p(a,b)."));
+			DefaultConjunctiveQuery query = DlgpParser.parseQuery("? :- p(X,Y,Z).");
+	
+			SubstitutionReader subReader;
+			subReader = Graal.executeQuery(query, atomset);
+			Assert.assertFalse(subReader.hasNext());
+		} catch (Exception e) {
+			Assert.assertTrue(e.getMessage(), false);
+		}
+	}
+	
 
 }

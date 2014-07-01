@@ -55,7 +55,7 @@ public class SqlConjunctiveQueriesUnionSolver implements Solver {
 	public SubstitutionReader execute() throws SolverException {
 		this.preprocessing();
 		try {
-			return new ResultSetSubstitutionReader(this.store, this.sqlQuery.toString());
+			return new ResultSetSubstitutionReader(this.store, this.sqlQuery.toString(), queries.isBoolean());
 		} catch (Exception e) {
 			throw new SolverException(e.getMessage(), e);
 		}

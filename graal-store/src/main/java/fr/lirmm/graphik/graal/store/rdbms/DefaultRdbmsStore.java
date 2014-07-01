@@ -56,7 +56,8 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	// queries
 	private static final String getPredicateQuery = "SELECT * FROM "
 													+ predicateTableName
-													+ " WHERE predicate_label = ? ;";
+													+ " WHERE predicate_label = ? " 
+													+ " AND predicate_arity = ?;";
 	private static final String insertPredicateQuery = "INSERT INTO "
 													   + predicateTableName
 													   + " VALUES ( ?, ?, ?)";
@@ -670,6 +671,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 
 		try {
 			this.getPredicateTableStatement.setString(1, predicate.getLabel());
+			this.getPredicateTableStatement.setInt(2, predicate.getArity());
 			ResultSet results = this.getPredicateTableStatement.executeQuery();
 
 			if (results.next())
