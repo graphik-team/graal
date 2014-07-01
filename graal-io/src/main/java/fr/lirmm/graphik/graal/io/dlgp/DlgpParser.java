@@ -23,8 +23,10 @@ import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.NegativeConstraint;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Term;
+import fr.lirmm.graphik.graal.core.filter.AtomFilter;
 import fr.lirmm.graphik.util.stream.AbstractReader;
 import fr.lirmm.graphik.util.stream.ArrayBlockingStream;
+import fr.lirmm.graphik.util.stream.FilterReader;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -68,7 +70,22 @@ public class DlgpParser extends AbstractReader<Object> {
 
 		@Override
 		public Term createTerm(TERM_TYPE termType, Object term) {
-			return new Term(term, Term.Type.valueOf(termType.toString()));
+			Term.Type type = null;
+			switch(termType) {
+			case ANSWER_VARIABLE:
+			case VARIABLE:
+				type = Term.Type.VARIABLE;
+				break;
+			case CONSTANT: 
+				type = Term.Type.CONSTANT;
+				break;
+			case FLOAT:
+			case INTEGER:
+			case STRING:
+				type = Term.Type.LITERAL;
+				break;
+			}
+			return new Term(term, type);
 		}
 	}
 
@@ -143,7 +160,11 @@ public class DlgpParser extends AbstractReader<Object> {
 	public static Atom parseAtom(String s) {
 		return (Atom) new DlgpParser(s).next();
 	}
-
+	
+	public static Iterable<Atom> parseAtomSet(String s) {
+		return new FilterReader<Atom, Object>(new DlgpParser(s), new AtomFilter());
+	}
+	
 	public static Rule parseRule(String s) {
 		return (Rule) new DlgpParser(s).next();
 	}
@@ -151,5 +172,5 @@ public class DlgpParser extends AbstractReader<Object> {
 	public static NegativeConstraint parseNegativeConstraint(String s) {
 		return (NegativeConstraint) new DlgpParser(s).next();
 	}
-
+	
 };

@@ -64,16 +64,9 @@ public class DlgpWriter extends Writer implements AtomWriter {
 	}
 	
 	@Override
-	public void write(ReadOnlyAtomSet atomSet) throws IOException {
-		this.writeAtomSet(atomSet, true);
-		this.writer.write(".\n");
-		this.writer.flush();
-	}
-	
-	@Override
 	public void write(Iterable<Atom> atoms) throws IOException {
-		for(Atom a : atoms)
-			this.writeAtom(a);
+		this.writeAtomSet(atoms, true);
+		this.writer.write(".\n");
 		this.writer.flush();
 	}
 	
@@ -143,7 +136,7 @@ public class DlgpWriter extends Writer implements AtomWriter {
 		}
 	}
 	
-	private void writeAtomSet(ReadOnlyAtomSet atomSet, boolean addCarriageReturn) throws IOException {
+	private void writeAtomSet(Iterable<Atom> atomSet, boolean addCarriageReturn) throws IOException {
 		boolean isFirst = true;
 		for(Atom a : atomSet) {
 			if(isFirst) {

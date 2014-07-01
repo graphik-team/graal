@@ -20,8 +20,8 @@ abstract class AbstractRDFListener extends RDFHandlerBase {
 	@Override
 	public void handleStatement(Statement st) {
 		DefaultAtom a = new DefaultAtom(new Predicate(st.getPredicate().toString(), 2), new Term(
-				st.getSubject(), Type.CONSTANT), new Term(st.getObject(),
-				Type.CONSTANT));
+				st.getSubject(), Type.LITERAL), new Term(st.getObject(),
+				Type.LITERAL));
 		
 		this.createAtom(a);
 	}

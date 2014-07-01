@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
@@ -22,6 +25,10 @@ import fr.lirmm.graphik.util.stream.AbstractReader;
  */
 public class RDF2Atom extends AbstractReader<Atom> {
 
+	
+	private static final Logger logger = LoggerFactory
+			.getLogger(RDF2Atom.class);
+	
 	public static final String RDF_PREFIX = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 
 	/** */
@@ -76,6 +83,9 @@ public class RDF2Atom extends AbstractReader<Atom> {
 		while (this.atom == null && this.reader.hasNext()) {
 			Atom a = this.reader.next();
 			String predicateStr = a.getPredicate().toString();
+			
+			if(logger.isDebugEnabled())
+				logger.debug("RDF Predicate: " + predicateStr);
 			
 			if(RDF_TYPE.equals(predicateStr)) {
 				Predicate p = new Predicate(a.getTerm(1).toString(), 1);

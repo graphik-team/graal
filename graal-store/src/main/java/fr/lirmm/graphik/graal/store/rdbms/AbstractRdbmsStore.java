@@ -84,8 +84,12 @@ IRdbmsStore {
 			Statement statement = this.getStatement();
 			for(Atom a : stream) {
 				this.add(statement, a);
-				if((++c % MAX_BATCH_SIZE) == 0)
+				if((++c % MAX_BATCH_SIZE) == 0) {
+					if(logger.isDebugEnabled()) {
+						logger.debug("batch commit, size=" + MAX_BATCH_SIZE);
+					}
 					statement.executeBatch();
+				}
 			}
 			statement.executeBatch();
 			this.getConnection().commit();
