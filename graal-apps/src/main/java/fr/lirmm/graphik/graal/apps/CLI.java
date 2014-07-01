@@ -54,7 +54,7 @@ public class CLI {
 		System.out.print("[" + ARG_INPUTFORMAT[0] + " <dlp>] ");
 		System.out.print("[" + ARG_QUERY[0] + " <query>] ");
 		System.out.print("[" + ARG_ADDFACT[0] + " <fact>]");
-		System.out.print("[" + ARG_RMFACT + "]");
+		System.out.print("[" + ARG_RMFACT[0] + "]");
 		System.out.println("");
 
 		System.out.println(ARG_HELP[0] + " | " + ARG_HELP[1] + " \t\t\t\t\t" + 
@@ -83,10 +83,15 @@ public class CLI {
 
 	public void parseArgs(String[] args) {
 		final int n = args.length;
+		if (n == 0) {
+			printHelp();
+			System.exit(0);
+		}
 		for (int i = 0 ; i < n ; ++i) {
 			//System.out.println("arg[" + i + "]=" + args[i]);
 			if (args[i].equals(ARG_HELP[0]) || args[i].equals(ARG_HELP[1])) {
 				printHelp();
+				System.exit(0);
 			}
 			else if (args[i].equals(ARG_FILE[0]) || args[i].equals(ARG_FILE[1])) {
 				++i;
