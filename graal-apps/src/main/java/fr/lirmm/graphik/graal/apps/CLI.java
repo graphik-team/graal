@@ -54,6 +54,7 @@ public class CLI {
 		System.out.print("[" + ARG_INPUTFORMAT[0] + " <dlp>] ");
 		System.out.print("[" + ARG_QUERY[0] + " <query>] ");
 		System.out.print("[" + ARG_ADDFACT[0] + " <fact>]");
+		System.out.print("[" + ARG_RMFACT + "]");
 		System.out.println("");
 
 		System.out.println(ARG_HELP[0] + " | " + ARG_HELP[1] + " \t\t\t\t\t" + 
@@ -68,6 +69,8 @@ public class CLI {
 		                   "get answers (substitutions) to a given query");
 		System.out.println(ARG_ADDFACT[0] + " | " + ARG_ADDFACT[1] + "\t\t<fact>\t\t\t" + 
 		                   "add some fact to the atomset");
+		System.out.println(ARG_RMFACT[0] + " | " + ARG_RMFACT[1] + "\t\t\t\t" + 
+		                   "remove fact instead of adding (must be used with -F)");
 		System.out.println(ARG_RULE[0] + " | " + ARG_RULE[1] + "\t\t<rule>\t\t\t" + 
 		                   "consider some rules");
 		System.out.println(ARG_SATURATE[0] + " | " + ARG_SATURATE[1] + "\t\t\t\t\t" + 
@@ -313,7 +316,7 @@ public class CLI {
 	private boolean                   _mustSaturate = false;
 	private boolean                   _mustOneStepSaturate = false;
 	private boolean                   _printFact = false;
-	private boolean                   _removeFact = true;
+	private boolean                   _removeFact = false;
 
 
 	private static final String ARG_HELP[]          =   { "-h", "--help" };

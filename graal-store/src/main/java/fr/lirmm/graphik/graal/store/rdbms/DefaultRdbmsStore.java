@@ -260,19 +260,6 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * fr.lirmm.graphik.alaska.store.IWriteableStore#remove(fr.lirmm.graphik
-	 * .kb.core.IAtom)
-	 */
-	@Override
-	public boolean remove(Atom atom) {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see fr.lirmm.graphik.alaska.store.IStore#iterator()
 	 */
 	@Override
@@ -301,6 +288,54 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	 * (non-Javadoc)
 	 * 
 	 * @see
+	 * fr.lirmm.graphik.alaska.store.IWriteableStore#remove(fr.lirmm.graphik
+	 * .kb.core.IAtom)
+	 */
+	@Override
+	public boolean remove(Atom atom) {
+		try {
+			String tableName = this.predicateTableExist(atom.getPredicate());
+			if (tableName == null) return false;
+			StringBuilder query = new StringBuilder("DELETE FROM ");
+			query.append(tableName);
+			query.append(" WHERE ");
+
+			int termIndex = 0;
+			for (Term t : atom.getTerms()) {
+				if (termIndex != 0) query.append(" and ");
+				query.append(PREFIX_TERM_FIELD).append(termIndex).append(" = '").append(t).append("'");
+				++termIndex;
+			}
+			query.append(";");
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("Removing " + atom.toString() + " : " + query.toString());
+			}
+
+			try {
+				Statement statement = this.getStatement();
+				int result = statement.executeUpdate(query.toString());
+				if (logger.isDebugEnabled())
+					logger.debug("Removed " + result + " occurences of " + atom.toString());
+				this.getConnection().commit();
+				return result != 0;
+			}
+			catch (SQLException e) {
+				System.err.println(e);
+				return false;
+				//throw new StoreException(e);
+			}
+		}
+		catch (Exception e) {
+			System.err.println(e);
+			return false;
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
 	 * fr.lirmm.graphik.alaska.store.IStore#contains(fr.lirmm.graphik.kb.core
 	 * .IAtom)
 	 */
@@ -321,7 +356,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 
 			Iterator<Term> terms = atom.getTerms().iterator();
 
-			term = terms.next();
+			term = terms.next();            // TODO: FIX THIS => if arity = 0 -> crash ?!
 			++termIndex;
 			query.append("term").append(termIndex).append(" = \'").append(term)
 					.append('\'');
@@ -615,7 +650,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 					predicate));
 			insertPredicate(tableName, predicate);
 		} else {
-			throw new StoreException("Unsupported arity 0");
+			throw new StoreException("Unsupported arity 0"); // TODO Why ?!
 		}
 		return tableName;
 	}
