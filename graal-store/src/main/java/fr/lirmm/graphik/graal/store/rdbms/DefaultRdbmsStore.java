@@ -284,15 +284,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 				updateCounterValueQuery);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.lirmm.graphik.alaska.store.IWriteableStore#remove(fr.lirmm.graphik
-	 * .kb.core.IAtom)
-	 */
-	@Override
-	public boolean remove(Atom atom) {
+	protected boolean removeWithoutCommit(Atom atom) {
 		try {
 			String tableName = this.predicateTableExist(atom.getPredicate());
 			if (tableName == null) return false;
@@ -330,6 +322,29 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			System.err.println(e);
 			return false;
 		}
+	}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * fr.lirmm.graphik.alaska.store.IWriteableStore#remove(fr.lirmm.graphik
+	 * .kb.core.IAtom)
+	 */
+	@Override
+	public boolean remove(Atom atom) {
+		boolean result = this.removeWithoutCommit(atom);
+		try { this.getConnection().commit(); }
+		catch (Exception e) { System.err.println(e); return false; }
+		return result;
+	}
+
+	public boolean remove(Iterable<Atom> atoms) {
+		boolean result = false;
+		for (Atom atom : atoms)
+			result |= this.removeWithoutCommit(atom);
+		try { this.getConnection().commit(); }
+		catch (Exception e) { System.err.println(e); return false; }
+		return result;
 	}
 
 	/*
