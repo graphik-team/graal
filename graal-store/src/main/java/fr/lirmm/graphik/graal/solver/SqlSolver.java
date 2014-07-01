@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
-import fr.lirmm.graphik.graal.store.rdbms.IRdbmsStore;
+import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.ResultSetSubstitutionReader;
 
 /**
@@ -21,14 +21,14 @@ public class SqlSolver implements Solver {
 			.getLogger(SqlSolver.class);
 
     private ConjunctiveQuery query;
-    private IRdbmsStore store;
+    private RdbmsStore store;
     private String sqlQuery;
 
     /**
      * @param query
      * @param store
      */
-    public SqlSolver(ConjunctiveQuery query, IRdbmsStore store) {
+    public SqlSolver(ConjunctiveQuery query, RdbmsStore store) {
         this.query = query;
         this.store = store;
     }

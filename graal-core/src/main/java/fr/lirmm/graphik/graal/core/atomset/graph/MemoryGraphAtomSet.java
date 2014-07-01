@@ -69,7 +69,7 @@ public class MemoryGraphAtomSet extends AbstractReadOnlyAtomSet implements AtomS
      * .stream.IAtomReader)
      */
     @Override
-    public void remove(ObjectReader<Atom> stream) {
+    public void remove(Iterable<Atom> atoms) {
         // TODO implement this method
         throw new Error("This method isn't implemented");
     }

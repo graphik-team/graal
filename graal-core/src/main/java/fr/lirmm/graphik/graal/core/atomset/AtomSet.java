@@ -35,6 +35,6 @@ public interface AtomSet extends ReadOnlyAtomSet {
      * @param stream - the atom stream to be removed.
      * @throws AtomSetException 
      */
-    void remove(ObjectReader<Atom> stream) throws AtomSetException;
+    void remove(Iterable<Atom> atoms) throws AtomSetException;
     
 }

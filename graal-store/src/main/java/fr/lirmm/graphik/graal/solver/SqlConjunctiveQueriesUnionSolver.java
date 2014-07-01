@@ -9,7 +9,7 @@ import java.util.Iterator;
 import fr.lirmm.graphik.graal.core.ConjunctiveQueriesUnion;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
-import fr.lirmm.graphik.graal.store.rdbms.IRdbmsStore;
+import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.ResultSetSubstitutionReader;
 
 /**
@@ -18,12 +18,12 @@ import fr.lirmm.graphik.graal.store.rdbms.ResultSetSubstitutionReader;
  */
 public class SqlConjunctiveQueriesUnionSolver implements Solver {
 
-	private IRdbmsStore store;
+	private RdbmsStore store;
 	private StringBuilder sqlQuery;
 	private ConjunctiveQueriesUnion queries;
 
 	public SqlConjunctiveQueriesUnionSolver(ConjunctiveQueriesUnion queries,
-			IRdbmsStore store) {
+			RdbmsStore store) {
 		this.queries = queries;
 		this.store = store;
 	}

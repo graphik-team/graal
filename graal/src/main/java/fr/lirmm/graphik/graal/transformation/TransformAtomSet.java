@@ -65,7 +65,7 @@ public class TransformAtomSet extends ReadOnlyTransformStore implements
     }
 
     @Override
-    public void remove(ObjectReader<Atom> stream) {
+    public void remove(Iterable<Atom> stream) {
         try {
             this.getStore().remove(
                     this.getAtomTransformator().transform(stream));

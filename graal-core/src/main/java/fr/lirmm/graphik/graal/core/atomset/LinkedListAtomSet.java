@@ -74,9 +74,9 @@ public class LinkedListAtomSet extends AbstractReadOnlyAtomSet implements AtomSe
     }
 
     @Override
-    public void remove(ObjectReader<Atom> stream) {
-        while (stream.hasNext())
-            this.linkedList.remove(stream.next());
+    public void remove(Iterable<Atom> atoms) {
+        for(Atom a : atoms)
+            this.linkedList.remove(a);
         
     }
 

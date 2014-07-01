@@ -13,7 +13,7 @@ import fr.lirmm.graphik.graal.solver.Solver;
 import fr.lirmm.graphik.graal.solver.SolverFactoryException;
 import fr.lirmm.graphik.graal.solver.SqlConjunctiveQueriesUnionSolver;
 import fr.lirmm.graphik.graal.solver.SqlSolver;
-import fr.lirmm.graphik.graal.store.rdbms.IRdbmsStore;
+import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
 import fr.lirmm.graphik.graal.transformation.ReadOnlyTransformStore;
 import fr.lirmm.graphik.graal.transformation.TransformatorSolver;
 
@@ -34,9 +34,9 @@ public class DefaultSolverFactory extends SolverFactory {
     public Solver getSolver(Query query, ReadOnlyAtomSet atomSet)
             throws SolverFactoryException {
         if (query instanceof ConjunctiveQuery) {
-            if (atomSet instanceof IRdbmsStore)
+            if (atomSet instanceof RdbmsStore)
                 return new SqlSolver((ConjunctiveQuery) query,
-                        (IRdbmsStore) atomSet);
+                        (RdbmsStore) atomSet);
             if (atomSet instanceof ReadOnlyTransformStore)
             	return new TransformatorSolver((ConjunctiveQuery) query, atomSet);
             else
@@ -44,8 +44,8 @@ public class DefaultSolverFactory extends SolverFactory {
                         atomSet);
             
         } else if (query instanceof ConjunctiveQueriesUnion) {
-            if (atomSet instanceof IRdbmsStore)
-                return new SqlConjunctiveQueriesUnionSolver((ConjunctiveQueriesUnion) query, (IRdbmsStore) atomSet);
+            if (atomSet instanceof RdbmsStore)
+                return new SqlConjunctiveQueriesUnionSolver((ConjunctiveQueriesUnion) query, (RdbmsStore) atomSet);
             if (atomSet instanceof ReadOnlyTransformStore)
             	return null;
             else

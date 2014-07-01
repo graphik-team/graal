@@ -33,7 +33,7 @@ public interface Store extends ReadOnlyStore, AtomSet {
      * 
      * @param stream
      */
-    void remove(ObjectReader<Atom> stream) throws AtomSetException;
+    void remove(Iterable<Atom> atoms) throws AtomSetException;
 
     /**
      * Remove this atom from this store.

@@ -11,7 +11,7 @@ import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public interface IRdbmsStore extends Store {
+public interface RdbmsStore extends Store {
 
     /**
      * @return

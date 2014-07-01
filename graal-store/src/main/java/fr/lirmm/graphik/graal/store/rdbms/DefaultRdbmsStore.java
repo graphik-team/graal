@@ -238,28 +238,6 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * fr.lirmm.graphik.alaska.store.IWriteableStore#add(fr.lirmm.graphik.kb
-	 * .core.IAtom)
-	 */
-	@Override
-	public boolean add(Atom atom) {
-		try {
-			Statement statement = this.getStatement();
-			this.add(statement, atom);
-			statement.executeBatch();
-			this.getConnection().commit();
-		} catch (SQLException e) {
-			return false;
-		} catch (AtomSetException e) {
-			return false;
-		}
-		return true;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see fr.lirmm.graphik.alaska.store.IStore#iterator()
 	 */
 	@Override
@@ -282,69 +260,6 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		return new RdbmsSymbolGenenrator(this.getConnection(),
 				MAX_VARIABLE_ID_COUNTER, getCounterValueQuery,
 				updateCounterValueQuery);
-	}
-
-	protected boolean removeWithoutCommit(Atom atom) {
-		try {
-			String tableName = this.predicateTableExist(atom.getPredicate());
-			if (tableName == null) return false;
-			StringBuilder query = new StringBuilder("DELETE FROM ");
-			query.append(tableName);
-			query.append(" WHERE ");
-
-			int termIndex = 0;
-			for (Term t : atom.getTerms()) {
-				if (termIndex != 0) query.append(" and ");
-				query.append(PREFIX_TERM_FIELD).append(termIndex).append(" = '").append(t).append("'");
-				++termIndex;
-			}
-			query.append(";");
-
-			if (logger.isDebugEnabled()) {
-				logger.debug("Removing " + atom.toString() + " : " + query.toString());
-			}
-
-			try {
-				Statement statement = this.getStatement();
-				int result = statement.executeUpdate(query.toString());
-				if (logger.isDebugEnabled())
-					logger.debug("Removed " + result + " occurences of " + atom.toString());
-				this.getConnection().commit();
-				return result != 0;
-			}
-			catch (SQLException e) {
-				System.err.println(e);
-				return false;
-				//throw new StoreException(e);
-			}
-		}
-		catch (Exception e) {
-			System.err.println(e);
-			return false;
-		}
-	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.lirmm.graphik.alaska.store.IWriteableStore#remove(fr.lirmm.graphik
-	 * .kb.core.IAtom)
-	 */
-	@Override
-	public boolean remove(Atom atom) {
-		boolean result = this.removeWithoutCommit(atom);
-		try { this.getConnection().commit(); }
-		catch (Exception e) { System.err.println(e); return false; }
-		return result;
-	}
-
-	public boolean remove(Iterable<Atom> atoms) {
-		boolean result = false;
-		for (Atom atom : atoms)
-			result |= this.removeWithoutCommit(atom);
-		try { this.getConnection().commit(); }
-		catch (Exception e) { System.err.println(e); return false; }
-		return result;
 	}
 
 	/*
@@ -593,10 +508,6 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			   + " values (?, ?);";
 	}
 
-	// /////////////////////////////////////////////////////////////////////////
-	// PRIVATE METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
 	/**
 	 * @param statement
 	 * @param atom
@@ -633,6 +544,44 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		}
 		return statement;
 	}
+	
+	/**
+	 * 
+	 * @param atom
+	 * @return
+	 */
+	protected Statement remove(Statement statement, Atom atom) throws StoreException {
+		try {
+			String tableName = this.predicateTableExist(atom.getPredicate());
+			if (tableName == null) 
+				return statement;
+			StringBuilder query = new StringBuilder("DELETE FROM ");
+			query.append(tableName);
+			query.append(" WHERE ");
+
+			int termIndex = 0;
+			for (Term t : atom.getTerms()) {
+				if (termIndex != 0) {
+					query.append(" and ");
+				}
+				query.append(PREFIX_TERM_FIELD).append(termIndex).append(" = '").append(t).append("'");
+				++termIndex;
+			}
+			query.append(";");
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("Removing " + atom.toString() + " : " + query.toString());
+			}
+			statement.addBatch(query.toString());
+		} catch (SQLException e) {
+			throw new StoreException(e.getMessage(), e);
+		}
+		return statement;
+	}
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
 	private void add(Statement statement, Term term) throws SQLException {
 		this.insertTermStatement.setString(1, term.toString());
@@ -751,19 +700,6 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		this.updateCounterValueStatement.executeUpdate();
 
 		return value;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.lirmm.graphik.alaska.store.IWriteableStore#remove(fr.lirmm.graphik
-	 * .util.stream.ObjectReader)
-	 */
-	@Override
-	public void remove(ObjectReader<Atom> stream) throws AtomSetException {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
 	}
 
 	/*

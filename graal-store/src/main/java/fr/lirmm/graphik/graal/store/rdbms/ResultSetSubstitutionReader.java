@@ -34,7 +34,7 @@ public class ResultSetSubstitutionReader implements SubstitutionReader {
     private boolean hasNextCallDone = false;
     private boolean hasNext;
 	private boolean isBooleanQuery;
-	private IRdbmsStore store;
+	private RdbmsStore store;
 
     // /////////////////////////////////////////////////////////////////////////
     //  CONSTRUCTORS
@@ -46,7 +46,7 @@ public class ResultSetSubstitutionReader implements SubstitutionReader {
      * @throws SQLException
      * @throws StoreException 
      */
-    public ResultSetSubstitutionReader(IRdbmsStore store, String sqlQuery) throws SQLException, StoreException {
+    public ResultSetSubstitutionReader(RdbmsStore store, String sqlQuery) throws SQLException, StoreException {
     	this.store = store;
 		this.statement = store.getDriver().getConnection().createStatement();
         this.results = statement.executeQuery(sqlQuery);
@@ -62,7 +62,7 @@ public class ResultSetSubstitutionReader implements SubstitutionReader {
      * @throws SQLException
      * @throws StoreException
      */
-	public ResultSetSubstitutionReader(IRdbmsStore store, String sqlQuery,
+	public ResultSetSubstitutionReader(RdbmsStore store, String sqlQuery,
 			boolean isBooleanQuery) throws SQLException, StoreException {
 		this.store = store;
 		this.statement = store.getDriver().getConnection().createStatement();
