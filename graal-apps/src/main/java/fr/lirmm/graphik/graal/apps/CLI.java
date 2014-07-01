@@ -97,6 +97,9 @@ public class CLI {
 				++i;
 				if (i < n) _factString += args[i];
 			}
+			else if (args[i].equals(ARG_RMFACT[0]) || args[i].equals(ARG_RMFACT[1])) {
+				_removeFact = true;
+			}
 			else if (args[i].equals(ARG_RULE[0]) || args[i].equals(ARG_RULE[1])) {
 				++i;
 				if (i < n) _ruleString += args[i];
@@ -167,7 +170,8 @@ public class CLI {
 		ObjectReader reader = buildReader(_factString);
 		for (Object o : reader) {
 			if (o instanceof Atom) {
-				_atoms.add((Atom)o);
+				if (_removeFact) _atoms.remove((Atom)o);
+				else _atoms.add((Atom)o);
 			}
 			else {
 				System.err.println("[ignore] Ignoring non atom : " + o);
@@ -309,6 +313,7 @@ public class CLI {
 	private boolean                   _mustSaturate = false;
 	private boolean                   _mustOneStepSaturate = false;
 	private boolean                   _printFact = false;
+	private boolean                   _removeFact = true;
 
 
 	private static final String ARG_HELP[]          =   { "-h", "--help" };
@@ -316,11 +321,12 @@ public class CLI {
 	private static final String ARG_QUERY[]         =   { "-q", "--query" };
 	private static final String ARG_RULE[]          =   { "-r", "--rules" };
 	private static final String ARG_ADDFACT[]       =   { "-F", "--fact" };
+	private static final String ARG_RMFACT[]        =   { "-d", "--delete-fact" };
 	private static final String ARG_SATURATE[]      =   { "-S", "--saturate" };
 	private static final String ARG_ONESTEPSAT[]    =   { "-s", "--one-step-saturate" };
 	private static final String ARG_PRINTFACT[]     =   { "-p", "--print-fact" };
 	private static final String ARG_INPUTFORMAT[]   =   { "-i", "--input-format" };
-	private static final String ARG_DRIVER[]        =   { "-d", "--driver" };
+	private static final String ARG_DRIVER[]        =   { "-b", "--driver" };
 
 };
 
