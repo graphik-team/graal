@@ -19,6 +19,12 @@ import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
 
 /**
+ * The graph of rule dependencies (GRD) is a directed graph built from a rule
+ * set as follows: there is a vertex for each rule in the set and there is an
+ * edge from a rule R1 to a rule R2 if R1 may lead to trigger R2, i.e., R2
+ * depends on R1. R2 depends on R1 if and only if there is piece-unifier (for
+ * this notion, see f.i. this paper) between the body of R2 and the head of R1.
+ * 
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
@@ -30,7 +36,7 @@ public class GraphOfRuleDependencies {
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
-	
+
 	public GraphOfRuleDependencies() {
 		this.graph = new HashMap<Rule, Map<Substitution, Rule>>();
 		this.rules = new TreeMap<String, Rule>();
@@ -39,12 +45,12 @@ public class GraphOfRuleDependencies {
 	// /////////////////////////////////////////////////////////////////////////
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
-	
+
 	public void addRule(Rule r) {
 		this.rules.put(r.getLabel(), r);
 		this.graph.put(r, new HashMap<Substitution, Rule>());
 	}
-	
+
 	public Collection<Rule> getRules() {
 		return this.rules.values();
 	}
@@ -56,7 +62,7 @@ public class GraphOfRuleDependencies {
 	public Map<Substitution, Rule> getOutEdges(Rule src) {
 		return this.graph.get(src);
 	}
-	
+
 	public void parseGrd(BufferedReader reader) throws IOException {
 		String line = reader.readLine();
 		while (line != null) {
@@ -64,36 +70,39 @@ public class GraphOfRuleDependencies {
 			line = reader.readLine();
 		}
 	}
-	
+
 	// /////////////////////////////////////////////////////////////////////////
 	// OVERRIDE METHODS
 	// /////////////////////////////////////////////////////////////////////////
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
 		StringBuilder s = new StringBuilder();
-		for (Map.Entry<Rule, Map<Substitution, Rule>> graphEntry : this.graph.entrySet()){
-			
-			for (Map.Entry<Substitution, Rule> edgeEntry : graphEntry.getValue().entrySet()){
-			    s.append(graphEntry.getKey().getLabel());
-			    s.append("--");
-			    s.append(edgeEntry.getKey());
-			    s.append("-->");
-			    s.append(edgeEntry.getValue().getLabel());
-			    s.append('\n');
+		for (Map.Entry<Rule, Map<Substitution, Rule>> graphEntry : this.graph
+				.entrySet()) {
+
+			for (Map.Entry<Substitution, Rule> edgeEntry : graphEntry
+					.getValue().entrySet()) {
+				s.append(graphEntry.getKey().getLabel());
+				s.append("--");
+				s.append(edgeEntry.getKey());
+				s.append("-->");
+				s.append(edgeEntry.getValue().getLabel());
+				s.append('\n');
 			}
 		}
 		return s.toString();
 	}
-	
+
 	// /////////////////////////////////////////////////////////////////////////
 	// STATIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	
 	/**
 	 * @param unificatorString
 	 * @return
@@ -123,34 +132,33 @@ public class GraphOfRuleDependencies {
 
 		return unificator;
 	}
-	
+
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
-	
+
 	/**
 	 * @param g
 	 * @param line
 	 */
 	private void parseLine(String line) {
-		if(line.length() > 0) {
-			if(line.charAt(0) == '[') {
+		if (line.length() > 0) {
+			if (line.charAt(0) == '[') {
 				this.parseRule(line);
 			} else {
 				this.parseDependency(line);
 			}
 		}
 	}
-	
+
 	private void parseRule(String line) {
 		this.addRule(DlgpParser.parseRule(line));
 	}
-	
+
 	private void parseDependency(String line) {
 		Pattern pattern = Pattern
 				.compile("(\\S+)\\s*-->\\s*(\\S+)\\s*\\{(.*)\\}");
-		Matcher matcher = pattern
-				.matcher(line);
+		Matcher matcher = pattern.matcher(line);
 		Rule src, dest;
 
 		if (matcher.find()) {
