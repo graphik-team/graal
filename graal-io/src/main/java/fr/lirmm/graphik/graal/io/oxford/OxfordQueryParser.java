@@ -1,13 +1,14 @@
 /**
  * 
  */
-package fr.lirmm.graphik.graal.parser.oxford;
+package fr.lirmm.graphik.graal.io.oxford;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.LinkedList;
 
+import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.parser.ParseException;
 
 /**
@@ -27,14 +28,14 @@ import fr.lirmm.graphik.graal.parser.ParseException;
  * 
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  */
-public class OxfordQueryParser {
+public class OxfordQueryParser  {
 
-	private LinkedList<OxfordQueryParserListener> parserListenerList = new LinkedList<OxfordQueryParserListener>();
+	private OxfordQueryParserListener listener = new OxfordQueryParserListener();
 
 	private char c;
 	private int index = -1;
 	private Reader reader;
-
+	
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
@@ -46,26 +47,31 @@ public class OxfordQueryParser {
 	public OxfordQueryParser(Reader reader) {
 		this.reader = reader;
 	}
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// STATIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
+	
+	public static ConjunctiveQuery parseQuery(String s) throws ParseException {
+		OxfordQueryParser p = new OxfordQueryParser(s);
+		p.parse();
+		return p.listener.getQuery();
+	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLICS METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public void addListener(OxfordQueryParserListener listener) {
-		this.parserListenerList.add(listener);
-	}
 
 	public void parse() throws ParseException {
-		for (OxfordQueryParserListener listener : parserListenerList)
-			listener.startQuery();
+		listener.startQuery();
 
 		forward();
 		readHead();
 		read("<-");
 		readBody();
 
-		for (OxfordQueryParserListener listener : parserListenerList)
-			listener.endOfQuery();
+		listener.endOfQuery();
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -78,8 +84,7 @@ public class OxfordQueryParser {
 	}
 
 	private void readBody() throws ParseException {
-		for (OxfordQueryParserListener listener : parserListenerList)
-			listener.startBody();
+		listener.startBody();
 
 		readAtom();
 		if (test(',')) {
@@ -89,16 +94,14 @@ public class OxfordQueryParser {
 	}
 
 	private void readAtom() throws ParseException {
-		for (OxfordQueryParserListener listener : parserListenerList)
-			listener.startAtom();
+		listener.startAtom();
 
 		readPredicate();
 		read('(');
 		readTerms();
 		read(')');
 
-		for (OxfordQueryParserListener listener : parserListenerList)
-			listener.endOfAtom();
+		listener.endOfAtom();
 	}
 
 	private void readPredicate() throws ParseException {
@@ -113,8 +116,7 @@ public class OxfordQueryParser {
 			forward();
 		}
 
-		for (OxfordQueryParserListener listener : parserListenerList)
-			listener.predicate(predicate.toString());
+		listener.predicate(predicate.toString());
 	}
 
 	private void readTerms() throws ParseException {
@@ -140,21 +142,20 @@ public class OxfordQueryParser {
 			forward();
 		}
 
-		for (OxfordQueryParserListener listener : parserListenerList)
-			listener.constant(term.toString());
+		listener.constant(term.toString());
 	}
 
 	private void readTermVar() throws ParseException {
 		StringBuilder term = new StringBuilder();
-
+		term.append('X');
+		
 		read('?');
 		while (c >= '0' && c <= '9') {
 			term.append(c);
 			forward();
 		}
 
-		for (OxfordQueryParserListener listener : parserListenerList)
-			listener.variable(term.toString());
+		listener.variable(term.toString());
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
