@@ -3,7 +3,7 @@
  */
 package fr.lirmm.graphik.graal.writer;
 
-import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
+import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -11,5 +11,5 @@ import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
  */
 public interface ConjunctiveQueryWriter {
 
-	void write(DefaultConjunctiveQuery query) throws WriterException;
+	void write(ConjunctiveQuery query) throws WriterException;
 }

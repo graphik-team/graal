@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.Collection;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
@@ -17,7 +18,6 @@ import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.Term.Type;
-import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.writer.AtomWriter;
 
 /**
@@ -89,8 +89,24 @@ public class DlgpWriter extends Writer implements AtomWriter {
 		this.writer.flush();
 	}
 	
-	public void write(ConjunctiveQuery query) throws IOException {		
-		this.writer.write(" ? :- ");
+	public void write(ConjunctiveQuery query) throws IOException {	
+		this.writer.write('?');
+		Collection<Term> avars = query.getAnswerVariables();
+		if(!avars.isEmpty()) {
+			boolean isFirst = true;
+			this.writer.write('(');
+			for(Term t: avars) {
+				if(isFirst) {
+					isFirst = false;
+				} else {
+					this.writer.write(',');
+				} 
+				
+				this.writeTerm(t);
+			}
+			this.writer.write(')');
+		}
+		this.writer.write(" :- ");
 		this.writeAtomSet(query.getAtomSet(), false);
 		this.writer.write(".\n");
 		this.writer.flush();
@@ -157,28 +173,36 @@ public class DlgpWriter extends Writer implements AtomWriter {
 		
 		boolean isFirst = true;
 		for(Term t : atom.getTerms()) {
-			String term = t.toString();
 			if(isFirst) {
 				isFirst = false;
 			} else {
 				this.writer.write(", ");
 			}
 			
-			if(Type.VARIABLE.equals(t.getType())) {
-				if (term.charAt(0) < 65 || term.charAt(0) > 90) {
-					this.writer.write("VAR_");
-				}
-				this.writer.write(term);
-			} else if(Type.CONSTANT.equals(t.getType())) {
-				if (term.charAt(0) < 97 || term.charAt(0) > 122) {
-					this.writer.write("cst_");
-				}
-				this.writer.write(term);
-			} else {
-				this.writer.write(t.toString());
-			}
+			this.writeTerm(t);
+			
+			
 		}
 		this.writer.write(')');
+	}
+	
+	private void writeTerm(Term t) throws IOException {
+		String term = t.toString();
+		if(Type.VARIABLE.equals(t.getType())) {
+			if (term.charAt(0) < 65 || term.charAt(0) > 90) {
+				this.writer.write("VAR_");
+			}
+			this.writer.write(term);
+		} else if(Type.CONSTANT.equals(t.getType())) {
+			if (term.charAt(0) < 97 || term.charAt(0) > 122) {
+				this.writer.write("cst_");
+			}
+			this.writer.write(term);
+		} else {
+			this.writer.write('"');
+			this.writer.write(t.toString());
+			this.writer.write('"');
+		}
 	}
 	
 	private void writePredicate(Predicate p) throws IOException {

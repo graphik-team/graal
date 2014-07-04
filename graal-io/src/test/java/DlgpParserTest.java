@@ -30,7 +30,7 @@ public class DlgpParserTest {
 	@Test
 	public void parseQuery() {
 		DefaultConjunctiveQuery q = DlgpParser.parseQuery("?(X) :- p(a,X).");
-		Assert.assertEquals(Term.Type.VARIABLE, q.getResponseVariables().iterator().next().getType());
+		Assert.assertEquals(Term.Type.VARIABLE, q.getAnswerVariables().iterator().next().getType());
 		Assert.assertEquals(Term.Type.VARIABLE, q.getAtomSet().iterator().next().getTerm(1).getType());
 	}
 	

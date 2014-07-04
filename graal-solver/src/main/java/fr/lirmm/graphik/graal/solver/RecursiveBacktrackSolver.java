@@ -92,7 +92,7 @@ public class RecursiveBacktrackSolver implements Solver {
         Collection<Substitution> substitutionList = new LinkedList<Substitution>();
         if (orderedVars.size() == 0) {
             Substitution filteredSub = new HashMapSubstitution();
-            for (Term var : this.query.getResponseVariables()) {
+            for (Term var : this.query.getAnswerVariables()) {
                 filteredSub.put(var, substitution.getSubstitut(var));
             }
             substitutionList.add(filteredSub);

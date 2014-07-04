@@ -19,7 +19,7 @@ public interface ConjunctiveQuery extends Query, Iterable<Atom> {
 
 	/*ReadOnly*/AtomSet getAtomSet();
 
-	Collection<Term> getResponseVariables();
+	Collection<Term> getAnswerVariables();
 
 	@Override
 	Iterator<Atom> iterator();

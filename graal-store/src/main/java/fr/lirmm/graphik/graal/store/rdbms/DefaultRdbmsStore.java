@@ -79,7 +79,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 														  + " SET value = ? WHERE counter_name = ?;";
 
 	// misc queries
-	private static final String EMPTY_QUERY = "select 0 from (select 0) as t where 0";
+	private static final String EMPTY_QUERY = "select 0 from (select 0) as t where 0;";
 	private static final String TEST_SCHEMA_QUERY = "SELECT 0 FROM "
 													+ predicateTableName
 													+ " LIMIT 1";
@@ -410,24 +410,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			String tableName = atom.getPredicate().getLabel() + count;
 			tableNames.put(atom, tableName);
 		}
-
-		// Create FROM clause
-		String tableName = null;
-		for (Map.Entry<Atom, String> entries : tableNames.entrySet()) {
-			if (tables.length() != 0)
-				tables.append(", ");
-
-			tableName = this.predicateTableExist(entries.getKey()
-					.getPredicate());
-			if (tableName == null)
-				return EMPTY_QUERY;
-			else
-				tables.append(tableName);
-
-			tables.append(" as ");
-			tables.append(entries.getValue());
-		}
-
+		
 		//
 		for (Atom atom : atomSet) {
 			String currentAtom = tableNames.get(atom) + ".";
@@ -444,12 +427,31 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 										 + thisTerm);
 					}
 					lastOccurrence.put(term.toString(), thisTerm);
-					if (cquery.getResponseVariables().contains(term))
+					if (cquery.getAnswerVariables().contains(term))
 						columns.put(term, thisTerm + " as " + term);
 				}
 				++position;
 			}
 		}
+
+		// Create FROM clause
+		String tableName = null;
+		for (Map.Entry<Atom, String> entries : tableNames.entrySet()) {
+			if (tables.length() != 0)
+				tables.append(", ");
+
+			tableName = this.predicateTableExist(entries.getKey()
+					.getPredicate());
+			if (tableName == null)
+				return this.createEmptyQuery(columns.size());
+			else
+				tables.append(tableName);
+
+			tables.append(" as ");
+			tables.append(entries.getValue());
+		}
+
+		
 
 		// Create WHERE clause
 		for (String equivalence : equivalences) {
@@ -712,6 +714,17 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	@Override
 	public ObjectReader<Predicate> getAllPredicate() throws StoreException {
 		return new DefaultRdbmsPredicateReader(this.getDriver());
+	}
+	
+	private String createEmptyQuery(int nbAnswerVars) {
+		StringBuilder s = new StringBuilder("select 0");
+		
+		for(int i=1; i<nbAnswerVars; ++i)
+			s.append(", 0");
+		
+		s.append(" from (select 0) as t where 0;");
+		return s.toString();
+
 	}
 
 }

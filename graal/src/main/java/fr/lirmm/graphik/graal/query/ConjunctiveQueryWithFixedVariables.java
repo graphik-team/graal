@@ -75,7 +75,7 @@ public class ConjunctiveQueryWithFixedVariables implements ConjunctiveQuery {
 	 * @see fr.lirmm.graphik.kb.core.ConjunctiveQuery#getResponseVariables()
 	 */
 	@Override
-	public Collection<Term> getResponseVariables() {
+	public Collection<Term> getAnswerVariables() {
 		return this.responseVariables;
 	}
 	
