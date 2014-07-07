@@ -117,6 +117,10 @@ public class DlgpParser extends AbstractReader<Object> {
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 	
+	public DlgpParser() {
+		this(new InputStreamReader(System.in));
+	}
+	
 	public DlgpParser(Reader reader) {
 		new Thread(new Producer(reader, buffer)).start();
 	}

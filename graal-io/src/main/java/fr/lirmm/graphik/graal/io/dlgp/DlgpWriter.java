@@ -18,15 +18,15 @@ import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.Term.Type;
-import fr.lirmm.graphik.graal.writer.AtomWriter;
+import fr.lirmm.graphik.util.stream.ObjectWriter;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class DlgpWriter extends Writer implements AtomWriter {
+public class DlgpWriter extends Writer implements ObjectWriter<Object> {
 
-	private Writer writer;
+	protected Writer writer;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
@@ -57,18 +57,34 @@ public class DlgpWriter extends Writer implements AtomWriter {
 	// /////////////////////////////////////////////////////////////////////////
 	
 	@Override
+	public void write(Iterable<Object> o) {
+		this.write(o);
+	}
+	
+	@Override
+	public void write(Object o) throws IOException {
+		if(o instanceof Atom) {
+			this.write((Atom)o);
+		} else if(o instanceof NegativeConstraint) {
+			this.write((NegativeConstraint)o);
+		} else if(o instanceof Rule) {
+			this.write((Rule)o);
+		} else if(o instanceof ConjunctiveQuery) {
+			this.write((ConjunctiveQuery)o);
+		}
+	}
+	
 	public void write(Atom atom) throws IOException{
 		this.writeAtom(atom);
 		this.writer.write(".\n");
 		this.writer.flush();
 	}
 	
-	@Override
-	public void write(Iterable<Atom> atoms) throws IOException {
+	/*public void write(Iterable<Atom> atoms) throws IOException {
 		this.writeAtomSet(atoms, true);
 		this.writer.write(".\n");
 		this.writer.flush();
-	}
+	}*/
 	
 	public void write(Rule rule) throws IOException {
 		this.writeLabel(rule.getLabel());
@@ -144,7 +160,7 @@ public class DlgpWriter extends Writer implements AtomWriter {
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
 	
-	private void writeLabel(String label) throws IOException {
+	protected void writeLabel(String label) throws IOException {
 		if(!label.isEmpty()) {
 			this.write("[");
 			this.write(label);
@@ -152,7 +168,7 @@ public class DlgpWriter extends Writer implements AtomWriter {
 		}
 	}
 	
-	private void writeAtomSet(Iterable<Atom> atomSet, boolean addCarriageReturn) throws IOException {
+	protected void writeAtomSet(Iterable<Atom> atomSet, boolean addCarriageReturn) throws IOException {
 		boolean isFirst = true;
 		for(Atom a : atomSet) {
 			if(isFirst) {
@@ -167,7 +183,7 @@ public class DlgpWriter extends Writer implements AtomWriter {
 		}
 	}
 	
-	private void writeAtom(Atom atom) throws IOException {
+	protected void writeAtom(Atom atom) throws IOException {
 		this.writePredicate(atom.getPredicate());
 		this.writer.write('(');
 		
@@ -186,7 +202,7 @@ public class DlgpWriter extends Writer implements AtomWriter {
 		this.writer.write(')');
 	}
 	
-	private void writeTerm(Term t) throws IOException {
+	protected void writeTerm(Term t) throws IOException {
 		String term = t.toString();
 		if(Type.VARIABLE.equals(t.getType())) {
 			if (term.charAt(0) < 65 || term.charAt(0) > 90) {
@@ -205,7 +221,7 @@ public class DlgpWriter extends Writer implements AtomWriter {
 		}
 	}
 	
-	private void writePredicate(Predicate p) throws IOException {
+	protected void writePredicate(Predicate p) throws IOException {
 		String s = p.getLabel();
 		if(s.charAt(0) != '"') {
 			this.writer.write('"');
