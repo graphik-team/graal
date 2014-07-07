@@ -418,7 +418,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			int position = 0;
 			for (Term term : atom.getTerms()) {
 				String thisTerm = currentAtom + PREFIX_TERM_FIELD + position;
-				if (Term.Type.CONSTANT.equals(term.getType())) {
+				if (term.isConstant()) {
 					constants.add(thisTerm + " = '" + term + "'");
 				} else {
 					if (lastOccurrence.containsKey(term.toString())) {
