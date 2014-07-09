@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
+import java.io.IOException;
 
 import parser.DatalogGrammar;
 import parser.ParseException;
@@ -109,33 +110,29 @@ public class DlgpParser extends AbstractReader<Object> {
 			} catch (ParseException e) {
 				throw new ParseError("An error occured while parsing", e);
 			}
+			buffer.close();
 		}
 
-		public void close() {
-			this.buffer.close();
-		}
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 	
-	private Thread   thread;
-	private Producer producer;
+	private Reader reader = null;
 
 	public DlgpParser(Reader reader) {
-		this.producer = new Producer(reader,buffer);
-		this.thread = new Thread(producer);
-		this.thread.start();
+		this.reader = reader;
+		new Thread(new Producer(reader,buffer)).start();
 	}
 	
 	public DlgpParser(File file) throws FileNotFoundException {
 		this(new FileReader(file));
 	}
 
-	public void close() {
-		this.thread.stop();
-		this.producer.close();
+	public void close() throws IOException {
+		this.reader.close();
+		this.reader = null;
 	}
 
 
