@@ -81,7 +81,7 @@ public class CLI {
 		int i = 0;
 		int k = 0;
 		try { k = Integer.valueOf(_args.get(SATURATE)).intValue(); }
-		catch (NullPointerException e) { } // no saturation requested
+		catch (NumberFormatException e) { } // no saturation requested
 
 		DlgpWriter writer = new DlgpWriter(System.out);
 
@@ -150,27 +150,31 @@ public class CLI {
 					if (o instanceof Atom) {
 						if (_verbose) System.out.println("Adding atom " + (Atom)o);
 						_atomset.add((Atom)o);
+						if (_verbose) System.out.println("Atom added!");
 					}
 					else if (o instanceof Rule) {
 						if (_verbose) System.out.println("Adding rule " + (Rule)o);
 						_rules.add((Rule)o);
+						if (_verbose) System.out.println("Rule added!");
 					}
 					else if (o instanceof Query) {
 						if (_verbose) System.out.println("Adding query " + (Query)o);
 						_queries.add((Query)o);
+						if (_verbose) System.out.println("Query added!");
 					}
 					else {
 						if (_verbose) System.out.println("Ignoring non recognized object: " + o);
 					}
 				}
-				try {
-					parser.close();
-					if (_verbose) System.out.println("File closed!");
-				}
-				catch (Exception e) {
-					System.err.println("Cannot close file: " + e);
-					error |= ERROR_FILE_CLOSE;
-				}
+			//	try {
+			//		if (_verbose) System.out.println("Closing file...");
+			//		parser.close();
+			//		if (_verbose) System.out.println("File closed!");
+			//	}
+			//	catch (Exception e) {
+			//		System.err.println("Cannot close file: " + e);
+			//		error |= ERROR_FILE_CLOSE;
+			//	}
 			}
 			catch (Exception e) {
 				System.err.println("An error has occured: " +e);
@@ -274,7 +278,7 @@ public class CLI {
 				if (i >= n) return ERROR_ARG_FILE_OUTPUT;
 				_args.put(FILE_OUTPUT,argv[i]);
 			}
-			else if (isArg(argv[i],ARG_FILE_OUTPUT)) {
+			else if (isArg(argv[i],ARG_UCQ)) {
 				++i;
 				if (i >= n) return ERROR_ARG_UCQ;
 				if (argv[i].charAt(0) == '?') _args.put(STRING_UCQ,argv[i]);
