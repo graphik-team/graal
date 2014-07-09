@@ -1,11 +1,8 @@
 package fr.lirmm.graphik.graal.apps;
 
-import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 
-import fr.lirmm.graphik.graal.filter.RDFPrefixFilter;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
 import fr.lirmm.graphik.graal.parser.semanticweb.RDF2Atom;
 import fr.lirmm.graphik.graal.parser.semanticweb.RDFParser;

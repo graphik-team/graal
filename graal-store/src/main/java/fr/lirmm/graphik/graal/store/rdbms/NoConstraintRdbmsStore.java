@@ -34,24 +34,6 @@ public class NoConstraintRdbmsStore extends AbstractRdbmsStore {
 	}
 
 	/* (non-Javadoc)
-	 * @see fr.lirmm.graphik.alaska.store.IWriteableStore#add(fr.lirmm.graphik.kb.core.IAtom)
-	 */
-	@Override
-	public boolean add(Atom atom) {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
-	}
-
-	/* (non-Javadoc)
-	 * @see fr.lirmm.graphik.alaska.store.IWriteableStore#remove(fr.lirmm.graphik.kb.stream.AtomReader)
-	 */
-	@Override
-	public void remove(ObjectReader<Atom> stream) throws AtomSetException {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
-	}
-
-	/* (non-Javadoc)
 	 * @see fr.lirmm.graphik.alaska.store.IWriteableStore#remove(fr.lirmm.graphik.kb.core.IAtom)
 	 */
 	@Override
@@ -182,6 +164,16 @@ public class NoConstraintRdbmsStore extends AbstractRdbmsStore {
 	 */
 	@Override
 	public Term getTerm(String label) throws StoreException {
+		// TODO implement this method
+		throw new Error("This method isn't implemented");
+	}
+
+	/* (non-Javadoc)
+	 * @see fr.lirmm.graphik.graal.store.rdbms.AbstractRdbmsStore#remove(java.sql.Statement, fr.lirmm.graphik.graal.core.Atom)
+	 */
+	@Override
+	protected Statement remove(Statement statement, Atom atom)
+			throws StoreException {
 		// TODO implement this method
 		throw new Error("This method isn't implemented");
 	}

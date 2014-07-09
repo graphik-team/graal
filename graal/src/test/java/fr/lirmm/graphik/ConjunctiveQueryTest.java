@@ -21,6 +21,9 @@ import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
 import fr.lirmm.graphik.graal.parser.misc.BasicStringFormat;
 import fr.lirmm.graphik.graal.parser.misc.StringAtomReader;
 import fr.lirmm.graphik.graal.parser.misc.StringFormat;
+import fr.lirmm.graphik.graal.solver.SqlSolver;
+import fr.lirmm.graphik.graal.store.rdbms.AbstractRdbmsStore;
+import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -313,6 +316,65 @@ public class ConjunctiveQueryTest {
 			SubstitutionReader subReader;
 			subReader = Graal.executeQuery(query, store);
 			Assert.assertFalse(subReader.hasNext());
+		} catch (Exception e) {
+			Assert.assertTrue(e.getMessage(), false);
+		}
+	}
+	
+	@Theory
+	public void wrongArityQuery(AtomSet atomset) {
+		try {
+			atomset.add(DlgpParser.parseAtom("p(a,b)."));
+			DefaultConjunctiveQuery query = DlgpParser.parseQuery("? :- p(X).");
+	
+			SubstitutionReader subReader;
+			subReader = Graal.executeQuery(query, atomset);
+			Assert.assertFalse(subReader.hasNext());
+		} catch (Exception e) {
+			Assert.assertTrue(e.getMessage(), false);
+		}
+	}
+	
+	@Theory
+	public void wrongArityQuery2(AtomSet atomset) {
+		try {
+			atomset.add(DlgpParser.parseAtom("p(a,b)."));
+			DefaultConjunctiveQuery query = DlgpParser.parseQuery("? :- p(X,Y,Z).");
+	
+			SubstitutionReader subReader;
+			subReader = Graal.executeQuery(query, atomset);
+			Assert.assertFalse(subReader.hasNext());
+		} catch (Exception e) {
+			Assert.assertTrue(e.getMessage(), false);
+		}
+	}
+	
+	@Theory
+	public void diffLiteralQueryTest(AtomSet atomset) {
+		try {
+			atomset.add(DlgpParser.parseAtom("p(\"literal\")."));
+			DefaultConjunctiveQuery query = DlgpParser.parseQuery("? :- p(\"otherLiteral\").");
+	
+			SubstitutionReader subReader;
+			if(atomset instanceof DefaultRdbmsStore) {
+				System.out.println(((DefaultRdbmsStore)atomset).transformToSQL(query));
+			}
+			subReader = Graal.executeQuery(query, atomset);
+			Assert.assertFalse("Error on " + atomset.getClass() ,subReader.hasNext());
+		} catch (Exception e) {
+			Assert.assertTrue(e.getMessage(), false);
+		}
+	}
+	
+	@Theory
+	public void sameLiteralQueryTest(AtomSet atomset) {
+		try {
+			atomset.add(DlgpParser.parseAtom("p(\"literal\")."));
+			DefaultConjunctiveQuery query = DlgpParser.parseQuery("? :- p(\"literal\").");
+	
+			SubstitutionReader subReader;
+			subReader = Graal.executeQuery(query, atomset);
+			Assert.assertTrue("Error on " + atomset.getClass() ,subReader.hasNext());
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);
 		}

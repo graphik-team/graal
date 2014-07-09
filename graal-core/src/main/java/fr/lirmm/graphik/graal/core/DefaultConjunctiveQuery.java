@@ -57,7 +57,7 @@ public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 	 * Returns the answer variables of the query.
 	 */
 	@Override
-	public Collection<Term> getResponseVariables() { return this.responseVariables; }
+	public Collection<Term> getAnswerVariables() { return this.responseVariables; }
 	public void setResponseVariables(Collection<Term> v) { this.responseVariables = v; }
 	
 	/* (non-Javadoc)

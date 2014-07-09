@@ -4,7 +4,7 @@
 package fr.lirmm.graphik.graal.writer;
 
 import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
+import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.util.ForEachSeparator;
@@ -15,12 +15,12 @@ import fr.lirmm.graphik.util.ForEachSeparator;
  */
 public class SparqlConjunctiveQueryWriter implements ConjunctiveQueryWriter {
 
-	public void write(DefaultConjunctiveQuery query, String rdfPrefix) throws WriterException {
+	public void write(ConjunctiveQuery query, String rdfPrefix) throws WriterException {
 		System.out.println("PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>");
 		System.out.println("PREFIX : <" + rdfPrefix + '>');
 
 		System.out.print("SELECT DISTINCT ");
-		for(Term t : query.getResponseVariables())
+		for(Term t : query.getAnswerVariables())
 			this.write(t);
 
 		System.out.print("\nWHERE\n{\n");
@@ -37,7 +37,7 @@ public class SparqlConjunctiveQueryWriter implements ConjunctiveQueryWriter {
 	 * @see fr.lirmm.graphik.obda.writer.ConjunctiveQueryWriter#write(fr.lirmm.graphik.kb.core.impl.ConjunctiveQuery)
 	 */
 	@Override
-	public void write(DefaultConjunctiveQuery query) throws WriterException {
+	public void write(ConjunctiveQuery query) throws WriterException {
 		this.write(query, "");
 	}
 

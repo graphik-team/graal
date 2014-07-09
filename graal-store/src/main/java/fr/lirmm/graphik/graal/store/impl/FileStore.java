@@ -116,19 +116,19 @@ public class FileStore implements Store {
     }
 
 	/* (non-Javadoc)
-	 * @see fr.lirmm.graphik.alaska.store.IWriteableStore#remove(fr.lirmm.graphik.util.stream.ObjectReader)
+	 * @see fr.lirmm.graphik.kb.core.AtomSet#getAllPredicate()
 	 */
 	@Override
-	public void remove(ObjectReader<Atom> stream) throws AtomSetException {
+	public ObjectReader<Predicate> getAllPredicate() throws AtomSetException {
 		// TODO implement this method
 		throw new Error("This method isn't implemented");
 	}
 
 	/* (non-Javadoc)
-	 * @see fr.lirmm.graphik.kb.core.AtomSet#getAllPredicate()
+	 * @see fr.lirmm.graphik.graal.store.Store#remove(java.lang.Iterable)
 	 */
 	@Override
-	public ObjectReader<Predicate> getAllPredicate() throws AtomSetException {
+	public void remove(Iterable<Atom> atoms) throws AtomSetException {
 		// TODO implement this method
 		throw new Error("This method isn't implemented");
 	}

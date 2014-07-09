@@ -41,6 +41,14 @@ public class Term implements Comparable<Term>, Serializable {
 	public Object getValue() {
 		return this.value;
 	}
+	
+	public boolean isConstant() {
+		return Type.CONSTANT.equals(this.type) || Type.LITERAL.equals(this.type);
+	}
+	
+	public boolean isVariable() {
+		return !isConstant();
+	}
 
 	/**
 	 * 

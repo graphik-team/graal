@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.Collection;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.Query;
@@ -21,14 +22,15 @@ import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.writer.AtomWriter;
 import fr.lirmm.graphik.graal.writer.ConjunctiveQueryWriter;
+import fr.lirmm.graphik.util.stream.ObjectWriter;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class DlgpWriter extends Writer implements AtomWriter, ConjunctiveQueryWriter {
+public class DlgpWriter extends Writer implements ObjectWriter<Object>,ConjunctiveQueryWriter {
 
-	private Writer writer;
+	protected Writer writer;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
@@ -59,18 +61,34 @@ public class DlgpWriter extends Writer implements AtomWriter, ConjunctiveQueryWr
 	// /////////////////////////////////////////////////////////////////////////
 	
 	@Override
+	public void write(Iterable<Object> o) {
+		this.write(o);
+	}
+	
+	@Override
+	public void write(Object o) throws IOException {
+		if(o instanceof Atom) {
+			this.write((Atom)o);
+		} else if(o instanceof NegativeConstraint) {
+			this.write((NegativeConstraint)o);
+		} else if(o instanceof Rule) {
+			this.write((Rule)o);
+		} else if(o instanceof ConjunctiveQuery) {
+			this.write((ConjunctiveQuery)o);
+		}
+	}
+	
 	public void write(Atom atom) throws IOException{
 		this.writeAtom(atom);
 		this.writer.write(".\n");
 		this.writer.flush();
 	}
 	
-	@Override
-	public void write(Iterable<Atom> atoms) throws IOException {
+	/*public void write(Iterable<Atom> atoms) throws IOException {
 		this.writeAtomSet(atoms, true);
 		this.writer.write(".\n");
 		this.writer.flush();
-	}
+	}*/
 	
 	public void write(Rule rule) throws IOException {
 		this.writeLabel(rule.getLabel());
@@ -105,8 +123,24 @@ public class DlgpWriter extends Writer implements AtomWriter, ConjunctiveQueryWr
 	}
 	
 	@Override
-	public void write(ConjunctiveQuery query) throws IOException {		
-		this.writer.write(" ? :- ");
+	public void write(ConjunctiveQuery query) throws IOException {	
+		this.writer.write('?');
+		Collection<Term> avars = query.getAnswerVariables();
+		if(!avars.isEmpty()) {
+			boolean isFirst = true;
+			this.writer.write('(');
+			for(Term t: avars) {
+				if(isFirst) {
+					isFirst = false;
+				} else {
+					this.writer.write(',');
+				} 
+				
+				this.writeTerm(t);
+			}
+			this.writer.write(')');
+		}
+		this.writer.write(" :- ");
 		this.writeAtomSet(query.getAtomSet(), false);
 		this.writer.write(".\n");
 		this.writer.flush();
@@ -144,7 +178,7 @@ public class DlgpWriter extends Writer implements AtomWriter, ConjunctiveQueryWr
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
 	
-	private void writeLabel(String label) throws IOException {
+	protected void writeLabel(String label) throws IOException {
 		if(!label.isEmpty()) {
 			this.write("[");
 			this.write(label);
@@ -152,7 +186,7 @@ public class DlgpWriter extends Writer implements AtomWriter, ConjunctiveQueryWr
 		}
 	}
 	
-	private void writeAtomSet(Iterable<Atom> atomSet, boolean addCarriageReturn) throws IOException {
+	protected void writeAtomSet(Iterable<Atom> atomSet, boolean addCarriageReturn) throws IOException {
 		boolean isFirst = true;
 		for(Atom a : atomSet) {
 			if(isFirst) {
@@ -167,37 +201,45 @@ public class DlgpWriter extends Writer implements AtomWriter, ConjunctiveQueryWr
 		}
 	}
 	
-	private void writeAtom(Atom atom) throws IOException {
+	protected void writeAtom(Atom atom) throws IOException {
 		this.writePredicate(atom.getPredicate());
 		this.writer.write('(');
 		
 		boolean isFirst = true;
 		for(Term t : atom.getTerms()) {
-			String term = t.toString();
 			if(isFirst) {
 				isFirst = false;
 			} else {
 				this.writer.write(", ");
 			}
 			
-			if(Type.VARIABLE.equals(t.getType())) {
-				if (term.charAt(0) < 65 || term.charAt(0) > 90) {
-					this.writer.write("VAR_");
-				}
-				this.writer.write(term);
-			} else if(Type.CONSTANT.equals(t.getType())) {
-				if (term.charAt(0) < 97 || term.charAt(0) > 122) {
-					this.writer.write("cst_");
-				}
-				this.writer.write(term);
-			} else {
-				this.writer.write(t.toString());
-			}
+			this.writeTerm(t);
+			
+			
 		}
 		this.writer.write(')');
 	}
 	
-	private void writePredicate(Predicate p) throws IOException {
+	protected void writeTerm(Term t) throws IOException {
+		String term = t.toString();
+		if(Type.VARIABLE.equals(t.getType())) {
+			if (term.charAt(0) < 65 || term.charAt(0) > 90) {
+				this.writer.write("VAR_");
+			}
+			this.writer.write(term);
+		} else if(Type.CONSTANT.equals(t.getType())) {
+			if (term.charAt(0) < 97 || term.charAt(0) > 122) {
+				this.writer.write("cst_");
+			}
+			this.writer.write(term);
+		} else {
+			this.writer.write('"');
+			this.writer.write(t.toString());
+			this.writer.write('"');
+		}
+	}
+	
+	protected void writePredicate(Predicate p) throws IOException {
 		String s = p.getLabel();
 		if(s.charAt(0) != '"') {
 			this.writer.write('"');

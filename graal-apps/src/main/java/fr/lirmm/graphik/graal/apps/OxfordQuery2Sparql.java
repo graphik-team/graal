@@ -5,9 +5,9 @@ import java.util.List;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
+import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.io.oxford.OxfordQueryParser;
 import fr.lirmm.graphik.graal.parser.ParseException;
-import fr.lirmm.graphik.graal.parser.oxford.BasicOxfordQueryParserListener;
-import fr.lirmm.graphik.graal.parser.oxford.OxfordQueryParser;
 import fr.lirmm.graphik.graal.writer.SparqlConjunctiveQueryWriter;
 import fr.lirmm.graphik.graal.writer.WriterException;
 
@@ -39,13 +39,11 @@ public class OxfordQuery2Sparql {
 		}
 		
 		for(String query : options.queries) {
-			OxfordQueryParser parser = new OxfordQueryParser(query);
-			BasicOxfordQueryParserListener listener = new BasicOxfordQueryParserListener();
-			parser.addListener(listener);
-			parser.parse();
+			ConjunctiveQuery q = OxfordQueryParser.parseQuery(query);
+			
 			
 			SparqlConjunctiveQueryWriter writer = new SparqlConjunctiveQueryWriter();
-			writer.write(listener.getQuery(), options.rdfPrefix);
+			writer.write(q, options.rdfPrefix);
 		}
 	}
 

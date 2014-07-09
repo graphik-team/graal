@@ -63,13 +63,6 @@ public class StdStreamStore implements Store {
     }
 
     @Override
-    public void remove(ObjectReader<Atom> stream) throws AtomSetException {
-        // TODO implement this method
-        throw new Error("This method isn't implemented");
-
-    }
-
-    @Override
     public Set<Term> getTerms() {
         // TODO implement this method
         throw new Error("This method isn't implemented");
@@ -117,6 +110,15 @@ public class StdStreamStore implements Store {
 	 */
 	@Override
 	public ObjectReader<Predicate> getAllPredicate() throws AtomSetException {
+		// TODO implement this method
+		throw new Error("This method isn't implemented");
+	}
+
+	/* (non-Javadoc)
+	 * @see fr.lirmm.graphik.graal.store.Store#remove(java.lang.Iterable)
+	 */
+	@Override
+	public void remove(Iterable<Atom> atoms) throws AtomSetException {
 		// TODO implement this method
 		throw new Error("This method isn't implemented");
 	}

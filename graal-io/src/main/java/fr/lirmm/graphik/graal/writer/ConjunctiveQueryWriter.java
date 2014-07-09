@@ -13,4 +13,6 @@ import java.io.IOException;
 public interface ConjunctiveQueryWriter {
 
 	public void write(ConjunctiveQuery query) throws IOException;
+
 }
+

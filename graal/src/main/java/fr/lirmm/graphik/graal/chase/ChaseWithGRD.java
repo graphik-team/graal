@@ -95,7 +95,9 @@ public class ChaseWithGRD extends AbstractChase {
 								logger.debug("-- -- Dependency: " + entry.getValue() + " with " + entry.getKey());
 								logger.debug("-- -- Unificator: " + u);
 							}
-							this.queue.add(new ImmutablePair<Rule, Substitution>(entry.getValue(), u));
+							if(u != null) {
+								this.queue.add(new ImmutablePair<Rule, Substitution>(entry.getValue(), u));
+							}
 						}
 					}
 				}

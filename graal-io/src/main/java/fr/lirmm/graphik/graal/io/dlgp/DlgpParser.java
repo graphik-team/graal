@@ -121,6 +121,10 @@ public class DlgpParser extends AbstractReader<Object> {
 	
 	private Reader reader = null;
 
+	public DlgpParser() {
+		this(new InputStreamReader(System.in));
+	}
+	
 	public DlgpParser(Reader reader) {
 		this.reader = reader;
 		new Thread(new Producer(reader,buffer)).start();
