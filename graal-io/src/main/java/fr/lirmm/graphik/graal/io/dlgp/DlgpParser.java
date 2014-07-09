@@ -109,7 +109,10 @@ public class DlgpParser extends AbstractReader<Object> {
 			} catch (ParseException e) {
 				throw new ParseError("An error occured while parsing", e);
 			}
-			buffer.close();
+		}
+
+		public void close() {
+			this.buffer.close();
 		}
 	}
 
@@ -117,13 +120,24 @@ public class DlgpParser extends AbstractReader<Object> {
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 	
+	private Thread   thread;
+	private Producer producer;
+
 	public DlgpParser(Reader reader) {
-		new Thread(new Producer(reader, buffer)).start();
+		this.producer = new Producer(reader,buffer);
+		this.thread = new Thread(producer);
+		this.thread.start();
 	}
 	
 	public DlgpParser(File file) throws FileNotFoundException {
 		this(new FileReader(file));
 	}
+
+	public void close() {
+		this.thread.stop();
+		this.producer.close();
+	}
+
 
 	/**
 	 * Parse the content of the string s as DLGP content.

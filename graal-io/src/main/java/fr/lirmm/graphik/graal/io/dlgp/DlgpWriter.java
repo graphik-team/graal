@@ -11,6 +11,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.NegativeConstraint;
 import fr.lirmm.graphik.graal.core.Predicate;
@@ -19,12 +20,13 @@ import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.writer.AtomWriter;
+import fr.lirmm.graphik.graal.writer.ConjunctiveQueryWriter;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class DlgpWriter extends Writer implements AtomWriter {
+public class DlgpWriter extends Writer implements AtomWriter, ConjunctiveQueryWriter {
 
 	private Writer writer;
 
@@ -88,7 +90,21 @@ public class DlgpWriter extends Writer implements AtomWriter {
 		this.writer.write(".\n");
 		this.writer.flush();
 	}
+
+	public void write(Query query) throws IOException {
+		if (query instanceof ConjunctiveQuery) {
+			this.write((ConjunctiveQuery)query);
+		}
+		else if (query instanceof Iterable) {
+			for (Object q : (Iterable)query) {
+				if (q instanceof ConjunctiveQuery) {
+					this.write((ConjunctiveQuery)q);
+				}
+			}
+		}
+	}
 	
+	@Override
 	public void write(ConjunctiveQuery query) throws IOException {		
 		this.writer.write(" ? :- ");
 		this.writeAtomSet(query.getAtomSet(), false);

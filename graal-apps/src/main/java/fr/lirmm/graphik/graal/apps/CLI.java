@@ -1,340 +1,306 @@
 package fr.lirmm.graphik.graal.apps;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.StringReader;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.LinkedList;
 
 import fr.lirmm.graphik.graal.Graal;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQueriesUnion;
-import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.LinkedListRuleSet;
+import fr.lirmm.graphik.graal.core.Query;
+import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.RuleSet;
+import fr.lirmm.graphik.graal.core.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
+import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
 import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
 import fr.lirmm.graphik.util.stream.ObjectReader;
-// execute query
 
 public class CLI {
 
-	public static final int ERR_ARGS        = 1;
-	public static final int ERR_FACT        = 2;
-	public static final int ERR_PARSEQUERY  = 4;
-	public static final int ERR_QUERY       = 8;
-	public static final int ERR_PARSERULE   = 16;
-	public static final int ERR_APPLYRULE   = 32;
-	public static final int ERR_PRINTFACT   = 64;
+	public static final String   PROGRAM_NAME    = "graal-cli";
+	public static final String[] ARG_HELP        = new String[]{"-h","--help"};
+	public static final String[] ARG_FILE_INPUT  = new String[]{"-f","--file","--input-file"};
+	public static final String[] ARG_FILE_OUTPUT = new String[]{"-d","-o","--output","--database","--db","--output-database"};
+	public static final String[] ARG_UCQ         = new String[]{"-u","--ucq"};
+	public static final String[] ARG_SATURATE    = new String[]{"-s","--saturate"};
 
+	public static final String ARG_ERROR_MSG = "Error while parsing argument!";
 
-	public static final int DRIVER_SQLITE   = 1;
-	public static final int DRIVER_MYSQL    = 2;
+	public static final int ERROR_ARG_FILE_INPUT  = 1;
+	public static final int ERROR_ARG_FILE_OUTPUT = 2;
+	public static final int ERROR_ARG_UCQ         = 4;
 
-	public CLI() { }
+	public static final int ERROR_DB_OPEN         = 8;
+	public static final int ERROR_FILE_CLOSE      = 16;
+	public static final int ERROR_FILE_PARSE      = 32;
+	public static final int ERROR_CHASE           = 64;
+	public static final int ERROR_QUERY           = 128;
 
-	public void createAtomSet() throws Exception {
-		_dbFile = new File(_filename);
-		RdbmsDriver driver = null;
-		if (_driver == DRIVER_SQLITE)
-			driver = new SqliteDriver(_dbFile);
-		//else if (_driver == DRIVER_MYSQL)
-			//driver = new MysqlDriver();
-		_atoms = new DefaultRdbmsStore(driver);
+	private static final String VERBOSE     = "verbose";
+	private static final String SATURATE    = "saturate";
+	private static final String FILE_INPUT  = "in";
+	private static final String FILE_OUTPUT = "out";
+	private static final String FILE_UCQ    = "ucq_file";
+	private static final String STRING_UCQ  = "ucq_str";
+
+	public static void main(String args[]) {
+		int error = 0;
+
+		CLI cli = new CLI();
+
+		error |= cli.parseArgs(args);
+
+		if (error != 0) {
+			System.err.println(ARG_ERROR_MSG);
+			cli.printHelp();
+			System.exit(error);
+		}
+
+		error |= cli.prepare();
+		error |= cli.execute();
+
+		if (error != 0) {
+			System.err.println("Something went wrong!");
+			System.err.println("Error:"+error);
+			System.exit(error);
+		}
+	}
+
+	public int execute() {
+		int error = 0;
+		int i = 0;
+		int k = 0;
+		try { k = Integer.valueOf(_args.get(SATURATE)).intValue(); }
+		catch (NullPointerException e) { } // no saturation requested
+
+		DlgpWriter writer = new DlgpWriter(System.out);
+
+		if (k < 0) {
+			if (_verbose) System.out.println("Saturating until fix point...");
+			try { Graal.executeChase(_atomset,_rules); }
+			catch (Exception e) {
+				error |= ERROR_CHASE;
+				System.err.println("An error has occured while saturating: "+e);
+			}
+		}
+		else {
+			if (_verbose) System.out.println("Saturating "+k+" steps...");
+			try { for (i = 0 ; i < k ; ++i) Graal.executeOneStepChase(_atomset,_rules); }
+			catch (Exception e) {
+				error |= ERROR_CHASE;
+				System.err.println("An error has occured during the " + i + " step of saturation: "+e);
+			}
+		}
+		if (_verbose) System.out.println("Atomset saturated!");
+
+		if (!_queries.isEmpty()) {
+			if (_verbose) System.out.println("Querying...");
+			for (Query q : _queries) {
+				try {
+					writer.write(q);
+					for (Substitution s : Graal.executeQuery(q,_atomset)) System.out.println(s);
+				}
+				catch (Exception e) {
+					error |= ERROR_QUERY;
+					System.err.println("An exception has occured while querying: " + e);
+				}
+			}
+			if (_verbose) System.out.println("Querying done!");
+		}
+
+		return error;
+	}
+
+	public int prepare() {
+		int error = 0;
+
+		_verbose = _args.get(VERBOSE) != null;
+
+		String database;
+		if ((database = _args.get(FILE_OUTPUT)) == null) database = "_default_graal.db";
+		if (_verbose) System.out.println("Database filepath: " + database);
+
+		if (_verbose) System.out.println("Opening database...");
+		try {
+			File f = new File(database);
+			_atomset = new DefaultRdbmsStore(new SqliteDriver(f));
+		}
+		catch (Exception e) {
+			System.err.println("An error has occured while opening database: " +e);
+			return ERROR_DB_OPEN;
+		}
+		if (_verbose) System.out.println("Database opened!");
+
+		String input_file = _args.get(FILE_INPUT);
+		if (input_file != null) {
+			if (_verbose) System.out.println("Opening file "+input_file+"...");
+			try {
+				DlgpParser parser = new DlgpParser(new FileReader(input_file));
+				for (Object o : parser) {
+					if (o instanceof Atom) {
+						if (_verbose) System.out.println("Adding atom " + (Atom)o);
+						_atomset.add((Atom)o);
+					}
+					else if (o instanceof Rule) {
+						if (_verbose) System.out.println("Adding rule " + (Rule)o);
+						_rules.add((Rule)o);
+					}
+					else if (o instanceof Query) {
+						if (_verbose) System.out.println("Adding query " + (Query)o);
+						_queries.add((Query)o);
+					}
+					else {
+						if (_verbose) System.out.println("Ignoring non recognized object: " + o);
+					}
+				}
+				try {
+					parser.close();
+					if (_verbose) System.out.println("File closed!");
+				}
+				catch (Exception e) {
+					System.err.println("Cannot close file: " + e);
+					error |= ERROR_FILE_CLOSE;
+				}
+			}
+			catch (Exception e) {
+				System.err.println("An error has occured: " +e);
+				error |= ERROR_FILE_PARSE;
+			}
+		}
+
+		String ucq_file = _args.get(FILE_UCQ);
+		if (ucq_file != null) {
+			ConjunctiveQueriesUnion ucq = new ConjunctiveQueriesUnion();
+			if (_verbose) System.out.println("Opening UCQ file "+ucq_file+"...");
+			try {
+				DlgpParser parser = new DlgpParser(new FileReader(ucq_file));
+				for (Object o : parser) {
+					if (o instanceof ConjunctiveQuery) {
+						if (_verbose) System.out.println("Adding query to union " + (Query)o);
+						ucq.add((ConjunctiveQuery)o);
+					}
+					else {
+						if (_verbose) System.out.println("Ignoring non query object: " + o);
+					}
+				}
+				_queries.add(ucq);
+				try {
+					parser.close();
+					if (_verbose) System.out.println("File closed!");
+				}
+				catch (Exception e) {
+					System.err.println("Cannot close file: " + e);
+					error |= ERROR_FILE_CLOSE;
+				}
+			}
+			catch (Exception e) {
+				System.err.println("An error has occured: " +e);
+				error |= ERROR_FILE_PARSE;
+			}
+		}
+
+		String ucq_string = _args.get(STRING_UCQ);
+		if (ucq_string != null) {
+			ConjunctiveQueriesUnion ucq = new ConjunctiveQueriesUnion();
+			if (_verbose) System.out.println("Reading UCQ string "+ucq_string+"...");
+			try {
+				DlgpParser parser = new DlgpParser(new StringReader(ucq_string));
+				for (Object o : parser) {
+					if (o instanceof ConjunctiveQuery) {
+						if (_verbose) System.out.println("Adding query to union " + (Query)o);
+						ucq.add((ConjunctiveQuery)o);
+					}
+					else {
+						if (_verbose) System.out.println("Ignoring non query object: " + o);
+					}
+				}
+				_queries.add(ucq);
+			}
+			catch (Exception e) {
+				System.err.println("An error has occured: " +e);
+				error |= ERROR_FILE_PARSE;
+			}
+		}
+
+		return error;
+
+	}
+
+	public boolean isArg(String a, String[] arg) {
+		for (String s : arg) if (a.equals(s)) return true;
+		return false;
 	}
 
 	public void printHelp() {
-		System.out.print("alaska-cli ");
-		System.out.print("[" + ARG_HELP[0] + "] ");
-		System.out.print("[" + ARG_FILE[0] + " <file_path>] ");
-		System.out.print("[" + ARG_DRIVER[0] + " <sqlite | mysql>] ");
-		System.out.print("[" + ARG_INPUTFORMAT[0] + " <dlp>] ");
-		System.out.print("[" + ARG_QUERY[0] + " <query>] ");
-		System.out.print("[" + ARG_ADDFACT[0] + " <fact>]");
-		System.out.print("[" + ARG_RMFACT[0] + "]");
-		System.out.println("");
+		int i;
+		final int v = 24;
+		final int c = 40;
+		System.out.println(PROGRAM_NAME);
+		System.out.println(" [-h] [-f <input_file>] [-d <db_file>] [-u <ucq_file|ucq_string>]");
+		System.out.print("---------");
+		System.out.println("-----------------------------------------------------------------");
 
-		System.out.println(ARG_HELP[0] + " | " + ARG_HELP[1] + " \t\t\t\t\t" + 
-		                   "print this message");
-		System.out.println(ARG_FILE[0] + " | " + ARG_FILE[1] + "\t\t<file_path>\t\t" + 
-		                   "select the database file");
-		System.out.println(ARG_DRIVER[0] + " | " + ARG_DRIVER[1] + "\t\t<sqlite | mysql>\t" + 
-		                   "select the database driver");
-		System.out.println(ARG_INPUTFORMAT[0] + " | " + ARG_INPUTFORMAT[1] + "\t<dlp>\t\t\t" + 
-		                   "select the input format");
-		System.out.println(ARG_QUERY[0] + " | " + ARG_QUERY[1] + "\t\t<query>\t\t\t" + 
-		                   "get answers (substitutions) to a given query");
-		System.out.println(ARG_ADDFACT[0] + " | " + ARG_ADDFACT[1] + "\t\t<fact>\t\t\t" + 
-		                   "add some fact to the atomset");
-		System.out.println(ARG_RMFACT[0] + " | " + ARG_RMFACT[1] + "\t\t\t\t" + 
-		                   "remove fact instead of adding (must be used with -F)");
-		System.out.println(ARG_RULE[0] + " | " + ARG_RULE[1] + "\t\t<rule>\t\t\t" + 
-		                   "consider some rules");
-		System.out.println(ARG_SATURATE[0] + " | " + ARG_SATURATE[1] + "\t\t\t\t\t" + 
-		                   "saturate fact");
-		System.out.println(ARG_ONESTEPSAT[0] + " | " + ARG_ONESTEPSAT[1] + "\t\t\t" + 
-		                   "'one step' saturate fact");
-		System.out.println(ARG_PRINTFACT[0] + " | " + ARG_PRINTFACT[1] + "\t\t\t\t" + 
-		                   "print fact to stdout");
+		System.out.println("-h    --help                                  print this message");
+		System.out.println("-f    --file        <file_path>               read a dlp file as input (use - for stdin)");
+		System.out.println("-d    --database    <file_path>               select the database file");
+		System.out.println("-u    --ucq         <file_path|dlp_string>    read a dlp file as input (use - for stdin)");
+		System.out.println("-s    --saturate    [<n>]                     execute the chase for n steps ; if n is negative of not specified, the chase will be executed until a fixpoint is reached");
 	}
 
-	public void parseArgs(String[] args) {
-		final int n = args.length;
-		if (n == 0) {
-			printHelp();
-			System.exit(0);
-		}
+	public int parseArgs(String argv[]) {
+		int n = argv.length;
 		for (int i = 0 ; i < n ; ++i) {
-			//System.out.println("arg[" + i + "]=" + args[i]);
-			if (args[i].equals(ARG_HELP[0]) || args[i].equals(ARG_HELP[1])) {
+			if (isArg(argv[i],ARG_HELP)) {
 				printHelp();
 				System.exit(0);
 			}
-			else if (args[i].equals(ARG_FILE[0]) || args[i].equals(ARG_FILE[1])) {
+			else if (isArg(argv[i],ARG_FILE_INPUT)) {
 				++i;
-				if (i < n) _filename = args[i];
+				if (i >= n) return ERROR_ARG_FILE_INPUT;
+				_args.put(FILE_INPUT,argv[i]);
 			}
-			else if (args[i].equals(ARG_QUERY[0]) || args[i].equals(ARG_QUERY[1])) {
+			else if (isArg(argv[i],ARG_FILE_OUTPUT)) {
 				++i;
-				if (i < n) _queryString += args[i];
+				if (i >= n) return ERROR_ARG_FILE_OUTPUT;
+				_args.put(FILE_OUTPUT,argv[i]);
 			}
-			else if (args[i].equals(ARG_ADDFACT[0]) || args[i].equals(ARG_ADDFACT[1])) {
+			else if (isArg(argv[i],ARG_FILE_OUTPUT)) {
 				++i;
-				if (i < n) _factString += args[i];
+				if (i >= n) return ERROR_ARG_UCQ;
+				if (argv[i].charAt(0) == '?') _args.put(STRING_UCQ,argv[i]);
+				else _args.put(FILE_UCQ,argv[i]);
 			}
-			else if (args[i].equals(ARG_RMFACT[0]) || args[i].equals(ARG_RMFACT[1])) {
-				_removeFact = true;
-			}
-			else if (args[i].equals(ARG_RULE[0]) || args[i].equals(ARG_RULE[1])) {
-				++i;
-				if (i < n) _ruleString += args[i];
-			}
-			else if (args[i].equals(ARG_INPUTFORMAT[0]) || args[i].equals(ARG_INPUTFORMAT[1])) {
-				++i;
-				if (i < n) _inputFormat = args[i];
-				verifyInputFormat();
-			}
-			else if (args[i].equals(ARG_DRIVER[0]) || args[i].equals(ARG_DRIVER[1])) {
-				++i;
-				if (i < n) parseDriver(args[i]);
-			}
-			else if (args[i].equals(ARG_ONESTEPSAT[0]) || args[i].equals(ARG_ONESTEPSAT[1])) {
-				if (!_mustSaturate) _mustOneStepSaturate = true;
-			}
-			else if (args[i].equals(ARG_SATURATE[0]) || args[i].equals(ARG_SATURATE[1])) {
-				_mustSaturate = true;
-				_mustOneStepSaturate = false;
-			}
-			else if (args[i].equals(ARG_PRINTFACT[0]) || args[i].equals(ARG_PRINTFACT[1])) {
-				_printFact = true;
+			else if (isArg(argv[i],ARG_SATURATE)) {
+				if ((i+1 < n) && (argv[i+1].charAt(0) != '-')) {
+					++i;
+					_args.put(SATURATE,argv[i]);
+				}
+				else _args.put(SATURATE,"-1");
 			}
 			else {
-				System.err.println("[ignore] Ignoring unrecognized argument: " + args[i]);
+				System.err.println("Ignoring unrecognized argument: " + argv[i]);
 			}
 		}
+
+		return 0;
 	}
 
-	public void parseDriver(String d) {
-		if (d.equals("sqlite"))
-			_driver = DRIVER_SQLITE;
-		//else if (d.equals("mysql"))
-			//_driver = DRIVER_MYSQL;
-		else {
-			System.err.println("[warning] Unrecognized driver: " + d + " > switching to sqlite");
-			_driver = DRIVER_SQLITE;
-		}
-	}
 
-	public void verifyInputFormat() {
-		if (!_inputFormat.equals("dlp"))
-			System.err.println("[warning] Unrecognized input format: switching to dlp");
-		_inputFormat = "dlp";
-	}
-
-	public ObjectReader buildReader(String toParse) {
-		//if (_inputFormat.equals("dlp")) {
-			 return new DlgpParser(new StringReader(toParse));
-		//}
-	}
-
-	public void parseQuery() throws Exception {
-		ObjectReader reader = buildReader(_queryString);
-		for (Object o : reader) {
-			if (o instanceof DefaultConjunctiveQuery) {
-				_query.add((DefaultConjunctiveQuery)o);
-			}
-			else {
-				System.err.println("[ignore] Ignoring non query : " + o);
-			}
-		}
-	}
-
-	public void parseFact() throws Exception {
-		//System.out.println("Fact: " + _factString);
-		//_factString = "p(X,Y).";
-		ObjectReader reader = buildReader(_factString);
-		for (Object o : reader) {
-			if (o instanceof Atom) {
-				if (_removeFact) _atoms.remove((Atom)o);
-				else _atoms.add((Atom)o);
-			}
-			else {
-				System.err.println("[ignore] Ignoring non atom : " + o);
-			}
-		}
-	}
-
-	public void parseRule() throws Exception {
-		ObjectReader reader = buildReader(_ruleString);
-		for (Object o : reader) {
-			if (o instanceof Rule) {
-				_rules.add((Rule)o);
-			}
-			else {
-				System.err.println("[ignore] Ignoring non rule : " + o);
-			}
-		}
-	}
-
-	public int run(String[] args) {
-		this.parseArgs(args);
-		int err = 0;
-
-		try { this.createAtomSet(); }
-		catch (Exception e) {
-			System.err.println("An error occurs while creating atomset : " 
-			                   + e + " (" + e.getMessage() + ")");
-			e.printStackTrace();
-			err |= ERR_ARGS;
-			return err;
-		}
-
-		if (!_factString.equals("")) {
-			try { this.parseFact(); }
-			catch (Exception e) {
-				System.err.println("An error occurs while parsing or adding atoms : " 
-			                   	   + e + " (" + e.getMessage() + ")");
-				e.printStackTrace();
-				err |= ERR_FACT;
-			}
-		}
-
-		if (!_ruleString.equals("")) {
-			try { this.parseRule(); }
-			catch (Exception e) {
-				System.err.println("An error occurs while parsing rules : " 
-			                   	   + e + " (" + e.getMessage() + ")");
-				e.printStackTrace();
-				err |= ERR_PARSERULE;
-			}
-		}
-
-		if (_mustSaturate) {
-			try { Graal.executeChase(_atoms, _rules); }
-			catch (Exception e) {
-				System.err.println("An error occurs while saturating : " 
-			                   	   + e + " (" + e.getMessage() + ")");
-				e.printStackTrace();
-				err |= ERR_APPLYRULE;
-			}
-		}
-
-		if (_mustOneStepSaturate) {
-
-			try { Graal.executeOneStepChase(_atoms, _rules); }
-			catch (Exception e) {
-				System.err.println("An error occurs while one step saturating : " 
-			                   	   + e + " (" + e.getMessage() + ")");
-				e.printStackTrace();
-				err |= ERR_APPLYRULE;
-			}
-		}
-
-		if (!_queryString.equals("")) { 
-			//System.out.println("query: " + _queryString);
-			try { this.parseQuery(); }
-			catch (Exception e) {
-				System.err.println("An error occurs while parsing queries : " 
-			                   	   + e + " (" + e.getMessage() + ")");
-				e.printStackTrace();
-				err |= ERR_PARSEQUERY;
-			}
-
-			try {
-				SubstitutionReader answers = Graal.executeQuery(_query,_atoms);
-				for (Substitution s : answers)
-					System.out.println(s.toString());
-			}
-			catch (Exception e) {
-				System.err.println("An error occurs while executing queries : " 
-			                   	   + e + " (" + e.getMessage() + ")");
-				e.printStackTrace();
-				err |= ERR_QUERY;
-			}
-		}
-
-		if (_printFact) {
-			try {
-				for (Atom a : _atoms)
-					System.out.println(a);
-			}
-			catch (Exception e) {
-				System.err.println("An error occurs while printing fact : " 
-			                   	   + e + " (" + e.getMessage() + ")");
-				e.printStackTrace();
-				err |= ERR_PRINTFACT;
-			}
-			catch (Error e) {
-				System.err.println("An error occurs while printing fact : " 
-			                   	   + e + " (" + e.getMessage() + ")");
-				e.printStackTrace();
-				err |= ERR_PRINTFACT;
-			}
-		}
-
-		return err;
-	}
-
-	public static void main(String[] args) {
-		CLI cli = new CLI();
-		int err = 0;
-		if ((err = cli.run(args)) != 0) {
-			System.err.println("CLI: some errors have occured: " + err);
-		}
-	}
-
-	private AtomSet                   _atoms = null;
-	private RuleSet                   _rules = new LinkedListRuleSet();
-	private ConjunctiveQueriesUnion   _query = new ConjunctiveQueriesUnion();
-	private File                      _dbFile = null;
-
-	// for arguments parsing
-	private String                    _filename = "_graal_default.db";
-	private String                    _queryString = "";
-	private String                    _factString = "";
-	private String                    _ruleString = "";
-	private String                    _inputFormat = "dlp";
-	private int                       _driver = DRIVER_SQLITE;
-	private boolean                   _mustSaturate = false;
-	private boolean                   _mustOneStepSaturate = false;
-	private boolean                   _printFact = false;
-	private boolean                   _removeFact = false;
-
-
-	private static final String ARG_HELP[]          =   { "-h", "--help" };
-	private static final String ARG_FILE[]          =   { "-f", "--file" };
-	private static final String ARG_QUERY[]         =   { "-q", "--query" };
-	private static final String ARG_RULE[]          =   { "-r", "--rules" };
-	private static final String ARG_ADDFACT[]       =   { "-F", "--fact" };
-	private static final String ARG_RMFACT[]        =   { "-d", "--delete-fact" };
-	private static final String ARG_SATURATE[]      =   { "-S", "--saturate" };
-	private static final String ARG_ONESTEPSAT[]    =   { "-s", "--one-step-saturate" };
-	private static final String ARG_PRINTFACT[]     =   { "-p", "--print-fact" };
-	private static final String ARG_INPUTFORMAT[]   =   { "-i", "--input-format" };
-	private static final String ARG_DRIVER[]        =   { "-b", "--driver" };
+	private Map<String,String> _args = new TreeMap<String,String>();
+	private boolean _verbose = false;
+	private AtomSet _atomset = null;
+	private RuleSet _rules = new LinkedListRuleSet();
+	private LinkedList<Query> _queries = new LinkedList<Query>();
 
 };
 
