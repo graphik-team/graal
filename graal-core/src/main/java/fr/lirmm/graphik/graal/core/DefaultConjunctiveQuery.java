@@ -58,7 +58,8 @@ public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 	 */
 	@Override
 	public Collection<Term> getAnswerVariables() { return this.responseVariables; }
-	public void setResponseVariables(Collection<Term> v) { this.responseVariables = v; }
+
+	public void setAnswerVariables(Collection<Term> v) { this.responseVariables = v; }
 	
 	/* (non-Javadoc)
 	 * @see fr.lirmm.graphik.kb.query.Query#isBoolean()
