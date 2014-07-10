@@ -1,7 +1,9 @@
 package fr.lirmm.graphik.graal.apps;
 
 import java.io.File;
+import java.io.Reader;
 import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.Map;
 import java.util.TreeMap;
@@ -29,6 +31,7 @@ public class CLI {
 
 	public static final String   PROGRAM_NAME    = "graal-cli";
 	public static final String[] ARG_HELP        = new String[]{"-h","--help"};
+	public static final String[] ARG_VERBOSE     = new String[]{"-v","--verbose"};
 	public static final String[] ARG_FILE_INPUT  = new String[]{"-f","--file","--input-file"};
 	public static final String[] ARG_FILE_OUTPUT = new String[]{"-d","-o","--output","--database","--db","--output-database"};
 	public static final String[] ARG_UCQ         = new String[]{"-u","--ucq"};
@@ -85,23 +88,25 @@ public class CLI {
 
 		DlgpWriter writer = new DlgpWriter(System.out);
 
-		if (k < 0) {
-			if (_verbose) System.out.println("Saturating until fix point...");
-			try { Graal.executeChase(_atomset,_rules); }
-			catch (Exception e) {
-				error |= ERROR_CHASE;
-				System.err.println("An error has occured while saturating: "+e);
+		if (k != 0) {
+			if (k < 0) {
+				if (_verbose) System.out.println("Saturating until fix point...");
+				try { Graal.executeChase(_atomset,_rules); }
+				catch (Exception e) {
+					error |= ERROR_CHASE;
+					System.err.println("An error has occured while saturating: "+e);
+				}
 			}
-		}
-		else {
-			if (_verbose) System.out.println("Saturating "+k+" steps...");
-			try { for (i = 0 ; i < k ; ++i) Graal.executeOneStepChase(_atomset,_rules); }
-			catch (Exception e) {
-				error |= ERROR_CHASE;
-				System.err.println("An error has occured during the " + i + " step of saturation: "+e);
+			else {
+				if (_verbose) System.out.println("Saturating "+k+" steps...");
+				try { for (i = 0 ; i < k ; ++i) Graal.executeOneStepChase(_atomset,_rules); }
+				catch (Exception e) {
+					error |= ERROR_CHASE;
+					System.err.println("An error has occured during the " + i + " step of saturation: "+e);
+				}
 			}
+			if (_verbose) System.out.println("Atomset saturated!");
 		}
-		if (_verbose) System.out.println("Atomset saturated!");
 
 		if (!_queries.isEmpty()) {
 			if (_verbose) System.out.println("Querying...");
@@ -143,9 +148,17 @@ public class CLI {
 
 		String input_file = _args.get(FILE_INPUT);
 		if (input_file != null) {
-			if (_verbose) System.out.println("Opening file "+input_file+"...");
 			try {
-				DlgpParser parser = new DlgpParser(new FileReader(input_file));
+				Reader reader;
+				if (input_file.equals("-")) {
+					if (_verbose) System.out.println("Reading stdin...");
+					reader = new InputStreamReader(System.in);
+				}
+				else {
+					if (_verbose) System.out.println("Opening file "+input_file+"...");
+					reader = new FileReader(input_file);
+				}
+				DlgpParser parser = new DlgpParser(reader);
 				for (Object o : parser) {
 					if (o instanceof Atom) {
 						if (_verbose) System.out.println("Adding atom " + (Atom)o);
@@ -250,14 +263,15 @@ public class CLI {
 		final int v = 24;
 		final int c = 40;
 		System.out.println(PROGRAM_NAME);
-		System.out.println(" [-h] [-f <input_file>] [-d <db_file>] [-u <ucq_file|ucq_string>]");
+		System.out.println(" [-h] [-v] [-f <input_file>] [-d <db_file>] [-u <ucq_file|ucq_string>] [-s [<n>]]");
 		System.out.print("---------");
 		System.out.println("-----------------------------------------------------------------");
 
 		System.out.println("-h    --help                                  print this message");
+		System.out.println("-v    --verbose                               enable verbose mode (more outputs)");
 		System.out.println("-f    --file        <file_path>               read a dlp file as input (use - for stdin)");
 		System.out.println("-d    --database    <file_path>               select the database file");
-		System.out.println("-u    --ucq         <file_path|dlp_string>    read a dlp file as input (use - for stdin)");
+		System.out.println("-u    --ucq         <file_path|dlp_string>    read a dlp file or string as a union of conjunctive queries");
 		System.out.println("-s    --saturate    [<n>]                     execute the chase for n steps ; if n is negative of not specified, the chase will be executed until a fixpoint is reached");
 	}
 
@@ -267,6 +281,9 @@ public class CLI {
 			if (isArg(argv[i],ARG_HELP)) {
 				printHelp();
 				System.exit(0);
+			}
+			else if (isArg(argv[i],ARG_VERBOSE)) {
+				_args.put(VERBOSE,"1");
 			}
 			else if (isArg(argv[i],ARG_FILE_INPUT)) {
 				++i;
