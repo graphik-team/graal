@@ -11,14 +11,18 @@ import java.util.LinkedList;
 
 import fr.lirmm.graphik.graal.Graal;
 import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.core.DefaultAtom;
+import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.ConjunctiveQueriesUnion;
 import fr.lirmm.graphik.graal.core.Query;
+import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.RuleSet;
 import fr.lirmm.graphik.graal.core.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
@@ -220,7 +224,7 @@ public class CLI {
 				for (Object o : parser) {
 					if (o instanceof ConjunctiveQuery) {
 						if (_verbose) System.out.println("Adding query to union " + (Query)o);
-						ucq.add((ConjunctiveQuery)o);
+						ucq.add(prepareConjunctiveQuery((ConjunctiveQuery)o));
 					}
 					else {
 						if (_verbose) System.out.println("Ignoring non query object: " + o);
@@ -299,6 +303,32 @@ public class CLI {
 	public boolean isArg(String a, String[] arg) {
 		for (String s : arg) if (a.equals(s)) return true;
 		return false;
+	}
+
+	public ConjunctiveQuery prepareConjunctiveQuery(ConjunctiveQuery q) {
+		DefaultConjunctiveQuery q_rw = new DefaultConjunctiveQuery(new LinkedListAtomSet());
+		q_rw.setAnswerVariables(q.getAnswerVariables());
+		for (Atom a : q) {
+			Atom a2 = new DefaultAtom(a.getPredicate());
+			int i = 0;
+			for (Term t : a) {
+				a2.setTerm(i,prepareConjunctiveQueryAtomTerm(t));
+				++i;
+			}
+			q_rw.getAtomSet().add(a2);
+		}
+		return q_rw;
+	}
+
+	public Term prepareConjunctiveQueryAtomTerm(Term t) {
+		String value = (String)(t.getValue());
+		if ((value.length() >= 4)
+		 && (value.charAt(0) == 'C')
+		 && (value.charAt(1) == 'S')
+		 && (value.charAt(2) == 'T')
+		 && (value.charAt(3) == '_'))
+			return new Term(value.substring(4),Term.Type.CONSTANT);
+		return t;
 	}
 
 
