@@ -29,16 +29,6 @@ import fr.lirmm.graphik.util.stream.ObjectReader;
 
 public class CLI {
 
-	public static final String   PROGRAM_NAME    = "graal-cli";
-	public static final String[] ARG_HELP        = new String[]{"-h","--help"};
-	public static final String[] ARG_VERBOSE     = new String[]{"-v","--verbose"};
-	public static final String[] ARG_FILE_INPUT  = new String[]{"-f","--file","--input-file"};
-	public static final String[] ARG_FILE_OUTPUT = new String[]{"-d","-o","--output","--database","--db","--output-database"};
-	public static final String[] ARG_UCQ         = new String[]{"-u","--ucq"};
-	public static final String[] ARG_SATURATE    = new String[]{"-s","--saturate"};
-
-	public static final String ARG_ERROR_MSG = "Error while parsing argument!";
-
 	public static final int ERROR_ARG_FILE_INPUT  = 1;
 	public static final int ERROR_ARG_FILE_OUTPUT = 2;
 	public static final int ERROR_ARG_UCQ         = 4;
@@ -49,12 +39,16 @@ public class CLI {
 	public static final int ERROR_CHASE           = 64;
 	public static final int ERROR_QUERY           = 128;
 
-	private static final String VERBOSE     = "verbose";
-	private static final String SATURATE    = "saturate";
-	private static final String FILE_INPUT  = "in";
-	private static final String FILE_OUTPUT = "out";
-	private static final String FILE_UCQ    = "ucq_file";
-	private static final String STRING_UCQ  = "ucq_str";
+
+	public static final String   PROGRAM_NAME    = "graal-cli";
+	public static final String[] ARG_HELP        = new String[]{"-h","--help"};
+	public static final String[] ARG_VERBOSE     = new String[]{"-v","--verbose"};
+	public static final String[] ARG_FILE_INPUT  = new String[]{"-f","--file","--input-file"};
+	public static final String[] ARG_FILE_OUTPUT = new String[]{"-d","-o","--output","--database","--db","--output-database"};
+	public static final String[] ARG_UCQ         = new String[]{"-u","--ucq"};
+	public static final String[] ARG_SATURATE    = new String[]{"-s","--saturate"};
+
+	public static final String ARG_ERROR_MSG = "Error while parsing argument!";
 
 	public static void main(String args[]) {
 		int error = 0;
@@ -179,15 +173,6 @@ public class CLI {
 						if (_verbose) System.out.println("Ignoring non recognized object: " + o);
 					}
 				}
-			//	try {
-			//		if (_verbose) System.out.println("Closing file...");
-			//		parser.close();
-			//		if (_verbose) System.out.println("File closed!");
-			//	}
-			//	catch (Exception e) {
-			//		System.err.println("Cannot close file: " + e);
-			//		error |= ERROR_FILE_CLOSE;
-			//	}
 			}
 			catch (Exception e) {
 				System.err.println("An error has occured: " +e);
@@ -253,28 +238,6 @@ public class CLI {
 
 	}
 
-	public boolean isArg(String a, String[] arg) {
-		for (String s : arg) if (a.equals(s)) return true;
-		return false;
-	}
-
-	public void printHelp() {
-		int i;
-		final int v = 24;
-		final int c = 40;
-		System.out.println(PROGRAM_NAME);
-		System.out.println(" [-h] [-v] [-f <input_file>] [-d <db_file>] [-u <ucq_file|ucq_string>] [-s [<n>]]");
-		System.out.print("---------");
-		System.out.println("-----------------------------------------------------------------");
-
-		System.out.println("-h    --help                                  print this message");
-		System.out.println("-v    --verbose                               enable verbose mode (more outputs)");
-		System.out.println("-f    --file        <file_path>               read a dlp file as input (use - for stdin)");
-		System.out.println("-d    --database    <file_path>               select the database file");
-		System.out.println("-u    --ucq         <file_path|dlp_string>    read a dlp file or string as a union of conjunctive queries");
-		System.out.println("-s    --saturate    [<n>]                     execute the chase for n steps ; if n is negative of not specified, the chase will be executed until a fixpoint is reached");
-	}
-
 	public int parseArgs(String argv[]) {
 		int n = argv.length;
 		for (int i = 0 ; i < n ; ++i) {
@@ -316,6 +279,35 @@ public class CLI {
 		return 0;
 	}
 
+	public void printHelp() {
+		int i;
+		final int v = 24;
+		final int c = 40;
+		System.out.println(PROGRAM_NAME);
+		System.out.println(" [-h] [-v] [-f <input_file>] [-d <db_file>] [-u <ucq_file|ucq_string>] [-s [<n>]]");
+		System.out.print("---------");
+		System.out.println("-----------------------------------------------------------------");
+
+		System.out.println("-h    --help                                  print this message");
+		System.out.println("-v    --verbose                               enable verbose mode (more outputs)");
+		System.out.println("-f    --file        <file_path>               read a dlp file as input (use - for stdin)");
+		System.out.println("-d    --database    <file_path>               select the database file");
+		System.out.println("-u    --ucq         <file_path|dlp_string>    read a dlp file or string as a union of conjunctive queries");
+		System.out.println("-s    --saturate    [<n>]                     execute the chase for n steps ; if n is negative of not specified, the chase will be executed until a fixpoint is reached");
+	}
+
+	public boolean isArg(String a, String[] arg) {
+		for (String s : arg) if (a.equals(s)) return true;
+		return false;
+	}
+
+
+	private static final String VERBOSE     = "verbose";
+	private static final String SATURATE    = "saturate";
+	private static final String FILE_INPUT  = "in";
+	private static final String FILE_OUTPUT = "out";
+	private static final String FILE_UCQ    = "ucq_file";
+	private static final String STRING_UCQ  = "ucq_str";
 
 	private Map<String,String> _args = new TreeMap<String,String>();
 	private boolean _verbose = false;
