@@ -26,8 +26,9 @@ For now only SQLite database are handled.
 	- If some query is given to GRAAL-CLI (either from a file, or from the ucq option),
 	all answers will be printed to stdout
 	- If an existential variable name starts with 'CST_', it will ask GRAAL specifically for
-	this variable (e.g. let F = p(a,X0). Q0 = ?:-p(X,Y). Q1 = ?:-p(X,CST_X0). 
-	Q2 = ?:-p(X,CST_Y) Q0 and Q1 have an answer in F while Q2 has not).
+	this variable, i.e., to considere this variable as a constant
+	(e.g. let F = p(a,X0). Q0 = ?:-p(X,Y). Q1 = ?:-p(X,CST_X0). Q2 = ?:-p(X,CST_Y)
+	Q0 and Q1 have an answer in F while Q2 has not).
 
 # Options
 	- help: will print a short description of all options

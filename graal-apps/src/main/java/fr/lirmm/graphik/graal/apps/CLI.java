@@ -42,6 +42,7 @@ public class CLI {
 	public static final int ERROR_FILE_PARSE      = 32;
 	public static final int ERROR_CHASE           = 64;
 	public static final int ERROR_QUERY           = 128;
+	public static final int ERROR_PRINTFACT       = 256;
 
 
 	public static final String   PROGRAM_NAME    = "graal-cli";
@@ -49,8 +50,9 @@ public class CLI {
 	public static final String[] ARG_VERBOSE     = new String[]{"-v","--verbose"};
 	public static final String[] ARG_FILE_INPUT  = new String[]{"-f","--file","--input-file"};
 	public static final String[] ARG_FILE_OUTPUT = new String[]{"-d","-o","--output","--database","--db","--output-database"};
-	public static final String[] ARG_UCQ         = new String[]{"-u","--ucq"};
+	public static final String[] ARG_UCQ         = new String[]{"-u","-q","--ucq"};
 	public static final String[] ARG_SATURATE    = new String[]{"-s","--saturate"};
+	public static final String[] ARG_PRINTFACT   = new String[]{"-p","--print-fact"};
 
 	public static final String ARG_ERROR_MSG = "Error while parsing argument!";
 
@@ -119,6 +121,27 @@ public class CLI {
 				}
 			}
 			if (_verbose) System.out.println("Querying done!");
+		}
+
+		if (_args.get(PRINTFACT) != null) {
+			if (_verbose) System.out.println("Printing fact...");
+			try {
+				for (Atom a : _atomset)
+					System.out.println(a);
+			}
+			catch (Exception e) {
+				System.err.println("An error occurs while printing fact : " 
+			                   	   + e + " (" + e.getMessage() + ")");
+				e.printStackTrace();
+				error |= ERROR_PRINTFACT;
+			}
+			catch (Error e) {
+				System.err.println("An error occurs while printing fact : " 
+			                   	   + e + " (" + e.getMessage() + ")");
+				e.printStackTrace();
+				error |= ERROR_PRINTFACT;
+			}
+			if (_verbose) System.out.println("Fact printed!");
 		}
 
 		return error;
@@ -252,6 +275,9 @@ public class CLI {
 			else if (isArg(argv[i],ARG_VERBOSE)) {
 				_args.put(VERBOSE,"1");
 			}
+			else if (isArg(argv[i],ARG_PRINTFACT)) {
+				_args.put(PRINTFACT,"1");
+			}
 			else if (isArg(argv[i],ARG_FILE_INPUT)) {
 				++i;
 				if (i >= n) return ERROR_ARG_FILE_INPUT;
@@ -296,6 +322,7 @@ public class CLI {
 		System.out.println("-v    --verbose                               enable verbose mode (more outputs)");
 		System.out.println("-f    --file        <file_path>               read a dlp file as input (use - for stdin)");
 		System.out.println("-d    --database    <file_path>               select the database file");
+		System.out.println("-p    --print-fact                            print the fact to stdout");
 		System.out.println("-u    --ucq         <file_path|dlp_string>    read a dlp file or string as a union of conjunctive queries");
 		System.out.println("-s    --saturate    [<n>]                     execute the chase for n steps ; if n is negative of not specified, the chase will be executed until a fixpoint is reached");
 	}
@@ -338,6 +365,7 @@ public class CLI {
 	private static final String FILE_OUTPUT = "out";
 	private static final String FILE_UCQ    = "ucq_file";
 	private static final String STRING_UCQ  = "ucq_str";
+	private static final String PRINTFACT   = "print_fact";
 
 	private Map<String,String> _args = new TreeMap<String,String>();
 	private boolean _verbose = false;
