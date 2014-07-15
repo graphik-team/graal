@@ -18,7 +18,7 @@ import fr.lirmm.graphik.graal.store.rdbms.ResultSetSubstitutionReader;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public class SqlConjunctiveQueriesUnionSolver implements Solver {
+public class SqlConjunctiveQueriesUnionSolver implements ConjunctiveQueriesUnionSolver {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(SqlConjunctiveQueriesUnionSolver.class);

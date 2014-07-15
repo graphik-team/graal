@@ -44,7 +44,7 @@ public class QueriesUnionSubstitutionReader implements SubstitutionReader {
                 Query q = this.cqueryIterator.next();
                 Solver solver;
                 try {
-                    solver = SolverFactory.getFactory().getSolver(q, this.atomSet);
+                    solver = DefaultSolverFactory.getInstance().getSolver(q, this.atomSet);
                     this.tmpReader = solver.execute();
                 } catch (SolverFactoryException e) {
                     return false;

@@ -1,15 +1,13 @@
-/**
- * 
- */
 package fr.lirmm.graphik.graal;
 
 import fr.lirmm.graphik.graal.core.ConjunctiveQueriesUnion;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
-import fr.lirmm.graphik.graal.solver.ConjunctiveQueriesUnionSolver;
+import fr.lirmm.graphik.graal.solver.DefaultConjunctiveQueriesUnionSolver;
 import fr.lirmm.graphik.graal.solver.RecursiveBacktrackSolver;
 import fr.lirmm.graphik.graal.solver.Solver;
+import fr.lirmm.graphik.graal.solver.SolverFactory;
 import fr.lirmm.graphik.graal.solver.SolverFactoryException;
 import fr.lirmm.graphik.graal.solver.SqlConjunctiveQueriesUnionSolver;
 import fr.lirmm.graphik.graal.solver.SqlSolver;
@@ -21,8 +19,19 @@ import fr.lirmm.graphik.graal.transformation.TransformatorSolver;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public class DefaultSolverFactory extends SolverFactory {
+public class GraalSolverFactory implements SolverFactory {
 
+	private static GraalSolverFactory instance = null;
+	
+	private GraalSolverFactory(){}
+	
+	public static final GraalSolverFactory getInstance() {
+		if(instance == null)
+			instance = new GraalSolverFactory();
+		
+		return instance;
+	}
+	
     /*
      * (non-Javadoc)
      * 
@@ -49,7 +58,7 @@ public class DefaultSolverFactory extends SolverFactory {
             if (atomSet instanceof ReadOnlyTransformStore)
             	return null;
             else
-                return new ConjunctiveQueriesUnionSolver((ConjunctiveQueriesUnion) query, atomSet);
+                return new DefaultConjunctiveQueriesUnionSolver((ConjunctiveQueriesUnion) query, atomSet);
             
         } else {
             throw new SolverFactoryException("No solver for this kind of query");

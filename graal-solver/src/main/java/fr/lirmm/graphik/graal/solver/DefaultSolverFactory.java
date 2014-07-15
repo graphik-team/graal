@@ -12,8 +12,18 @@ import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public class DefaultSolverFactory extends SolverFactory {
+public class DefaultSolverFactory implements SolverFactory {
 
+	private static DefaultSolverFactory instance = null;
+	
+	private DefaultSolverFactory(){}
+	
+	public static final DefaultSolverFactory getInstance() {
+		if(instance == null)
+			instance = new DefaultSolverFactory();
+		
+		return instance;
+	}
     /*
      * (non-Javadoc)
      * 
@@ -29,7 +39,7 @@ public class DefaultSolverFactory extends SolverFactory {
                         atomSet);
             
         } else if (query instanceof ConjunctiveQueriesUnion) {
-                return new ConjunctiveQueriesUnionSolver((ConjunctiveQueriesUnion) query, atomSet);
+                return new DefaultConjunctiveQueriesUnionSolver((ConjunctiveQueriesUnion) query, atomSet);
             
         } else {
             throw new SolverFactoryException("No solver for this kind of query");

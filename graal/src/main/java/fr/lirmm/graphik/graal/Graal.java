@@ -24,7 +24,7 @@ import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.solver.Solver;
 import fr.lirmm.graphik.graal.solver.SolverException;
-import fr.lirmm.graphik.graal.SolverFactory;
+import fr.lirmm.graphik.graal.solver.SolverFactory;
 import fr.lirmm.graphik.graal.solver.SolverFactoryException;
 
 /**
@@ -34,45 +34,43 @@ import fr.lirmm.graphik.graal.solver.SolverFactoryException;
 public abstract class Graal {
 
 	private static final Logger logger = LoggerFactory.getLogger(Graal.class);
-	
-	public static void executeChase(AtomSet atomSet, Iterable<Rule> ruleSet) throws ChaseException {
+
+	// /////////////////////////////////////////////////////////////////////////
+	// FACTORY METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	public static SolverFactory getSolverFactory() {
+		return GraalSolverFactory.getInstance();
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// EXECUTE METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	public static void executeChase(AtomSet atomSet, Iterable<Rule> ruleSet)
+			throws ChaseException {
 		Chase chase = new DefaultChase(ruleSet, atomSet);
 		chase.execute();
 	}
-	
-	public static void executeChase(AtomSet atomSet, GraphOfRuleDependencies grd) throws ChaseException {
+
+	public static void executeChase(AtomSet atomSet, GraphOfRuleDependencies grd)
+			throws ChaseException {
 		Chase chase = new ChaseWithGRD(grd, atomSet);
 		chase.execute();
 	}
-	
-	public static void executeOneStepChase(AtomSet atomSet, Iterable<Rule> ruleSet) throws ChaseException {
+
+	public static void executeOneStepChase(AtomSet atomSet,
+			Iterable<Rule> ruleSet) throws ChaseException {
 		Chase chase = new DefaultChase(ruleSet, atomSet);
 		chase.next();
 	}
-	
-	public static void executeOneStepChase(AtomSet atomSet, GraphOfRuleDependencies grd) throws ChaseException {
+
+	public static void executeOneStepChase(AtomSet atomSet,
+			GraphOfRuleDependencies grd) throws ChaseException {
 		Chase chase = new ChaseWithGRD(grd, atomSet);
 		chase.next();
 	}
-	
-	// /////////////////////////////////////////////////////////////////////////
-	// @TODO to clean
-	// /////////////////////////////////////////////////////////////////////////
-	
-	public static Rule substitut(Rule rule, Substitution substitution) {
-		AtomSet body = substitut(rule.getBody(), substitution);
-		AtomSet head = substitut(rule.getHead(), substitution);
-		return new DefaultRule(body, head);
-	}
-	
-	public static AtomSet substitut(AtomSet atomSet, Substitution substitution) {
-		AtomSet newAtomSet = new LinkedListAtomSet();
-		for(Atom a : atomSet) {
-			newAtomSet.add(substitution.getSubstitut(a));
-		}
-		return newAtomSet;
-	}
-	
+
 	/**
 	 * For boolean query, return a SubstitutionReader with an empty Substitution
 	 * for true and no substitution for false.
@@ -83,26 +81,46 @@ public abstract class Graal {
 	 * @throws SolverFactoryException
 	 * @throws SolverException
 	 */
-	public static SubstitutionReader executeQuery(Query query, ReadOnlyAtomSet atomSet)
-																		  throws SolverFactoryException,
-																		  SolverException {
+	public static SubstitutionReader executeQuery(Query query,
+			ReadOnlyAtomSet atomSet) throws SolverFactoryException,
+			SolverException {
 		if (logger.isDebugEnabled())
 			logger.debug("Query : " + query);
 
 		Solver solver;
-		solver = SolverFactory.getFactory().getSolver(query, atomSet);
+		solver = Graal.getSolverFactory().getSolver(query, atomSet);
 		return solver.execute();
 
 	}
 
-	public static SubstitutionReader getRuleBodyHomomorphisms(Rule rule, ReadOnlyAtomSet atomSet)
-																		  throws SolverFactoryException,
-																		  SolverException {
-		Query query = new DefaultConjunctiveQuery(rule.getBody(), rule.getFrontier());
+	// /////////////////////////////////////////////////////////////////////////
+	// @TODO to clean
+	// /////////////////////////////////////////////////////////////////////////
+
+	public static Rule substitut(Rule rule, Substitution substitution) {
+		AtomSet body = substitut(rule.getBody(), substitution);
+		AtomSet head = substitut(rule.getHead(), substitution);
+		return new DefaultRule(body, head);
+	}
+
+	public static AtomSet substitut(AtomSet atomSet, Substitution substitution) {
+		AtomSet newAtomSet = new LinkedListAtomSet();
+		for (Atom a : atomSet) {
+			newAtomSet.add(substitution.getSubstitut(a));
+		}
+		return newAtomSet;
+	}
+
+	public static SubstitutionReader getRuleBodyHomomorphisms(Rule rule,
+			ReadOnlyAtomSet atomSet) throws SolverFactoryException,
+			SolverException {
+		Query query = new DefaultConjunctiveQuery(rule.getBody(),
+				rule.getFrontier());
 		return executeQuery(query, atomSet);
 	}
 
-	public static ReadOnlyAtomSet substitute(Substitution s, ReadOnlyAtomSet atomSet) {
+	public static ReadOnlyAtomSet substitute(Substitution s,
+			ReadOnlyAtomSet atomSet) {
 		AtomSet newAtomSet = new LinkedListAtomSet();
 		for (Atom a : atomSet) {
 			newAtomSet.add(s.getSubstitut(a));
@@ -118,27 +136,15 @@ public abstract class Graal {
 		return Factory.getInstance();
 	}
 
-	
-	
-
-/*	private static void addExistentialSubstitution(Rule rule, Substitution sub) {
-		StringBuilder skolem = null;
-		int tmpLength = 0;
-		for (Term t : rule.getExistentials()) {
-			if (skolem == null) {
-				skolem = new StringBuilder(Integer.toString(rule.hashCode()));
-				skolem.append('[');
-				for (Term var : rule.getFrontier()) {
-					skolem.append(var).append(':');
-					skolem.append(sub.getSubstitut(var)).append(',');
-				}
-				skolem.setCharAt(skolem.length() - 1, ']');
-				skolem.append('[');
-				tmpLength = skolem.length();
-			}
-			skolem.setLength(tmpLength);
-			sub.put(t, new Term(skolem.append(t).append(']').toString(),
-					Type.VARIABLE));
-		}
-	}*/
+	/*
+	 * private static void addExistentialSubstitution(Rule rule, Substitution
+	 * sub) { StringBuilder skolem = null; int tmpLength = 0; for (Term t :
+	 * rule.getExistentials()) { if (skolem == null) { skolem = new
+	 * StringBuilder(Integer.toString(rule.hashCode())); skolem.append('['); for
+	 * (Term var : rule.getFrontier()) { skolem.append(var).append(':');
+	 * skolem.append(sub.getSubstitut(var)).append(','); }
+	 * skolem.setCharAt(skolem.length() - 1, ']'); skolem.append('['); tmpLength
+	 * = skolem.length(); } skolem.setLength(tmpLength); sub.put(t, new
+	 * Term(skolem.append(t).append(']').toString(), Type.VARIABLE)); } }
+	 */
 }
