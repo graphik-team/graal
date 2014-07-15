@@ -28,6 +28,12 @@ public class ConjunctiveQueriesUnion implements Query, Collection<ConjunctiveQue
         this.queries = queries;
     }
     
+    public ConjunctiveQueriesUnion(ConjunctiveQuery... queries) {
+        this.queries = new LinkedList<ConjunctiveQuery>();
+        for(ConjunctiveQuery cq : queries)
+            this.queries.add(cq);
+    }
+
     // /////////////////////////////////////////////////////////////////////////
     //	PUBLIC METHODS
     // /////////////////////////////////////////////////////////////////////////
