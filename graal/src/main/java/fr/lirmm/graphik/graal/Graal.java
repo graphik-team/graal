@@ -22,10 +22,14 @@ import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.core.factory.Factory;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
+import fr.lirmm.graphik.graal.solver.DefaultSolverFactory;
 import fr.lirmm.graphik.graal.solver.Solver;
 import fr.lirmm.graphik.graal.solver.SolverException;
 import fr.lirmm.graphik.graal.solver.SolverFactory;
 import fr.lirmm.graphik.graal.solver.SolverFactoryException;
+import fr.lirmm.graphik.graal.solver.SqlConjunctiveQueriesUnionSolverChecker;
+import fr.lirmm.graphik.graal.solver.SqlSolverChecker;
+import fr.lirmm.graphik.graal.transformation.TransformatorSolverChecker;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -39,8 +43,15 @@ public abstract class Graal {
 	// FACTORY METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
+	private static boolean isInit = false;
 	public static SolverFactory getSolverFactory() {
-		return GraalSolverFactory.getInstance();
+		if(!isInit) {
+			DefaultSolverFactory.getInstance().addChecker(new TransformatorSolverChecker());
+			DefaultSolverFactory.getInstance().addChecker(new SqlSolverChecker());
+			DefaultSolverFactory.getInstance().addChecker(new SqlConjunctiveQueriesUnionSolverChecker());
+			isInit = true;
+		}
+		return DefaultSolverFactory.getInstance();
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

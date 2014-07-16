@@ -3,20 +3,35 @@
  */
 package fr.lirmm.graphik.graal.solver;
 
-import fr.lirmm.graphik.graal.core.ConjunctiveQueriesUnion;
-import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
 import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
+import fr.lirmm.graphik.graal.solver.checker.DefaultUnionConjunctiveQueriesSolverChecker;
+import fr.lirmm.graphik.graal.solver.checker.RecursiveBacktrackSolverChecker;
+import fr.lirmm.graphik.graal.solver.checker.SolverFactoryChecker;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
 public class DefaultSolverFactory implements SolverFactory {
-
-	private static DefaultSolverFactory instance = null;
 	
-	private DefaultSolverFactory(){}
+	private SortedSet<SolverFactoryChecker> elements;
+	
+	private static DefaultSolverFactory instance = null;
+
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTOR
+	// /////////////////////////////////////////////////////////////////////////
+	
+	private DefaultSolverFactory(){
+		this.elements = new TreeSet<SolverFactoryChecker>();
+		this.elements.add(new RecursiveBacktrackSolverChecker());
+		this.elements.add(new DefaultUnionConjunctiveQueriesSolverChecker());
+	}
 	
 	public static final DefaultSolverFactory getInstance() {
 		if(instance == null)
@@ -24,26 +39,31 @@ public class DefaultSolverFactory implements SolverFactory {
 		
 		return instance;
 	}
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * fr.lirmm.graphik.alaska.solver.SolverFactory#getSolver(fr.lirmm.graphik
-     * .kb.IQuery, fr.lirmm.graphik.kb.IAtomSet)
-     */
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// METHODS
+	// /////////////////////////////////////////////////////////////////////////
+	
+	/**
+	 * 
+	 * @param checker
+	 * @return true if this checker is not already added, false otherwise.
+	 */
+	public boolean addChecker(SolverFactoryChecker checker) {
+		return this.elements.add(checker);
+	}
+ 	
     @Override
-    public Solver getSolver(Query query, ReadOnlyAtomSet atomSet)
+    public Solver getSolver(Query query, ReadOnlyAtomSet atomset)
             throws SolverFactoryException {
-        if (query instanceof ConjunctiveQuery) {
-                return new RecursiveBacktrackSolver((ConjunctiveQuery) query,
-                        atomSet);
-            
-        } else if (query instanceof ConjunctiveQueriesUnion) {
-                return new DefaultConjunctiveQueriesUnionSolver((ConjunctiveQueriesUnion) query, atomSet);
-            
-        } else {
-            throw new SolverFactoryException("No solver for this kind of query");
-        }
+    	Solver solver = null;
+    	for(SolverFactoryChecker e : elements) {
+    		if(e.check(query, atomset)) {
+    			solver = e.getSolver(query, atomset);
+    			break;
+    		}
+    	}
+    	return solver;
     }
-
+    
 }
