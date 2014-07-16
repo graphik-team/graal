@@ -24,20 +24,24 @@ import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public class RecursiveBacktrackSolver implements Solver {
+public class RecursiveBacktrackSolver implements Solver<ConjunctiveQuery, ReadOnlyAtomSet> {
 
     private static final Logger logger = LoggerFactory
             .getLogger(RecursiveBacktrackSolver.class);
-    private ConjunctiveQuery query;
-    private ReadOnlyAtomSet facts;
+    
+    private static RecursiveBacktrackSolver instance;
 
     // /////////////////////////////////////////////////////////////////////////
     // CONSTRUCTORS
     // /////////////////////////////////////////////////////////////////////////
 
-    public RecursiveBacktrackSolver(ConjunctiveQuery query, ReadOnlyAtomSet facts) {
-        this.query = query;
-        this.facts = facts;
+    private RecursiveBacktrackSolver(){}
+    
+    public static RecursiveBacktrackSolver getInstance() {
+    	if(instance == null)
+    		instance = new RecursiveBacktrackSolver();
+    	
+    	return instance;
     }
 
     // /////////////////////////////////////////////////////////////////////////
@@ -50,15 +54,16 @@ public class RecursiveBacktrackSolver implements Solver {
      * @throws AtomSetException
      */
     @Override
-    public SubstitutionReader execute() throws SolverException {
-        List<Term> orderedVars = this.order(this.query.getAtomSet().getTerms(
+    public SubstitutionReader execute(ConjunctiveQuery query, ReadOnlyAtomSet facts) throws SolverException {
+        System.out.println(query);
+    	List<Term> orderedVars = order(query.getAtomSet().getTerms(
                 Term.Type.VARIABLE));
         Collection<Atom>[] queryAtomRanked = getAtomRank(
-                this.query.getAtomSet(), orderedVars);
+                query.getAtomSet(), orderedVars);
         try {
-            if (isHomomorphisme(queryAtomRanked[0], this.facts,
+            if (isHomomorphisme(queryAtomRanked[0], facts,
                     new HashMapSubstitution())) {
-                return new IteratorSubstitutionReader(this.homomorphisme(
+                return new IteratorSubstitutionReader(homomorphisme(query,
                         queryAtomRanked, facts, new HashMapSubstitution(),
                         orderedVars, 1).iterator());
             } else {
@@ -85,14 +90,14 @@ public class RecursiveBacktrackSolver implements Solver {
      * @return
      * @throws Exception
      */
-    private Collection<Substitution> homomorphisme(
+    private static Collection<Substitution> homomorphisme(ConjunctiveQuery query,
             Collection<Atom>[] queryAtomRanked, ReadOnlyAtomSet facts,
             Substitution substitution, List<Term> orderedVars, int rank)
             throws Exception {
         Collection<Substitution> substitutionList = new LinkedList<Substitution>();
         if (orderedVars.size() == 0) {
             Substitution filteredSub = new HashMapSubstitution();
-            for (Term var : this.query.getAnswerVariables()) {
+            for (Term var : query.getAnswerVariables()) {
                 filteredSub.put(var, substitution.getSubstitut(var));
             }
             substitutionList.add(filteredSub);
@@ -106,9 +111,9 @@ public class RecursiveBacktrackSolver implements Solver {
                         substitution);
                 tmpSubstitution.put(var, substitut);
                 // Test partial homomorphisme
-                if (this.isHomomorphisme(queryAtomRanked[rank], facts,
+                if (isHomomorphisme(queryAtomRanked[rank], facts,
                         tmpSubstitution))
-                    substitutionList.addAll(this.homomorphisme(queryAtomRanked,
+                    substitutionList.addAll(homomorphisme(query, queryAtomRanked,
                             facts, tmpSubstitution, new LinkedList<Term>(
                                     orderedVars), rank + 1));
             }
@@ -117,7 +122,7 @@ public class RecursiveBacktrackSolver implements Solver {
         return substitutionList;
     }
 
-    private boolean isHomomorphisme(Collection<Atom> atomsFrom,
+    private static boolean isHomomorphisme(Collection<Atom> atomsFrom,
             ReadOnlyAtomSet atomsTo, Substitution substitution) throws Exception {
         for (Atom atom : atomsFrom) {
             if (logger.isDebugEnabled())
@@ -130,7 +135,7 @@ public class RecursiveBacktrackSolver implements Solver {
     }
 
     // TODO use an external comparator
-    private List<Term> order(Collection<Term> vars) {
+    private static List<Term> order(Collection<Term> vars) {
         LinkedList<Term> orderedList = new LinkedList<Term>();
         for (Term var : vars)
             if (!orderedList.contains(var))

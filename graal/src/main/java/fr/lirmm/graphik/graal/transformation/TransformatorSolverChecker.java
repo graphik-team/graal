@@ -21,8 +21,8 @@ public class TransformatorSolverChecker extends AbstractSolverChecker {
 	}
 
 	@Override
-	public Solver getSolver(Query query, ReadOnlyAtomSet atomset) {
-		return new TransformatorSolver((ConjunctiveQuery) query, atomset);
+	public TransformatorSolver getSolver() {
+		return TransformatorSolver.getInstance();
 	}
 
 	@Override

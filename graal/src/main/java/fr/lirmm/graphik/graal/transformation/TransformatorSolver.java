@@ -4,7 +4,6 @@
 package fr.lirmm.graphik.graal.transformation;
 
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 import fr.lirmm.graphik.graal.solver.Solver;
 import fr.lirmm.graphik.graal.solver.SolverException;
@@ -13,21 +12,26 @@ import fr.lirmm.graphik.graal.solver.SolverException;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class TransformatorSolver implements Solver {
+public class TransformatorSolver implements Solver<ConjunctiveQuery, TransformAtomSet> {
 
-	/**
-	 * @param query
-	 * @param atomSet
-	 */
-	public TransformatorSolver(ConjunctiveQuery query, ReadOnlyAtomSet atomSet) {
-		// TODO Auto-generated constructor stub
+	private static TransformatorSolver instance;
+
+	private TransformatorSolver() {
 	}
 
-	/* (non-Javadoc)
-	 * @see fr.lirmm.graphik.alaska.solver.ISolver#execute()
-	 */
+	public static TransformatorSolver getInstance() {
+		if (instance == null)
+			instance = new TransformatorSolver();
+
+		return instance;
+	}
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
 	@Override
-	public SubstitutionReader execute() throws SolverException {
+	public SubstitutionReader execute(ConjunctiveQuery query, TransformAtomSet atomSet) throws SolverException {
 		//TODO transform query and pass it to encapsulated atomSet
 		throw new Error("This method isn't implemented!");
 	}

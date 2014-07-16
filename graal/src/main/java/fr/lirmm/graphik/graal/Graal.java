@@ -44,11 +44,15 @@ public abstract class Graal {
 	// /////////////////////////////////////////////////////////////////////////
 
 	private static boolean isInit = false;
+
 	public static SolverFactory getSolverFactory() {
-		if(!isInit) {
-			DefaultSolverFactory.getInstance().addChecker(new TransformatorSolverChecker());
-			DefaultSolverFactory.getInstance().addChecker(new SqlSolverChecker());
-			DefaultSolverFactory.getInstance().addChecker(new SqlConjunctiveQueriesUnionSolverChecker());
+		if (!isInit) {
+			DefaultSolverFactory.getInstance().addChecker(
+					new TransformatorSolverChecker());
+			DefaultSolverFactory.getInstance().addChecker(
+					new SqlSolverChecker());
+			DefaultSolverFactory.getInstance().addChecker(
+					new SqlConjunctiveQueriesUnionSolverChecker());
 			isInit = true;
 		}
 		return DefaultSolverFactory.getInstance();
@@ -98,9 +102,9 @@ public abstract class Graal {
 		if (logger.isDebugEnabled())
 			logger.debug("Query : " + query);
 
-		Solver solver;
-		solver = Graal.getSolverFactory().getSolver(query, atomSet);
-		return solver.execute();
+		Solver solver = Graal
+				.getSolverFactory().getSolver(query, atomSet);
+		return solver.execute(query, atomSet);
 
 	}
 

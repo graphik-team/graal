@@ -1,22 +1,18 @@
+/**
+ * 
+ */
 package fr.lirmm.graphik.graal.solver;
 
-import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
+import fr.lirmm.graphik.graal.core.Query;
+import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 
-
-
 /**
- * Interface for a solver.
- * @author Bruno Paiva Lima da Silva <bplsilva@lirmm.fr>
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+ *
  */
-
-public interface Solver {
-
-    /**
-     * @throws AtomSetException 
-     * @throws SolverException 
-     * 
-     */
-    SubstitutionReader execute() throws SolverException;
+public interface Solver<T1 extends Query, T2 extends ReadOnlyAtomSet> {
+	
+	 SubstitutionReader execute(T1 q, T2 a) throws SolverException;
 
 }

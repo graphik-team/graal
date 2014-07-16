@@ -21,14 +21,13 @@ public class DefaultUnionConjunctiveQueriesSolverChecker extends AbstractSolverC
 	}
 
 	@Override
-	public Solver getSolver(Query query, ReadOnlyAtomSet atomset) {
-		 return new DefaultConjunctiveQueriesUnionSolver((ConjunctiveQueriesUnion) query, atomset);
+	public Solver<? extends Query, ? extends ReadOnlyAtomSet> getSolver() {
+		 return DefaultConjunctiveQueriesUnionSolver.getInstance();
 	}
 
 	@Override
 	public int getDefaultPriority() {
 		return 0;
 	}
-	
 
 }

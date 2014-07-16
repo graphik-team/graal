@@ -18,58 +18,60 @@ import fr.lirmm.graphik.graal.store.rdbms.ResultSetSubstitutionReader;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public class SqlConjunctiveQueriesUnionSolver implements ConjunctiveQueriesUnionSolver {
+public class SqlConjunctiveQueriesUnionSolver implements ConjunctiveQueriesUnionSolver<RdbmsStore> {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(SqlConjunctiveQueriesUnionSolver.class);
 	
-	private RdbmsStore store;
-	private StringBuilder sqlQuery;
-	private ConjunctiveQueriesUnion queries;
+	private static SqlConjunctiveQueriesUnionSolver instance;
 
-	public SqlConjunctiveQueriesUnionSolver(ConjunctiveQueriesUnion queries,
-			RdbmsStore store) {
-		this.queries = queries;
-		this.store = store;
+	private SqlConjunctiveQueriesUnionSolver() {
 	}
-
-	private void preprocessing() throws SolverException {
-		Iterator<ConjunctiveQuery> it = queries.iterator();
-		this.sqlQuery = new StringBuilder();
-		try {
-			if (it.hasNext()) {
-				this.sqlQuery.append(this.store.transformToSQL(it.next()));
-				this.sqlQuery.setLength(this.sqlQuery.length() - 1);
-
-				while (it.hasNext()) {
-					this.sqlQuery.append(" UNION ");
-					this.sqlQuery.append(this.store.transformToSQL(it.next()));
-					this.sqlQuery.setLength(this.sqlQuery.length() - 1);
-				}
-			}
-			this.sqlQuery.append(';');
-		} catch (Exception e) {
-			throw new SolverException("Error during query translation to SQL",
-					e);
-		}
+	
+	public static SqlConjunctiveQueriesUnionSolver getInstance() {
+		if(instance == null)
+			instance = new SqlConjunctiveQueriesUnionSolver();
+		
+		return instance;
 	}
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.lirmm.graphik.alaska.solver.ISolver#execute()
-	 */
 	@Override
-	public SubstitutionReader execute() throws SolverException {
-		this.preprocessing();
+	public SubstitutionReader execute(ConjunctiveQueriesUnion queries,
+			RdbmsStore store) throws SolverException {
+		String sqlQuery = preprocessing(queries, store);
 		try {
 			if(logger.isDebugEnabled()) {
-				logger.debug(this.sqlQuery.toString());
+				logger.debug(sqlQuery.toString());
 			}
-			return new ResultSetSubstitutionReader(this.store, this.sqlQuery.toString(), queries.isBoolean());
+			return new ResultSetSubstitutionReader(store, sqlQuery.toString(), queries.isBoolean());
 		} catch (Exception e) {
 			throw new SolverException(e.getMessage(), e);
 		}
 	}
 
+	private static String preprocessing(ConjunctiveQueriesUnion queries, RdbmsStore store) throws SolverException {
+		Iterator<ConjunctiveQuery> it = queries.iterator();
+		StringBuilder sqlQuery = new StringBuilder();
+		try {
+			if (it.hasNext()) {
+				sqlQuery.append(store.transformToSQL(it.next()));
+				sqlQuery.setLength(sqlQuery.length() - 1);
+
+				while (it.hasNext()) {
+					sqlQuery.append(" UNION ");
+					sqlQuery.append(store.transformToSQL(it.next()));
+					sqlQuery.setLength(sqlQuery.length() - 1);
+				}
+			}
+			sqlQuery.append(';');
+		} catch (Exception e) {
+			throw new SolverException("Error during query translation to SQL",
+					e);
+		}
+		return sqlQuery.toString();
+	}
 }

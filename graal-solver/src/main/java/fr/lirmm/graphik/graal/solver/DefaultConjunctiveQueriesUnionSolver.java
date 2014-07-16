@@ -11,27 +11,28 @@ import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class DefaultConjunctiveQueriesUnionSolver implements ConjunctiveQueriesUnionSolver {
+public class DefaultConjunctiveQueriesUnionSolver implements ConjunctiveQueriesUnionSolver<ReadOnlyAtomSet> {
 
-    private ReadOnlyAtomSet atomSet;
-    private ConjunctiveQueriesUnion queries;
-
-    /* (non-Javadoc)
-     * @see fr.lirmm.graphik.alaska.solver.ISolver#execute()
-     */
-    /**
+	private static DefaultConjunctiveQueriesUnionSolver instance;
+    
+	/**
      * @param queries
      * @param atomSet
      */
-    public DefaultConjunctiveQueriesUnionSolver(ConjunctiveQueriesUnion queries,
-            ReadOnlyAtomSet atomSet) {
-        this.queries = queries;
-        this.atomSet = atomSet;
+    private DefaultConjunctiveQueriesUnionSolver() {
+    }
+    
+    public static DefaultConjunctiveQueriesUnionSolver getInstance() {
+    	if(instance == null)
+    		instance = new DefaultConjunctiveQueriesUnionSolver();
+    	
+    	return instance;
     }
 
-    @Override
-    public SubstitutionReader execute() throws SolverException {
-        return new QueriesUnionSubstitutionReader(queries, atomSet);
-    }
+	@Override
+	public SubstitutionReader execute(ConjunctiveQueriesUnion queries,
+			ReadOnlyAtomSet atomset) throws SolverException {
+        return new QueriesUnionSubstitutionReader(queries, atomset);
+	}
 
 }

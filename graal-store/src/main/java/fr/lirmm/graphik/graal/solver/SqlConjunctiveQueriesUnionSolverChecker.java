@@ -23,9 +23,8 @@ public class SqlConjunctiveQueriesUnionSolverChecker extends
 	}
 
 	@Override
-	public Solver getSolver(Query query, ReadOnlyAtomSet atomset) {
-		return new SqlConjunctiveQueriesUnionSolver(
-				(ConjunctiveQueriesUnion) query, (RdbmsStore) atomset);
+	public SqlConjunctiveQueriesUnionSolver getSolver() {
+		return SqlConjunctiveQueriesUnionSolver.getInstance();
 	}
 
 	@Override
