@@ -45,9 +45,11 @@ public class QueriesUnionSubstitutionReader implements SubstitutionReader {
                 Solver solver;
                 try {
                     solver = DefaultSolverFactory.getInstance().getSolver(q, this.atomSet);
-                    this.tmpReader = solver.execute();
-                } catch (SolverFactoryException e) {
-                    return false;
+                    if(solver == null) {
+                    	return false;
+                    } else {
+                    	this.tmpReader = solver.execute();
+                    }
                 } catch (SolverException e) {
                     return false;
                 }

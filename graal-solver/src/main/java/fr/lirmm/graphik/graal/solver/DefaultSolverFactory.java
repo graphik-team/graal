@@ -54,8 +54,7 @@ public class DefaultSolverFactory implements SolverFactory {
 	}
  	
     @Override
-    public Solver getSolver(Query query, ReadOnlyAtomSet atomset)
-            throws SolverFactoryException {
+    public Solver getSolver(Query query, ReadOnlyAtomSet atomset) {
     	Solver solver = null;
     	for(SolverFactoryChecker e : elements) {
     		if(e.check(query, atomset)) {
