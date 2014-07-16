@@ -12,7 +12,7 @@ import fr.lirmm.graphik.graal.chase.Chase;
 import fr.lirmm.graphik.graal.chase.ChaseException;
 import fr.lirmm.graphik.graal.chase.ChaseWithGRD;
 import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.ConjunctiveQueriesUnion;
+import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
@@ -145,28 +145,28 @@ public class MelanieQueryTest {
 	
 	public static void parseUnionQuery() throws ParseException {
 
-		ConjunctiveQueriesUnion ucq = new ConjunctiveQueriesUnion();
+		UnionConjunctiveQueries ucq = new UnionConjunctiveQueries();
 		ucq.add(DlgpParser.parseQuery("?(A,B) :- affiliatedOrganizationOf(B,C), headOf(A,B)."));
 		ucq.add(DlgpParser.parseQuery("?(A,B) :- affiliatedOrganizationOf(B,C), worksFor(A,B)."));
 		queries.add(ucq);
 
-		ucq = new ConjunctiveQueriesUnion();
+		ucq = new UnionConjunctiveQueries();
 		ucq.add(DlgpParser.parseQuery("?(A,B) :- teacherOf(A,B)."));
 		queries.add(ucq);
 		
-		ucq = new ConjunctiveQueriesUnion();
+		ucq = new UnionConjunctiveQueries();
 		ucq.add(DlgpParser.parseQuery("?(A,B,C) :- hasExamrecord(A,D), takesCourse(A,C), teacherOf(B,C)." ));
 		ucq.add(DlgpParser.parseQuery("?(A,B,C) :- advisor(A,B), \"ResearchAssistant\"(A), takesCourse(A,C), teacherOf(B,C)." ));
 		ucq.add(DlgpParser.parseQuery("?(A,B,C) :- advisor(A,B), \"Student\"(A), takesCourse(A,C), teacherOf(B,C)." ));
 		ucq.add(DlgpParser.parseQuery("?(A,B,C) :- takesCourse(A,C), teacherOf(B,C), \"UndergraduateStudent\"(A)." ));
 		queries.add(ucq);
 
-		ucq = new ConjunctiveQueriesUnion();
+		ucq = new UnionConjunctiveQueries();
 		ucq.add(DlgpParser.parseQuery("?(A,B) :- headOf(A,B)." ));
 		ucq.add(DlgpParser.parseQuery("?(A,B) :- worksFor(A,B)." ));
 		queries.add(ucq);
 
-		ucq = new ConjunctiveQueriesUnion();
+		ucq = new UnionConjunctiveQueries();
 		ucq.add(DlgpParser.parseQuery("?(A,B) :- degreeFrom(A,B), headof(A,B)."));
 		ucq.add(DlgpParser.parseQuery("?(A,B) :- degreeFrom(A,B), worksfor(A,B)."));
 		ucq.add(DlgpParser.parseQuery("?(A,B) :- doctoralDegreeFrom(A,B), headOf(A,B)."));

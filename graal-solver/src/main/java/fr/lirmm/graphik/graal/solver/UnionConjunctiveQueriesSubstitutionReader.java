@@ -5,7 +5,7 @@ package fr.lirmm.graphik.graal.solver;
 
 import java.util.Iterator;
 
-import fr.lirmm.graphik.graal.core.ConjunctiveQueriesUnion;
+import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.Substitution;
@@ -16,7 +16,7 @@ import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class QueriesUnionSubstitutionReader implements SubstitutionReader {
+public class UnionConjunctiveQueriesSubstitutionReader implements SubstitutionReader {
 
     private ReadOnlyAtomSet atomSet;
     private Iterator<ConjunctiveQuery> cqueryIterator;
@@ -27,7 +27,7 @@ public class QueriesUnionSubstitutionReader implements SubstitutionReader {
      * @param queries
      * @param atomSet
      */
-    public QueriesUnionSubstitutionReader(ConjunctiveQueriesUnion queries,
+    public UnionConjunctiveQueriesSubstitutionReader(UnionConjunctiveQueries queries,
             ReadOnlyAtomSet atomSet) {
         this.cqueryIterator = queries.iterator();
         this.atomSet = atomSet;

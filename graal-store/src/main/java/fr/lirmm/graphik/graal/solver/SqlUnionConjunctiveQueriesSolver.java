@@ -8,7 +8,7 @@ import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.core.ConjunctiveQueriesUnion;
+import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
@@ -18,19 +18,19 @@ import fr.lirmm.graphik.graal.store.rdbms.ResultSetSubstitutionReader;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public class SqlConjunctiveQueriesUnionSolver implements ConjunctiveQueriesUnionSolver<RdbmsStore> {
+public class SqlUnionConjunctiveQueriesSolver implements UnionConjunctiveQueriesSolver<RdbmsStore> {
 
 	private static final Logger logger = LoggerFactory
-			.getLogger(SqlConjunctiveQueriesUnionSolver.class);
+			.getLogger(SqlUnionConjunctiveQueriesSolver.class);
 	
-	private static SqlConjunctiveQueriesUnionSolver instance;
+	private static SqlUnionConjunctiveQueriesSolver instance;
 
-	private SqlConjunctiveQueriesUnionSolver() {
+	private SqlUnionConjunctiveQueriesSolver() {
 	}
 	
-	public static SqlConjunctiveQueriesUnionSolver getInstance() {
+	public static SqlUnionConjunctiveQueriesSolver getInstance() {
 		if(instance == null)
-			instance = new SqlConjunctiveQueriesUnionSolver();
+			instance = new SqlUnionConjunctiveQueriesSolver();
 		
 		return instance;
 	}
@@ -40,7 +40,7 @@ public class SqlConjunctiveQueriesUnionSolver implements ConjunctiveQueriesUnion
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public SubstitutionReader execute(ConjunctiveQueriesUnion queries,
+	public SubstitutionReader execute(UnionConjunctiveQueries queries,
 			RdbmsStore store) throws SolverException {
 		String sqlQuery = preprocessing(queries, store);
 		try {
@@ -53,7 +53,7 @@ public class SqlConjunctiveQueriesUnionSolver implements ConjunctiveQueriesUnion
 		}
 	}
 
-	private static String preprocessing(ConjunctiveQueriesUnion queries, RdbmsStore store) throws SolverException {
+	private static String preprocessing(UnionConjunctiveQueries queries, RdbmsStore store) throws SolverException {
 		Iterator<ConjunctiveQuery> it = queries.iterator();
 		StringBuilder sqlQuery = new StringBuilder();
 		try {

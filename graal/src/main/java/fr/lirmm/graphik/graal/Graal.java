@@ -27,7 +27,7 @@ import fr.lirmm.graphik.graal.solver.Solver;
 import fr.lirmm.graphik.graal.solver.SolverException;
 import fr.lirmm.graphik.graal.solver.SolverFactory;
 import fr.lirmm.graphik.graal.solver.SolverFactoryException;
-import fr.lirmm.graphik.graal.solver.SqlConjunctiveQueriesUnionSolverChecker;
+import fr.lirmm.graphik.graal.solver.SqlUnionConjunctiveQueriesSolverChecker;
 import fr.lirmm.graphik.graal.solver.SqlSolverChecker;
 import fr.lirmm.graphik.graal.transformation.TransformatorSolverChecker;
 
@@ -52,7 +52,7 @@ public abstract class Graal {
 			DefaultSolverFactory.getInstance().addChecker(
 					new SqlSolverChecker());
 			DefaultSolverFactory.getInstance().addChecker(
-					new SqlConjunctiveQueriesUnionSolverChecker());
+					new SqlUnionConjunctiveQueriesSolverChecker());
 			isInit = true;
 		}
 		return DefaultSolverFactory.getInstance();

@@ -13,7 +13,7 @@ import fr.lirmm.graphik.graal.Graal;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.graal.core.ConjunctiveQueriesUnion;
+import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
@@ -209,7 +209,7 @@ public class CLI {
 
 		String ucq_file = _args.get(FILE_UCQ);
 		if (ucq_file != null) {
-			ConjunctiveQueriesUnion ucq = new ConjunctiveQueriesUnion();
+			UnionConjunctiveQueries ucq = new UnionConjunctiveQueries();
 			if (_verbose) System.out.println("Opening UCQ file "+ucq_file+"...");
 			try {
 				DlgpParser parser = new DlgpParser(new FileReader(ucq_file));
@@ -240,7 +240,7 @@ public class CLI {
 
 		String ucq_string = _args.get(STRING_UCQ);
 		if (ucq_string != null) {
-			ConjunctiveQueriesUnion ucq = new ConjunctiveQueriesUnion();
+			UnionConjunctiveQueries ucq = new UnionConjunctiveQueries();
 			if (_verbose) System.out.println("Reading UCQ string "+ucq_string+"...");
 			try {
 				DlgpParser parser = new DlgpParser(new StringReader(ucq_string));
