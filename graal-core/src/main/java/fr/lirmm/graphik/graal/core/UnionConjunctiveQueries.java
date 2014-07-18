@@ -12,7 +12,7 @@ import java.util.LinkedList;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class ConjunctiveQueriesUnion implements Query, Collection<ConjunctiveQuery> {
+public class UnionConjunctiveQueries implements Query, Collection<ConjunctiveQuery> {
 
     private Collection<ConjunctiveQuery> queries;
     
@@ -20,15 +20,15 @@ public class ConjunctiveQueriesUnion implements Query, Collection<ConjunctiveQue
     //	CONSTRUCTORS
     // /////////////////////////////////////////////////////////////////////////
 
-    public ConjunctiveQueriesUnion() {
+    public UnionConjunctiveQueries() {
         this.queries = new LinkedList<ConjunctiveQuery>();
     }
     
-    public ConjunctiveQueriesUnion(Collection<ConjunctiveQuery> queries) {
+    public UnionConjunctiveQueries(Collection<ConjunctiveQuery> queries) {
         this.queries = queries;
     }
     
-    public ConjunctiveQueriesUnion(ConjunctiveQuery... queries) {
+    public UnionConjunctiveQueries(ConjunctiveQuery... queries) {
         this.queries = new LinkedList<ConjunctiveQuery>();
         for(ConjunctiveQuery cq : queries)
             this.queries.add(cq);

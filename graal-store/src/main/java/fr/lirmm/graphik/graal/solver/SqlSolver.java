@@ -15,34 +15,37 @@ import fr.lirmm.graphik.graal.store.rdbms.ResultSetSubstitutionReader;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public class SqlSolver implements Solver {
+public class SqlSolver implements Solver<ConjunctiveQuery, RdbmsStore> {
 	
 	private static final Logger logger = LoggerFactory
 			.getLogger(SqlSolver.class);
+    
+    private static SqlSolver instance;
 
-    private ConjunctiveQuery query;
-    private RdbmsStore store;
-    private String sqlQuery;
+	private SqlSolver() {
+	}
 
-    /**
-     * @param query
-     * @param store
-     */
-    public SqlSolver(ConjunctiveQuery query, RdbmsStore store) {
-        this.query = query;
-        this.store = store;
-    }
+	public static SqlSolver getInstance() {
+		if (instance == null)
+			instance = new SqlSolver();
 
+		return instance;
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// METHODS
+	// /////////////////////////////////////////////////////////////////////////
+	
     /*
      * (non-Javadoc)
      * 
      * @see fr.lirmm.graphik.alaska.solver.ISolver#execute()
      */
     @Override
-    public SubstitutionReader execute() throws SolverException {
-        this.preprocessing();
+    public SubstitutionReader execute(ConjunctiveQuery query, RdbmsStore store) throws SolverException {
+        String sqlQuery = preprocessing(query, store);
         try {
-            return new ResultSetSubstitutionReader(this.store, this.sqlQuery, this.query.isBoolean());
+            return new ResultSetSubstitutionReader(store, sqlQuery, query.isBoolean());
         } catch (Exception e) {
             throw new SolverException(e.getMessage(), e);
         }
@@ -52,15 +55,17 @@ public class SqlSolver implements Solver {
     //	PRIVATE METHODS
     // /////////////////////////////////////////////////////////////////////////
 
-    private void preprocessing() throws SolverException {
+    private static String preprocessing(ConjunctiveQuery query, RdbmsStore store) throws SolverException {
+    	String sqlQuery = null;
         try {
-            this.sqlQuery = this.store.transformToSQL(query);
+            sqlQuery = store.transformToSQL(query);
             if(logger.isDebugEnabled())
-            	logger.debug("GENERATED SQL QUERY: \n" + this.query + "\n" + this.sqlQuery);
+            	logger.debug("GENERATED SQL QUERY: \n" + query + "\n" + sqlQuery);
         } catch (Exception e) {
             throw new SolverException("Error during query translation to SQL",
                     e);
         }
+        return sqlQuery;
     }
 
 }

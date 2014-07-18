@@ -10,14 +10,14 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import fr.lirmm.graphik.graal.Graal;
-import fr.lirmm.graphik.graal.core.ConjunctiveQueriesUnion;
+import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultFreeVarGen;
 import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
-import fr.lirmm.graphik.graal.solver.ConjunctiveQueriesUnionSolver;
+import fr.lirmm.graphik.graal.solver.UnionConjunctiveQueriesSolver;
 import fr.lirmm.graphik.graal.solver.Solver;
 import fr.lirmm.graphik.graal.solver.SolverFactoryException;
 import fr.lirmm.graphik.graal.solver.SqlSolver;
@@ -61,11 +61,11 @@ public class SolverFactoryTest {
 
 		ConjunctiveQuery query1 = DlgpParser.parseQuery("?(X) :- p(X).");
 		ConjunctiveQuery query2 = DlgpParser.parseQuery("?(Y) :- q(Y).");
-		ConjunctiveQueriesUnion ucq = new ConjunctiveQueriesUnion(query1,
+		UnionConjunctiveQueries ucq = new UnionConjunctiveQueries(query1,
 				query2);
 
 		Solver solver = Graal.getSolverFactory().getSolver(ucq, atomSet);
-		Assert.assertTrue(solver instanceof ConjunctiveQueriesUnionSolver);
+		Assert.assertTrue(solver instanceof UnionConjunctiveQueriesSolver);
 	}
 	
 	@Test

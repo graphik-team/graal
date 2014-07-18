@@ -27,7 +27,7 @@ public interface SolverChecker extends Comparable<SolverChecker> {
 	 * @param atomset
 	 * @return
 	 */
-	Solver getSolver(Query query, ReadOnlyAtomSet atomset);
+	Solver<? extends Query, ? extends ReadOnlyAtomSet> getSolver();
 	
 	/**
 	 * 

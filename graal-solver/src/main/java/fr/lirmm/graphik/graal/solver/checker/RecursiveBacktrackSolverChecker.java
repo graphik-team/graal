@@ -7,7 +7,6 @@ import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.solver.RecursiveBacktrackSolver;
-import fr.lirmm.graphik.graal.solver.Solver;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -15,11 +14,9 @@ import fr.lirmm.graphik.graal.solver.Solver;
  */
 public class RecursiveBacktrackSolverChecker extends AbstractSolverChecker {
 	
-	
 	@Override
-	public Solver getSolver(Query query,  ReadOnlyAtomSet atomset) {
-		return new RecursiveBacktrackSolver((ConjunctiveQuery) query,
-                atomset);
+	public RecursiveBacktrackSolver getSolver() {
+		return RecursiveBacktrackSolver.getInstance();
 	}
 	
 	@Override

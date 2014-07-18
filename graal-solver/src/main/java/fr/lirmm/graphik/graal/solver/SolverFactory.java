@@ -12,6 +12,6 @@ import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
  */
 public interface SolverFactory {
     
-    public abstract Solver getSolver(Query query, ReadOnlyAtomSet atomSet) throws SolverFactoryException;
+    public abstract Solver getSolver(Query query, ReadOnlyAtomSet atomSet);
 
 }

@@ -27,7 +27,7 @@ import fr.lirmm.graphik.graal.solver.Solver;
 import fr.lirmm.graphik.graal.solver.SolverException;
 import fr.lirmm.graphik.graal.solver.SolverFactory;
 import fr.lirmm.graphik.graal.solver.SolverFactoryException;
-import fr.lirmm.graphik.graal.solver.SqlConjunctiveQueriesUnionSolverChecker;
+import fr.lirmm.graphik.graal.solver.SqlUnionConjunctiveQueriesSolverChecker;
 import fr.lirmm.graphik.graal.solver.SqlSolverChecker;
 import fr.lirmm.graphik.graal.transformation.TransformatorSolverChecker;
 
@@ -44,11 +44,15 @@ public abstract class Graal {
 	// /////////////////////////////////////////////////////////////////////////
 
 	private static boolean isInit = false;
+
 	public static SolverFactory getSolverFactory() {
-		if(!isInit) {
-			DefaultSolverFactory.getInstance().addChecker(new TransformatorSolverChecker());
-			DefaultSolverFactory.getInstance().addChecker(new SqlSolverChecker());
-			DefaultSolverFactory.getInstance().addChecker(new SqlConjunctiveQueriesUnionSolverChecker());
+		if (!isInit) {
+			DefaultSolverFactory.getInstance().addChecker(
+					new TransformatorSolverChecker());
+			DefaultSolverFactory.getInstance().addChecker(
+					new SqlSolverChecker());
+			DefaultSolverFactory.getInstance().addChecker(
+					new SqlUnionConjunctiveQueriesSolverChecker());
 			isInit = true;
 		}
 		return DefaultSolverFactory.getInstance();
@@ -98,9 +102,9 @@ public abstract class Graal {
 		if (logger.isDebugEnabled())
 			logger.debug("Query : " + query);
 
-		Solver solver;
-		solver = Graal.getSolverFactory().getSolver(query, atomSet);
-		return solver.execute();
+		Solver solver = Graal
+				.getSolverFactory().getSolver(query, atomSet);
+		return solver.execute(query, atomSet);
 
 	}
 

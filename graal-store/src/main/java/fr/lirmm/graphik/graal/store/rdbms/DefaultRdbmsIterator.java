@@ -78,9 +78,9 @@ class DefaultRdbmsIterator extends AbstractReader<Atom> {
 				
 				DefaultConjunctiveQuery query = new DefaultConjunctiveQuery(atomSet);
 				
-				Solver solver = new SqlSolver(query, this.store);
+				SqlSolver solver = SqlSolver.getInstance();
 				try {
-					this.atomReader = new SubstitutionReader2AtomReader(atom, solver.execute());
+					this.atomReader = new SubstitutionReader2AtomReader(atom, solver.execute(query, this.store));
 				} catch (SolverException e) {
 					logger.error(e.getMessage(), e);
 					return false;

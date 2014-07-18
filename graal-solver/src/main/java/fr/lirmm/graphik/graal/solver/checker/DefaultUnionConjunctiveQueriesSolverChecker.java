@@ -3,10 +3,10 @@
  */
 package fr.lirmm.graphik.graal.solver.checker;
 
-import fr.lirmm.graphik.graal.core.ConjunctiveQueriesUnion;
+import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
-import fr.lirmm.graphik.graal.solver.DefaultConjunctiveQueriesUnionSolver;
+import fr.lirmm.graphik.graal.solver.DefaultUnionConjunctiveQueriesSolver;
 import fr.lirmm.graphik.graal.solver.Solver;
 
 /**
@@ -17,18 +17,17 @@ public class DefaultUnionConjunctiveQueriesSolverChecker extends AbstractSolverC
 
 	@Override
 	public boolean check(Query query, ReadOnlyAtomSet atomset) {
-		return query instanceof ConjunctiveQueriesUnion;
+		return query instanceof UnionConjunctiveQueries;
 	}
 
 	@Override
-	public Solver getSolver(Query query, ReadOnlyAtomSet atomset) {
-		 return new DefaultConjunctiveQueriesUnionSolver((ConjunctiveQueriesUnion) query, atomset);
+	public Solver<? extends Query, ? extends ReadOnlyAtomSet> getSolver() {
+		 return DefaultUnionConjunctiveQueriesSolver.getInstance();
 	}
 
 	@Override
 	public int getDefaultPriority() {
 		return 0;
 	}
-	
 
 }
