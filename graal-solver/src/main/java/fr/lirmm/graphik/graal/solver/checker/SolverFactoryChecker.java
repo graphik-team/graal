@@ -11,7 +11,7 @@ import fr.lirmm.graphik.graal.solver.Solver;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface SolverFactoryChecker extends Comparable<SolverFactoryChecker> {
+public interface SolverChecker extends Comparable<SolverChecker> {
 	
 	/**
 	 * 

@@ -10,7 +10,7 @@ import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.solver.checker.DefaultUnionConjunctiveQueriesSolverChecker;
 import fr.lirmm.graphik.graal.solver.checker.RecursiveBacktrackSolverChecker;
-import fr.lirmm.graphik.graal.solver.checker.SolverFactoryChecker;
+import fr.lirmm.graphik.graal.solver.checker.SolverChecker;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -18,7 +18,7 @@ import fr.lirmm.graphik.graal.solver.checker.SolverFactoryChecker;
  */
 public class DefaultSolverFactory implements SolverFactory {
 	
-	private SortedSet<SolverFactoryChecker> elements;
+	private SortedSet<SolverChecker> elements;
 	
 	private static DefaultSolverFactory instance = null;
 
@@ -28,7 +28,7 @@ public class DefaultSolverFactory implements SolverFactory {
 	// /////////////////////////////////////////////////////////////////////////
 	
 	private DefaultSolverFactory(){
-		this.elements = new TreeSet<SolverFactoryChecker>();
+		this.elements = new TreeSet<SolverChecker>();
 		this.elements.add(new RecursiveBacktrackSolverChecker());
 		this.elements.add(new DefaultUnionConjunctiveQueriesSolverChecker());
 	}
@@ -49,7 +49,7 @@ public class DefaultSolverFactory implements SolverFactory {
 	 * @param checker
 	 * @return true if this checker is not already added, false otherwise.
 	 */
-	public boolean addChecker(SolverFactoryChecker checker) {
+	public boolean addChecker(SolverChecker checker) {
 		return this.elements.add(checker);
 	}
  	
@@ -57,7 +57,7 @@ public class DefaultSolverFactory implements SolverFactory {
     public Solver getSolver(Query query, ReadOnlyAtomSet atomset)
             throws SolverFactoryException {
     	Solver solver = null;
-    	for(SolverFactoryChecker e : elements) {
+    	for(SolverChecker e : elements) {
     		if(e.check(query, atomset)) {
     			solver = e.getSolver(query, atomset);
     			break;
