@@ -8,14 +8,14 @@ package fr.lirmm.graphik.graal.solver.checker;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public abstract class AbstractSolverChecker implements SolverFactoryChecker {
+public abstract class AbstractSolverChecker implements SolverChecker {
 
 	private int priority = this.getDefaultPriority();
 	
 	public abstract int getDefaultPriority();
 	
 	@Override
-	public int compareTo(SolverFactoryChecker o) {
+	public int compareTo(SolverChecker o) {
 		int val = o.getPriority() - this.getPriority();
 		if(val == 0) {
 			val = this.getClass().hashCode() - o.getClass().hashCode();
