@@ -4,15 +4,14 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.BuiltInPredicate;
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
-import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
-import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
+import fr.lirmm.graphik.graal.core.Substitution;
+import fr.lirmm.graphik.graal.core.Term;
+import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 
 
@@ -45,8 +44,8 @@ public class ComplexSolver<Q extends ConjunctiveQuery, F extends ReadOnlyAtomSet
 
 		public BuiltInSubstitutionReader(SubstitutionReader reader) {
 			this.rawReader = reader;
-			this.current = null;
-			this.next = computeNext();
+			this.next = this.computeNext();
+			this.next();
 		}
 
 		@Override
