@@ -19,7 +19,7 @@ public class DomainRestrictedProperty extends AbstractRuleProperty {
 	
 	private DomainRestrictedProperty(){}
 	
-	public static RuleProperty getInstance() {
+	public static DomainRestrictedProperty getInstance() {
 		if(instance == null) {
 			instance = new DomainRestrictedProperty();
 		}
@@ -48,6 +48,11 @@ public class DomainRestrictedProperty extends AbstractRuleProperty {
 		}
 
 		return true;
+	}
+
+	@Override
+	public String getLabel() {
+		return "dr";
 	}
 
 };

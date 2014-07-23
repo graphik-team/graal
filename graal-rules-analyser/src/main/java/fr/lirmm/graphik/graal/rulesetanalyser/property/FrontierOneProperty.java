@@ -16,7 +16,7 @@ public class FrontierOneProperty extends AbstractRuleProperty {
 	private FrontierOneProperty() {
 	}
 
-	public static RuleProperty getInstance() {
+	public static FrontierOneProperty getInstance() {
 		if (instance == null) {
 			instance = new FrontierOneProperty();
 		}
@@ -26,6 +26,11 @@ public class FrontierOneProperty extends AbstractRuleProperty {
 	@Override
 	public boolean check(Rule rule) {
 		return rule.getFrontier().size() == 1;
+	}
+
+	@Override
+	public String getLabel() {
+		return "fr1";
 	}
 
 }

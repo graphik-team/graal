@@ -13,6 +13,7 @@ import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.rulesetanalyser.util.PredicatePosition;
 
 /**
  * The affected position set is built from a rule set by the following
@@ -37,7 +38,18 @@ public class AffectedPositionSet {
 		this.ruleSet = ruleSet;
 		init();
 	}
-
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// GETTERS
+	// /////////////////////////////////////////////////////////////////////////
+	
+	/**
+	 * @return
+	 */
+	public Iterable<Rule> getRules() {
+		return this.ruleSet;
+	}
+	
 	// /////////////////////////////////////////////////////////////////////////
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////

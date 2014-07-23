@@ -9,6 +9,7 @@ import java.util.Set;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.AffectedPositionSet;
+import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.RuleUtil;
 
 /**
@@ -20,8 +21,6 @@ import fr.lirmm.graphik.graal.rulesetanalyser.util.RuleUtil;
  * 
  */
 public class WeaklyGuardedSetProperty implements RuleProperty {
-
-	private AffectedPositionSet affectedPositionSet;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -63,9 +62,27 @@ public class WeaklyGuardedSetProperty implements RuleProperty {
 	 */
 	@Override
 	public boolean check(Iterable<Rule> rules) {
-		this.affectedPositionSet = new AffectedPositionSet(rules);
-		for (Rule r : rules) {
-			Set<Term> affectedVars = this.affectedPositionSet
+		AffectedPositionSet affectedPositionSet = new AffectedPositionSet(rules);
+		return this.check(affectedPositionSet);
+	}
+	
+	@Override
+	public boolean check(AnalyserRuleSet ruleSet) {
+		return this.check(ruleSet.getAffectedPositionSet());
+	}
+
+	@Override
+	public String getLabel() {
+		return "wg";
+	}
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	private boolean check(AffectedPositionSet affectedPositionSet) {
+		for (Rule r : affectedPositionSet.getRules()) {
+			Set<Term> affectedVars = affectedPositionSet
 					.getAllAffectedVariables(r.getBody());
 			if (!RuleUtil.thereIsOneAtomThatContainsAllVars(r.getBody(),
 					affectedVars)) {
@@ -74,5 +91,4 @@ public class WeaklyGuardedSetProperty implements RuleProperty {
 		}
 		return true;
 	}
-
 }

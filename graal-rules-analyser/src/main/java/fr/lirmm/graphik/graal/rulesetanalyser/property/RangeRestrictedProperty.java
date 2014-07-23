@@ -18,7 +18,7 @@ public class RangeRestrictedProperty extends AbstractRuleProperty {
 	
 	private RangeRestrictedProperty(){}
 	
-	public static RuleProperty getInstance() {
+	public static RangeRestrictedProperty getInstance() {
 		if(instance == null) {
 			instance = new RangeRestrictedProperty();
 		}
@@ -28,6 +28,11 @@ public class RangeRestrictedProperty extends AbstractRuleProperty {
 	@Override
 	public boolean check(Rule rule) {
 		return rule.getExistentials().isEmpty();
+	}
+
+	@Override
+	public String getLabel() {
+		return "rr";
 	}
 
 }

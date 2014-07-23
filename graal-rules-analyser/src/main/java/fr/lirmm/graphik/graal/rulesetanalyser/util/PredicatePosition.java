@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.lirmm.graphik.graal.rulesetanalyser.graph;
+package fr.lirmm.graphik.graal.rulesetanalyser.util;
 
 import fr.lirmm.graphik.graal.core.Predicate;
 

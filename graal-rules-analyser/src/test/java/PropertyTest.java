@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
+import fr.lirmm.graphik.graal.rulesetanalyser.RuleAnalyser;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.AtomicBodyProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.DisconnectedProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.DomainRestrictedProperty;
@@ -324,6 +325,34 @@ public class PropertyTest {
 		assertTrue(wfg.check(RSet1));
 		assertTrue(wfg.check(RSet2));
 		assertFalse(wfg.check(RSet3));
+	}
+	
+	@Test
+	public void ruleAnalyserTest() {
+		RuleAnalyser analyser;
+		analyser = new RuleAnalyser(RSet0);
+		analyser.checkAll();
+		assertFalse(analyser.check(s));
+		assertTrue(analyser.check(wa));
+		assertTrue(analyser.check(ws));
+		assertTrue(analyser.check(wg));
+		assertTrue(analyser.check(wfg));
+		
+		analyser = new RuleAnalyser(RSet1);
+		analyser.checkAll();
+		assertTrue(analyser.check(s));
+		assertFalse(analyser.check(wa));
+		assertTrue(analyser.check(ws));
+		assertTrue(analyser.check(wg));
+		assertTrue(analyser.check(wfg));
+		
+		analyser = new RuleAnalyser(RSet3);
+		analyser.checkAll();
+		assertFalse(analyser.check(s));
+		assertFalse(analyser.check(wa));
+		assertTrue(analyser.check(ws));
+		assertFalse(analyser.check(wg));
+		assertFalse(analyser.check(wfg));
 	}
 
 };

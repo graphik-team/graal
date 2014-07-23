@@ -1,15 +1,17 @@
 package fr.lirmm.graphik.graal.core;
 
-import fr.lirmm.graphik.util.stream.ObjectReader;
+import java.util.Iterator;
 
-public interface RuleSet extends Iterable<Rule> {
+public interface RuleSet extends ImmutableRuleSet {
 
-    public boolean contains(Rule rule);
 	public boolean add(Rule rule);
+
 	public boolean remove(Rule rule);
 
 	@Override
-	public ObjectReader<Rule> iterator();
+	public boolean contains(Rule rule);
+
+	@Override
+	public Iterator<Rule> iterator();
 
 };
-

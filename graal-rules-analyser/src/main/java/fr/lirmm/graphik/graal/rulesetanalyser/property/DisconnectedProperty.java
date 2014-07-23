@@ -16,7 +16,7 @@ public class DisconnectedProperty extends AbstractRuleProperty {
 	
 	private DisconnectedProperty(){}
 	
-	public static RuleProperty getInstance() {
+	public static DisconnectedProperty getInstance() {
 		if(instance == null) {
 			instance = new DisconnectedProperty();
 		}
@@ -26,6 +26,11 @@ public class DisconnectedProperty extends AbstractRuleProperty {
 	@Override
 	public boolean check(Rule rule) {
 		return rule.getFrontier().isEmpty();
+	}
+
+	@Override
+	public String getLabel() {
+		return "disc";
 	}
 
 }

@@ -8,6 +8,7 @@ import java.util.List;
 
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.GraphPositionDependencies;
+import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
 
 /**
  * All predicate positions in the graph of position dependencies have finite
@@ -19,8 +20,6 @@ import fr.lirmm.graphik.graal.rulesetanalyser.graph.GraphPositionDependencies;
  * 
  */
 public class WeaklyAcyclicProperty implements RuleProperty {
-
-	private GraphPositionDependencies graph;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -38,10 +37,6 @@ public class WeaklyAcyclicProperty implements RuleProperty {
 		return instance;
 	}
 
-	public WeaklyAcyclicProperty(Iterable<Rule> rules) {
-		this.graph = new GraphPositionDependencies(rules);
-	}
-
 	// /////////////////////////////////////////////////////////////////////////
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
@@ -57,17 +52,23 @@ public class WeaklyAcyclicProperty implements RuleProperty {
 	public boolean check(Rule rule) {
 		List<Rule> rules = new LinkedList<Rule>();
 		rules.add(rule);
-		this.graph = new GraphPositionDependencies(rules);
-		return this.graph.isWeaklyAcyclic();
+		return this.check(rules);
 	}
 
+	@Override
 	public boolean check(Iterable<Rule> rules) {
-		this.graph = new GraphPositionDependencies(rules);
-		return this.graph.isWeaklyAcyclic();
+		GraphPositionDependencies graph = new GraphPositionDependencies(rules);
+		return graph.isWeaklyAcyclic();
+	}
+	
+	@Override
+	public boolean check(AnalyserRuleSet ruleSet) {
+		return ruleSet.getGraphPositionDependencies().isWeaklyAcyclic();
 	}
 
-	public boolean check() {
-		return this.graph.isWeaklyAcyclic();
+	@Override
+	public String getLabel() {
+		return "wa";
 	}
 
 }

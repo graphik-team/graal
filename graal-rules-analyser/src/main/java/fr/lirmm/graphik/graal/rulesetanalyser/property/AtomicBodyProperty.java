@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
 
 /**
  * The body contains only one atom.
@@ -32,5 +33,10 @@ public class AtomicBodyProperty extends AbstractRuleProperty {
 			it.next();
 		return !it.hasNext();
 	}
-
+	
+	@Override
+	public String getLabel() {
+		return "lin";
+	}
+	
 }

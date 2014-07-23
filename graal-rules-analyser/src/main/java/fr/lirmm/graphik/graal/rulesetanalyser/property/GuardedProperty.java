@@ -20,7 +20,7 @@ public class GuardedProperty extends AbstractRuleProperty {
 	
 	private GuardedProperty(){}
 	
-	public static RuleProperty getInstance() {
+	public static GuardedProperty getInstance() {
 		if(instance == null) {
 			instance = new GuardedProperty();
 		}
@@ -46,6 +46,11 @@ public class GuardedProperty extends AbstractRuleProperty {
 		}
 
 		return isGuarded;
+	}
+
+	@Override
+	public String getLabel() {
+		return "g";
 	}
 
 }

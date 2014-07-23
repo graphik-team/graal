@@ -7,6 +7,7 @@ import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Term;
+import fr.lirmm.graphik.graal.rulesetanalyser.util.PredicatePosition;
 import grph.Grph;
 import grph.in_memory.InMemoryGrph;
 

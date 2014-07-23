@@ -11,6 +11,7 @@ import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.GraphPositionDependencies;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.MarkedVariableSet;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.MarkedVariableSet.MarkedRule;
+import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
 
 /**
  * This class does not belong to any abstract class defined earlier. It is a
@@ -28,8 +29,6 @@ import fr.lirmm.graphik.graal.rulesetanalyser.graph.MarkedVariableSet.MarkedRule
 public class WeaklyStickyProperty implements RuleProperty {
 
 	private static WeaklyStickyProperty instance = null;
-	private static MarkedVariableSet markedRuleSet;
-	private static GraphPositionDependencies gpd;
 
 	private WeaklyStickyProperty() {
 	}
@@ -49,23 +48,35 @@ public class WeaklyStickyProperty implements RuleProperty {
 	public boolean check(Rule rule) {
 		LinkedList<Rule> rules = new LinkedList<Rule>();
 		rules.add(rule);
-		gpd = new GraphPositionDependencies(rules);
-		markedRuleSet = new MarkedVariableSet(rules);
-		return this.check();
+		return this.check(rules);
 
 	}
 
 	public boolean check(Iterable<Rule> rules) {
-		gpd = new GraphPositionDependencies(rules);
-		markedRuleSet = new MarkedVariableSet(rules);
-		return this.check();
+		GraphPositionDependencies gpd = new GraphPositionDependencies(rules);
+		MarkedVariableSet markedVariableSet = new MarkedVariableSet(rules);
+		return this.check(markedVariableSet, gpd);
 	}
 
-	public boolean check() {
+	public boolean check(AnalyserRuleSet ruleSet) {
+		return this.check(ruleSet.getMarkedVariableSet(), ruleSet.getGraphPositionDependencies());
+	}
+	
+
+	@Override
+	public String getLabel() {
+		return "ws";
+	}
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	private boolean check(MarkedVariableSet markedVariableSet, GraphPositionDependencies gpd) {
 		int nbOccurence;
 		int position;
 		boolean thereIsAFiniteRank;
-		for (MarkedRule mrule : markedRuleSet.getMarkedRuleCollection()) {
+		for (MarkedRule mrule : markedVariableSet.getMarkedRuleCollection()) {
 			for (Term mvar : mrule.markedVars) {
 				nbOccurence = 0;
 				thereIsAFiniteRank = false;
@@ -88,5 +99,4 @@ public class WeaklyStickyProperty implements RuleProperty {
 		}
 		return true;
 	}
-
 }

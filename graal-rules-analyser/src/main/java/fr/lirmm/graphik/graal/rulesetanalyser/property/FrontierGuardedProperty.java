@@ -20,7 +20,7 @@ public class FrontierGuardedProperty extends AbstractRuleProperty {
 	
 	private FrontierGuardedProperty(){}
 	
-	public static RuleProperty getInstance() {
+	public static FrontierGuardedProperty getInstance() {
 		if(instance == null) {
 			instance = new FrontierGuardedProperty();
 		}
@@ -46,6 +46,11 @@ public class FrontierGuardedProperty extends AbstractRuleProperty {
 		}
 
 		return isGuarded;
+	}
+
+	@Override
+	public String getLabel() {
+		return "fr";
 	}
 
 }
