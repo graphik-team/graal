@@ -49,20 +49,20 @@ public class WeaklyAcyclicProperty implements RuleProperty {
 	 * .graal.core.Rule)
 	 */
 	@Override
-	public boolean check(Rule rule) {
+	public Boolean check(Rule rule) {
 		List<Rule> rules = new LinkedList<Rule>();
 		rules.add(rule);
 		return this.check(rules);
 	}
 
 	@Override
-	public boolean check(Iterable<Rule> rules) {
+	public Boolean check(Iterable<Rule> rules) {
 		GraphPositionDependencies graph = new GraphPositionDependencies(rules);
 		return graph.isWeaklyAcyclic();
 	}
 	
 	@Override
-	public boolean check(AnalyserRuleSet ruleSet) {
+	public Boolean check(AnalyserRuleSet ruleSet) {
 		return ruleSet.getGraphPositionDependencies().isWeaklyAcyclic();
 	}
 

@@ -13,7 +13,7 @@ import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
 public abstract class AbstractRuleProperty implements RuleProperty {
 	
 	@Override
-	public boolean check(Iterable<Rule> rules) {
+	public Boolean check(Iterable<Rule> rules) {
 		for(Rule rule : rules)
 			if(!this.check(rule))
 				return false;
@@ -22,7 +22,7 @@ public abstract class AbstractRuleProperty implements RuleProperty {
 	}
 	
 	@Override
-	public boolean check(AnalyserRuleSet ruleSet) {
+	public Boolean check(AnalyserRuleSet ruleSet) {
 		return this.check((Iterable<Rule>) ruleSet);
 	}
 

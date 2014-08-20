@@ -24,7 +24,7 @@ public class DisconnectedProperty extends AbstractRuleProperty {
 	}
 	
 	@Override
-	public boolean check(Rule rule) {
+	public Boolean check(Rule rule) {
 		return rule.getFrontier().isEmpty();
 	}
 

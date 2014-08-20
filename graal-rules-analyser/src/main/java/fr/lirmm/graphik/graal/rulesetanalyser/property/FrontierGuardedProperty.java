@@ -28,7 +28,7 @@ public class FrontierGuardedProperty extends AbstractRuleProperty {
 	}
 	
 	@Override
-	public boolean check(Rule rule) {
+	public Boolean check(Rule rule) {
 		Set<Term> frontier = rule.getFrontier();
 		boolean isGuarded = true;
 
@@ -50,7 +50,7 @@ public class FrontierGuardedProperty extends AbstractRuleProperty {
 
 	@Override
 	public String getLabel() {
-		return "fr";
+		return "fg";
 	}
 
 }

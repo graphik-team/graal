@@ -7,9 +7,13 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 import java.util.TreeMap;
 
+import org.apache.commons.graph.scc.StronglyConnectedComponentsGraph;
+
 import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.AtomicBodyProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.BTSProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.DisconnectedProperty;
@@ -66,8 +70,12 @@ public class RuleAnalyser {
 			.getInstance();
 	protected static final WeaklyStickyProperty WEAKLY_STICKY = WeaklyStickyProperty
 			.getInstance();
-	
+
 	protected Collection<RuleProperty> propertiesList;
+
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTOR
+	// /////////////////////////////////////////////////////////////////////////
 
 	public RuleAnalyser(Iterable<Rule> rules) {
 		this.rules = new AnalyserRuleSet(rules);
@@ -85,7 +93,11 @@ public class RuleAnalyser {
 						parentProperty.getLabel());
 			}
 		}
-		
+	}
+
+	public RuleAnalyser(GraphOfRuleDependencies grd) {
+		this(grd.getRules());
+		this.rules.setGraphOfRuleDependencies(grd);
 	}
 
 	private void initPropertiesList() {
@@ -125,7 +137,7 @@ public class RuleAnalyser {
 			if (isChecked == null) {
 				isChecked = property.check(this.rules);
 				this.properties.put(property.getLabel(), isChecked);
-				if (isChecked) {
+				if (isChecked != null && isChecked) {
 					this.check(property.getLabel());
 				} else {
 					for (RuleProperty p : this.getParentsLabels(property
@@ -136,17 +148,23 @@ public class RuleAnalyser {
 			}
 		}
 	}
-	
-	public boolean check(RuleProperty property) {
+
+	/**
+	 * 
+	 * @param property
+	 * @return warning, this method can return null value if the validity of its
+	 *         property is unknown.
+	 */
+	public Boolean check(RuleProperty property) {
 		Boolean isChecked = this.properties.get(property.getLabel());
 		if (isChecked == null) {
 			isChecked = property.check(this.rules);
 			this.properties.put(property.getLabel(), isChecked);
-			if (isChecked) {
+			if (isChecked != null && isChecked) {
 				this.check(property.getLabel());
-			} 
+			}
 		}
-		return isChecked; 
+		return isChecked;
 	}
 
 	/**
@@ -202,35 +220,47 @@ public class RuleAnalyser {
 	public Collection<RuleProperty> getAllProperty() {
 		return this.propertiesList;
 	}
-	
+
+	public StronglyConnectedComponentsGraph<Rule> getStronglyConnectedComponentsGraph() {
+		return this.rules.getStronglyConnectedComponentsGraph();
+	}
+
+	/**
+	 * @param component
+	 */
+	public RuleAnalyser getSubRuleAnalyser(Iterable<Rule> component) {
+		return new RuleAnalyser(this.rules.getSubRuleSetAnalyser(component));
+	}
+
 	// /////////////////////////////////////////////////////////////////////////
 	// OBJECT METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
 	public String toString() {
 		StringBuilder s = new StringBuilder();
-		for(Rule rule : this.rules) {
+		for (Rule rule : this.rules) {
 			s.append(rule);
 			s.append('\n');
 		}
 		s.append('\n');
-		for(RuleProperty property : this.getAllProperty()) {
+		for (RuleProperty property : this.getAllProperty()) {
 			s.append(property.getLabel());
 			s.append(": ");
 			s.append(this.properties.get(property.getLabel()));
+			s.append('\n');
 		}
 		return s.toString();
 	}
-	
+
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
 	private void check(String label) {
+		this.properties.put(label, true);
 		for (RuleProperty property : this.getParentsLabels(label)) {
-			this.properties.put(label, true);
 			this.check(property.getLabel());
 		}
 	}
-	
+
 }

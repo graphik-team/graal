@@ -28,7 +28,7 @@ public class GuardedProperty extends AbstractRuleProperty {
 	}
 	
 	@Override
-	public boolean check(Rule rule) {
+	public Boolean check(Rule rule) {
 		Set<Term> bodyVars = rule.getBody().getTerms(Term.Type.VARIABLE);
 		boolean isGuarded = true;
 

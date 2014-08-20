@@ -26,7 +26,7 @@ public class RangeRestrictedProperty extends AbstractRuleProperty {
 	}
 	
 	@Override
-	public boolean check(Rule rule) {
+	public Boolean check(Rule rule) {
 		return rule.getExistentials().isEmpty();
 	}
 

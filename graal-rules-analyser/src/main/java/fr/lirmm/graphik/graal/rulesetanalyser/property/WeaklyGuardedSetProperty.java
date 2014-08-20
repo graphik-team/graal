@@ -50,7 +50,7 @@ public class WeaklyGuardedSetProperty implements RuleProperty {
 	 * .graal.core.Rule)
 	 */
 	@Override
-	public boolean check(Rule rule) {
+	public Boolean check(Rule rule) {
 		LinkedList<Rule> rules = new LinkedList<Rule>();
 		rules.add(rule);
 		return this.check(rules);
@@ -61,13 +61,13 @@ public class WeaklyGuardedSetProperty implements RuleProperty {
 	 * variables from the body.
 	 */
 	@Override
-	public boolean check(Iterable<Rule> rules) {
+	public Boolean check(Iterable<Rule> rules) {
 		AffectedPositionSet affectedPositionSet = new AffectedPositionSet(rules);
 		return this.check(affectedPositionSet);
 	}
 	
 	@Override
-	public boolean check(AnalyserRuleSet ruleSet) {
+	public Boolean check(AnalyserRuleSet ruleSet) {
 		return this.check(ruleSet.getAffectedPositionSet());
 	}
 

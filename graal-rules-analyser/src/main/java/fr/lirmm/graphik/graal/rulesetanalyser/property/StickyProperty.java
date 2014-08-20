@@ -46,18 +46,18 @@ public class StickyProperty implements RuleProperty {
 	 * .graal.core.Rule)
 	 */
 	@Override
-	public boolean check(Rule rule) {
+	public Boolean check(Rule rule) {
 		LinkedList<Rule> rules = new LinkedList<Rule>();
 		rules.add(rule);
 		return this.check(rules);
 	}
 
-	public boolean check(Iterable<Rule> rules) {
+	public Boolean check(Iterable<Rule> rules) {
 		MarkedVariableSet markedVariableSet = new MarkedVariableSet(rules);
 		return this.check(markedVariableSet);
 	}
 	
-	public boolean check(AnalyserRuleSet ruleSet) {
+	public Boolean check(AnalyserRuleSet ruleSet) {
 		return this.check(ruleSet.getMarkedVariableSet());
 	}
 

@@ -17,9 +17,9 @@ public interface RuleProperty {
 	 * @param ruleSet
 	 * @return
 	 */
-	boolean check(AnalyserRuleSet ruleSet);
+	Boolean check(AnalyserRuleSet ruleSet);
 
-	boolean check(Rule rule);
+	Boolean check(Rule rule);
 	
-	boolean check(Iterable<Rule> ruleSet);
+	Boolean check(Iterable<Rule> ruleSet);
 }

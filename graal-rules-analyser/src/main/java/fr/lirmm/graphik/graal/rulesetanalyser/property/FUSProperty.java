@@ -4,12 +4,13 @@
 package fr.lirmm.graphik.graal.rulesetanalyser.property;
 
 import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class FUSProperty extends AbstractRuleProperty {
+public class FUSProperty implements RuleProperty {
 
 	private static FUSProperty instance;
 
@@ -29,8 +30,18 @@ public class FUSProperty extends AbstractRuleProperty {
 	}
 
 	@Override
-	public boolean check(Rule rule) {
-		return false;
+	public Boolean check(Rule rule) {
+		return null;
+	}
+
+	@Override
+	public Boolean check(AnalyserRuleSet ruleSet) {
+		return null;
+	}
+
+	@Override
+	public Boolean check(Iterable<Rule> ruleSet) {
+		return null;
 	}
 
 }

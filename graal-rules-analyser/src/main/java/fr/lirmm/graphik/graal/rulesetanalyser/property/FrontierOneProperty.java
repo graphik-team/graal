@@ -24,7 +24,7 @@ public class FrontierOneProperty extends AbstractRuleProperty {
 	}
 
 	@Override
-	public boolean check(Rule rule) {
+	public Boolean check(Rule rule) {
 		return rule.getFrontier().size() == 1;
 	}
 

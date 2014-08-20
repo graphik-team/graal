@@ -27,7 +27,7 @@ public class AtomicBodyProperty extends AbstractRuleProperty {
 	}
 	
 	@Override
-	public boolean check(Rule rule) {
+	public Boolean check(Rule rule) {
 		Iterator<Atom> it = rule.getBody().iterator();
 		if(it.hasNext())
 			it.next();
