@@ -1,4 +1,4 @@
-package org.apache.commons.graph.scc;
+package fr.lirmm.graphik.util.graph.scc;
 
 /*                                                                              |                                                  
  * Licensed to the Apache Software Foundation (ASF) under one                   |                                                  
@@ -24,7 +24,7 @@ import java.util.Stack;
 import java.util.TreeMap;
 
 import org.apache.commons.graph.DirectedGraph;
-import org.apache.commons.lang.mutable.MutableInt;
+import org.apache.commons.lang3.mutable.MutableInt;
 
 /**
  * Implements Tarjan's algorithm is a variation (slightly faster) on

@@ -32,11 +32,11 @@ public class DefaultRule implements Rule {
 	public DefaultRule() {
 		this("", new LinkedListAtomSet(), new LinkedListAtomSet());
 	}
-	
+
 	public DefaultRule(Iterable<Atom> body, Iterable<Atom> head) {
 		this("", body, head);
 	}
-	
+
 	public DefaultRule(String label, Iterable<Atom> body, Iterable<Atom> head) {
 		this.label = label;
 		AtomSet atomSet = new LinkedListAtomSet();
@@ -59,13 +59,11 @@ public class DefaultRule implements Rule {
 		}
 		this.head = atomSet;
 	}
-	
 
 	// /////////////////////////////////////////////////////////////////////////
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -76,7 +74,9 @@ public class DefaultRule implements Rule {
 		return this.body;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see fr.lirmm.graphik.kb.core.Rule#getLabel()
 	 */
 	@Override
@@ -117,15 +117,32 @@ public class DefaultRule implements Rule {
 		return this.existentials;
 	}
 
+	@Override
+	public int compareTo(Rule other) {
+		return this.label.compareTo(other.getLabel());
+	}
+
 	// /////////////////////////////////////////////////////////////////////////
 	// OBJECT OVERRIDE METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
+	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder(this.body.toString());
 		builder.append(" -> ");
 		builder.append(this.head);
 		return builder.toString();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		boolean res;
+		res = o != null && o instanceof Rule;
+		if (res) {
+			Rule r = (Rule) o;
+			res = this.compareTo(r) == 0;
+		}
+		return res;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -149,4 +166,5 @@ public class DefaultRule implements Rule {
 				this.existentials.add(termHead);
 		}
 	}
+
 }

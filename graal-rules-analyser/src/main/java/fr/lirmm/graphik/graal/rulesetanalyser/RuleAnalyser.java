@@ -10,12 +10,14 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.apache.commons.graph.scc.StronglyConnectedComponentsGraph;
+import org.apache.commons.lang3.StringUtils;
+
 
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.AtomicBodyProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.BTSProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.Decidable;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.DisconnectedProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.DomainRestrictedProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.FESProperty;
@@ -32,17 +34,29 @@ import fr.lirmm.graphik.graal.rulesetanalyser.property.WeaklyFrontierGuardedSetP
 import fr.lirmm.graphik.graal.rulesetanalyser.property.WeaklyGuardedSetProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.WeaklyStickyProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
+import fr.lirmm.graphik.util.graph.scc.StronglyConnectedComponentsGraph;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */
 public class RuleAnalyser {
+	
+	private class ComponentCalculabilityValue {
+		static final int FES = 1;
+		static final int FUS = 2;
+		static final int BTS = 4;
+		static final int UNKNOWN = 0;
+	}
 
 	private RuleHierarchyGraph hierarchy;
 	private Map<String, Boolean> properties;
 	private AnalyserRuleSet rules;
-
+	
+	private StronglyConnectedComponentsGraph<Rule> scc;
+	private RuleAnalyser[] ruleAnalyserArray;
+	private int[] componentCalculability;
+	
 	protected static final AtomicBodyProperty ATOMIC_BODY = AtomicBodyProperty
 			.getInstance();
 	protected static final BTSProperty BTS = BTSProperty.getInstance();
@@ -124,6 +138,44 @@ public class RuleAnalyser {
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
+	/**
+	 * 
+	 */
+	public void isDecidable() {
+		if(scc == null) {
+			this.scc = this.getStronglyConnectedComponentsGraph();
+			
+			int nbrScc = scc.getNbrComponents();
+			ruleAnalyserArray = new RuleAnalyser[nbrScc];
+			componentCalculability = new int[nbrScc];
+		
+			for(int c : scc.getVertices()) {
+				RuleAnalyser subRA = this.getSubRuleAnalyser(scc.getComponent(c));
+				ruleAnalyserArray[c] = subRA;
+				subRA.checkAll();
+			}		
+			
+			// combine
+			int[] layers = scc.computeLayers();
+			computeFUSComponent(layers);
+			computeFESComponent(layers);
+	
+			// display combine
+			for(int i = 0; i < componentCalculability.length; ++i) {
+				System.out.println(i + " - " + componentCalculability[i] + " (" + layers[i] + ")");
+			}
+		}
+	}
+	
+	public int getTmpInfoScc(int scc) {
+		return componentCalculability[scc];
+	}
+	
+	/**
+	 * Compute and memorize all properties satisfaction. If you need to check
+	 * major parts of properties, it is recommended to call this method first 
+	 * in order to optimize call with the graph of property dependencies.
+	 */
 	public void checkAll() {
 		Queue<RuleProperty> queue = new LinkedList<RuleProperty>();
 		for (RuleProperty property : this.hierarchy.getSources()) {
@@ -150,7 +202,7 @@ public class RuleAnalyser {
 	}
 
 	/**
-	 * 
+	 * Check one property.
 	 * @param property
 	 * @return warning, this method can return null value if the validity of its
 	 *         property is unknown.
@@ -260,6 +312,87 @@ public class RuleAnalyser {
 		this.properties.put(label, true);
 		for (RuleProperty property : this.getParentsLabels(label)) {
 			this.check(property.getLabel());
+		}
+	}
+	
+	/**
+	 * @param scc
+	 * @param layers
+	 * @param componentCalculability
+	 * @return
+	 */
+	private void computeFESComponent(int[] layers) {
+		boolean[] mark = new boolean[scc.getNbrComponents()];
+		
+		Queue<Integer> queue = new LinkedList<Integer>();
+		
+		// init
+		for(int c : scc.getSources()) {
+			if(componentCalculability[c] == 0 && !mark[c]) {
+				mark[c] = true;
+				queue.add(c);
+			}
+		}
+		
+		// process
+		while(!queue.isEmpty()) {
+			int c = queue.poll();
+			boolean predFES = true;
+			for(int pred : scc.getInbound(c)) {
+				if(componentCalculability[pred] != ComponentCalculabilityValue.FES) {
+					predFES = false;
+				}
+			}
+			Boolean bool = ruleAnalyserArray[c].check(FESProperty.getInstance());
+			if(bool != null && bool && predFES) {
+				componentCalculability[c] = ComponentCalculabilityValue.FES;
+				for(int succ : scc.getOutbound(c)) {
+					if(componentCalculability[succ] == 0 && !mark[succ] && layers[c] + 1 == layers[succ]) {
+						mark[succ] = true;
+						queue.add(succ);
+					}
+				}
+			} 			
+		}
+	}
+	
+	/**
+	 * @param scc
+	 * @param layers
+	 * @param componentCalculability
+	 * @return
+	 */
+	private void computeFUSComponent(int[] layers) {
+		boolean[] mark = new boolean[scc.getNbrComponents()];
+		Queue<Integer> queue = new LinkedList<Integer>();
+		
+		// init
+		for(int c : scc.getSinks()) {
+			if(componentCalculability[c] == 0 && !mark[c]) {
+				mark[c] = true;
+				queue.add(c);
+			}
+		}
+		
+		// process
+		while(!queue.isEmpty()) {
+			int c = queue.poll();
+			boolean succFUS = true;
+			for(int succ : scc.getOutbound(c)) {
+				if(componentCalculability[succ] != ComponentCalculabilityValue.FUS) {
+					succFUS = false;
+				}
+			}
+			Boolean bool = ruleAnalyserArray[c].check(FUSProperty.getInstance());
+			if(bool != null && bool && succFUS) {
+				componentCalculability[c] = ComponentCalculabilityValue.FUS;
+				for(int pred : scc.getInbound(c)) {
+					if(componentCalculability[pred] == 0 && !mark[pred] && layers[c] - 1 == layers[pred]) {
+						mark[pred] = true;
+						queue.add(pred);
+					}
+				}
+			} 			
 		}
 	}
 

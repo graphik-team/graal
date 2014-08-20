@@ -89,14 +89,15 @@ public class ChaseWithGRD extends AbstractChase {
 	
 					if(stopCondition.canIAdd(deductedAtomSet, fixedTerm, this.atomSet)) {
 						this.atomSet.add(deductedAtomSet);
-						for(Map.Entry<Substitution, Rule> entry : this.grd.getOutEdges(rule).entrySet()) {
-							Substitution u = entry.getKey().compose(substitution);
-							if(logger.isDebugEnabled()) {
-								logger.debug("-- -- Dependency: " + entry.getValue() + " with " + entry.getKey());
-								logger.debug("-- -- Unificator: " + u);
-							}
-							if(u != null) {
-								this.queue.add(new ImmutablePair<Rule, Substitution>(entry.getValue(), u));
+						for(Rule triggeredRule : this.grd.getOutEdges(rule)) {
+							for(Substitution u : this.grd.getUnifier(rule, triggeredRule)) {
+								if(logger.isDebugEnabled()) {
+									logger.debug("-- -- Dependency: " + triggeredRule + " with " + u);
+									logger.debug("-- -- Unificator: " + u);
+								}
+								if(u != null) {
+									this.queue.add(new ImmutablePair<Rule, Substitution>(triggeredRule, u));
+								}
 							}
 						}
 					}

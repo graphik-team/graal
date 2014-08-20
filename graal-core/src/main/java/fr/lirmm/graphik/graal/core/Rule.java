@@ -4,7 +4,7 @@ import java.util.Set;
 
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 
-public interface Rule {
+public interface Rule extends Comparable<Rule> {
 	
 	/**
 	 * @return a label (a name) for this rule.

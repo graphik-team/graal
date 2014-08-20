@@ -1,5 +1,4 @@
 package fr.lirmm.graphik.alaska.trash;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -12,12 +11,11 @@ import fr.lirmm.graphik.graal.chase.Chase;
 import fr.lirmm.graphik.graal.chase.ChaseException;
 import fr.lirmm.graphik.graal.chase.ChaseWithGRD;
 import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
-import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.Substitution;
+import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.filter.AtomFilter;
@@ -25,6 +23,7 @@ import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
+import fr.lirmm.graphik.graal.io.grd.GRDParser;
 import fr.lirmm.graphik.graal.io.oxford.OxfordQueryParser;
 import fr.lirmm.graphik.graal.parser.ParseException;
 import fr.lirmm.graphik.graal.solver.SolverException;
@@ -76,9 +75,8 @@ public class MelanieQueryTest {
 	}
 		
 
-	public static void forwardChaining(AtomSet atomSet) throws FileNotFoundException, IOException, ChaseException {
-		GraphOfRuleDependencies grd = new GraphOfRuleDependencies();
-		grd.parseGrd(new BufferedReader(new FileReader(GRD_FILE)));
+	public static void forwardChaining(AtomSet atomSet) throws FileNotFoundException, IOException, ChaseException, ParseException {
+		GraphOfRuleDependencies grd = GRDParser.getInstance().parse(new File(GRD_FILE));
 
 		
 		Chase chase = new ChaseWithGRD(grd, atomSet);

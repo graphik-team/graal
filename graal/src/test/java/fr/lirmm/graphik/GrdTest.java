@@ -12,6 +12,7 @@ import org.junit.Test;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
+import fr.lirmm.graphik.graal.io.grd.GRDParser;
 
 /**
  * @author clement
@@ -21,14 +22,7 @@ public class GrdTest {
 	
 	 @Test
 	 public void grdTest() throws Exception {
-		GraphOfRuleDependencies g = new GraphOfRuleDependencies();
-		DlgpParser parser = new DlgpParser(new FileReader("./src/test/resources/univ-bench.dlp"));
-		for(Object o : parser) {
-			if(o instanceof Rule) {
-				g.addRule((Rule)o);
-			}
-		}
-		g.parseGrd(new BufferedReader(new FileReader("./src/test/resources/univ-bench.grd")));
+		GraphOfRuleDependencies g = GRDParser.getInstance().parse(new File("./src/test/resources/univ-bench.grd"));
 		return;
 	 }
 }

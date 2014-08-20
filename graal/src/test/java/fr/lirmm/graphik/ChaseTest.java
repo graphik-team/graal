@@ -28,6 +28,8 @@ import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.io.basic.BasicParser;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
+import fr.lirmm.graphik.graal.io.grd.GRDParser;
+import fr.lirmm.graphik.graal.parser.ParseException;
 import fr.lirmm.graphik.graal.solver.SolverException;
 import fr.lirmm.graphik.graal.solver.SolverFactoryException;
 
@@ -78,21 +80,18 @@ public class ChaseTest {
 	}
 	
 	@Theory
-	public void restrictedChaseTestWithGrd(AtomSet atomSet) throws IOException, ChaseException {
-		GraphOfRuleDependencies grd = new GraphOfRuleDependencies();
+	public void restrictedChaseTestWithGrd(AtomSet atomSet) throws IOException, ChaseException, ParseException {
+		GraphOfRuleDependencies grd = GRDParser.getInstance().parse(new File("./src/test/resources/test1.grd"));
 		DlgpParser parser = new DlgpParser(new File("./src/test/resources/test1.dlp"));
 
 		for(Object o : parser) {
-			System.out.println(o);
-			if(o instanceof Rule) {
-				grd.addRule((Rule)o);
-			} else if (o instanceof Atom) {
+			if (o instanceof Atom) {
 				atomSet.add((Atom) o);
 			}
 		}
 		
 		System.out.println("#########################");
-		grd.parseGrd(new BufferedReader(new FileReader("./src/test/resources/test1.grd")));
+		System.out.println(grd.toString());
 		Chase chase = new ChaseWithGRD(grd, atomSet);
 		chase.execute();
 		

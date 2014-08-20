@@ -3,12 +3,14 @@
  */
 package fr.lirmm.graphik.graal.parser;
 
+import java.io.IOException;
+
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class ParseException extends Exception {
+public class ParseException extends IOException {
 
 	private static final long serialVersionUID = -4455111019098315998L;
 	

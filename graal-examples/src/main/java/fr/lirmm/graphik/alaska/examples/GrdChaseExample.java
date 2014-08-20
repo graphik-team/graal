@@ -1,6 +1,5 @@
 package fr.lirmm.graphik.alaska.examples;
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.File;
 import java.io.IOException;
 
 import fr.lirmm.graphik.graal.chase.Chase;
@@ -11,16 +10,17 @@ import fr.lirmm.graphik.graal.core.atomset.graph.MemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
+import fr.lirmm.graphik.graal.io.grd.GRDParser;
+import fr.lirmm.graphik.graal.parser.ParseException;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
 public class GrdChaseExample {
-	public static void main(String[] args) throws IOException, ChaseException   {
+	public static void main(String[] args) throws IOException, ChaseException, ParseException   {
 		
-		GraphOfRuleDependencies grd = new GraphOfRuleDependencies();
-		grd.parseGrd(new BufferedReader(new FileReader("./src/main/resources/test-grd.grd")));
+		GraphOfRuleDependencies grd = GRDParser.getInstance().parse(new File("./src/main/resources/test-grd.grd"));
 		
 		AtomSet facts = new MemoryGraphAtomSet();
 		facts.add(DlgpParser.parseAtom("r(a)."));
