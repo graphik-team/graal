@@ -2,32 +2,23 @@ package fr.lirmm.graphik.alaska.trash;
 import java.util.LinkedList;
 
 import fr.lirmm.graphik.graal.Graal;
-import fr.lirmm.graphik.graal.chase.Chase;
+import fr.lirmm.graphik.graal.StaticChase;
 import fr.lirmm.graphik.graal.chase.ChaseException;
-import fr.lirmm.graphik.graal.chase.DefaultChase;
 import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.LinkedListRuleSet;
-import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.RuleSet;
 import fr.lirmm.graphik.graal.core.Substitution;
-import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.atomset.graph.MemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 import fr.lirmm.graphik.graal.io.basic.BasicParser;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
-import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
 import fr.lirmm.graphik.graal.solver.SolverException;
 import fr.lirmm.graphik.graal.solver.SolverFactoryException;
-import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
-import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;
-import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
 
 
 
@@ -46,7 +37,7 @@ public class TestApplyRules {
 		RuleSet ruleSet = new LinkedListRuleSet();
 		ruleSet.add(DlgpParser.parseRule("q(X,Y) :- p(X,Y)."));
 
-		Graal.executeChase(atomSet, ruleSet);
+		StaticChase.executeChase(atomSet, ruleSet);
 	
 
 		System.out.println("#####################");
@@ -93,7 +84,7 @@ public class TestApplyRules {
 		LinkedList<Rule> ruleSet = new LinkedList<Rule>();
 		ruleSet.add(DlgpParser.parseRule("q(X,Y) :- p(X,Y)."));
 
-		Graal.executeChase(atomSet, ruleSet);
+		StaticChase.executeChase(atomSet, ruleSet);
 
 		
 		System.out.println("#####################");

@@ -10,7 +10,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.core.factory.Factory;
+import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
+import fr.lirmm.graphik.graal.core.factory.RuleFactory;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -66,7 +67,7 @@ public abstract class AbstractSubstitution implements Substitution {
 	
 	@Override
 	public AtomSet getSubstitut(AtomSet src) {
-		AtomSet dest = Factory.getInstance().createAtomSet();
+		AtomSet dest = AtomSetFactory.getInstance().createAtomSet();
 		this.substitut(src, dest);
 		return dest;
 	}
@@ -80,7 +81,7 @@ public abstract class AbstractSubstitution implements Substitution {
 	
 	@Override
 	public Rule getSubstitut(Rule rule) {
-		Rule substitut = Factory.getInstance().createRule();
+		Rule substitut = RuleFactory.getInstance().createRule();
 		this.substitut(rule.getBody(), substitut.getBody());
 		this.substitut(rule.getHead(), substitut.getHead());
 		return substitut;
@@ -116,7 +117,7 @@ public abstract class AbstractSubstitution implements Substitution {
 	 */
 	@Override
 	public Substitution compose(Substitution s) {
-		Substitution newSub = Factory.getInstance().createSubstitution();
+		Substitution newSub = this.getNewInstance();
 		for(Term term : this.getTerms()) {
 			if(!newSub.compose(term, this.getSubstitut(term))){
 				return null;
@@ -147,6 +148,8 @@ public abstract class AbstractSubstitution implements Substitution {
     	builder.append('}');
     	return builder.toString();
     }
+    
+    protected abstract Substitution getNewInstance();
 
 };
 

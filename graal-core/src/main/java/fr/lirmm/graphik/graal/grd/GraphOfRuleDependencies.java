@@ -8,8 +8,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import org.apache.commons.graph.model.DirectedMutableGraph;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
@@ -28,9 +26,6 @@ import fr.lirmm.graphik.util.graph.scc.TarjanAlgorithm2;
  */
 public class GraphOfRuleDependencies {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(GraphOfRuleDependencies.class);
-
 	private DirectedMutableGraph<Rule, Integer> graph;
 	private ArrayList<Collection<Substitution>> edgesValue;
 
@@ -41,6 +36,13 @@ public class GraphOfRuleDependencies {
 	public GraphOfRuleDependencies() {
 		this.graph = new DirectedMutableGraph<Rule, Integer>();
 		this.edgesValue = new ArrayList<Collection<Substitution>>();
+	}
+	
+	public GraphOfRuleDependencies(Iterable<Rule> it) {
+		this();
+		for(Rule r : it)
+			this.addRule(r);
+		this.computeGRD();
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -141,5 +143,15 @@ public class GraphOfRuleDependencies {
 		}
 		return s.toString();
 	}
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
+	private void computeGRD() {
+		for(Rule r1 : this.graph.getVertices()) {
+			for(Rule r2 : this.graph.getVertices()) {
+			}
+		}
+	}
 }

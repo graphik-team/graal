@@ -1,13 +1,13 @@
 package fr.lirmm.graphik.graal.core;
 
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
-import fr.lirmm.graphik.graal.core.factory.Factory;
+import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
 
 
 /**
@@ -24,7 +24,7 @@ public class DefaultConjunctiveQuery implements ConjunctiveQuery {
     // /////////////////////////////////////////////////////////////////////////
 
 	public DefaultConjunctiveQuery() {
-		this.atomSet = Factory.getInstance().createAtomSet();
+		this.atomSet = AtomSetFactory.getInstance().createAtomSet();
 		this.responseVariables = new LinkedList<Term>();
 	}
 	

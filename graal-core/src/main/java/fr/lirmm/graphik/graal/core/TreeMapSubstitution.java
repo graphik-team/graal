@@ -29,6 +29,11 @@ public class TreeMapSubstitution extends AbstractSubstitution {
 		return this.map;
 	}
 
+	@Override
+	protected Substitution getNewInstance() {
+		return new TreeMapSubstitution();
+	}
+
 	
 	
 };

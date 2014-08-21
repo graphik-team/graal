@@ -15,7 +15,7 @@ import fr.lirmm.graphik.util.stream.AbstractReader;
 public class TransformatorReader extends AbstractReader<Atom> {
 
     private boolean hasNextCallDone;
-    private AAtomTransformator transformator;
+    private AtomTransformator transformator;
     private Iterator<Atom> atomIterator;
     private Iterator<Atom> tmpIterator;
 
@@ -24,7 +24,7 @@ public class TransformatorReader extends AbstractReader<Atom> {
     // /////////////////////////////////////////////////////////////////////////
 
     public TransformatorReader(Iterable<Atom> atoms,
-            AAtomTransformator transformator) {
+            AtomTransformator transformator) {
         this.atomIterator = atoms.iterator();
         this.transformator = transformator;
         this.tmpIterator = null;

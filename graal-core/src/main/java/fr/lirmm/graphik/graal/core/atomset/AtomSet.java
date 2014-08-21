@@ -1,7 +1,6 @@
 package fr.lirmm.graphik.graal.core.atomset;
 
 import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.util.stream.ObjectReader;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>

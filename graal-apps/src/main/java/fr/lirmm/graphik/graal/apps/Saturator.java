@@ -4,11 +4,11 @@
 package fr.lirmm.graphik.graal.apps;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.LinkedList;
 
 import fr.lirmm.graphik.graal.Graal;
+import fr.lirmm.graphik.graal.StaticChase;
 import fr.lirmm.graphik.graal.chase.ChaseException;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
@@ -50,7 +50,7 @@ public class Saturator {
         		querySet.add((ConjunctiveQuery)o);
         }
         
-        Graal.executeChase(atomSet, ruleSet);
+        StaticChase.executeChase(atomSet, ruleSet);
         writer.write("% facts\n");
         writer.write(atomSet);
         

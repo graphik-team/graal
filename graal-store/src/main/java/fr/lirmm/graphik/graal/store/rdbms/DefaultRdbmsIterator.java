@@ -16,11 +16,10 @@ import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.solver.Solver;
 import fr.lirmm.graphik.graal.solver.SolverException;
 import fr.lirmm.graphik.graal.solver.SqlSolver;
-import fr.lirmm.graphik.graal.store.StoreException;
 import fr.lirmm.graphik.util.stream.AbstractReader;
 import fr.lirmm.graphik.util.stream.ObjectReader;
 
@@ -33,7 +32,7 @@ class DefaultRdbmsIterator extends AbstractReader<Atom> {
 	private static final Logger logger = LoggerFactory
 			.getLogger(DefaultRdbmsIterator.class);
 	
-	private DefaultRdbmsStore store;
+	private RdbmsStore store;
 	private boolean hasNextCallDone = false;
 	private ObjectReader<Predicate> predicateStream;
 	private ObjectReader<Atom> atomReader;
@@ -42,12 +41,12 @@ class DefaultRdbmsIterator extends AbstractReader<Atom> {
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 
-	DefaultRdbmsIterator(DefaultRdbmsStore store) throws StoreException {
+	DefaultRdbmsIterator(RdbmsStore store) throws AtomSetException {
 		this.store = store;
 		this.init();
 	}
 
-	private void init() throws StoreException {
+	private void init() throws AtomSetException {
 		this.predicateStream = store.getAllPredicate();
 	}
 

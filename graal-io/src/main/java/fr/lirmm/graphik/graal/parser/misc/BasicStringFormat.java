@@ -11,7 +11,7 @@ import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.core.factory.Factory;
+import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
 import fr.lirmm.graphik.util.stream.ObjectReader;
 
 /**
@@ -50,7 +50,7 @@ public class BasicStringFormat implements StringFormat {
 	 * TODO return Iterator<Atom>
 	 */
 	public AtomSet parse(String s) {
-	    AtomSet atomSet = Factory.getInstance().createAtomSet();
+	    AtomSet atomSet = AtomSetFactory.getInstance().createAtomSet();
 	    for(Atom atom : new StringAtomReader(s, this))
 	        atomSet.add(atom);
 	    

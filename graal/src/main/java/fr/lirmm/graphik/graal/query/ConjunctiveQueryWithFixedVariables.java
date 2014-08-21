@@ -15,7 +15,9 @@ import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
-import fr.lirmm.graphik.graal.core.factory.Factory;
+import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
+import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
+
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -87,8 +89,8 @@ public class ConjunctiveQueryWithFixedVariables implements ConjunctiveQuery {
 	private static AtomSet computeFixedQuery(/*ReadOnly*/AtomSet atomSet,
 			Iterable<Term> fixedTerms) {
 		// create a Substitution for fixed query
-		AtomSet fixedQuery = Factory.getInstance().createAtomSet();
-		Substitution fixSub = Factory.getInstance().createSubstitution();
+		AtomSet fixedQuery = AtomSetFactory.getInstance().createAtomSet();
+		Substitution fixSub = SubstitutionFactory.getInstance().createSubstitution();
 		for (Term t : fixedTerms) {
 			if (Type.VARIABLE.equals(t.getType()))
 				fixSub.put(t, t.transtypage(Type.CONSTANT));

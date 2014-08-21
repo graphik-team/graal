@@ -245,7 +245,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	public ObjectReader<Atom> iterator() {
 		try {
 			return new DefaultRdbmsIterator(this);
-		} catch (StoreException e) {
+		} catch (AtomSetException e) {
 			logger.error(e.getMessage(), e);
 			return null;
 		}

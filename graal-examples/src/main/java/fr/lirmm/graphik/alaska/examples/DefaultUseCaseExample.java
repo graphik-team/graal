@@ -6,6 +6,7 @@ package fr.lirmm.graphik.alaska.examples;
 import java.io.IOException;
 
 import fr.lirmm.graphik.graal.Graal;
+import fr.lirmm.graphik.graal.StaticChase;
 import fr.lirmm.graphik.graal.chase.ChaseException;
 import fr.lirmm.graphik.graal.core.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.Query;
@@ -47,7 +48,7 @@ public class DefaultUseCaseExample {
 		
 		// /////////////////////////////////////////////////////////////////////
 		// run saturation
-		Graal.executeChase(atomSet, ruleSet);
+		StaticChase.executeChase(atomSet, ruleSet);
 		// equivalent code:
 		// Chase chase = new DefaultChase(ruleSet, atomSet);
 		// chase.execute();

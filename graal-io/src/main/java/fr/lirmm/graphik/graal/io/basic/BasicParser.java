@@ -15,7 +15,7 @@ import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.core.factory.Factory;
+import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
 import fr.lirmm.graphik.graal.parser.ParseException;
 import fr.lirmm.graphik.util.stream.AbstractReader;
 
@@ -122,7 +122,7 @@ public class BasicParser extends AbstractReader<Atom> {
 	 * TODO return Iterator<Atom>
 	 */
 	public static AtomSet parse(String s) {
-	    AtomSet atomSet = Factory.getInstance().createAtomSet();
+	    AtomSet atomSet = AtomSetFactory.getInstance().createAtomSet();
 	    for(Atom atom : new BasicParser(s))
 	        atomSet.add(atom);
 	    

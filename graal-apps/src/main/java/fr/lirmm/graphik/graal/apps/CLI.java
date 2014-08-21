@@ -1,35 +1,33 @@
 package fr.lirmm.graphik.graal.apps;
 
 import java.io.File;
-import java.io.Reader;
 import java.io.FileReader;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.StringReader;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.LinkedList;
 
 import fr.lirmm.graphik.graal.Graal;
+import fr.lirmm.graphik.graal.StaticChase;
 import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.DefaultAtom;
-import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
-import fr.lirmm.graphik.graal.core.Query;
-import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.core.DefaultAtom;
+import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
+import fr.lirmm.graphik.graal.core.LinkedListRuleSet;
+import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.RuleSet;
-import fr.lirmm.graphik.graal.core.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.Substitution;
+import fr.lirmm.graphik.graal.core.Term;
+import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
-import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
 import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
-import fr.lirmm.graphik.util.stream.ObjectReader;
 
 public class CLI {
 
@@ -91,7 +89,7 @@ public class CLI {
 		if (k != 0) {
 			if (k < 0) {
 				if (_verbose) System.out.println("Saturating until fix point...");
-				try { Graal.executeChase(_atomset,_rules); }
+				try { StaticChase.executeChase(_atomset,_rules); }
 				catch (Exception e) {
 					error |= ERROR_CHASE;
 					System.err.println("An error has occured while saturating: "+e);
@@ -99,7 +97,7 @@ public class CLI {
 			}
 			else {
 				if (_verbose) System.out.println("Saturating "+k+" steps...");
-				try { for (i = 0 ; i < k ; ++i) Graal.executeOneStepChase(_atomset,_rules); }
+				try { for (i = 0 ; i < k ; ++i) StaticChase.executeOneStepChase(_atomset,_rules); }
 				catch (Exception e) {
 					error |= ERROR_CHASE;
 					System.err.println("An error has occured during the " + i + " step of saturation: "+e);

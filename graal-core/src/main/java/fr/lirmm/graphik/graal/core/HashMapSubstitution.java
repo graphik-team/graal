@@ -28,4 +28,9 @@ public class HashMapSubstitution extends AbstractSubstitution {
 	protected Map<Term, Term> getMap() {
 		return this.map;
 	}
+
+	@Override
+	protected Substitution getNewInstance() {
+		return new HashMapSubstitution();
+	}
 };

@@ -6,10 +6,6 @@ package fr.lirmm.graphik.graal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.chase.Chase;
-import fr.lirmm.graphik.graal.chase.ChaseException;
-import fr.lirmm.graphik.graal.chase.ChaseWithGRD;
-import fr.lirmm.graphik.graal.chase.DefaultChase;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultRule;
@@ -19,16 +15,14 @@ import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
-import fr.lirmm.graphik.graal.core.factory.Factory;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
-import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.solver.DefaultSolverFactory;
 import fr.lirmm.graphik.graal.solver.Solver;
 import fr.lirmm.graphik.graal.solver.SolverException;
 import fr.lirmm.graphik.graal.solver.SolverFactory;
 import fr.lirmm.graphik.graal.solver.SolverFactoryException;
-import fr.lirmm.graphik.graal.solver.SqlUnionConjunctiveQueriesSolverChecker;
 import fr.lirmm.graphik.graal.solver.SqlSolverChecker;
+import fr.lirmm.graphik.graal.solver.SqlUnionConjunctiveQueriesSolverChecker;
 import fr.lirmm.graphik.graal.transformation.TransformatorSolverChecker;
 
 /**
@@ -61,30 +55,6 @@ public abstract class Graal {
 	// /////////////////////////////////////////////////////////////////////////
 	// EXECUTE METHODS
 	// /////////////////////////////////////////////////////////////////////////
-
-	public static void executeChase(AtomSet atomSet, Iterable<Rule> ruleSet)
-			throws ChaseException {
-		Chase chase = new DefaultChase(ruleSet, atomSet);
-		chase.execute();
-	}
-
-	public static void executeChase(AtomSet atomSet, GraphOfRuleDependencies grd)
-			throws ChaseException {
-		Chase chase = new ChaseWithGRD(grd, atomSet);
-		chase.execute();
-	}
-
-	public static void executeOneStepChase(AtomSet atomSet,
-			Iterable<Rule> ruleSet) throws ChaseException {
-		Chase chase = new DefaultChase(ruleSet, atomSet);
-		chase.next();
-	}
-
-	public static void executeOneStepChase(AtomSet atomSet,
-			GraphOfRuleDependencies grd) throws ChaseException {
-		Chase chase = new ChaseWithGRD(grd, atomSet);
-		chase.next();
-	}
 
 	/**
 	 * For boolean query, return a SubstitutionReader with an empty Substitution
@@ -142,13 +112,6 @@ public abstract class Graal {
 		}
 
 		return newAtomSet;
-	}
-
-	/**
-	 * @return
-	 */
-	public static Factory getFactory() {
-		return Factory.getInstance();
 	}
 
 	/*
