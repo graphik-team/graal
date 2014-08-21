@@ -99,7 +99,7 @@ public class GraphPositionDependencies {
 						int edge;
 						while (edgesIt.hasNext()) {
 							edge = edgesIt.next();
-							if (specialEdges.contains(new Integer(edge))) {
+							if (specialEdges.contains(Integer.valueOf(edge))) {
 								componentIsFiniteRank = false;
 							}
 						}

@@ -150,6 +150,11 @@ public class DefaultRule implements Rule {
 		}
 		return res;
 	}
+	
+	@Override
+	public int hashCode() {
+		return this.label.hashCode();
+	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS

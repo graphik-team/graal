@@ -17,7 +17,6 @@ import fr.lirmm.graphik.util.stream.AbstractReader;
 public class RDFPrefixFilter extends AbstractReader<Atom>{
 
 	private Iterator<Atom> reader;
-	private Object next;
 	private String prefix;
 
 	// /////////////////////////////////////////////////////////////////////////

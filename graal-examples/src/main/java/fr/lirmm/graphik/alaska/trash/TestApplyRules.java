@@ -56,10 +56,6 @@ public class TestApplyRules {
 
 		Query query = DlgpParser.parseQuery("?(X) :- p(X,Y),q(X,Y).");
 		
-		Predicate p = new Predicate("p", 2);
-		Term a = new Term("a", Term.Type.CONSTANT);
-		Atom atom = new DefaultAtom(p, a, a);
-		
 		SubstitutionReader sub = Graal.executeQuery(query, atomSet);
 		if(sub.hasNext()) {
 			sub.next();

@@ -124,9 +124,9 @@ public class RDF2Atom extends AbstractReader<Atom> {
 	 * @param term
 	 * @return
 	 */
-	private boolean isBlankNode(Term term) {
+	/*private boolean isBlankNode(Term term) {
 		return term.toString().startsWith("_:");
-	}
+	}*/
 
 	/*
 	 * (non-Javadoc)
@@ -153,7 +153,7 @@ public class RDF2Atom extends AbstractReader<Atom> {
 			startOfCollection.removeLast();
 			startOfCollection.addAll(collection);
 			this.newCollection(startOfCollection);
-		} else if(startOfCollection == null) {
+		} else {
     		
     		if(!RDF_NIL.equals(collection.getLast())) {
     			this.collectionMap.put(collection.getFirst(), collection);

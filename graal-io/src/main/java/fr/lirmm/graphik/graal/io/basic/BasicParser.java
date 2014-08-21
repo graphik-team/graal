@@ -5,6 +5,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,8 +69,7 @@ public class BasicParser extends AbstractReader<Atom> {
 		try {
 			return (atom == null)? readAtom(this.reader) : atom;		
 		} catch (IOException e) {
-			logger.error("Error during atom parsing", e);
-			return null;
+			throw new NoSuchElementException();
 		}
 	}
 	

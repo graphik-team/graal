@@ -83,7 +83,7 @@ public class CLI {
 		int error = 0;
 		int i = 0;
 		int k = 0;
-		try { k = Integer.valueOf(_args.get(SATURATE)).intValue(); }
+		try { k = Integer.parseInt(_args.get(SATURATE)); }
 		catch (NumberFormatException e) { } // no saturation requested
 
 		DlgpWriter writer = new DlgpWriter(System.out);

@@ -80,7 +80,7 @@ public class ComplexSolver<Q extends ConjunctiveQuery, F extends ReadOnlyAtomSet
 		protected boolean check(Substitution s) {
 			for (Atom a : builtInAtoms) {
 				Atom a2 = s.getSubstitut(a);
-				if (!((BuiltInPredicate)(a2.getPredicate())).evaluate(a2.getTerms().toArray(new Term[]{}))) {
+				if (!((BuiltInPredicate)(a2.getPredicate())).evaluate(a2.getTerms().toArray(new Term[a2.getTerms().size()]))) {
 					return false;
 				}
 			}

@@ -47,7 +47,7 @@ public class MelanieQueryTest {
 	public static final String GRD_FILE = "./src/test/resources/u/u.grd";
 	public static final String FACT_FILE = "./src/test/resources/u/University0_0.dlp";
 	
-	public static List<Query> queries = new LinkedList<Query>(); 
+	private static List<Query> queries = new LinkedList<Query>(); 
 	
 	public static void main(String[] args) throws AtomSetException, IOException, ChaseException, SolverFactoryException, SolverException, ParseException {
 		

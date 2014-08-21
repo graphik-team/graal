@@ -45,7 +45,7 @@ public class SqlUnionConjunctiveQueriesSolver implements UnionConjunctiveQueries
 		String sqlQuery = preprocessing(queries, store);
 		try {
 			if(logger.isDebugEnabled()) {
-				logger.debug(sqlQuery.toString());
+				logger.debug(sqlQuery);
 			}
 			return new ResultSetSubstitutionReader(store, sqlQuery.toString(), queries.isBoolean());
 		} catch (Exception e) {

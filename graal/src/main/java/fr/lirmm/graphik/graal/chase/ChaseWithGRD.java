@@ -4,7 +4,6 @@
 package fr.lirmm.graphik.graal.chase;
 
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 

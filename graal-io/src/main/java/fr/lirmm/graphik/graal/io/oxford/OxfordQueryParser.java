@@ -137,7 +137,7 @@ public class OxfordQueryParser  {
 	private void readTermCst() throws ParseException {
 		StringBuilder term = new StringBuilder();
 
-		while ((c >= 'A' && c <= 'Z') | (c >= 'a' && c <= 'z')) {
+		while ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) {
 			term.append(c);
 			forward();
 		}
@@ -175,10 +175,6 @@ public class OxfordQueryParser  {
 		} catch (IOException e) {
 			throw new ParseException("Error on reading char", e);
 		}
-	}
-
-	private boolean isEOF() {
-		return (int) c == -1;
 	}
 
 	private void read(String s) throws ParseException {

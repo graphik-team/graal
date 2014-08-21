@@ -61,8 +61,9 @@ public class DlgpWriter extends Writer implements ObjectWriter<Object>,Conjuncti
 	// /////////////////////////////////////////////////////////////////////////
 	
 	@Override
-	public void write(Iterable<Object> o) {
-		this.write(o);
+	public void write(Iterable<Object> it) throws IOException {
+		for(Object o: it)
+			this.write(o);
 	}
 	
 	@Override

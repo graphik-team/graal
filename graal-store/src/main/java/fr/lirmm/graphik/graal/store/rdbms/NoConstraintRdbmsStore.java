@@ -3,6 +3,7 @@
  */
 package fr.lirmm.graphik.graal.store.rdbms;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Set;
@@ -133,7 +134,7 @@ public class NoConstraintRdbmsStore extends AbstractRdbmsStore {
     
     protected boolean testDatabaseSchema() throws StoreException {
     	try {
-			this.getStatement().executeQuery("SELECT * FROM alaskavars");
+			this.getStatement().executeQuery("SELECT * FROM alaskavars limit 1;");
 		} catch (SQLException e) {
 			return false;
 		}

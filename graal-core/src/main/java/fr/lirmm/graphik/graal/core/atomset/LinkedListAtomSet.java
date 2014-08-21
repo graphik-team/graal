@@ -177,7 +177,7 @@ public class LinkedListAtomSet extends AbstractReadOnlyAtomSet implements AtomSe
 	 */
 	@Override
 	public boolean remove(Object o) {
-		return this.remove(o);
+		return this.linkedList.remove(o);
 	}
 
 	/* (non-Javadoc)

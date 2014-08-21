@@ -24,7 +24,7 @@ import fr.lirmm.graphik.util.stream.ArrayBlockingStream;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public class RDFParser extends AbstractReader<Atom> {
+public final class RDFParser extends AbstractReader<Atom> {
 
 	private static ArrayBlockingStream<Atom> buffer = new ArrayBlockingStream<Atom>(
 			512);

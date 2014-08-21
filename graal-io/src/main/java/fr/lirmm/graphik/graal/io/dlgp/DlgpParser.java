@@ -33,7 +33,7 @@ import fr.lirmm.graphik.util.stream.FilterReader;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public class DlgpParser extends AbstractReader<Object> {
+public final class DlgpParser extends AbstractReader<Object> {
 
 	private ArrayBlockingStream<Object> buffer = new ArrayBlockingStream<Object>(
 			512);

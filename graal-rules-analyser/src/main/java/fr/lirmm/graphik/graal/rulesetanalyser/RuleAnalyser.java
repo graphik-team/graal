@@ -37,7 +37,7 @@ import fr.lirmm.graphik.util.graph.scc.StronglyConnectedComponentsGraph;
  */
 public class RuleAnalyser {
 
-	private class ComponentCalculabilityValue {
+	private static class ComponentCalculabilityValue {
 		static final int FES = 1;
 		static final int FUS = 2;
 		static final int BTS = 4;
@@ -175,9 +175,9 @@ public class RuleAnalyser {
 	public int[] getCombineWithFESPriority() {
 		int[] res = new int[componentCalculability.length];
 		for (int i = 0; i < componentCalculability.length; ++i) {
-			if ((componentCalculability[i] & ComponentCalculabilityValue.FES) > 0)
+			if ((componentCalculability[i] & ComponentCalculabilityValue.FES) != 0)
 				res[i] = ComponentCalculabilityValue.FES;
-			else if ((componentCalculability[i] & ComponentCalculabilityValue.FUS) > 0)
+			else if ((componentCalculability[i] & ComponentCalculabilityValue.FUS) != 0)
 				res[i] = ComponentCalculabilityValue.FUS;
 		}
 		return res;
@@ -193,9 +193,9 @@ public class RuleAnalyser {
 	public int[] getCombineWithFUSPriority() {
 		int[] res = new int[componentCalculability.length];
 		for (int i = 0; i < componentCalculability.length; ++i) {
-			if ((componentCalculability[i] & ComponentCalculabilityValue.FUS) > 0)
+			if ((componentCalculability[i] & ComponentCalculabilityValue.FUS) != 0)
 				res[i] = ComponentCalculabilityValue.FUS;
-			else if ((componentCalculability[i] & ComponentCalculabilityValue.FES) > 0)
+			else if ((componentCalculability[i] & ComponentCalculabilityValue.FES) != 0)
 				res[i] = ComponentCalculabilityValue.FES;
 		}
 		return res;
@@ -267,13 +267,13 @@ public class RuleAnalyser {
 			list.add(WEAKLY_ACYCLIC);
 		} else if (DOMAIN_RESTRICTED.getLabel().equals(label)) {
 			list.add(FUS);
-		} else if (FES.getLabel().equals(label)) {
-		} else if (FRONTIER_GUARDED.getLabel().equals(label)) {
+		} /*else if (FES.getLabel().equals(label)) {
+		}*/ else if (FRONTIER_GUARDED.getLabel().equals(label)) {
 			list.add(WEAKLY_FRONTIER_GUARDED_SET);
 		} else if (FRONTIER_ONE.getLabel().equals(label)) {
 			list.add(FRONTIER_GUARDED);
-		} else if (FUS.getLabel().equals(label)) {
-		} else if (GBTS.getLabel().equals(label)) {
+		} /*else if (FUS.getLabel().equals(label)) {
+		}*/ else if (GBTS.getLabel().equals(label)) {
 			list.add(BTS);
 		} else if (GUARDED.getLabel().equals(label)) {
 			list.add(FRONTIER_GUARDED);
@@ -291,8 +291,8 @@ public class RuleAnalyser {
 			list.add(GBTS);
 		} else if (WEAKLY_GUARDED_SET.getLabel().equals(label)) {
 			list.add(WEAKLY_FRONTIER_GUARDED_SET);
-		} else if (WEAKLY_STICKY.getLabel().equals(label)) {
-		}
+		} /*else if (WEAKLY_STICKY.getLabel().equals(label)) {
+		}*/
 		return list;
 	}
 

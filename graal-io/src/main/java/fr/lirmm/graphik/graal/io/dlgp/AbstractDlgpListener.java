@@ -28,8 +28,8 @@ abstract class AbstractDlgpListener implements ParserListener {
 			.getLogger(AbstractDlgpListener.class);
 	
 	private List<Term> answerVars;
-	private LinkedListAtomSet AtomSet = null;
-	private LinkedListAtomSet AtomSet2 = null;
+	private LinkedListAtomSet atomSet = null;
+	private LinkedListAtomSet atomSet2 = null;
 	private DefaultAtom atom;
 	private String label;
 
@@ -47,17 +47,17 @@ abstract class AbstractDlgpListener implements ParserListener {
 	public void startsObject(OBJECT_TYPE objectType, String name) {
 		this.label = (name == null)? "" : name;
 		
-		AtomSet = AtomSet2 = null;
+		atomSet = atomSet2 = null;
 		this.objectType = objectType;
 		
 		switch (objectType) {
 		case QUERY:
 			this.answerVars = new LinkedList<Term>();
-			this.AtomSet = new LinkedListAtomSet();
+			this.atomSet = new LinkedListAtomSet();
 			break;
 		case RULE:
 		case NEG_CONSTRAINT:
-			this.AtomSet = new LinkedListAtomSet();
+			this.atomSet = new LinkedListAtomSet();
 			break;
 		case FACT:
 			break;
@@ -88,7 +88,7 @@ abstract class AbstractDlgpListener implements ParserListener {
 		case QUERY:
 		case RULE:
 		case NEG_CONSTRAINT:
-			this.AtomSet.add(atom);
+			this.atomSet.add(atom);
 			break;
 		default:
 			break;
@@ -121,17 +121,17 @@ abstract class AbstractDlgpListener implements ParserListener {
 	public void endsConjunction(OBJECT_TYPE objectType) {
 		switch (objectType) {
 		case QUERY:
-			this.createQuery(new DefaultConjunctiveQuery(this.AtomSet, this.answerVars));
+			this.createQuery(new DefaultConjunctiveQuery(this.atomSet, this.answerVars));
 			break;
 		case NEG_CONSTRAINT:
-			this.createNegConstraint(new NegativeConstraint(this.label, this.AtomSet));
+			this.createNegConstraint(new NegativeConstraint(this.label, this.atomSet));
 			break;
 		case RULE:
-			if(this.AtomSet2 == null) {
-    			this.AtomSet2 = this.AtomSet;
-    			this.AtomSet = new LinkedListAtomSet();
+			if(this.atomSet2 == null) {
+    			this.atomSet2 = this.atomSet;
+    			this.atomSet = new LinkedListAtomSet();
 			} else {
-				this.createRule(new DefaultRule(this.label, this.AtomSet, this.AtomSet2));
+				this.createRule(new DefaultRule(this.label, this.atomSet, this.atomSet2));
 			}
 			break;
 		default:

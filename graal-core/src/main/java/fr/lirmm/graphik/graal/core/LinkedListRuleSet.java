@@ -77,7 +77,7 @@ public class LinkedListRuleSet implements RuleSet, Collection<Rule> {
 	 */
 	@Override
 	public boolean containsAll(Collection<?> c) {
-		return this.containsAll(c);
+		return this.ruleList.containsAll(c);
 	}
 
 	/* (non-Javadoc)

@@ -3,6 +3,7 @@ package fr.lirmm.graphik.graal.parser.misc;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.NoSuchElementException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,8 +65,7 @@ public class StringAtomReader extends AbstractReader<Atom> {
 		try {
 			return (atom == null)? representation.readAtom(this.reader) : atom;		
 		} catch (IOException e) {
-			logger.error("Error during atom parsing", e);
-			return null;
+			throw new NoSuchElementException();
 		}
 	}
 	

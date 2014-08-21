@@ -23,6 +23,18 @@ public interface Atom extends Comparable<Atom>, Iterable<Term> {
 			}
 			return -1;
 		}
+		
+		@Override
+		public boolean equals(Object o) {
+			if(o == null || !(o instanceof Atom))
+				return false;
+			return this.compareTo((Atom)o) == 0;
+		}
+		
+		@Override
+		public int hashCode() {
+			return 0;
+		}
 
 		@Override
 		public void setTerm(int index, Term term) {
