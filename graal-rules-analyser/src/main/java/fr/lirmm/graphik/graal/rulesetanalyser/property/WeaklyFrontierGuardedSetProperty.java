@@ -31,7 +31,7 @@ public class WeaklyFrontierGuardedSetProperty implements RuleProperty {
 	private WeaklyFrontierGuardedSetProperty() {
 	}
 
-	public static WeaklyFrontierGuardedSetProperty getInstance() {
+	public static synchronized WeaklyFrontierGuardedSetProperty getInstance() {
 		if (instance == null) {
 			instance = new WeaklyFrontierGuardedSetProperty();
 		}

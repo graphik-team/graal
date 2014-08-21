@@ -17,7 +17,7 @@ public class BTSProperty implements RuleProperty {
 	private BTSProperty() {
 	}
 
-	public static BTSProperty getInstance() {
+	public static synchronized BTSProperty getInstance() {
 		if (instance == null)
 			instance = new BTSProperty();
 

@@ -33,7 +33,7 @@ public class DefaultSolverFactory implements SolverFactory {
 		this.elements.add(new DefaultUnionConjunctiveQueriesSolverChecker());
 	}
 	
-	public static final DefaultSolverFactory getInstance() {
+	public static synchronized final DefaultSolverFactory getInstance() {
 		if(instance == null)
 			instance = new DefaultSolverFactory();
 		

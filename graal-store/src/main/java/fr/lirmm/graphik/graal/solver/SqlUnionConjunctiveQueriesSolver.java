@@ -28,7 +28,7 @@ public class SqlUnionConjunctiveQueriesSolver implements UnionConjunctiveQueries
 	private SqlUnionConjunctiveQueriesSolver() {
 	}
 	
-	public static SqlUnionConjunctiveQueriesSolver getInstance() {
+	public static synchronized SqlUnionConjunctiveQueriesSolver getInstance() {
 		if(instance == null)
 			instance = new SqlUnionConjunctiveQueriesSolver();
 		

@@ -17,7 +17,7 @@ public class FESProperty implements RuleProperty {
 	private FESProperty() {
 	}
 
-	public static FESProperty getInstance() {
+	public static synchronized FESProperty getInstance() {
 		if (instance == null)
 			instance = new FESProperty();
 

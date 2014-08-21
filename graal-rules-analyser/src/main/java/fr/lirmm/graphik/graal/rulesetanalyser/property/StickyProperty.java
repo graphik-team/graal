@@ -26,7 +26,7 @@ public class StickyProperty implements RuleProperty {
 	
 	private StickyProperty(){}
 	
-	public static StickyProperty getInstance() {
+	public static synchronized StickyProperty getInstance() {
 		if(instance == null) {
 			instance = new StickyProperty();
 		}

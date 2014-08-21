@@ -17,7 +17,7 @@ public class GBTSProperty implements RuleProperty {
 	private GBTSProperty() {
 	}
 
-	public static GBTSProperty getInstance() {
+	public static synchronized GBTSProperty getInstance() {
 		if (instance == null)
 			instance = new GBTSProperty();
 

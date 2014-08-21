@@ -19,7 +19,7 @@ public class AtomicBodyProperty extends AbstractRuleProperty {
 	
 	private AtomicBodyProperty(){}
 	
-	public static AtomicBodyProperty getInstance() {
+	public static synchronized AtomicBodyProperty getInstance() {
 		if(instance == null) {
 			instance = new AtomicBodyProperty();
 		}

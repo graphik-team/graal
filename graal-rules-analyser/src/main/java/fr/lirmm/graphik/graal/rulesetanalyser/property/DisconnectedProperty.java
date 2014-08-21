@@ -16,7 +16,7 @@ public class DisconnectedProperty extends AbstractRuleProperty {
 	
 	private DisconnectedProperty(){}
 	
-	public static DisconnectedProperty getInstance() {
+	public static synchronized DisconnectedProperty getInstance() {
 		if(instance == null) {
 			instance = new DisconnectedProperty();
 		}

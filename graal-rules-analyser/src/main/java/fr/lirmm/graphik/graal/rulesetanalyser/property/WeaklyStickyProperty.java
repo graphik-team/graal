@@ -33,7 +33,7 @@ public class WeaklyStickyProperty implements RuleProperty {
 	private WeaklyStickyProperty() {
 	}
 
-	public static WeaklyStickyProperty getInstance() {
+	public static synchronized WeaklyStickyProperty getInstance() {
 		if (instance == null) {
 			instance = new WeaklyStickyProperty();
 		}

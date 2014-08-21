@@ -18,7 +18,7 @@ public class RangeRestrictedProperty extends AbstractRuleProperty {
 	
 	private RangeRestrictedProperty(){}
 	
-	public static RangeRestrictedProperty getInstance() {
+	public static synchronized RangeRestrictedProperty getInstance() {
 		if(instance == null) {
 			instance = new RangeRestrictedProperty();
 		}

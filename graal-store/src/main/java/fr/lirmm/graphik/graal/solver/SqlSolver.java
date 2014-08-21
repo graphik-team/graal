@@ -25,7 +25,7 @@ public class SqlSolver implements Solver<ConjunctiveQuery, RdbmsStore> {
 	private SqlSolver() {
 	}
 
-	public static SqlSolver getInstance() {
+	public static synchronized SqlSolver getInstance() {
 		if (instance == null)
 			instance = new SqlSolver();
 

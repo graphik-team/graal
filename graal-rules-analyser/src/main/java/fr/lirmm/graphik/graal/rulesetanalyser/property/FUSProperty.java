@@ -17,7 +17,7 @@ public class FUSProperty implements RuleProperty {
 	private FUSProperty() {
 	}
 
-	public static FUSProperty getInstance() {
+	public static synchronized FUSProperty getInstance() {
 		if (instance == null)
 			instance = new FUSProperty();
 

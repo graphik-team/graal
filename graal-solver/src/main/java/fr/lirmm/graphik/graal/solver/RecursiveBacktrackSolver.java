@@ -37,7 +37,7 @@ public class RecursiveBacktrackSolver implements Solver<ConjunctiveQuery, ReadOn
 
     private RecursiveBacktrackSolver(){}
     
-    public static RecursiveBacktrackSolver getInstance() {
+    public static synchronized RecursiveBacktrackSolver getInstance() {
     	if(instance == null)
     		instance = new RecursiveBacktrackSolver();
     	

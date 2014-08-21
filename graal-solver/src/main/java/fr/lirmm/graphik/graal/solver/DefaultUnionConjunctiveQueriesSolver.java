@@ -22,7 +22,7 @@ public class DefaultUnionConjunctiveQueriesSolver implements UnionConjunctiveQue
     private DefaultUnionConjunctiveQueriesSolver() {
     }
     
-    public static DefaultUnionConjunctiveQueriesSolver getInstance() {
+    public static synchronized DefaultUnionConjunctiveQueriesSolver getInstance() {
     	if(instance == null)
     		instance = new DefaultUnionConjunctiveQueriesSolver();
     	

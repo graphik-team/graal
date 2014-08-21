@@ -19,7 +19,7 @@ public class DomainRestrictedProperty extends AbstractRuleProperty {
 	
 	private DomainRestrictedProperty(){}
 	
-	public static DomainRestrictedProperty getInstance() {
+	public static synchronized DomainRestrictedProperty getInstance() {
 		if(instance == null) {
 			instance = new DomainRestrictedProperty();
 		}

@@ -30,7 +30,7 @@ public class WeaklyAcyclicProperty implements RuleProperty {
 	private WeaklyAcyclicProperty() {
 	}
 
-	public static WeaklyAcyclicProperty getInstance() {
+	public static synchronized WeaklyAcyclicProperty getInstance() {
 		if (instance == null) {
 			instance = new WeaklyAcyclicProperty();
 		}

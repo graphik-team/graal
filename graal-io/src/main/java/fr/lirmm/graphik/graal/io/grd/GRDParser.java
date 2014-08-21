@@ -64,7 +64,7 @@ public class GRDParser {
 	// STATIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public static GRDParser getInstance() {
+	public static synchronized GRDParser getInstance() {
 		if (instance == null)
 			instance = new GRDParser();
 

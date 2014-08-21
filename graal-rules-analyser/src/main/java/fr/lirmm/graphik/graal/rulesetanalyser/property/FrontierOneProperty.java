@@ -16,7 +16,7 @@ public class FrontierOneProperty extends AbstractRuleProperty {
 	private FrontierOneProperty() {
 	}
 
-	public static FrontierOneProperty getInstance() {
+	public static synchronized FrontierOneProperty getInstance() {
 		if (instance == null) {
 			instance = new FrontierOneProperty();
 		}

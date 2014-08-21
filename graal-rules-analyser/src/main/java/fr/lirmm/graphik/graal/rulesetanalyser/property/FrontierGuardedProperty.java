@@ -20,7 +20,7 @@ public class FrontierGuardedProperty extends AbstractRuleProperty {
 	
 	private FrontierGuardedProperty(){}
 	
-	public static FrontierGuardedProperty getInstance() {
+	public static synchronized FrontierGuardedProperty getInstance() {
 		if(instance == null) {
 			instance = new FrontierGuardedProperty();
 		}

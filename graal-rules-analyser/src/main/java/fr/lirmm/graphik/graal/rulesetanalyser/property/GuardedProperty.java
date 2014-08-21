@@ -20,7 +20,7 @@ public class GuardedProperty extends AbstractRuleProperty {
 	
 	private GuardedProperty(){}
 	
-	public static GuardedProperty getInstance() {
+	public static synchronized GuardedProperty getInstance() {
 		if(instance == null) {
 			instance = new GuardedProperty();
 		}

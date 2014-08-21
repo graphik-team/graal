@@ -19,7 +19,7 @@ public class TransformatorSolver implements Solver<ConjunctiveQuery, TransformAt
 	private TransformatorSolver() {
 	}
 
-	public static TransformatorSolver getInstance() {
+	public static synchronized TransformatorSolver getInstance() {
 		if (instance == null)
 			instance = new TransformatorSolver();
 
