@@ -3,15 +3,9 @@
  */
 package fr.lirmm.graphik.graal.grd;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.graph.model.DirectedMutableGraph;
 import org.slf4j.Logger;
@@ -19,8 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
-import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.util.graph.scc.StronglyConnectedComponentsGraph;
 import fr.lirmm.graphik.util.graph.scc.TarjanAlgorithm2;
 
