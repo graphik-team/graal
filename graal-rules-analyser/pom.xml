@@ -57,9 +57,11 @@
 			<version>3.3.2</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-graph</artifactId>
-			<version>0.1-SNAPSHOT</version>
+		 	<groupId>org.apache.commons</groupId>
+			<artifactId>commons-graph-for-graal</artifactId>
+			<version>0.1</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/commons-graph-for-graal.jar</systemPath>
 		</dependency>
 		
 		<dependency>
