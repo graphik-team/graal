@@ -4,13 +4,21 @@
 package fr.lirmm.graphik.graal.core;
 
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
+import fr.lirmm.graphik.util.EquivalentRelation;
+import fr.lirmm.graphik.util.TreeMapEquivalentRelation;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -41,7 +49,7 @@ public class DefaultRule implements Rule {
 		this.label = label;
 		AtomSet atomSet = new LinkedListAtomSet();
 		try {
-			atomSet.add(body);
+			atomSet.addAll(body);
 		} catch (AtomSetException e) {
 			// TODO treat this exception
 			e.printStackTrace();
@@ -51,7 +59,7 @@ public class DefaultRule implements Rule {
 
 		atomSet = new LinkedListAtomSet();
 		try {
-			atomSet.add(head);
+			atomSet.addAll(head);
 		} catch (AtomSetException e) {
 			// TODO treat this exception
 			e.printStackTrace();
@@ -64,41 +72,21 @@ public class DefaultRule implements Rule {
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.lirmm.graphik.kb.core.Rule#getBody()
-	 */
 	@Override
 	public AtomSet getBody() {
 		return this.body;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.lirmm.graphik.kb.core.Rule#getLabel()
-	 */
 	@Override
 	public String getLabel() {
 		return this.label;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.lirmm.graphik.kb.core.Rule#getHead()
-	 */
 	@Override
 	public AtomSet getHead() {
 		return this.head;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.lirmm.graphik.kb.core.Rule#getFrontier()
-	 */
 	@Override
 	public Set<Term> getFrontier() {
 		if (frontier == null) {
@@ -115,6 +103,60 @@ public class DefaultRule implements Rule {
 		}
 
 		return this.existentials;
+	}
+
+	@Override
+	public Collection<AtomSet> getPieces() {
+		Set<Term> existentials = getExistentials();
+		Collection<AtomSet> pieces = new LinkedList<AtomSet>();
+		
+		// compute equivalent classes
+		EquivalentRelation<Term> classes = new TreeMapEquivalentRelation<Term>();
+		for (Atom a : this.getHead()) {
+			Term representant = null;
+			for (Term t : a) {
+				if (existentials.contains(t)) {
+					if (representant == null)
+						representant = t;
+					else
+						classes.mergeClasses(representant, t);
+				}
+			}
+		}
+
+		// init pieces for equivalent classes
+		Map<Integer, AtomSet> tmpPieces = new TreeMap<Integer, AtomSet>();
+		for (Term e : existentials) {
+			if (tmpPieces.get(classes.getIdClass(e)) == null) {
+				tmpPieces.put(classes.getIdClass(e), AtomSetFactory
+						.getInstance().createAtomSet());
+			}
+		}
+
+		// Affect atoms to one pieces
+		boolean isAffected;
+		AtomSet atomset;
+		Term e;
+		for (Atom a : this.getHead()) {
+			isAffected = false;
+			Iterator<Term> it = existentials.iterator();
+			while (it.hasNext() && !isAffected) {
+				e = it.next();
+				if (a.getTerms().contains(e)) {
+					tmpPieces.get(classes.getIdClass(e)).add(a);
+					isAffected = true;
+				}
+			}
+			if (!isAffected) { // does not contain existential variable
+				atomset = AtomSetFactory.getInstance().createAtomSet();
+				atomset.add(a);
+				pieces.add(atomset);
+			}
+		}
+
+		pieces.addAll(tmpPieces.values());
+		
+		return pieces;
 	}
 
 	@Override
@@ -150,7 +192,7 @@ public class DefaultRule implements Rule {
 		}
 		return res;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return this.label.hashCode();
