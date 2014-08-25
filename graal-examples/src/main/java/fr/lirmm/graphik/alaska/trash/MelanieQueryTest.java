@@ -95,7 +95,7 @@ public class MelanieQueryTest {
 		DlgpParser parser = new DlgpParser(new FileReader(FACT_FILE));
 		
 		//atomSet.add(new RDFPrefixFilter(new RDF2Atom(rdfParser),"http://swat.cse.lehigh.edu/onto/univ-bench.owl#"));
-		atomset.add(new FilterReader<Atom, Object>(parser, new AtomFilter()));
+		atomset.addAll(new FilterReader<Atom, Object>(parser, new AtomFilter()));
 	}
 	
 	public static AtomSet getSqliteAtomSet(boolean deleteIfExist, String base ) throws IOException, StoreException {

@@ -20,7 +20,7 @@ public interface AtomSet extends ReadOnlyAtomSet {
      * @param stream - the atom stream to be added
      * @throws 
      */
-    void add(Iterable<Atom> atoms) throws AtomSetException;
+    void addAll(Iterable<Atom> atoms) throws AtomSetException;
     
     /**
      * Remove the specified atom from this this atom set.

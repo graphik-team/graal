@@ -52,7 +52,7 @@ public class DefaultChase extends AbstractChase {
 						ReadOnlyAtomSet deductedAtomSet = Graal.substitute(s, rule.getHead());
 						
 						if(stopCondition.canIAdd(deductedAtomSet, fixedTerm, this.atomSet)) {
-							this.atomSet.add(deductedAtomSet);
+							this.atomSet.addAll(deductedAtomSet);
 							this.hasNext = true;
 						}
 					}

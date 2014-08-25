@@ -18,7 +18,7 @@ public interface Store extends ReadOnlyStore, AtomSet {
      * @param atoms
      * @throws AtomSetException
      */
-    void add(Iterable<Atom> atoms) throws AtomSetException;
+    void addAll(Iterable<Atom> atoms) throws AtomSetException;
 
     /**
      * Write this atom on this store.

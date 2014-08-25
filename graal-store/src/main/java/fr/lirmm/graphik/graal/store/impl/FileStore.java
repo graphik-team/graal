@@ -35,7 +35,7 @@ public class FileStore implements Store {
         this.representation = representation;
     }
 
-    public void add(Iterable<Atom> atoms) throws AtomSetException {
+    public void addAll(Iterable<Atom> atoms) throws AtomSetException {
 
         BufferedWriter writer = null;
         try {

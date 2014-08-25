@@ -43,7 +43,7 @@ public class StdStreamStore implements Store {
     }
 
     @Override
-    public void add(Iterable<Atom> atoms) throws AtomSetException {
+    public void addAll(Iterable<Atom> atoms) throws AtomSetException {
         try {
             this.atomWriter.write(atoms);
         } catch (IOException e) {

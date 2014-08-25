@@ -87,7 +87,7 @@ public class ChaseWithGRD extends AbstractChase {
 					ReadOnlyAtomSet deductedAtomSet = Graal.substitute(substitution, unifiedRule.getHead());
 	
 					if(stopCondition.canIAdd(deductedAtomSet, fixedTerm, this.atomSet)) {
-						this.atomSet.add(deductedAtomSet);
+						this.atomSet.addAll(deductedAtomSet);
 						for(Rule triggeredRule : this.grd.getOutEdges(rule)) {
 							for(Substitution u : this.grd.getUnifier(rule, triggeredRule)) {
 								if(logger.isDebugEnabled()) {

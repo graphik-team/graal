@@ -29,7 +29,7 @@ public class TransformAtomSet extends ReadOnlyTransformStore implements
     @Override
     public boolean add(Atom atom) {
         try {
-            this.getStore().add(
+            this.getStore().addAll(
                     this.getAtomTransformator().transform(atom).iterator());
         } catch (AtomSetException e) {
             // TODO treat this exception
@@ -53,9 +53,9 @@ public class TransformAtomSet extends ReadOnlyTransformStore implements
     }
 
     @Override
-    public void add(Iterable<Atom> atoms) {
+    public void addAll(Iterable<Atom> atoms) {
         try {
-            this.getStore().add(this.getAtomTransformator().transform(atoms));
+            this.getStore().addAll(this.getAtomTransformator().transform(atoms));
         } catch (AtomSetException e) {
             // TODO treat this exception
             e.printStackTrace();

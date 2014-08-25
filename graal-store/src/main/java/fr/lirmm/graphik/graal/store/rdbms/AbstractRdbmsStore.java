@@ -118,7 +118,7 @@ RdbmsStore {
 	 * .stream.AtomReader)
 	 */
 	@Override
-	public void add(Iterable<Atom> stream) throws AtomSetException {
+	public void addAll(Iterable<Atom> stream) throws AtomSetException {
 		try {
 			int c = 0;
 			Statement statement = this.getStatement();

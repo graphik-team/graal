@@ -68,7 +68,7 @@ public class LinkedListAtomSet extends AbstractReadOnlyAtomSet implements AtomSe
     }
 
     @Override
-    public void add(Iterable<Atom> atoms) {
+    public void addAll(Iterable<Atom> atoms) {
         for(Atom a : atoms)
             this.linkedList.add(a);
     }

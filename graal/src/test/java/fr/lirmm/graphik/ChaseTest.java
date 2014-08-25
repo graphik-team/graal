@@ -47,7 +47,7 @@ public class ChaseTest {
 	
 	@Theory
 	public void test1(AtomSet atomSet) throws AtomSetException, SolverFactoryException, SolverException, ChaseException {
-		atomSet.add(BasicParser.parse("p(X,a).q(a,a)"));
+		atomSet.addAll(BasicParser.parse("p(X,a).q(a,a)"));
 
 		LinkedList<Rule> ruleSet = new LinkedList<Rule>();
 		ruleSet.add(DlgpParser.parseRule("q(X,Y) :- p(X,Y)."));
@@ -61,7 +61,7 @@ public class ChaseTest {
 	
 	@Theory
 	public void restrictedChaseTest(AtomSet atomSet) throws AtomSetException, SolverFactoryException, SolverException, ChaseException {
-		atomSet.add(BasicParser.parse("p(a)"));
+		atomSet.addAll(BasicParser.parse("p(a)"));
 		
 		LinkedList<Rule> ruleSet = new LinkedList<Rule>();
 		ruleSet.add(DlgpParser.parseRule("q(X,Z) :- p(X)."));

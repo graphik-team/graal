@@ -121,7 +121,7 @@ public class MemoryGraphAtomSet extends AbstractReadOnlyAtomSet implements AtomS
      * kb.stream.IAtomReader)
      */
     @Override
-    public void add(Iterable<Atom> atoms) throws AtomSetException {
+    public void addAll(Iterable<Atom> atoms) throws AtomSetException {
         for (Atom a : atoms) {
             this.add(a);
         }

@@ -32,7 +32,7 @@ public class TestApplyRules {
 		
 		AtomSet atomSet = new LinkedListAtomSet();
 		
-		atomSet.add(BasicParser.parse("p(X,a).q(a,a)"));
+		atomSet.addAll(BasicParser.parse("p(X,a).q(a,a)"));
 
 		RuleSet ruleSet = new LinkedListRuleSet();
 		ruleSet.add(DlgpParser.parseRule("q(X,Y) :- p(X,Y)."));
@@ -64,7 +64,7 @@ public class TestApplyRules {
 			System.out.print(s);
 			AtomSet tmp = substitute(s, rule.getHead());
 			System.out.println(" -> " + tmp);
-			atomSet.add(tmp);
+			atomSet.addAll(tmp);
 		}
 	}
 	
@@ -79,7 +79,7 @@ public class TestApplyRules {
 	
 	public static void test() throws AtomSetException, SolverFactoryException, SolverException, ChaseException {
 		AtomSet atomSet = new LinkedListAtomSet();
-		atomSet.add(BasicParser.parse("p(X,a).q(a,a)"));
+		atomSet.addAll(BasicParser.parse("p(X,a).q(a,a)"));
 
 		LinkedList<Rule> ruleSet = new LinkedList<Rule>();
 		ruleSet.add(DlgpParser.parseRule("q(X,Y) :- p(X,Y)."));

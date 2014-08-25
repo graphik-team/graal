@@ -36,7 +36,7 @@ public class MiscTest {
                 new BasicStringFormat());
         AtomSet atomSet = new LinkedListAtomSet();
         atomSet.add(atom);
-        store.add(new IteratorAtomReader(atomSet.iterator()));
+        store.addAll(new IteratorAtomReader(atomSet.iterator()));
     }
 
 }
