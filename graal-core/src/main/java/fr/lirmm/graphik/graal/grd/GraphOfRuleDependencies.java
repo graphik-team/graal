@@ -37,13 +37,6 @@ public class GraphOfRuleDependencies {
 		this.graph = new DirectedMutableGraph<Rule, Integer>();
 		this.edgesValue = new ArrayList<Collection<Substitution>>();
 	}
-	
-	public GraphOfRuleDependencies(Iterable<Rule> it) {
-		this();
-		for(Rule r : it)
-			this.addRule(r);
-		this.computeGRD();
-	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// METHODS
@@ -144,14 +137,4 @@ public class GraphOfRuleDependencies {
 		return s.toString();
 	}
 	
-	// /////////////////////////////////////////////////////////////////////////
-	// PRIVATE METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	private void computeGRD() {
-		for(Rule r1 : this.graph.getVertices()) {
-			for(Rule r2 : this.graph.getVertices()) {
-			}
-		}
-	}
 }
