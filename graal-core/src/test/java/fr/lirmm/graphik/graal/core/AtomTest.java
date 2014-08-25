@@ -1,4 +1,4 @@
-package fr.lirmm.graphik.kb;
+package fr.lirmm.graphik.graal.core;
 
 import java.util.Arrays;
 

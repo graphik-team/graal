@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.lirmm.graphik.kb;
+package fr.lirmm.graphik.graal.core;
 
 import org.junit.Assert;
 import org.junit.experimental.theories.DataPoints;
