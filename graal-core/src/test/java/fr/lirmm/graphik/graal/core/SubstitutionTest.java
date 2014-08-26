@@ -43,9 +43,9 @@ public class SubstitutionTest {
 		Substitution composition = s1.compose(s2);
 		Assert.assertNotNull(composition);
 
-		Assert.assertEquals(a, composition.getSubstitut(X));
-		Assert.assertEquals(a, composition.getSubstitut(Y));
-		Assert.assertEquals(a, composition.getSubstitut(Z));
+		Assert.assertEquals(a, composition.getSubstitute(X));
+		Assert.assertEquals(a, composition.getSubstitute(Y));
+		Assert.assertEquals(a, composition.getSubstitute(Z));
 	}
 	
 	@Theory
@@ -59,9 +59,9 @@ public class SubstitutionTest {
 		Substitution composition = s1.compose(s2);
 		Assert.assertNotNull(composition);
 		
-		Assert.assertEquals(a, composition.getSubstitut(X));
-		Assert.assertEquals(a, composition.getSubstitut(Y));
-		Assert.assertEquals(a, composition.getSubstitut(Z));
+		Assert.assertEquals(a, composition.getSubstitute(X));
+		Assert.assertEquals(a, composition.getSubstitute(Y));
+		Assert.assertEquals(a, composition.getSubstitute(Z));
 	}
 
 	@Theory
@@ -75,9 +75,9 @@ public class SubstitutionTest {
 		Substitution composition = s1.compose(s2);
 		Assert.assertNotNull(composition);
 		
-		Assert.assertEquals(a, composition.getSubstitut(X));
-		Assert.assertEquals(a, composition.getSubstitut(Y));
-		Assert.assertEquals(a, composition.getSubstitut(Z));
+		Assert.assertEquals(a, composition.getSubstitute(X));
+		Assert.assertEquals(a, composition.getSubstitute(Y));
+		Assert.assertEquals(a, composition.getSubstitute(Z));
 	}
 	
 	@Theory
@@ -91,9 +91,9 @@ public class SubstitutionTest {
 		Substitution composition = s1.compose(s2);
 		Assert.assertNotNull(composition);
 		
-		Assert.assertEquals(a, composition.getSubstitut(X));
-		Assert.assertEquals(a, composition.getSubstitut(Y));
-		Assert.assertEquals(a, composition.getSubstitut(Z));
+		Assert.assertEquals(a, composition.getSubstitute(X));
+		Assert.assertEquals(a, composition.getSubstitute(Y));
+		Assert.assertEquals(a, composition.getSubstitute(Z));
 	}
 	
 	@Theory

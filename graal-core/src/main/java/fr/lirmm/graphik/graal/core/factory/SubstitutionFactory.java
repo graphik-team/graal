@@ -23,10 +23,6 @@ public class SubstitutionFactory {
 		return instance;
 	}
 
-	public Rule createRule() {
-		return new DefaultRule();
-	}
-	
 	public Substitution createSubstitution() {
 		return new HashMapSubstitution();
 	}

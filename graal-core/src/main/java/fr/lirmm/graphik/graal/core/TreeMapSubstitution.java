@@ -18,7 +18,7 @@ public class TreeMapSubstitution extends AbstractSubstitution {
 	public TreeMapSubstitution(Substitution substitution) {
 		super();
 		for (Term term : substitution.getTerms())
-			this.map.put(term, substitution.getSubstitut(term));
+			this.map.put(term, substitution.getSubstitute(term));
 	}
 
 	/* (non-Javadoc)

@@ -9,7 +9,7 @@ public interface Substitution {
 
 	Set<Term> getTerms();
 
-	Term getSubstitut(Term term);
+	Term getSubstitute(Term term);
 
 	/**
 	 * 
