@@ -20,8 +20,8 @@ public class Unifier {
 	private Unifier(){
 	};
 	
-	public static Collection<Substitution> computePieceUnifier(Rule rule, AtomSet atomset) {
-		Collection<Substitution> unifiers = new LinkedSet<Substitution>();
+	public static Set<Substitution> computePieceUnifier(Rule rule, AtomSet atomset) {
+		Set<Substitution> unifiers = new LinkedSet<Substitution>();
 		for (Atom a1 : atomset) {
 			unifiers.addAll(extendUnifier(rule, atomset, a1,
 					new TreeMapSubstitution()));

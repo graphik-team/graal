@@ -4,13 +4,15 @@
 package fr.lirmm.graphik.graal.grd;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
+import java.util.Collections;
+import java.util.Set;
 
 import org.apache.commons.graph.model.DirectedMutableGraph;
 
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
+import fr.lirmm.graphik.graal.core.Unifier;
+import fr.lirmm.graphik.util.LinkedSet;
 import fr.lirmm.graphik.util.graph.scc.StronglyConnectedComponentsGraph;
 import fr.lirmm.graphik.util.graph.scc.TarjanAlgorithm2;
 
@@ -27,66 +29,60 @@ import fr.lirmm.graphik.util.graph.scc.TarjanAlgorithm2;
 public class GraphOfRuleDependencies {
 
 	private DirectedMutableGraph<Rule, Integer> graph;
-	private ArrayList<Collection<Substitution>> edgesValue;
+	private ArrayList<Set<Substitution>> edgesValue;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public GraphOfRuleDependencies() {
+	protected GraphOfRuleDependencies() {
 		this.graph = new DirectedMutableGraph<Rule, Integer>();
-		this.edgesValue = new ArrayList<Collection<Substitution>>();
+		this.edgesValue = new ArrayList<Set<Substitution>>();
 	}
 
-	// /////////////////////////////////////////////////////////////////////////
-	// METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	public void addRule(Rule r) {
-		this.graph.addVertex(r);
-	}
-
-	public void addRuleSet(Iterable<Rule> ruleSet) {
-		for (Rule r : ruleSet) {
+	public GraphOfRuleDependencies(Iterable<Rule> rules) {
+		this();
+		for (Rule r : rules) {
 			this.addRule(r);
 		}
+		for (Rule r1 : rules) {
+			for (Rule r2 : rules) {
+				Set<Substitution> unifiers = Unifier.computePieceUnifier(r1,
+						r2.getBody());
+				if (!unifiers.isEmpty()) {
+					this.setDependency(r1, unifiers, r2);
+				}
+			}
+		}
 	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
 	public Iterable<Rule> getRules() {
 		return this.graph.getVertices();
-	}
-
-	public void addDependency(Rule src, Substitution sub, Rule dest) {
-	
-		Collection<Substitution> edge  = this.getUnifier(src, dest);
-		if(edge == null) {
-			int edgeIndex = this.edgesValue.size();
-			edge = new LinkedList<Substitution>();
-			this.edgesValue.add(edgeIndex, edge);
-			this.graph.addEdge(src, edgeIndex, dest);
-		}
-		edge.add(sub);
-		
 	}
 
 	public Iterable<Rule> getOutEdges(Rule src) {
 		return this.graph.getOutbound(src);
 	}
 
-	public Collection<Substitution> getUnifier(Rule src, Rule dest) {
+	public Set<Substitution> getUnifiers(Rule src, Rule dest) {
 		Integer index = this.graph.getEdge(src, dest);
-		Collection<Substitution> res = null;
-		if(index != null) {
+		Set<Substitution> res = null;
+		if (index != null) {
 			res = this.edgesValue.get(index);
 		}
-		return  res;
+		return Collections.unmodifiableSet(res);
 	}
 
 	public StronglyConnectedComponentsGraph<Rule> getStronglyConnectedComponentsGraph() {
-		StronglyConnectedComponentsGraph<Rule> scc = new TarjanAlgorithm2<Rule>(this.graph).perform();
+		StronglyConnectedComponentsGraph<Rule> scc = new TarjanAlgorithm2<Rule>(
+				this.graph).perform();
 		return scc;
 	}
-	
+
 	/**
 	 * @param ruleset
 	 * @return
@@ -98,7 +94,7 @@ public class GraphOfRuleDependencies {
 			for (Rule target : ruleSet) {
 				Integer e = this.graph.getEdge(src, target);
 				if (e != null) { // there is an edge
-					for(Substitution s : this.edgesValue.get(e)) {
+					for (Substitution s : this.edgesValue.get(e)) {
 						subGRD.addDependency(src, s, target);
 					}
 				}
@@ -109,23 +105,17 @@ public class GraphOfRuleDependencies {
 
 	// /////////////////////////////////////////////////////////////////////////
 	// OVERRIDE METHODS
-	// /////////////////////////////////////////////////////////////////////////
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuilder s = new StringBuilder();
 		for (Rule src : this.graph.getVertices()) {
 			for (Rule dest : this.graph.getOutbound(src)) {
-				
+
 				s.append(src.getLabel());
 				s.append("--");
-				for(Substitution sub : this.edgesValue.get(this.graph.getEdge(src,
-						dest))) {
+				for (Substitution sub : this.edgesValue.get(this.graph.getEdge(
+						src, dest))) {
 					s.append(sub);
 				}
 				s.append("-->");
@@ -136,5 +126,43 @@ public class GraphOfRuleDependencies {
 		}
 		return s.toString();
 	}
-	
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PROTECTED METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	protected void addRule(Rule r) {
+		this.graph.addVertex(r);
+	}
+
+	protected void addRuleSet(Iterable<Rule> ruleSet) {
+		for (Rule r : ruleSet) {
+			this.addRule(r);
+		}
+	}
+
+	protected void addDependency(Rule src, Substitution sub, Rule dest) {
+		Integer edgeIndex = this.graph.getEdge(src, dest);
+		Set<Substitution> edge = null;
+		if (edgeIndex != null) {
+			edge = this.edgesValue.get(edgeIndex);
+		} else {
+			edgeIndex = this.edgesValue.size();
+			edge = new LinkedSet<Substitution>();
+			this.edgesValue.add(edgeIndex, edge);
+			this.graph.addEdge(src, edgeIndex, dest);
+		}
+		edge.add(sub);
+	}
+
+	protected void setDependency(Rule src, Set<Substitution> subs, Rule dest) {
+		Integer edgeIndex = this.graph.getEdge(src, dest);
+		if (edgeIndex == null) {
+			edgeIndex = this.edgesValue.size();
+			this.edgesValue.add(edgeIndex, subs);
+			this.graph.addEdge(src, edgeIndex, dest);
+		} else {
+			this.edgesValue.set(edgeIndex, subs);
+		}
+	}
 }
