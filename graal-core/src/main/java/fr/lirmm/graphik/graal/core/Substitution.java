@@ -1,6 +1,5 @@
 package fr.lirmm.graphik.graal.core;
 
-import java.util.Collection;
 import java.util.Set;
 
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;

@@ -77,7 +77,8 @@ public class StronglyConnectedComponentsGraph<V> extends
 	public int[] computeLayers() {
 		Iterable<Integer> firstLayer = this.getSources();
 		int size = 0;
-		for(int i : this.getVertices()) 
+		Iterator<Integer> it = this.getVertices().iterator();
+		while(it.hasNext()) 
 			++size;
 		
 		int[] layers = new int[size];

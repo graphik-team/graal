@@ -3,9 +3,7 @@
  */
 package fr.lirmm.graphik.graal.core.factory;
 
-import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.HashMapSubstitution;
-import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
 
 /**

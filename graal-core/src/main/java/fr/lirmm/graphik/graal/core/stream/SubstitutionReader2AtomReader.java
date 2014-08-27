@@ -1,10 +1,9 @@
 /**
  * 
  */
-package fr.lirmm.graphik.graal;
+package fr.lirmm.graphik.graal.core.stream;
 
 import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 import fr.lirmm.graphik.util.stream.AbstractReader;
 
 /**

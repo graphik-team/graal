@@ -1,6 +1,5 @@
 package fr.lirmm.graphik.graal.core;
 
-import java.util.Iterator;
 
 public interface Query /*extends Iterable<Atom>*/ {
 

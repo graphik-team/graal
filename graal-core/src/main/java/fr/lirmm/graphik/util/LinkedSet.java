@@ -15,7 +15,6 @@ import java.util.Set;
 public class LinkedSet<E> implements Set<E> {
 
 	LinkedList<E> list = new LinkedList<E>();
-	private static final long serialVersionUID = 3056778651225951171L;
 
 	@Override
 	public boolean add(E e) {

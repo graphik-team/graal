@@ -1,6 +1,5 @@
 package fr.lirmm.graphik.graal.core;
 
-import java.io.Serializable;
 
 public class BuiltInPredicate extends Predicate {
 
