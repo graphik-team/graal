@@ -1,15 +1,16 @@
 package fr.lirmm.graphik.graal.core;
 
-
-public interface Query /*extends Iterable<Atom>*/ {
+/**
+ * Represents a generic query.
+ * 
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+ * 
+ */
+public interface Query {
 
 	/**
 	 * @return true if the expected answer is boolean, false otherwise.
 	 */
 	public boolean isBoolean();
 
-//	@Override
-//	public Iterator<Atom> iterator();
-
 };
-

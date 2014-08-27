@@ -97,6 +97,17 @@ public class SubstitutionTest {
 	}
 	
 	@Theory
+	public void aggregateTest3(Substitution s1)  {
+		s1.put(X,a);
+		s1.compose(X,Y);
+		
+		Assert.assertNotNull(s1);
+		
+		Assert.assertEquals(a, s1.getSubstitute(X));
+		Assert.assertEquals(a, s1.getSubstitute(Y));
+	}
+	
+	@Theory
 	public void aggregateImpossible(Substitution s1, Substitution s2)  {
 		s1.put(X,a);
 		s2.put(X,b);
