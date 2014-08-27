@@ -9,7 +9,7 @@ import java.util.Comparator;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class VertexComparator implements Comparator<Vertex> {
+class VertexComparator implements Comparator<Vertex> {
 
 	@Override
 	public int compare(Vertex v1, Vertex v2) {
