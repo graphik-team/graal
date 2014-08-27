@@ -89,7 +89,7 @@ public class ChaseWithGRD extends AbstractChase {
 					if(stopCondition.canIAdd(deductedAtomSet, fixedTerm, this.atomSet)) {
 						this.atomSet.addAll(deductedAtomSet);
 						for(Rule triggeredRule : this.grd.getOutEdges(rule)) {
-							for(Substitution u : this.grd.getUnifier(rule, triggeredRule)) {
+							for(Substitution u : this.grd.getUnifiers(rule, triggeredRule)) {
 								if(logger.isDebugEnabled()) {
 									logger.debug("-- -- Dependency: " + triggeredRule + " with " + u);
 									logger.debug("-- -- Unificator: " + u);
