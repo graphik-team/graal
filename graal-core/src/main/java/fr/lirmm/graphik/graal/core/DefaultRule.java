@@ -68,6 +68,12 @@ public class DefaultRule implements Rule {
 		this.head = atomSet;
 	}
 
+	// copy constructor
+	public DefaultRule(Rule rule) {
+		this(rule.getLabel(), new LinkedListAtomSet(rule.getBody()),
+				new LinkedListAtomSet(rule.getHead()));
+	}
+
 	// /////////////////////////////////////////////////////////////////////////
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////

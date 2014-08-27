@@ -68,6 +68,22 @@ public interface Atom extends Comparable<Atom>, Iterable<Term> {
 		public Iterator<Term> iterator() {
 			return terms.iterator();
 		}
+
+		@Override
+		public String toString() {
+			StringBuilder s = new StringBuilder(this.getPredicate().toString());
+			s.append('(');
+			boolean bool = false;
+			for (Term term : this.getTerms()) {
+				if (bool)
+					s.append(',');
+				s.append(term);
+				bool = true;
+			}
+			s.append(')');
+
+			return s.toString();
+		}
 	};
 
 	/**

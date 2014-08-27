@@ -8,6 +8,7 @@ import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.AtomComparator;
+import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.stream.IteratorAtomReader;
@@ -43,6 +44,14 @@ public class LinkedListAtomSet extends AbstractReadOnlyAtomSet implements AtomSe
 		this();
 		for (Atom a : it)
 			this.linkedList.add(a);
+	}
+
+	// copy constructor
+	public LinkedListAtomSet(AtomSet atomset) {
+		this();
+		for (Atom atom : atomset) {
+			this.add(new DefaultAtom(atom));
+		}
 	}
     
     // /////////////////////////////////////////////////////////////////////////
