@@ -4,7 +4,9 @@
 package fr.lirmm.graphik.graal.core;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Set;
 
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
@@ -13,61 +15,63 @@ import fr.lirmm.graphik.util.LinkedSet;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- *
+ * 
  */
 public class Unifier {
-	
-	private Unifier(){
+
+	private Unifier() {
 	};
-	
-	public static Set<Substitution> computePieceUnifier(Rule rule, AtomSet atomset) {
+
+	public static Set<Substitution> computePieceUnifier(Rule rule,
+			AtomSet atomset) {
 		Set<Substitution> unifiers = new LinkedSet<Substitution>();
-		for (Atom a1 : atomset) {
-			unifiers.addAll(extendUnifier(rule, atomset, a1,
+		Queue<Atom> atomQueue = new LinkedList<Atom>();
+		for (Atom a : atomset) {
+			atomQueue.add(a);
+		}
+
+		for (Atom a : atomset) {
+			Queue<Atom> tmp = new LinkedList<Atom>(atomQueue);
+			unifiers.addAll(extendUnifier(rule, tmp, a,
 					new TreeMapSubstitution()));
 		}
 		return unifiers;
 	}
-	
+
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE FUNCTIONS
 	// /////////////////////////////////////////////////////////////////////////
 
-	private static Collection<Substitution> extendUnifier(Rule rule, AtomSet atomset,
-			Atom pieceElement, Substitution unifier) {
+	private static Collection<Substitution> extendUnifier(Rule rule,
+			Queue<Atom> atomset, Atom pieceElement, Substitution unifier) {
+		atomset.remove(pieceElement);
 		Collection<Substitution> unifierCollection = new LinkedList<Substitution>();
 		Set<Term> frontierVars = rule.getFrontier();
 		Set<Term> existentialVars = rule.getExistentials();
-		
-		for (Atom atom : rule.getHead()) {
-			Substitution u = unifier(unifier, pieceElement, atom,
-					frontierVars, existentialVars);
-			if (u != null) {
-				boolean isExtended = false;
-				for (Atom newPieceElement : atomset) {
-					boolean containsExist = false;
-					boolean containsNonAffected = false;
 
-					// test if exist a var substitut by an existential and a var
-					// not already substitut
-					for (Term t : newPieceElement) {
+		for (Atom atom : rule.getHead()) {
+			Substitution u = unifier(unifier, pieceElement, atom, frontierVars,
+					existentialVars);
+			if (u != null) {
+				Iterator<Atom> it = atomset.iterator();
+				Atom newPieceElement = null;
+				while (it.hasNext() && newPieceElement == null) {
+					Atom a = it.next();
+
+					for (Term t : a) {
 						if (existentialVars.contains(u.getSubstitute(t))) {
-							containsExist = true;
-						} else if (Term.Type.VARIABLE.equals(t.getType())
-								&& u.getSubstitute(t).equals(t)) {
-							containsNonAffected = true;
+							newPieceElement = a;
+							break;
 						}
 					}
 
-					if (containsExist && containsNonAffected) {
-						isExtended = true;
-						unifierCollection.addAll(extendUnifier(rule, atomset,
-								newPieceElement, u));
-					}
 				}
 
-				if (!isExtended) {
+				if (newPieceElement == null) {
 					unifierCollection.add(u);
+				} else {
+					unifierCollection.addAll(extendUnifier(rule, atomset,
+							newPieceElement, u));
 				}
 			}
 		}
@@ -133,10 +137,12 @@ public class Unifier {
 			Set<Term> existentials, Term term, Term substitut) {
 		if (!term.equals(substitut)) {
 			// two (constant | existentials vars)
-			if (Term.Type.CONSTANT.equals(term.getType()) || existentials.contains(term)) {
+			if (Term.Type.CONSTANT.equals(term.getType())
+					|| existentials.contains(term)) {
 				return false;
 				// fr -> existential vars
-			} else if (frontierVars.contains(term) && existentials.contains(substitut)) {
+			} else if (frontierVars.contains(term)
+					&& existentials.contains(substitut)) {
 				return false;
 			}
 		}
