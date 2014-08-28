@@ -25,7 +25,7 @@ import fr.lirmm.graphik.util.TreeMapEquivalentRelation;
  */
 public class DefaultRule implements Rule {
 
-	private final String label;
+	private String label;
 	private final AtomSet body;
 	private final AtomSet head;
 
@@ -88,6 +88,11 @@ public class DefaultRule implements Rule {
 	}
 
 	@Override
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	@Override
 	public AtomSet getHead() {
 		return this.head;
 	}
@@ -114,7 +119,7 @@ public class DefaultRule implements Rule {
 	public Collection<AtomSet> getPieces() {
 		Set<Term> existentials = getExistentials();
 		Collection<AtomSet> pieces = new LinkedList<AtomSet>();
-		
+
 		// compute equivalent classes
 		EquivalentRelation<Term> classes = new TreeMapEquivalentRelation<Term>();
 		for (Atom a : this.getHead()) {
@@ -160,7 +165,7 @@ public class DefaultRule implements Rule {
 		}
 
 		pieces.addAll(tmpPieces.values());
-		
+
 		return pieces;
 	}
 
