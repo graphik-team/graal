@@ -28,7 +28,7 @@ public class LinkedSet<E> implements Set<E> {
 	public boolean addAll(Collection<? extends E> c) {
 		boolean res = false;
 		for(E e : c)
-			res = res || list.add(e);
+			res = res || this.add(e);
 		
 		return res;
 	}
