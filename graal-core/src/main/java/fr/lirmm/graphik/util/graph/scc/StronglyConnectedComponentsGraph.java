@@ -78,8 +78,10 @@ public class StronglyConnectedComponentsGraph<V> extends
 		Iterable<Integer> firstLayer = this.getSources();
 		int size = 0;
 		Iterator<Integer> it = this.getVertices().iterator();
-		while(it.hasNext()) 
+		while (it.hasNext()) {
+			it.next();
 			++size;
+		}
 		
 		int[] layers = new int[size];
 		//init
