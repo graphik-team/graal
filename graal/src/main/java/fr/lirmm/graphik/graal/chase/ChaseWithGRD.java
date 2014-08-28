@@ -107,10 +107,6 @@ public class ChaseWithGRD extends AbstractChase {
 		}
 	}
 	
-
-	/* (non-Javadoc)
-	 * @see fr.lirmm.graphik.alaska.saturator.Saturator#hasNext()
-	 */
 	@Override
 	public boolean hasNext() {
 		return !queue.isEmpty();
