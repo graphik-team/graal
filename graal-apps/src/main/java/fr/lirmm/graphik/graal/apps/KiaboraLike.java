@@ -64,13 +64,8 @@ public class KiaboraLike {
 		else {
 			LinkedList<Rule> rules = new LinkedList<Rule>();
 			DlgpParser parser = new DlgpParser(reader);
-			int i = -1;
 			for (Object o : parser) {
 				if (o instanceof Rule) {
-					Rule r = (Rule) o;
-					if (r.getLabel().isEmpty()) {
-						r.setLabel("R" + ++i);
-					}
 					rules.add((Rule) o);
 				}
 			}

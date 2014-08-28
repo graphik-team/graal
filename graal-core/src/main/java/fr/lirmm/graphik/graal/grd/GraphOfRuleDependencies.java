@@ -5,6 +5,7 @@ package fr.lirmm.graphik.graal.grd;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Set;
 
 import org.apache.commons.graph.model.DirectedMutableGraph;
@@ -131,7 +132,12 @@ public class GraphOfRuleDependencies {
 	// PROTECTED METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
+	private static final String PREFIX = "R" + (new Date()).hashCode() + "-";
+	private static int ruleIndex = -1;
 	protected void addRule(Rule r) {
+		if(r.getLabel().isEmpty()) {
+			r.setLabel(PREFIX + ++ruleIndex);
+		}
 		this.graph.addVertex(r);
 	}
 
