@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,12 +24,29 @@ import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
 import fr.lirmm.graphik.graal.parser.ParseException;
+import fr.lirmm.graphik.util.LinkedSet;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */
 public class GRDParser {
+
+	private static final class GRD extends GraphOfRuleDependencies {
+
+		GRD() {
+			super();
+		}
+
+		protected void addRule(Rule r) {
+			super.addRule(r);
+		}
+
+		protected void addDependency(Rule src, Substitution sub, Rule dest) {
+			super.addDependency(src, sub, dest);
+		}
+
+	}
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(GRDParser.class);
@@ -44,7 +62,7 @@ public class GRDParser {
 	
 	public GraphOfRuleDependencies parse(BufferedReader reader)
 			throws ParseException {
-		GraphOfRuleDependencies grd = new GraphOfRuleDependencies();
+		GRD grd = new GRD();
 		Map<String, Rule> rules = new TreeMap<String, Rule>();
 
 		String line;
@@ -79,7 +97,7 @@ public class GRDParser {
 	 * @param g
 	 * @param line
 	 */
-	private static void parseLine(String line, GraphOfRuleDependencies grd,
+	private static void parseLine(String line, GRD grd,
 			Map<String, Rule> rules) {
 		if (line.length() > 0) {
 			if (line.charAt(0) == '[') {
@@ -90,7 +108,7 @@ public class GRDParser {
 		}
 	}
 
-	private static void parseRule(String line, GraphOfRuleDependencies grd,
+	private static void parseRule(String line, GRD grd,
 			Map<String, Rule> rules) {
 		Rule r = DlgpParser.parseRule(line);
 		rules.put(r.getLabel(), r);
@@ -98,7 +116,7 @@ public class GRDParser {
 	}
 
 	private static void parseDependency(String line,
-			GraphOfRuleDependencies grd, Map<String, Rule> rules) {
+			GRD grd, Map<String, Rule> rules) {
 		Pattern pattern = Pattern
 				.compile("(\\S+)\\s*-->\\s*(\\S+)\\s*\\{(.*)\\}");
 		Matcher matcher = pattern.matcher(line);

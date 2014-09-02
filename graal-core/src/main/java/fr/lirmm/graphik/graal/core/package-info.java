@@ -1,4 +1,4 @@
 /**
- *	This package contains anything about OBDA (Ontology Based Data Access).
+ *	This package contains the main classes of GRAAL.
  */
 package fr.lirmm.graphik.graal.core;

@@ -18,7 +18,7 @@ import fr.lirmm.graphik.graal.core.Term.Type;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public class AtomEdge extends AbstractAtom implements Edge {
+class AtomEdge extends AbstractAtom implements Edge {
 
     private PredicateVertex predicate;
     private List<TermVertex> terms;

@@ -9,7 +9,7 @@ import java.util.TreeSet;
 import fr.lirmm.graphik.graal.core.Predicate;
 
 
-public class PredicateVertex extends Predicate implements Vertex {
+class PredicateVertex extends Predicate implements Vertex {
 
 	private static final long serialVersionUID = 1607321754413212182L;
 	private Set<Edge> edges = new TreeSet<Edge>();

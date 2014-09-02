@@ -8,7 +8,7 @@ import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.core.Term;
 
-public class TermVertex extends Term implements Vertex {
+class TermVertex extends Term implements Vertex {
 
 	private static final long serialVersionUID = -1087277093687686210L;
 	private final TreeSet<Edge> edges = new TreeSet<Edge>();

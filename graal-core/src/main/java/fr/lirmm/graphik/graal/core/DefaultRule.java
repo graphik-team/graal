@@ -6,7 +6,6 @@ package fr.lirmm.graphik.graal.core;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -26,7 +25,7 @@ import fr.lirmm.graphik.util.TreeMapEquivalentRelation;
  */
 public class DefaultRule implements Rule {
 
-	private final String label;
+	private String label;
 	private final AtomSet body;
 	private final AtomSet head;
 
@@ -68,6 +67,12 @@ public class DefaultRule implements Rule {
 		this.head = atomSet;
 	}
 
+	// copy constructor
+	public DefaultRule(Rule rule) {
+		this(rule.getLabel(), new LinkedListAtomSet(rule.getBody()),
+				new LinkedListAtomSet(rule.getHead()));
+	}
+
 	// /////////////////////////////////////////////////////////////////////////
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
@@ -80,6 +85,11 @@ public class DefaultRule implements Rule {
 	@Override
 	public String getLabel() {
 		return this.label;
+	}
+
+	@Override
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 	@Override
@@ -109,7 +119,7 @@ public class DefaultRule implements Rule {
 	public Collection<AtomSet> getPieces() {
 		Set<Term> existentials = getExistentials();
 		Collection<AtomSet> pieces = new LinkedList<AtomSet>();
-		
+
 		// compute equivalent classes
 		EquivalentRelation<Term> classes = new TreeMapEquivalentRelation<Term>();
 		for (Atom a : this.getHead()) {
@@ -155,7 +165,7 @@ public class DefaultRule implements Rule {
 		}
 
 		pieces.addAll(tmpPieces.values());
-		
+
 		return pieces;
 	}
 

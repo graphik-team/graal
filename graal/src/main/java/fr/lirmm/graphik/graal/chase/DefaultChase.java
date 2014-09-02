@@ -6,8 +6,10 @@ package fr.lirmm.graphik.graal.chase;
 import java.util.Set;
 
 import fr.lirmm.graphik.graal.Graal;
+import fr.lirmm.graphik.graal.core.DefaultFreeVarGen;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
+import fr.lirmm.graphik.graal.core.SymbolGenerator;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
@@ -19,7 +21,7 @@ import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 public class DefaultChase extends AbstractChase {
 
 	private ChaseStopCondition stopCondition = new RestrictedChaseStopCondition();
-	private FreeExistentialVariableGenerator varGen = new FreeExistentialVariableGenerator();
+	private SymbolGenerator existentialGen = new DefaultFreeVarGen("E");
 	private Iterable<Rule> ruleSet;
 	private AtomSet atomSet;
 	boolean hasNext = true;
@@ -45,8 +47,10 @@ public class DefaultChase extends AbstractChase {
 					for (Substitution s : Graal.getRuleBodyHomomorphisms(rule, this.atomSet)) {
 						Set<Term> fixedTerm = s.getValues();
 						
-						// Generate substitution for existential var
-						s.put(varGen.getExistentialSubstitution(rule.getExistentials()));
+						// Generate new existential variables
+						for(Term t : rule.getExistentials()) {
+							s.put(t, existentialGen.getFreeVar());
+						}
 
 						// the atom set producted by the rule application
 						ReadOnlyAtomSet deductedAtomSet = Graal.substitute(s, rule.getHead());

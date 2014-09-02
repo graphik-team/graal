@@ -5,15 +5,19 @@ package fr.lirmm.graphik.graal.apps;
  */
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.LinkedList;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
+
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
+import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
 import fr.lirmm.graphik.graal.io.grd.GRDParser;
 import fr.lirmm.graphik.graal.rulesetanalyser.RuleAnalyser;
@@ -28,14 +32,45 @@ public class KiaboraLike {
 
 	private static DlgpWriter writer = new DlgpWriter();
 
-	public static void main(String[] args) throws FileNotFoundException,
-			IOException {
-		GraphOfRuleDependencies grd;
-		if (args.length > 0)
-			grd = GRDParser.getInstance().parse(new File(args[0]));
-		else
-			grd = GRDParser.getInstance().parse(
-					new BufferedReader(new InputStreamReader(System.in)));
+	@Parameter(names = { "-f", "--file" }, description = "DLP file")
+	private String file = "";
+
+	@Parameter(names = { "-h", "--help" }, help = true)
+	private boolean help;
+
+	@Parameter(names = { "--grd" })
+	private boolean grd = false;
+
+	public static void main(String[] args) throws IOException {
+
+		KiaboraLike options = new KiaboraLike();
+		JCommander commander = new JCommander(options, args);
+
+		if (options.help) {
+			commander.usage();
+			System.exit(0);
+		}
+
+		GraphOfRuleDependencies grd = null;
+		BufferedReader reader;
+		if (options.file.isEmpty()) {
+			reader = new BufferedReader(new InputStreamReader(System.in));
+		} else {
+			reader = new BufferedReader(new FileReader(options.file));
+		}
+
+		if (options.grd)
+			grd = GRDParser.getInstance().parse(reader);
+		else {
+			LinkedList<Rule> rules = new LinkedList<Rule>();
+			DlgpParser parser = new DlgpParser(reader);
+			for (Object o : parser) {
+				if (o instanceof Rule) {
+					rules.add((Rule) o);
+				}
+			}
+			grd = new GraphOfRuleDependencies(rules);
+		}
 
 		execute(grd);
 	}

@@ -17,10 +17,21 @@ import fr.lirmm.graphik.graal.core.atomset.AtomSet;
  */
 public interface ConjunctiveQuery extends Query, Iterable<Atom> {
 
-	/*ReadOnly*/AtomSet getAtomSet();
+	/**
+	 * Get the atom conjunction representing the query.
+	 * @return an atom set representing the atom conjunction of the query.
+	 */
+	AtomSet getAtomSet();
 
+	/**
+	 * Get the answer variables
+	 * @return an Collection of Term representing the answer variables.
+	 */
 	Collection<Term> getAnswerVariables();
 
+	/**
+	 * Iterator of the atom query conjunction.
+	 */
 	@Override
 	Iterator<Atom> iterator();
 	

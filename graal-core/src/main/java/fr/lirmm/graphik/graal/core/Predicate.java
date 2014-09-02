@@ -26,10 +26,18 @@ public class Predicate implements Comparable<Predicate>, Serializable {
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
+	/**
+	 * Get the label (the name) of this predicate.
+	 * @return a string representing predicate label.
+	 */
 	public String getLabel() {
 		return label;
 	}
 
+	/**
+	 * Get the arity of this predicate.
+	 * @return
+	 */
 	public int getArity() {
 		return arity;
 	}

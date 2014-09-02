@@ -14,10 +14,12 @@ import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.Graal;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
+import fr.lirmm.graphik.graal.core.DefaultFreeVarGen;
 import fr.lirmm.graphik.graal.core.HashMapSubstitution;
 import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
+import fr.lirmm.graphik.graal.core.SymbolGenerator;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
@@ -33,7 +35,7 @@ public class ChaseWithGRD extends AbstractChase {
 			.getLogger(ChaseWithGRD.class);
 	
 	private ChaseStopCondition stopCondition = new RestrictedChaseStopCondition();
-	private FreeExistentialVariableGenerator varGen = new FreeExistentialVariableGenerator();
+	private SymbolGenerator existentialGen = new DefaultFreeVarGen("E");
 	private GraphOfRuleDependencies grd;
 	private AtomSet atomSet;
 	private Queue<Pair<Rule, Substitution>> queue = new LinkedList<Pair<Rule, Substitution>>();
@@ -80,8 +82,10 @@ public class ChaseWithGRD extends AbstractChase {
 					}
 					Set<Term> fixedTerm = substitution.getValues();
 					
-					// Generate substitution for existential var
-					substitution.put(varGen.getExistentialSubstitution(unifiedRule.getExistentials()));
+					// Generate new existential variables
+					for(Term t : unifiedRule.getExistentials()) {
+						substitution.put(t, existentialGen.getFreeVar());
+					}
 
 					// the atom set producted by the rule application
 					ReadOnlyAtomSet deductedAtomSet = Graal.substitute(substitution, unifiedRule.getHead());
@@ -89,7 +93,7 @@ public class ChaseWithGRD extends AbstractChase {
 					if(stopCondition.canIAdd(deductedAtomSet, fixedTerm, this.atomSet)) {
 						this.atomSet.addAll(deductedAtomSet);
 						for(Rule triggeredRule : this.grd.getOutEdges(rule)) {
-							for(Substitution u : this.grd.getUnifier(rule, triggeredRule)) {
+							for(Substitution u : this.grd.getUnifiers(rule, triggeredRule)) {
 								if(logger.isDebugEnabled()) {
 									logger.debug("-- -- Dependency: " + triggeredRule + " with " + u);
 									logger.debug("-- -- Unificator: " + u);
@@ -107,10 +111,6 @@ public class ChaseWithGRD extends AbstractChase {
 		}
 	}
 	
-
-	/* (non-Javadoc)
-	 * @see fr.lirmm.graphik.alaska.saturator.Saturator#hasNext()
-	 */
 	@Override
 	public boolean hasNext() {
 		return !queue.isEmpty();

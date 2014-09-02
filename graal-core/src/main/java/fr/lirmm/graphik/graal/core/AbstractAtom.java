@@ -70,20 +70,22 @@ public abstract class AbstractAtom implements Atom {
     }
     
     /**
-     * Returns a string in the form p(t1,...,tk)
-     */
-    public String toString() {
-        StringBuilder s = new StringBuilder(this.getPredicate().toString());
-        s.append('(');
-        for (Term term : this.getTerms()) { 
-            s.append(term);
-            s.append(','); 
-        }
-        s.setLength(s.length()-1);   
-        s.append(')');
-        
-        return s.toString();
-    }
+	 * Returns a string in the form p(t1,...,tk)
+	 */
+	public String toString() {
+		StringBuilder s = new StringBuilder(this.getPredicate().toString());
+		s.append('(');
+		boolean bool = false;
+		for (Term term : this.getTerms()) {
+			if (bool)
+				s.append(',');
+			s.append(term);
+			bool = true;
+		}
+		s.append(')');
+
+		return s.toString();
+	}
 
     @Override
 	public Iterator<Term> iterator() {

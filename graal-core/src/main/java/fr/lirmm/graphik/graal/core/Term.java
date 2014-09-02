@@ -3,7 +3,7 @@ package fr.lirmm.graphik.graal.core;
 import java.io.Serializable;
 
 /**
- * 
+ * (Immutable object)
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
@@ -25,7 +25,16 @@ public class Term implements Comparable<Term>, Serializable {
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
+	/**
+	 * 
+	 * @param value if the type is VARIABLE, this parameter will be interpreted
+	 * as a string.
+	 * @param type
+	 */
 	public Term(Object value, Type type) {
+		if(Type.VARIABLE.equals(type)) 
+			value = value.toString();
+		
 		this.value = value;
 		this.type = type;
 	}
@@ -58,6 +67,12 @@ public class Term implements Comparable<Term>, Serializable {
 		return this.type;
 	}
 	
+	/**
+	 * Create a new Term from this term with a different type.
+	 * 
+	 * @param newType
+	 * @return
+	 */
 	public Term transtypage(Type newType) {
 		return new Term(this.value, newType);
 	}
@@ -99,11 +114,6 @@ public class Term implements Comparable<Term>, Serializable {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
 	@Override
 	public int compareTo(Term other) {
 		int cmpVal = this.toString().compareTo(other.toString());

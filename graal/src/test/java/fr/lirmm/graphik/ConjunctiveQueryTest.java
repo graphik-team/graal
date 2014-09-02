@@ -189,10 +189,10 @@ public class ConjunctiveQueryTest {
 			sub = subReader.next();
 			Assert.assertEquals(2, sub.getTerms().size());
 			Assert.assertEquals(
-					sub.getSubstitut(new Term("X", Term.Type.VARIABLE)),
+					sub.getSubstitute(new Term("X", Term.Type.VARIABLE)),
 					new Term("a", Term.Type.CONSTANT));
 			Assert.assertEquals(
-					sub.getSubstitut(new Term("Y", Term.Type.VARIABLE)),
+					sub.getSubstitute(new Term("Y", Term.Type.VARIABLE)),
 					new Term("b", Term.Type.CONSTANT));
 
 			Assert.assertFalse(subReader.hasNext());
@@ -217,10 +217,10 @@ public class ConjunctiveQueryTest {
 			sub = subReader.next();
 			Assert.assertEquals(2, sub.getTerms().size());
 			Assert.assertEquals(
-					sub.getSubstitut(new Term("X", Term.Type.VARIABLE)),
+					sub.getSubstitute(new Term("X", Term.Type.VARIABLE)),
 					new Term("b", Term.Type.CONSTANT));
 			Assert.assertEquals(
-					sub.getSubstitut(new Term("Y", Term.Type.VARIABLE)),
+					sub.getSubstitute(new Term("Y", Term.Type.VARIABLE)),
 					new Term("b", Term.Type.CONSTANT));
 
 			Assert.assertFalse(subReader.hasNext());
@@ -250,10 +250,10 @@ public class ConjunctiveQueryTest {
 			sub = subReader.next();
 			Assert.assertEquals(2, sub.getTerms().size());
 			Assert.assertEquals(
-					sub.getSubstitut(new Term("X", Term.Type.VARIABLE)),
+					sub.getSubstitute(new Term("X", Term.Type.VARIABLE)),
 					new Term("a", Term.Type.CONSTANT));
 			Assert.assertEquals(
-					sub.getSubstitut(new Term("Y", Term.Type.VARIABLE)),
+					sub.getSubstitute(new Term("Y", Term.Type.VARIABLE)),
 					new Term("b", Term.Type.CONSTANT));
 
 			Assert.assertFalse(subReader.hasNext());
@@ -299,7 +299,7 @@ public class ConjunctiveQueryTest {
 			sub = subReader.next();
 			Assert.assertEquals(1, sub.getTerms().size());
 			Assert.assertEquals(
-					sub.getSubstitut(new Term("X", Term.Type.VARIABLE)),
+					sub.getSubstitute(new Term("X", Term.Type.VARIABLE)),
 					new Term("a", Term.Type.CONSTANT));
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);

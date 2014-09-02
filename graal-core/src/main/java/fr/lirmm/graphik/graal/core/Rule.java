@@ -20,6 +20,11 @@ public interface Rule extends Comparable<Rule> {
 	String getLabel();
 
 	/**
+	 * @param label
+	 */
+	void setLabel(String label);
+
+	/**
 	 * The body (the hypothesis) of the rule.
 	 * 
 	 * @return
@@ -56,4 +61,5 @@ public interface Rule extends Comparable<Rule> {
 	 * @return
 	 */
 	Collection<AtomSet> getPieces();
+
 };

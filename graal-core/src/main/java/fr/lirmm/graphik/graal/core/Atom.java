@@ -12,6 +12,10 @@ import fr.lirmm.graphik.graal.core.Term.Type;
  */
 public interface Atom extends Comparable<Atom>, Iterable<Term> {
 
+	/**
+	 * This instance of Atom represents Bottom, it is always interpreted as
+	 * false.
+	 */
 	public static final Atom BOTTOM = new Atom() {
 		private List<Term> terms = new LinkedList<Term>();
 		private Predicate predicate = new Predicate("\u22A5", 0);
@@ -23,14 +27,14 @@ public interface Atom extends Comparable<Atom>, Iterable<Term> {
 			}
 			return -1;
 		}
-		
+
 		@Override
 		public boolean equals(Object o) {
-			if(o == null || !(o instanceof Atom))
+			if (o == null || !(o instanceof Atom))
 				return false;
-			return this.compareTo((Atom)o) == 0;
+			return this.compareTo((Atom) o) == 0;
 		}
-		
+
 		@Override
 		public int hashCode() {
 			return 0;
@@ -67,6 +71,22 @@ public interface Atom extends Comparable<Atom>, Iterable<Term> {
 		@Override
 		public Iterator<Term> iterator() {
 			return terms.iterator();
+		}
+
+		@Override
+		public String toString() {
+			StringBuilder s = new StringBuilder(this.getPredicate().toString());
+			s.append('(');
+			boolean bool = false;
+			for (Term term : this.getTerms()) {
+				if (bool)
+					s.append(',');
+				s.append(term);
+				bool = true;
+			}
+			s.append(')');
+
+			return s.toString();
 		}
 	};
 
@@ -115,6 +135,9 @@ public interface Atom extends Comparable<Atom>, Iterable<Term> {
 	 */
 	Collection<Term> getTerms(Type type);
 
+	/**
+	 * Return an Iterator of Term.
+	 */
 	@Override
 	Iterator<Term> iterator();
 
