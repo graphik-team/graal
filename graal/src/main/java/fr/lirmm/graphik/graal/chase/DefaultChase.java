@@ -21,7 +21,7 @@ import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 public class DefaultChase extends AbstractChase {
 
 	private ChaseStopCondition stopCondition = new RestrictedChaseStopCondition();
-	private SymbolGenerator existentialGen = new DefaultFreeVarGen("E");
+	private SymbolGenerator existentialGen;
 	private Iterable<Rule> ruleSet;
 	private AtomSet atomSet;
 	boolean hasNext = true;
@@ -30,9 +30,14 @@ public class DefaultChase extends AbstractChase {
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public DefaultChase(Iterable<Rule> ruleSet, AtomSet atomSet) {
+	public DefaultChase(Iterable<Rule> ruleSet, AtomSet atomSet, SymbolGenerator existentialGen) {
 		this.ruleSet = ruleSet;
 		this.atomSet = atomSet;
+		this.existentialGen = existentialGen;
+	}
+
+	public DefaultChase(Iterable<Rule> ruleSet, AtomSet atomSet) {
+		this(ruleSet,atomSet,new DefaultFreeVarGen("E"));
 	}
 	
 	// /////////////////////////////////////////////////////////////////////////

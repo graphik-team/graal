@@ -24,6 +24,16 @@ public class Unifier {
 
 	public static Set<Substitution> computePieceUnifier(Rule rule,
 			AtomSet atomset) {
+//		Substitution sh = new Substitution();
+//		Substitution sb = new Substitution();
+//
+//		for (Term t : rule.getTerms()) {
+//			sh.put(t,new Term(t.getValue().toString() + ".H",t.getType()));
+//		}
+//		for (Term t : atomset.getTerms()) {
+//			sb.put(t,new Term(t.getValue().toString() + ".B",t.getType()));
+//		}
+
 		Set<Substitution> unifiers = new LinkedSet<Substitution>();
 		Queue<Atom> atomQueue = new LinkedList<Atom>();
 		for (Atom a : atomset) {
