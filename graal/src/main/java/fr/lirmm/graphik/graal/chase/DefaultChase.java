@@ -6,13 +6,16 @@ package fr.lirmm.graphik.graal.chase;
 import java.util.Set;
 
 import fr.lirmm.graphik.graal.Graal;
+import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultFreeVarGen;
+import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.SymbolGenerator;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
+import fr.lirmm.graphik.graal.solver.Solver;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -24,16 +27,33 @@ public class DefaultChase extends AbstractChase {
 	private SymbolGenerator existentialGen;
 	private Iterable<Rule> ruleSet;
 	private AtomSet atomSet;
+	private Solver solver;
 	boolean hasNext = true;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
-
+	
+	public DefaultChase(Iterable<Rule> ruleSet, AtomSet atomSet, SymbolGenerator existentialGen, Solver solver) {
+		this.ruleSet = ruleSet;
+		this.atomSet = atomSet;
+		this.existentialGen = existentialGen;
+		this.solver = solver;
+	}
+	
+	public DefaultChase(Iterable<Rule> ruleSet, AtomSet atomSet, Solver solver) {
+		this.ruleSet = ruleSet;
+		this.atomSet = atomSet;
+		this.existentialGen = new DefaultFreeVarGen("E");
+		this.solver = solver;
+	}
+	
 	public DefaultChase(Iterable<Rule> ruleSet, AtomSet atomSet, SymbolGenerator existentialGen) {
 		this.ruleSet = ruleSet;
 		this.atomSet = atomSet;
 		this.existentialGen = existentialGen;
+		this.solver = Graal
+				.getSolverFactory().getSolver(new DefaultConjunctiveQuery(), atomSet);
 	}
 
 	public DefaultChase(Iterable<Rule> ruleSet, AtomSet atomSet) {
@@ -49,7 +69,9 @@ public class DefaultChase extends AbstractChase {
     		if(this.hasNext) {
     			this.hasNext = false;
     			for (Rule rule : this.ruleSet) {
-					for (Substitution s : Graal.getRuleBodyHomomorphisms(rule, this.atomSet)) {
+    				Query query = new DefaultConjunctiveQuery(rule.getBody(),
+    						rule.getFrontier());
+					for (Substitution s : this.solver.execute(query, atomSet)) {
 						Set<Term> fixedTerm = s.getValues();
 						
 						// Generate new existential variables
