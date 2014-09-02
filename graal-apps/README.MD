@@ -42,5 +42,6 @@ For now only SQLite database are handled.
 	- ucq: allow the use of union of conjunctive queries, which can either be specified in a file, or in a string
 	(both in dlgp format)
 	- saturate: will saturate the atomset with the given rules, one can specify a bound for the number of saturation
-	steps (the bound is not completely handled by GRAAL, but will still allow one to use it for non FES rules)
+	steps (the bound is not completely handled by GRAAL, but will still allow one to use it for non FES rules (at most
+	k + |R| steps))
 
