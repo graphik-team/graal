@@ -47,7 +47,7 @@ public class CLI {
 	public static final String[] ARG_HELP        = new String[]{"-h","--help"};
 	public static final String[] ARG_VERBOSE     = new String[]{"-v","--verbose"};
 	public static final String[] ARG_FILE_INPUT  = new String[]{"-f","--file","--input-file"};
-	public static final String[] ARG_FILE_OUTPUT = new String[]{"-d","-o","--output","--database","--db","--output-database"};
+	public static final String[] ARG_FILE_OUTPUT = new String[]{"-d","--db","--database"};
 	public static final String[] ARG_UCQ         = new String[]{"-u","-q","--ucq"};
 	public static final String[] ARG_SATURATE    = new String[]{"-s","--saturate"};
 	public static final String[] ARG_PRINTFACT   = new String[]{"-p","--print-fact"};
@@ -85,11 +85,13 @@ public class CLI {
 		catch (NumberFormatException e) { } // no saturation requested
 
 		DlgpWriter writer = new DlgpWriter(System.out);
+		Solver solver = new ComplexSolver(new SqlUnionConjunctiveQueriesSolver());
+		DefaultChase chase = new DefaultChase(_rules,_atomset,solver);
 
 		if (k != 0) {
 			if (k < 0) {
 				if (_verbose) System.out.println("Saturating until fix point...");
-				try { StaticChase.executeChase(_atomset,_rules); }
+				try { chase.execute(); } 
 				catch (Exception e) {
 					error |= ERROR_CHASE;
 					System.err.println("An error has occured while saturating: "+e);
@@ -97,7 +99,7 @@ public class CLI {
 			}
 			else {
 				if (_verbose) System.out.println("Saturating "+k+" steps...");
-				try { for (i = 0 ; i < k ; ++i) StaticChase.executeOneStepChase(_atomset,_rules); }
+				try { for (i = 0 ; i < k ; ++i) if (chase.hasNext()) chase.next(); }
 				catch (Exception e) {
 					error |= ERROR_CHASE;
 					System.err.println("An error has occured during the " + i + " step of saturation: "+e);
