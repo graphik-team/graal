@@ -24,12 +24,16 @@ import fr.lirmm.graphik.util.stream.ArrayBlockingStream;
  */
 public final class RDFParser extends AbstractReader<Atom> {
 
-	private static ArrayBlockingStream<Atom> buffer = new ArrayBlockingStream<Atom>(
+	private ArrayBlockingStream<Atom> buffer = new ArrayBlockingStream<Atom>(
 			512);
 
 	private static class RDFListener extends AbstractRDFListener {
 
-		private ArrayBlockingStream<Atom> set = buffer;
+		private ArrayBlockingStream<Atom> set;
+
+		public RDFListener(ArrayBlockingStream<Atom> set) {
+			this.set = set;
+		}
 
 		@Override
 		protected void createAtom(DefaultAtom atom) {
@@ -41,15 +45,17 @@ public final class RDFParser extends AbstractReader<Atom> {
 	private static class Producer implements Runnable {
 
 		private Reader reader;
+		private ArrayBlockingStream<Atom> buffer;
 
-		Producer(Reader reader) {
+		Producer(Reader reader, ArrayBlockingStream<Atom> buffer) {
 			this.reader = reader;
+			this.buffer = buffer;
 		}
 
 		public void run() {
 			
 			org.openrdf.rio.RDFParser rdfParser = Rio.createParser(RDFFormat.RDFXML);
-			rdfParser.setRDFHandler(new RDFListener());
+			rdfParser.setRDFHandler(new RDFListener(buffer));
 			try {
 				rdfParser.parse(this.reader, "");
 			} catch (RDFParseException e) {
@@ -68,7 +74,7 @@ public final class RDFParser extends AbstractReader<Atom> {
 	// /////////////////////////////////////////////////////////////////////////
 
 	public RDFParser(Reader reader) {
-		new Thread(new Producer(reader)).start();
+		new Thread(new Producer(reader, buffer)).start();
 		
 	}
 
