@@ -73,10 +73,11 @@ RdbmsStore {
 	}
 
 	private int unbatchedAtoms = 0;
+	private Statement unbatchedStatement = null;
 	public void addUnbatched(Atom a) {
 		try {
-			Statement statement = this.getStatement();
-			this.add(statement, a);
+			this.unbatchedStatement = this.getStatement();
+			this.add(this.unbatchedStatement, a);
 			if((++this.unbatchedAtoms % MAX_BATCH_SIZE) == 0) {
 				if(logger.isDebugEnabled()) {
 					logger.debug("batch commit, size=" + MAX_BATCH_SIZE);
@@ -90,9 +91,11 @@ RdbmsStore {
 
 	public void commitAtoms() {
 		try {
-			this.getStatement().executeBatch();
+			this.unbatchedStatement.executeBatch();
 			this.getConnection().commit();
 			this.unbatchedAtoms = 0;
+			this.unbatchedStatement.close();
+			this.unbatchedStatement = null;
 		}
 		catch (Exception e) {
 			logger.error(e.getMessage(),e);
