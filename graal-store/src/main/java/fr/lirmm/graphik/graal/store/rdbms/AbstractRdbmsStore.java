@@ -83,14 +83,19 @@ RdbmsStore {
 				}
 				this.commitAtoms();
 			}
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
 	}
 
 	public void commitAtoms() {
-		this.getStatement().executeBatch();
-		this.getConnection().commit();
+		try {
+			this.getStatement().executeBatch();
+			this.getConnection().commit();
+		}
+		catch (Exception e) {
+			logger.error(e.getMessage(),e);
+		}
 	}
 	
 	/* (non-Javadoc)
