@@ -90,7 +90,8 @@ RdbmsStore {
 				this.unbatchedStatement = this.createStatement();
 			}
 			this.add(this.unbatchedStatement, a);
-			if((++this.unbatchedAtoms % MAX_BATCH_SIZE) == 0) {
+			++this.unbatchedAtoms;
+			if (this.unbatchedAtoms >= MAX_BATCH_SIZE) {
 				if(logger.isDebugEnabled()) {
 					logger.debug("batch commit, size=" + MAX_BATCH_SIZE);
 				}
