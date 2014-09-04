@@ -71,6 +71,27 @@ RdbmsStore {
 		}
 		return true;
 	}
+
+	private int unbatchedAtoms = 0;
+	public void addUnbatched(Atom a) {
+		try {
+			Statement statement = this.getStatement();
+			this.add(statement, a);
+			if((++this.unbatchedAtoms % MAX_BATCH_SIZE) == 0) {
+				if(logger.isDebugEnabled()) {
+					logger.debug("batch commit, size=" + MAX_BATCH_SIZE);
+				}
+				this.commitAtoms();
+			}
+		} catch (SQLException e) {
+			logger.error(e.getMessage(), e);
+		}
+	}
+
+	public void commitAtoms() {
+		this.getStatement().executeBatch();
+		this.getConnection().commit();
+	}
 	
 	/* (non-Javadoc)
 	 * @see fr.lirmm.graphik.graal.store.Store#remove(fr.lirmm.graphik.graal.core.Atom)

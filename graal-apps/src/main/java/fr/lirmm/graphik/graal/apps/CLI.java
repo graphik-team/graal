@@ -26,8 +26,13 @@ import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
+import fr.lirmm.graphik.graal.store.rdbms.AbstractRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
+import fr.lirmm.graphik.graal.chase.DefaultChase;
+import fr.lirmm.graphik.graal.solver.ComplexSolver;
+import fr.lirmm.graphik.graal.solver.Solver;
+import fr.lirmm.graphik.graal.solver.SqlUnionConjunctiveQueriesSolver;
 
 public class CLI {
 
@@ -85,7 +90,7 @@ public class CLI {
 		catch (NumberFormatException e) { } // no saturation requested
 
 		DlgpWriter writer = new DlgpWriter(System.out);
-		Solver solver = new ComplexSolver(new SqlUnionConjunctiveQueriesSolver());
+		Solver solver = new ComplexSolver(SqlUnionConjunctiveQueriesSolver.getInstance());
 		DefaultChase chase = new DefaultChase(_rules,_atomset,solver);
 
 		if (k != 0) {
@@ -183,7 +188,7 @@ public class CLI {
 				for (Object o : parser) {
 					if (o instanceof Atom) {
 						if (_verbose) System.out.println("Adding atom " + (Atom)o);
-						_atomset.add((Atom)o);
+						_atomset.addUnbatched((Atom)o);
 						if (_verbose) System.out.println("Atom added!");
 					}
 					else if (o instanceof Rule) {
@@ -200,6 +205,7 @@ public class CLI {
 						if (_verbose) System.out.println("Ignoring non recognized object: " + o);
 					}
 				}
+				_atomset.commitAtoms();
 			}
 			catch (Exception e) {
 				System.err.println("An error has occured: " +e);
@@ -369,7 +375,8 @@ public class CLI {
 
 	private Map<String,String> _args = new TreeMap<String,String>();
 	private boolean _verbose = false;
-	private AtomSet _atomset = null;
+	//private AtomSet _atomset = null;
+	private AbstractRdbmsStore _atomset = null;
 	private RuleSet _rules = new LinkedListRuleSet();
 	private LinkedList<Query> _queries = new LinkedList<Query>();
 
