@@ -86,7 +86,9 @@ RdbmsStore {
 	private Statement unbatchedStatement = null;
 	public void addUnbatched(Atom a) {
 		try {
-			this.unbatchedStatement = this.createStatement();
+			if (this.unbatchedStatement == null) {
+				this.unbatchedStatement = this.createStatement();
+			}
 			this.add(this.unbatchedStatement, a);
 			if((++this.unbatchedAtoms % MAX_BATCH_SIZE) == 0) {
 				if(logger.isDebugEnabled()) {
