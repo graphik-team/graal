@@ -92,6 +92,7 @@ RdbmsStore {
 		try {
 			this.getStatement().executeBatch();
 			this.getConnection().commit();
+			this.unbatchedAtoms = 0;
 		}
 		catch (Exception e) {
 			logger.error(e.getMessage(),e);
