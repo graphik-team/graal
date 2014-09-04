@@ -15,7 +15,6 @@ import fr.lirmm.graphik.graal.store.StoreException;
  */
 public abstract class AbstractRdbmsDriver implements RdbmsDriver {
 
-	private Statement statement;
 	private Connection dbConnection;
 	
 	public AbstractRdbmsDriver(Connection connection) {
@@ -26,15 +25,12 @@ public abstract class AbstractRdbmsDriver implements RdbmsDriver {
 		return this.dbConnection;
 	}
 	
-	public Statement getStatement() throws StoreException {
+	public Statement createStatement() throws StoreException {
 		try {
-			if(this.statement == null || this.statement.isClosed())
-				this.statement = this.getConnection().createStatement();
+			return this.getConnection().createStatement();
 		} catch (SQLException e) {
 			throw new StoreException(e.getMessage(), e);
-		}
-		
-		return this.statement;
+		}		
 	}
 	
 	/*

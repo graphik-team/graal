@@ -69,9 +69,5 @@ public class SqliteDriver extends AbstractRdbmsDriver {
 	public String getInsertOrIgnoreStatement() {
 		return INSERT_IGNORE;
 	}
-	
-	public Statement getStatement() {
-		return this.statement;
-	}
 
 }

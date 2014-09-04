@@ -125,7 +125,7 @@ public class NoConstraintRdbmsStore extends AbstractRdbmsStore {
     protected void createDatabaseSchema()
             throws StoreException {
         try {
-            this.getStatement().execute("create table alaskavars (alaskavars1 varchar(128));");
+            this.createStatement().execute("create table alaskavars (alaskavars1 varchar(128));");
             
         } catch (SQLException e) {
         	throw new StoreException(e.getMessage(), e);
@@ -134,7 +134,7 @@ public class NoConstraintRdbmsStore extends AbstractRdbmsStore {
     
     protected boolean testDatabaseSchema() throws StoreException {
     	try {
-			this.getStatement().executeQuery("SELECT * FROM alaskavars limit 1;");
+			this.createStatement().executeQuery("SELECT * FROM alaskavars limit 1;");
 		} catch (SQLException e) {
 			return false;
 		}

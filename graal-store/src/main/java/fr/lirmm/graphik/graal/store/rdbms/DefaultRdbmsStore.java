@@ -127,12 +127,22 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 
 	@Override
 	protected boolean testDatabaseSchema() throws StoreException {
+		Statement statement = null;
 		try {
-			this.getStatement().execute(TEST_SCHEMA_QUERY);
+			statement = this.createStatement();
+			statement.execute(TEST_SCHEMA_QUERY);
 		} catch (SQLException e) {
 			return false;
 		} catch (StoreException e) {
 			throw new StoreException(e.getMessage(), e);
+		} finally {
+			if(statement != null) {
+				try {
+					statement.close();
+				} catch (SQLException e) {
+					throw new StoreException(e);
+				}
+			}
 		}
 
 		return true;
@@ -167,10 +177,10 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		final String insertTermTypeQuery = "INSERT INTO "
 										   + termTypeTableName
 										   + " values (?);";
-
+		Statement statement = null;
 		PreparedStatement pstat = null;
 		try {
-			Statement statement = this.getStatement();
+			statement = this.createStatement();
 			if (logger.isDebugEnabled())
 				logger.debug("Create database schema");
 
@@ -199,17 +209,27 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 												   + counterTableName
 												   + " (counter_name varchar(64), value long, PRIMARY KEY (counter_name));";
 
-			final String insertCounterTableQuery = "INSERT INTO "
-												   + counterTableName
-												   + " values (?, -1);";
-
-			final String[] counters = { MAX_PREDICATE_ID_COUNTER,
-					MAX_VARIABLE_ID_COUNTER };
-
 			if (logger.isDebugEnabled())
 				logger.debug(createCounterTableQuery);
 			statement.executeUpdate(createCounterTableQuery);
-
+		} catch (SQLException e) {
+			throw new StoreException(e.getMessage(), e);
+		} finally {
+			if (statement != null) {
+				try {
+					statement.close();
+				} catch (SQLException e) {
+					throw new StoreException(e);
+				}
+			}
+		}
+		
+		try {
+			final String insertCounterTableQuery = "INSERT INTO "
+					   + counterTableName
+					   + " values (?, -1);";
+			final String[] counters = { MAX_PREDICATE_ID_COUNTER,
+					MAX_VARIABLE_ID_COUNTER };
 			pstat = this.getConnection().prepareStatement(
 					insertCounterTableQuery);
 			for (int i = 0; i < counters.length; ++i) {
@@ -272,8 +292,9 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	 */
 	@Override
 	public boolean contains(Atom atom) throws StoreException {
+		boolean res = false;
 		Term term;
-		Statement statement = this.getStatement();
+		Statement statement = null;
 		int termIndex = -1;
 		String tableName = this.predicateTableExist(atom.getPredicate());
 		if (logger.isDebugEnabled()) {
@@ -306,16 +327,25 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			}
 			ResultSet results;
 			try {
+				statement = this.createStatement();
 				results = statement.executeQuery(query.toString());
 				if (results.next()) {
-					return true;
+					res = true;
 				}
+				results.close();
 			} catch (SQLException e) {
+				if(statement != null) {
+					try {
+						statement.close();
+					} catch (SQLException sqlEx) {
+						throw new StoreException(sqlEx);
+					}
+				}
 				throw new StoreException(e);
 			}
 		}
 
-		return false;
+		return res;
 	}
 
 	/*
@@ -325,9 +355,10 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	 */
 	@Override
 	public Set<Term> getTerms() throws StoreException {
-		Statement statement = this.getStatement();
-		ResultSet results;
+		Statement statement = this.createStatement();
+		ResultSet results = null;
 		Set<Term> terms;
+		
 		try {
 			results = statement.executeQuery(getAllTermsQuery);
 			terms = new TreeSet<Term>();
@@ -336,9 +367,22 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 				terms.add(new Term(results.getString(1), Term.Type
 						.valueOf(results.getString(2))));
 			}
+			
+			results.close();
 		} catch (SQLException e) {
 			throw new StoreException(e);
+		} finally {
+			if(statement != null) {
+				try {
+					statement.close();
+				} catch (SQLException e) {
+					throw new StoreException(e);
+				}
+			}
 		}
+		
+		
+		
 		return terms;
 	}
 
@@ -374,6 +418,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 				term = new Term(results.getString(1), Term.Type.valueOf(results
 						.getString(2)));
 			}
+			results.close();
 		} catch (SQLException e) {
 			throw new StoreException(e);
 		}
@@ -612,9 +657,16 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 															StoreException {
 		String tableName = "pred" + this.getFreePredicateId();
 		if (predicate.getArity() >= 1) {
-			Statement stat = this.getStatement();
+			Statement stat = this.createStatement();
 			stat.executeUpdate(generateCreateTablePredicateQuery(tableName,
 					predicate));
+			if(stat != null) {
+				try {
+					stat.close();
+				} catch (SQLException e) {
+					throw new StoreException(e);
+				}
+			}
 			insertPredicate(tableName, predicate);
 		} else {
 			throw new StoreException("Unsupported arity 0"); // TODO Why ?!
@@ -678,6 +730,8 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 
 			if (results.next())
 				predicateTableName = results.getString("predicate_table_name");
+			
+			results.close();
 		} catch (SQLException e) {
 			throw new StoreException(e);
 		}
@@ -698,7 +752,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		ResultSet result = this.getCounterValueStatement.executeQuery();
 		result.next();
 		value = result.getLong("value") + 1;
-
+		result.close();
 		this.updateCounterValueStatement.setLong(1, value);
 		this.updateCounterValueStatement.setString(2, MAX_PREDICATE_ID_COUNTER);
 		this.updateCounterValueStatement.executeUpdate();

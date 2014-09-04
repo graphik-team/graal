@@ -39,7 +39,7 @@ class DefaultRdbmsPredicateReader extends AbstractReader<Predicate> {
 	DefaultRdbmsPredicateReader(RdbmsDriver driver) throws StoreException {
 		Statement stat;
 		try {
-			stat = driver.getStatement();
+			stat = driver.createStatement();
 			results = stat.executeQuery(getAllPredicatesQuery);
 		} catch (SQLException e) {
 			throw new StoreException(e);

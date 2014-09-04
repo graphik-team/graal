@@ -36,8 +36,8 @@ RdbmsStore {
 		return this.driver.getConnection();
 	}
 	
-	protected Statement getStatement() throws StoreException {
-		return this.driver.getStatement();
+	protected Statement createStatement() throws StoreException {
+		return this.driver.createStatement();
 	}
 
 	protected abstract Statement add(Statement statement, Atom atom) throws StoreException;
@@ -59,17 +59,27 @@ RdbmsStore {
 	 */
 	@Override
 	public boolean add(Atom atom) {
+		boolean res = true;
+		Statement statement = null;
 		try {
-			Statement statement = this.getStatement();
+			statement = this.createStatement();
 			this.add(statement, atom);
 			statement.executeBatch();
 			this.getConnection().commit();
 		} catch (SQLException e) {
-			return false;
+			res = false;
 		} catch (AtomSetException e) {
-			return false;
+			res = false;
+		} finally {
+			if(statement != null) {
+				try {
+					statement.close();
+				} catch (SQLException e) {
+					res = false;
+				}
+			}
 		}
-		return true;
+		return res;
 	}
 	
 	/* (non-Javadoc)
@@ -77,17 +87,27 @@ RdbmsStore {
 	 */
 	@Override
 	public boolean remove(Atom atom) {
+		boolean res = true;
+		Statement statement = null;
 		try {
-			Statement statement = this.getStatement();
+			statement = this.createStatement();
 			this.remove(statement, atom);
 			statement.executeBatch();
 			this.getConnection().commit();
 		} catch (SQLException e) {
-			return false;
+			res = false;
 		} catch (AtomSetException e) {
-			return false;
+			res = false;
+		} finally {
+			if(statement != null) {
+				try {
+					statement.close();
+				} catch (SQLException e) {
+					res = false;
+				}
+			}
 		}
-		return true;
+		return res;
 	}
 
 
@@ -121,17 +141,25 @@ RdbmsStore {
 	public void addAll(Iterable<Atom> stream) throws AtomSetException {
 		try {
 			int c = 0;
-			Statement statement = this.getStatement();
+			Statement statement = null;
+			
 			for(Atom a : stream) {
+				statement = this.createStatement();
 				this.add(statement, a);
 				if((++c % MAX_BATCH_SIZE) == 0) {
 					if(logger.isDebugEnabled()) {
 						logger.debug("batch commit, size=" + MAX_BATCH_SIZE);
 					}
 					statement.executeBatch();
+					statement.close();
 				}
+			} 
+			
+			if(!statement.isClosed()) {
+				statement.executeBatch();
+				statement.close();
 			}
-			statement.executeBatch();
+			
 			this.getConnection().commit();
 		} catch (SQLException e) {
 			logger.error(e.getMessage(), e);
@@ -141,7 +169,7 @@ RdbmsStore {
 	public void remove(Iterable<Atom> stream) throws AtomSetException {
 		try {
 			int c = 0;
-			Statement statement = this.getStatement();
+			Statement statement = this.createStatement();
 			for(Atom a : stream) {
 				this.remove(statement, a);
 				if((++c % MAX_BATCH_SIZE) == 0) {
@@ -149,9 +177,15 @@ RdbmsStore {
 						logger.debug("batch commit, size=" + MAX_BATCH_SIZE);
 					}
 					statement.executeBatch();
+					statement.close();
 				}
 			}
-			statement.executeBatch();
+			
+			if(!statement.isClosed()) {
+				statement.executeBatch();
+				statement.close();
+			}
+			
 			this.getConnection().commit();
 		} catch (SQLException e) {
 			logger.error(e.getMessage(), e);

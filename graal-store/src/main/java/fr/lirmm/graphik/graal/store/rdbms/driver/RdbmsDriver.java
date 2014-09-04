@@ -15,7 +15,7 @@ import fr.lirmm.graphik.graal.store.StoreException;
 public interface RdbmsDriver {
 
 	Connection getConnection();
-	Statement getStatement() throws StoreException;
+	Statement createStatement() throws StoreException;
 	
 	String getInsertOrIgnoreStatement();
 }
