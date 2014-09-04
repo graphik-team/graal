@@ -171,10 +171,9 @@ RdbmsStore {
 	public void addAll(Iterable<Atom> stream) throws AtomSetException {
 		try {
 			int c = 0;
-			Statement statement = null;
+			Statement statement = this.createStatement();;
 			
 			for(Atom a : stream) {
-				statement = this.createStatement();
 				this.add(statement, a);
 				if((++c % MAX_BATCH_SIZE) == 0) {
 					if(logger.isDebugEnabled()) {
@@ -182,6 +181,7 @@ RdbmsStore {
 					}
 					statement.executeBatch();
 					statement.close();
+					statement = this.createStatement();
 				}
 			} 
 			
