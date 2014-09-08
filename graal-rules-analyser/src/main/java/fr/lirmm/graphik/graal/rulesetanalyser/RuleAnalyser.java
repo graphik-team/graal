@@ -152,9 +152,8 @@ public class RuleAnalyser {
 			}
 
 			// combine
-			int[] layers = scc.computeLayers();
-			computeFESComponent(layers);
-			computeFUSComponent(layers);
+			computeFESComponent();
+			computeFUSComponent();
 		}
 
 		// result
@@ -352,7 +351,9 @@ public class RuleAnalyser {
 	 * @param componentCalculability
 	 * @return
 	 */
-	private void computeFESComponent(int[] layers) {
+	private void computeFESComponent() {
+		int[] layers = scc.computeLayers(scc.getSources(), true);
+
 		boolean[] mark = new boolean[scc.getNbrComponents()];
 
 		Queue<Integer> queue = new LinkedList<Integer>();
@@ -392,7 +393,9 @@ public class RuleAnalyser {
 	 * @param componentCalculability
 	 * @return
 	 */
-	private void computeFUSComponent(int[] layers) {
+	private void computeFUSComponent() {
+		int[] layers = scc.computeLayers(scc.getSinks(), false);
+
 		boolean[] mark = new boolean[scc.getNbrComponents()];
 		Queue<Integer> queue = new LinkedList<Integer>();
 
@@ -416,7 +419,7 @@ public class RuleAnalyser {
 			if (bool != null && bool && succFUS) {
 				componentCalculability[c] += ComponentCalculabilityValue.FUS;
 				for (int pred : scc.getInbound(c)) {
-					if (!mark[pred] && layers[c] - 1 == layers[pred]) {
+					if (!mark[pred] && layers[c] + 1 == layers[pred]) {
 						mark[pred] = true;
 						queue.add(pred);
 					}

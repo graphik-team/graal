@@ -69,37 +69,47 @@ public class StronglyConnectedComponentsGraph<V> extends
 	public int getNbrComponents() {
 		return this.getAdjacencyList().size();
 	}
-	
+
 	/**
 	 * @param scc
+	 * @param direction
+	 *            if true, following the direction of the edges, otherwise
+	 *            follows the reverse direction.
 	 * @return
 	 */
-	public int[] computeLayers() {
-		Iterable<Integer> firstLayer = this.getSources();
+	public int[] computeLayers(Iterable<Integer> sources,
+			boolean direction) {
+		Iterable<Integer> firstLayer = sources;
 		int size = 0;
 		Iterator<Integer> it = this.getVertices().iterator();
 		while (it.hasNext()) {
 			it.next();
 			++size;
 		}
-		
+
 		int[] layers = new int[size];
-		//init
-		for(int i = 0; i < size; ++i) {
+		// init
+		for (int i = 0; i < size; ++i) {
 			layers[i] = -1;
 		}
-		for(int i : firstLayer) {
+		for (int i : firstLayer) {
 			layers[i] = 0;
-			layers = computeLayersRec( i, layers, 1);
+			layers = computeLayersRec(i, layers, 1, direction);
 		}
 		return layers;
 	}
-	
-	private int[] computeLayersRec(int v, int[] layers, int actualLayer) {
-		for(int succ : this.getOutbound(v)) {
-			if(layers[succ] < actualLayer && v != succ) {
+
+	private int[] computeLayersRec(int v, int[] layers, int actualLayer, boolean direction) {
+		Iterable<Integer> it = null;
+		if(direction)
+			it = this.getOutbound(v);
+		else
+			it = this.getInbound(v);
+		
+		for (int succ : it) {
+			if (layers[succ] < actualLayer && v != succ) {
 				layers[succ] = actualLayer;
-				layers = computeLayersRec(succ, layers, actualLayer + 1);
+				layers = computeLayersRec(succ, layers, actualLayer + 1, direction);
 			}
 		}
 		return layers;
