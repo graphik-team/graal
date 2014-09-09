@@ -188,10 +188,10 @@ RdbmsStore {
 				}
 			} 
 			
-			if(!statement.isClosed()) {
+			//if(!statement.isClosed()) {
 				statement.executeBatch();
 				statement.close();
-			}
+			//}
 			
 			this.getConnection().commit();
 		} catch (SQLException e) {
