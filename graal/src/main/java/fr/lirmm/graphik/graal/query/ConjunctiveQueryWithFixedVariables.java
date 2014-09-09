@@ -26,25 +26,25 @@ import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
 public class ConjunctiveQueryWithFixedVariables implements ConjunctiveQuery {
 
 	private /*ReadOnly*/AtomSet atomSet;
-	private Collection<Term> responseVariables;
+	private Collection<Term> answerVariables;
 
 	public ConjunctiveQueryWithFixedVariables(/*ReadOnly*/AtomSet atomSet, Iterable<Term> fixedTerms) {
 		this.atomSet = computeFixedQuery(atomSet, fixedTerms);
-        this.responseVariables = this.atomSet.getTerms(Term.Type.VARIABLE);
+        this.answerVariables = this.atomSet.getTerms(Term.Type.VARIABLE);
     }
 
 	public ConjunctiveQueryWithFixedVariables(ReadOnlyAtomSet atomSet, Iterable<Term> fixedTerms) {
 		this.atomSet = computeFixedQuery(new LinkedListAtomSet(atomSet), fixedTerms);
-        this.responseVariables = this.atomSet.getTerms(Term.Type.VARIABLE);
+        this.answerVariables = this.atomSet.getTerms(Term.Type.VARIABLE);
     }
 
 	public ConjunctiveQueryWithFixedVariables(/*ReadOnly*/AtomSet atomSet,
 			Collection<Term> responseVariables, Iterable<Term> fixedTerms) {
 
 		this.atomSet = computeFixedQuery(atomSet, fixedTerms);
-		this.responseVariables = responseVariables;
-		if (this.responseVariables == null) {
-			this.responseVariables = new LinkedList<Term>();
+		this.answerVariables = responseVariables;
+		if (this.answerVariables == null) {
+			this.answerVariables = new LinkedList<Term>();
 		}
 	}
 
@@ -60,7 +60,7 @@ public class ConjunctiveQueryWithFixedVariables implements ConjunctiveQuery {
 	 */
 	@Override
 	public boolean isBoolean() {
-		return this.responseVariables.isEmpty();
+		return this.answerVariables.isEmpty();
 	}
 
 	/* (non-Javadoc)
@@ -76,7 +76,7 @@ public class ConjunctiveQueryWithFixedVariables implements ConjunctiveQuery {
 	 */
 	@Override
 	public Collection<Term> getAnswerVariables() {
-		return this.responseVariables;
+		return this.answerVariables;
 	}
 	
 	
@@ -113,7 +113,7 @@ public class ConjunctiveQueryWithFixedVariables implements ConjunctiveQuery {
 			s.append(t).append(',');
 
 		s.append("), ANS(");
-		for (Term t : this.responseVariables)
+		for (Term t : this.answerVariables)
 			s.append(t).append(',');
 
 		s.append(") :- ");
