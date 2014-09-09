@@ -31,13 +31,11 @@ public class ConjunctiveQueryWithFixedVariables implements ConjunctiveQuery {
 	public ConjunctiveQueryWithFixedVariables(/*ReadOnly*/AtomSet atomSet, Iterable<Term> fixedTerms) {
 		this.atomSet = computeFixedQuery(atomSet, fixedTerms);
         this.responseVariables = this.atomSet.getTerms(Term.Type.VARIABLE);
-       
     }
 
 	public ConjunctiveQueryWithFixedVariables(ReadOnlyAtomSet atomSet, Iterable<Term> fixedTerms) {
 		this.atomSet = computeFixedQuery(new LinkedListAtomSet(atomSet), fixedTerms);
         this.responseVariables = this.atomSet.getTerms(Term.Type.VARIABLE);
-       
     }
 
 	public ConjunctiveQueryWithFixedVariables(/*ReadOnly*/AtomSet atomSet,
@@ -104,6 +102,23 @@ public class ConjunctiveQueryWithFixedVariables implements ConjunctiveQuery {
 		return fixedQuery;
 	}
 
+	// /////////////////////////////////////////////////////////////////////////
+	// OBJECT METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
+	@Override
+	public String toString() {
+		StringBuilder s = new StringBuilder("FIXED(");
+		for (Term t : this.atomSet.getTerms(Term.Type.CONSTANT))
+			s.append(t).append(',');
+
+		s.append("), ANS(");
+		for (Term t : this.responseVariables)
+			s.append(t).append(',');
+
+		s.append(") :- ");
+		s.append(this.atomSet);
+		return s.toString();
+	}
 	
 }
