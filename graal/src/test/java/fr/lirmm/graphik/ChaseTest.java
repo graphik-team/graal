@@ -3,9 +3,7 @@
  */
 package fr.lirmm.graphik;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedList;
 
@@ -15,12 +13,6 @@ import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
-import fr.lirmm.graphik.graal.Graal;
-import fr.lirmm.graphik.graal.StaticChase;
-import fr.lirmm.graphik.graal.chase.Chase;
-import fr.lirmm.graphik.graal.chase.ChaseException;
-import fr.lirmm.graphik.graal.chase.ChaseWithGRD;
-import fr.lirmm.graphik.graal.chase.DefaultChase;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.Query;
@@ -29,15 +21,19 @@ import fr.lirmm.graphik.graal.core.RuleSet;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
-import fr.lirmm.graphik.graal.core.atomset.graph.MemoryGraphAtomSet;
+import fr.lirmm.graphik.graal.forward_chaining.Chase;
+import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
+import fr.lirmm.graphik.graal.forward_chaining.ChaseWithGRD;
+import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
+import fr.lirmm.graphik.graal.forward_chaining.StaticChase;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.io.basic.BasicParser;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
-import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
 import fr.lirmm.graphik.graal.io.grd.GRDParser;
 import fr.lirmm.graphik.graal.parser.ParseException;
 import fr.lirmm.graphik.graal.solver.SolverException;
 import fr.lirmm.graphik.graal.solver.SolverFactoryException;
+import fr.lirmm.graphik.graal.solver.StaticSolver;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -62,7 +58,7 @@ public class ChaseTest {
 		chase.execute();
 		
 		Query query = DlgpParser.parseQuery("? :- p(X,Y),q(X,Y).");
-		Assert.assertTrue(Graal.executeQuery(query, atomSet).hasNext());
+		Assert.assertTrue(StaticSolver.executeQuery(query, atomSet).hasNext());
 	}
 	
 	@Theory
@@ -134,7 +130,7 @@ public class ChaseTest {
 		// /////////////////////////////////////////////////////////////////////
 		// execute query
 		Query query = DlgpParser.parseQuery("?(X,Y) :- s(X, Y), p(X), q(Y).");
-		Iterable<Substitution> subReader = Graal.executeQuery(query, atomSet);
+		Iterable<Substitution> subReader = StaticSolver.executeQuery(query, atomSet);
 		Assert.assertTrue(subReader.iterator().hasNext());
 	}
 	

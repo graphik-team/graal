@@ -3,7 +3,7 @@ package fr.lirmm.graphik.graal.transformation;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
-import fr.lirmm.graphik.util.stream.ObjectReader;
+import fr.lirmm.graphik.graal.solver.DefaultSolverFactory;
 
 /**
  * 
@@ -12,6 +12,11 @@ import fr.lirmm.graphik.util.stream.ObjectReader;
  */
 public class TransformAtomSet extends ReadOnlyTransformStore implements
         AtomSet {
+	
+	static  {
+		DefaultSolverFactory.getInstance().addChecker(
+				new TransformatorSolverChecker());
+	}
 
     // /////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR

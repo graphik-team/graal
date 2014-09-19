@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.lirmm.graphik.graal.query;
+package fr.lirmm.graphik.graal.forward_chaining;
 
 import java.util.Collection;
 import java.util.Iterator;

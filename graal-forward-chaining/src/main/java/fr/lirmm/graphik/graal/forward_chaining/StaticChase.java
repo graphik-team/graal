@@ -1,12 +1,8 @@
 /**
  * 
  */
-package fr.lirmm.graphik.graal;
+package fr.lirmm.graphik.graal.forward_chaining;
 
-import fr.lirmm.graphik.graal.chase.Chase;
-import fr.lirmm.graphik.graal.chase.ChaseException;
-import fr.lirmm.graphik.graal.chase.ChaseWithGRD;
-import fr.lirmm.graphik.graal.chase.DefaultChase;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;

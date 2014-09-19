@@ -5,19 +5,19 @@ package fr.lirmm.graphik.alaska.examples;
 
 import java.io.IOException;
 
-import fr.lirmm.graphik.graal.Graal;
-import fr.lirmm.graphik.graal.StaticChase;
-import fr.lirmm.graphik.graal.chase.ChaseException;
 import fr.lirmm.graphik.graal.core.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.RuleSet;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.graph.MemoryGraphAtomSet;
+import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
+import fr.lirmm.graphik.graal.forward_chaining.StaticChase;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
 import fr.lirmm.graphik.graal.solver.SolverException;
 import fr.lirmm.graphik.graal.solver.SolverFactoryException;
+import fr.lirmm.graphik.graal.solver.StaticSolver;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -65,7 +65,7 @@ public class DefaultUseCaseExample {
 		// /////////////////////////////////////////////////////////////////////
 		// execute query
 		Query query = DlgpParser.parseQuery("?(X,Y) :- s(X, Y), p(X), q(Y).");
-		Iterable<Substitution> subReader = Graal.executeQuery(query, atomSet);
+		Iterable<Substitution> subReader = StaticSolver.executeQuery(query, atomSet);
 		for(Substitution s : subReader) {
 			System.out.println(s);
 		}

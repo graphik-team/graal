@@ -1,11 +1,10 @@
 /**
  * 
  */
-package fr.lirmm.graphik.graal.chase;
+package fr.lirmm.graphik.graal.forward_chaining;
 
 import java.util.Set;
 
-import fr.lirmm.graphik.graal.Graal;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultFreeVarGen;
 import fr.lirmm.graphik.graal.core.Query;
@@ -16,6 +15,7 @@ import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.solver.Solver;
+import fr.lirmm.graphik.graal.solver.StaticSolver;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -52,8 +52,7 @@ public class DefaultChase extends AbstractChase {
 		this.ruleSet = ruleSet;
 		this.atomSet = atomSet;
 		this.existentialGen = existentialGen;
-		this.solver = Graal
-				.getSolverFactory().getSolver(new DefaultConjunctiveQuery(), atomSet);
+		this.solver = StaticSolver.getSolverFactory().getSolver(new DefaultConjunctiveQuery(), atomSet);
 	}
 
 	public DefaultChase(Iterable<Rule> ruleSet, AtomSet atomSet) {
@@ -80,7 +79,7 @@ public class DefaultChase extends AbstractChase {
 						}
 
 						// the atom set producted by the rule application
-						ReadOnlyAtomSet deductedAtomSet = Graal.substitute(s, rule.getHead());
+						ReadOnlyAtomSet deductedAtomSet = s.getSubstitut(rule.getHead());
 						
 						if(stopCondition.canIAdd(deductedAtomSet, fixedTerm, this.atomSet)) {
 							this.atomSet.addAll(deductedAtomSet);

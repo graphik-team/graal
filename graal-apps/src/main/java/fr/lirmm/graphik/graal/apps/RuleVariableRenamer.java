@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-import fr.lirmm.graphik.graal.Graal;
 import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.HashMapSubstitution;
 import fr.lirmm.graphik.graal.core.Rule;
@@ -51,8 +50,8 @@ public class RuleVariableRenamer {
 					for(Term var : vars) {
 						substitution.put(var, new Term(var.toString() + "_" + objectNumber, Term.Type.VARIABLE));
 					}
-					AtomSet body = Graal.substitut(rule.getBody(), substitution);
-					AtomSet head = Graal.substitut(rule.getHead(), substitution);
+					AtomSet body = substitution.getSubstitut(rule.getBody());
+					AtomSet head = substitution.getSubstitut(rule.getHead());
 					String label = rule.getLabel();
 					if(label.isEmpty()) {
 						label = "R"+objectNumber;
