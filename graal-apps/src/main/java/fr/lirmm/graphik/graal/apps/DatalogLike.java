@@ -28,7 +28,7 @@ import fr.lirmm.graphik.graal.solver.StaticSolver;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class Saturator {
+public class DatalogLike {
 	public static void main(String[] args) throws ChaseException, IOException, SolverFactoryException, SolverException {
 		DlgpWriter writer = new DlgpWriter();
 		DlgpParser parser = new DlgpParser(System.in);
