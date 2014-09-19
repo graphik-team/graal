@@ -31,8 +31,6 @@ public class LinkedListRuleSet implements RuleSet, Collection<Rule> {
 
 	@Override
 	public boolean add(Rule rule) {
-		if (ruleList.contains(rule))
-			return false;
 		ruleList.add(rule);
 		return true;
 	}
