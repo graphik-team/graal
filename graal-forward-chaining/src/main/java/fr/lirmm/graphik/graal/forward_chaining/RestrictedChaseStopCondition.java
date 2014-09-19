@@ -1,20 +1,19 @@
 /**
  * 
  */
-package fr.lirmm.graphik.graal.chase;
+package fr.lirmm.graphik.graal.forward_chaining;
 
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.Graal;
 import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
-import fr.lirmm.graphik.graal.query.ConjunctiveQueryWithFixedVariables;
 import fr.lirmm.graphik.graal.solver.SolverException;
 import fr.lirmm.graphik.graal.solver.SolverFactoryException;
+import fr.lirmm.graphik.graal.solver.StaticSolver;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -35,7 +34,7 @@ public class RestrictedChaseStopCondition implements ChaseStopCondition {
 		if(logger.isDebugEnabled()) {
 			logger.debug("Fixed Query:" + query);
 		}
-		if (Graal.executeQuery(query, base).hasNext()) {
+		if (StaticSolver.executeQuery(query, base).hasNext()) {
 			return false;
 		}
 		return true;

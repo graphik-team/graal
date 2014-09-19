@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.lirmm.graphik.graal.chase;
+package fr.lirmm.graphik.graal.forward_chaining;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -12,7 +12,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.Graal;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultFreeVarGen;
 import fr.lirmm.graphik.graal.core.HashMapSubstitution;
@@ -24,6 +23,7 @@ import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
+import fr.lirmm.graphik.graal.solver.StaticSolver;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -76,7 +76,7 @@ public class ChaseWithGRD extends AbstractChase {
 					logger.debug("-- Query: " + query);
 				}
 				
-				for (Substitution substitution : Graal.executeQuery(query, atomSet)) {
+				for (Substitution substitution : StaticSolver.executeQuery(query, atomSet)) {
 					if(logger.isDebugEnabled()) {
 						logger.debug("-- Found homomorphism: " + substitution );
 					}
@@ -88,7 +88,7 @@ public class ChaseWithGRD extends AbstractChase {
 					}
 
 					// the atom set producted by the rule application
-					ReadOnlyAtomSet deductedAtomSet = Graal.substitute(substitution, unifiedRule.getHead());
+					ReadOnlyAtomSet deductedAtomSet = substitution.getSubstitut(unifiedRule.getHead());
 	
 					if(stopCondition.canIAdd(deductedAtomSet, fixedTerm, this.atomSet)) {
 						this.atomSet.addAll(deductedAtomSet);

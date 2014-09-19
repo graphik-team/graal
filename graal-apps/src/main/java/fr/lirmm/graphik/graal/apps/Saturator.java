@@ -7,9 +7,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 
-import fr.lirmm.graphik.graal.Graal;
-import fr.lirmm.graphik.graal.StaticChase;
-import fr.lirmm.graphik.graal.chase.ChaseException;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.LinkedListRuleSet;
@@ -19,10 +16,13 @@ import fr.lirmm.graphik.graal.core.RuleSet;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.graph.MemoryGraphAtomSet;
+import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
+import fr.lirmm.graphik.graal.forward_chaining.StaticChase;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
 import fr.lirmm.graphik.graal.solver.SolverException;
 import fr.lirmm.graphik.graal.solver.SolverFactoryException;
+import fr.lirmm.graphik.graal.solver.StaticSolver;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -57,7 +57,7 @@ public class Saturator {
         writer.write("\n% queries\n");
         for(ConjunctiveQuery q : querySet) {
         	writer.write(q);
-        	for(Substitution s : Graal.executeQuery(q, atomSet)) {
+        	for(Substitution s : StaticSolver.executeQuery(q, atomSet)) {
         		writer.write(s.toString());
         		writer.write("\n");
         	}

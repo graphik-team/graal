@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.lirmm.graphik.graal.chase;
+package fr.lirmm.graphik.graal.forward_chaining;
 
 import java.util.Set;
 

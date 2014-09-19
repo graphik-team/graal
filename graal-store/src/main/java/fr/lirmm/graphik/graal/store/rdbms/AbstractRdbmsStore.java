@@ -12,6 +12,9 @@ import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
+import fr.lirmm.graphik.graal.solver.DefaultSolverFactory;
+import fr.lirmm.graphik.graal.solver.SqlSolverChecker;
+import fr.lirmm.graphik.graal.solver.SqlUnionConjunctiveQueriesSolverChecker;
 import fr.lirmm.graphik.graal.store.AbstractStore;
 import fr.lirmm.graphik.graal.store.StoreException;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
@@ -22,6 +25,13 @@ import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
  */
 public abstract class AbstractRdbmsStore extends AbstractStore implements
 RdbmsStore {
+	
+	static  {
+		DefaultSolverFactory.getInstance().addChecker(
+				new SqlSolverChecker());
+		DefaultSolverFactory.getInstance().addChecker(
+				new SqlUnionConjunctiveQueriesSolverChecker());
+	}
 	
 	private static final Logger logger = LoggerFactory
 			.getLogger(AbstractRdbmsStore.class);
