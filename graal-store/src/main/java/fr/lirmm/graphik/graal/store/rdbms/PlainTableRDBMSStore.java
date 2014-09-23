@@ -104,7 +104,7 @@ public class PlainTableRDBMSStore extends AbstractRdbmsStore {
 	}
 
 	@Override
-	public ObjectReader<Predicate> getAllPredicate() throws AtomSetException {
+	public ObjectReader<Predicate> getAllPredicates() throws AtomSetException {
 		// TODO implement this method
 		throw new Error("This method isn't implemented");
 	}
@@ -191,6 +191,12 @@ public class PlainTableRDBMSStore extends AbstractRdbmsStore {
 
 	@Override
 	protected void createDatabaseSchema() throws StoreException {
+		// TODO implement this method
+		throw new Error("This method isn't implemented");
+	}
+
+	@Override
+	public void clear() {
 		// TODO implement this method
 		throw new Error("This method isn't implemented");
 	}

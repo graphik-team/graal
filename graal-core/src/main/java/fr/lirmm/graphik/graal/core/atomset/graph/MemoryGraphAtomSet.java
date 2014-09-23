@@ -7,7 +7,6 @@ import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.AtomComparator;
-import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.TermValueComparator;
@@ -182,13 +181,11 @@ public class MemoryGraphAtomSet extends AbstractReadOnlyAtomSet implements AtomS
         return val;
     }
 
-	/* (non-Javadoc)
-	 * @see fr.lirmm.graphik.kb.core.AtomSet#getAllPredicate()
-	 */
 	@Override
-	public ObjectReader<Predicate> getAllPredicate() throws AtomSetException {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
+	public void clear() {
+		this.terms.clear();
+		this.predicates.clear();
+		this.atoms.clear();
 	}
 
 }

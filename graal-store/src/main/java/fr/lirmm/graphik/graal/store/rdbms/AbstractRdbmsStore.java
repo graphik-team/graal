@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.solver.DefaultSolverFactory;
 import fr.lirmm.graphik.graal.solver.SqlSolverChecker;
@@ -234,6 +235,5 @@ RdbmsStore {
 			logger.error(e.getMessage(), e);
 		}
 	}
-	
 	
 }

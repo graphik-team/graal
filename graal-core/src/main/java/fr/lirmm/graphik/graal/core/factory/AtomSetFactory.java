@@ -3,6 +3,7 @@
  */
 package fr.lirmm.graphik.graal.core.factory;
 
+import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 
@@ -23,5 +24,13 @@ public class AtomSetFactory {
 
 	public AtomSet createAtomSet() {
 		return new LinkedListAtomSet();
+	}
+
+	public AtomSet createAtomSet(AtomSet src) {
+		AtomSet atomset = this.createAtomSet();
+		for (Atom a : src) {
+			atomset.add(a);
+		}
+		return atomset;
 	}
 }

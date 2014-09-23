@@ -9,6 +9,7 @@ import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.SymbolGenerator;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.Term.Type;
+import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.solver.SolverException;
@@ -113,7 +114,19 @@ public class ReadOnlyTransformStore implements ReadOnlyStore {
 	 * @see fr.lirmm.graphik.kb.core.AtomSet#getAllPredicate()
 	 */
 	@Override
-	public ObjectReader<Predicate> getAllPredicate() throws AtomSetException {
+	public ObjectReader<Predicate> getAllPredicates() throws AtomSetException {
+		// TODO implement this method
+		throw new Error("This method isn't implemented");
+	}
+
+	@Override
+	public boolean isSubSetOf(AtomSet atomset) {
+		// TODO implement this method
+		throw new Error("This method isn't implemented");
+	}
+
+	@Override
+	public boolean isEmpty() {
 		// TODO implement this method
 		throw new Error("This method isn't implemented");
 	}

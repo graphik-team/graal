@@ -53,6 +53,18 @@ public interface Rule extends Comparable<Rule> {
 	Set<Term> getExistentials();
 
 	/**
+	 * 
+	 * @return
+	 */
+	Set<Term> getTerms(Term.Type type);
+
+	/**
+	 * 
+	 * @return
+	 */
+	Set<Term> getTerms();
+
+	/**
 	 * Compute and return the set of pieces of the head according to the
 	 * frontier. On Rules with Existential Variables: Walking the Decidability
 	 * Line Jean-François Baget, Michel Leclère, Marie-Laure Mugnier, Eric

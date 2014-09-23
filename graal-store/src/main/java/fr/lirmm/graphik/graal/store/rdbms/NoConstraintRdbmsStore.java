@@ -155,7 +155,7 @@ public class NoConstraintRdbmsStore extends AbstractRdbmsStore {
 	 * @see fr.lirmm.graphik.kb.core.AtomSet#getAllPredicate()
 	 */
 	@Override
-	public ObjectReader<Predicate> getAllPredicate() throws AtomSetException {
+	public ObjectReader<Predicate> getAllPredicates() throws AtomSetException {
 		// TODO implement this method
 		throw new Error("This method isn't implemented");
 	}
@@ -175,6 +175,12 @@ public class NoConstraintRdbmsStore extends AbstractRdbmsStore {
 	@Override
 	protected Statement remove(Statement statement, Atom atom)
 			throws StoreException {
+		// TODO implement this method
+		throw new Error("This method isn't implemented");
+	}
+
+	@Override
+	public void clear() {
 		// TODO implement this method
 		throw new Error("This method isn't implemented");
 	}

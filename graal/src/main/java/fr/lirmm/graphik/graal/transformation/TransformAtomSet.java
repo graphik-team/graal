@@ -82,6 +82,11 @@ public class TransformAtomSet extends ReadOnlyTransformStore implements
         }
     }
 
+	@Override
+	public void clear() {
+		this.getStore().clear();
+	}
+
     // /////////////////////////////////////////////////////////////////////////
     // PROTECTED METHODS
     // /////////////////////////////////////////////////////////////////////////
@@ -89,4 +94,5 @@ public class TransformAtomSet extends ReadOnlyTransformStore implements
     protected AtomSet getStore() {
         return (AtomSet) super.getStore();
     }
+
 }

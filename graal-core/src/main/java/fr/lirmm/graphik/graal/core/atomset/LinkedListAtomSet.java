@@ -9,7 +9,6 @@ import java.util.TreeSet;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.AtomComparator;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
-import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.stream.IteratorAtomReader;
 import fr.lirmm.graphik.util.stream.ObjectReader;
@@ -125,6 +124,7 @@ public class LinkedListAtomSet extends AbstractReadOnlyAtomSet implements AtomSe
        return this.linkedList.toString();
     }
     
+    @Override
     public boolean isEmpty() {
         return this.linkedList.isEmpty();
     }
@@ -139,15 +139,6 @@ public class LinkedListAtomSet extends AbstractReadOnlyAtomSet implements AtomSe
     public Atom poll() {
         return this.linkedList.poll();
     }
-
-	/* (non-Javadoc)
-	 * @see fr.lirmm.graphik.kb.core.AtomSet#getAllPredicate()
-	 */
-	@Override
-	public ObjectReader<Predicate> getAllPredicate() throws AtomSetException {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
-	}
 
 	/* (non-Javadoc)
 	 * @see java.util.Collection#addAll(java.util.Collection)

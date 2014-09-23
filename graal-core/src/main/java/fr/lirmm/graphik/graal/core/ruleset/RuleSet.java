@@ -1,6 +1,8 @@
-package fr.lirmm.graphik.graal.core;
+package fr.lirmm.graphik.graal.core.ruleset;
 
 import java.util.Iterator;
+
+import fr.lirmm.graphik.graal.core.Rule;
 
 public interface RuleSet extends ImmutableRuleSet {
 

@@ -1,8 +1,9 @@
-package fr.lirmm.graphik.graal.core;
+package fr.lirmm.graphik.graal.core.ruleset;
 
 import java.util.Collection;
 import java.util.LinkedList;
 
+import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.stream.IteratorRuleReader;
 import fr.lirmm.graphik.util.stream.ObjectReader;
 

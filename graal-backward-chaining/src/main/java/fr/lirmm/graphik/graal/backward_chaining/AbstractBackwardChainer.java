@@ -3,20 +3,17 @@
  */
 package fr.lirmm.graphik.graal.backward_chaining;
 
-import java.util.Iterator;
-
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */
-public interface BackwardChainer extends Iterator<ConjunctiveQuery> {
+public abstract class AbstractBackwardChainer implements BackwardChainer {
 
 	@Override
-	boolean hasNext();
-
-	@Override
-	ConjunctiveQuery next();
+	public void remove() {
+		throw new UnsupportedOperationException();
+	}
 
 }
