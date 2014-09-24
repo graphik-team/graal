@@ -43,7 +43,40 @@ public abstract class AbstractReadOnlyAtomSet implements ReadOnlyAtomSet {
 		}
 		return predicates;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof AtomSet)) {
+			return false;
+		}
+		return this.equals((AtomSet) obj);
+	}
 
+	public boolean equals(AtomSet other) {
+		try {
+			for(Atom a : this) {
+				if(!other.contains(a)) {
+					return false;
+				}
+			}
+			for(Atom a : other) {
+				if(!this.contains(a)) {
+					return false;
+				}
+			}
+		} catch (AtomSetException e) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
 	public String toString() {
 		StringBuilder s = new StringBuilder();
 		s.append('[');

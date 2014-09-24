@@ -57,6 +57,14 @@ public class LinkedListAtomSet extends AbstractReadOnlyAtomSet implements AtomSe
     //	PUBLIC METHODS
     // /////////////////////////////////////////////////////////////////////////
 
+	@Override
+	public boolean add(Atom atom) {
+		if (this.linkedList.contains(atom))
+			return false;
+
+		return this.linkedList.add(atom);
+	}
+
     @Override
     public Set<Term> getTerms() {
         Set<Term> terms = new TreeSet<Term>();
@@ -78,7 +86,7 @@ public class LinkedListAtomSet extends AbstractReadOnlyAtomSet implements AtomSe
     @Override
     public void addAll(Iterable<Atom> atoms) {
         for(Atom a : atoms)
-            this.linkedList.add(a);
+            this.add(a);
     }
 
     @Override
@@ -109,14 +117,6 @@ public class LinkedListAtomSet extends AbstractReadOnlyAtomSet implements AtomSe
     @Override
     public ObjectReader<Atom> iterator() {
         return new IteratorAtomReader(this.linkedList.iterator());
-    }
-
-    /* (non-Javadoc)
-     * @see fr.lirmm.graphik.kb.IWriteableAtomSet#add(fr.lirmm.graphik.kb.IAtom)
-     */
-    @Override
-    public boolean add(Atom atom) {
-        return this.linkedList.add(atom);
     }
 
     @Override

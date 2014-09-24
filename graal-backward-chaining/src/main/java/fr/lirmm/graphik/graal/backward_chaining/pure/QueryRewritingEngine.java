@@ -2,6 +2,7 @@ package fr.lirmm.graphik.graal.backward_chaining.pure;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -122,7 +123,9 @@ public class QueryRewritingEngine {
 		LinkedList<ConjunctiveQuery> rewriteSetToExplore = new LinkedList<ConjunctiveQuery>();
 		Collection<ConjunctiveQuery> rewriteToAdd;
 
-		ConjunctiveQuery q = new DefaultConjunctiveQuery(this.getQuery());
+		this.query.addAnswerPredicate();
+		ConjunctiveQuery q = this.query;
+		
 		rewriteSetToExplore.add(q);
 		pivotRewritingSet.add(q);
 
@@ -169,6 +172,11 @@ public class QueryRewritingEngine {
 
 			// Stop homomorphism
 
+		}
+		
+		// remove ans predicate from queries
+		for(ConjunctiveQuery query : pivotRewritingSet) {
+			PureQuery.removeAnswerPredicate(query);
 		}
 
 		if (compilation != null)
@@ -228,7 +236,10 @@ public class QueryRewritingEngine {
 				}
 
 				newq.clear();
-				newq.add(new DefaultConjunctiveQuery());
+				ConjunctiveQuery query = new DefaultConjunctiveQuery();
+				query.getAnswerVariables().addAll(q.getAnswerVariables());
+				newq.add(query);
+				
 				// we will build all the possible fact from the rewriting of the
 				// atoms
 				Iterator<ConjunctiveQuery> i;
@@ -722,7 +733,12 @@ public class QueryRewritingEngine {
 
 	public static Collection<Rule> getUnifiableRules(Iterable<Predicate> preds,
 			IndexedByHeadPredicatesRuleSet ruleSet, RulesCompilation compilation) {
-		TreeSet<Rule> res = new TreeSet<Rule>();
+		TreeSet<Rule> res = new TreeSet<Rule>(new Comparator<Rule>() {
+			@Override
+			public int compare(Rule o1, Rule o2) {
+				return o1.toString().compareTo(o2.toString());
+			}
+		});
 		TreeSet<Predicate> unifiable_preds = new TreeSet<Predicate>();
 		if (compilation != null) {
 			for (Predicate pred : preds) {

@@ -76,24 +76,25 @@ public class IDCompilation implements RulesCompilation {
 			}
 		}
 		try {
-			File save = new File(rule_name + ".save");
-			if (!save.createNewFile()) {// the save file for the saturation of
-										// this set of rule exists
-				loadSaturation(rule_name);
-			} else {
-				// compute the saturation and save it
-				computeSaturation();
-				// create file to save the saturation
-				FileWriter file = new FileWriter(save);
-				Atom b;
-				Atom h;
-				for (Rule ru : saturation) {
-					h = ru.getHead().iterator().next();
-					b = ru.getBody().iterator().next();
-					file.write(h + ":-" + b + ".\n");
-					file.flush();
-				}
-			}
+			computeSaturation();
+//			File save = new File(rule_name + ".save");
+//			if (!save.createNewFile()) {// the save file for the saturation of
+//										// this set of rule exists
+//				loadSaturation(rule_name);
+//			} else {
+//				// compute the saturation and save it
+//				computeSaturation();
+//				// create file to save the saturation
+//				FileWriter file = new FileWriter(save);
+//				Atom b;
+//				Atom h;
+//				for (Rule ru : saturation) {
+//					h = ru.getHead().iterator().next();
+//					b = ru.getBody().iterator().next();
+//					file.write(h + ":-" + b + ".\n");
+//					file.flush();
+//				}
+//			}
 		} catch (Exception e) {
 			System.err.println("Problem to save the saturation");
 		}

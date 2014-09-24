@@ -212,16 +212,29 @@ public class DefaultRule implements Rule {
 		builder.append(this.head);
 		return builder.toString();
 	}
-
+	
 	@Override
-	public boolean equals(Object o) {
-		boolean res;
-		res = o != null && o instanceof Rule;
-		if (res) {
-			Rule r = (Rule) o;
-			res = this.compareTo(r) == 0;
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
 		}
-		return res;
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof Rule)) {
+			return false;
+		}
+		return this.equals((Rule) obj);
+	}
+
+	public boolean equals(Rule other) {
+		if(this.label.compareTo(other.getLabel()) != 0)
+			return false;
+		if(!other.getHead().equals(this.getHead()))
+			return false;
+		if(!other.getBody().equals(this.getBody()))
+			return false;
+		return true;
 	}
 
 	@Override

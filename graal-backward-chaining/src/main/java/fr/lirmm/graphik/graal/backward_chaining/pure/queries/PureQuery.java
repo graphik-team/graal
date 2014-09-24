@@ -11,7 +11,9 @@ import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
 import fr.lirmm.graphik.graal.backward_chaining.pure.utils.Misc;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
+import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 
@@ -75,14 +77,24 @@ public class PureQuery extends DefaultConjunctiveQuery {
 		return false;
 	}
 
+	
+	private static Predicate ansPredicate = new Predicate("__ans", 1);
 	public void removeAnswerPredicate() {
-		Iterator<Atom> ita = this.getAtomSet().iterator();
+		removeAnswerPredicate(this);
+	}
+	
+	public static void removeAnswerPredicate(ConjunctiveQuery query) {
+		Iterator<Atom> ita = query.getAtomSet().iterator();
 		while (ita.hasNext()) {
-			Atom a = ita.next();
-			String label = (String) a.getPredicate().getLabel();
-			if (label.length() > 3 && label.substring(0, 4).equals("Ans_")) {
+			if (ita.next().getPredicate().equals(ansPredicate)) {
 				ita.remove();
 			}
+		}
+	}
+
+	public void addAnswerPredicate() {
+		for(Term t: getAnswerVariables()) {
+			this.getAtomSet().add(new DefaultAtom(ansPredicate, t));
 		}
 	}
 }
