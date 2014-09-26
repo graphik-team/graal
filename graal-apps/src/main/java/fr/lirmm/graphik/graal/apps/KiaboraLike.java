@@ -1,9 +1,5 @@
 package fr.lirmm.graphik.graal.apps;
 
-/**
- * 
- */
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;

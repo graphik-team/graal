@@ -90,7 +90,7 @@ public class DefaultChase extends AbstractChase {
     			}
     		}
 		} catch (Exception e) {
-			throw new ChaseException("An error occur pending saturation step.", e);
+			throw new ChaseException("An error occured during saturation step.", e);
 		}
 	}
 	

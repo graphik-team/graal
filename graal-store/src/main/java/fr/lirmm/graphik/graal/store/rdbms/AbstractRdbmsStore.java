@@ -104,11 +104,13 @@ RdbmsStore {
 
 	public void commitAtoms() {
 		try {
-			this.unbatchedStatement.executeBatch();
-			this.getConnection().commit();
-			this.unbatchedAtoms = 0;
-			this.unbatchedStatement.close();
-			this.unbatchedStatement = null;
+			if (this.unbatchedStatement != null) {
+				this.unbatchedStatement.executeBatch();
+				this.getConnection().commit();
+				this.unbatchedAtoms = 0;
+				this.unbatchedStatement.close();
+				this.unbatchedStatement = null;
+			}
 		}
 		catch (Exception e) {
 			logger.error(e.getMessage(),e);
@@ -188,7 +190,7 @@ RdbmsStore {
 				}
 			} 
 			
-			if(!statement.isClosed()) {
+			if(statement != null) {// && !statement.isClosed()) {
 				statement.executeBatch();
 				statement.close();
 			}

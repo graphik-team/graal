@@ -32,6 +32,7 @@ import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
 import fr.lirmm.graphik.graal.chase.DefaultChase;
 import fr.lirmm.graphik.graal.solver.ComplexSolver;
 import fr.lirmm.graphik.graal.solver.Solver;
+import fr.lirmm.graphik.graal.solver.SqlSolver;
 import fr.lirmm.graphik.graal.solver.SqlUnionConjunctiveQueriesSolver;
 
 public class CLI {
@@ -90,7 +91,7 @@ public class CLI {
 		catch (NumberFormatException e) { } // no saturation requested
 
 		DlgpWriter writer = new DlgpWriter(System.out);
-		Solver solver = new ComplexSolver(SqlUnionConjunctiveQueriesSolver.getInstance());
+		Solver solver = new ComplexSolver(SqlSolver.getInstance());
 		DefaultChase chase = new DefaultChase(_rules,_atomset,solver);
 
 		if (k != 0) {
@@ -100,6 +101,7 @@ public class CLI {
 				catch (Exception e) {
 					error |= ERROR_CHASE;
 					System.err.println("An error has occured while saturating: "+e);
+					e.printStackTrace();
 				}
 			}
 			else {
