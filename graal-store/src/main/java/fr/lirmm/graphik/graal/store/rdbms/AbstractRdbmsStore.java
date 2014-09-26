@@ -11,7 +11,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
+import fr.lirmm.graphik.graal.solver.DefaultSolverFactory;
+import fr.lirmm.graphik.graal.solver.SqlSolverChecker;
+import fr.lirmm.graphik.graal.solver.SqlUnionConjunctiveQueriesSolverChecker;
 import fr.lirmm.graphik.graal.store.AbstractStore;
 import fr.lirmm.graphik.graal.store.StoreException;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
@@ -22,6 +26,13 @@ import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
  */
 public abstract class AbstractRdbmsStore extends AbstractStore implements
 RdbmsStore {
+	
+	static  {
+		DefaultSolverFactory.getInstance().addChecker(
+				new SqlSolverChecker());
+		DefaultSolverFactory.getInstance().addChecker(
+				new SqlUnionConjunctiveQueriesSolverChecker());
+	}
 	
 	private static final Logger logger = LoggerFactory
 			.getLogger(AbstractRdbmsStore.class);
@@ -176,10 +187,9 @@ RdbmsStore {
 	public void addAll(Iterable<Atom> stream) throws AtomSetException {
 		try {
 			int c = 0;
-			Statement statement = null;
+			Statement statement = this.createStatement();
 			
 			for(Atom a : stream) {
-				statement = this.createStatement();
 				this.add(statement, a);
 				if((++c % MAX_BATCH_SIZE) == 0) {
 					if(logger.isDebugEnabled()) {
@@ -187,13 +197,14 @@ RdbmsStore {
 					}
 					statement.executeBatch();
 					statement.close();
+					statement = this.createStatement();
 				}
 			} 
 			
-			if(statement != null) {// && !statement.isClosed()) {
+			//if(statement != null) {// && !statement.isClosed()) {
 				statement.executeBatch();
 				statement.close();
-			}
+			//}
 			
 			this.getConnection().commit();
 		} catch (SQLException e) {
@@ -226,6 +237,5 @@ RdbmsStore {
 			logger.error(e.getMessage(), e);
 		}
 	}
-	
 	
 }

@@ -24,7 +24,6 @@ public class SqliteDriver extends AbstractRdbmsDriver {
             .getLogger(SqliteDriver.class);
 	
 	private static final String INSERT_IGNORE = "INSERT OR IGNORE INTO ";
-	private final Statement statement;
 	
 	 /**
 	  * 
@@ -34,12 +33,6 @@ public class SqliteDriver extends AbstractRdbmsDriver {
 	public SqliteDriver(File file)
 			throws StoreException {
 		super(openConnection(file));
-		
-		try {
-			this.statement = this.getConnection().createStatement();
-		} catch (SQLException e) {
-			throw new StoreException(e.getMessage(), e);
-		}
 	}
 	 
 	private static Connection openConnection(File file) throws StoreException {

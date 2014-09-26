@@ -29,6 +29,7 @@ public class DefaultRule implements Rule {
 	private final AtomSet body;
 	private final AtomSet head;
 
+	private Set<Term> terms = null;
 	private Set<Term> frontier = null;
 	private Set<Term> existentials = null;
 
@@ -98,8 +99,28 @@ public class DefaultRule implements Rule {
 	}
 
 	@Override
+	public Set<Term> getTerms() {
+		if(this.terms == null) {
+			this.terms = new TreeSet<Term>();
+			try {
+				this.terms.addAll(this.getBody().getTerms());
+				this.terms.addAll(this.getHead().getTerms());
+			} catch (AtomSetException e) {}
+		}
+		return this.terms;
+	}
+
+	@Override
+	public Set<Term> getTerms(Term.Type type) {
+		Set<Term> terms = new TreeSet<Term>();
+		terms.addAll(this.getBody().getTerms(type));
+		terms.addAll(this.getHead().getTerms(type));
+		return terms;
+	}
+
+	@Override
 	public Set<Term> getFrontier() {
-		if (frontier == null) {
+		if (this.frontier == null) {
 			this.computeFrontierAndExistentials();
 		}
 
@@ -108,7 +129,7 @@ public class DefaultRule implements Rule {
 
 	@Override
 	public Set<Term> getExistentials() {
-		if (existentials == null) {
+		if (this.existentials == null) {
 			this.computeFrontierAndExistentials();
 		}
 
@@ -191,16 +212,29 @@ public class DefaultRule implements Rule {
 		builder.append(this.head);
 		return builder.toString();
 	}
-
+	
 	@Override
-	public boolean equals(Object o) {
-		boolean res;
-		res = o != null && o instanceof Rule;
-		if (res) {
-			Rule r = (Rule) o;
-			res = this.compareTo(r) == 0;
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
 		}
-		return res;
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof Rule)) {
+			return false;
+		}
+		return this.equals((Rule) obj);
+	}
+
+	public boolean equals(Rule other) {
+		if(this.label.compareTo(other.getLabel()) != 0)
+			return false;
+		if(!other.getHead().equals(this.getHead()))
+			return false;
+		if(!other.getBody().equals(this.getBody()))
+			return false;
+		return true;
 	}
 
 	@Override
@@ -225,8 +259,9 @@ public class DefaultRule implements Rule {
 					isExistential = false;
 				}
 			}
-			if (isExistential)
+			if (isExistential) {
 				this.existentials.add(termHead);
+			}
 		}
 	}
 

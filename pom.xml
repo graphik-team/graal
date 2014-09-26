@@ -31,7 +31,9 @@
 		<module>graal-core</module>
 		<module>graal-io</module>
 		<module>graal-solver</module>
+		<module>graal-forward-chaining</module>
 		<module>graal-store</module>
+		<module>graal-backward-chaining</module>
 		<module>graal</module>
 		<module>graal-apps</module>
 		<module>graal-examples</module>

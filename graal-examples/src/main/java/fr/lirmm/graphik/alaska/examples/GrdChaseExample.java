@@ -2,11 +2,11 @@ package fr.lirmm.graphik.alaska.examples;
 import java.io.File;
 import java.io.IOException;
 
-import fr.lirmm.graphik.graal.chase.Chase;
-import fr.lirmm.graphik.graal.chase.ChaseException;
-import fr.lirmm.graphik.graal.chase.ChaseWithGRD;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.graph.MemoryGraphAtomSet;
+import fr.lirmm.graphik.graal.forward_chaining.Chase;
+import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
+import fr.lirmm.graphik.graal.forward_chaining.ChaseWithGRD;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;

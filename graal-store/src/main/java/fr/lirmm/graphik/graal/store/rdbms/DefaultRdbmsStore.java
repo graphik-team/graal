@@ -24,6 +24,7 @@ import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.SymbolGenerator;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.Term.Type;
+import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.store.StoreException;
@@ -760,13 +761,8 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		return value;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.lirmm.graphik.kb.core.AtomSet#getAllPredicate()
-	 */
 	@Override
-	public ObjectReader<Predicate> getAllPredicate() throws StoreException {
+	public Iterable<Predicate> getAllPredicates() throws StoreException {
 		return new DefaultRdbmsPredicateReader(this.getDriver());
 	}
 	
@@ -779,6 +775,12 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		s.append(" from (select 0) as t where 0;");
 		return s.toString();
 
+	}
+
+	@Override
+	public void clear() {
+		// TODO implement this method
+		throw new Error("This method isn't implemented");
 	}
 
 }

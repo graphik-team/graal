@@ -9,18 +9,18 @@ import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Test;
 
-import fr.lirmm.graphik.graal.Graal;
-import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultFreeVarGen;
 import fr.lirmm.graphik.graal.core.Query;
+import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
-import fr.lirmm.graphik.graal.solver.UnionConjunctiveQueriesSolver;
 import fr.lirmm.graphik.graal.solver.Solver;
 import fr.lirmm.graphik.graal.solver.SolverFactoryException;
 import fr.lirmm.graphik.graal.solver.SqlSolver;
+import fr.lirmm.graphik.graal.solver.StaticSolver;
+import fr.lirmm.graphik.graal.solver.UnionConjunctiveQueriesSolver;
 import fr.lirmm.graphik.graal.store.StoreException;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
@@ -35,7 +35,7 @@ import fr.lirmm.graphik.graal.transformation.TransformatorSolver;
 public class SolverFactoryTest {
 
 	@Test
-	public void test() throws IOException, StoreException,
+	public void testSqlSolver() throws IOException, StoreException,
 			SolverFactoryException {
 
 		File file = new File(TestUtil.DB_TEST);
@@ -45,7 +45,7 @@ public class SolverFactoryTest {
 		AtomSet atomSet = new DefaultRdbmsStore(new SqliteDriver(file));
 
 		Query query = DlgpParser.parseQuery("?(X) :- p(X).");
-		Solver solver = Graal.getSolverFactory().getSolver(query, atomSet);
+		Solver solver = StaticSolver.getSolverFactory().getSolver(query, atomSet);
 		Assert.assertTrue(solver instanceof SqlSolver);
 	}
 
@@ -64,7 +64,7 @@ public class SolverFactoryTest {
 		UnionConjunctiveQueries ucq = new UnionConjunctiveQueries(query1,
 				query2);
 
-		Solver solver = Graal.getSolverFactory().getSolver(ucq, atomSet);
+		Solver solver = StaticSolver.getSolverFactory().getSolver(ucq, atomSet);
 		Assert.assertTrue(solver instanceof UnionConjunctiveQueriesSolver);
 	}
 	
@@ -81,7 +81,8 @@ public class SolverFactoryTest {
 		ConjunctiveQuery query = DlgpParser.parseQuery("?(X) :- p(X).");
 
 
-		Solver solver = Graal.getSolverFactory().getSolver(query, atomSet);
+		Solver solver = StaticSolver.getSolverFactory().getSolver(query, atomSet);
 		Assert.assertTrue(solver instanceof TransformatorSolver);
 	}
+	
 }

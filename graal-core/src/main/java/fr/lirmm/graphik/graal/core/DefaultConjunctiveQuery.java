@@ -1,6 +1,7 @@
 package fr.lirmm.graphik.graal.core;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -27,22 +28,37 @@ public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 		this.atomSet = AtomSetFactory.getInstance().createAtomSet();
 		this.responseVariables = new LinkedList<Term>();
 	}
-	
+
 	public DefaultConjunctiveQuery(ReadOnlyAtomSet atomSet) {
         this.atomSet = new LinkedListAtomSet(atomSet);
         this.responseVariables = atomSet.getTerms(Term.Type.VARIABLE);
 	}
-	public DefaultConjunctiveQuery(/*ReadOnly*/AtomSet atomSet) {
+
+	public DefaultConjunctiveQuery(AtomSet atomSet) {
         this.atomSet = atomSet;
         this.responseVariables = atomSet.getTerms(Term.Type.VARIABLE);
     }
-	
-	public DefaultConjunctiveQuery(/*ReadOnly*/AtomSet atomSet, Collection<Term> responseVariables) {
+
+	public DefaultConjunctiveQuery(AtomSet atomSet, Collection<Term> answerVariables) {
 		this.atomSet = atomSet;
-		this.responseVariables = responseVariables;
+		this.responseVariables = answerVariables;
 		if(this.responseVariables == null) {
-			this.responseVariables = new LinkedList<Term>();
+			this.responseVariables = Collections.<Term>emptyList();
 		}
+	}
+
+	public DefaultConjunctiveQuery(Iterable<Atom> atomSet, Iterable<Term> answerVariables) {
+		this.atomSet = new LinkedListAtomSet(atomSet);
+		this.responseVariables = new LinkedList<Term>();
+		for(Term t : answerVariables) {
+			this.responseVariables.add(t);
+		}
+	}
+
+	// copy constructor
+	public DefaultConjunctiveQuery(ConjunctiveQuery query) {
+		this.atomSet = new LinkedListAtomSet(query.getAtomSet());
+		this.responseVariables = new LinkedList<Term>(query.getAnswerVariables());
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

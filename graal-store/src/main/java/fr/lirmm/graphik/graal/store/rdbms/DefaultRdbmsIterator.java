@@ -3,6 +3,7 @@
  */
 package fr.lirmm.graphik.graal.store.rdbms;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -34,7 +35,7 @@ class DefaultRdbmsIterator extends AbstractReader<Atom> {
 	
 	private RdbmsStore store;
 	private boolean hasNextCallDone = false;
-	private ObjectReader<Predicate> predicateStream;
+	private Iterator<Predicate> predicateStream;
 	private ObjectReader<Atom> atomReader;
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -47,7 +48,7 @@ class DefaultRdbmsIterator extends AbstractReader<Atom> {
 	}
 
 	private void init() throws AtomSetException {
-		this.predicateStream = store.getAllPredicate();
+		this.predicateStream = store.getAllPredicates().iterator();
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

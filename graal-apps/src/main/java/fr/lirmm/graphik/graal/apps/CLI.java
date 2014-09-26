@@ -9,31 +9,29 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
-import fr.lirmm.graphik.graal.Graal;
-import fr.lirmm.graphik.graal.StaticChase;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.RuleSet;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
+import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
+import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
-import fr.lirmm.graphik.graal.store.rdbms.AbstractRdbmsStore;
-import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
-import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
-import fr.lirmm.graphik.graal.chase.DefaultChase;
 import fr.lirmm.graphik.graal.solver.ComplexSolver;
 import fr.lirmm.graphik.graal.solver.Solver;
 import fr.lirmm.graphik.graal.solver.SqlSolver;
 import fr.lirmm.graphik.graal.solver.SqlUnionConjunctiveQueriesSolver;
+import fr.lirmm.graphik.graal.solver.StaticSolver;
+import fr.lirmm.graphik.graal.store.rdbms.AbstractRdbmsStore;
+import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
+import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
 
 public class CLI {
 
@@ -120,7 +118,7 @@ public class CLI {
 			for (Query q : _queries) {
 				try {
 					writer.write(q);
-					for (Substitution s : Graal.executeQuery(q,_atomset)) System.out.println(s);
+					for (Substitution s : StaticSolver.executeQuery(q,_atomset)) System.out.println(s);
 				}
 				catch (Exception e) {
 					error |= ERROR_QUERY;

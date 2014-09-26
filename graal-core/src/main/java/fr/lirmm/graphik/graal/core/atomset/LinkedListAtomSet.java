@@ -9,7 +9,6 @@ import java.util.TreeSet;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.AtomComparator;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
-import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.stream.IteratorAtomReader;
 import fr.lirmm.graphik.util.stream.ObjectReader;
@@ -58,6 +57,14 @@ public class LinkedListAtomSet extends AbstractReadOnlyAtomSet implements AtomSe
     //	PUBLIC METHODS
     // /////////////////////////////////////////////////////////////////////////
 
+	@Override
+	public boolean add(Atom atom) {
+		if (this.linkedList.contains(atom))
+			return false;
+
+		return this.linkedList.add(atom);
+	}
+
     @Override
     public Set<Term> getTerms() {
         Set<Term> terms = new TreeSet<Term>();
@@ -79,7 +86,7 @@ public class LinkedListAtomSet extends AbstractReadOnlyAtomSet implements AtomSe
     @Override
     public void addAll(Iterable<Atom> atoms) {
         for(Atom a : atoms)
-            this.linkedList.add(a);
+            this.add(a);
     }
 
     @Override
@@ -112,19 +119,12 @@ public class LinkedListAtomSet extends AbstractReadOnlyAtomSet implements AtomSe
         return new IteratorAtomReader(this.linkedList.iterator());
     }
 
-    /* (non-Javadoc)
-     * @see fr.lirmm.graphik.kb.IWriteableAtomSet#add(fr.lirmm.graphik.kb.IAtom)
-     */
-    @Override
-    public boolean add(Atom atom) {
-        return this.linkedList.add(atom);
-    }
-
     @Override
     public String toString() {        
        return this.linkedList.toString();
     }
     
+    @Override
     public boolean isEmpty() {
         return this.linkedList.isEmpty();
     }
@@ -139,15 +139,6 @@ public class LinkedListAtomSet extends AbstractReadOnlyAtomSet implements AtomSe
     public Atom poll() {
         return this.linkedList.poll();
     }
-
-	/* (non-Javadoc)
-	 * @see fr.lirmm.graphik.kb.core.AtomSet#getAllPredicate()
-	 */
-	@Override
-	public ObjectReader<Predicate> getAllPredicate() throws AtomSetException {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
-	}
 
 	/* (non-Javadoc)
 	 * @see java.util.Collection#addAll(java.util.Collection)

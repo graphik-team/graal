@@ -2,7 +2,6 @@ package fr.lirmm.graphik.graal.transformation;
 
 import java.util.Set;
 
-import fr.lirmm.graphik.graal.Graal;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Predicate;
@@ -10,10 +9,12 @@ import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.SymbolGenerator;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.Term.Type;
+import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.solver.SolverException;
 import fr.lirmm.graphik.graal.solver.SolverFactoryException;
+import fr.lirmm.graphik.graal.solver.StaticSolver;
 import fr.lirmm.graphik.graal.store.ReadOnlyStore;
 import fr.lirmm.graphik.graal.store.StoreException;
 import fr.lirmm.graphik.util.stream.ObjectReader;
@@ -44,7 +45,7 @@ public class ReadOnlyTransformStore implements ReadOnlyStore {
     public boolean contains(Atom atom) throws StoreException {
         Query query = new DefaultConjunctiveQuery(this.transformator.transform(atom));
         try {
-			return Graal.executeQuery(query, this).hasNext();
+			return StaticSolver.executeQuery(query, this).hasNext();
 		} catch (SolverFactoryException e) {
 			throw new StoreException(e);
 		} catch (SolverException e) {
@@ -113,7 +114,19 @@ public class ReadOnlyTransformStore implements ReadOnlyStore {
 	 * @see fr.lirmm.graphik.kb.core.AtomSet#getAllPredicate()
 	 */
 	@Override
-	public ObjectReader<Predicate> getAllPredicate() throws AtomSetException {
+	public ObjectReader<Predicate> getAllPredicates() throws AtomSetException {
+		// TODO implement this method
+		throw new Error("This method isn't implemented");
+	}
+
+	@Override
+	public boolean isSubSetOf(AtomSet atomset) {
+		// TODO implement this method
+		throw new Error("This method isn't implemented");
+	}
+
+	@Override
+	public boolean isEmpty() {
 		// TODO implement this method
 		throw new Error("This method isn't implemented");
 	}

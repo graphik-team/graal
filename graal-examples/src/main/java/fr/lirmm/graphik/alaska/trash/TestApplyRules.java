@@ -1,24 +1,24 @@
 package fr.lirmm.graphik.alaska.trash;
 import java.util.LinkedList;
 
-import fr.lirmm.graphik.graal.Graal;
-import fr.lirmm.graphik.graal.StaticChase;
-import fr.lirmm.graphik.graal.chase.ChaseException;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.RuleSet;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
+import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
+import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
+import fr.lirmm.graphik.graal.forward_chaining.StaticChase;
 import fr.lirmm.graphik.graal.io.basic.BasicParser;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
 import fr.lirmm.graphik.graal.solver.SolverException;
 import fr.lirmm.graphik.graal.solver.SolverFactoryException;
+import fr.lirmm.graphik.graal.solver.StaticSolver;
 
 
 
@@ -47,7 +47,7 @@ public class TestApplyRules {
 
 		Query query = DlgpParser.parseQuery("?(X) :- p(X,Y),q(X,Y).");
 		
-		SubstitutionReader sub = Graal.executeQuery(query, atomSet);
+		SubstitutionReader sub = StaticSolver.executeQuery(query, atomSet);
 		if(sub.hasNext()) {
 			sub.next();
 			System.out.println("ok");
@@ -59,7 +59,7 @@ public class TestApplyRules {
 	
 	public static void applyRule(Rule rule, AtomSet atomSet) throws AtomSetException, SolverFactoryException, SolverException {
 		Query query = new DefaultConjunctiveQuery(rule.getBody(), rule.getFrontier());
-		SubstitutionReader reader = Graal.executeQuery(query, atomSet);
+		SubstitutionReader reader = StaticSolver.executeQuery(query, atomSet);
 		for(Substitution s : reader) {
 			System.out.print(s);
 			AtomSet tmp = substitute(s, rule.getHead());
@@ -93,7 +93,7 @@ public class TestApplyRules {
 		}
 		
 		Query query = DlgpParser.parseQuery("?(X,Y) :- p(X,Y).q(X,Y).");
-		if(Graal.executeQuery(query, atomSet).hasNext()) {
+		if(StaticSolver.executeQuery(query, atomSet).hasNext()) {
 			System.out.println("ok");
 		} else {
 			System.out.println("nok");
