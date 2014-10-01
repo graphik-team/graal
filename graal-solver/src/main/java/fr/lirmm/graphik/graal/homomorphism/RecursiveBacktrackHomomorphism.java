@@ -1,4 +1,4 @@
-package fr.lirmm.graphik.graal.solver;
+package fr.lirmm.graphik.graal.homomorphism;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -24,22 +24,22 @@ import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public class RecursiveBacktrackSolver implements Solver<ConjunctiveQuery, ReadOnlyAtomSet> {
+public class RecursiveBacktrackHomomorphism implements Homomorphism<ConjunctiveQuery, ReadOnlyAtomSet> {
 
     private static final Logger logger = LoggerFactory
-            .getLogger(RecursiveBacktrackSolver.class);
+            .getLogger(RecursiveBacktrackHomomorphism.class);
     
-    private static RecursiveBacktrackSolver instance;
+    private static RecursiveBacktrackHomomorphism instance;
 
     // /////////////////////////////////////////////////////////////////////////
     // CONSTRUCTORS
     // /////////////////////////////////////////////////////////////////////////
 
-    private RecursiveBacktrackSolver(){}
+    private RecursiveBacktrackHomomorphism(){}
     
-    public static synchronized RecursiveBacktrackSolver getInstance() {
+    public static synchronized RecursiveBacktrackHomomorphism getInstance() {
     	if(instance == null)
-    		instance = new RecursiveBacktrackSolver();
+    		instance = new RecursiveBacktrackHomomorphism();
     	
     	return instance;
     }
@@ -54,7 +54,7 @@ public class RecursiveBacktrackSolver implements Solver<ConjunctiveQuery, ReadOn
      * @throws AtomSetException
      */
     @Override
-    public SubstitutionReader execute(ConjunctiveQuery query, ReadOnlyAtomSet facts) throws SolverException {
+    public SubstitutionReader execute(ConjunctiveQuery query, ReadOnlyAtomSet facts) throws HomomorphismException {
         System.out.println(query);
     	List<Term> orderedVars = order(query.getAtomSet().getTerms(
                 Term.Type.VARIABLE));
@@ -72,7 +72,7 @@ public class RecursiveBacktrackSolver implements Solver<ConjunctiveQuery, ReadOn
                         new LinkedList<Substitution>().iterator());
             }
         } catch (Exception e) {
-            throw new SolverException(e.getMessage(), e);
+            throw new HomomorphismException(e.getMessage(), e);
         }
     }
 

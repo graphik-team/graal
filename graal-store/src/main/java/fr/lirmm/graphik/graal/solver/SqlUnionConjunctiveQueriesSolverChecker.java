@@ -6,7 +6,7 @@ package fr.lirmm.graphik.graal.solver;
 import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
-import fr.lirmm.graphik.graal.solver.checker.AbstractSolverChecker;
+import fr.lirmm.graphik.graal.homomorphism.checker.AbstractChecker;
 import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
 
 /**
@@ -14,7 +14,7 @@ import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
  * 
  */
 public class SqlUnionConjunctiveQueriesSolverChecker extends
-		AbstractSolverChecker {
+		AbstractChecker {
 
 	@Override
 	public boolean check(Query query, ReadOnlyAtomSet atomset) {

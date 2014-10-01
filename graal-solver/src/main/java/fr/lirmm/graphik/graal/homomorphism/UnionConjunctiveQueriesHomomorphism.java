@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.lirmm.graphik.graal.solver;
+package fr.lirmm.graphik.graal.homomorphism;
 
 import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
@@ -10,6 +10,6 @@ import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface UnionConjunctiveQueriesSolver<A extends ReadOnlyAtomSet> extends Solver<UnionConjunctiveQueries, A> {
+public interface UnionConjunctiveQueriesHomomorphism<A extends ReadOnlyAtomSet> extends Homomorphism<UnionConjunctiveQueries, A> {
 
 }

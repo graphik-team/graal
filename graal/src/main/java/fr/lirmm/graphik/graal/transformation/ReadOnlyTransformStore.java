@@ -12,9 +12,9 @@ import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
-import fr.lirmm.graphik.graal.solver.SolverException;
-import fr.lirmm.graphik.graal.solver.SolverFactoryException;
-import fr.lirmm.graphik.graal.solver.StaticSolver;
+import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
+import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.store.ReadOnlyStore;
 import fr.lirmm.graphik.graal.store.StoreException;
 import fr.lirmm.graphik.util.stream.ObjectReader;
@@ -45,10 +45,10 @@ public class ReadOnlyTransformStore implements ReadOnlyStore {
     public boolean contains(Atom atom) throws StoreException {
         Query query = new DefaultConjunctiveQuery(this.transformator.transform(atom));
         try {
-			return StaticSolver.executeQuery(query, this).hasNext();
-		} catch (SolverFactoryException e) {
+			return StaticHomomorphism.executeQuery(query, this).hasNext();
+		} catch (HomomorphismFactoryException e) {
 			throw new StoreException(e);
-		} catch (SolverException e) {
+		} catch (HomomorphismException e) {
 			throw new StoreException(e);
 		}
     }

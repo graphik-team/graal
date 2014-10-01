@@ -17,10 +17,10 @@ import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 import fr.lirmm.graphik.graal.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
+import fr.lirmm.graphik.graal.homomorphism.Homomorphism;
+import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
 import fr.lirmm.graphik.graal.parser.ParseException;
-import fr.lirmm.graphik.graal.solver.Solver;
-import fr.lirmm.graphik.graal.solver.SolverException;
 import fr.lirmm.graphik.graal.solver.SqlUnionConjunctiveQueriesSolver;
 import fr.lirmm.graphik.graal.store.StoreException;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
@@ -60,7 +60,7 @@ public class GRAALQuery {
 
 	
 	
-	public static void main(String[] args) throws StoreException, FileNotFoundException, ChaseException, ParseException, SolverException {
+	public static void main(String[] args) throws StoreException, FileNotFoundException, ChaseException, ParseException, HomomorphismException {
 		GRAALQuery options = new GRAALQuery();
 		JCommander commander = new JCommander(options, args);
 
@@ -85,7 +85,7 @@ public class GRAALQuery {
 			}
 		}		
 			
-		Solver solver = SqlUnionConjunctiveQueriesSolver.getInstance();
+		Homomorphism solver = SqlUnionConjunctiveQueriesSolver.getInstance();
 		System.out.println("querying");
 		long time = System.currentTimeMillis();
 		SubstitutionReader subr = solver.execute(ucq, atomSet);

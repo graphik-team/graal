@@ -1,4 +1,4 @@
-package fr.lirmm.graphik.graal.solver;
+package fr.lirmm.graphik.graal.homomorphism;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -15,16 +15,16 @@ import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 
 
-public class ComplexSolver<Q extends ConjunctiveQuery, F extends ReadOnlyAtomSet> implements Solver<Q,F> {
+public class ComplexHomomorphism<Q extends ConjunctiveQuery, F extends ReadOnlyAtomSet> implements Homomorphism<Q,F> {
 
-	private Solver<ConjunctiveQuery,F> rawSolver;
+	private Homomorphism<ConjunctiveQuery,F> rawSolver;
 	private LinkedList<Atom> builtInAtoms;
 
-	public ComplexSolver(Solver<ConjunctiveQuery,F> rawSolver) {
+	public ComplexHomomorphism(Homomorphism<ConjunctiveQuery,F> rawSolver) {
 		this.rawSolver = rawSolver;
 	}
 
-    public SubstitutionReader execute(Q q, F f) throws SolverException {
+    public SubstitutionReader execute(Q q, F f) throws HomomorphismException {
 	    AtomSet raw_atoms = new LinkedListAtomSet();
 		this.builtInAtoms = new LinkedList<Atom>();
 		for (Atom a : q) {

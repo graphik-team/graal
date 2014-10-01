@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
+import fr.lirmm.graphik.graal.homomorphism.Homomorphism;
+import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.ResultSetSubstitutionReader;
 
@@ -15,7 +17,7 @@ import fr.lirmm.graphik.graal.store.rdbms.ResultSetSubstitutionReader;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public class SqlSolver implements Solver<ConjunctiveQuery, RdbmsStore> {
+public class SqlSolver implements Homomorphism<ConjunctiveQuery, RdbmsStore> {
 	
 	private static final Logger logger = LoggerFactory
 			.getLogger(SqlSolver.class);
@@ -42,12 +44,12 @@ public class SqlSolver implements Solver<ConjunctiveQuery, RdbmsStore> {
      * @see fr.lirmm.graphik.alaska.solver.ISolver#execute()
      */
     @Override
-    public SubstitutionReader execute(ConjunctiveQuery query, RdbmsStore store) throws SolverException {
+    public SubstitutionReader execute(ConjunctiveQuery query, RdbmsStore store) throws HomomorphismException {
         String sqlQuery = preprocessing(query, store);
         try {
             return new ResultSetSubstitutionReader(store, sqlQuery, query.isBoolean());
         } catch (Exception e) {
-            throw new SolverException(e.getMessage(), e);
+            throw new HomomorphismException(e.getMessage(), e);
         }
     }
     
@@ -55,14 +57,14 @@ public class SqlSolver implements Solver<ConjunctiveQuery, RdbmsStore> {
     //	PRIVATE METHODS
     // /////////////////////////////////////////////////////////////////////////
 
-    private static String preprocessing(ConjunctiveQuery query, RdbmsStore store) throws SolverException {
+    private static String preprocessing(ConjunctiveQuery query, RdbmsStore store) throws HomomorphismException {
     	String sqlQuery = null;
         try {
             sqlQuery = store.transformToSQL(query);
             if(logger.isDebugEnabled())
             	logger.debug("GENERATED SQL QUERY: \n" + query + "\n" + sqlQuery);
         } catch (Exception e) {
-            throw new SolverException("Error during query translation to SQL",
+            throw new HomomorphismException("Error during query translation to SQL",
                     e);
         }
         return sqlQuery;

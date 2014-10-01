@@ -19,7 +19,7 @@ import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader2AtomReader;
-import fr.lirmm.graphik.graal.solver.SolverException;
+import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.solver.SqlSolver;
 import fr.lirmm.graphik.util.stream.AbstractReader;
 import fr.lirmm.graphik.util.stream.ObjectReader;
@@ -81,7 +81,7 @@ class DefaultRdbmsIterator extends AbstractReader<Atom> {
 				SqlSolver solver = SqlSolver.getInstance();
 				try {
 					this.atomReader = new SubstitutionReader2AtomReader(atom, solver.execute(query, this.store));
-				} catch (SolverException e) {
+				} catch (HomomorphismException e) {
 					logger.error(e.getMessage(), e);
 					return false;
 				}

@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
-import fr.lirmm.graphik.graal.solver.DefaultSolverFactory;
+import fr.lirmm.graphik.graal.homomorphism.DefaultHomomorphismFactory;
 import fr.lirmm.graphik.graal.solver.SqlSolverChecker;
 import fr.lirmm.graphik.graal.solver.SqlUnionConjunctiveQueriesSolverChecker;
 import fr.lirmm.graphik.graal.store.AbstractStore;
@@ -28,9 +28,9 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements
 RdbmsStore {
 	
 	static  {
-		DefaultSolverFactory.getInstance().addChecker(
+		DefaultHomomorphismFactory.getInstance().addChecker(
 				new SqlSolverChecker());
-		DefaultSolverFactory.getInstance().addChecker(
+		DefaultHomomorphismFactory.getInstance().addChecker(
 				new SqlUnionConjunctiveQueriesSolverChecker());
 	}
 	

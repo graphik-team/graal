@@ -23,7 +23,7 @@ import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
-import fr.lirmm.graphik.graal.solver.StaticSolver;
+import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -76,7 +76,7 @@ public class ChaseWithGRD extends AbstractChase {
 					logger.debug("-- Query: " + query);
 				}
 				
-				for (Substitution substitution : StaticSolver.executeQuery(query, atomSet)) {
+				for (Substitution substitution : StaticHomomorphism.executeQuery(query, atomSet)) {
 					if(logger.isDebugEnabled()) {
 						logger.debug("-- Found homomorphism: " + substitution );
 					}

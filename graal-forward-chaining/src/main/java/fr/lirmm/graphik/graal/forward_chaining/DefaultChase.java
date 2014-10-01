@@ -14,8 +14,8 @@ import fr.lirmm.graphik.graal.core.SymbolGenerator;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
-import fr.lirmm.graphik.graal.solver.Solver;
-import fr.lirmm.graphik.graal.solver.StaticSolver;
+import fr.lirmm.graphik.graal.homomorphism.Homomorphism;
+import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -27,21 +27,21 @@ public class DefaultChase extends AbstractChase {
 	private SymbolGenerator existentialGen;
 	private Iterable<Rule> ruleSet;
 	private AtomSet atomSet;
-	private Solver solver;
+	private Homomorphism solver;
 	boolean hasNext = true;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 	
-	public DefaultChase(Iterable<Rule> ruleSet, AtomSet atomSet, SymbolGenerator existentialGen, Solver solver) {
+	public DefaultChase(Iterable<Rule> ruleSet, AtomSet atomSet, SymbolGenerator existentialGen, Homomorphism solver) {
 		this.ruleSet = ruleSet;
 		this.atomSet = atomSet;
 		this.existentialGen = existentialGen;
 		this.solver = solver;
 	}
 	
-	public DefaultChase(Iterable<Rule> ruleSet, AtomSet atomSet, Solver solver) {
+	public DefaultChase(Iterable<Rule> ruleSet, AtomSet atomSet, Homomorphism solver) {
 		this.ruleSet = ruleSet;
 		this.atomSet = atomSet;
 		this.existentialGen = new DefaultFreeVarGen("E");
@@ -52,7 +52,7 @@ public class DefaultChase extends AbstractChase {
 		this.ruleSet = ruleSet;
 		this.atomSet = atomSet;
 		this.existentialGen = existentialGen;
-		this.solver = StaticSolver.getSolverFactory().getSolver(new DefaultConjunctiveQuery(), atomSet);
+		this.solver = StaticHomomorphism.getSolverFactory().getSolver(new DefaultConjunctiveQuery(), atomSet);
 	}
 
 	public DefaultChase(Iterable<Rule> ruleSet, AtomSet atomSet) {

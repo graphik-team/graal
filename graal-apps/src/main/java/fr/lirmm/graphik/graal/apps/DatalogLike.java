@@ -18,18 +18,18 @@ import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.forward_chaining.StaticChase;
+import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
+import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
-import fr.lirmm.graphik.graal.solver.SolverException;
-import fr.lirmm.graphik.graal.solver.SolverFactoryException;
-import fr.lirmm.graphik.graal.solver.StaticSolver;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
 public class DatalogLike {
-	public static void main(String[] args) throws ChaseException, IOException, SolverFactoryException, SolverException {
+	public static void main(String[] args) throws ChaseException, IOException, HomomorphismFactoryException, HomomorphismException {
 		DlgpWriter writer = new DlgpWriter();
 		DlgpParser parser = new DlgpParser(System.in);
 		if(args.length > 0)
@@ -57,7 +57,7 @@ public class DatalogLike {
         writer.write("\n% queries\n");
         for(ConjunctiveQuery q : querySet) {
         	writer.write(q);
-        	for(Substitution s : StaticSolver.executeQuery(q, atomSet)) {
+        	for(Substitution s : StaticHomomorphism.executeQuery(q, atomSet)) {
         		writer.write(s.toString());
         		writer.write("\n");
         	}

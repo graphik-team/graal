@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.lirmm.graphik.graal.solver;
+package fr.lirmm.graphik.graal.homomorphism;
 
 import java.util.Iterator;
 
@@ -42,15 +42,15 @@ public class UnionConjunctiveQueriesSubstitutionReader implements SubstitutionRe
             while ((this.tmpReader == null || !this.tmpReader.hasNext())
                     && this.cqueryIterator.hasNext()) {
                 Query q = this.cqueryIterator.next();
-                Solver solver;
+                Homomorphism solver;
                 try {
-                    solver = DefaultSolverFactory.getInstance().getSolver(q, this.atomSet);
+                    solver = DefaultHomomorphismFactory.getInstance().getSolver(q, this.atomSet);
                     if(solver == null) {
                     	return false;
                     } else {
                     	this.tmpReader = solver.execute(q, this.atomSet);
                     }
-                } catch (SolverException e) {
+                } catch (HomomorphismException e) {
                     return false;
                 }
             }

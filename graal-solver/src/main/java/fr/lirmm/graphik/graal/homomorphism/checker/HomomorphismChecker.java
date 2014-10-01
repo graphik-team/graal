@@ -1,17 +1,17 @@
 /**
  * 
  */
-package fr.lirmm.graphik.graal.solver.checker;
+package fr.lirmm.graphik.graal.homomorphism.checker;
 
 import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
-import fr.lirmm.graphik.graal.solver.Solver;
+import fr.lirmm.graphik.graal.homomorphism.Homomorphism;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface SolverChecker extends Comparable<SolverChecker> {
+public interface HomomorphismChecker extends Comparable<HomomorphismChecker> {
 	
 	/**
 	 * 
@@ -27,7 +27,7 @@ public interface SolverChecker extends Comparable<SolverChecker> {
 	 * @param atomset
 	 * @return
 	 */
-	Solver<? extends Query, ? extends ReadOnlyAtomSet> getSolver();
+	Homomorphism<? extends Query, ? extends ReadOnlyAtomSet> getSolver();
 	
 	/**
 	 * 

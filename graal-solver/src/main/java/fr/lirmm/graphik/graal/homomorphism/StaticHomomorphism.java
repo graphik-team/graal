@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.lirmm.graphik.graal.solver;
+package fr.lirmm.graphik.graal.homomorphism;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,13 +14,13 @@ import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */
-public class StaticSolver {
+public class StaticHomomorphism {
 
 	private static final Logger logger = LoggerFactory
-			.getLogger(StaticSolver.class);
+			.getLogger(StaticHomomorphism.class);
 	
-	public static SolverFactory getSolverFactory() {
-		return DefaultSolverFactory.getInstance();
+	public static HomomorphismFactory getSolverFactory() {
+		return DefaultHomomorphismFactory.getInstance();
 	}
 
 	/**
@@ -30,16 +30,16 @@ public class StaticSolver {
 	 * @param query
 	 * @param atomSet
 	 * @return A substitution stream that represents homomorphisms.
-	 * @throws SolverFactoryException
-	 * @throws SolverException
+	 * @throws HomomorphismFactoryException
+	 * @throws HomomorphismException
 	 */
 	public static SubstitutionReader executeQuery(Query query,
-			ReadOnlyAtomSet atomSet) throws SolverFactoryException,
-			SolverException {
+			ReadOnlyAtomSet atomSet) throws HomomorphismFactoryException,
+			HomomorphismException {
 		if (logger.isDebugEnabled())
 			logger.debug("Query : " + query);
 
-		Solver solver = DefaultSolverFactory.getInstance().getSolver(query,
+		Homomorphism solver = DefaultHomomorphismFactory.getInstance().getSolver(query,
 				atomSet);
 		return solver.execute(query, atomSet);
 

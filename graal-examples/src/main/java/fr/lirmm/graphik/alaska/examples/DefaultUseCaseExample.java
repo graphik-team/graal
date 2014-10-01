@@ -13,11 +13,11 @@ import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.forward_chaining.StaticChase;
+import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
+import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
-import fr.lirmm.graphik.graal.solver.SolverException;
-import fr.lirmm.graphik.graal.solver.SolverFactoryException;
-import fr.lirmm.graphik.graal.solver.StaticSolver;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -25,7 +25,7 @@ import fr.lirmm.graphik.graal.solver.StaticSolver;
  */
 public class DefaultUseCaseExample {
 
-	public static void main(String[] args) throws ChaseException, IOException, SolverFactoryException, SolverException {
+	public static void main(String[] args) throws ChaseException, IOException, HomomorphismFactoryException, HomomorphismException {
 		
 		// /////////////////////////////////////////////////////////////////////
 		// create an atom set
@@ -65,7 +65,7 @@ public class DefaultUseCaseExample {
 		// /////////////////////////////////////////////////////////////////////
 		// execute query
 		Query query = DlgpParser.parseQuery("?(X,Y) :- s(X, Y), p(X), q(Y).");
-		Iterable<Substitution> subReader = StaticSolver.executeQuery(query, atomSet);
+		Iterable<Substitution> subReader = StaticHomomorphism.executeQuery(query, atomSet);
 		for(Substitution s : subReader) {
 			System.out.println(s);
 		}

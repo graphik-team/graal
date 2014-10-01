@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
+import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.homomorphism.UnionConjunctiveQueriesHomomorphism;
 import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.ResultSetSubstitutionReader;
 
@@ -18,7 +20,7 @@ import fr.lirmm.graphik.graal.store.rdbms.ResultSetSubstitutionReader;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public class SqlUnionConjunctiveQueriesSolver implements UnionConjunctiveQueriesSolver<RdbmsStore> {
+public class SqlUnionConjunctiveQueriesSolver implements UnionConjunctiveQueriesHomomorphism<RdbmsStore> {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(SqlUnionConjunctiveQueriesSolver.class);
@@ -41,7 +43,7 @@ public class SqlUnionConjunctiveQueriesSolver implements UnionConjunctiveQueries
 
 	@Override
 	public SubstitutionReader execute(UnionConjunctiveQueries queries,
-			RdbmsStore store) throws SolverException {
+			RdbmsStore store) throws HomomorphismException {
 		String sqlQuery = preprocessing(queries, store);
 		try {
 			if(logger.isDebugEnabled()) {
@@ -49,11 +51,11 @@ public class SqlUnionConjunctiveQueriesSolver implements UnionConjunctiveQueries
 			}
 			return new ResultSetSubstitutionReader(store, sqlQuery.toString(), queries.isBoolean());
 		} catch (Exception e) {
-			throw new SolverException(e.getMessage(), e);
+			throw new HomomorphismException(e.getMessage(), e);
 		}
 	}
 
-	private static String preprocessing(UnionConjunctiveQueries queries, RdbmsStore store) throws SolverException {
+	private static String preprocessing(UnionConjunctiveQueries queries, RdbmsStore store) throws HomomorphismException {
 		Iterator<ConjunctiveQuery> it = queries.iterator();
 		StringBuilder sqlQuery = new StringBuilder();
 		try {
@@ -69,7 +71,7 @@ public class SqlUnionConjunctiveQueriesSolver implements UnionConjunctiveQueries
 			}
 			sqlQuery.append(';');
 		} catch (Exception e) {
-			throw new SolverException("Error during query translation to SQL",
+			throw new HomomorphismException("Error during query translation to SQL",
 					e);
 		}
 		return sqlQuery.toString();

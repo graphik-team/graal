@@ -27,13 +27,13 @@ import fr.lirmm.graphik.graal.forward_chaining.ChaseWithGRD;
 import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
 import fr.lirmm.graphik.graal.forward_chaining.StaticChase;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
+import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
+import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.basic.BasicParser;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
 import fr.lirmm.graphik.graal.io.grd.GRDParser;
 import fr.lirmm.graphik.graal.parser.ParseException;
-import fr.lirmm.graphik.graal.solver.SolverException;
-import fr.lirmm.graphik.graal.solver.SolverFactoryException;
-import fr.lirmm.graphik.graal.solver.StaticSolver;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -48,7 +48,7 @@ public class ChaseTest {
 	}
 	
 	@Theory
-	public void test1(AtomSet atomSet) throws AtomSetException, SolverFactoryException, SolverException, ChaseException {
+	public void test1(AtomSet atomSet) throws AtomSetException, HomomorphismFactoryException, HomomorphismException, ChaseException {
 		atomSet.addAll(BasicParser.parse("p(X,a).q(a,a)"));
 
 		LinkedList<Rule> ruleSet = new LinkedList<Rule>();
@@ -58,11 +58,11 @@ public class ChaseTest {
 		chase.execute();
 		
 		Query query = DlgpParser.parseQuery("? :- p(X,Y),q(X,Y).");
-		Assert.assertTrue(StaticSolver.executeQuery(query, atomSet).hasNext());
+		Assert.assertTrue(StaticHomomorphism.executeQuery(query, atomSet).hasNext());
 	}
 	
 	@Theory
-	public void restrictedChaseTest(AtomSet atomSet) throws AtomSetException, SolverFactoryException, SolverException, ChaseException {
+	public void restrictedChaseTest(AtomSet atomSet) throws AtomSetException, HomomorphismFactoryException, HomomorphismException, ChaseException {
 		atomSet.addAll(BasicParser.parse("p(a)"));
 		
 		LinkedList<Rule> ruleSet = new LinkedList<Rule>();
@@ -106,7 +106,7 @@ public class ChaseTest {
 	}
 	
 	@Theory
-	public void test2(AtomSet atomSet) throws ChaseException, SolverFactoryException, SolverException {
+	public void test2(AtomSet atomSet) throws ChaseException, HomomorphismFactoryException, HomomorphismException {
 
 		// add assertions into this atom set
 		atomSet.add(DlgpParser.parseAtom("p(a)."));
@@ -130,7 +130,7 @@ public class ChaseTest {
 		// /////////////////////////////////////////////////////////////////////
 		// execute query
 		Query query = DlgpParser.parseQuery("?(X,Y) :- s(X, Y), p(X), q(Y).");
-		Iterable<Substitution> subReader = StaticSolver.executeQuery(query, atomSet);
+		Iterable<Substitution> subReader = StaticHomomorphism.executeQuery(query, atomSet);
 		Assert.assertTrue(subReader.iterator().hasNext());
 	}
 	

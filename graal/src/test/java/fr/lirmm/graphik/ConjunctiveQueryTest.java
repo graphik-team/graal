@@ -15,9 +15,9 @@ import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
+import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.basic.BasicParser;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
-import fr.lirmm.graphik.graal.solver.StaticSolver;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 
 /**
@@ -44,7 +44,7 @@ public class ConjunctiveQueryTest {
 			SubstitutionReader subReader;
 			Substitution sub;
 
-			subReader = StaticSolver.executeQuery(query, store);
+			subReader = StaticHomomorphism.executeQuery(query, store);
 
 			Assert.assertTrue(subReader.hasNext());
 			sub = subReader.next();
@@ -71,7 +71,7 @@ public class ConjunctiveQueryTest {
 			SubstitutionReader subReader;
 			Substitution sub;
 
-			subReader = StaticSolver.executeQuery(query, store);
+			subReader = StaticHomomorphism.executeQuery(query, store);
 
 			Assert.assertTrue(subReader.hasNext());
 			sub = subReader.next();
@@ -96,7 +96,7 @@ public class ConjunctiveQueryTest {
 
 			SubstitutionReader subReader;
 
-			subReader = StaticSolver.executeQuery(query, store);
+			subReader = StaticHomomorphism.executeQuery(query, store);
 			Assert.assertFalse(subReader.hasNext());
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);
@@ -113,7 +113,7 @@ public class ConjunctiveQueryTest {
 
 			SubstitutionReader subReader;
 
-			subReader = StaticSolver.executeQuery(query, store);
+			subReader = StaticHomomorphism.executeQuery(query, store);
 			Assert.assertFalse(subReader.hasNext());
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);
@@ -131,7 +131,7 @@ public class ConjunctiveQueryTest {
 
 			SubstitutionReader subReader;
 
-			subReader = StaticSolver.executeQuery(query, store);
+			subReader = StaticHomomorphism.executeQuery(query, store);
 			Assert.assertFalse(subReader.hasNext());
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);
@@ -155,7 +155,7 @@ public class ConjunctiveQueryTest {
 			SubstitutionReader subReader;
 			Substitution sub;
 
-			subReader = StaticSolver.executeQuery(query, store);
+			subReader = StaticHomomorphism.executeQuery(query, store);
 
 			Assert.assertTrue(subReader.hasNext());
 			sub = subReader.next();
@@ -178,7 +178,7 @@ public class ConjunctiveQueryTest {
 			SubstitutionReader subReader;
 			Substitution sub;
 
-			subReader = StaticSolver.executeQuery(query, store);
+			subReader = StaticHomomorphism.executeQuery(query, store);
 
 			Assert.assertTrue(subReader.hasNext());
 			sub = subReader.next();
@@ -206,7 +206,7 @@ public class ConjunctiveQueryTest {
 			SubstitutionReader subReader;
 			Substitution sub;
 
-			subReader = StaticSolver.executeQuery(query, store);
+			subReader = StaticHomomorphism.executeQuery(query, store);
 
 			Assert.assertTrue(subReader.hasNext());
 			sub = subReader.next();
@@ -239,7 +239,7 @@ public class ConjunctiveQueryTest {
 			SubstitutionReader subReader;
 			Substitution sub;
 
-			subReader = StaticSolver.executeQuery(query, store);
+			subReader = StaticHomomorphism.executeQuery(query, store);
 
 			Assert.assertTrue(subReader.hasNext());
 			sub = subReader.next();
@@ -268,7 +268,7 @@ public class ConjunctiveQueryTest {
 			DefaultConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y) :- q(a,f,d),p(X,Y).");
 
 			SubstitutionReader subReader;
-			subReader = StaticSolver.executeQuery(query, store);
+			subReader = StaticHomomorphism.executeQuery(query, store);
 			Assert.assertFalse(subReader.hasNext());
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);
@@ -288,7 +288,7 @@ public class ConjunctiveQueryTest {
 			SubstitutionReader subReader;
 			Substitution sub;
 
-			subReader = StaticSolver.executeQuery(query, store);
+			subReader = StaticHomomorphism.executeQuery(query, store);
 
 			Assert.assertTrue(subReader.hasNext());
 			sub = subReader.next();
@@ -309,7 +309,7 @@ public class ConjunctiveQueryTest {
 			DefaultConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y) :- q(X,Y).");
 
 			SubstitutionReader subReader;
-			subReader = StaticSolver.executeQuery(query, store);
+			subReader = StaticHomomorphism.executeQuery(query, store);
 			Assert.assertFalse(subReader.hasNext());
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);
@@ -323,7 +323,7 @@ public class ConjunctiveQueryTest {
 			DefaultConjunctiveQuery query = DlgpParser.parseQuery("? :- p(X).");
 	
 			SubstitutionReader subReader;
-			subReader = StaticSolver.executeQuery(query, atomset);
+			subReader = StaticHomomorphism.executeQuery(query, atomset);
 			Assert.assertFalse(subReader.hasNext());
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);
@@ -337,7 +337,7 @@ public class ConjunctiveQueryTest {
 			DefaultConjunctiveQuery query = DlgpParser.parseQuery("? :- p(X,Y,Z).");
 	
 			SubstitutionReader subReader;
-			subReader = StaticSolver.executeQuery(query, atomset);
+			subReader = StaticHomomorphism.executeQuery(query, atomset);
 			Assert.assertFalse(subReader.hasNext());
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);
@@ -354,7 +354,7 @@ public class ConjunctiveQueryTest {
 			if(atomset instanceof DefaultRdbmsStore) {
 				System.out.println(((DefaultRdbmsStore)atomset).transformToSQL(query));
 			}
-			subReader = StaticSolver.executeQuery(query, atomset);
+			subReader = StaticHomomorphism.executeQuery(query, atomset);
 			Assert.assertFalse("Error on " + atomset.getClass() ,subReader.hasNext());
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);
@@ -368,7 +368,7 @@ public class ConjunctiveQueryTest {
 			DefaultConjunctiveQuery query = DlgpParser.parseQuery("? :- p(\"literal\").");
 	
 			SubstitutionReader subReader;
-			subReader = StaticSolver.executeQuery(query, atomset);
+			subReader = StaticHomomorphism.executeQuery(query, atomset);
 			Assert.assertTrue("Error on " + atomset.getClass() ,subReader.hasNext());
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);

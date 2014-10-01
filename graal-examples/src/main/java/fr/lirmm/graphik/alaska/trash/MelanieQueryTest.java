@@ -20,14 +20,14 @@ import fr.lirmm.graphik.graal.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseWithGRD;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
+import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
+import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
 import fr.lirmm.graphik.graal.io.grd.GRDParser;
 import fr.lirmm.graphik.graal.io.oxford.OxfordQueryParser;
 import fr.lirmm.graphik.graal.parser.ParseException;
-import fr.lirmm.graphik.graal.solver.SolverException;
-import fr.lirmm.graphik.graal.solver.SolverFactoryException;
-import fr.lirmm.graphik.graal.solver.StaticSolver;
 import fr.lirmm.graphik.graal.store.StoreException;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;
@@ -49,7 +49,7 @@ public class MelanieQueryTest {
 	
 	private static List<Query> queries = new LinkedList<Query>(); 
 	
-	public static void main(String[] args) throws AtomSetException, IOException, ChaseException, SolverFactoryException, SolverException, ParseException {
+	public static void main(String[] args) throws AtomSetException, IOException, ChaseException, HomomorphismFactoryException, HomomorphismException, ParseException {
 		
 		
 		AtomSet atomSet = getMysqlAtomSet(true, "univ_bench");
@@ -62,7 +62,7 @@ public class MelanieQueryTest {
 		for(Query query : queries) { 
 			System.out.println(query);
 			time = System.currentTimeMillis();
-			SubstitutionReader subR = StaticSolver.executeQuery(query, atomSet);
+			SubstitutionReader subR = StaticHomomorphism.executeQuery(query, atomSet);
 			time2 = System.currentTimeMillis();
 			
 			int i = 0;

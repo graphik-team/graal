@@ -6,14 +6,14 @@ package fr.lirmm.graphik.graal.transformation;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
-import fr.lirmm.graphik.graal.solver.Solver;
-import fr.lirmm.graphik.graal.solver.checker.AbstractSolverChecker;
+import fr.lirmm.graphik.graal.homomorphism.Homomorphism;
+import fr.lirmm.graphik.graal.homomorphism.checker.AbstractChecker;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class TransformatorSolverChecker extends AbstractSolverChecker {
+public class TransformatorSolverChecker extends AbstractChecker {
 
 	@Override
 	public boolean check(Query query, ReadOnlyAtomSet atomset) {
