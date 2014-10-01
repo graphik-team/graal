@@ -30,7 +30,7 @@
 	<modules>
 		<module>graal-core</module>
 		<module>graal-io</module>
-		<module>graal-solver</module>
+		<module>graal-homomorphism</module>
 		<module>graal-forward-chaining</module>
 		<module>graal-store</module>
 		<module>graal-backward-chaining</module>

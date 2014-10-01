@@ -7,8 +7,8 @@
 		<version>0.4.3-SNAPSHOT</version>
 	</parent>
 	
-	<artifactId>graal-solver</artifactId>
-	<name>GRAAL Solver</name>
+	<artifactId>graal-homomorphism</artifactId>
+	<name>GRAAL Homomorphism</name>
 	<packaging>jar</packaging>
 
 	<properties>
