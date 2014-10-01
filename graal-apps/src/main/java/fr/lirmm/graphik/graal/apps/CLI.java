@@ -27,6 +27,7 @@ import fr.lirmm.graphik.graal.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
+import fr.lirmm.graphik.graal.solver.SqlSolver;
 import fr.lirmm.graphik.graal.solver.SqlUnionConjunctiveQueriesSolver;
 import fr.lirmm.graphik.graal.store.rdbms.AbstractRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
@@ -88,7 +89,8 @@ public class CLI {
 		catch (NumberFormatException e) { } // no saturation requested
 
 		DlgpWriter writer = new DlgpWriter(System.out);
-		Homomorphism solver = new ComplexHomomorphism(SqlUnionConjunctiveQueriesSolver.getInstance());
+		Homomorphism solver = new ComplexHomomorphism(SqlSolver.getInstance());
+
 		DefaultChase chase = new DefaultChase(_rules,_atomset,solver);
 
 		if (k != 0) {
@@ -98,6 +100,7 @@ public class CLI {
 				catch (Exception e) {
 					error |= ERROR_CHASE;
 					System.err.println("An error has occured while saturating: "+e);
+					e.printStackTrace();
 				}
 			}
 			else {

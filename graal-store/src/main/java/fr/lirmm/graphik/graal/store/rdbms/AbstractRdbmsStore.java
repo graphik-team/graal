@@ -115,11 +115,13 @@ RdbmsStore {
 
 	public void commitAtoms() {
 		try {
-			this.unbatchedStatement.executeBatch();
-			this.getConnection().commit();
-			this.unbatchedAtoms = 0;
-			this.unbatchedStatement.close();
-			this.unbatchedStatement = null;
+			if (this.unbatchedStatement != null) {
+				this.unbatchedStatement.executeBatch();
+				this.getConnection().commit();
+				this.unbatchedAtoms = 0;
+				this.unbatchedStatement.close();
+				this.unbatchedStatement = null;
+			}
 		}
 		catch (Exception e) {
 			logger.error(e.getMessage(),e);
@@ -185,7 +187,7 @@ RdbmsStore {
 	public void addAll(Iterable<Atom> stream) throws AtomSetException {
 		try {
 			int c = 0;
-			Statement statement = this.createStatement();;
+			Statement statement = this.createStatement();
 			
 			for(Atom a : stream) {
 				this.add(statement, a);
@@ -199,7 +201,7 @@ RdbmsStore {
 				}
 			} 
 			
-			//if(!statement.isClosed()) {
+			//if(statement != null) {// && !statement.isClosed()) {
 				statement.executeBatch();
 				statement.close();
 			//}
