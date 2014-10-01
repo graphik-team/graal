@@ -14,10 +14,10 @@ import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.homomorphism.DefaultHomomorphismFactory;
-import fr.lirmm.graphik.graal.solver.SqlSolverChecker;
-import fr.lirmm.graphik.graal.solver.SqlUnionConjunctiveQueriesSolverChecker;
 import fr.lirmm.graphik.graal.store.AbstractStore;
 import fr.lirmm.graphik.graal.store.StoreException;
+import fr.lirmm.graphik.graal.store.homomorphism.SqlHomomorphismChecker;
+import fr.lirmm.graphik.graal.store.homomorphism.SqlUCQHomomorphismChecker;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
 
 /**
@@ -29,9 +29,9 @@ RdbmsStore {
 	
 	static  {
 		DefaultHomomorphismFactory.getInstance().addChecker(
-				new SqlSolverChecker());
+				new SqlHomomorphismChecker());
 		DefaultHomomorphismFactory.getInstance().addChecker(
-				new SqlUnionConjunctiveQueriesSolverChecker());
+				new SqlUCQHomomorphismChecker());
 	}
 	
 	private static final Logger logger = LoggerFactory

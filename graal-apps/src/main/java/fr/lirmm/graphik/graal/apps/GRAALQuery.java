@@ -21,8 +21,8 @@ import fr.lirmm.graphik.graal.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
 import fr.lirmm.graphik.graal.parser.ParseException;
-import fr.lirmm.graphik.graal.solver.SqlUnionConjunctiveQueriesSolver;
 import fr.lirmm.graphik.graal.store.StoreException;
+import fr.lirmm.graphik.graal.store.homomorphism.SqlUCQHomomorphism;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
@@ -85,7 +85,7 @@ public class GRAALQuery {
 			}
 		}		
 			
-		Homomorphism solver = SqlUnionConjunctiveQueriesSolver.getInstance();
+		Homomorphism solver = SqlUCQHomomorphism.getInstance();
 		System.out.println("querying");
 		long time = System.currentTimeMillis();
 		SubstitutionReader subr = solver.execute(ucq, atomSet);

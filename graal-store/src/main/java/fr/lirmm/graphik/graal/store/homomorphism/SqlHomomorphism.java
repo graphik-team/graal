@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.lirmm.graphik.graal.solver;
+package fr.lirmm.graphik.graal.store.homomorphism;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,19 +17,19 @@ import fr.lirmm.graphik.graal.store.rdbms.ResultSetSubstitutionReader;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public class SqlSolver implements Homomorphism<ConjunctiveQuery, RdbmsStore> {
+public class SqlHomomorphism implements Homomorphism<ConjunctiveQuery, RdbmsStore> {
 	
 	private static final Logger logger = LoggerFactory
-			.getLogger(SqlSolver.class);
+			.getLogger(SqlHomomorphism.class);
     
-    private static SqlSolver instance;
+    private static SqlHomomorphism instance;
 
-	private SqlSolver() {
+	private SqlHomomorphism() {
 	}
 
-	public static synchronized SqlSolver getInstance() {
+	public static synchronized SqlHomomorphism getInstance() {
 		if (instance == null)
-			instance = new SqlSolver();
+			instance = new SqlHomomorphism();
 
 		return instance;
 	}

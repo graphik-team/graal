@@ -27,8 +27,8 @@ import fr.lirmm.graphik.graal.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
-import fr.lirmm.graphik.graal.solver.SqlSolver;
-import fr.lirmm.graphik.graal.solver.SqlUnionConjunctiveQueriesSolver;
+import fr.lirmm.graphik.graal.store.homomorphism.SqlHomomorphism;
+import fr.lirmm.graphik.graal.store.homomorphism.SqlUCQHomomorphism;
 import fr.lirmm.graphik.graal.store.rdbms.AbstractRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
@@ -89,7 +89,7 @@ public class CLI {
 		catch (NumberFormatException e) { } // no saturation requested
 
 		DlgpWriter writer = new DlgpWriter(System.out);
-		Homomorphism solver = new ComplexHomomorphism(SqlSolver.getInstance());
+		Homomorphism solver = new ComplexHomomorphism(SqlHomomorphism.getInstance());
 
 		DefaultChase chase = new DefaultChase(_rules,_atomset,solver);
 

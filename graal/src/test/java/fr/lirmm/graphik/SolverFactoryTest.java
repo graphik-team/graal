@@ -20,8 +20,8 @@ import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.UnionConjunctiveQueriesHomomorphism;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
-import fr.lirmm.graphik.graal.solver.SqlSolver;
 import fr.lirmm.graphik.graal.store.StoreException;
+import fr.lirmm.graphik.graal.store.homomorphism.SqlHomomorphism;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
 import fr.lirmm.graphik.graal.transformation.ToTripleTransformation;
@@ -46,7 +46,7 @@ public class SolverFactoryTest {
 
 		Query query = DlgpParser.parseQuery("?(X) :- p(X).");
 		Homomorphism solver = StaticHomomorphism.getSolverFactory().getSolver(query, atomSet);
-		Assert.assertTrue(solver instanceof SqlSolver);
+		Assert.assertTrue(solver instanceof SqlHomomorphism);
 	}
 
 	@Test

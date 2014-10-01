@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.lirmm.graphik.graal.solver;
+package fr.lirmm.graphik.graal.store.homomorphism;
 
 import java.util.Iterator;
 
@@ -17,22 +17,24 @@ import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.ResultSetSubstitutionReader;
 
 /**
+ * SQL homomorphism for Union Conjunctive Queries
+ * 
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public class SqlUnionConjunctiveQueriesSolver implements UnionConjunctiveQueriesHomomorphism<RdbmsStore> {
+public class SqlUCQHomomorphism implements UnionConjunctiveQueriesHomomorphism<RdbmsStore> {
 
 	private static final Logger logger = LoggerFactory
-			.getLogger(SqlUnionConjunctiveQueriesSolver.class);
+			.getLogger(SqlUCQHomomorphism.class);
 	
-	private static SqlUnionConjunctiveQueriesSolver instance;
+	private static SqlUCQHomomorphism instance;
 
-	private SqlUnionConjunctiveQueriesSolver() {
+	private SqlUCQHomomorphism() {
 	}
 	
-	public static synchronized SqlUnionConjunctiveQueriesSolver getInstance() {
+	public static synchronized SqlUCQHomomorphism getInstance() {
 		if(instance == null)
-			instance = new SqlUnionConjunctiveQueriesSolver();
+			instance = new SqlUCQHomomorphism();
 		
 		return instance;
 	}
