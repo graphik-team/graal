@@ -101,7 +101,6 @@ public final class DlgpParser extends AbstractReader<Object> {
 		}
 
 		public void run() {
-
 			DatalogGrammar dlpGrammar = new DatalogGrammar(
 					new InternalTermFactory(), reader);
 			dlpGrammar.addParserListener(new DlgpListener(buffer));
@@ -109,8 +108,9 @@ public final class DlgpParser extends AbstractReader<Object> {
 				dlpGrammar.document();
 			} catch (ParseException e) {
 				throw new ParseError("An error occured while parsing", e);
+			} finally {
+				buffer.close();
 			}
-			buffer.close();
 		}
 
 	}
