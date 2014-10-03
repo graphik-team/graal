@@ -30,6 +30,7 @@ import fr.lirmm.graphik.util.stream.ArrayBlockingStream;
 import fr.lirmm.graphik.util.stream.FilterReader;
 
 /**
+ * 
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
@@ -121,33 +122,43 @@ public final class DlgpParser extends AbstractReader<Object> {
 	
 	private Reader reader = null;
 
-	public DlgpParser() {
-		this(new InputStreamReader(System.in));
-	}
-	
+	/**
+	 * Constructor for parsing from the given reader.
+	 * @param reader
+	 */
 	public DlgpParser(Reader reader) {
 		this.reader = reader;
 		new Thread(new Producer(reader,buffer)).start();
 	}
 	
+	/**
+	 * Constructor for parsing from the standard input.
+	 */
+	public DlgpParser() {
+		this(new InputStreamReader(System.in));
+	}
+	
+	/**
+	 * Constructor for parsing from the given file.
+	 * @param file
+	 * @throws FileNotFoundException
+	 */
 	public DlgpParser(File file) throws FileNotFoundException {
 		this(new FileReader(file));
 	}
 
-	public void close() throws IOException {
-		this.reader.close();
-		this.reader = null;
-	}
-
-
 	/**
-	 * Parse the content of the string s as DLGP content.
+	 * Constructor for parsing the content of the string s as DLGP content.
 	 * @param s
 	 */
 	public DlgpParser(String s) {
 		this(new StringReader(s));
 	}
 	
+	/**
+	 * Constructor for parsing the given InputStream.
+	 * @param in
+	 */
 	public DlgpParser(InputStream in) {
 		this(new InputStreamReader(in));
 	}
@@ -162,6 +173,19 @@ public final class DlgpParser extends AbstractReader<Object> {
 
 	public Object next() {
 		return buffer.next();
+	}
+	
+	/**
+	 * Closes the stream and releases any system resources associated with it.
+	 * Once the stream has been closed, further read(), ready(), mark(),
+	 * reset(), or skip() invocations will throw an IOException. Closing a
+	 * previously closed stream has no effect.
+	 * 
+	 * @throws IOException
+	 */
+	public void close() throws IOException {
+		this.reader.close();
+		this.reader = null;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
