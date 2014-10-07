@@ -1,0 +1,42 @@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Hierarchy
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+"animal"(X) :- "vertébré"(X).
+"vertébré"(X) :- "ostéichthyen"(X).
+"vertébré"(X) :- "chondrichthyen"(X).
+
+"ostéichthyen"(X) :- "oiseau"(X).
+"ostéichthyen"(X) :- "crocodilien"(X).
+"ostéichthyen"(X) :- "mammifère"(X).
+"ostéichthyen"(X) :- "chélonien"(X).
+"ostéichthyen"(X) :- "squamate"(X).
+"ostéichthyen"(X) :- "lissamphibien"(X).
+"ostéichthyen"(X) :- "actinoptérygien"(X).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Rules
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+"vertébré"(X) :- "animal"(X), "a_pour_partie"(X,Y), "squelette"(Y).
+"a_pour_partie"(X,Y), "squelette"(Y) :- "vertébré"(X).
+
+"ostéichthyen"(X) :- "animal"(X), "a_pour_partie"(X, squelette_osseux).
+"a_pour_partie"(X, squelette_osseux) :- "ostéichthyen"(X).
+
+"chondrichthyen"(X) :- "animal"(X), "a_pour_partie"(X, squelette_cartilagineux).
+"a_pour_partie"(X, squelette_cartilagineux) :- "chondrichthyen"(X).
+
+"mammifère"(X) :- "animal"(X), "a_pour_partie"(X, poils).
+"mammifère"(X) :- "animal"(X), "a_pour_partie"(X, mammelles).
+"a_pour_partie"(X, poils),"a_pour_partie"(X, mammelles) :- "mammifère"(X).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Facts
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+"squelette"(squelette_osseux), 
+"squelette"(squelette_cartilagineux).
+
+"animal"(souris), "a_pour_partie"(souris, poils).
