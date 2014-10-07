@@ -55,8 +55,10 @@ public class RecursiveBacktrackHomomorphism implements Homomorphism<ConjunctiveQ
      */
     @Override
     public SubstitutionReader execute(ConjunctiveQuery query, ReadOnlyAtomSet facts) throws HomomorphismException {
-        System.out.println(query);
-    	List<Term> orderedVars = order(query.getAtomSet().getTerms(
+        if(logger.isTraceEnabled()) {
+            logger.trace(query.toString());
+        }
+        List<Term> orderedVars = order(query.getAtomSet().getTerms(
                 Term.Type.VARIABLE));
         Collection<Atom>[] queryAtomRanked = getAtomRank(
                 query.getAtomSet(), orderedVars);
