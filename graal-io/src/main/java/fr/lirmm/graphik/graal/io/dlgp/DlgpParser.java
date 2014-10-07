@@ -21,6 +21,7 @@ import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultRule;
+import fr.lirmm.graphik.graal.core.KnowledgeBase;
 import fr.lirmm.graphik.graal.core.NegativeConstraint;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Term;
@@ -212,4 +213,22 @@ public final class DlgpParser extends AbstractReader<Object> {
 		return (NegativeConstraint) new DlgpParser(s).next();
 	}
 	
+	/**
+	 * Parse a DLP content and store data into the KnowledgeBase target.
+	 * 
+	 * @param src
+	 * @param target
+	 */
+	public static void parseKnowledgeBase(Reader src, KnowledgeBase target) {
+		DlgpParser parser = new DlgpParser(src);
+
+		for (Object o : parser) {
+			if (o instanceof Rule) {
+				target.getRuleSet().add((Rule) o);
+			} else if (o instanceof Atom) {
+				target.getAtomSet().add((Atom) o);
+			}
+		}
+	}
+
 };

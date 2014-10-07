@@ -12,15 +12,15 @@ import java.io.Writer;
 import java.util.Collection;
 
 import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.NegativeConstraint;
 import fr.lirmm.graphik.graal.core.Predicate;
+import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.Term.Type;
-import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
-import fr.lirmm.graphik.graal.writer.AtomWriter;
+import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
 import fr.lirmm.graphik.graal.writer.ConjunctiveQueryWriter;
 import fr.lirmm.graphik.util.stream.ObjectWriter;
 
@@ -78,7 +78,20 @@ public class DlgpWriter extends Writer implements ObjectWriter<Object>,Conjuncti
 			this.write((ConjunctiveQuery)o);
 		}
 	}
-	
+
+	public void write(AtomSet atomset) throws IOException {
+		this.writeAtomSet(atomset, true);
+		this.write(".");
+		this.writer.flush();
+	}
+
+	public void write(RuleSet ruleset) throws IOException {
+		for (Rule r : ruleset) {
+			this.write(r);
+		}
+		this.writer.flush();
+	}
+
 	public void write(Atom atom) throws IOException{
 		this.writeAtom(atom);
 		this.writer.write(".\n");
