@@ -106,6 +106,8 @@ public class Unifier {
 							&& !existentialVars.contains(t2)) {
 						if (!compose(u, frontierVars, existentialVars, t2, t1))
 							error = true;
+					} else {
+						error = true;
 					}
 				}
 			}

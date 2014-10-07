@@ -32,7 +32,7 @@ public class UnifierTest {
 	private static final Term a = new Term("a", Term.Type.CONSTANT);
 	private static final Term b = new Term("b", Term.Type.CONSTANT);
 	
-	private static Atom p_xy, p_yz, p_uv, p_vw, p_au, p_xb, q_x;
+	private static Atom p_xy, p_yz, p_uv, p_vw, p_au, p_xa, p_xb, q_x;
 	static {
 		Term[] terms = new Term[2];
 		terms[0] = x;
@@ -58,6 +58,11 @@ public class UnifierTest {
 		terms[0] = a;
 		terms[1] = u;
 		p_au = new DefaultAtom(p, Arrays.asList(terms));
+
+		terms = new Term[2];
+		terms[0] = x;
+		terms[1] = a;
+		p_xa = new DefaultAtom(p, Arrays.asList(terms));
 		
 		terms = new Term[2];
 		terms[0] = x;
@@ -95,6 +100,20 @@ public class UnifierTest {
 		
 		Collection<Substitution> unifiers = Unifier.computePieceUnifier(rule, atomset);
 		Assert.assertEquals(1, unifiers.size());
+	}
+
+	@Test
+	public void constantUnification() {
+		Rule rule = RuleFactory.getInstance().createRule();
+		rule.getBody().add(q_x);
+		rule.getHead().add(p_xb);
+
+		AtomSet atomset = AtomSetFactory.getInstance().createAtomSet();
+		atomset.add(p_xa);
+
+		Collection<Substitution> unifiers = Unifier.computePieceUnifier(rule,
+				atomset);
+		Assert.assertEquals(0, unifiers.size());
 	}
 
 }
