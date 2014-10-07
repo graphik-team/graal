@@ -119,7 +119,9 @@ public class QREAggregSingleRule extends QueryRewritingEngine {
 		ConjunctiveQuery a;
 		for (QueryUnifier u : unifiers) {
 			a = rewrite(q, u);
-			rewriteSet.add(a);
+			if(a != null) {
+				rewriteSet.add(a);
+			}
 		}
 
 		return rewriteSet;

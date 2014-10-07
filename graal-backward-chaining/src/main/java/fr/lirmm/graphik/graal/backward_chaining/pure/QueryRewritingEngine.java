@@ -461,14 +461,18 @@ public class QueryRewritingEngine {
 	 */
 	public ConjunctiveQuery rewrite(ConjunctiveQuery q, QueryUnifier u) {
 
+
 		AtomSet ajout = u.getImageOf(u.getRule().getBody());
 		AtomSet restant = u.getImageOf(AtomSets.minus(q.getAtomSet(),
 				u.getPiece()));
-		AtomSet res = AtomSets.union(ajout, restant);
-
-		ArrayList<Term> ansVar = new ArrayList<Term>();
-		ansVar.addAll(q.getAnswerVariables());
-		return new DefaultConjunctiveQuery(res, ansVar);
+		if(ajout != null && restant != null) { // FIXME
+			AtomSet res = AtomSets.union(ajout, restant);
+	
+			ArrayList<Term> ansVar = new ArrayList<Term>();
+			ansVar.addAll(q.getAnswerVariables());
+			return new DefaultConjunctiveQuery(res, ansVar);
+		}
+		return null;
 	}
 
 	public LinkedList<QueryUnifier> getSinglePieceUnifiers(ConjunctiveQuery Q,

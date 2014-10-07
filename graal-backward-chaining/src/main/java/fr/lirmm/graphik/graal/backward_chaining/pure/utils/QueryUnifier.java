@@ -96,11 +96,21 @@ public class QueryUnifier {
 
 	/**
 	 * Return the image of a given fact by the substitution of this
+	 * 
+	 * @return the image of a given fact,
 	 */
 	public AtomSet getImageOf(AtomSet f) {
-		if (associatedSubstitution == null)
+		AtomSet atomset = null;
+
+		if (associatedSubstitution == null) {
 			associatedSubstitution = partition.getAssociatedSubstitution(query);
-		return associatedSubstitution.getSubstitut(f);
+		}
+
+		if (associatedSubstitution != null) {
+			atomset = associatedSubstitution.getSubstitut(f);
+		}
+
+		return atomset;
 	}
 
 	@Override
