@@ -14,6 +14,7 @@ import fr.lirmm.graphik.graal.backward_chaining.pure.rules.IDCompilation;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -32,11 +33,12 @@ public class PureRewriter extends AbstractBackwardChainer {
 	 * 
 	 */
 	public PureRewriter(ConjunctiveQuery query, Iterable<Rule> rules) {
+		LinkedListRuleSet ruleset = new LinkedListRuleSet(rules);
 		RulesCompilation comp = new IDCompilation();
-		comp.code(rules, (new Date()).toString());
+		comp.code(ruleset, (new Date()).toString());
 
 		PureQuery pquery = new PureQuery(query);
-		QueryRewritingEngine qre = new QREAggregSingleRule(pquery, rules, comp);
+		QueryRewritingEngine qre = new QREAggregSingleRule(pquery, ruleset, comp);
 
 		try {
 			this.rewrites = qre.computeRewritings().iterator();
