@@ -122,8 +122,7 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 	}
 	
 	private void computeGRD() {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
+		this.grd = new GraphOfRuleDependencies(ruleset);
 	}
 	
 	private void computeAffectedPositionSet() {
