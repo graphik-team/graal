@@ -40,7 +40,7 @@
 		</dependency>
 		<dependency>
 		  <groupId>fr.lirmm.graphik</groupId>
-		  <artifactId>graal-solver</artifactId>
+		  <artifactId>graal-homomorphism</artifactId>
 		  <version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
@@ -61,6 +61,11 @@
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-backward-chaining</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>fr.lirmm.graphik</groupId>
+			<artifactId>graal-rules-analyser</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
