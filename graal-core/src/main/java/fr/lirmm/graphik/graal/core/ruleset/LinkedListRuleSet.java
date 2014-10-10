@@ -7,7 +7,7 @@ import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.stream.IteratorRuleReader;
 import fr.lirmm.graphik.util.stream.ObjectReader;
 
-public class LinkedListRuleSet implements RuleSet, Collection<Rule> {
+public class LinkedListRuleSet extends AbstractRuleSet implements Collection<Rule> {
 
 	private LinkedList<Rule> ruleList;
 	
