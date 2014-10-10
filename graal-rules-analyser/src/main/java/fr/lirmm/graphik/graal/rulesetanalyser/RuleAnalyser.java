@@ -3,14 +3,19 @@
  */
 package fr.lirmm.graphik.graal.rulesetanalyser;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 import java.util.TreeMap;
 
+import org.apache.commons.io.output.StringBuilderWriter;
+import org.apache.commons.lang3.StringUtils;
+
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
+import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.AtomicBodyProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.BTSProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.DisconnectedProperty;
@@ -318,20 +323,145 @@ public class RuleAnalyser {
 	// OBJECT METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
+	@Override
 	public String toString() {
-		StringBuilder s = new StringBuilder();
-		for (Rule rule : this.rules) {
-			s.append(rule);
-			s.append('\n');
+		StringBuilder sb = new StringBuilder();
+		this.toString(sb);
+		return sb.toString();
+	}
+
+	public void toString(StringBuilder sb) {
+		StronglyConnectedComponentsGraph<Rule> scc = this
+				.getStronglyConnectedComponentsGraph();
+		this.checkAll();
+
+		sb.append("\n\nInput Rule Base\n");
+		sb.append("===============\n");
+
+		DlgpWriter writer = new DlgpWriter(new StringBuilderWriter(sb));
+		for (Rule r : this.rules) {
+			try {
+				writer.write(r);
+			} catch (IOException e) {
+				sb.append(r.toString());
+			}
 		}
-		s.append('\n');
-		for (RuleProperty property : this.getAllProperty()) {
-			s.append(property.getLabel());
-			s.append(": ");
-			s.append(this.properties.get(property.getLabel()));
-			s.append('\n');
+		try {
+			writer.close();
+		} catch (IOException e) {
 		}
-		return s.toString();
+
+		sb.append("\n\nGraph of Rule Dependencies\n");
+		sb.append("==========================\n");
+		sb.append(this.rules.getGraphOfRuleDependencies().toString());
+
+		sb.append("\n\nStrongly Connected Components in the GRD\n");
+		sb.append("========================================\n");
+		for (int v : scc.getVertices()) {
+			sb.append("C" + v + " = {");
+			boolean isFirst = true;
+			for (Rule r : scc.getComponent(v)) {
+				if (!isFirst)
+					sb.append(", ");
+				sb.append(r.getLabel());
+				isFirst = false;
+			}
+			sb.append("}\n");
+
+		}
+
+		sb.append("\n\nGraph of Strongly Connected Components\n");
+		sb.append("======================================\n");
+		for (int src : scc.getVertices()) {
+			for (int target : scc.getOutbound(src)) {
+				sb.append("C" + src + " ---> C" + target);
+				sb.append('\n');
+			}
+		}
+
+		sb.append("\n\nRecognized Rule Classes\n");
+		sb.append("=======================\n");
+		int cellSize = 6;
+		sb.append(StringUtils.center(StringUtils.left("C", cellSize), cellSize));
+		for (RuleProperty rp : this.getAllProperty()) {
+			String pString = StringUtils.center(
+					StringUtils.left(rp.getLabel(), cellSize), cellSize);
+			sb.append("|" + pString);
+		}
+		sb.append("|\n");
+
+		sb.append(StringUtils.center("", (cellSize + 1)
+				* (this.getAllProperty().size() + 1), '-'));
+		sb.append('\n');
+
+		for (int c : scc.getVertices()) {
+			RuleAnalyser subRA = this.getSubRuleAnalyser(scc.getComponent(c));
+			subRA.checkAll();
+
+			sb.append(StringUtils.center(StringUtils.left("C" + c, cellSize),
+					cellSize));
+			for (RuleProperty rp : this.getAllProperty()) {
+				sb.append("|");
+				Boolean b = subRA.check(rp);
+				if (b == null) {
+					sb.append(StringUtils.center("?", cellSize));
+				} else if (b) {
+					sb.append(StringUtils.center("X", cellSize));
+				} else {
+					sb.append(StringUtils.center(" ", cellSize));
+				}
+			}
+			sb.append("|\n");
+		}
+
+		// Recognized classes for the whole ruleset
+		sb.append(StringUtils.center(StringUtils.left("KB", cellSize), cellSize));
+		for (RuleProperty rp : this.getAllProperty()) {
+			sb.append("|");
+			Boolean b = this.check(rp);
+			if (b == null) {
+				sb.append(StringUtils.center("?", cellSize));
+			} else if (b) {
+				sb.append(StringUtils.center("X", cellSize));
+			} else {
+				sb.append(StringUtils.center(" ", cellSize));
+			}
+		}
+		sb.append("|\n");
+
+		sb.append(StringUtils.center("", (cellSize + 1)
+				* (this.getAllProperty().size() + 1), '-'));
+		sb.append("\n");
+
+		sb.append(StringUtils.center(StringUtils.left("C", cellSize), cellSize));
+		for (RuleProperty rp : this.getAllProperty()) {
+			String pString = StringUtils.center(
+					StringUtils.left(rp.getLabel(), cellSize), cellSize);
+			sb.append("|" + pString);
+		}
+		sb.append("|\n");
+
+		// /////////////////////////////////////////////////////////////////////
+		// display combine
+		sb.append("\n\nCombined Algorithms FES/FUS/BTS\n");
+		sb.append("===============================\n");
+
+		if (this.isDecidable()) {
+			sb.append("Decidable combination found\n");
+		} else {
+			sb.append("Decidable combination not found\n");
+		}
+
+		sb.append("\n\nPriority: FES\n");
+		sb.append("-------------\n");
+		int[] combination = this.getCombineWithFESPriority();
+		printDecidableCombination(combination, sb);
+
+		sb.append("\n\nPriority: FUS\n");
+		sb.append("-------------\n");
+		combination = this.getCombineWithFUSPriority();
+		printDecidableCombination(combination, sb);
+
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -424,6 +554,21 @@ public class RuleAnalyser {
 						queue.add(pred);
 					}
 				}
+			}
+		}
+	}
+
+	private static void printDecidableCombination(int[] combination,
+			StringBuilder sb) {
+		for (int i = 0; i < combination.length; ++i) {
+			if (combination[i] == 1) {
+				sb.append("C" + i + "    " + "FES\n");
+			} else if (combination[i] == 2) {
+				sb.append("C" + i + "    " + "FUS\n");
+			} else if (combination[i] == 4) {
+				sb.append("C" + i + "    " + "BTS\n");
+			} else {
+				sb.append("C" + i);
 			}
 		}
 	}
