@@ -23,98 +23,141 @@ import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
+import fr.lirmm.graphik.graal.rulesetanalyser.RuleAnalyser;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- *
+ * 
  */
 public class AnimalsExample {
-	
+
 	private static String filePath = "./src/main/resources/animals.dlp";
 	private static DlgpWriter writer = new DlgpWriter();
 
-	public static void main(String args[]) throws ChaseException, IOException, HomomorphismFactoryException, HomomorphismException {
+	public static void main(String args[]) throws ChaseException, IOException,
+			HomomorphismFactoryException, HomomorphismException {
 		KnowledgeBase kb = new DefaultKnowledgeBase();
 
 		Reader reader = new FileReader(filePath);
 		DlgpParser.parseKnowledgeBase(reader, kb);
-		
-		writer.write("\n Ontology:\n");
+
+		writer.write("\n= Ontology =\n");
 		writer.write(kb.getRuleSet());
-		writer.write("\n Facts:\n");
+		waitEntry();
+
+		writer.write("\n= Facts =\n");
 		writer.write(kb.getAtomSet());
-		writer.write("\n\n");
 		writer.flush();
 		waitEntry();
-		
-		ConjunctiveQuery query = DlgpParser.parseQuery("?(X) :- \"mammifère\"(X).");
+
+		writer.write("\n= Query =\n");
+		ConjunctiveQuery query = DlgpParser
+				.parseQuery("?(X) :- \"mammifère\"(X).");
 		writer.write(query);
 		waitEntry();
-		
+
+		writer.write("\n= Answers =\n");
+		Iterable<Substitution> results = StaticHomomorphism.executeQuery(query,
+				kb.getAtomSet());
+		for (Substitution s : results) {
+			writer.write(s.toString());
+			writer.write("\n");
+		}
+		writer.flush();
+		waitEntry();
+
 		// /////////////////////////////////////////////////////////////////////////
 		// Backward Chaining
 		// /////////////////////////////////////////////////////////////////////////
-		
-		BackwardChainer backwardChainer = new PureRewriter(query, kb.getRuleSet());
+		writer.write("\n=========================================\n");
+		writer.write("= Backward Chaining                     =\n");
+		writer.write("=========================================\n");
+		writer.flush();
+		waitEntry();
+
+		BackwardChainer backwardChainer = new PureRewriter(query,
+				kb.getRuleSet());
 		UnionConjunctiveQueries ucq = new UnionConjunctiveQueries();
 		{
 			ConjunctiveQuery q;
-			while(backwardChainer.hasNext()) {
+			while (backwardChainer.hasNext()) {
 				q = backwardChainer.next();
 				ucq.add(q);
 			}
 		}
-		
+
 		// /////////////////////////////////////////////////////////////////////////
 		// Rewritings
-		writer.write("\n Rewritings:\n");
-		for(ConjunctiveQuery q : ucq) {
+		writer.write("\n= Queries Union =\n");
+		for (ConjunctiveQuery q : ucq) {
 			writer.write(q);
 		}
 		waitEntry();
-		
-		// /////////////////////////////////////////////////////////////////////////
-		// Backward Chaining Query
-		writer.write("\n Backward chaining answers:\n");
-		Iterable<Substitution> results = StaticHomomorphism.executeQuery(ucq, kb.getAtomSet());
-		for(Substitution s : results) {
-			writer.write(s.toString());
-			writer.write("\n");
-		}
-		writer.flush();	
-		waitEntry();
-		
-		
-		// /////////////////////////////////////////////////////////////////////////
-		// Forward Chaining
-		// /////////////////////////////////////////////////////////////////////////
-		
-		Chase chase = new DefaultChase(kb.getRuleSet(), kb.getAtomSet());
-		chase.execute();
-		
-		// /////////////////////////////////////////////////////////////////////////
-		// Saturated database
-		writer.write("\n Facts:\n");
+
+		writer.write("\n= Facts =\n");
 		writer.write(kb.getAtomSet());
 		writer.flush();
 		waitEntry();
-		
+
 		// /////////////////////////////////////////////////////////////////////////
-		// Forward Chaining Query
-		writer.write("\n Forward chaining answers:\n");
-		results = StaticHomomorphism.executeQuery(query, kb.getAtomSet());
-		for(Substitution s : results) {
+		// Backward Chaining Query
+		writer.write("\n= Answers =\n");
+		results = StaticHomomorphism.executeQuery(ucq, kb.getAtomSet());
+		for (Substitution s : results) {
 			writer.write(s.toString());
 			writer.write("\n");
 		}
 		writer.flush();
 		waitEntry();
-		
-		
+
+		// /////////////////////////////////////////////////////////////////////////
+		// Forward Chaining
+		// /////////////////////////////////////////////////////////////////////////
+		writer.write("\n=========================================\n");
+		writer.write("= Forward Chaining                      =\n");
+		writer.write("=========================================\n");
+		writer.flush();
+		waitEntry();
+
+		Chase chase = new DefaultChase(kb.getRuleSet(), kb.getAtomSet());
+		chase.execute();
+
+		writer.write("\n= Query =\n");
+		writer.write(query);
+		waitEntry();
+
+		// /////////////////////////////////////////////////////////////////////////
+		// Saturated database
+		writer.write("\n= Facts =\n");
+		writer.write(kb.getAtomSet());
+		writer.flush();
+		waitEntry();
+
+		// /////////////////////////////////////////////////////////////////////////
+		// Forward Chaining Query
+		writer.write("\n= Answers =\n");
+		results = StaticHomomorphism.executeQuery(query, kb.getAtomSet());
+		for (Substitution s : results) {
+			writer.write(s.toString());
+			writer.write("\n");
+		}
+		writer.flush();
+		waitEntry();
+
+		writer.write("\n=========================================\n");
+		writer.write("= Ontology Analysis                     =\n");
+		writer.write("=========================================\n");
+
+		RuleAnalyser ra = new RuleAnalyser(kb.getRuleSet());
+		writer.write(ra.toString());
+		writer.flush();
+
 	}
-	
+
 	private static Scanner scan = new Scanner(System.in);
+
 	public static void waitEntry() {
 		scan.nextLine();
 	}
+
 }
