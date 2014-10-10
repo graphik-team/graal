@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Set;
 import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.backward_chaining.pure.queries.PureQuery;
@@ -460,14 +461,11 @@ public class QueryRewritingEngine {
 	 *         and q
 	 */
 	public ConjunctiveQuery rewrite(ConjunctiveQuery q, QueryUnifier u) {
-
-
 		AtomSet ajout = u.getImageOf(u.getRule().getBody());
 		AtomSet restant = u.getImageOf(AtomSets.minus(q.getAtomSet(),
 				u.getPiece()));
 		if(ajout != null && restant != null) { // FIXME
 			AtomSet res = AtomSets.union(ajout, restant);
-	
 			ArrayList<Term> ansVar = new ArrayList<Term>();
 			ansVar.addAll(q.getAnswerVariables());
 			return new DefaultConjunctiveQuery(res, ansVar);
@@ -581,29 +579,36 @@ public class QueryRewritingEngine {
 	public LinkedList<QueryUnifier> getSinglePieceUnifiersNAHR(
 			ConjunctiveQuery Q, Rule R) {
 		LinkedList<QueryUnifier> u = new LinkedList<QueryUnifier>();
-		Rule copy = Misc.getSafeCopy(R);
+		Rule ruleCopy = Misc.getSafeCopy(R);
 		HashMap<Atom, LinkedList<TermPartition>> possibleUnification = new HashMap<Atom, LinkedList<TermPartition>>();
 		// compute possible unification between atoms of Q and head(R)
 		for (Atom a : Q) {
-			for (Atom b : copy.getHead()) {
+			for (Atom b : ruleCopy.getHead()) {
 				if (isUnifiable(a, b)) {
-					if (possibleUnification.get(a) == null)
-						possibleUnification.put(a,
-								new LinkedList<TermPartition>());
-					possibleUnification.get(a).addAll(getUnification(a, b));
+					Collection<? extends TermPartition> unification = getUnification(a, b);
+					for(TermPartition partition : unification) {
+						if(partition.isAdmissible(ruleCopy) ) {
+							if(possibleUnification.get(a) == null)
+								possibleUnification.put(a, new LinkedList<TermPartition>());
+							possibleUnification.get(a).add(partition);
+						}
+					}
 				}
 			}
 		}
 
 		LinkedList<Atom> atoms = getUnifiableAtoms(Q, R);
 		for (Atom a : atoms) {
-			Iterator<TermPartition> i = possibleUnification.get(a).iterator();
-			while (i.hasNext()) {
-				TermPartition unif = i.next();
-				AtomSet p = new LinkedListAtomSet();
-				p.add(a);
-				u.addAll(extend(p, unif, possibleUnification, Q, copy));
-				i.remove();
+			LinkedList<TermPartition> partitionList = possibleUnification.get(a);
+			if (partitionList != null) {
+				Iterator<TermPartition> i = partitionList.iterator();
+				while (i.hasNext()) {
+					TermPartition unif = i.next();
+					AtomSet p = new LinkedListAtomSet();
+					p.add(a);
+					u.addAll(extend(p, unif, possibleUnification, Q, ruleCopy));
+					i.remove();
+				}
 			}
 		}
 
