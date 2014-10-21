@@ -82,15 +82,17 @@ public class Misc {
 	public static boolean equivalent(Rule r1, Rule r2) {
 		// Rule o = Misc.getSafeCopy(r2);
 		Iterator<Atom> r1BodyIt = r1.getBody().iterator();
+		Iterator<Atom> r1HeadIt = r1.getHead().iterator();
 		Iterator<Atom> r2BodyIt = r2.getBody().iterator();
+		Iterator<Atom> r2HeadIt = r2.getHead().iterator();
 
-		if (r1BodyIt.hasNext() && r2BodyIt.hasNext()) {
+		if (r1BodyIt.hasNext() && r2BodyIt.hasNext() && r1HeadIt.hasNext() && r2HeadIt.hasNext()) {
 			Atom b1 = r1BodyIt.next();
 			Atom b2 = r2BodyIt.next();
-			Atom h1 = r1.getHead().iterator().next();
-			Atom h2 = r2.getHead().iterator().next();
+			Atom h1 = r1HeadIt.next();
+			Atom h2 = r2HeadIt.next();
 
-			if (r1BodyIt.hasNext() && r2BodyIt.hasNext()) {
+			if (!r1BodyIt.hasNext() && !r2BodyIt.hasNext() && !r1HeadIt.hasNext() && !r2HeadIt.hasNext()) {
 
 				if (b2.getPredicate().equals(b1.getPredicate())
 						&& h2.getPredicate().equals(h1.getPredicate())) {
