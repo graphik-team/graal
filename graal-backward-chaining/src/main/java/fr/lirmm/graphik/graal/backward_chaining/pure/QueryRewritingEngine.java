@@ -174,14 +174,14 @@ public class QueryRewritingEngine {
 			// Stop homomorphism
 
 		}
-		
-		// remove ans predicate from queries
-		for(ConjunctiveQuery query : pivotRewritingSet) {
-			PureQuery.removeAnswerPredicate(query);
-		}
 
 		if (compilation != null)
 			develop();
+
+		// remove ans predicate from queries
+		for (ConjunctiveQuery query : pivotRewritingSet) {
+			PureQuery.removeAnswerPredicate(query);
+		}
 
 		return unfoldingRewritingSet;
 	}

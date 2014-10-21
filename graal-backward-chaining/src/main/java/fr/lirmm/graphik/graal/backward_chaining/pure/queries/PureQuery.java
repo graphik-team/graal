@@ -78,7 +78,7 @@ public class PureQuery extends DefaultConjunctiveQuery {
 	}
 
 	
-	private static Predicate ansPredicate = new Predicate("__ans", 1);
+	private static Predicate ansPredicate = new Predicate("__ans", 2);
 	public void removeAnswerPredicate() {
 		removeAnswerPredicate(this);
 	}
@@ -93,8 +93,9 @@ public class PureQuery extends DefaultConjunctiveQuery {
 	}
 
 	public void addAnswerPredicate() {
+		int i = -1;
 		for(Term t: getAnswerVariables()) {
-			this.getAtomSet().add(new DefaultAtom(ansPredicate, t));
+			this.getAtomSet().add(new DefaultAtom(ansPredicate, new Term(++i, Term.Type.LITERAL), t));
 		}
 	}
 }
