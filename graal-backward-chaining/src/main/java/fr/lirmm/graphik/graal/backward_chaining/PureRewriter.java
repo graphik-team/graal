@@ -22,7 +22,9 @@ import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
  */
 public class PureRewriter extends AbstractBackwardChainer {
 
-	Iterator<ConjunctiveQuery> rewrites;
+	PureQuery pquery;
+	LinkedListRuleSet ruleset;
+	Iterator<ConjunctiveQuery> rewrites = null;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -33,33 +35,57 @@ public class PureRewriter extends AbstractBackwardChainer {
 	 * 
 	 */
 	public PureRewriter(ConjunctiveQuery query, Iterable<Rule> rules) {
-		LinkedListRuleSet ruleset = new LinkedListRuleSet(rules);
-		RulesCompilation comp = new IDCompilation();
-		comp.code(ruleset, (new Date()).toString());
-
-		PureQuery pquery = new PureQuery(query);
-		QueryRewritingEngine qre = new QREAggregSingleRule(pquery, ruleset, comp);
-
-		try {
-			this.rewrites = qre.computeRewritings().iterator();
-		} catch (Exception e) {
-			this.rewrites = Collections.<ConjunctiveQuery> emptyList()
-					.iterator();
-		}
+		this.pquery = new PureQuery(query);
+		this.ruleset = new LinkedListRuleSet(rules);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
-	// METHODS
+	// ITERATOR METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
 	public boolean hasNext() {
+		if (this.rewrites == null) {
+			this.compute();
+		}
 		return this.rewrites.hasNext();
 	}
 
 	@Override
 	public ConjunctiveQuery next() {
+		if (this.rewrites == null) {
+			this.compute();
+		}
 		return this.rewrites.next();
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	private void compute() {
+		for (BackwardChainerListener listener : this.getListeners()) {
+			listener.startPreprocessing();
+		}
+		// preprocessing
+		RulesCompilation comp = new IDCompilation();
+		comp.code(this.ruleset, (new Date()).toString());
+		for (BackwardChainerListener listener : this.getListeners()) {
+			listener.endPreprocessing();
+			listener.startRewriting();
+		}
+		// rewriting
+		QueryRewritingEngine qre = new QREAggregSingleRule(pquery, ruleset,
+				comp);
+		try {
+			this.rewrites = qre.computeRewritings().iterator();
+		} catch (Exception e1) {
+			this.rewrites = Collections.<ConjunctiveQuery> emptyList()
+					.iterator();
+		}
+		for (BackwardChainerListener listener : this.getListeners()) {
+			listener.endRewriting();
+		}
 	}
 
 }

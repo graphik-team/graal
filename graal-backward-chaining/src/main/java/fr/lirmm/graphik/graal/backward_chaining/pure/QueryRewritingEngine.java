@@ -44,11 +44,11 @@ public class QueryRewritingEngine {
 
 	protected RulesCompilation compilation;
 
-	protected LinkedList<ConjunctiveQuery> unfoldingRewritingSet;
+	protected Collection<ConjunctiveQuery> unfoldingRewritingSet;
 	protected LinkedList<ConjunctiveQuery> pivotRewritingSet;
 
 	// attributs temporaires
-	public boolean testInclu = true;
+	public static boolean testInclu = true;
 	public boolean atomic = false;
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -89,7 +89,7 @@ public class QueryRewritingEngine {
 		return this.compilation;
 	}
 
-	public LinkedList<ConjunctiveQuery> getUnfoldingRewritingSet() {
+	public Collection<ConjunctiveQuery> getUnfoldingRewritingSet() {
 		return unfoldingRewritingSet;
 	}
 
@@ -145,18 +145,18 @@ public class QueryRewritingEngine {
 
 			// Start homomorphism
 			/** keep only the most general among query just computed **/
-			computeCover(currentRewriteSet, this.compilation);
+			computeCover(currentRewriteSet);
 
 			/**
 			 * keep only the query just computed that are more general than
 			 * query already compute
 			 **/
 			selectMostGeneralFromRelativeTo(currentRewriteSet,
-					pivotRewritingSet, compilation);
+					pivotRewritingSet);
 
 			/** keep to explore only most general query **/
 			selectMostGeneralFromRelativeTo(rewriteSetToExplore,
-					currentRewriteSet, compilation);
+					currentRewriteSet);
 
 			/** add to explore the query just computed that we keep **/
 			addAll(rewriteSetToExplore, currentRewriteSet);
@@ -166,7 +166,7 @@ public class QueryRewritingEngine {
 			 * computed
 			 **/
 			selectMostGeneralFromRelativeTo(pivotRewritingSet,
-					currentRewriteSet, compilation);
+					currentRewriteSet);
 
 			/** add in final rewrite set the query just compute that we keep **/
 			pivotRewritingSet.addAll(currentRewriteSet);
@@ -176,35 +176,33 @@ public class QueryRewritingEngine {
 		}
 
 		if (compilation != null)
-			develop();
+			this.unfoldingRewritingSet = develop(pivotRewritingSet, compilation);
 
 		// remove ans predicate from queries
-		for (ConjunctiveQuery query : pivotRewritingSet) {
+		for(ConjunctiveQuery query : unfoldingRewritingSet) {
 			PureQuery.removeAnswerPredicate(query);
 		}
 
 		return unfoldingRewritingSet;
 	}
 
-	public Collection<ConjunctiveQuery> develop() throws Exception {
+	public static Collection<ConjunctiveQuery> develop(Collection<ConjunctiveQuery> pivotRewritingSet, RulesCompilation compilation) throws Exception {		
+		int estim_nb = estimateNbDevelopedRew(pivotRewritingSet, compilation);
 
-		int estim_nb = estimateNbDevelopedRew();
-
-		developpRewriting(pivotRewritingSet);
+		Collection<ConjunctiveQuery> unfoldingRewritingSet = developpRewriting(pivotRewritingSet, compilation);
 
 		/** clean the rewrites to return **/
 		removeUselessRewrites(unfoldingRewritingSet);
 
-		computeCover(unfoldingRewritingSet, null);
+		computeCover(unfoldingRewritingSet);
 
-		removeAnswerPredicate(unfoldingRewritingSet);
 		return unfoldingRewritingSet;
 	}
 
-	public int estimateNbDevelopedRew() {
+	public static int estimateNbDevelopedRew(Collection<ConjunctiveQuery> pivotRewritingSet, RulesCompilation compilation) {
 		int res = 0;
 		int nb;
-		for (ConjunctiveQuery query : unfoldingRewritingSet) {
+		for (ConjunctiveQuery query : pivotRewritingSet) {
 			nb = 1;
 			for (Atom a : query) {
 				nb = nb * compilation.getRewritingOf(a).size();
@@ -218,8 +216,10 @@ public class QueryRewritingEngine {
 	 * Add in the given rewriting set the rewrites that can be entailed from the
 	 * predicate order ex: the rewrite A(x) can be entailed from the rewrite
 	 * B(x) and the predicate order A > B
+	 * @return 
 	 */
-	private void developpRewriting(Collection<ConjunctiveQuery> rewritingSet) {
+	private static Collection<ConjunctiveQuery> developpRewriting(Collection<ConjunctiveQuery> rewritingSet, RulesCompilation compilation) {
+		Collection<ConjunctiveQuery> unfoldingRewritingSet = new LinkedList<ConjunctiveQuery>();
 		if (compilation != null) {
 			LinkedList<ConjunctiveQuery> newq = new LinkedList<ConjunctiveQuery>();
 			LinkedList<ConjunctiveQuery> sauv = new LinkedList<ConjunctiveQuery>();
@@ -263,8 +263,8 @@ public class QueryRewritingEngine {
 				}
 				unfoldingRewritingSet.addAll(newq);
 			}
-
 		}
+		return unfoldingRewritingSet;
 	}
 
 	protected void initialiseQRE() {
@@ -279,15 +279,13 @@ public class QueryRewritingEngine {
 	 * 
 	 * @param comp
 	 */
-	public boolean isMoreGeneral(AtomSet h, AtomSet f, RulesCompilation comp) {
+	public static boolean isMoreGeneral(AtomSet h, AtomSet f) {
 
-		boolean moreGen;
+		boolean moreGen = false;
 		if (testInclu && h.isSubSetOf(f)) {
 			moreGen = true;
-		} else if (new Homomorphism(h, f, comp).existHomomorphism()) {
+		} else if (new Homomorphism(h, f).existHomomorphism()) {
 			moreGen = true;
-		} else {
-			moreGen = false;
 		}
 
 		return moreGen;
@@ -299,7 +297,7 @@ public class QueryRewritingEngine {
 	 * 
 	 * @param comp
 	 */
-	public void computeCover(RewritingSet set, RulesCompilation comp) {
+	public static void computeCover(RewritingSet set, RulesCompilation comp) {
 		Iterator<ConjunctiveQuery> i = set.iterator();
 		boolean foundMoreGen;
 		ConjunctiveQuery q;
@@ -313,7 +311,7 @@ public class QueryRewritingEngine {
 			j = comparable.iterator();
 			while (!foundMoreGen && j.hasNext()) {
 				o = j.next().getAtomSet();
-				if (q != o && isMoreGeneral(o, q.getAtomSet(), comp)) {
+				if (q != o && isMoreGeneral(o, q.getAtomSet())) {
 					foundMoreGen = true;
 					i.remove();
 				}
@@ -328,8 +326,7 @@ public class QueryRewritingEngine {
 	 * @param comp
 	 * @throws Exception
 	 */
-	public void computeCover(LinkedList<ConjunctiveQuery> set,
-			RulesCompilation comp) throws Exception {
+	public static void computeCover(Iterable<ConjunctiveQuery> set) throws Exception {
 
 		Iterator<ConjunctiveQuery> beg = set.iterator();
 		Iterator<ConjunctiveQuery> end;
@@ -342,7 +339,7 @@ public class QueryRewritingEngine {
 			end = set.iterator();
 			while (!finished && end.hasNext()) {
 				o = end.next().getAtomSet();
-				if (o != q && isMoreGeneral(o, q, comp)) {
+				if (o != q && isMoreGeneral(o, q)) {
 					finished = true;
 					beg.remove();
 				}
@@ -359,11 +356,11 @@ public class QueryRewritingEngine {
 	 */
 	public void selectMostGeneralFromRelativeTo(
 			Collection<ConjunctiveQuery> toSelect,
-			Collection<ConjunctiveQuery> rewritingSet, RulesCompilation comp) {
+			Collection<ConjunctiveQuery> rewritingSet) {
 		Iterator<? extends ConjunctiveQuery> i = toSelect.iterator();
 		while (i.hasNext()) {
 			AtomSet f = i.next().getAtomSet();
-			if (containMoreGeneral(f, rewritingSet, comp))
+			if (containMoreGeneral(f, rewritingSet))
 				i.remove();
 		}
 	}
@@ -378,12 +375,12 @@ public class QueryRewritingEngine {
 	 * @return
 	 */
 	public boolean containMoreGeneral(AtomSet f,
-			Collection<ConjunctiveQuery> rewriteSet, RulesCompilation comp) {
+			Collection<ConjunctiveQuery> rewriteSet) {
 		boolean foundMoreGen = false;
 		Iterator<? extends ConjunctiveQuery> i = rewriteSet.iterator();
 		while (i.hasNext() && !foundMoreGen) {
 			AtomSet q = i.next().getAtomSet();
-			if (isMoreGeneral(q, f, comp))
+			if (isMoreGeneral(q, f))
 				foundMoreGen = true;
 		}
 		return foundMoreGen;
@@ -424,27 +421,13 @@ public class QueryRewritingEngine {
 	 * @return the list of rewrite without the rewrite containing temporary
 	 *         predicates
 	 */
-	protected void removeUselessRewrites(Collection<ConjunctiveQuery> rewriteSet) {
+	protected static void removeUselessRewrites(Collection<ConjunctiveQuery> rewriteSet) {
 		Iterator<? extends ConjunctiveQuery> i = rewriteSet.iterator();
 		while (i.hasNext()) {
 			ConjunctiveQuery q = i.next();
 			// if contains auxiliary predicate that can be match in the facts
 			if (containAuxiliaryPredicate(q))
 				i.remove();
-		}
-	}
-
-	/**
-	 * Remove the answer predicate Ans_ of queries in the given list
-	 * 
-	 * @param rewriteSet
-	 *            the list of rewrite that we want clean
-	 * @return the list of rewrite without the rewrite containing temporary
-	 *         predicates
-	 */
-	protected void removeAnswerPredicate(Collection<ConjunctiveQuery> rewriteSet) {
-		for (ConjunctiveQuery q : rewriteSet) {
-			removeAnswerPredicate(q);
 		}
 	}
 
@@ -780,17 +763,6 @@ public class QueryRewritingEngine {
 				return true;
 		}
 		return false;
-	}
-
-	public static void removeAnswerPredicate(ConjunctiveQuery q) {
-		Iterator<Atom> ita = q.iterator();
-		while (ita.hasNext()) {
-			Atom a = ita.next();
-			String label = (String) a.getPredicate().getLabel();
-			if (label.length() > 3 && label.substring(0, 4).equals("Ans_")) {
-				ita.remove();
-			}
-		}
 	}
 
 }

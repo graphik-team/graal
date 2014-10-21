@@ -19,4 +19,7 @@ public interface BackwardChainer extends Iterator<ConjunctiveQuery> {
 	@Override
 	ConjunctiveQuery next();
 
+	void addListener(BackwardChainerListener listener);
+
+	void deleteListener(BackwardChainerListener listener);
 }
