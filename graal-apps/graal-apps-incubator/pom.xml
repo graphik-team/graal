@@ -1,16 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
+	
 	<modelVersion>4.0.0</modelVersion>
 	
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
-		<artifactId>graal-main-project</artifactId>
+		<artifactId>graal-apps</artifactId>
 		<version>0.4.3-SNAPSHOT</version>
 	</parent>
 	
-	<artifactId>graal-io</artifactId>
+	<artifactId>graal-apps-incubator</artifactId>
+	<name>graal-apps-incubator</name>
 	<packaging>jar</packaging>
-	<name>graal-io</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -25,6 +25,11 @@
 	</organization>
 
 	<developers>
+	        <developer>
+		        <name>Swan ROCHER</name>
+			<email>rocher@lirmm.fr</email>
+			<organization>INRIA</organization>
+		</developer>
 		<developer>
 			<name>Clément SIPIETER</name>
 			<email>clement@6pi.fr</email>
@@ -33,17 +38,45 @@
 	</developers>
 
 	<dependencies>
-	    <dependency>
+		<dependency>
+			<groupId>fr.lirmm.graphik</groupId>
+			<artifactId>graal</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>fr.lirmm.graphik</groupId>
+			<artifactId>graal-store</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-core</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>dlgp-parser</artifactId>
-			<version>1.1.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/dlgp-parser.jar</systemPath>
+			<artifactId>graal-io</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>fr.lirmm.graphik</groupId>
+			<artifactId>graal-rules-analyser</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>fr.lirmm.graphik</groupId>
+			<artifactId>graal-forward-chaining</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>fr.lirmm.graphik</groupId>
+			<artifactId>graal-backward-chaining</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.beust</groupId>
+			<artifactId>jcommander</artifactId>
+			<version>1.35</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -57,19 +90,9 @@
 			<version>1.1.1</version>
 		</dependency>
 		<dependency>
-			<groupId>org.openrdf.sesame</groupId>
-			<artifactId>sesame-rio-api</artifactId>
-			<version>2.7.11</version>
-		</dependency>
-		<dependency>
-			<groupId>org.openrdf.sesame</groupId>
-			<artifactId>sesame-rio-rdfxml</artifactId>
-			<version>2.7.11</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.3.2</version>
+			<groupId>com.google.code.findbugs</groupId>
+			<artifactId>annotations</artifactId>
+			<version>2.0.3</version>
 		</dependency>
 	</dependencies>
 
@@ -84,7 +107,7 @@
 					<target>${jdk.version}</target>
 				</configuration>
 			</plugin>
-			<plugin>
+            <plugin>
 			  <artifactId>maven-release-plugin</artifactId>
 			  <version>2.1</version>
 			  <configuration>
