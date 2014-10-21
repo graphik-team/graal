@@ -11,6 +11,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
@@ -29,6 +32,9 @@ import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
  * 
  */
 public class Homomorphism {
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(Homomorphism.class);
 
 	private AtomSet query;// the query that we want project on the fact
 	private AtomSet fact; // the fact on which we want project the query
@@ -80,7 +86,9 @@ public class Homomorphism {
 
 		// check if the query is empty
 		if (query == null || query.isEmpty()) {
-			System.out.println("requete vide");
+			if(logger.isInfoEnabled()) {
+				logger.info("Empty query");
+			}
 			return true;
 		}
 
