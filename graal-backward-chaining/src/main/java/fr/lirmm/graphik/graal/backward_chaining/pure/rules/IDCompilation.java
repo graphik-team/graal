@@ -71,7 +71,7 @@ public class IDCompilation implements RulesCompilation {
 		while (it.hasNext()) {
 			r = it.next();
 			if (isCompilable(r)) {
-				saturation.add(Misc.getSafeCopy(r));
+				saturation.add(r);
 				it.remove();
 			}
 		}
@@ -149,48 +149,54 @@ public class IDCompilation implements RulesCompilation {
 	}
 
 	private void computeSaturation() {
+		// FIXME pb à résoudre avec unification trop importante
+
 		IndexedByBodyPredicatesRuleSet rules = new IndexedByBodyPredicatesRuleSet();
 		for (Rule r : saturation) {
 			rules.add(Misc.getSafeCopy(r));
 		}
 
-		// TODO pb a résoudre avec unification trop importante
-		LinkedList<Rule> lastCompute = new LinkedList<Rule>();
-		LinkedList<Rule> tmp = new LinkedList<Rule>();
+		Collection<Rule> lastCompute = new LinkedList<Rule>();
 		lastCompute.addAll(saturation);
-		Atom head1;
-		Atom body2;
-		TermPartition part;
-		AtomSet impliedHead;
-		AtomSet impliedBody;
-		Rule impliedRule;
+
 		while (!lastCompute.isEmpty()) {
-			for (Rule r1 : lastCompute) {
-				head1 = r1.getHead().iterator().next();
-				for (Rule r2 : rules.getRulesByBodyPredicate(head1
-						.getPredicate())) {
-					body2 = r2.getBody().iterator().next();
-					if (head1.getPredicate().equals(body2.getPredicate())) {
-						part = TermPartition.getPartitionByPosition(head1,
-								body2);
-						impliedBody = part.getAssociatedSubstitution(null)
-								.getSubstitut(r1.getBody());
-						impliedHead = part.getAssociatedSubstitution(null)
-								.getSubstitut(r2.getHead());
-						if (!impliedHead.equals(impliedBody)) {
-							impliedRule = new DefaultRule(impliedBody,
-									impliedHead);
-							if (mustBeKeeped(impliedRule)) {
-								tmp.add(impliedRule);
-								saturation.add(impliedRule);
-							}
+			lastCompute = computeSaturationPart(lastCompute, rules);
+			saturation.addAll(lastCompute);
+		}
+	}
+
+	private Collection<Rule> computeSaturationPart(Iterable<Rule> lastCompute, IndexedByBodyPredicatesRuleSet rules) {
+		Atom head1, body2;
+		TermPartition part;
+		AtomSet impliedHead, impliedBody;
+		Rule impliedRule;
+
+		LinkedList<Rule> tmp = new LinkedList<Rule>();
+
+		for (Rule r1 : lastCompute) {
+			head1 = r1.getHead().iterator().next();
+			for (Rule r2 : rules.getRulesByBodyPredicate(head1
+					.getPredicate())) {
+				body2 = r2.getBody().iterator().next();
+				if (head1.getPredicate().equals(body2.getPredicate())) {
+					part = TermPartition.getPartitionByPosition(head1,
+							body2);
+					impliedBody = part.getAssociatedSubstitution(null)
+							.getSubstitut(r1.getBody());
+					impliedHead = part.getAssociatedSubstitution(null)
+							.getSubstitut(r2.getHead());
+					if (!impliedHead.equals(impliedBody)) {
+						impliedRule = new DefaultRule(impliedBody,
+								impliedHead);
+						if (mustBeKeeped(impliedRule)) {
+							tmp.add(impliedRule);
 						}
 					}
 				}
 			}
-			lastCompute = tmp;
-			tmp = new LinkedList<Rule>();
 		}
+
+		return tmp;
 	}
 
 	/**
@@ -198,11 +204,11 @@ public class IDCompilation implements RulesCompilation {
 	 * the given one
 	 */
 	private boolean mustBeKeeped(Rule r) {
-		Iterator<Rule> i = saturation.iterator();
+		Iterator<Rule> it = saturation.iterator();
 		Rule o;
 		boolean isImplied = false;
-		while (!isImplied && i.hasNext()) {
-			o = i.next();
+		while (!isImplied && it.hasNext()) {
+			o = it.next();
 			if (Misc.equivalent(o, r))
 				isImplied = true;
 		}
