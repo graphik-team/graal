@@ -3,7 +3,7 @@
 
 	<groupId>fr.lirmm.graphik</groupId>
 	<artifactId>graal-apps</artifactId>
-	<version>0.4.3-SNAPSHOT</version>
+	<version>0.5.0</version>
 	<name>GRAAL Apps</name>
 	
 	<packaging>pom</packaging>
