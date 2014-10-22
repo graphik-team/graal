@@ -29,6 +29,8 @@
 
 	<modules>
 		<module>graal-apps-incubator</module>
+		<module>graal-cli</module>
+		<module>kiabo-graal</module>
 		<module>pure-rewriter</module>
 	</modules>
 
