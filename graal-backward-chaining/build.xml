@@ -4,22 +4,22 @@
 <!-- Ant build file (http://ant.apache.org/) for Ant 1.6.2 or above.        -->
 <!-- ====================================================================== -->
 
-<project name="graal-core" default="package" basedir=".">
+<project name="graal-backward-chaining" default="package" basedir=".">
 
   <!-- ====================================================================== -->
   <!-- Import maven-build.xml into the current project                        -->
   <!-- ====================================================================== -->
 
   <import file="maven-build.xml"/>
-  
-  <target name="compile" depends="graal-core-from-maven.compile">
-    <jar jarfile="${maven.repo.local}/fr/lirmm/graphik/graal-core/${maven.build.version}/${maven.build.finalName}.jar" 
+
+  <target name="compile" depends="graal-backward-chaining-from-maven.compile">
+    <jar jarfile="${maven.repo.local}/fr/lirmm/graphik/graal-backward-chaining/${maven.build.version}/${maven.build.finalName}.jar" 
          compress="true" 
          index="false" 
          basedir="${maven.build.outputDir}" 
          excludes="**/package.html"/>
-  </target>
-	
+  </target>	
+  
   <!-- ====================================================================== -->
   <!-- Help target                                                            -->
   <!-- ====================================================================== -->

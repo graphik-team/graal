@@ -8,6 +8,14 @@
 	
 	<packaging>pom</packaging>
 	
+	 <distributionManagement>
+	 	<site>
+	      <id>graal.com</id>
+	      <name>GRAAL Website</name>
+	      <url>/tmp/site/</url>
+	    </site>
+    </distributionManagement>
+	
 	<scm>
 		<developerConnection>scm:git:https://info-depot.lirmm.fr/repos/GraphIK/GRAAL</developerConnection>
 	</scm>
@@ -50,7 +58,27 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<configuration>
+					<stagingDirectory>/tmp/graal-site/</stagingDirectory>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
+	
+	<reporting>
+	    <plugins>
+	      <plugin>
+	        <groupId>org.apache.maven.plugins</groupId>
+	        <artifactId>maven-javadoc-plugin</artifactId>
+	        <version>2.10.1</version>
+	        <configuration>
+	          <show>public</show>
+	        </configuration>
+	      </plugin>
+	    </plugins>
+  </reporting>
 
 </project>
