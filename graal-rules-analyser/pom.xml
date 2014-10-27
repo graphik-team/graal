@@ -1,24 +1,16 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
 		<artifactId>graal-main-project</artifactId>
 		<version>0.5.1-SNAPSHOT</version>
 	</parent>
-	
+
 	<artifactId>graal-rules-analyser</artifactId>
 	<name>GRAAL Rules Analyser</name>
 	<packaging>jar</packaging>
-	
-	<repositories>
-		<repository>
-			<id>lhogie.i3s.maven.repo</id>
-			<name>Luc Hogie Maven repository</name>
-			<url>http://www.i3s.unice.fr/~hogie/maven_repository/</url>
-		</repository>
-	</repositories>
-	
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -52,17 +44,16 @@
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
-		 	<groupId>org.apache.commons</groupId>
+			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-graph-for-graal</artifactId>
 			<version>0.1</version>
 			<scope>system</scope>
 			<systemPath>${project.basedir}/lib/commons-graph-for-graal.jar</systemPath>
 		</dependency>
-		
 		<dependency>
-			<groupId>grph</groupId>
-			<artifactId>grph</artifactId>
-			<version>1.4.2</version>
+			<groupId>org.jgrapht</groupId>
+			<artifactId>jgrapht-core</artifactId>
+			<version>0.9.0</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -90,6 +81,13 @@
 			<artifactId>annotations</artifactId>
 			<version>2.0.3</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-graph-for-graal</artifactId>
+			<version>0.1</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/commons-graph-for-graal.jar</systemPath>
+		</dependency>
 		<!-- Jdbc Driver -->
 		<dependency>
 			<groupId>mysql</groupId>
@@ -115,11 +113,11 @@
 				</configuration>
 			</plugin>
 			<plugin>
-			  <artifactId>maven-release-plugin</artifactId>
-			  <version>2.1</version>
-			  <configuration>
-			    <preparationGoals>clean install</preparationGoals>
-			  </configuration>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.1</version>
+				<configuration>
+					<preparationGoals>clean install</preparationGoals>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

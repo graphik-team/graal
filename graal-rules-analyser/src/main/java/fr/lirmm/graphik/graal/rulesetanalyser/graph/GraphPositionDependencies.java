@@ -3,23 +3,21 @@
  */
 package fr.lirmm.graphik.graal.rulesetanalyser.graph;
 
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
+import org.jgrapht.DirectedGraph;
+import org.jgrapht.alg.StrongConnectivityInspector;
+import org.jgrapht.graph.DefaultDirectedGraph;
+import org.jgrapht.graph.DefaultEdge;
+
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.PredicatePosition;
-import grph.Grph;
-import grph.in_memory.InMemoryGrph;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-
-import toools.math.IntIterator;
-
-import com.carrotsearch.hppc.cursors.IntCursor;
 
 /**
  * The graph of position dependencies noted Gpos is a directed graph built from
@@ -35,40 +33,40 @@ import com.carrotsearch.hppc.cursors.IntCursor;
  * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * @author Swan Rocher
+ * @param <E>
+ * @param <V>
  * 
  */
-public class GraphPositionDependencies {
+public class GraphPositionDependencies<E, V> {
 
-	private TreeSet<Integer> specialEdges;
+	private static class SpecialEdge extends DefaultEdge {
+		private static final long serialVersionUID = 3660050932528046714L;
+	}
 
-	private int nbVertices = 0;
+	private Set<PredicatePosition> isFiniteRank = null;
 
-	private Map<PredicatePosition, Integer> graphEntryMap;
-	private boolean[] isFiniteRank = null;
-
-	private Grph graph = new InMemoryGrph();
+	private DirectedGraph<PredicatePosition, DefaultEdge> graph = new DefaultDirectedGraph<PredicatePosition, DefaultEdge>(DefaultEdge.class);
 	private Iterable<Rule> rules;
 
 	public GraphPositionDependencies(Iterable<Rule> rules) {
-		this.specialEdges = new TreeSet<Integer>();
-		this.graphEntryMap = new HashMap<PredicatePosition, Integer>();
 		this.rules = rules;
 		init();
 	}
 
 	public boolean isWeaklyAcyclic() {
-		for (int e : specialEdges) {
-			int head = this.graph.getDirectedSimpleEdgeHead(e);
-			int tail = this.graph.getDirectedSimpleEdgeTail(e);
+		for (DefaultEdge e : this.graph.edgeSet()) {
+			if (e instanceof SpecialEdge) {
+				PredicatePosition head = this.graph.getEdgeTarget(e);
+				PredicatePosition tail = this.graph.getEdgeSource(e);
 
-			boolean[] markedVertex = new boolean[nbVertices];
-			markedVertex[head] = true;
-			markedVertex[tail] = true;
+				Set<PredicatePosition> markedVertex = new TreeSet<PredicatePosition>();
+				markedVertex.add(head);
+				markedVertex.add(tail);
 
-			if (this.findSpecialCycle(head, markedVertex, tail)) {
-				return false;
+				if (this.findSpecialCycle(head, markedVertex, tail)) {
+					return false;
+				}
 			}
-
 		}
 		return true;
 	}
@@ -79,27 +77,18 @@ public class GraphPositionDependencies {
 
 	public void initFiniteRank() {
 		if (this.isFiniteRank == null) {
-			this.isFiniteRank = new boolean[nbVertices];
-			Collection<toools.set.IntSet> stronglyConnectedComponentCollection = this.graph
-					.getStronglyConnectedComponents();
-			for (toools.set.IntSet stronglyConnectedComponent : stronglyConnectedComponentCollection) {
-				// TODO fix grph library
-				IntIterator iIt = stronglyConnectedComponent
-						.iteratorPrimitive();
-				IntIterator jIt = stronglyConnectedComponent
-						.iteratorPrimitive();
-				int i, j;
+			this.isFiniteRank = new TreeSet<PredicatePosition>();
+
+			StrongConnectivityInspector<PredicatePosition, DefaultEdge> sccInspector = new StrongConnectivityInspector<PredicatePosition, DefaultEdge>(
+					graph);
+			List<Set<PredicatePosition>> sccList = sccInspector
+					.stronglyConnectedSets();
+			for (Set<PredicatePosition> scc : sccList) {
 				boolean componentIsFiniteRank = true;
-				while (iIt.hasNext()) {
-					i = iIt.next();
-					while (jIt.hasNext()) {
-						j = jIt.next();
-						IntIterator edgesIt = this.graph.getEdgesConnecting(i,
-								j).iteratorPrimitive();
-						int edge;
-						while (edgesIt.hasNext()) {
-							edge = edgesIt.next();
-							if (specialEdges.contains(Integer.valueOf(edge))) {
+				for (PredicatePosition p1 : scc) {
+					for (PredicatePosition p2 : scc) {
+						for (DefaultEdge edge : graph.getAllEdges(p1, p2)) {
+							if (edge instanceof SpecialEdge) {
 								componentIsFiniteRank = false;
 							}
 						}
@@ -107,24 +96,18 @@ public class GraphPositionDependencies {
 				}
 
 				// store information
-				iIt = stronglyConnectedComponent.iteratorPrimitive();
-				while (iIt.hasNext()) {
-					i = iIt.next();
-					this.isFiniteRank[i] = componentIsFiniteRank;
+				if (componentIsFiniteRank) {
+					for (PredicatePosition p : scc) {
+						this.isFiniteRank.add(p);
+					}
 				}
-
 			}
 		}
 	}
 
 	public boolean isFiniteRank(PredicatePosition p) {
 		initFiniteRank();
-		Integer integer = this.graphEntryMap.get(p);
-		if (integer != null) {
-			return this.isFiniteRank[integer];
-		} else {
-			return true;
-		}
+		return this.isFiniteRank.contains(p);
 	}
 
 	/**
@@ -132,15 +115,15 @@ public class GraphPositionDependencies {
 	 * @param markedVertex
 	 * @return
 	 */
-	private boolean findSpecialCycle(int vertex, boolean[] markedVertex,
-			int vertexCible) {
+	private boolean findSpecialCycle(PredicatePosition vertex, Set<PredicatePosition> markedVertex,
+			PredicatePosition vertexCible) {
 
-		for (IntCursor vcursor : this.graph.getOutNeighbors(vertex)) {
-			int v = vcursor.value;
-			if (v == vertexCible) {
+		for (DefaultEdge edge : this.graph.outgoingEdgesOf(vertex)) {
+			PredicatePosition v = this.graph.getEdgeTarget(edge);
+			if (v.equals(vertexCible)) {
 				return true;
-			} else if (!markedVertex[v]) {
-				markedVertex[v] = true;
+			} else if (!markedVertex.contains(v)) {
+				markedVertex.add(v);
 				if (this.findSpecialCycle(v, markedVertex, vertexCible)) {
 					return true;
 				}
@@ -185,25 +168,24 @@ public class GraphPositionDependencies {
 		}
 	}
 
-	private int getVertice(PredicatePosition predicatePosition) {
-		Integer vertice = this.graphEntryMap.get(predicatePosition);
-		if (vertice == null) {
-			vertice = this.nbVertices++;
-			this.graphEntryMap.put(predicatePosition, vertice);
-		}
-		return vertice;
-	}
-
 	/**
 	 * @param predicatePosition
 	 * @param predicatePosition2
 	 */
 	private void addSpecialEdge(PredicatePosition predicatePosition,
 			PredicatePosition predicatePosition2) {
-		int vertice1 = this.getVertice(predicatePosition);
-		int vertice2 = this.getVertice(predicatePosition2);
-		int edge = this.graph.addDirectedSimpleEdge(vertice1, vertice2);
-		this.specialEdges.add(edge);
+		if(this.graph.containsEdge(predicatePosition, predicatePosition2)) {
+			this.graph.removeEdge(predicatePosition, predicatePosition2);
+		} else {
+			if(!this.graph.containsVertex(predicatePosition)) {
+				this.graph.addVertex(predicatePosition);
+			}
+			if(!this.graph.containsVertex(predicatePosition2)) {
+				this.graph.addVertex(predicatePosition2);
+			}
+		}
+		this.graph.addEdge(predicatePosition, predicatePosition2, new SpecialEdge());
+
 	}
 
 	/**
@@ -212,8 +194,14 @@ public class GraphPositionDependencies {
 	 */
 	private void addEdge(PredicatePosition predicatePosition,
 			PredicatePosition predicatePosition2) {
-		int vertice1 = this.getVertice(predicatePosition);
-		int vertice2 = this.getVertice(predicatePosition2);
-		this.graph.addDirectedSimpleEdge(vertice1, vertice2);
+		if(!this.graph.containsEdge(predicatePosition, predicatePosition2)) {
+			if(!this.graph.containsVertex(predicatePosition)) {
+				this.graph.addVertex(predicatePosition);
+			}
+			if(!this.graph.containsVertex(predicatePosition2)) {
+				this.graph.addVertex(predicatePosition2);
+			}
+			this.graph.addEdge(predicatePosition, predicatePosition2);
+		}
 	}
 }

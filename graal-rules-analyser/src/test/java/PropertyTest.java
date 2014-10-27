@@ -49,7 +49,7 @@ public class PropertyTest {
 	private static RuleProperty wfg = WeaklyFrontierGuardedSetProperty.getInstance();
 
 	private static Rule NR0,NR1,R0,R1,R2,R3,R4,R5;
- 	private static List<Rule> RSet0,RSet1,RSet2,RSet3;
+	private static List<Rule> RSet0,RSet1,RSet2,RSet3,RSetWAFalse;
 	
 	@BeforeClass
 	public static void setUp() {
@@ -98,6 +98,11 @@ public class PropertyTest {
 		RSet3.add((Rule)(DlgpParser.parseRule("dept(W,Z) :- pR1(V,W,X,Y,Z).")));
 		RSet3.add((Rule)(DlgpParser.parseRule("runs(W,Y) :- pR1(V,W,X,Y,Z).")));
 		RSet3.add((Rule)(DlgpParser.parseRule("pro(Y,X):- runs(W,X),dept(W,Y).")));
+
+		RSetWAFalse = new LinkedList<Rule>();
+		RSetWAFalse.add((Rule)(DlgpParser.parseRule("emp(W,V,X,Y) :- dept(V,W).")));
+		RSetWAFalse.add((Rule)(DlgpParser.parseRule("pR1(V,W,X,Y,Z) :- emp(V,W,X,Y).")));
+		RSetWAFalse.add((Rule)(DlgpParser.parseRule("dept(W,Z) :- pR1(V,W,X,Y,Z).")));
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -237,6 +242,7 @@ public class PropertyTest {
 		assertFalse(ab.check(RSet1));
 		assertFalse(ab.check(RSet2));
 		assertFalse(ab.check(RSet3));
+		assertTrue(ab.check(RSetWAFalse));
 	}
 
 	@Test
@@ -261,6 +267,7 @@ public class PropertyTest {
 		assertTrue(fg.check(RSet1));
 		assertFalse(fg.check(RSet2));
 		assertFalse(fg.check(RSet3));
+		assertTrue(fg.check(RSetWAFalse));
 	}
 	
 	@Test
@@ -293,6 +300,8 @@ public class PropertyTest {
 		assertTrue(s.check(RSet1));
 		assertFalse(s.check(RSet2));
 		assertFalse(s.check(RSet3));
+		assertTrue(s.check(RSetWAFalse));
+
 	}
 
 	@Test
@@ -301,6 +310,7 @@ public class PropertyTest {
 		assertFalse(wa.check(RSet1));
 		assertTrue(wa.check(RSet2));
 		assertFalse(wa.check(RSet3));
+		assertFalse(wa.check(RSetWAFalse));
 	}
 
 	@Test
