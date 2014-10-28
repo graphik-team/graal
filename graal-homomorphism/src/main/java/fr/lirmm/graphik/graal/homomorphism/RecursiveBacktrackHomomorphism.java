@@ -63,9 +63,9 @@ public class RecursiveBacktrackHomomorphism implements Homomorphism<ConjunctiveQ
         Collection<Atom>[] queryAtomRanked = getAtomRank(
                 query.getAtomSet(), orderedVars);
         try {
-            if (isHomomorphisme(queryAtomRanked[0], facts,
+            if (isHomomorphism(queryAtomRanked[0], facts,
                     new HashMapSubstitution())) {
-                return new IteratorSubstitutionReader(homomorphisme(query,
+                return new IteratorSubstitutionReader(homomorphism(query,
                         queryAtomRanked, facts, new HashMapSubstitution(),
                         orderedVars, 1).iterator());
             } else {
@@ -92,7 +92,7 @@ public class RecursiveBacktrackHomomorphism implements Homomorphism<ConjunctiveQ
      * @return
      * @throws Exception
      */
-    private static Collection<Substitution> homomorphisme(ConjunctiveQuery query,
+    private static Collection<Substitution> homomorphism(ConjunctiveQuery query,
             Collection<Atom>[] queryAtomRanked, ReadOnlyAtomSet facts,
             Substitution substitution, List<Term> orderedVars, int rank)
             throws Exception {
@@ -112,10 +112,10 @@ public class RecursiveBacktrackHomomorphism implements Homomorphism<ConjunctiveQ
                 Substitution tmpSubstitution = new HashMapSubstitution(
                         substitution);
                 tmpSubstitution.put(var, substitut);
-                // Test partial homomorphisme
-                if (isHomomorphisme(queryAtomRanked[rank], facts,
+                // Test partial homomorphism
+                if (isHomomorphism(queryAtomRanked[rank], facts,
                         tmpSubstitution))
-                    substitutionList.addAll(homomorphisme(query, queryAtomRanked,
+                    substitutionList.addAll(homomorphism(query, queryAtomRanked,
                             facts, tmpSubstitution, new LinkedList<Term>(
                                     orderedVars), rank + 1));
             }
@@ -124,7 +124,7 @@ public class RecursiveBacktrackHomomorphism implements Homomorphism<ConjunctiveQ
         return substitutionList;
     }
 
-    private static boolean isHomomorphisme(Collection<Atom> atomsFrom,
+    private static boolean isHomomorphism(Collection<Atom> atomsFrom,
             ReadOnlyAtomSet atomsTo, Substitution substitution) throws Exception {
         for (Atom atom : atomsFrom) {
             if (logger.isDebugEnabled())
