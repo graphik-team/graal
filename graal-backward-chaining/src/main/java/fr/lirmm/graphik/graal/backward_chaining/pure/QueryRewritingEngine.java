@@ -14,7 +14,6 @@ import fr.lirmm.graphik.graal.backward_chaining.pure.rules.AtomicHeadRule;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.IDCompilation;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.PredicateOrder;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
-import fr.lirmm.graphik.graal.backward_chaining.pure.utils.Homomorphism;
 import fr.lirmm.graphik.graal.backward_chaining.pure.utils.Misc;
 import fr.lirmm.graphik.graal.backward_chaining.pure.utils.QueryUnifier;
 import fr.lirmm.graphik.graal.backward_chaining.pure.utils.RewritingSet;
@@ -31,6 +30,8 @@ import fr.lirmm.graphik.graal.core.atomset.AtomSets;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByHeadPredicatesRuleSet;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
+import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.homomorphism.PureHomomorphism;
 
 /**
  * @author Mélanie KÖNIG Query Rewriting Engine that rewrites query using only
@@ -284,8 +285,13 @@ public class QueryRewritingEngine {
 		boolean moreGen = false;
 		if (testInclu && h.isSubSetOf(f)) {
 			moreGen = true;
-		} else if (new Homomorphism(h, f).existHomomorphism()) {
-			moreGen = true;
+		} else {
+			try {
+				if (PureHomomorphism.getInstance().exist(h, f)) {
+					moreGen = true;
+				}
+			} catch (HomomorphismException e) {
+			}
 		}
 
 		return moreGen;

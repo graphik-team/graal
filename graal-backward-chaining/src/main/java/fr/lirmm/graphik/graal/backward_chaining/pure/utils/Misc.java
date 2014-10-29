@@ -16,6 +16,8 @@ import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.homomorphism.PureHomomorphism;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -75,8 +77,13 @@ public class Misc {
 	}
 
 	public boolean isMoreGeneralThan(AtomSet a1, AtomSet a2) {
-		Homomorphism hom = new Homomorphism(a1, a2);
-		return hom.existHomomorphism();
+		try {
+			if (PureHomomorphism.getInstance().exist(a1, a2)) {
+				return true;
+			}
+		} catch (HomomorphismException e) {
+		}
+		return false;
 	}
 
 	public static boolean equivalent(Rule r1, Rule r2) {
