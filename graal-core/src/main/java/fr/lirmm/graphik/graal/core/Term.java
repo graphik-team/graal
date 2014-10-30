@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 /**
  * (Immutable object)
+ * 
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
@@ -27,14 +28,15 @@ public class Term implements Comparable<Term>, Serializable {
 
 	/**
 	 * 
-	 * @param value if the type is VARIABLE, this parameter will be interpreted
-	 * as a string.
+	 * @param value
+	 *            if the type is VARIABLE, this parameter will be interpreted as
+	 *            a string.
 	 * @param type
 	 */
 	public Term(Object value, Type type) {
-		if(Type.VARIABLE.equals(type)) 
+		if (Type.VARIABLE.equals(type))
 			value = value.toString();
-		
+
 		this.value = value;
 		this.type = type;
 	}
@@ -44,29 +46,43 @@ public class Term implements Comparable<Term>, Serializable {
 	// /////////////////////////////////////////////////////////////////////////
 
 	/**
+	 * Get the value.
 	 * 
 	 * @return
 	 */
 	public Object getValue() {
 		return this.value;
 	}
-	
+
+	/**
+	 * Returns true if this Term is a constant (Type.LITERAL is considered as a
+	 * constant).
+	 * 
+	 * @return
+	 */
 	public boolean isConstant() {
-		return Type.CONSTANT.equals(this.type) || Type.LITERAL.equals(this.type);
+		return Type.CONSTANT.equals(this.type)
+				|| Type.LITERAL.equals(this.type);
 	}
-	
+
+	/**
+	 * Returns true if this Term is a variable.
+	 * 
+	 * @return
+	 */
 	public boolean isVariable() {
 		return !isConstant();
 	}
 
 	/**
+	 * Returns the Type of this Term.
 	 * 
 	 * @return
 	 */
 	public Type getType() {
 		return this.type;
 	}
-	
+
 	/**
 	 * Create a new Term from this term with a different type.
 	 * 
@@ -99,19 +115,14 @@ public class Term implements Comparable<Term>, Serializable {
 		if (this == obj) {
 			return true;
 		}
-		if (obj == null) {
-			return false;
-		}
-		if (!(obj instanceof Term)) {
+		if (obj == null || !(obj instanceof Term)) {
 			return false;
 		}
 		Term other = (Term) obj;
 		if (!this.getType().equals(other.getType())) {
 			return false;
-		} else if (!this.getValue().equals(other.getValue())) {
-			return false;
 		}
-		return true;
+		return this.getValue().equals(other.getValue());
 	}
 
 	@Override
