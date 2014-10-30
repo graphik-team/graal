@@ -28,6 +28,7 @@ public class Predicate implements Comparable<Predicate>, Serializable {
 
 	/**
 	 * Get the label (the name) of this predicate.
+	 * 
 	 * @return a string representing predicate label.
 	 */
 	public String getLabel() {
@@ -36,6 +37,7 @@ public class Predicate implements Comparable<Predicate>, Serializable {
 
 	/**
 	 * Get the arity of this predicate.
+	 * 
 	 * @return
 	 */
 	public int getArity() {
@@ -51,9 +53,8 @@ public class Predicate implements Comparable<Predicate>, Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + this.getArity();
-		result = prime
-				 * result
-				 + ((this.getLabel() == null) ? 0 : this.getLabel().hashCode());
+		result = prime * result
+				+ ((this.getLabel() == null) ? 0 : this.getLabel().hashCode());
 		return result;
 	}
 
@@ -65,31 +66,16 @@ public class Predicate implements Comparable<Predicate>, Serializable {
 		if (this == obj) {
 			return true;
 		}
-		if (obj == null) {
-			return false;
-		}
-		if (!(obj instanceof Predicate)) {
+		if (obj == null || !(obj instanceof Predicate)) {
 			return false;
 		}
 		Predicate other = (Predicate) obj;
 		if (this.getArity() != other.getArity()) {
 			return false;
 		}
-		if (this.getLabel() == null) {
-			if (other.getLabel() != null) {
-				return false;
-			}
-		} else if (!this.getLabel().equals(other.getLabel())) {
-			return false;
-		}
-		return true;
+		return this.getLabel().equals(other.getLabel());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
 	@Override
 	public int compareTo(Predicate other) {
 		int cmpVal = (this.getArity() < other.getArity()) ? -1 : ((this
