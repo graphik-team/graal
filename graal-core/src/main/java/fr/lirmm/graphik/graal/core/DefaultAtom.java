@@ -7,87 +7,73 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ArrayList;
 
-
 /**
  * Class that implements atoms.
  */
 public class DefaultAtom extends AbstractAtom implements Serializable {
 
-    private static final long serialVersionUID = -5889218407173357933L;
-    
-    private Predicate predicate;
+	private static final long serialVersionUID = -5889218407173357933L;
+
+	private Predicate predicate;
 	private List<Term> terms;
 
 	// /////////////////////////////////////////////////////////////////////////
-    //	CONSTRUCTORS
-    // /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
 
-	public DefaultAtom(Predicate predicate) { 
+	public DefaultAtom(Predicate predicate) {
 		this.predicate = predicate;
 		int n = predicate.getArity();
 		this.terms = new ArrayList<Term>(n);
-		for (int i = 0 ; i < n ; ++i)
+		for (int i = 0; i < n; ++i)
 			this.terms.add(null);
 	}
 
-	public DefaultAtom(Predicate predicate, List<Term> terms) { 
-		this.predicate = predicate;	
+	public DefaultAtom(Predicate predicate, List<Term> terms) {
+		this.predicate = predicate;
 		this.terms = terms;
 	}
-	
+
 	public DefaultAtom(Predicate predicate, Term... terms) {
 		this(predicate, Arrays.asList(terms));
 	}
-	
+
 	/**
-     * @param atom
-     */
-    public DefaultAtom(Atom atom) {
-        this.predicate = atom.getPredicate();  // Predicate is immutable
-        this.terms = new LinkedList<Term>();
-        for(Term t : atom.getTerms())
-            this.terms.add(t); // Term is immutable
-    }
-	
-	/*public Atom(IPredicate predicate, ITerm... terms) {
-		System.out.println("e1");
-		this.predicate = predicate;
-		System.out.println("e2");
-		this.terms = Arrays.asList(terms);
-		System.out.println("e3");
-	}*/
+	 * @param atom
+	 */
+	public DefaultAtom(Atom atom) {
+		this.predicate = atom.getPredicate(); // Predicate is immutable
+		this.terms = new LinkedList<Term>();
+		for (Term t : atom.getTerms())
+			this.terms.add(t); // Term is immutable
+	}
 
 	// /////////////////////////////////////////////////////////////////////////
-    //	PUBLIC METHODS
-    // /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
-    @Override
-	public List<Term> getTerms() { 
-		return this.terms; 
+	/**
+	 * Returns all Term with the Type type.
+	 */
+	@Override
+	public Collection<Term> getTerms(Term.Type type) {
+		Collection<Term> typedTerms = new LinkedList<Term>();
+		for (Term term : this.terms)
+			if (type.equals(term.getType()))
+				typedTerms.add(term);
+
+		return typedTerms;
 	}
-	
-    @Override
-    public Collection<Term> getTerms(Term.Type type) {
-        Collection<Term> typedTerms = new LinkedList<Term>();
-        for(Term term : this.terms)
-            if(type.equals(term.getType()))
-                typedTerms.add(term);
-        
-        return typedTerms;
-    }
-
-	public void setTerms(List<Term> terms) { this.terms = terms; }
-
-	public Predicate getPredicate() { return predicate; }
-
 
 	/**
 	 * Verifies if a certain term is contained in the atom or not.
 	 */
 	public boolean contains(Term term) {
 		int size = terms.size();
-		for (int i=0;i<size;i++) {
-			if (terms.get(i).equals(term)) { return true; }
+		for (int i = 0; i < size; i++) {
+			if (terms.get(i).equals(term)) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -95,50 +81,80 @@ public class DefaultAtom extends AbstractAtom implements Serializable {
 	/**
 	 * Returns the index of a given term in the atom.
 	 */
-	public int[] getIndexOf(Term term) {	
+	public int[] getIndexOf(Term term) {
 		int[] result = null;
 		int resultCounter = 0;
 		int termsSize = terms.size();
-		for (int i=0;i<termsSize;i++) { if (terms.get(i).equals(term)) { resultCounter++; } }
+		for (int i = 0; i < termsSize; i++) {
+			if (terms.get(i).equals(term)) {
+				resultCounter++;
+			}
+		}
 		if (resultCounter != 0) {
 			result = new int[resultCounter];
 			int pos = 0;
-			for (int i=0;i<termsSize;i++) { if (terms.get(i).equals(term)) { result[pos] = i; pos++; } }
-		}
-		return result; 
-	}
-
-	/**
-	 * Returns the term of the atom located in the given index.
-	 */
-	public Term getTermAt(int index) { return terms.get(index); }
-
-	/**
-	 * Searches the index of a term, via its label, in the atom.
-	 */
-	/*public int getIndexByLabel(Object label) {
-		int result = -1;
-		int size = terms.size();
-		for (int i=0;i<size;i++) {
-			if (terms.get(i).getLabel().equals(label)) { return i; }
+			for (int i = 0; i < termsSize; i++) {
+				if (terms.get(i).equals(term)) {
+					result[pos] = i;
+					pos++;
+				}
+			}
 		}
 		return result;
-	}*/
+	}
 
+	// /////////////////////////////////////////////////////////////////////////
+	// GETTERS/SETTERS
+	// /////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Set the predicate.
+	 */
+	@Override
 	public void setPredicate(Predicate predicate) {
 		this.predicate = predicate;
-		
 	}
 
+	/**
+	 * Get the predicate.
+	 */
+	@Override
+	public Predicate getPredicate() {
+		return predicate;
+	}
+
+	/**
+	 * Set the Term with the specified index.
+	 */
+	@Override
 	public void setTerm(int index, Term term) {
 		this.terms.set(index, term);
-		
+
 	}
 
+	/**
+	 * Returns the Term with the specified index.
+	 */
+	@Override
 	public Term getTerm(int index) {
 		return this.terms.get(index);
 	}
 
+	/**
+	 * Set the List of Term.
+	 * 
+	 * @param terms
+	 */
+	public void setTerms(List<Term> terms) {
+		this.terms = terms;
+	}
 
+	/**
+	 * Returns the List of Term.
+	 */
+	@Override
+	public List<Term> getTerms() {
+		return this.terms;
+	}
 
-}
+};
