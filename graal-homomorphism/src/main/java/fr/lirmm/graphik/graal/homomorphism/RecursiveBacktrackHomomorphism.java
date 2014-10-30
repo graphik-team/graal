@@ -78,6 +78,30 @@ public class RecursiveBacktrackHomomorphism implements Homomorphism<ConjunctiveQ
         }
     }
 
+    /**
+     * 
+     * @param atomSet1
+     * @param atomSet2
+     * @return
+     * @throws HomomorphismException
+     */
+	public boolean exist(ReadOnlyAtomSet atomSet1, ReadOnlyAtomSet atomSet2)
+			throws HomomorphismException {
+		List<Term> orderedVars = order(atomSet1.getTerms(Term.Type.VARIABLE));
+		Collection<Atom>[] queryAtomRanked = getAtomRank(atomSet1, orderedVars);
+		try {
+			if (isHomomorphism(queryAtomRanked[0], atomSet2,
+					new HashMapSubstitution())) {
+				return existHomomorphism(atomSet1, queryAtomRanked, atomSet2,
+						new HashMapSubstitution(), orderedVars, 1);
+			} else {
+				return false;
+			}
+		} catch (Exception e) {
+			throw new HomomorphismException(e.getMessage(), e);
+		}
+	}
+
     // /////////////////////////////////////////////////////////////////////////
     // PRIVATE METHODS
     // /////////////////////////////////////////////////////////////////////////
@@ -123,6 +147,45 @@ public class RecursiveBacktrackHomomorphism implements Homomorphism<ConjunctiveQ
         }
         return substitutionList;
     }
+
+	/**
+	 * 
+	 * @param queryAtomRanked
+	 * @param facts
+	 * @param substitution
+	 * @param orderedVars
+	 * @param rank
+	 * @return
+	 * @throws Exception
+	 */
+	private static boolean existHomomorphism(ReadOnlyAtomSet atomSet1,
+			Collection<Atom>[] queryAtomRanked, ReadOnlyAtomSet atomSet2,
+			Substitution substitution, List<Term> orderedVars, int rank)
+			throws Exception {
+		if (orderedVars.size() == 0) {
+			return true;
+		} else {
+			Term var;
+			Set<Term> domaine = atomSet2.getTerms();
+
+			var = orderedVars.remove(0);
+			for (Term substitut : domaine) {
+				Substitution tmpSubstitution = new HashMapSubstitution(
+						substitution);
+				tmpSubstitution.put(var, substitut);
+				// Test partial homomorphism
+				if (isHomomorphism(queryAtomRanked[rank], atomSet2,
+						tmpSubstitution))
+					if (existHomomorphism(atomSet1, queryAtomRanked, atomSet2,
+							tmpSubstitution, new LinkedList<Term>(orderedVars),
+							rank + 1)) {
+						return true;
+					}
+			}
+
+		}
+		return false;
+	}
 
     private static boolean isHomomorphism(Collection<Atom> atomsFrom,
             ReadOnlyAtomSet atomsTo, Substitution substitution) throws Exception {
