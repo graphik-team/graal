@@ -39,7 +39,7 @@ public class PredicateOrder implements RulesCompilation {
 	}
 
 	@Override
-	public void code(Iterable<Rule> rules, String rule_name) {
+	public void code(Iterable<Rule> rules) {
 		Iterator<Rule> i = rules.iterator();
 		Rule r;
 

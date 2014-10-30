@@ -17,7 +17,7 @@ public interface RulesCompilation {
 	 * @param arrayList
 	 * @param rule_base
 	 */
-	public void code(Iterable<Rule> arrayList, String rule_base);
+	public void code(Iterable<Rule> arrayList);
 
 	/**
 	 * Return true if the given rule is compilable by this

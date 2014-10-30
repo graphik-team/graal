@@ -1,14 +1,14 @@
 package fr.lirmm.graphik.graal.backward_chaining.pure.rules;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.backward_chaining.pure.utils.IDCondition;
@@ -24,19 +24,36 @@ import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByBodyPredicatesRuleSet;
+import fr.lirmm.graphik.util.stream.ObjectWriter;
 
 public class IDCompilation implements RulesCompilation {
 
 	private static DefaultFreeVarGen varGen = new DefaultFreeVarGen("X"
 			+ Integer.toString(IDCompilation.class.hashCode()));
 
-	TreeSet<Predicate> pred = new TreeSet<Predicate>();
-	int nb_pred = 0;
+	private TreeSet<Predicate> predicates = new TreeSet<Predicate>();
 
 	// a matrix for store conditions ( p -> q : [q][p] )
-	private HashMap<Predicate, HashMap<Predicate, LinkedList<IDCondition>>> conditions;
+	private Map<Predicate, TreeMap<Predicate, LinkedList<IDCondition>>> conditions;
 
 	private LinkedList<Rule> saturation = new LinkedList<Rule>();
+
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
+
+	public IDCompilation() {
+		super();
+	}
+
+	public IDCompilation(Iterable<Rule> ruleSet) {
+		super();
+		this.code(ruleSet);
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
 	public LinkedList<IDCondition> getConditions(Predicate pred_b,
 			Predicate pred_h) {
@@ -49,7 +66,7 @@ public class IDCompilation implements RulesCompilation {
 			}
 			res.add(new IDCondition(terms, terms));
 		} else {
-			HashMap<Predicate, LinkedList<IDCondition>> cond_h = conditions
+			Map<Predicate, LinkedList<IDCondition>> cond_h = conditions
 					.get(pred_h);
 
 			if (cond_h != null) {
@@ -63,63 +80,55 @@ public class IDCompilation implements RulesCompilation {
 	}
 
 	@Override
-	public void code(Iterable<Rule> list, String rule_name) {
-		saturation.clear();
+	public void code(Iterable<Rule> ruleSet) {
+		this.saturation.clear();
+
 		// initialise first rules in the saturation
-		Iterator<Rule> it = list.iterator();
 		Rule r;
+		Iterator<Rule> it = ruleSet.iterator();
 		while (it.hasNext()) {
 			r = it.next();
-			if (isCompilable(r)) {
-				saturation.add(r);
+			if (this.isCompilable(r)) {
+				this.saturation.add(r);
 				it.remove();
 			}
 		}
-		try {
-			computeSaturation();
-//			File save = new File(rule_name + ".save");
-//			if (!save.createNewFile()) {// the save file for the saturation of
-//										// this set of rule exists
-//				loadSaturation(rule_name);
-//			} else {
-//				// compute the saturation and save it
-//				computeSaturation();
-//				// create file to save the saturation
-//				FileWriter file = new FileWriter(save);
-//				Atom b;
-//				Atom h;
-//				for (Rule ru : saturation) {
-//					h = ru.getHead().iterator().next();
-//					b = ru.getBody().iterator().next();
-//					file.write(h + ":-" + b + ".\n");
-//					file.flush();
-//				}
-//			}
-		} catch (Exception e) {
-			System.err.println("Problem to save the saturation");
-		}
+
+		this.computeSaturation();
+
 		// create IDCondition from the saturation
-		createIDCondition();
+		this.createIDCondition();
 	}
 
-	public void loadSaturation(String rule_name) throws FileNotFoundException {
-		// load the rule saved in the saturation backup file
-		// saturation.clear();
-		// DlgpParser parser = new DlgpParser();
-		// parser.parse(new FileReader(rule_name+".save"));
-		// saturation.addAll(parser.rules);
-		throw new Error("loadSaturation not reimplemented");
+	/**
+	 * Save the IDCompilation with a writer
+	 * @param ruleWriter
+	 * @throws IOException
+	 */
+	public void save(ObjectWriter<Rule> ruleWriter) throws IOException {
+		ruleWriter.write(this.saturation);
+	}
+
+	/**
+	 * load a ruleSet
+	 * @param file
+	 * @throws FileNotFoundException
+	 */
+	public void load(Iterable<Rule> saturation) throws FileNotFoundException {
+		 this.saturation.clear();
+		 for(Rule rule : saturation) {
+			 this.saturation.add(rule);
+		 }
 	}
 
 	private void createIDCondition() {
 		Atom b;
 		Atom h;
-		conditions = new HashMap<Predicate, HashMap<Predicate, LinkedList<IDCondition>>>(
-				nb_pred);
-		for (Rule ru : saturation) {
+		this.conditions = new TreeMap<Predicate, TreeMap<Predicate, LinkedList<IDCondition>>>();
+		for (Rule ru : this.saturation) {
 			h = ru.getHead().iterator().next();
 			b = ru.getBody().iterator().next();
-			addCondition(b.getPredicate(), h.getPredicate(), b.getTerms(),
+			this.addCondition(b.getPredicate(), h.getPredicate(), b.getTerms(),
 					h.getTerms());
 		}
 	}
@@ -135,10 +144,9 @@ public class IDCompilation implements RulesCompilation {
 
 			if (!bodyIt.hasNext() && !headIt.hasNext()) {
 				// atomic head and body
-				if (pred.add(b.getPredicate()))
-					nb_pred++;
-				if (pred.add(h.getPredicate()))
-					nb_pred++;
+				predicates.add(b.getPredicate());
+				predicates.add(h.getPredicate());
+
 				for (Term t : h.getTerms())
 					if (t.isConstant() || r.getExistentials().contains(t))
 						return false;
@@ -203,13 +211,13 @@ public class IDCompilation implements RulesCompilation {
 	 * return true if saturation does not already contain a rule that implied
 	 * the given one
 	 */
-	private boolean mustBeKeeped(Rule r) {
+	private boolean mustBeKeeped(Rule rule) {
 		Iterator<Rule> it = saturation.iterator();
 		Rule o;
 		boolean isImplied = false;
 		while (!isImplied && it.hasNext()) {
 			o = it.next();
-			if (Misc.equivalent(o, r))
+			if (Misc.imply(o, rule))
 				isImplied = true;
 		}
 		return !isImplied;
@@ -218,7 +226,7 @@ public class IDCompilation implements RulesCompilation {
 	private void addCondition(Predicate pred_b, Predicate pred_h, List<Term> b,
 			List<Term> h) {
 
-		HashMap<Predicate, LinkedList<IDCondition>> cond_h = conditions
+		Map<Predicate, LinkedList<IDCondition>> cond_h = this.conditions
 				.get(pred_h);
 		LinkedList<IDCondition> conds;
 		if (cond_h != null) {
@@ -229,7 +237,7 @@ public class IDCompilation implements RulesCompilation {
 			}
 		} else {
 			conditions.put(pred_h,
-					new HashMap<Predicate, LinkedList<IDCondition>>(12));
+					new TreeMap<Predicate, LinkedList<IDCondition>>());
 			cond_h = conditions.get(pred_h);
 			cond_h.put(pred_b, new LinkedList<IDCondition>());
 			conds = cond_h.get(pred_b);
@@ -299,7 +307,7 @@ public class IDCompilation implements RulesCompilation {
 	@Override
 	public Collection<Predicate> getUnifiablePredicate(Predicate p) {
 		Collection<Predicate> res = new LinkedList<Predicate>();
-		HashMap<Predicate, LinkedList<IDCondition>> cond_h = conditions.get(p);
+		Map<Predicate, LinkedList<IDCondition>> cond_h = conditions.get(p);
 		res.add(p);
 		if (cond_h != null)
 			res.addAll(cond_h.keySet());
@@ -313,7 +321,7 @@ public class IDCompilation implements RulesCompilation {
 		res.add(father);
 
 		Predicate pred_h = father.getPredicate();
-		HashMap<Predicate, LinkedList<IDCondition>> cond_h = conditions
+		Map<Predicate, LinkedList<IDCondition>> cond_h = conditions
 				.get(pred_h);
 		LinkedList<IDCondition> conds;
 		if (cond_h != null) {
@@ -328,5 +336,4 @@ public class IDCompilation implements RulesCompilation {
 		}
 		return res;
 	}
-
 }
