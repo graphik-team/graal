@@ -3,8 +3,9 @@
  */
 package fr.lirmm.graphik.graal.backward_chaining.pure.utils;
 
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
 
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
 import fr.lirmm.graphik.graal.core.Atom;
@@ -86,42 +87,43 @@ public class Misc {
 		return false;
 	}
 
-	public static boolean equivalent(Rule r1, Rule r2) {
-		// Rule o = Misc.getSafeCopy(r2);
-		Iterator<Atom> r1BodyIt = r1.getBody().iterator();
-		Iterator<Atom> r1HeadIt = r1.getHead().iterator();
-		Iterator<Atom> r2BodyIt = r2.getBody().iterator();
-		Iterator<Atom> r2HeadIt = r2.getHead().iterator();
+	/**
+	 * This methods test if the first rule logically imply the second. This
+	 * methods works with linear rules (atomic head and body).
+	 * 
+	 * @param r1
+	 * @param r2
+	 * @return true, if r1 logically imply r2.
+	 */
+	public static boolean imply(Rule r1, Rule r2) {
 
-		if (r1BodyIt.hasNext() && r2BodyIt.hasNext() && r1HeadIt.hasNext() && r2HeadIt.hasNext()) {
-			Atom b1 = r1BodyIt.next();
-			Atom b2 = r2BodyIt.next();
-			Atom h1 = r1HeadIt.next();
-			Atom h2 = r2HeadIt.next();
+		Atom b1 = r1.getBody().iterator().next();
+		Atom b2 = r2.getBody().iterator().next();
+		Atom h1 = r1.getHead().iterator().next();
+		Atom h2 = r2.getHead().iterator().next();
 
-			if (!r1BodyIt.hasNext() && !r2BodyIt.hasNext() && !r1HeadIt.hasNext() && !r2HeadIt.hasNext()) {
-
-				if (b2.getPredicate().equals(b1.getPredicate())
-						&& h2.getPredicate().equals(h1.getPredicate())) {
-					HashMap<Term, Term> s = new HashMap<Term, Term>(b2
-							.getPredicate().getArity());
-					for (int i = 0; i < b2.getPredicate().getArity(); i++) {
-						if (s.get(b2.getTerm(i)) == null)
-							s.put(b2.getTerm(i), b1.getTerm(i));
-						else if (!s.get(b2.getTerm(i)).equals(b1.getTerm(i)))
-							return false;
-
-					}
-					for (int i = 0; i < h2.getPredicate().getArity(); i++) {
-						if (s.get(h2.getTerm(i)) == null)
-							s.put(h2.getTerm(i), h1.getTerm(i));
-						else if (!s.get(h2.getTerm(i)).equals(h1.getTerm(i)))
-							return false;
-					}
-					return true;
-				}
+		if (b1.getPredicate().equals(b2.getPredicate())
+				&& h1.getPredicate().equals(h2.getPredicate())) {
+			Map<Term, Term> s = new TreeMap<Term, Term>();
+			Term term;
+			for (int i = 0; i < b1.getPredicate().getArity(); i++) {
+				term = s.get(b1.getTerm(i));
+				if (term == null)
+					s.put(b1.getTerm(i), b2.getTerm(i));
+				else if (!term.equals(b2.getTerm(i)))
+					return false;
 			}
+			for (int i = 0; i < h1.getPredicate().getArity(); i++) {
+				term = s.get(h1.getTerm(i));
+				if (term == null)
+					s.put(h1.getTerm(i), h2.getTerm(i));
+				else if (!term.equals(h2.getTerm(i)))
+					return false;
+			}
+			return true;
 		}
+
 		return false;
 	}
+
 }
