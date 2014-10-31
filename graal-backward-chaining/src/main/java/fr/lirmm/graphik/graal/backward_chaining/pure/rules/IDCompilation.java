@@ -315,21 +315,26 @@ public class IDCompilation implements RulesCompilation {
 		return res;
 	}
 
+	/**
+	 * Return all possible rewritings of this Atom by this compilation.
+	 */
 	@Override
-	public Collection<Atom> getRewritingOf(Atom father) {
+	public Collection<Atom> getRewritingOf(Atom atom) {
 		TreeSet<Atom> res = new TreeSet<Atom>();
-		res.add(father);
+		res.add(atom);
 
-		Predicate pred_h = father.getPredicate();
-		Map<Predicate, LinkedList<IDCondition>> cond_h = conditions
+		Predicate pred_h = atom.getPredicate();
+		Map<Predicate, LinkedList<IDCondition>> cond_h = this.conditions
 				.get(pred_h);
-		LinkedList<IDCondition> conds;
 		if (cond_h != null) {
-			for (Predicate pred_b : cond_h.keySet()) {
-				conds = cond_h.get(pred_b);
+			LinkedList<IDCondition> conds;
+			Predicate pred_b;
+			for (Map.Entry<Predicate, LinkedList<IDCondition>> entry : cond_h.entrySet()) {
+				pred_b = entry.getKey();
+				conds = entry.getValue();
 				for (IDCondition cond : conds) {
-					if (cond.checkHead(father.getTerms()))
-						res.add(new DefaultAtom(pred_b, cond.getBody(father
+					if (cond.checkHead(atom.getTerms()))
+						res.add(new DefaultAtom(pred_b, cond.getBody(atom
 								.getTerms())));
 				}
 			}
