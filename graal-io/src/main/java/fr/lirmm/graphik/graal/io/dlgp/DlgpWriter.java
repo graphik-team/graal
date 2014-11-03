@@ -28,7 +28,7 @@ import fr.lirmm.graphik.util.stream.ObjectWriter;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class DlgpWriter extends Writer implements ObjectWriter<Object>,ConjunctiveQueryWriter {
+public class DlgpWriter extends Writer implements ObjectWriter, ConjunctiveQueryWriter {
 
 	protected Writer writer;
 
@@ -61,7 +61,7 @@ public class DlgpWriter extends Writer implements ObjectWriter<Object>,Conjuncti
 	// /////////////////////////////////////////////////////////////////////////
 	
 	@Override
-	public void write(Iterable<Object> it) throws IOException {
+	public void write(Iterable it) throws IOException {
 		for(Object o: it)
 			this.write(o);
 	}
