@@ -3,7 +3,7 @@
  */
 package fr.lirmm.graphik.graal.backward_chaining;
 
-import javax.swing.event.EventListenerList;
+import fr.lirmm.graphik.util.Profiler;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -11,29 +11,21 @@ import javax.swing.event.EventListenerList;
  */
 public abstract class AbstractBackwardChainer implements BackwardChainer {
 
-	private final EventListenerList listeners = new EventListenerList();
+	private Profiler profiler;
 
 	@Override
 	public void remove() {
 		throw new UnsupportedOperationException();
 	}
 
-	// /////////////////////////////////////////////////////////////////////////
-	// OBSERVABLE METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
 	@Override
-	public void addListener(BackwardChainerListener listener) {
-		this.listeners.add(BackwardChainerListener.class, listener);
+	public void setProfiler(Profiler profiler) {
+		this.profiler = profiler;
 	}
 
 	@Override
-	public void deleteListener(BackwardChainerListener listener) {
-		this.listeners.remove(BackwardChainerListener.class, listener);
-	}
-
-	protected BackwardChainerListener[] getListeners() {
-		return listeners.getListeners(BackwardChainerListener.class);
+	public Profiler getProfiler() {
+		return this.profiler;
 	}
 
 }

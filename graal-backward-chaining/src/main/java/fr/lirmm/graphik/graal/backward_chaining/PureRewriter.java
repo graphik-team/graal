@@ -3,8 +3,6 @@
  */
 package fr.lirmm.graphik.graal.backward_chaining;
 
-import java.util.Collections;
-import java.util.Date;
 import java.util.Iterator;
 
 import fr.lirmm.graphik.graal.backward_chaining.pure.QREAggregSingleRule;
@@ -15,16 +13,19 @@ import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
+import fr.lirmm.graphik.util.Verbosable;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */
-public class PureRewriter extends AbstractBackwardChainer {
+public class PureRewriter extends AbstractBackwardChainer implements Verbosable {
 
 	PureQuery pquery;
 	LinkedListRuleSet ruleset;
+	RulesCompilation compilation;
 	Iterator<ConjunctiveQuery> rewrites = null;
+	private boolean verbose;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -37,6 +38,17 @@ public class PureRewriter extends AbstractBackwardChainer {
 	public PureRewriter(ConjunctiveQuery query, Iterable<Rule> rules) {
 		this.pquery = new PureQuery(query);
 		this.ruleset = new LinkedListRuleSet(rules);
+	}
+
+	/**
+	 * @throws Exception
+	 * 
+	 */
+	public PureRewriter(ConjunctiveQuery query, Iterable<Rule> rules,
+			RulesCompilation compilation) {
+		this.pquery = new PureQuery(query);
+		this.ruleset = new LinkedListRuleSet(rules);
+		this.compilation = compilation;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -59,33 +71,53 @@ public class PureRewriter extends AbstractBackwardChainer {
 		return this.rewrites.next();
 	}
 
+	public static RulesCompilation compile(Iterable<Rule> ruleset) {
+		// if(this.getTimer() != null) {
+		// this.getTimer().start("preprocessing time");
+		// }
+		return new IDCompilation(ruleset);
+		// if(this.getTimer() != null) {
+		// this.getTimer().stop("preprocessing time");
+		// }
+	}
+
+	public static RulesCompilation loadCompilation(Iterable<Rule> ruleset,
+			Iterable<Rule> saturation) {
+		IDCompilation compilation = new IDCompilation(ruleset, saturation);
+		return compilation;
+	}
+
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
 	private void compute() {
-		for (BackwardChainerListener listener : this.getListeners()) {
-			listener.startPreprocessing();
-		}
+
 		// preprocessing
-		RulesCompilation comp = new IDCompilation();
-		comp.code(this.ruleset, (new Date()).toString());
-		for (BackwardChainerListener listener : this.getListeners()) {
-			listener.endPreprocessing();
-			listener.startRewriting();
-		}
+		if (this.compilation == null)
+			this.compilation = compile(this.ruleset);
+
 		// rewriting
 		QueryRewritingEngine qre = new QREAggregSingleRule(pquery, ruleset,
-				comp);
-		try {
-			this.rewrites = qre.computeRewritings().iterator();
-		} catch (Exception e1) {
-			this.rewrites = Collections.<ConjunctiveQuery> emptyList()
-					.iterator();
+				this.compilation);
+		qre.enableVerbose(this.verbose);
+		qre.setProfiler(this.getProfiler());
+		Iterable<ConjunctiveQuery> queries = qre.computeRewritings();
+
+		// unfolding
+		if (this.getProfiler() != null) {
+			this.getProfiler().start("unfolding time");
 		}
-		for (BackwardChainerListener listener : this.getListeners()) {
-			listener.endRewriting();
+		this.rewrites = this.compilation.unfold(queries).iterator();
+		if (this.getProfiler() != null) {
+			this.getProfiler().stop("unfolding time");
 		}
+
+	}
+
+	@Override
+	public void enableVerbose(boolean enable) {
+		this.verbose = enable;
 	}
 
 }

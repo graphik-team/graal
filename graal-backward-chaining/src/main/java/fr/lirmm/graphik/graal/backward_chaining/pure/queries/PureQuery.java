@@ -62,21 +62,6 @@ public class PureQuery extends DefaultConjunctiveQuery {
 	// /////////////////////////////////////////////////////////////////////////
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
-
-	public PureQuery getIrredondant(RulesCompilation comp) {
-		return new PureQuery(Misc.getIrredondant(comp, this.getAtomSet()),
-				this.getAnswerVariables());
-	}
-
-	public boolean containAuxiliaryPredicate() {
-		for (Atom a : this.getAtomSet()) {
-			String label = (String) a.getPredicate().getLabel();
-			if (label.length() > 3 && label.substring(0, 4).equals("aux_"))
-				return true;
-		}
-		return false;
-	}
-
 	
 	private static Predicate ansPredicate = new Predicate("__ans", 2);
 	public void removeAnswerPredicate() {

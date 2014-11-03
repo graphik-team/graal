@@ -18,7 +18,6 @@ import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
-import fr.lirmm.graphik.util.Timer;
 
 /**
  * A simple implementation of an algorithm to find if there exist an

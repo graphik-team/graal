@@ -7,8 +7,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
-import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
 import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultFreeVarGen;
 import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.Rule;
@@ -32,33 +32,6 @@ public class Misc {
 	private Misc() {
 	}
 
-	public static AtomSet getIrredondant(RulesCompilation comp, AtomSet atomSet) {
-		AtomSet irr = new LinkedListAtomSet(atomSet);
-		if (comp != null) {
-			Iterator<Atom> i = irr.iterator();
-			Iterator<Atom> j;
-			Atom origin;
-			Atom target;
-			boolean isSubsumed;
-			while (i.hasNext()) {
-				target = i.next();
-				j = irr.iterator();
-				isSubsumed = false;
-				while (j.hasNext() && !isSubsumed) {
-					origin = j.next();
-					if (target != origin)
-						if (comp.isImplied(target, origin)) {
-							isSubsumed = true;
-						}
-
-				}
-				if (isSubsumed)
-					i.remove();
-			}
-		}
-		return irr;
-	}
-
 	public static Rule getSafeCopy(Rule rule) {
 		Substitution substitution = new TreeMapSubstitution();
 		for (Term t : rule.getTerms(Term.Type.VARIABLE)) {
@@ -77,14 +50,27 @@ public class Misc {
 		return new DefaultRule(safeBody, safeHead);
 	}
 
-	public boolean isMoreGeneralThan(AtomSet a1, AtomSet a2) {
-		try {
-			if (PureHomomorphism.getInstance().exist(a1, a2)) {
-				return true;
+	/**
+	 * Returns true if AtomSet h is more general than AtomSet f, and mark all
+	 * the atom of h if h is a marked fact; else return false
+	 * 
+	 * @param comp
+	 */
+	public static boolean testInclu = true;
+
+	public static boolean isMoreGeneralThan(AtomSet h, AtomSet f) {
+
+		boolean moreGen = false;
+		if (testInclu && h.isSubSetOf(f)) {
+			moreGen = true;
+		} else {
+			try {
+				moreGen = PureHomomorphism.getInstance().exist(h, f);
+			} catch (HomomorphismException e) {
 			}
-		} catch (HomomorphismException e) {
 		}
-		return false;
+
+		return moreGen;
 	}
 
 	/**
@@ -124,6 +110,62 @@ public class Misc {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Remove the queries that are not the most general in the given set of
+	 * queries
+	 * 
+	 * @param comp
+	 * @throws Exception
+	 */
+	public static void computeCover(Iterable<ConjunctiveQuery> set) {
+
+		Iterator<ConjunctiveQuery> beg = set.iterator();
+		Iterator<ConjunctiveQuery> end;
+		AtomSet q;
+		AtomSet o;
+		boolean finished;
+		while (beg.hasNext()) {
+			q = beg.next().getAtomSet();
+			finished = false;
+			end = set.iterator();
+			while (!finished && end.hasNext()) {
+				o = end.next().getAtomSet();
+				if (o != q && Misc.isMoreGeneralThan(o, q)) {
+					finished = true;
+					beg.remove();
+				}
+			}
+		}
+	}
+
+	/**
+	 * Remove the queries that are not the most general in the given set of
+	 * queries
+	 * 
+	 * @param comp
+	 * @throws Exception
+	 */
+	public static void computeCoverAtomSet(Iterable<AtomSet> set) {
+
+		Iterator<AtomSet> beg = set.iterator();
+		Iterator<AtomSet> end;
+		AtomSet q;
+		AtomSet o;
+		boolean finished;
+		while (beg.hasNext()) {
+			q = beg.next();
+			finished = false;
+			end = set.iterator();
+			while (!finished && end.hasNext()) {
+				o = end.next();
+				if (o != q && Misc.isMoreGeneralThan(o, q)) {
+					finished = true;
+					beg.remove();
+				}
+			}
+		}
 	}
 
 }

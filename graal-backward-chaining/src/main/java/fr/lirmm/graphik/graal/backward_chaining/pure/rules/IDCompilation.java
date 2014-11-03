@@ -26,7 +26,7 @@ import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByBodyPredicatesRuleSet;
 import fr.lirmm.graphik.util.stream.ObjectWriter;
 
-public class IDCompilation implements RulesCompilation {
+public class IDCompilation extends AbstractRulesCompilation {
 
 	private static DefaultFreeVarGen varGen = new DefaultFreeVarGen("X"
 			+ Integer.toString(IDCompilation.class.hashCode()));
@@ -36,7 +36,7 @@ public class IDCompilation implements RulesCompilation {
 	// a matrix for store conditions ( p -> q : [q][p] )
 	private Map<Predicate, TreeMap<Predicate, LinkedList<IDCondition>>> conditions;
 
-	private LinkedList<Rule> saturation = new LinkedList<Rule>();
+	private LinkedList<Rule> saturation;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -48,7 +48,16 @@ public class IDCompilation implements RulesCompilation {
 
 	public IDCompilation(Iterable<Rule> ruleSet) {
 		super();
-		this.code(ruleSet);
+		this.saturation = extractCompilable(ruleSet);
+		this.computeSaturation();
+		this.createIDCondition();
+	}
+
+	public IDCompilation(Iterable<Rule> ruleSet, Iterable<Rule> compilation) {
+		super();
+		this.saturation = extractCompilable(ruleSet);
+		this.load(compilation);
+		this.createIDCondition();
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -79,46 +88,51 @@ public class IDCompilation implements RulesCompilation {
 			return new LinkedList<IDCondition>();
 	}
 
-	@Override
-	public void code(Iterable<Rule> ruleSet) {
-		this.saturation.clear();
-
-		// initialise first rules in the saturation
-		Rule r;
-		Iterator<Rule> it = ruleSet.iterator();
-		while (it.hasNext()) {
-			r = it.next();
-			if (this.isCompilable(r)) {
-				this.saturation.add(r);
-				it.remove();
-			}
-		}
-
-		this.computeSaturation();
-
-		// create IDCondition from the saturation
-		this.createIDCondition();
-	}
-
 	/**
 	 * Save the IDCompilation with a writer
+	 * 
 	 * @param ruleWriter
 	 * @throws IOException
 	 */
+	@Override
 	public void save(ObjectWriter<Rule> ruleWriter) throws IOException {
 		ruleWriter.write(this.saturation);
 	}
 
 	/**
 	 * load a ruleSet
+	 * 
 	 * @param file
 	 * @throws FileNotFoundException
 	 */
-	public void load(Iterable<Rule> saturation) throws FileNotFoundException {
-		 this.saturation.clear();
-		 for(Rule rule : saturation) {
-			 this.saturation.add(rule);
-		 }
+	private void load(Iterable<Rule> saturation) {
+		this.saturation = new LinkedList<Rule>();
+		for (Rule r : saturation) {
+			this.saturation.add(r);
+		}
+	}
+
+	/**
+	 * Remove compilable rule from ruleset and return a List of compilable
+	 * rules.
+	 * 
+	 * @param ruleset
+	 * @return
+	 */
+	public LinkedList<Rule> extractCompilable(Iterable<Rule> ruleset) {
+		LinkedList<Rule> compilable = new LinkedList<Rule>();
+		Rule r;
+
+		Iterator<Rule> it = ruleset.iterator();
+		while (it.hasNext()) {
+			r = it.next();
+			if (this.isCompilable(r)) {
+				compilable.add(r);
+				it.remove();
+			}
+		}
+
+		return compilable;
 	}
 
 	private void createIDCondition() {
@@ -173,7 +187,8 @@ public class IDCompilation implements RulesCompilation {
 		}
 	}
 
-	private Collection<Rule> computeSaturationPart(Iterable<Rule> lastCompute, IndexedByBodyPredicatesRuleSet rules) {
+	private Collection<Rule> computeSaturationPart(Iterable<Rule> lastCompute,
+			IndexedByBodyPredicatesRuleSet rules) {
 		Atom head1, body2;
 		TermPartition part;
 		AtomSet impliedHead, impliedBody;
@@ -183,19 +198,16 @@ public class IDCompilation implements RulesCompilation {
 
 		for (Rule r1 : lastCompute) {
 			head1 = r1.getHead().iterator().next();
-			for (Rule r2 : rules.getRulesByBodyPredicate(head1
-					.getPredicate())) {
+			for (Rule r2 : rules.getRulesByBodyPredicate(head1.getPredicate())) {
 				body2 = r2.getBody().iterator().next();
 				if (head1.getPredicate().equals(body2.getPredicate())) {
-					part = TermPartition.getPartitionByPosition(head1,
-							body2);
+					part = TermPartition.getPartitionByPosition(head1, body2);
 					impliedBody = part.getAssociatedSubstitution(null)
 							.getSubstitut(r1.getBody());
 					impliedHead = part.getAssociatedSubstitution(null)
 							.getSubstitut(r2.getHead());
 					if (!impliedHead.equals(impliedBody)) {
-						impliedRule = new DefaultRule(impliedBody,
-								impliedHead);
+						impliedRule = new DefaultRule(impliedBody, impliedHead);
 						if (mustBeKeeped(impliedRule)) {
 							tmp.add(impliedRule);
 						}
@@ -329,7 +341,8 @@ public class IDCompilation implements RulesCompilation {
 		if (cond_h != null) {
 			LinkedList<IDCondition> conds;
 			Predicate pred_b;
-			for (Map.Entry<Predicate, LinkedList<IDCondition>> entry : cond_h.entrySet()) {
+			for (Map.Entry<Predicate, LinkedList<IDCondition>> entry : cond_h
+					.entrySet()) {
 				pred_b = entry.getKey();
 				conds = entry.getValue();
 				for (IDCondition cond : conds) {

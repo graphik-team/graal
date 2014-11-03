@@ -1,23 +1,34 @@
 package fr.lirmm.graphik.graal.backward_chaining.pure.rules;
 
+import java.io.IOException;
 import java.util.Collection;
 
 import fr.lirmm.graphik.graal.backward_chaining.pure.utils.TermPartition;
 import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
+import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.util.stream.ObjectWriter;
 
 public interface RulesCompilation {
 
 	/**
-	 * Compute a Predicate Order from the set of rule. Remove from the set of
-	 * rule the rule coded by the predicate order
+	 * Unfold the pivot rewriting set with this rules compilation.
 	 * 
-	 * @param arrayList
-	 * @param rule_base
+	 * @param pivotRewritingSet
+	 * @return
 	 */
-	public void code(Iterable<Rule> arrayList);
+	Collection<ConjunctiveQuery> unfold(
+			Iterable<ConjunctiveQuery> pivotRewritingSet);
+
+	/**
+	 * Save the compilation
+	 * 
+	 * @param ruleWriter
+	 */
+	public void save(ObjectWriter<Rule> ruleWriter) throws IOException;
 
 	/**
 	 * Return true if the given rule is compilable by this
@@ -69,5 +80,11 @@ public interface RulesCompilation {
 	 * Return a collection of predicate unifiable with the given one
 	 */
 	public Collection<Predicate> getUnifiablePredicate(Predicate p);
+
+	/**
+	 * @param atomSet
+	 * @return
+	 */
+	AtomSet getIrredondant(AtomSet atomSet);
 
 }

@@ -17,8 +17,9 @@ import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
+import fr.lirmm.graphik.util.stream.ObjectWriter;
 
-public class PredicateOrder implements RulesCompilation {
+public class PredicateOrder extends AbstractRulesCompilation {
 
 	// relies the Predicate and the index in the matrix order
 	private HashMap<Predicate, Integer> predicateIndex;
@@ -38,7 +39,6 @@ public class PredicateOrder implements RulesCompilation {
 		size_order = 0;
 	}
 
-	@Override
 	public void code(Iterable<Rule> rules) {
 		Iterator<Rule> i = rules.iterator();
 		Rule r;
@@ -278,6 +278,12 @@ public class PredicateOrder implements RulesCompilation {
 			}
 
 		return res;
+	}
+
+	@Override
+	public void save(ObjectWriter<Rule> ruleWriter) {
+		// TODO implement this method
+		throw new Error("This method isn't implemented");
 	}
 
 }
