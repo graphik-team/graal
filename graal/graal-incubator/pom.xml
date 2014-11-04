@@ -3,12 +3,12 @@
 	
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
-		<artifactId>graal-main-project</artifactId>
+		<artifactId>graal</artifactId>
 		<version>0.5.1-SNAPSHOT</version>
 	</parent>
 	
-	<artifactId>graal-homomorphism</artifactId>
-	<name>GRAAL Homomorphism</name>
+	<artifactId>graal-incubator</artifactId>
+	<name>graal-incubator</name>
 	<packaging>jar</packaging>
 
 	<properties>
@@ -40,6 +40,21 @@
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-io</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>fr.lirmm.graphik</groupId>
+			<artifactId>graal-forward-chaining</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>fr.lirmm.graphik</groupId>
+			<artifactId>graal-store</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>fr.lirmm.graphik</groupId>
+			<artifactId>graal-homomorphism</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		

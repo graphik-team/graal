@@ -4,13 +4,13 @@
 	
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
-		<artifactId>graal-main-project</artifactId>
+		<artifactId>graal</artifactId>
 		<version>0.5.1-SNAPSHOT</version>
 	</parent>
 	
-	<artifactId>graal-io</artifactId>
+	<artifactId>graal-backward-chaining</artifactId>
 	<packaging>jar</packaging>
-	<name>graal-io</name>
+	<name>graal-backward-chaining</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -40,10 +40,8 @@
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>dlgp-parser</artifactId>
-			<version>1.1.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/dlgp-parser.jar</systemPath>
+			<artifactId>graal-homomorphism</artifactId>
+			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -55,21 +53,6 @@
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>1.1.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.openrdf.sesame</groupId>
-			<artifactId>sesame-rio-api</artifactId>
-			<version>2.7.11</version>
-		</dependency>
-		<dependency>
-			<groupId>org.openrdf.sesame</groupId>
-			<artifactId>sesame-rio-rdfxml</artifactId>
-			<version>2.7.11</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.3.2</version>
 		</dependency>
 	</dependencies>
 

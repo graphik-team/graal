@@ -8,7 +8,7 @@
 	</parent>
 	
 	<artifactId>graal-apps</artifactId>
-	<name>GRAAL Apps</name>
+	<name>graal-apps</name>
 	<packaging>pom</packaging>
     
 	<scm>

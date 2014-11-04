@@ -1,25 +1,26 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>fr.lirmm.graphik</groupId>
 	<artifactId>graal-main-project</artifactId>
 	<version>0.5.1-SNAPSHOT</version>
 	<name>Generic Rule ApplicAtion Library</name>
-	
+
 	<packaging>pom</packaging>
-	
-	 <distributionManagement>
-	 	<site>
-	      <id>graal.com</id>
-	      <name>GRAAL Website</name>
-	      <url>/tmp/site/</url>
-	    </site>
-    </distributionManagement>
-	
+
+	<distributionManagement>
+		<site>
+			<id>graal.com</id>
+			<name>GRAAL Website</name>
+			<url>/tmp/site/</url>
+		</site>
+	</distributionManagement>
+
 	<scm>
 		<developerConnection>scm:git:https://info-depot.lirmm.fr/repos/GraphIK/GRAAL</developerConnection>
 	</scm>
-	
+
 	<inceptionYear>2014</inceptionYear>
 
 	<organization>
@@ -36,16 +37,9 @@
 	</developers>
 
 	<modules>
-		<module>graal-core</module>
-		<module>graal-io</module>
-		<module>graal-homomorphism</module>
-		<module>graal-forward-chaining</module>
-		<module>graal-store</module>
-		<module>graal-backward-chaining</module>
 		<module>graal</module>
 		<module>graal-apps</module>
 		<module>graal-examples</module>
-		<module>graal-rules-analyser</module>
 	</modules>
 
 	<build>
@@ -67,18 +61,18 @@
 			</plugin>
 		</plugins>
 	</build>
-	
+
 	<reporting>
-	    <plugins>
-	      <plugin>
-	        <groupId>org.apache.maven.plugins</groupId>
-	        <artifactId>maven-javadoc-plugin</artifactId>
-	        <version>2.10.1</version>
-	        <configuration>
-	          <show>public</show>
-	        </configuration>
-	      </plugin>
-	    </plugins>
-  </reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.1</version>
+				<configuration>
+					<show>public</show>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
 
 </project>

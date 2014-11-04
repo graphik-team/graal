@@ -3,15 +3,14 @@
 	
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
-		<artifactId>graal-main-project</artifactId>
+		<artifactId>graal</artifactId>
 		<version>0.5.1-SNAPSHOT</version>
 	</parent>
 	
-	<artifactId>graal-examples</artifactId>
+	<artifactId>graal-store</artifactId>
+	<name>graal-store</name>
 	<packaging>jar</packaging>
-	<name>graal-examples</name>
 
-	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>1.6</jdk.version>
@@ -34,19 +33,9 @@
 
 	<dependencies>
 		<dependency>
-		  <groupId>fr.lirmm.graphik</groupId>
-		  <artifactId>graal</artifactId>
-		  <version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-		  <groupId>fr.lirmm.graphik</groupId>
-		  <artifactId>graal-homomorphism</artifactId>
-		  <version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-		  <groupId>fr.lirmm.graphik</groupId>
-		  <artifactId>graal-store</artifactId>
-		  <version>${project.parent.version}</version>
+			<groupId>fr.lirmm.graphik</groupId>
+			<artifactId>graal-homomorphism</artifactId>
+			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
@@ -58,27 +47,39 @@
 			<artifactId>graal-io</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
+		
 		<dependency>
-			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-backward-chaining</artifactId>
-			<version>${project.parent.version}</version>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-forward-chaining</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-rules-analyser</artifactId>
-			<version>${project.parent.version}</version>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.3.2</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>1.1.1</version>
 		</dependency>
-		
+		<dependency>
+			<groupId>com.google.code.findbugs</groupId>
+			<artifactId>annotations</artifactId>
+			<version>2.0.3</version>
+		</dependency>
+		<!-- Jdbc Driver -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.xerial</groupId>
+			<artifactId>sqlite-jdbc</artifactId>
+			<version>3.7.2</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -92,12 +93,36 @@
 					<target>${jdk.version}</target>
 				</configuration>
 			</plugin>
-		    <plugin>
+			<plugin>
 			  <artifactId>maven-release-plugin</artifactId>
 			  <version>2.1</version>
 			  <configuration>
 			    <preparationGoals>clean install</preparationGoals>
 			  </configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>benchmark.Benchmark</mainClass>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>lib/</classpathPrefix>
+						</manifest>
+					</archive>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
