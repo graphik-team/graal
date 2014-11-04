@@ -42,8 +42,6 @@
 			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>dlgp-parser</artifactId>
 			<version>1.1.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/dlgp-parser.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

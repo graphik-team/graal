@@ -55,10 +55,8 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-graph-for-graal</artifactId>
+			<artifactId>graph-for-graal</artifactId>
 			<version>0.1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/commons-graph-for-graal.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>

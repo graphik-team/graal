@@ -1,20 +1,21 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
 		<artifactId>graal</artifactId>
 		<version>0.5.1-SNAPSHOT</version>
 	</parent>
-	
+
 	<artifactId>graal-core</artifactId>
 	<packaging>jar</packaging>
 	<name>graal-core</name>
 
 	<properties>
-	  <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	  <jdk.version>1.6</jdk.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<jdk.version>1.6</jdk.version>
 	</properties>
 
 	<inceptionYear>2014</inceptionYear>
@@ -34,12 +35,6 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.11</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>1.1.1</version>
@@ -50,11 +45,17 @@
 			<version>3.3.2</version>
 		</dependency>
 		<dependency>
-		 	<groupId>org.apache.commons</groupId>
-			<artifactId>commons-graph-for-graal</artifactId>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>graph-for-graal</artifactId>
 			<version>0.1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/commons-graph-for-graal.jar</systemPath>
+		</dependency>
+		
+		<!-- Test -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
@@ -68,13 +69,6 @@
 					<source>${jdk.version}</source>
 					<target>${jdk.version}</target>
 				</configuration>
-			</plugin>
-			<plugin>
-			  <artifactId>maven-release-plugin</artifactId>
-			  <version>2.1</version>
-			  <configuration>
-			    <preparationGoals>clean install</preparationGoals>
-			  </configuration>
 			</plugin>
 		</plugins>
 	</build>
