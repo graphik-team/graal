@@ -13,8 +13,6 @@ import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.io.basic.BasicParser;
 import fr.lirmm.graphik.graal.parser.ParseException;
-import fr.lirmm.graphik.graal.parser.misc.BasicStringFormat;
-import fr.lirmm.graphik.graal.parser.misc.StringFormat;
 
 /**
  * Unit test.
