@@ -15,7 +15,7 @@ import fr.lirmm.graphik.graal.parser.semanticweb.RDFParser;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public class RDF2DLGP {
+public class RDF2DLP {
 
 	public static void main(String[] args) throws IOException {
 		if(args.length == 0)

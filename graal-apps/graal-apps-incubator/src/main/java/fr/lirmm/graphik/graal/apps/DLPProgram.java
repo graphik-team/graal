@@ -28,7 +28,7 @@ import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class DatalogLike {
+public class DLPProgram {
 	public static void main(String[] args) throws ChaseException, IOException, HomomorphismFactoryException, HomomorphismException {
 		DlgpWriter writer = new DlgpWriter();
 		DlgpParser parser = new DlgpParser(System.in);
@@ -49,12 +49,13 @@ public class DatalogLike {
         	else if(o instanceof ConjunctiveQuery)
         		querySet.add((ConjunctiveQuery)o);
         }
+        parser.close();
         
         StaticChase.executeChase(atomSet, ruleSet);
         writer.write("% facts\n");
         writer.write(atomSet);
         
-        writer.write("\n% queries\n");
+        writer.write("\n\n% queries\n");
         for(ConjunctiveQuery q : querySet) {
         	writer.write(q);
         	for(Substitution s : StaticHomomorphism.executeQuery(q, atomSet)) {
