@@ -10,8 +10,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
@@ -19,16 +17,13 @@ import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
-import fr.lirmm.graphik.graal.io.grd.GRDParser;
 import fr.lirmm.graphik.graal.rulesetanalyser.RuleAnalyser;
-import fr.lirmm.graphik.graal.rulesetanalyser.property.RuleProperty;
-import fr.lirmm.graphik.util.graph.scc.StronglyConnectedComponentsGraph;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */
-public class KiaboraLike {
+public class Kiabora {
 
 	private static DlgpWriter writer = new DlgpWriter();
 
@@ -43,7 +38,7 @@ public class KiaboraLike {
 
 	public static void main(String[] args) throws IOException {
 
-		KiaboraLike options = new KiaboraLike();
+		Kiabora options = new Kiabora();
 		JCommander commander = new JCommander(options, args);
 
 		if (options.help) {
@@ -59,34 +54,29 @@ public class KiaboraLike {
 			reader = new BufferedReader(new FileReader(options.file));
 		}
 
-		if (options.grd)
-			grd = GRDParser.getInstance().parse(reader);
-		else {
-			LinkedList<Rule> rules = new LinkedList<Rule>();
-			DlgpParser parser = new DlgpParser(reader);
-			for (Object o : parser) {
-				if (o instanceof Rule) {
-					rules.add((Rule) o);
-				}
+		// GRD
+		LinkedList<Rule> rules = new LinkedList<Rule>();
+		DlgpParser parser = new DlgpParser(reader);
+		for (Object o : parser) {
+			if (o instanceof Rule) {
+				rules.add((Rule) o);
 			}
-			grd = new GraphOfRuleDependencies(rules);
 		}
+		grd = new GraphOfRuleDependencies(rules);
 
 		execute(grd);
 	}
 
 	public static void execute(GraphOfRuleDependencies grd) throws IOException {
 		RuleAnalyser ra = new RuleAnalyser(grd);
-		StronglyConnectedComponentsGraph<Rule> scc = ra
+		System.out.println(ra);
+		
+		/*StronglyConnectedComponentsGraph<Rule> scc = ra
 				.getStronglyConnectedComponentsGraph();
 		ra.checkAll();
 
-		System.out.println("\n\nInput Rule Base");
-		System.out.println("===============\n");
-		for (Rule r : grd.getRules()) {
-			writer.write(r);
-		}
-
+		printRules(grd);
+		
 		System.out.println("\n\nGraph of Rule Dependencies");
 		System.out.println("==========================\n");
 		System.out.println(grd);
@@ -148,9 +138,8 @@ public class KiaboraLike {
 			System.out.println("|");
 		}
 		
-		System.out.print(StringUtils.center(StringUtils.left("C", cellSize),
-				cellSize));
-		
+		System.out.println(StringUtils.center("", (cellSize + 1)
+				* (ra.getAllProperty().size() + 1), '-'));
 		System.out.print(StringUtils.center(
 				StringUtils.left("KB", cellSize), cellSize));
 		for (RuleProperty rp : ra.getAllProperty()) {
@@ -192,27 +181,29 @@ public class KiaboraLike {
 		System.out.println("\n\nPriority: FES");
 		System.out.println("-------------\n");
 		int[] combination = ra.getCombineWithFESPriority();
-		printDecidableCombination(combination);
+		System.out.println(ra.decidableCombinationToString(combination));
 
 		System.out.println("\n\nPriority: FUS");
 		System.out.println("-------------\n");
 		combination = ra.getCombineWithFUSPriority();
-		printDecidableCombination(combination);
+		System.out.println(ra.decidableCombinationToString(combination));
 
 	}
 
-	private static void printDecidableCombination(int[] combination) {
-		for (int i = 0; i < combination.length; ++i) {
-			if (combination[i] == 1) {
-				System.out.println("C" + i + "    " + "FES");
-			} else if (combination[i] == 2) {
-				System.out.println("C" + i + "    " + "FUS");
-			} else if (combination[i] == 4) {
-				System.out.println("C" + i + "    " + "BTS");
-			} else {
-				System.out.println("C" + i);
-			}
+	private static void printRules(GraphOfRuleDependencies grd) throws IOException 
+	{
+		System.out.println("\n\nInput Rule Base");
+		System.out.println("===============\n");
+		TreeSet<Rule> rules = new TreeSet<Rule>(new LabelRuleComparator());
+		for (Rule r : grd.getRules()) {
+			rules.add(r);
 		}
+		
+		for (Rule r : rules) {
+			writer.write(r);
+		}*/
 	}
+
+	
 
 }
