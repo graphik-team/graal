@@ -85,7 +85,7 @@ public class UnifierTest {
 		atomset.add(p_uv);
 		atomset.add(p_vw);
 		
-		Collection<Substitution> unifiers = Unifier.computePieceUnifier(rule, atomset);
+		Collection<Substitution> unifiers = Unifier.getInstance().computePieceUnifier(rule, atomset);
 		Assert.assertEquals(2, unifiers.size());
 	}
 	
@@ -98,7 +98,7 @@ public class UnifierTest {
 		AtomSet atomset = AtomSetFactory.getInstance().createAtomSet();
 		atomset.add(p_au);
 		
-		Collection<Substitution> unifiers = Unifier.computePieceUnifier(rule, atomset);
+		Collection<Substitution> unifiers = Unifier.getInstance().computePieceUnifier(rule, atomset);
 		Assert.assertEquals(1, unifiers.size());
 	}
 
@@ -111,7 +111,7 @@ public class UnifierTest {
 		AtomSet atomset = AtomSetFactory.getInstance().createAtomSet();
 		atomset.add(p_xa);
 
-		Collection<Substitution> unifiers = Unifier.computePieceUnifier(rule,
+		Collection<Substitution> unifiers = Unifier.getInstance().computePieceUnifier(rule,
 				atomset);
 		Assert.assertEquals(0, unifiers.size());
 	}

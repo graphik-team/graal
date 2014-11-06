@@ -9,10 +9,12 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.apache.commons.io.output.StringBuilderWriter;
 import org.apache.commons.lang3.StringUtils;
 
+import fr.lirmm.graphik.graal.core.LabelRuleComparator;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
@@ -179,6 +181,7 @@ public class RuleAnalyser {
 	public int[] getCombineWithFESPriority() {
 		int[] res = new int[componentCalculability.length];
 		for (int i = 0; i < componentCalculability.length; ++i) {
+
 			if ((componentCalculability[i] & ComponentCalculabilityValue.FES) != 0)
 				res[i] = ComponentCalculabilityValue.FES;
 			else if ((componentCalculability[i] & ComponentCalculabilityValue.FUS) != 0)
@@ -271,13 +274,15 @@ public class RuleAnalyser {
 			list.add(WEAKLY_ACYCLIC);
 		} else if (DOMAIN_RESTRICTED.getLabel().equals(label)) {
 			list.add(FUS);
-		} /*else if (FES.getLabel().equals(label)) {
-		}*/ else if (FRONTIER_GUARDED.getLabel().equals(label)) {
+		} /*
+		 * else if (FES.getLabel().equals(label)) { }
+		 */else if (FRONTIER_GUARDED.getLabel().equals(label)) {
 			list.add(WEAKLY_FRONTIER_GUARDED_SET);
 		} else if (FRONTIER_ONE.getLabel().equals(label)) {
 			list.add(FRONTIER_GUARDED);
-		} /*else if (FUS.getLabel().equals(label)) {
-		}*/ else if (GBTS.getLabel().equals(label)) {
+		} /*
+		 * else if (FUS.getLabel().equals(label)) { }
+		 */else if (GBTS.getLabel().equals(label)) {
 			list.add(BTS);
 		} else if (GUARDED.getLabel().equals(label)) {
 			list.add(FRONTIER_GUARDED);
@@ -295,8 +300,9 @@ public class RuleAnalyser {
 			list.add(GBTS);
 		} else if (WEAKLY_GUARDED_SET.getLabel().equals(label)) {
 			list.add(WEAKLY_FRONTIER_GUARDED_SET);
-		} /*else if (WEAKLY_STICKY.getLabel().equals(label)) {
-		}*/
+		} /*
+		 * else if (WEAKLY_STICKY.getLabel().equals(label)) { }
+		 */
 		return list;
 	}
 
@@ -335,21 +341,11 @@ public class RuleAnalyser {
 				.getStronglyConnectedComponentsGraph();
 		this.checkAll();
 
-		sb.append("\n\nInput Rule Base\n");
-		sb.append("===============\n");
-
-		DlgpWriter writer = new DlgpWriter(new StringBuilderWriter(sb));
+		TreeSet<Rule> sortedRules = new TreeSet<Rule>(new LabelRuleComparator());
 		for (Rule r : this.rules) {
-			try {
-				writer.write(r);
-			} catch (IOException e) {
-				sb.append(r.toString());
-			}
+			sortedRules.add(r);
 		}
-		try {
-			writer.close();
-		} catch (IOException e) {
-		}
+		printRules(sortedRules, sb);
 
 		sb.append("\n\nGraph of Rule Dependencies\n");
 		sb.append("==========================\n");
@@ -372,7 +368,7 @@ public class RuleAnalyser {
 
 		sb.append("\n\nGraph of Strongly Connected Components\n");
 		sb.append("======================================\n");
-		for (int src : scc.getVertices()) {
+		for (int src = 0; src < scc.getNbrComponents(); ++src) {
 			for (int target : scc.getOutbound(src)) {
 				sb.append("C" + src + " ---> C" + target);
 				sb.append('\n');
@@ -414,8 +410,12 @@ public class RuleAnalyser {
 			sb.append("|\n");
 		}
 
+		sb.append(StringUtils.center("", (cellSize + 1)
+				* (this.getAllProperty().size() + 1), '-'));
+		sb.append("\n");
 		// Recognized classes for the whole ruleset
 		sb.append(StringUtils.center(StringUtils.left("KB", cellSize), cellSize));
+
 		for (RuleProperty rp : this.getAllProperty()) {
 			sb.append("|");
 			Boolean b = this.check(rp);
@@ -569,6 +569,19 @@ public class RuleAnalyser {
 				sb.append("C" + i + "    " + "BTS\n");
 			} else {
 				sb.append("C" + i);
+			}
+		}
+	}
+
+	private void printRules(Iterable<Rule> rules, StringBuilder sb) {
+		DlgpWriter writer = new DlgpWriter(new StringBuilderWriter(sb));
+		sb.append("\n\nInput Rule Base\n");
+		sb.append("===============\n\n");
+
+		for (Rule r : rules) {
+			try {
+				writer.write(r);
+			} catch (IOException e) {
 			}
 		}
 	}

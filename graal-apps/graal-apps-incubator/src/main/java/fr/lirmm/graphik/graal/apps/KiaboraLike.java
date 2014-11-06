@@ -12,7 +12,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
 import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
+import fr.lirmm.graphik.graal.grd.GraphOfRuleDependenciesWithUnifiers;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
 import fr.lirmm.graphik.graal.io.grd.GRDParser;
@@ -47,7 +47,7 @@ public class KiaboraLike {
 			System.exit(0);
 		}
 
-		GraphOfRuleDependencies grd = null;
+		GraphOfRuleDependenciesWithUnifiers grd = null;
 		BufferedReader reader;
 		if (options.file.isEmpty()) {
 			reader = new BufferedReader(new InputStreamReader(System.in));
@@ -65,13 +65,13 @@ public class KiaboraLike {
 					rules.add((Rule) o);
 				}
 			}
-			grd = new GraphOfRuleDependencies(rules);
+			grd = new GraphOfRuleDependenciesWithUnifiers(rules);
 		}
 
 		execute(grd);
 	}
 
-	public static void execute(GraphOfRuleDependencies grd) throws IOException {
+	public static void execute(GraphOfRuleDependenciesWithUnifiers grd) throws IOException {
 		RuleAnalyser ra = new RuleAnalyser(grd);
 		StronglyConnectedComponentsGraph<Rule> scc = ra
 				.getStronglyConnectedComponentsGraph();

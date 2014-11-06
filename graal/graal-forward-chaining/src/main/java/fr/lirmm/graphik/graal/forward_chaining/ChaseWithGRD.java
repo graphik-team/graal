@@ -22,7 +22,7 @@ import fr.lirmm.graphik.graal.core.SymbolGenerator;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
-import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
+import fr.lirmm.graphik.graal.grd.GraphOfRuleDependenciesWithUnifiers;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 
 /**
@@ -36,7 +36,7 @@ public class ChaseWithGRD extends AbstractChase {
 	
 	private ChaseStopCondition stopCondition = new RestrictedChaseStopCondition();
 	private SymbolGenerator existentialGen = new DefaultFreeVarGen("E");
-	private GraphOfRuleDependencies grd;
+	private GraphOfRuleDependenciesWithUnifiers grd;
 	private AtomSet atomSet;
 	private Queue<Pair<Rule, Substitution>> queue = new LinkedList<Pair<Rule, Substitution>>();
 	
@@ -44,7 +44,7 @@ public class ChaseWithGRD extends AbstractChase {
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 	
-	public ChaseWithGRD(GraphOfRuleDependencies grd, AtomSet atomSet) {
+	public ChaseWithGRD(GraphOfRuleDependenciesWithUnifiers grd, AtomSet atomSet) {
 		this.grd = grd;
 		this.atomSet = atomSet;
 		for(Rule r : grd.getRules()) {			

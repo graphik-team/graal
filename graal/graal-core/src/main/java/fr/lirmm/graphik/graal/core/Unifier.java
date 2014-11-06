@@ -19,20 +19,33 @@ import fr.lirmm.graphik.util.LinkedSet;
  */
 public class Unifier {
 
-	private Unifier() {
-	};
+	private static Unifier instance;
 
-	public static Set<Substitution> computePieceUnifier(Rule rule,
-			AtomSet atomset) {
-//		Substitution sh = new Substitution();
-//		Substitution sb = new Substitution();
-//
-//		for (Term t : rule.getTerms()) {
-//			sh.put(t,new Term(t.getValue().toString() + ".H",t.getType()));
-//		}
-//		for (Term t : atomset.getTerms()) {
-//			sb.put(t,new Term(t.getValue().toString() + ".B",t.getType()));
-//		}
+	protected Unifier() {
+	}
+
+	public static synchronized Unifier getInstance() {
+		if (instance == null)
+			instance = new Unifier();
+
+		return instance;
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * FIXME possible conflict on variable name: the main problem is provide by
+	 * the computation of pieces unifiers between the same rule. The question is
+	 * how store them. {X -> X} is ambiguous.
+	 * 
+	 * @param rule
+	 * @param atomset
+	 * @return
+	 */
+	public Set<Substitution> computePieceUnifier(Rule rule, AtomSet atomset) {
+		// FIXME
 
 		Set<Substitution> unifiers = new LinkedSet<Substitution>();
 		Queue<Atom> atomQueue = new LinkedList<Atom>();
@@ -46,6 +59,24 @@ public class Unifier {
 					new TreeMapSubstitution()));
 		}
 		return unifiers;
+	}
+
+	public boolean existPieceUnifier(Rule rule, AtomSet atomset) {
+		FreeVarSubstitution substitution = new FreeVarSubstitution();
+		atomset = substitution.getSubstitut(atomset);
+
+		Queue<Atom> atomQueue = new LinkedList<Atom>();
+		for (Atom a : atomset) {
+			atomQueue.add(a);
+		}
+
+		for (Atom a : atomset) {
+			Queue<Atom> tmp = new LinkedList<Atom>(atomQueue);
+			if (existExtendedUnifier(rule, tmp, a, new TreeMapSubstitution())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -160,4 +191,41 @@ public class Unifier {
 		}
 		return u.put(term, substitut);
 	}
+
+	private static boolean existExtendedUnifier(Rule rule, Queue<Atom> atomset,
+			Atom pieceElement, Substitution unifier) {
+		atomset.remove(pieceElement);
+		Set<Term> frontierVars = rule.getFrontier();
+		Set<Term> existentialVars = rule.getExistentials();
+
+		for (Atom atom : rule.getHead()) {
+			Substitution u = unifier(unifier, pieceElement, atom, frontierVars,
+					existentialVars);
+			if (u != null) {
+				Iterator<Atom> it = atomset.iterator();
+				Atom newPieceElement = null;
+				while (it.hasNext() && newPieceElement == null) {
+					Atom a = it.next();
+
+					for (Term t : a) {
+						if (existentialVars.contains(u.getSubstitute(t))) {
+							newPieceElement = a;
+							break;
+						}
+					}
+
+				}
+
+				if (newPieceElement == null) {
+					return true;
+				} else {
+					if (existExtendedUnifier(rule, atomset, newPieceElement, u)) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
 }

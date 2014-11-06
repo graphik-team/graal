@@ -21,7 +21,7 @@ import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
-import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
+import fr.lirmm.graphik.graal.grd.GraphOfRuleDependenciesWithUnifiers;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
 import fr.lirmm.graphik.graal.parser.ParseException;
 import fr.lirmm.graphik.util.LinkedSet;
@@ -32,7 +32,7 @@ import fr.lirmm.graphik.util.LinkedSet;
  */
 public class GRDParser {
 
-	private static final class GRD extends GraphOfRuleDependencies {
+	private static final class GRD extends GraphOfRuleDependenciesWithUnifiers {
 
 		GRD() {
 			super();
@@ -56,11 +56,11 @@ public class GRDParser {
 	private GRDParser() {
 	}
 
-	public GraphOfRuleDependencies parse(File file) throws FileNotFoundException, ParseException {
+	public GraphOfRuleDependenciesWithUnifiers parse(File file) throws FileNotFoundException, ParseException {
 		return this.parse(new BufferedReader(new FileReader(file)));
 	}
 	
-	public GraphOfRuleDependencies parse(BufferedReader reader)
+	public GraphOfRuleDependenciesWithUnifiers parse(BufferedReader reader)
 			throws ParseException {
 		GRD grd = new GRD();
 		Map<String, Rule> rules = new TreeMap<String, Rule>();

@@ -8,12 +8,10 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.ruleset.ImmutableRuleSet;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
-import fr.lirmm.graphik.graal.rulesetanalyser.RuleAnalyser;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.AffectedPositionSet;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.GraphPositionDependencies;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.MarkedVariableSet;
