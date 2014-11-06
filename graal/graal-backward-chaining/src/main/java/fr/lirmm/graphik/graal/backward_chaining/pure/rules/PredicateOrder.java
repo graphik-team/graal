@@ -14,10 +14,8 @@ import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
-import fr.lirmm.graphik.util.stream.ObjectWriter;
 
 public class PredicateOrder extends AbstractRulesCompilation {
 
@@ -33,18 +31,36 @@ public class PredicateOrder extends AbstractRulesCompilation {
 	// the list of the compiled rules
 	private LinkedList<Rule> rules;
 
-	public PredicateOrder() {
-		predicateIndex = new HashMap<Predicate, Integer>();
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTOR
+	// /////////////////////////////////////////////////////////////////////////
+
+	public PredicateOrder(Iterable<Rule> rules) {
 		rules = new LinkedList<Rule>();
+		for (Rule r : rules) {
+			this.rules.add(r);
+		}
+		predicateIndex = new HashMap<Predicate, Integer>();
 		size_order = 0;
 	}
 
-	public void code(Iterable<Rule> rules) {
+	// /////////////////////////////////////////////////////////////////////////
+	// GETTERS / SETTERS
+	// /////////////////////////////////////////////////////////////////////////
+
+	@Override
+	public Iterable<Rule> getSaturation() {
+		return this.rules;
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	@Override
+	public void compile() {
 		Iterator<Rule> i = rules.iterator();
 		Rule r;
-
-		AtomSet h;
-		AtomSet b;
 		TreeSet<Predicate> set = new TreeSet<Predicate>();
 		int nb_pred = 0;
 
@@ -68,7 +84,8 @@ public class PredicateOrder extends AbstractRulesCompilation {
 			}
 		}
 
-		System.out.println("hierarchical rules: " + this.rules.size());
+		if (this.getProfiler() != null)
+			System.out.println("hierarchical rules: " + this.rules.size());
 		Atom father;
 		Atom son;
 		// System.out.println("nb pred: "+nb_pred);
@@ -278,12 +295,6 @@ public class PredicateOrder extends AbstractRulesCompilation {
 			}
 
 		return res;
-	}
-
-	@Override
-	public void save(ObjectWriter<Rule> ruleWriter) {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
 	}
 
 }

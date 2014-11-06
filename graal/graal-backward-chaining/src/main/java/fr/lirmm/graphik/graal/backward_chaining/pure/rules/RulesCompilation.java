@@ -1,6 +1,5 @@
 package fr.lirmm.graphik.graal.backward_chaining.pure.rules;
 
-import java.io.IOException;
 import java.util.Collection;
 
 import fr.lirmm.graphik.graal.backward_chaining.pure.utils.TermPartition;
@@ -10,9 +9,16 @@ import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.util.stream.ObjectWriter;
+import fr.lirmm.graphik.util.Profilable;
 
-public interface RulesCompilation {
+public interface RulesCompilation extends Profilable {
+
+	/**
+	 * 
+	 */
+	public void compile();
+
+	public Iterable<Rule> getSaturation();
 
 	/**
 	 * Unfold the pivot rewriting set with this rules compilation.
@@ -22,13 +28,6 @@ public interface RulesCompilation {
 	 */
 	Collection<ConjunctiveQuery> unfold(
 			Iterable<ConjunctiveQuery> pivotRewritingSet);
-
-	/**
-	 * Save the compilation
-	 * 
-	 * @param ruleWriter
-	 */
-	public void save(ObjectWriter<Rule> ruleWriter) throws IOException;
 
 	/**
 	 * Return true if the given rule is compilable by this

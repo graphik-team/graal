@@ -14,12 +14,23 @@ import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.util.Profiler;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */
 public abstract class AbstractRulesCompilation implements RulesCompilation {
+
+	private Profiler profiler;
+
+	public void setProfiler(Profiler profiler) {
+		this.profiler = profiler;
+	}
+
+	public Profiler getProfiler() {
+		return this.profiler;
+	}
 
 	public Collection<ConjunctiveQuery> unfold(
 			Iterable<ConjunctiveQuery> pivotRewritingSet) {

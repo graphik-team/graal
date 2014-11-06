@@ -21,14 +21,6 @@ import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 @SuppressWarnings({ "unused", "rawtypes", "unchecked" })
 public class QREAggregSingleRule extends QueryRewritingEngine {
 
-	public QREAggregSingleRule(PureQuery query) {
-		super(query);
-	}
-
-	public QREAggregSingleRule(PureQuery query, Iterable<Rule> rules) {
-		super(query, rules);
-	}
-
 	public QREAggregSingleRule(PureQuery query, Iterable<Rule> rules,
 			RulesCompilation order) {
 		super(query, rules, order);

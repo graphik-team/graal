@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
+import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultFreeVarGen;
@@ -18,7 +19,6 @@ import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.homomorphism.PureHomomorphism;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -58,19 +58,26 @@ public class Misc {
 	 */
 	public static boolean testInclu = true;
 
-	public static boolean isMoreGeneralThan(AtomSet h, AtomSet f) {
+	public static boolean isMoreGeneralThan(AtomSet h, AtomSet f,
+			RulesCompilation compilation) {
 
 		boolean moreGen = false;
 		if (testInclu && h.isSubSetOf(f)) {
 			moreGen = true;
 		} else {
 			try {
-				moreGen = PureHomomorphism.getInstance().exist(h, f);
+				moreGen = PureHomomorphismWithCompilation.getInstance().exist(
+						h, f, compilation);
 			} catch (HomomorphismException e) {
 			}
 		}
 
 		return moreGen;
+	}
+
+	public static boolean isMoreGeneralThan(AtomSet h, AtomSet f) {
+
+		return isMoreGeneralThan(h, f, null);
 	}
 
 	/**
@@ -113,14 +120,14 @@ public class Misc {
 	}
 
 	/**
-	 * Remove the queries that are not the most general in the given set of
-	 * queries
+	 * Remove the fact that are not the most general (taking account of compiled
+	 * rules) in the given facts
 	 * 
 	 * @param comp
 	 * @throws Exception
 	 */
-	public static void computeCover(Iterable<ConjunctiveQuery> set) {
-
+	public static void computeCover(Iterable<ConjunctiveQuery> set,
+			RulesCompilation comp) {
 		Iterator<ConjunctiveQuery> beg = set.iterator();
 		Iterator<ConjunctiveQuery> end;
 		AtomSet q;
@@ -132,12 +139,23 @@ public class Misc {
 			end = set.iterator();
 			while (!finished && end.hasNext()) {
 				o = end.next().getAtomSet();
-				if (o != q && Misc.isMoreGeneralThan(o, q)) {
+				if (o != q && isMoreGeneralThan(o, q, comp)) {
 					finished = true;
 					beg.remove();
 				}
 			}
 		}
+	}
+
+	/**
+	 * Remove the queries that are not the most general in the given set of
+	 * queries
+	 * 
+	 * @param comp
+	 * @throws Exception
+	 */
+	public static void computeCover(Iterable<ConjunctiveQuery> set) {
+		computeCover(set, null);
 	}
 
 	/**

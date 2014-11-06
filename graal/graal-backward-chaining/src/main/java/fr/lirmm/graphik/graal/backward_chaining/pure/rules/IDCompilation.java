@@ -1,7 +1,6 @@
 package fr.lirmm.graphik.graal.backward_chaining.pure.rules;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -24,7 +23,6 @@ import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByBodyPredicatesRuleSet;
-import fr.lirmm.graphik.util.stream.ObjectWriter;
 
 public class IDCompilation extends AbstractRulesCompilation {
 
@@ -42,27 +40,55 @@ public class IDCompilation extends AbstractRulesCompilation {
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public IDCompilation() {
-		super();
-	}
-
 	public IDCompilation(Iterable<Rule> ruleSet) {
 		super();
 		this.saturation = extractCompilable(ruleSet);
-		this.computeSaturation();
-		this.createIDCondition();
+
 	}
 
 	public IDCompilation(Iterable<Rule> ruleSet, Iterable<Rule> compilation) {
 		super();
 		this.saturation = extractCompilable(ruleSet);
 		this.load(compilation);
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// GETTERS / SETTERS
+	// /////////////////////////////////////////////////////////////////////////
+
+	public Iterable<Rule> getSaturation() {
+		return this.saturation;
+	}
+
+	/**
+	 * load a ruleSet
+	 * 
+	 * @param file
+	 * @throws FileNotFoundException
+	 */
+	public void load(Iterable<Rule> saturation) {
+		this.saturation = new LinkedList<Rule>();
+		for (Rule r : saturation) {
+			this.saturation.add(r);
+		}
 		this.createIDCondition();
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
+
+	@Override
+	public void compile() {
+		if (this.getProfiler() != null) {
+			this.getProfiler().start("Compilation total time");
+		}
+		this.computeSaturation();
+		this.createIDCondition();
+		if (this.getProfiler() != null) {
+			this.getProfiler().stop("Compilation total time");
+		}
+	}
 
 	public LinkedList<IDCondition> getConditions(Predicate pred_b,
 			Predicate pred_h) {
@@ -89,30 +115,6 @@ public class IDCompilation extends AbstractRulesCompilation {
 	}
 
 	/**
-	 * Save the IDCompilation with a writer
-	 * 
-	 * @param ruleWriter
-	 * @throws IOException
-	 */
-	@Override
-	public void save(ObjectWriter<Rule> ruleWriter) throws IOException {
-		ruleWriter.write(this.saturation);
-	}
-
-	/**
-	 * load a ruleSet
-	 * 
-	 * @param file
-	 * @throws FileNotFoundException
-	 */
-	private void load(Iterable<Rule> saturation) {
-		this.saturation = new LinkedList<Rule>();
-		for (Rule r : saturation) {
-			this.saturation.add(r);
-		}
-	}
-
-	/**
 	 * Remove compilable rule from ruleset and return a List of compilable
 	 * rules.
 	 * 
@@ -133,18 +135,6 @@ public class IDCompilation extends AbstractRulesCompilation {
 		}
 
 		return compilable;
-	}
-
-	private void createIDCondition() {
-		Atom b;
-		Atom h;
-		this.conditions = new TreeMap<Predicate, TreeMap<Predicate, LinkedList<IDCondition>>>();
-		for (Rule ru : this.saturation) {
-			h = ru.getHead().iterator().next();
-			b = ru.getBody().iterator().next();
-			this.addCondition(b.getPredicate(), h.getPredicate(), b.getTerms(),
-					h.getTerms());
-		}
 	}
 
 	@Override
@@ -168,93 +158,6 @@ public class IDCompilation extends AbstractRulesCompilation {
 			}
 		}
 		return false;
-	}
-
-	private void computeSaturation() {
-		// FIXME pb à résoudre avec unification trop importante
-
-		IndexedByBodyPredicatesRuleSet rules = new IndexedByBodyPredicatesRuleSet();
-		for (Rule r : saturation) {
-			rules.add(Misc.getSafeCopy(r));
-		}
-
-		Collection<Rule> lastCompute = new LinkedList<Rule>();
-		lastCompute.addAll(saturation);
-
-		while (!lastCompute.isEmpty()) {
-			lastCompute = computeSaturationPart(lastCompute, rules);
-			saturation.addAll(lastCompute);
-		}
-	}
-
-	private Collection<Rule> computeSaturationPart(Iterable<Rule> lastCompute,
-			IndexedByBodyPredicatesRuleSet rules) {
-		Atom head1, body2;
-		TermPartition part;
-		AtomSet impliedHead, impliedBody;
-		Rule impliedRule;
-
-		LinkedList<Rule> tmp = new LinkedList<Rule>();
-
-		for (Rule r1 : lastCompute) {
-			head1 = r1.getHead().iterator().next();
-			for (Rule r2 : rules.getRulesByBodyPredicate(head1.getPredicate())) {
-				body2 = r2.getBody().iterator().next();
-				if (head1.getPredicate().equals(body2.getPredicate())) {
-					part = TermPartition.getPartitionByPosition(head1, body2);
-					impliedBody = part.getAssociatedSubstitution(null)
-							.getSubstitut(r1.getBody());
-					impliedHead = part.getAssociatedSubstitution(null)
-							.getSubstitut(r2.getHead());
-					if (!impliedHead.equals(impliedBody)) {
-						impliedRule = new DefaultRule(impliedBody, impliedHead);
-						if (mustBeKeeped(impliedRule)) {
-							tmp.add(impliedRule);
-						}
-					}
-				}
-			}
-		}
-
-		return tmp;
-	}
-
-	/**
-	 * return true if saturation does not already contain a rule that implied
-	 * the given one
-	 */
-	private boolean mustBeKeeped(Rule rule) {
-		Iterator<Rule> it = saturation.iterator();
-		Rule o;
-		boolean isImplied = false;
-		while (!isImplied && it.hasNext()) {
-			o = it.next();
-			if (Misc.imply(o, rule))
-				isImplied = true;
-		}
-		return !isImplied;
-	}
-
-	private void addCondition(Predicate pred_b, Predicate pred_h, List<Term> b,
-			List<Term> h) {
-
-		Map<Predicate, LinkedList<IDCondition>> cond_h = this.conditions
-				.get(pred_h);
-		LinkedList<IDCondition> conds;
-		if (cond_h != null) {
-			conds = cond_h.get(pred_b);
-			if (conds == null) {
-				cond_h.put(pred_b, new LinkedList<IDCondition>());
-				conds = cond_h.get(pred_b);
-			}
-		} else {
-			conditions.put(pred_h,
-					new TreeMap<Predicate, LinkedList<IDCondition>>());
-			cond_h = conditions.get(pred_h);
-			cond_h.put(pred_b, new LinkedList<IDCondition>());
-			conds = cond_h.get(pred_b);
-		}
-		conds.add(new IDCondition(b, h));
 	}
 
 	/**
@@ -354,4 +257,120 @@ public class IDCompilation extends AbstractRulesCompilation {
 		}
 		return res;
 	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	private void createIDCondition() {
+		if (this.getProfiler() != null) {
+			this.getProfiler().start("Compilation create IDCondition time");
+		}
+		Atom b;
+		Atom h;
+		this.conditions = new TreeMap<Predicate, TreeMap<Predicate, LinkedList<IDCondition>>>();
+		for (Rule ru : this.saturation) {
+			h = ru.getHead().iterator().next();
+			b = ru.getBody().iterator().next();
+			this.addCondition(b.getPredicate(), h.getPredicate(), b.getTerms(),
+					h.getTerms());
+		}
+		if (this.getProfiler() != null) {
+			this.getProfiler().stop("Compilation create IDCondition time");
+		}
+	}
+
+	private void computeSaturation() {
+		// FIXME pb à résoudre avec unification trop importante
+
+		if (this.getProfiler() != null) {
+			this.getProfiler().start("Compilation saturation time");
+		}
+		IndexedByBodyPredicatesRuleSet rules = new IndexedByBodyPredicatesRuleSet();
+		for (Rule r : saturation) {
+			rules.add(Misc.getSafeCopy(r));
+		}
+
+		Collection<Rule> lastCompute = new LinkedList<Rule>();
+		lastCompute.addAll(saturation);
+
+		while (!lastCompute.isEmpty()) {
+			lastCompute = computeSaturationPart(lastCompute, rules);
+			saturation.addAll(lastCompute);
+		}
+		if (this.getProfiler() != null) {
+			this.getProfiler().stop("Compilation saturation time");
+		}
+	}
+
+	private Collection<Rule> computeSaturationPart(Iterable<Rule> lastCompute,
+			IndexedByBodyPredicatesRuleSet rules) {
+		Atom head1, body2;
+		TermPartition part;
+		AtomSet impliedHead, impliedBody;
+		Rule impliedRule;
+
+		LinkedList<Rule> tmp = new LinkedList<Rule>();
+
+		for (Rule r1 : lastCompute) {
+			head1 = r1.getHead().iterator().next();
+			for (Rule r2 : rules.getRulesByBodyPredicate(head1.getPredicate())) {
+				body2 = r2.getBody().iterator().next();
+				if (head1.getPredicate().equals(body2.getPredicate())) {
+					part = TermPartition.getPartitionByPosition(head1, body2);
+					impliedBody = part.getAssociatedSubstitution(null)
+							.getSubstitut(r1.getBody());
+					impliedHead = part.getAssociatedSubstitution(null)
+							.getSubstitut(r2.getHead());
+					if (!impliedHead.equals(impliedBody)) {
+						impliedRule = new DefaultRule(impliedBody, impliedHead);
+						if (mustBeKeeped(impliedRule)) {
+							tmp.add(impliedRule);
+						}
+					}
+				}
+			}
+		}
+
+		return tmp;
+	}
+
+	/**
+	 * return true if saturation does not already contain a rule that implied
+	 * the given one
+	 */
+	private boolean mustBeKeeped(Rule rule) {
+		Iterator<Rule> it = saturation.iterator();
+		Rule o;
+		boolean isImplied = false;
+		while (!isImplied && it.hasNext()) {
+			o = it.next();
+			if (Misc.imply(o, rule))
+				isImplied = true;
+		}
+		return !isImplied;
+	}
+
+	private void addCondition(Predicate pred_b, Predicate pred_h, List<Term> b,
+			List<Term> h) {
+
+		Map<Predicate, LinkedList<IDCondition>> cond_h = this.conditions
+				.get(pred_h);
+		LinkedList<IDCondition> conds;
+		if (cond_h != null) {
+			conds = cond_h.get(pred_b);
+			if (conds == null) {
+				cond_h.put(pred_b, new LinkedList<IDCondition>());
+				conds = cond_h.get(pred_b);
+			}
+		} else {
+			conditions.put(pred_h,
+					new TreeMap<Predicate, LinkedList<IDCondition>>());
+			cond_h = conditions.get(pred_h);
+			cond_h.put(pred_b, new LinkedList<IDCondition>());
+			conds = cond_h.get(pred_b);
+		}
+		conds.add(new IDCondition(b, h));
+	}
+
 }

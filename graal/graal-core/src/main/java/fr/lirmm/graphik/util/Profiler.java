@@ -3,6 +3,7 @@
  */
 package fr.lirmm.graphik.util;
 
+import java.io.PrintStream;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.util.Map;
@@ -15,11 +16,21 @@ import java.util.TreeMap;
  */
 public class Profiler {
 
+	private PrintStream out = null;
+
 	private final ThreadMXBean bean = ManagementFactory.getThreadMXBean();
 	private final Map<String, Long> tmpMap = new TreeMap<String, Long>();
-	private final Map<String, Long> map = new TreeMap<String, Long>();
+	private final Map<String, Object> map = new TreeMap<String, Object>();
+
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTOR
+	// /////////////////////////////////////////////////////////////////////////
 
 	public Profiler() {
+	}
+
+	public Profiler(PrintStream out) {
+		this.out = out;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -31,19 +42,34 @@ public class Profiler {
 	}
 
 	public void stop(String key) {
-		Long old = this.map.get(key);
-		old = (old == null) ? 0 : old;
-		this.map.put(key, old + this.getTime() - this.tmpMap.get(key));
+		Long oldTime = (Long) this.map.get(key);
+		oldTime = (oldTime == null) ? 0 : oldTime;
+		Long newTime = oldTime + this.getTime() - this.tmpMap.get(key);
+		this.map.put(key, newTime);
+		if (this.out != null) {
+			this.out.println("Profiler - " + key + ": " + newTime + "ms");
+		}
 	}
 
-	public long get(String key) {
+	public void add(String key, Object value) {
+		this.map.put(key, value);
+		if (this.out != null) {
+			this.out.println("Profiler - " + key + ": " + value.toString());
+		}
+	}
+
+	public Object get(String key) {
 		return this.map.get(key);
 	}
 
 	public void clear(String key) {
 		this.map.remove(key);
 	}
-	
+
+	public void clear() {
+		this.map.clear();
+	}
+
 	public Set<String> keySet() {
 		return this.map.keySet();
 	}

@@ -71,16 +71,6 @@ public class PureRewriter extends AbstractBackwardChainer implements Verbosable 
 		return this.rewrites.next();
 	}
 
-	public static RulesCompilation compile(Iterable<Rule> ruleset) {
-		// if(this.getTimer() != null) {
-		// this.getTimer().start("preprocessing time");
-		// }
-		return new IDCompilation(ruleset);
-		// if(this.getTimer() != null) {
-		// this.getTimer().stop("preprocessing time");
-		// }
-	}
-
 	public static RulesCompilation loadCompilation(Iterable<Rule> ruleset,
 			Iterable<Rule> saturation) {
 		IDCompilation compilation = new IDCompilation(ruleset, saturation);
@@ -94,8 +84,10 @@ public class PureRewriter extends AbstractBackwardChainer implements Verbosable 
 	private void compute() {
 
 		// preprocessing
-		if (this.compilation == null)
-			this.compilation = compile(this.ruleset);
+		if (this.compilation == null) {
+			this.compilation = new IDCompilation(ruleset);
+			this.compilation.compile();
+		}
 
 		// rewriting
 		QueryRewritingEngine qre = new QREAggregSingleRule(pquery, ruleset,

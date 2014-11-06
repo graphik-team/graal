@@ -56,22 +56,11 @@ public class QueryRewritingEngine implements Verbosable, Profilable {
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public QueryRewritingEngine(PureQuery query) {
-		this.query = query;
-		ruleSet = new IndexedByHeadPredicatesRuleSet();
-		compilation = new PredicateOrder();
-	}
-
-	public QueryRewritingEngine(PureQuery query, Iterable<Rule> rules) {
-		this.query = query;
-		this.ruleSet = new IndexedByHeadPredicatesRuleSet(rules);
-	}
-
 	public QueryRewritingEngine(PureQuery query, Iterable<Rule> rules,
 			RulesCompilation comp) {
 		this.query = query;
-		this.compilation = comp;
 		this.ruleSet = new IndexedByHeadPredicatesRuleSet(rules);
+		this.compilation = comp;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -114,7 +103,7 @@ public class QueryRewritingEngine implements Verbosable, Profilable {
 			this.profiler.start("rewriting time");
 		}
 
-		query = new PureQuery(compilation.getIrredondant(query.getAtomSet()), query.getAnswerVariables());
+		this.query = new PureQuery(compilation.getIrredondant(query.getAtomSet()), query.getAnswerVariables());
 		Collection<ConjunctiveQuery> currentRewriteSet;
 		Queue<ConjunctiveQuery> rewriteSetToExplore = new LinkedList<ConjunctiveQuery>();
 
@@ -134,7 +123,7 @@ public class QueryRewritingEngine implements Verbosable, Profilable {
 			generatedRewrites += currentRewriteSet.size(); // stats
 
 			/* keep only the most general among query just computed */
-			Misc.computeCover(currentRewriteSet);
+			Misc.computeCover(currentRewriteSet, this.compilation);
 
 			/*
 			 * keep only the query just computed that are more general than
@@ -163,9 +152,9 @@ public class QueryRewritingEngine implements Verbosable, Profilable {
 		}
 
 		if(this.verbose) {
-			System.out.println("info - generated rewritings : " + generatedRewrites);
-			System.out.println("info - explored rewritings  : " + exploredRewrites);
-			System.out.println("info - pivots rewritings    : " + pivotRewritingSet.size());
+			this.profiler.add("Generated rewritings", generatedRewrites);
+			this.profiler.add("Explored rewritings", exploredRewrites);
+			this.profiler.add("Pivots rewritings", pivotRewritingSet.size());
 			this.profiler.stop("rewriting time");
 		}
 
@@ -212,11 +201,11 @@ public class QueryRewritingEngine implements Verbosable, Profilable {
 	 * @param comp
 	 * @return
 	 */
-	public static boolean containMoreGeneral(AtomSet f,
+	public boolean containMoreGeneral(AtomSet f,
 			Collection<ConjunctiveQuery> rewriteSet) {
 		for(ConjunctiveQuery q : rewriteSet) {
 			AtomSet a = q.getAtomSet();
-			if (Misc.isMoreGeneralThan(a, f))
+			if (Misc.isMoreGeneralThan(a, f, this.compilation))
 				return true;
 		}
 		return false;

@@ -22,14 +22,6 @@ import fr.lirmm.graphik.graal.core.atomset.AtomSets;
  */
 public class QREAggregAllRules extends QREAggregAllRulesBasic {
 
-	public QREAggregAllRules(PureQuery query) {
-		super(query);
-	}
-
-	public QREAggregAllRules(PureQuery query, Iterable<Rule> rules) {
-		super(query, rules);
-	}
-
 	public QREAggregAllRules(PureQuery query, Iterable<Rule> rules,
 			RulesCompilation order) {
 		super(query, rules, order);
