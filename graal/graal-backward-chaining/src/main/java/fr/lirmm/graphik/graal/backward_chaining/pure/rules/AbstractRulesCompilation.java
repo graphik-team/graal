@@ -37,13 +37,13 @@ public abstract class AbstractRulesCompilation implements RulesCompilation {
 		Collection<ConjunctiveQuery> unfoldingRewritingSet = this
 				.developpRewriting(pivotRewritingSet);
 
-		// remove ans predicate from queries
-		for (ConjunctiveQuery query : pivotRewritingSet) {
-			PureQuery.removeAnswerPredicate(query);
-		}
-
 		/** clean the rewrites to return **/
 		Misc.computeCover(unfoldingRewritingSet);
+
+		// remove ans predicate from queries
+		for (ConjunctiveQuery query : unfoldingRewritingSet) {
+			PureQuery.removeAnswerPredicate(query);
+		}
 
 		return unfoldingRewritingSet;
 
