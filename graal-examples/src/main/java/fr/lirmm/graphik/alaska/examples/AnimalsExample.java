@@ -78,14 +78,7 @@ public class AnimalsExample {
 
 		BackwardChainer backwardChainer = new PureRewriter(query,
 				kb.getRuleSet());
-		UnionConjunctiveQueries ucq = new UnionConjunctiveQueries();
-		{
-			ConjunctiveQuery q;
-			while (backwardChainer.hasNext()) {
-				q = backwardChainer.next();
-				ucq.add(q);
-			}
-		}
+		UnionConjunctiveQueries ucq = backwardChainer.getUCQs();
 
 		// /////////////////////////////////////////////////////////////////////////
 		// Rewritings
