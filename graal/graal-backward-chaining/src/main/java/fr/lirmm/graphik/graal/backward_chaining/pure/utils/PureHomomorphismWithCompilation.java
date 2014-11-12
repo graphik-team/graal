@@ -67,7 +67,6 @@ public class PureHomomorphismWithCompilation extends PureHomomorphism {
 	@Override
 	protected boolean isMappable(Atom a, Atom im, PureHomomorphism.Homomorphism homomorphism) {
 		if(((Homomorphism) homomorphism).compilation != null){
-			System.out.println("isMappable");
 			return ((Homomorphism) homomorphism).compilation.isMappable(a, im);
 		}
 		else {
