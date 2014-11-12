@@ -4,11 +4,11 @@
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
 		<artifactId>graal-main-project</artifactId>
-		<version>0.6.1-SNAPSHOT</version>
+		<version>0.6.1</version>
 	</parent>
 
 	<artifactId>graal</artifactId>
-  <version>0.6.1-SNAPSHOT </version>
+  <version>0.6.1 </version>
 	<name>GRAAL - Generic Rules ApplicAtion Library</name>
 	<packaging>pom</packaging>
 
