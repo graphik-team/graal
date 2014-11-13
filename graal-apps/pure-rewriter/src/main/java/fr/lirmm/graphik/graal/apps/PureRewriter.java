@@ -33,7 +33,7 @@ import fr.lirmm.graphik.util.stream.FilterReader;
  */
 public class PureRewriter {
 
-	private static final String VERSION = "0.6.1-SNAPSHOT";
+	private static final String VERSION = "0.6.2-SNAPSHOT";
 	private static Profiler profiler;
 	private static PureRewriter options;
 	private static DlgpWriter writer = new DlgpWriter();
@@ -245,7 +245,9 @@ public class PureRewriter {
 	 */
 	private static void printVersion() {
 		try {
-			writer.write("Pure version " + VERSION);
+			writer.write("Pure version ");
+			writer.write(VERSION);
+			writer.write("\n");
 			writer.flush();
 		} catch (IOException e) {
 		}
