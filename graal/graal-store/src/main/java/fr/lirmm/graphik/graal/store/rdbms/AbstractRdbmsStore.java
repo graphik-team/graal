@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.homomorphism.DefaultHomomorphismFactory;
 import fr.lirmm.graphik.graal.store.AbstractStore;
@@ -22,52 +21,40 @@ import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
- *
+ * 
  */
 public abstract class AbstractRdbmsStore extends AbstractStore implements
-RdbmsStore {
-	
-	static  {
+		RdbmsStore {
+
+	static {
 		DefaultHomomorphismFactory.getInstance().addChecker(
 				new SqlHomomorphismChecker());
 		DefaultHomomorphismFactory.getInstance().addChecker(
 				new SqlUCQHomomorphismChecker());
 	}
-	
+
 	private static final Logger logger = LoggerFactory
 			.getLogger(AbstractRdbmsStore.class);
-	
+
 	private final RdbmsDriver driver;
-	
+
+	private int unbatchedAtoms = 0;
+	private Statement unbatchedStatement = null;
+
+	protected static final int MAX_BATCH_SIZE = 1024;
+
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
+
 	public RdbmsDriver getDriver() {
 		return this.driver;
 	}
-	
-	protected Connection getConnection() {
-		return this.driver.getConnection();
-	}
-	
-	protected Statement createStatement() throws StoreException {
-		return this.driver.createStatement();
-	}
 
-	protected abstract Statement add(Statement statement, Atom atom) throws StoreException;
-	
-	protected abstract Statement remove(Statement statement, Atom atom) throws StoreException;
-	
-	protected abstract boolean testDatabaseSchema() throws StoreException;
-	
-	protected abstract void createDatabaseSchema() throws StoreException;	
-	
-	protected static final int MAX_BATCH_SIZE = 1024;
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.lirmm.graphik.alaska.store.IWriteableStore#add(fr.lirmm.graphik.kb
-	 * .core.IAtom)
-	 */
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
 	@Override
 	public boolean add(Atom atom) {
 		boolean res = true;
@@ -76,14 +63,14 @@ RdbmsStore {
 			statement = this.createStatement();
 			this.add(statement, atom);
 			statement.executeBatch();
-			this.getConnection().commit();
 		} catch (SQLException e) {
 			res = false;
 		} catch (AtomSetException e) {
 			res = false;
 		} finally {
-			if(statement != null) {
+			if (statement != null) {
 				try {
+					this.getConnection().commit();
 					statement.close();
 				} catch (SQLException e) {
 					res = false;
@@ -93,8 +80,6 @@ RdbmsStore {
 		return res;
 	}
 
-	private int unbatchedAtoms = 0;
-	private Statement unbatchedStatement = null;
 	public void addUnbatched(Atom a) {
 		try {
 			if (this.unbatchedStatement == null) {
@@ -103,7 +88,7 @@ RdbmsStore {
 			this.add(this.unbatchedStatement, a);
 			++this.unbatchedAtoms;
 			if (this.unbatchedAtoms >= MAX_BATCH_SIZE) {
-				if(logger.isDebugEnabled()) {
+				if (logger.isDebugEnabled()) {
 					logger.debug("batch commit, size=" + MAX_BATCH_SIZE);
 				}
 				this.commitAtoms();
@@ -122,15 +107,11 @@ RdbmsStore {
 				this.unbatchedStatement.close();
 				this.unbatchedStatement = null;
 			}
-		}
-		catch (Exception e) {
-			logger.error(e.getMessage(),e);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see fr.lirmm.graphik.graal.store.Store#remove(fr.lirmm.graphik.graal.core.Atom)
-	 */
+
 	@Override
 	public boolean remove(Atom atom) {
 		boolean res = true;
@@ -145,7 +126,7 @@ RdbmsStore {
 		} catch (AtomSetException e) {
 			res = false;
 		} finally {
-			if(statement != null) {
+			if (statement != null) {
 				try {
 					statement.close();
 				} catch (SQLException e) {
@@ -156,8 +137,6 @@ RdbmsStore {
 		return res;
 	}
 
-
-	
 	/**
 	 * 
 	 * @param driver
@@ -170,72 +149,87 @@ RdbmsStore {
 		} catch (SQLException e) {
 			throw new StoreException("ACID transaction required", e);
 		}
-		
-		if(!this.testDatabaseSchema())
+
+		if (!this.testDatabaseSchema())
 			this.createDatabaseSchema();
 
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.lirmm.graphik.alaska.store.IWriteableStore#add(fr.lirmm.graphik.kb
-	 * .stream.AtomReader)
-	 */
+
 	@Override
 	public void addAll(Iterable<Atom> stream) throws AtomSetException {
 		try {
 			int c = 0;
 			Statement statement = this.createStatement();
-			
-			for(Atom a : stream) {
+
+			for (Atom a : stream) {
 				this.add(statement, a);
-				if((++c % MAX_BATCH_SIZE) == 0) {
-					if(logger.isDebugEnabled()) {
+				if ((++c % MAX_BATCH_SIZE) == 0) {
+					if (logger.isDebugEnabled()) {
 						logger.debug("batch commit, size=" + MAX_BATCH_SIZE);
 					}
 					statement.executeBatch();
 					statement.close();
 					statement = this.createStatement();
 				}
-			} 
-			
-			//if(statement != null) {// && !statement.isClosed()) {
-				statement.executeBatch();
-				statement.close();
-			//}
-			
+			}
+
+			// if(statement != null) {// && !statement.isClosed()) {
+			statement.executeBatch();
+			statement.close();
+			// }
+
 			this.getConnection().commit();
 		} catch (SQLException e) {
 			logger.error(e.getMessage(), e);
 		}
 	}
-	
+
 	public void remove(Iterable<Atom> stream) throws AtomSetException {
 		try {
 			int c = 0;
 			Statement statement = this.createStatement();
-			for(Atom a : stream) {
+			for (Atom a : stream) {
 				this.remove(statement, a);
-				if((++c % MAX_BATCH_SIZE) == 0) {
-					if(logger.isDebugEnabled()) {
+				if ((++c % MAX_BATCH_SIZE) == 0) {
+					if (logger.isDebugEnabled()) {
 						logger.debug("batch commit, size=" + MAX_BATCH_SIZE);
 					}
 					statement.executeBatch();
 					statement.close();
 				}
 			}
-			
-			if(!statement.isClosed()) {
+
+			if (!statement.isClosed()) {
 				statement.executeBatch();
 				statement.close();
 			}
-			
+
 			this.getConnection().commit();
 		} catch (SQLException e) {
 			logger.error(e.getMessage(), e);
 		}
 	}
-	
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PROTECTED METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	protected Connection getConnection() {
+		return this.driver.getConnection();
+	}
+
+	protected Statement createStatement() throws StoreException {
+		return this.driver.createStatement();
+	}
+
+	protected abstract Statement add(Statement statement, Atom atom)
+			throws StoreException;
+
+	protected abstract Statement remove(Statement statement, Atom atom)
+			throws StoreException;
+
+	protected abstract boolean testDatabaseSchema() throws StoreException;
+
+	protected abstract void createDatabaseSchema() throws StoreException;
+
 }

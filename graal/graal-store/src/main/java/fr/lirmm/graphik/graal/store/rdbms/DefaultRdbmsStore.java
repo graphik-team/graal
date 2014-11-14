@@ -10,6 +10,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -20,11 +22,11 @@ import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.SymbolGenerator;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.Term.Type;
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.store.StoreException;
@@ -131,7 +133,8 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		Statement statement = null;
 		try {
 			statement = this.createStatement();
-			statement.execute(TEST_SCHEMA_QUERY);
+			ResultSet rs = statement.executeQuery(TEST_SCHEMA_QUERY);
+			rs.close();
 		} catch (SQLException e) {
 			return false;
 		} catch (StoreException e) {
@@ -140,6 +143,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			if(statement != null) {
 				try {
 					statement.close();
+					this.getConnection().rollback();
 				} catch (SQLException e) {
 					throw new StoreException(e);
 				}
@@ -208,7 +212,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 
 			final String createCounterTableQuery = "CREATE TABLE IF NOT EXISTS "
 												   + counterTableName
-												   + " (counter_name varchar(64), value long, PRIMARY KEY (counter_name));";
+												   + " (counter_name varchar(64), value BIGINT, PRIMARY KEY (counter_name));";
 
 			if (logger.isDebugEnabled())
 				logger.debug(createCounterTableQuery);
@@ -257,11 +261,6 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.lirmm.graphik.alaska.store.IStore#iterator()
-	 */
 	@Override
 	public ObjectReader<Atom> iterator() {
 		try {
@@ -457,7 +456,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			tableNames.put(atom, tableName);
 		}
 		
-		//
+		// Create WHERE clause
 		for (Atom atom : atomSet) {
 			String currentAtom = tableNames.get(atom) + ".";
 
@@ -480,6 +479,20 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			}
 		}
 
+		for (String equivalence : equivalences) {
+			if (where.length() != 0)
+				where.append(" AND ");
+
+			where.append(equivalence);
+		}
+
+		for (String constant : constants) {
+			if (where.length() != 0)
+				where.append(" AND ");
+
+			where.append(constant);
+		}
+
 		// Create FROM clause
 		String tableName = null;
 		for (Map.Entry<Atom, String> entries : tableNames.entrySet()) {
@@ -495,23 +508,6 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 
 			tables.append(" as ");
 			tables.append(entries.getValue());
-		}
-
-		
-
-		// Create WHERE clause
-		for (String equivalence : equivalences) {
-			if (where.length() != 0)
-				where.append(" AND ");
-
-			where.append(equivalence);
-		}
-
-		for (String constant : constants) {
-			if (where.length() != 0)
-				where.append(" AND ");
-
-			where.append(constant);
 		}
 
 		// Create SELECT clause
@@ -552,9 +548,14 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	// /////////////////////////////////////////////////////////////////////////
 
 	protected String getInsertTermQuery() {
-		return this.getDriver().getInsertOrIgnoreStatement()
+		return "INSERT INTO "
 			   + termTableName
-			   + " values (?, ?);";
+			   + " (term, term_type) "
+			   + "SELECT ?, ? FROM (SELECT 0) AS t "
+			   + "WHERE "
+			   + "  NOT EXISTS ("
+			   + "       SELECT 1 FROM " + termTableName + " WHERE term = ?"
+			   + "  );";
 	}
 
 	/**
@@ -565,29 +566,17 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	 */
 	protected Statement add(Statement statement, Atom atom)
 														   throws StoreException {
-		Term term;
 		try {
-			StringBuilder query = new StringBuilder(this.getDriver()
-					.getInsertOrIgnoreStatement());
-			query.append(this.getPredicateTable(atom.getPredicate()));
-			query.append(" VALUES (");
-
-			Iterator<Term> terms = atom.getTerms().iterator();
-
-			term = terms.next();
-			query.append('\'').append(term).append('\'');
-			this.add(statement, term);
-			while (terms.hasNext()) {
-				term = terms.next();
-				query.append(", '").append(term).append('\'');
-				this.add(statement, term);
+			for(Term t : atom.getTerms()) {
+				this.add(statement, t);
 			}
-			query.append(");");
+			String tableName = this.getPredicateTable(atom.getPredicate());
+			String query = this.getDriver().getInsertOrIgnoreStatement(tableName, atom.getTerms());
 
 			if (logger.isDebugEnabled()) {
 				logger.debug(atom.toString() + " : " + query.toString());
 			}
-			statement.addBatch(query.toString());
+			statement.addBatch(query);
 		} catch (SQLException e) {
 			throw new StoreException(e.getMessage(), e);
 		}
@@ -635,6 +624,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	private void add(Statement statement, Term term) throws SQLException {
 		this.insertTermStatement.setString(1, term.toString());
 		this.insertTermStatement.setString(2, term.getType().toString());
+		this.insertTermStatement.setString(3, term.toString());
 		this.insertTermStatement.execute();
 	}
 

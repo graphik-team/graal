@@ -58,8 +58,24 @@ public class SqliteDriver extends AbstractRdbmsDriver {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public String getInsertOrIgnoreStatement() {
-		return INSERT_IGNORE;
+	public String getInsertOrIgnoreStatement(String tableName, Iterable<?> values) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(INSERT_IGNORE);
+		sb.append(" ").append(tableName);
+		sb.append(" VALUES (");
+		boolean first = true;
+		for(Object o : values) {
+			if(!first) {
+				sb.append(", ");
+			} else {
+				first = false;
+			}
+			sb.append('\'');
+			sb.append(o.toString());
+			sb.append('\'');
+		}
+		sb.append(");");
+		return sb.toString();
 	}
 
 }

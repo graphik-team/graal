@@ -3,7 +3,6 @@
  */
 package fr.lirmm.graphik.graal.store.rdbms;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -127,7 +126,7 @@ public class ResultSetSubstitutionReader implements SubstitutionReader {
             Substitution substitution = new HashMapSubstitution();
             if(!isBooleanQuery) {
 	            for (int i = 1; i <= this.metaData.getColumnCount(); ++i) {
-	                Term term = new Term(this.metaData.getColumnLabel(i),
+	                Term term = new Term(this.metaData.getColumnLabel(i).toUpperCase(),
 	                        Term.Type.VARIABLE);
 	                Term substitut = this.store.getTerm(this.results.getString(i));
 	                substitution.put(term, substitut);
@@ -157,6 +156,7 @@ public class ResultSetSubstitutionReader implements SubstitutionReader {
     public void close() {
         try {
             this.results.close();
+            this.statement.close();
         } catch (SQLException e) {
             logger.warn(e.getMessage(), e);
         }
