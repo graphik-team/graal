@@ -23,7 +23,7 @@ import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
 import fr.lirmm.graphik.graal.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
-import fr.lirmm.graphik.graal.forward_chaining.ChaseWithGRD;
+import fr.lirmm.graphik.graal.forward_chaining.ChaseWithGRDAndUnfiers;
 import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
 import fr.lirmm.graphik.graal.forward_chaining.StaticChase;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependenciesWithUnifiers;
@@ -94,7 +94,7 @@ public class ChaseTest {
 		
 		System.out.println("#########################");
 		System.out.println(grd.toString());
-		Chase chase = new ChaseWithGRD(grd, atomSet);
+		Chase chase = new ChaseWithGRDAndUnfiers(grd, atomSet);
 		chase.execute();
 		
 		int size = 0;

@@ -20,7 +20,7 @@ public class StaticChase {
 
 	public static void executeChase(AtomSet atomSet, GraphOfRuleDependenciesWithUnifiers grd)
 			throws ChaseException {
-		Chase chase = new ChaseWithGRD(grd, atomSet);
+		Chase chase = new ChaseWithGRDAndUnfiers(grd, atomSet);
 		chase.execute();
 	}
 
@@ -32,7 +32,7 @@ public class StaticChase {
 
 	public static void executeOneStepChase(AtomSet atomSet,
 			GraphOfRuleDependenciesWithUnifiers grd) throws ChaseException {
-		Chase chase = new ChaseWithGRD(grd, atomSet);
+		Chase chase = new ChaseWithGRDAndUnfiers(grd, atomSet);
 		chase.next();
 	}
 }

@@ -3,29 +3,33 @@
  */
 package fr.lirmm.graphik.graal.forward_chaining;
 
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultFreeVarGen;
-import fr.lirmm.graphik.graal.core.HashMapSubstitution;
-import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.SymbolGenerator;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
+import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependenciesWithUnifiers;
+import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 
 /**
+ * This chase (forward-chaining) algorithm use GRD to define the Rules that will 
+ * be triggered in the next step.
+ * 
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
@@ -36,19 +40,19 @@ public class ChaseWithGRD extends AbstractChase {
 	
 	private ChaseStopCondition stopCondition = new RestrictedChaseStopCondition();
 	private SymbolGenerator existentialGen = new DefaultFreeVarGen("E");
-	private GraphOfRuleDependenciesWithUnifiers grd;
+	private GraphOfRuleDependencies grd;
 	private AtomSet atomSet;
-	private Queue<Pair<Rule, Substitution>> queue = new LinkedList<Pair<Rule, Substitution>>();
+	private TreeSet<Rule> queue = new TreeSet<Rule>();
 	
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 	
-	public ChaseWithGRD(GraphOfRuleDependenciesWithUnifiers grd, AtomSet atomSet) {
+	public ChaseWithGRD(GraphOfRuleDependencies grd, AtomSet atomSet) {
 		this.grd = grd;
 		this.atomSet = atomSet;
 		for(Rule r : grd.getRules()) {			
-			this.queue.add(new ImmutablePair<Rule, Substitution>(r, new HashMapSubstitution()));
+			this.queue.add(r);
 		}
 	}
 	
@@ -56,64 +60,65 @@ public class ChaseWithGRD extends AbstractChase {
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	/* (non-Javadoc)
-	 * @see fr.lirmm.graphik.alaska.saturator.Saturator#next()
-	 */
 	@Override
 	public void next() throws ChaseException {
-		Rule rule, unifiedRule;
-		Substitution unificator;
-		Query query;
+		Rule rule;
 		try {
-			Pair<Rule, Substitution> pair = queue.poll();
-			if(pair != null) {
-				unificator = pair.getRight();
-				rule = pair.getLeft();
-				unifiedRule = unificator.getSubstitut(pair.getLeft());
-				query = new DefaultConjunctiveQuery(unifiedRule.getBody(), unifiedRule.getFrontier());
-				if(logger.isDebugEnabled()) {
-					logger.debug("Execute rule: " + rule + " with unificator " + unificator);
-					logger.debug("-- Query: " + query);
-				}
-				
-				for (Substitution substitution : StaticHomomorphism.executeQuery(query, atomSet)) {
-					if(logger.isDebugEnabled()) {
-						logger.debug("-- Found homomorphism: " + substitution );
-					}
-					Set<Term> fixedTerm = substitution.getValues();
-					
-					// Generate new existential variables
-					for(Term t : unifiedRule.getExistentials()) {
-						substitution.put(t, existentialGen.getFreeVar());
-					}
-
-					// the atom set producted by the rule application
-					ReadOnlyAtomSet deductedAtomSet = substitution.getSubstitut(unifiedRule.getHead());
-	
-					if(stopCondition.canIAdd(deductedAtomSet, fixedTerm, this.atomSet)) {
-						this.atomSet.addAll(deductedAtomSet);
-						for(Rule triggeredRule : this.grd.getOutEdges(rule)) {
-							for(Substitution u : this.grd.getUnifiers(rule, triggeredRule)) {
-								if(logger.isDebugEnabled()) {
-									logger.debug("-- -- Dependency: " + triggeredRule + " with " + u);
-									logger.debug("-- -- Unificator: " + u);
-								}
-								if(u != null) {
-									this.queue.add(new ImmutablePair<Rule, Substitution>(triggeredRule, u));
-								}
-							}
-						}
-					}
-				}
+			rule = queue.pollFirst();
+			if(rule != null) {
+				this.apply(rule);
 			}
 		} catch (Exception e) {
 			throw new ChaseException("An error occur pending saturation step.", e);
 		}
 	}
-	
+
 	@Override
 	public boolean hasNext() {
 		return !queue.isEmpty();
+	}
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+	// /////////////////////////////////////////////////////////////////////////
+	
+	/**
+	 * @param rule
+	 * @throws AtomSetException 
+	 * @throws HomomorphismException 
+	 * @throws HomomorphismFactoryException 
+	 */
+	private void apply(Rule rule) throws HomomorphismFactoryException, HomomorphismException, AtomSetException {
+		ConjunctiveQuery query = new DefaultConjunctiveQuery(rule.getBody(), rule.getFrontier());
+		if(logger.isDebugEnabled()) {
+			logger.debug("Rule to execute: " + rule);
+			logger.debug("       -- Query: " + query);
+		}
+		
+		for (Substitution substitution : StaticHomomorphism.executeQuery(query, atomSet)) {
+			if(logger.isDebugEnabled()) {
+				logger.debug("-- Found homomorphism: " + substitution );
+			}
+			Set<Term> fixedTerm = substitution.getValues();
+			
+			// Generate new existential variables
+			for(Term t : rule.getExistentials()) {
+				substitution.put(t, existentialGen.getFreeVar());
+			}
+
+			// the atom set producted by the rule application
+			ReadOnlyAtomSet deductedAtomSet = substitution.getSubstitut(rule.getHead());
+
+			if(stopCondition.canIAdd(deductedAtomSet, fixedTerm, this.atomSet)) {
+				this.atomSet.addAll(deductedAtomSet);
+				for(Rule triggeredRule : this.grd.getOutEdges(rule)) {
+					if(logger.isDebugEnabled()) {
+						logger.debug("-- -- Dependency: " + triggeredRule);
+					}
+					this.queue.add(triggeredRule);
+				}
+			}
+		}
 	}
 
 }

@@ -6,7 +6,7 @@ import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.graph.MemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
-import fr.lirmm.graphik.graal.forward_chaining.ChaseWithGRD;
+import fr.lirmm.graphik.graal.forward_chaining.ChaseWithGRDAndUnfiers;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependenciesWithUnifiers;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
@@ -25,7 +25,7 @@ public class GrdChaseExample {
 		AtomSet facts = new MemoryGraphAtomSet();
 		facts.add(DlgpParser.parseAtom("r(a)."));
 
-		Chase chase = new ChaseWithGRD(grd, facts);
+		Chase chase = new ChaseWithGRDAndUnfiers(grd, facts);
 		chase.execute();
 		
 		System.out.println("########### SATURATED FACTS BASE ##############");
