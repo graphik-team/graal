@@ -1,4 +1,4 @@
-package fr.lirmm.graphik.alaska.trash;
+package fr.lirmm.graphik.graal.trash;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.util.LinkedList;

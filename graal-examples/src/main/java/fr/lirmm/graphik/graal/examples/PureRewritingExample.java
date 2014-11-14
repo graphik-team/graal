@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.lirmm.graphik.alaska.examples;
+package fr.lirmm.graphik.graal.examples;
 
 import fr.lirmm.graphik.graal.backward_chaining.BackwardChainer;
 import fr.lirmm.graphik.graal.backward_chaining.PureRewriter;

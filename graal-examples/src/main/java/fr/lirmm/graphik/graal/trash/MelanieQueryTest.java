@@ -1,4 +1,4 @@
-package fr.lirmm.graphik.alaska.trash;
+package fr.lirmm.graphik.graal.trash;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;

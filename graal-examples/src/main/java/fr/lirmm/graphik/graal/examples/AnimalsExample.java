@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.lirmm.graphik.alaska.examples;
+package fr.lirmm.graphik.graal.examples;
 
 import java.io.FileReader;
 import java.io.IOException;
