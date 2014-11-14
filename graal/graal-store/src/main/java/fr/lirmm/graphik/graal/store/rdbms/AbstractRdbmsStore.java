@@ -50,11 +50,19 @@ public abstract class AbstractRdbmsStore extends AbstractAtomSet implements
 	public RdbmsDriver getDriver() {
 		return this.driver;
 	}
-
+	
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
+	/**
+	 * This method close the associated driver instance.
+	 */
+	@Override
+	public void close() {
+		this.driver.close();
+	}
+	
 	@Override
 	public boolean add(Atom atom) {
 		boolean res = true;
