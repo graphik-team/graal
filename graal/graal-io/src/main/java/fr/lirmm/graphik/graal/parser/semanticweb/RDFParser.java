@@ -3,9 +3,12 @@
  */
 package fr.lirmm.graphik.graal.parser.semanticweb;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
+import java.net.URL;
 
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFHandlerException;
@@ -40,21 +43,23 @@ public final class RDFParser extends AbstractReader<Atom> {
 			this.set.write(atom);
 		}
 	};
-	
 
 	private static class Producer implements Runnable {
 
 		private Reader reader;
 		private ArrayBlockingStream<Atom> buffer;
+		private RDFFormat format;
 
-		Producer(Reader reader, ArrayBlockingStream<Atom> buffer) {
+		Producer(Reader reader, ArrayBlockingStream<Atom> buffer, RDFFormat format) {
 			this.reader = reader;
 			this.buffer = buffer;
+			this.format = format;
 		}
 
 		public void run() {
-			
-			org.openrdf.rio.RDFParser rdfParser = Rio.createParser(RDFFormat.RDFXML);
+
+			org.openrdf.rio.RDFParser rdfParser = Rio
+					.createParser(format);
 			rdfParser.setRDFHandler(new RDFListener(buffer));
 			try {
 				rdfParser.parse(this.reader, "");
@@ -66,6 +71,12 @@ public final class RDFParser extends AbstractReader<Atom> {
 				throw new ParseError("An error occured while parsing", e);
 			}
 			buffer.close();
+
+			try {
+				this.reader.close();
+			} catch (IOException e) {
+			}
+
 		}
 	}
 
@@ -73,13 +84,18 @@ public final class RDFParser extends AbstractReader<Atom> {
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 
-	public RDFParser(Reader reader) {
-		new Thread(new Producer(reader, buffer)).start();
-		
+	public RDFParser(Reader reader, RDFFormat format) {
+		new Thread(new Producer(reader, buffer, format)).start();
 	}
 
-	public RDFParser(String s) {
-		this(new StringReader(s));
+	public RDFParser(URL url, RDFFormat format) throws IOException {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(
+				url.openStream()));
+		new Thread(new Producer(reader, buffer, format)).start();
+	}
+
+	public RDFParser(String s, RDFFormat format) {
+		this(new StringReader(s), format);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
