@@ -1,0 +1,85 @@
+	<property name="lib-test"		value="${lib}:lib/junit-4.11.jar"/>
+
+	<property name="src" value="graal/graal-backward-chaining/src/main/java:graal/graal-core/src/main/java:graal/graal-forward-chaining/src/main/java:graal/graal-homomorphism/src/main/java:graal/graal-io/src/main/java:graal/graal-rules-analyser/src/main/java:graal/graal-store/src/main/java" />
+	<property name="src-test"       value="src/test/java"/>
+
+	<property name="target"         value="target"/>
+	<property name="target-build"   value="${target}/build"/>
+	<property name="target-test"    value="${target}/tests"/>
+	<property name="target-release" value="${target}/release"/>
+	<property name="target-doc"     value="${target}/release/doc"/>
+
+	<!-- end properties -->
+
+
+	<!-- prebuild step -->
+	<target name="pre">
+		<mkdir dir="${target-build}"/>
+		<mkdir dir="${target-release}"/>
+		<mkdir dir="${target-test}"/>
+	</target>
+
+	<!-- compile sources (.java) into classes (.class)  -->
+	<target name="compile"
+	        depends="pre">
+		<javac destdir="${target-build}"
+		       srcdir="${src}"
+			   classpath="${lib}"
+			   includeantruntime="false"/>
+	</target>
+
+	<!-- compile test source files -->
+	<target name="compile-test"
+	        depends="compile">
+		<javac destdir="${target-test}"
+		       srcdir="${src-test}"
+			   classpath="${lib-test}:${target-build}"
+			   includeantruntime="false"/>
+	</target>
+
+	<!-- execute tests -->
+	<target name="execute-test"
+	        depends="compile-test">
+	    <java classpath="${target-build}:${target-test}:${lib-test}" 
+	    	  classname="TestRunner"/>
+	</target>
+
+	<target name="test"
+	        depends="compile-test,execute-test">
+	</target>
+
+	<!-- compress classes into a jar file -->
+	<target name="jar"
+	        depends="compile">
+		<jar destfile="${target-release}/${name}.jar"
+		     basedir="${target-build}" />
+	</target>
+
+	<!-- make javadoc -->
+	<target name="doc"
+	        depends="compile">
+		<javadoc sourcepath="${src}"
+		         destdir="${target-doc}"
+				 access="private"
+				 use="true"
+				 doctitle="${doc-title}"
+				 header="${doc-header}"
+				 footer="${doc-footer}"
+				 bottom="${doc-bottom}"/>
+	</target>
+
+	<target name="release"
+	        depends="jar,test,doc">
+		<echo>${name} released!</echo>
+	</target>
+
+
+	<!-- clean outputs -->
+	<target name="clean">
+		<delete dir="${target-build}"/>
+		<delete dir="${target-release}"/>
+		<delete dir="${target-test}"/>
+	</target>
+
+</project>
+

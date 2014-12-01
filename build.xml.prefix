@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!-- build.xml -->
+
+
+<project name="graal"
+         basedir="."
+         default="jar">
+
+
+	<!-- properties -->
+
+	<property name="name"			value="graal"/>
+	<property name="doc-window"     value=""/>
+	<property name="doc-title"      value=""/>
+	<property name="doc-header"     value=""/>
+	<property name="doc-footer"     value=""/>
+	<property name="doc-bottom"     value=""/>
+
+
