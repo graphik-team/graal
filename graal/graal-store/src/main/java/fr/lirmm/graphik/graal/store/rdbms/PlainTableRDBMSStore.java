@@ -5,7 +5,6 @@ package fr.lirmm.graphik.graal.store.rdbms;
 
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -118,28 +117,15 @@ public class PlainTableRDBMSStore extends AbstractRdbmsStore {
 	@Override
 	protected Statement add(Statement statement, Atom atom)
 			throws StoreException {
-		Term term;
 		try {
 			this.checkPredicateTable(atom.getPredicate());
-			StringBuilder query = new StringBuilder(this.getDriver()
-					.getInsertOrIgnoreStatement());
-			query.append(this.getPredicateTableName(atom.getPredicate()));
-			query.append(" VALUES (");
-
-			Iterator<Term> terms = atom.getTerms().iterator();
-
-			term = terms.next();
-			query.append('\'').append(term).append('\'');
-			while (terms.hasNext()) {
-				term = terms.next();
-				query.append(", '").append(term).append('\'');
-			}
-			query.append(");");
+			String tableName = this.getPredicateTableName(atom.getPredicate());
+			String query = this.getDriver().getInsertOrIgnoreStatement(tableName, atom.getTerms());
 
 			if (logger.isDebugEnabled()) {
-				logger.debug(atom.toString() + " : " + query.toString());
+				logger.debug(atom.toString() + " : " + query);
 			}
-			statement.addBatch(query.toString());
+			statement.addBatch(query);
 		} catch (SQLException e) {
 			throw new StoreException(e.getMessage(), e);
 		}

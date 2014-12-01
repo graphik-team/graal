@@ -4,11 +4,11 @@
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
 		<artifactId>graal-main-project</artifactId>
-		<version>0.6.1-SNAPSHOT</version>
+		<version>0.6.2-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>graal-apps</artifactId>
-  <version>0.6.1-SNAPSHOT </version>
+  <version>0.6.2-SNAPSHOT </version>
 	<name>graal-apps</name>
 	<packaging>pom</packaging>
     
@@ -34,7 +34,7 @@
 	<modules>
 		<module>graal-apps-incubator</module>
 		<module>graal-cli</module>
-		<module>kiabo-graal</module>
+		<module>kiabora</module>
 		<module>pure-rewriter</module>
 	</modules>
 

@@ -6,6 +6,7 @@ package fr.lirmm.graphik.graal.backward_chaining;
 import java.util.Iterator;
 
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.util.Profilable;
 
 /**
@@ -19,5 +20,7 @@ public interface BackwardChainer extends Iterator<ConjunctiveQuery>, Profilable 
 
 	@Override
 	ConjunctiveQuery next();
+
+	UnionConjunctiveQueries getUCQs();
 
 }

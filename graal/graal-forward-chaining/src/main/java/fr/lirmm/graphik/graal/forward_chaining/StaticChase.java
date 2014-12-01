@@ -5,7 +5,7 @@ package fr.lirmm.graphik.graal.forward_chaining;
 
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
+import fr.lirmm.graphik.graal.grd.GraphOfRuleDependenciesWithUnifiers;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -18,9 +18,9 @@ public class StaticChase {
 		chase.execute();
 	}
 
-	public static void executeChase(AtomSet atomSet, GraphOfRuleDependencies grd)
+	public static void executeChase(AtomSet atomSet, GraphOfRuleDependenciesWithUnifiers grd)
 			throws ChaseException {
-		Chase chase = new ChaseWithGRD(grd, atomSet);
+		Chase chase = new ChaseWithGRDAndUnfiers(grd, atomSet);
 		chase.execute();
 	}
 
@@ -31,8 +31,8 @@ public class StaticChase {
 	}
 
 	public static void executeOneStepChase(AtomSet atomSet,
-			GraphOfRuleDependencies grd) throws ChaseException {
-		Chase chase = new ChaseWithGRD(grd, atomSet);
+			GraphOfRuleDependenciesWithUnifiers grd) throws ChaseException {
+		Chase chase = new ChaseWithGRDAndUnfiers(grd, atomSet);
 		chase.next();
 	}
 }

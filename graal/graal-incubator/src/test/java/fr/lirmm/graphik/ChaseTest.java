@@ -23,10 +23,10 @@ import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
 import fr.lirmm.graphik.graal.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
-import fr.lirmm.graphik.graal.forward_chaining.ChaseWithGRD;
+import fr.lirmm.graphik.graal.forward_chaining.ChaseWithGRDAndUnfiers;
 import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
 import fr.lirmm.graphik.graal.forward_chaining.StaticChase;
-import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
+import fr.lirmm.graphik.graal.grd.GraphOfRuleDependenciesWithUnifiers;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
@@ -83,7 +83,7 @@ public class ChaseTest {
 	
 	@Theory
 	public void restrictedChaseTestWithGrd(AtomSet atomSet) throws IOException, ChaseException, ParseException {
-		GraphOfRuleDependencies grd = GRDParser.getInstance().parse(new File("./src/test/resources/test1.grd"));
+		GraphOfRuleDependenciesWithUnifiers grd = GRDParser.getInstance().parse(new File("./src/test/resources/test1.grd"));
 		DlgpParser parser = new DlgpParser(new File("./src/test/resources/test1.dlp"));
 
 		for(Object o : parser) {
@@ -94,7 +94,7 @@ public class ChaseTest {
 		
 		System.out.println("#########################");
 		System.out.println(grd.toString());
-		Chase chase = new ChaseWithGRD(grd, atomSet);
+		Chase chase = new ChaseWithGRDAndUnfiers(grd, atomSet);
 		chase.execute();
 		
 		int size = 0;

@@ -17,5 +17,5 @@ public interface RdbmsDriver {
 	Connection getConnection();
 	Statement createStatement() throws StoreException;
 	
-	String getInsertOrIgnoreStatement();
+	String getInsertOrIgnoreStatement(String tableName, Iterable<?> values);
 }

@@ -37,7 +37,7 @@ import fr.lirmm.graphik.graal.rulesetanalyser.util.PredicatePosition;
  * @param <V>
  * 
  */
-public class GraphPositionDependencies<E, V> {
+public class GraphPositionDependencies {
 
 	private static class SpecialEdge extends DefaultEdge {
 		private static final long serialVersionUID = 3660050932528046714L;

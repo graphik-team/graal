@@ -16,14 +16,6 @@ import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
  */
 public class QREAggregAllRulesBasic extends QREAggregSingleRule {
 
-	public QREAggregAllRulesBasic(PureQuery query) {
-		super(query);
-	}
-
-	public QREAggregAllRulesBasic(PureQuery query, Iterable<Rule> rules) {
-		super(query, rules);
-	}
-
 	public QREAggregAllRulesBasic(PureQuery query, Iterable<Rule> rules,
 			RulesCompilation order) {
 		super(query, rules, order);

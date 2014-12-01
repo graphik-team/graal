@@ -12,6 +12,7 @@ import fr.lirmm.graphik.graal.backward_chaining.pure.rules.IDCompilation;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.util.Verbosable;
 
@@ -24,6 +25,7 @@ public class PureRewriter extends AbstractBackwardChainer implements Verbosable 
 	PureQuery pquery;
 	LinkedListRuleSet ruleset;
 	RulesCompilation compilation;
+	UnionConjunctiveQueries ucqs = null;
 	Iterator<ConjunctiveQuery> rewrites = null;
 	private boolean verbose;
 
@@ -52,7 +54,7 @@ public class PureRewriter extends AbstractBackwardChainer implements Verbosable 
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
-	// ITERATOR METHODS
+	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
@@ -71,15 +73,17 @@ public class PureRewriter extends AbstractBackwardChainer implements Verbosable 
 		return this.rewrites.next();
 	}
 
-	public static RulesCompilation compile(Iterable<Rule> ruleset) {
-		// if(this.getTimer() != null) {
-		// this.getTimer().start("preprocessing time");
-		// }
-		return new IDCompilation(ruleset);
-		// if(this.getTimer() != null) {
-		// this.getTimer().stop("preprocessing time");
-		// }
+	@Override
+	public UnionConjunctiveQueries getUCQs() {
+		if (this.ucqs == null) {
+			this.compute();
+		}
+		return this.ucqs;
 	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// STATIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
 	public static RulesCompilation loadCompilation(Iterable<Rule> ruleset,
 			Iterable<Rule> saturation) {
@@ -94,8 +98,10 @@ public class PureRewriter extends AbstractBackwardChainer implements Verbosable 
 	private void compute() {
 
 		// preprocessing
-		if (this.compilation == null)
-			this.compilation = compile(this.ruleset);
+		if (this.compilation == null) {
+			this.compilation = new IDCompilation(ruleset);
+			this.compilation.compile();
+		}
 
 		// rewriting
 		QueryRewritingEngine qre = new QREAggregSingleRule(pquery, ruleset,
@@ -108,7 +114,11 @@ public class PureRewriter extends AbstractBackwardChainer implements Verbosable 
 		if (this.getProfiler() != null) {
 			this.getProfiler().start("unfolding time");
 		}
-		this.rewrites = this.compilation.unfold(queries).iterator();
+
+		this.ucqs = new UnionConjunctiveQueries(
+				this.compilation.unfold(queries));
+		this.rewrites = this.ucqs.iterator();
+
 		if (this.getProfiler() != null) {
 			this.getProfiler().stop("unfolding time");
 		}

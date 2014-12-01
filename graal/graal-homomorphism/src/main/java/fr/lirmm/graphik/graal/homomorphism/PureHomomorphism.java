@@ -36,7 +36,7 @@ public class PureHomomorphism implements
 
 	private static PureHomomorphism instance;
 
-	private PureHomomorphism() {
+	protected PureHomomorphism() {
 	}
 
 	public static synchronized PureHomomorphism getInstance() {
@@ -88,7 +88,7 @@ public class PureHomomorphism implements
 	/**
 	 * Initialise attribute for homomorphism
 	 */
-	private static boolean initialiseHomomorphism(Homomorphism homomorphism,
+	protected boolean initialiseHomomorphism(Homomorphism homomorphism,
 			Iterable<Atom> source, Iterable<Atom> target) {
 		homomorphism.sourceAtoms = new ArrayList<Atom>();
 		homomorphism.firstOccurence = computeFirstOccurence(source,
@@ -104,7 +104,7 @@ public class PureHomomorphism implements
 		return initialiseAvailableImage(homomorphism, target);
 	}
 
-	private static boolean backtrack(Homomorphism homomorphism) {
+	protected static boolean backtrack(Homomorphism homomorphism) {
 		int level = 0;
 		boolean foundImage;
 		boolean hasNextImage;
@@ -131,7 +131,7 @@ public class PureHomomorphism implements
 	 * 
 	 * @param sourceAtoms2
 	 */
-	private static ArrayList<LinkedList<Term>> computeFirstOccurence(
+	protected static ArrayList<LinkedList<Term>> computeFirstOccurence(
 			Iterable<Atom> source, ArrayList<Atom> sourceAtoms) {
 		ArrayList<LinkedList<Term>> firstOccurenceArray = new ArrayList<LinkedList<Term>>();
 		Set<Term> alreadySeen = new TreeSet<Term>();
@@ -156,7 +156,7 @@ public class PureHomomorphism implements
 	/**
 	 * return the current image of the given atom
 	 */
-	private static Atom getImage(int level, Homomorphism homomorphism) {
+	protected static Atom getImage(int level, Homomorphism homomorphism) {
 		Integer numCurrentImage = homomorphism.currentImages.get(level);
 		LinkedList<Atom> images = homomorphism.availableImage.get(level);
 		return images.get(numCurrentImage);
@@ -166,7 +166,7 @@ public class PureHomomorphism implements
 	 * Return true if the current image of the given atom is possible and
 	 * compute the current substitution else return false
 	 */
-	private static boolean checkCurrentImage(int level,
+	protected static boolean checkCurrentImage(int level,
 			Homomorphism homomorphism) {
 		Atom atom = homomorphism.sourceAtoms.get(level);
 		Atom image = getImage(level, homomorphism);
@@ -198,7 +198,7 @@ public class PureHomomorphism implements
 	 * currentImage for the given atom and return true if has not : reset
 	 * current image for the given atom and return false
 	 */
-	private static boolean chooseNextImage(int level, Homomorphism homomorphism) {
+	protected static boolean chooseNextImage(int level, Homomorphism homomorphism) {
 		Integer numCurrentImage = homomorphism.currentImages.get(level);
 		if (numCurrentImage != null) {
 			resetSubstitution(level, homomorphism);
@@ -222,7 +222,7 @@ public class PureHomomorphism implements
 	 * 
 	 * @param atom
 	 */
-	private static void resetSubstitution(int level, Homomorphism homomorphism) {
+	protected static void resetSubstitution(int level, Homomorphism homomorphism) {
 		for (Term t : homomorphism.firstOccurence.get(level)) {
 			homomorphism.currentSubstitution.put(t, null);
 		}
@@ -232,13 +232,13 @@ public class PureHomomorphism implements
 	 * Found the possible image of each atom in the source fact into the atoms
 	 * of the target fact
 	 */
-	private static boolean initialiseAvailableImage(Homomorphism homomorphism,
+	protected boolean initialiseAvailableImage(Homomorphism homomorphism,
 			Iterable<Atom> target) {
 		LinkedList<Atom> images;
 		for (int i = 0; i < homomorphism.sourceAtoms.size(); ++i) {
 			images = new LinkedList<Atom>();
 			for (Atom im : target) {
-				if (isMappable(homomorphism.sourceAtoms.get(i), im)) {
+				if (isMappable(homomorphism.sourceAtoms.get(i), im, homomorphism)) {
 					images.add(im);
 				}
 			}
@@ -249,7 +249,7 @@ public class PureHomomorphism implements
 		return true;
 	}
 
-	private static boolean isMappable(Atom a, Atom im) {
+	protected boolean isMappable(Atom a, Atom im, Homomorphism homomorphism) {
 		return a.getPredicate().equals(im.getPredicate());
 	}
 
@@ -257,7 +257,7 @@ public class PureHomomorphism implements
 	// PRIVATE CLASS
 	// /////////////////////////////////////////////////////////////////////////
 
-	private static class Homomorphism {
+	protected static class Homomorphism {
 
 		// attribute for homomorphism computation
 		ArrayList<Atom> sourceAtoms;
