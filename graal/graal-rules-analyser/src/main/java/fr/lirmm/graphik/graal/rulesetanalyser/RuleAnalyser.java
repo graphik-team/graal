@@ -141,7 +141,7 @@ public class RuleAnalyser {
 	// /////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * @return true if the rule set is decidable, false otherwise.
+	 * @return return true if a proof of decidability was found, false otherwise.
 	 */
 	public boolean isDecidable() {
 		if (scc == null) {
