@@ -21,35 +21,6 @@ import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
  */
 public class OWLParser /* extends Iterator<Atom> */{
 
-	public static void main(String args[]) throws OWLOntologyCreationException, IOException {
-		
-		DlgpWriter writer = new DlgpWriter(System.out);
-		
-		OWLOntologyManager man = OWLManager.createOWLOntologyManager();
-		/*OWLOntology onto = man.loadOntologyFromOntologyDocument(new File(
-				"/home/clement/graphik/ontologies/V/V.owl"));*/
-		OWLOntology onto = man.loadOntologyFromOntologyDocument(new File(
-				"./src/test/resources/V.owl"));
-		
-
-		OWL2ELProfile visitor = new OWL2ELProfile();
-		
-
-		for (OWLAxiom a : onto.getAxioms()) {
-			Iterable iterable = a.accept(visitor);
-			if(iterable != null) {
-				for(Object o : iterable) {
-					 writer.write(o);
-				}
-			}
-		}
-		
-		/*OWLOntologyWalker walker = new OWLOntologyWalker(
-				Collections.singleton(onto));
-
-		walker.walkStructure(visitor);*/
-
-	}
 
 
 	

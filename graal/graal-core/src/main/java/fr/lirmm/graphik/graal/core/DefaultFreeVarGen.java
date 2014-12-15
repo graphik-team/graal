@@ -3,6 +3,19 @@ package fr.lirmm.graphik.graal.core;
 
 public class DefaultFreeVarGen implements SymbolGenerator {
 
+	private static DefaultFreeVarGen instance = null;
+	
+	public static Term genFreeVar() {
+		if(instance == null) {
+			instance = new DefaultFreeVarGen("X" + DefaultFreeVarGen.class.hashCode() + "_");
+		}
+		return instance.getFreeVar();
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// 
+	// /////////////////////////////////////////////////////////////////////////
+	
 	private String prefix;
 	private int index;
 

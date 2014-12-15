@@ -8,14 +8,13 @@
 	</parent>
 	
 	<artifactId>graal-examples</artifactId>
-  <version>0.6.2-SNAPSHOT </version>
 	<packaging>jar</packaging>
 	<name>graal-examples</name>
 
 	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jdk.version>1.6</jdk.version>
+		<jdk.version>1.7</jdk.version>
 	</properties>
 
 	<inceptionYear>2014</inceptionYear>
