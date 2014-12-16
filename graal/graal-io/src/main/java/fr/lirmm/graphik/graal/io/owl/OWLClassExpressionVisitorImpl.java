@@ -29,30 +29,182 @@ import org.semanticweb.owlapi.model.OWLObjectUnionOf;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
-import fr.lirmm.graphik.graal.core.DefaultFreeVarGen;
 import fr.lirmm.graphik.graal.core.Predicate;
+import fr.lirmm.graphik.graal.core.SymbolGenerator;
 import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.logic.Literal;
+import fr.lirmm.graphik.graal.logic.LogicalFormula;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */
 public class OWLClassExpressionVisitorImpl implements
-		OWLClassExpressionVisitorEx<AtomSet> {
+		OWLClassExpressionVisitorEx<LogicalFormula> {
 
 	private Term glueVariable;
+	private SymbolGenerator varGen;
 
-	/**
-		 * 
-		 */
-	public OWLClassExpressionVisitorImpl(Term glueVariable) {
+	public OWLClassExpressionVisitorImpl(SymbolGenerator varGen, Term glueVariable) {
 		this.glueVariable = glueVariable;
+		this.varGen = varGen;
 	}
 
-	private AtomSet createAtomSet() {
-		return new LinkedListAtomSet();
+
+
+	// /////////////////////////////////////////////////////////////////////////
+	//
+	// /////////////////////////////////////////////////////////////////////////
+
+	@Override
+	public LogicalFormula visit(OWLClass arg0) {
+		Predicate p = this.createPredicate(arg0);
+		Atom a = this.createAtom(p, glueVariable);
+		return this.createLogicalFormula(a);
+	}
+
+	@Override
+	public LogicalFormula visit(OWLObjectIntersectionOf arg) {
+		LogicalFormula f = this.createLogicalFormula();
+		for (OWLClassExpression c : arg.getOperands()) {
+			try {
+				f.and(c.accept(this));
+			} catch (Exception e) {
+			}
+		}
+
+		return f;
+	}
+
+	@Override
+	public LogicalFormula visit(OWLObjectUnionOf arg) {
+		LogicalFormula f = this.createLogicalFormula();
+
+		for (OWLClassExpression c : arg.getOperands()) {
+			try {
+				f.or(c.accept(this));
+			} catch (Exception e) {
+			}
+		}
+
+		return f;
+	}
+
+	@Override
+	public LogicalFormula visit(OWLObjectComplementOf arg) {
+		LogicalFormula f = arg.getOperand().accept(this);
+		f.not();
+
+		return f;
+	}
+
+	@Override
+	public LogicalFormula visit(OWLObjectSomeValuesFrom arg) {
+		Term newGlueVariable = varGen.getFreeVar();
+		Predicate predicate = this.createPredicate(arg.getProperty());
+		Atom a = this.createAtom(predicate, glueVariable, newGlueVariable);
+
+		LogicalFormula f = arg.getFiller().accept(
+				new OWLClassExpressionVisitorImpl(varGen, newGlueVariable));
+		f.and(this.createLogicalFormula(a));
+		return f;
+
+	}
+
+	@Override
+	public LogicalFormula visit(OWLObjectAllValuesFrom arg0) {
+		// TODO implement this method
+		throw new Error("This method isn't implemented");
+	}
+
+	@Override
+	public LogicalFormula visit(OWLObjectHasValue arg) {
+		Predicate property = createPredicate(arg.getProperty());
+		Atom a = createAtom(property, glueVariable, createTerm(arg.getFiller()));
+		return this.createLogicalFormula(a);
+	}
+
+	@Override
+	public LogicalFormula visit(OWLObjectMinCardinality arg0) {
+		// TODO implement this method
+		throw new Error("This method isn't implemented");
+	}
+
+	@Override
+	public LogicalFormula visit(OWLObjectExactCardinality arg0) {
+		// TODO implement this method
+		throw new Error("This method isn't implemented");
+	}
+
+	@Override
+	public LogicalFormula visit(OWLObjectMaxCardinality arg0) {
+		// TODO implement this method
+		throw new Error("This method isn't implemented");
+	}
+
+	@Override
+	public LogicalFormula visit(OWLObjectHasSelf arg) {
+		Predicate property = createPredicate(arg.getProperty());
+		Atom a = createAtom(property, glueVariable, glueVariable);
+		return this.createLogicalFormula(a);
+	}
+
+	@Override
+	public LogicalFormula visit(OWLObjectOneOf arg) {
+		LogicalFormula atomset = this.createLogicalFormula();
+		for (OWLIndividual i : arg.getIndividuals()) {
+			// atomset.add(atom)
+		}
+		return atomset;
+	}
+
+	@Override
+	public LogicalFormula visit(OWLDataSomeValuesFrom arg0) {
+		// TODO implement this method
+		throw new Error("This method isn't implemented");
+	}
+
+	@Override
+	public LogicalFormula visit(OWLDataAllValuesFrom arg0) {
+		// TODO implement this method
+		throw new Error("This method isn't implemented");
+	}
+
+	@Override
+	public LogicalFormula visit(OWLDataHasValue arg) {
+		Predicate property = createPredicate(arg.getProperty());
+		Atom a = createAtom(property, glueVariable, new Term(arg.getFiller().toString(), Term.Type.LITERAL));
+		return this.createLogicalFormula(a);
+	}
+
+	@Override
+	public LogicalFormula visit(OWLDataMinCardinality arg0) {
+		// TODO implement this method
+		throw new Error("This method isn't implemented");
+	}
+
+	@Override
+	public LogicalFormula visit(OWLDataExactCardinality arg0) {
+		// TODO implement this method
+		throw new Error("This method isn't implemented");
+	}
+
+	@Override
+	public LogicalFormula visit(OWLDataMaxCardinality arg0) {
+		// TODO implement this method
+		throw new Error("This method isn't implemented");
+	}
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// 
+	// /////////////////////////////////////////////////////////////////////////
+	
+	private LogicalFormula createLogicalFormula() {
+		return new LogicalFormula();
+	}
+	
+	private LogicalFormula createLogicalFormula(Atom a) {
+		return new LogicalFormula(new Literal(a, true));
 	}
 
 	/**
@@ -112,142 +264,6 @@ public class OWLClassExpressionVisitorImpl implements
 	 */
 	private Term createTerm(OWLIndividual value) {
 		return new Term(value.toString(), Term.Type.CONSTANT);
-	}
-
-	// /////////////////////////////////////////////////////////////////////////
-	//
-	// /////////////////////////////////////////////////////////////////////////
-
-	@Override
-	public AtomSet visit(OWLClass arg0) {
-		AtomSet atomset = this.createAtomSet();
-		Predicate p = this.createPredicate(arg0);
-		atomset.add(this.createAtom(p, glueVariable));
-		return atomset;
-	}
-
-	@Override
-	public AtomSet visit(OWLObjectIntersectionOf arg0) {
-		AtomSet atomset = this.createAtomSet();
-		for (OWLClassExpression c : arg0.getOperands()) {
-			try {
-				atomset.addAll(c.accept(this));
-			} catch (Exception e) {
-			}
-		}
-		return atomset;
-	}
-
-	@Override
-	public AtomSet visit(OWLObjectUnionOf arg0) {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
-	}
-
-	@Override
-	public AtomSet visit(OWLObjectComplementOf arg0) {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
-	}
-
-	@Override
-	public AtomSet visit(OWLObjectSomeValuesFrom arg) {
-		Term newGlueVariable = DefaultFreeVarGen.genFreeVar();
-		Predicate predicate = this.createPredicate(arg.getProperty());
-		Atom a = this.createAtom(predicate, glueVariable, newGlueVariable);
-
-		AtomSet atomset = arg.getFiller().accept(
-				new OWLClassExpressionVisitorImpl(newGlueVariable));
-		atomset.add(a);
-		return atomset;
-
-	}
-
-	@Override
-	public AtomSet visit(OWLObjectAllValuesFrom arg0) {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
-	}
-
-	@Override
-	public AtomSet visit(OWLObjectHasValue arg) {
-		AtomSet atomset = createAtomSet();
-		Predicate property = createPredicate(arg.getProperty());
-		atomset.add(createAtom(property, glueVariable, createTerm(arg.getValue())));
-		return atomset;
-	}
-
-	@Override
-	public AtomSet visit(OWLObjectMinCardinality arg0) {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
-	}
-
-	@Override
-	public AtomSet visit(OWLObjectExactCardinality arg0) {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
-	}
-
-	@Override
-	public AtomSet visit(OWLObjectMaxCardinality arg0) {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
-	}
-
-	@Override
-	public AtomSet visit(OWLObjectHasSelf arg) {
-		AtomSet atomset = createAtomSet();
-		Predicate property = createPredicate(arg.getProperty());
-		atomset.add(createAtom(property, glueVariable, glueVariable));
-		return atomset;
-	}
-
-	@Override
-	public AtomSet visit(OWLObjectOneOf arg) {
-		AtomSet atomset = this.createAtomSet();
-		for (OWLIndividual i : arg.getIndividuals()) {
-			// atomset.add(atom)
-		}
-		return atomset;
-	}
-
-	@Override
-	public AtomSet visit(OWLDataSomeValuesFrom arg0) {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
-	}
-
-	@Override
-	public AtomSet visit(OWLDataAllValuesFrom arg0) {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
-	}
-
-	@Override
-	public AtomSet visit(OWLDataHasValue arg) {
-		AtomSet atomset = createAtomSet();
-		Predicate property = createPredicate(arg.getProperty());
-		atomset.add(createAtom(property, glueVariable, new Term(arg.getValue().toString(), Term.Type.LITERAL)));
-		return atomset;
-	}
-
-	@Override
-	public AtomSet visit(OWLDataMinCardinality arg0) {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
-	}
-
-	@Override
-	public AtomSet visit(OWLDataExactCardinality arg0) {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
-	}
-
-	@Override
-	public AtomSet visit(OWLDataMaxCardinality arg0) {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
 	}
 
 }

@@ -3,6 +3,7 @@
  */
 package fr.lirmm.graphik.graal.io.owl;
 
+import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLObjectInverseOf;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
@@ -17,7 +18,7 @@ import fr.lirmm.graphik.graal.logic.Literal;
 import fr.lirmm.graphik.graal.logic.LogicalFormula;
 
 /**
- * @author clement
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
 public class OWLPropertyExpressionVisitorImpl implements
@@ -25,14 +26,20 @@ public class OWLPropertyExpressionVisitorImpl implements
 
 	private Term glueVariable1, glueVariable2;
 
-	public OWLPropertyExpressionVisitorImpl(Term glueVariable1, Term glueVariable2) {
-		this.glueVariable1 = glueVariable1;
-		this.glueVariable2 = glueVariable2;
+	public OWLPropertyExpressionVisitorImpl(Term glueVarX, Term glueVarY) {
+		this.glueVariable1 = glueVarX;
+		this.glueVariable2 = glueVarY;
 	}
-	
+
 	// /////////////////////////////////////////////////////////////////////////
-	// 
+	//
 	// /////////////////////////////////////////////////////////////////////////
+
+	@Override
+	public LogicalFormula visit(OWLAnnotationProperty arg0) {
+		// TODO implement this method
+		throw new Error("This method isn't implemented");
+	}
 	
 	@Override
 	public LogicalFormula visit(OWLObjectProperty property) {
@@ -53,9 +60,9 @@ public class OWLPropertyExpressionVisitorImpl implements
 		// TODO implement this method
 		throw new Error("This method isn't implemented");
 	}
-	
+
 	// /////////////////////////////////////////////////////////////////////////
-	// 
+	//
 	// /////////////////////////////////////////////////////////////////////////
 
 	/**
@@ -72,12 +79,13 @@ public class OWLPropertyExpressionVisitorImpl implements
 		}
 		return predicate;
 	}
-	
+
 	private Atom createAtom(Predicate p, Term... terms) {
 		return new DefaultAtom(p, terms);
 	}
-	
+
 	private LogicalFormula createLogicalFormula(Atom a) {
 		return new LogicalFormula(new Literal(a, true));
 	}
+
 }

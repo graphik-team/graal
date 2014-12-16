@@ -31,13 +31,17 @@ public class OWLParser {
 	
 	 public static void main(String args[]) throws OWLOntologyCreationException, IOException {
 		
-		DlgpWriter writer = new DlgpWriter(new File("/tmp/galen8_test_clement.dlp"));
+		DlgpWriter writer = new DlgpWriter(System.out);
+		
+		File f;
+		f = new File("../graal/graal-io/src/test/resources/test.owl");
+		//f = new File("/home/clement/graphik/ontologies/U/U.owl");
+		
+		//test(f);
 		
 		OWLOntologyManager man = OWLManager.createOWLOntologyManager();
 		OWLOntology onto;
-		onto = man.loadOntologyFromOntologyDocument(new File("/tmp/OpenGALEN8_MedicalExtensions_HumanAnatomy.owl"));
-		//onto = man.loadOntologyFromOntologyDocument(new File(
-		//		"./src/test/resources/test.owl"));
+		onto = man.loadOntologyFromOntologyDocument(f);
 		
 
 		OWLAxiomParser visitor = OWLAxiomParser.getInstance();
@@ -60,11 +64,10 @@ public class OWLParser {
 	}
 
 	
-	/*public static void main(String[] args) throws FileNotFoundException {
-		File f = new File("/tmp/OpenGALEN8_MedicalExtensions_HumanAnatomy.owl");
+	public static void test(File f) throws FileNotFoundException {
 		
 		for(Object r : new RDFParser(new FileReader(f), RDFFormat.RDFXML)) {
 			System.out.println(r);
 		}
-	}*/
+	}
 }

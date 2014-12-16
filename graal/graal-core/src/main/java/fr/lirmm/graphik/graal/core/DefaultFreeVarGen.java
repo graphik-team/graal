@@ -7,7 +7,7 @@ public class DefaultFreeVarGen implements SymbolGenerator {
 	
 	public static Term genFreeVar() {
 		if(instance == null) {
-			instance = new DefaultFreeVarGen("X" + DefaultFreeVarGen.class.hashCode() + "_");
+			instance = new DefaultFreeVarGen("Y");
 		}
 		return instance.getFreeVar();
 	}
