@@ -11,7 +11,6 @@ import org.semanticweb.owlapi.model.OWLDataExactCardinality;
 import org.semanticweb.owlapi.model.OWLDataHasValue;
 import org.semanticweb.owlapi.model.OWLDataMaxCardinality;
 import org.semanticweb.owlapi.model.OWLDataMinCardinality;
-import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
 import org.semanticweb.owlapi.model.OWLDataSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLObjectAllValuesFrom;
@@ -23,9 +22,9 @@ import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
 import org.semanticweb.owlapi.model.OWLObjectMaxCardinality;
 import org.semanticweb.owlapi.model.OWLObjectMinCardinality;
 import org.semanticweb.owlapi.model.OWLObjectOneOf;
-import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLObjectUnionOf;
+import org.semanticweb.owlapi.util.DefaultPrefixManager;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
@@ -44,8 +43,10 @@ public class OWLClassExpressionVisitorImpl implements
 
 	private Term glueVariable;
 	private SymbolGenerator varGen;
+	private DefaultPrefixManager prefixManager;
 
-	public OWLClassExpressionVisitorImpl(SymbolGenerator varGen, Term glueVariable) {
+	public OWLClassExpressionVisitorImpl(DefaultPrefixManager prefixManager, SymbolGenerator varGen, Term glueVariable) {
+		this.prefixManager = prefixManager;
 		this.glueVariable = glueVariable;
 		this.varGen = varGen;
 	}
@@ -57,8 +58,8 @@ public class OWLClassExpressionVisitorImpl implements
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public LogicalFormula visit(OWLClass arg0) {
-		Predicate p = this.createPredicate(arg0);
+	public LogicalFormula visit(OWLClass arg) {
+		Predicate p = this.createPredicate(arg);
 		Atom a = this.createAtom(p, glueVariable);
 		return this.createLogicalFormula(a);
 	}
@@ -103,10 +104,10 @@ public class OWLClassExpressionVisitorImpl implements
 		Term newGlueVariable = varGen.getFreeVar();
 		
 		LogicalFormula f = arg.getProperty().accept(new OWLPropertyExpressionVisitorImpl(
-				glueVariable, newGlueVariable));
+				this.prefixManager, glueVariable, newGlueVariable));
 		
 		f.and(arg.getFiller().accept(
-				new OWLClassExpressionVisitorImpl(varGen, newGlueVariable)));
+				new OWLClassExpressionVisitorImpl(this.prefixManager, varGen, newGlueVariable)));
 		return f;
 
 	}
@@ -120,7 +121,7 @@ public class OWLClassExpressionVisitorImpl implements
 	@Override
 	public LogicalFormula visit(OWLObjectHasValue arg) {
 		LogicalFormula f = arg.getProperty().accept(new OWLPropertyExpressionVisitorImpl(
-				glueVariable, createTerm(arg.getFiller())));
+				this.prefixManager, glueVariable, createTerm(arg.getFiller())));
 		return f;
 	}
 
@@ -145,7 +146,7 @@ public class OWLClassExpressionVisitorImpl implements
 	@Override
 	public LogicalFormula visit(OWLObjectHasSelf arg) {
 		LogicalFormula f = arg.getProperty().accept(new OWLPropertyExpressionVisitorImpl(
-				glueVariable, glueVariable));
+				this.prefixManager, glueVariable, glueVariable));
 		return f;
 	}
 
@@ -173,7 +174,7 @@ public class OWLClassExpressionVisitorImpl implements
 	@Override
 	public LogicalFormula visit(OWLDataHasValue arg) {
 		LogicalFormula f = arg.getProperty().accept(new OWLPropertyExpressionVisitorImpl(
-				glueVariable, new Term(arg.getFiller().toString(), Term.Type.LITERAL)));
+				this.prefixManager, glueVariable, new Term(arg.getFiller().toString(), Term.Type.LITERAL)));
 		return f;
 	}
 
@@ -216,7 +217,7 @@ public class OWLClassExpressionVisitorImpl implements
 		Predicate predicate = null;
 		if (!owlClass.isAnonymous()) {
 			predicate = new Predicate(
-					owlClass.asOWLClass().getIRI().toString(), 1);
+					this.prefixManager.getShortForm(owlClass.asOWLClass().getIRI()), 1);
 		} else {
 			System.out.println("###" + owlClass);
 			// this.tmpManageOWLClass(owlClass);

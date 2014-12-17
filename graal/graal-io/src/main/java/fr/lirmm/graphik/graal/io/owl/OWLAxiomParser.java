@@ -53,6 +53,7 @@ import org.semanticweb.owlapi.model.OWLSubPropertyChainOfAxiom;
 import org.semanticweb.owlapi.model.OWLSymmetricObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLTransitiveObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.SWRLRule;
+import org.semanticweb.owlapi.util.DefaultPrefixManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,41 +80,45 @@ public class OWLAxiomParser implements
 
 	private static SpecificFreeVarGen freeVarGen = new SpecificFreeVarGen();
 
-	private Term glueVarX = freeVarGen.getFreeVar();
-	private Term glueVarY = freeVarGen.getFreeVar();
-	private Term glueVarZ = freeVarGen.getFreeVar();
+	private Term glueVarX;
+	private Term glueVarY;
+	private Term glueVarZ;
 
-	private Predicate equalityPredicate = new Predicate("=", 2);
-	private OWLClassExpressionVisitorImpl classVisitorX = new OWLClassExpressionVisitorImpl(
-			freeVarGen, glueVarX);
-	private OWLClassExpressionVisitorImpl classVisitorY = new OWLClassExpressionVisitorImpl(
-			freeVarGen, glueVarY);
-	private OWLPropertyExpressionVisitorImpl propertyVisiotrXX = new OWLPropertyExpressionVisitorImpl(
-			glueVarX, glueVarX);
-	private OWLPropertyExpressionVisitorImpl propertyVisitorXY = new OWLPropertyExpressionVisitorImpl(
-			glueVarX, glueVarY);
-	private OWLPropertyExpressionVisitorImpl propertyVisitorYX = new OWLPropertyExpressionVisitorImpl(
-			glueVarY, glueVarX);
-	private OWLPropertyExpressionVisitorImpl propertyVisitorXZ = new OWLPropertyExpressionVisitorImpl(
-			glueVarX, glueVarZ);
-	private OWLPropertyExpressionVisitorImpl propertyVisitorYZ = new OWLPropertyExpressionVisitorImpl(
-			glueVarY, glueVarZ);
+	private DefaultPrefixManager prefixManager;
+	private Predicate equalityPredicate;
+	private OWLClassExpressionVisitorImpl classVisitorX;
+	private OWLClassExpressionVisitorImpl classVisitorY;
+	private OWLPropertyExpressionVisitorImpl propertyVisiotrXX;
+	private OWLPropertyExpressionVisitorImpl propertyVisitorXY;
+	private OWLPropertyExpressionVisitorImpl propertyVisitorYX;
+	private OWLPropertyExpressionVisitorImpl propertyVisitorXZ;
+	private OWLPropertyExpressionVisitorImpl propertyVisitorYZ;
 
-	// /////////////////////////////////////////////////////////////////////////
-	// SINGLETON
-	// /////////////////////////////////////////////////////////////////////////
+	
 
-	private static OWLAxiomParser instance;
+	public OWLAxiomParser(DefaultPrefixManager prefixManager) {
+		this.prefixManager = prefixManager;
+		this.glueVarX = freeVarGen.getFreeVar();
+		this.glueVarY = freeVarGen.getFreeVar();
+		this.glueVarZ = freeVarGen.getFreeVar();
 
-	private OWLAxiomParser() {
+		this.equalityPredicate = new Predicate("=", 2);
+		this.classVisitorX = new OWLClassExpressionVisitorImpl(
+				this.prefixManager, freeVarGen, glueVarX);
+		this.classVisitorY = new OWLClassExpressionVisitorImpl(
+				this.prefixManager, freeVarGen, glueVarY);
+		this.propertyVisiotrXX = new OWLPropertyExpressionVisitorImpl(
+				this.prefixManager, glueVarX, glueVarX);
+		this.propertyVisitorXY = new OWLPropertyExpressionVisitorImpl(
+				this.prefixManager, glueVarX, glueVarY);
+		this.propertyVisitorYX = new OWLPropertyExpressionVisitorImpl(
+				this.prefixManager, glueVarY, glueVarX);
+		this.propertyVisitorXZ = new OWLPropertyExpressionVisitorImpl(
+				this.prefixManager, glueVarX, glueVarZ);
+		this.propertyVisitorYZ = new OWLPropertyExpressionVisitorImpl(
+				this.prefixManager, glueVarY, glueVarZ);
 	}
 
-	public static synchronized OWLAxiomParser getInstance() {
-		if (instance == null)
-			instance = new OWLAxiomParser();
-
-		return instance;
-	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// Declaration
@@ -523,7 +528,7 @@ public class OWLAxiomParser implements
 		freeVarGen.setIndex(0);
 		Term i = new Term(arg.getIndividual().toString(), Type.CONSTANT);
 		return arg.getClassExpression().accept(
-				new OWLClassExpressionVisitorImpl(freeVarGen, i));
+				new OWLClassExpressionVisitorImpl(this.prefixManager, freeVarGen, i));
 	}
 
 	@Override

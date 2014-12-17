@@ -10,6 +10,7 @@ import org.semanticweb.owlapi.model.OWLObjectInverseOf;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLPropertyExpressionVisitorEx;
+import org.semanticweb.owlapi.util.DefaultPrefixManager;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
@@ -26,8 +27,10 @@ public class OWLPropertyExpressionVisitorImpl implements
 		OWLPropertyExpressionVisitorEx<LogicalFormula> {
 
 	private Term glueVariable1, glueVariable2;
+	private DefaultPrefixManager prefixManager;
 
-	public OWLPropertyExpressionVisitorImpl(Term glueVarX, Term glueVarY) {
+	public OWLPropertyExpressionVisitorImpl(DefaultPrefixManager prefixManager, Term glueVarX, Term glueVarY) {
+		this.prefixManager = prefixManager;
 		this.glueVariable1 = glueVarX;
 		this.glueVariable2 = glueVarY;
 	}
@@ -74,8 +77,8 @@ public class OWLPropertyExpressionVisitorImpl implements
 	private Predicate createPredicate(OWLObjectPropertyExpression property) {
 		Predicate predicate = null;
 		if (!property.isAnonymous()) {
-			predicate = new Predicate(property.asOWLObjectProperty().getIRI()
-					.toString(), 2);
+			String name = this.prefixManager.getShortForm(property.asOWLObjectProperty().getIRI());
+			predicate = new Predicate(name , 2);
 		} else {
 			throw new Error("not yet implemented");
 		}
@@ -85,8 +88,8 @@ public class OWLPropertyExpressionVisitorImpl implements
 	private Predicate createPredicate(OWLDataPropertyExpression property) {
 		Predicate predicate = null;
 		if (!property.isAnonymous()) {
-			predicate = new Predicate(property.asOWLDataProperty().getIRI()
-					.toString(), 2);
+			String name = this.prefixManager.getShortForm(property.asOWLDataProperty().getIRI());
+			predicate = new Predicate(name , 2);
 		} else {
 			throw new Error("not yet implemented");
 		}

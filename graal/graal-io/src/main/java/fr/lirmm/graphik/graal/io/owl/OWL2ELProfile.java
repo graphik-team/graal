@@ -47,9 +47,9 @@ import org.semanticweb.owlapi.model.SWRLRule;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class OWL2ELProfile implements OWLProfile {
+public class OWL2ELProfile {
 	
-	OWLAxiomParser full = OWLAxiomParser.getInstance();
+	/*OWLAxiomParser full = OWLAxiomParser.getInstance();
 	
 	// /////////////////////////////////////////////////////////////////////////
 	// METADATA AXIOMS
@@ -276,7 +276,7 @@ public class OWL2ELProfile implements OWLProfile {
 	public Iterable<? extends Object> visit(OWLAnnotationPropertyRangeAxiom arg0) {
 		// TODO implement this method
 		throw new Error("This method isn't implemented");
-	}
+	}*/
 	
 	
 }
