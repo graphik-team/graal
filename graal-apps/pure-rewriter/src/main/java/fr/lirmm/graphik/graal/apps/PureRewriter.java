@@ -225,14 +225,11 @@ public class PureRewriter {
 
 		// Main part
 		try {
-			switch (commander.getParsedCommand()) {
-			case CommandCompile.name:
+			String command = commander.getParsedCommand();
+			if (CommandCompile.name.equals(command)) {
 				cmdCompile.run(commander);
-				break;
-
-			case CommandRewrite.name:
+			} else if (CommandRewrite.name.equals(command)) {
 				cmdRewrite.run(commander);
-				break;
 			}
 		} catch (FileNotFoundException e) {
 			System.err.println(e.getMessage());
