@@ -101,12 +101,12 @@ public class OWLClassExpressionVisitorImpl implements
 	@Override
 	public LogicalFormula visit(OWLObjectSomeValuesFrom arg) {
 		Term newGlueVariable = varGen.getFreeVar();
-		Predicate predicate = this.createPredicate(arg.getProperty());
-		Atom a = this.createAtom(predicate, glueVariable, newGlueVariable);
-
-		LogicalFormula f = arg.getFiller().accept(
-				new OWLClassExpressionVisitorImpl(varGen, newGlueVariable));
-		f.and(this.createLogicalFormula(a));
+		
+		LogicalFormula f = arg.getProperty().accept(new OWLPropertyExpressionVisitorImpl(
+				glueVariable, newGlueVariable));
+		
+		f.and(arg.getFiller().accept(
+				new OWLClassExpressionVisitorImpl(varGen, newGlueVariable)));
 		return f;
 
 	}
@@ -119,9 +119,9 @@ public class OWLClassExpressionVisitorImpl implements
 
 	@Override
 	public LogicalFormula visit(OWLObjectHasValue arg) {
-		Predicate property = createPredicate(arg.getProperty());
-		Atom a = createAtom(property, glueVariable, createTerm(arg.getFiller()));
-		return this.createLogicalFormula(a);
+		LogicalFormula f = arg.getProperty().accept(new OWLPropertyExpressionVisitorImpl(
+				glueVariable, createTerm(arg.getFiller())));
+		return f;
 	}
 
 	@Override
@@ -144,9 +144,9 @@ public class OWLClassExpressionVisitorImpl implements
 
 	@Override
 	public LogicalFormula visit(OWLObjectHasSelf arg) {
-		Predicate property = createPredicate(arg.getProperty());
-		Atom a = createAtom(property, glueVariable, glueVariable);
-		return this.createLogicalFormula(a);
+		LogicalFormula f = arg.getProperty().accept(new OWLPropertyExpressionVisitorImpl(
+				glueVariable, glueVariable));
+		return f;
 	}
 
 	@Override
@@ -172,9 +172,9 @@ public class OWLClassExpressionVisitorImpl implements
 
 	@Override
 	public LogicalFormula visit(OWLDataHasValue arg) {
-		Predicate property = createPredicate(arg.getProperty());
-		Atom a = createAtom(property, glueVariable, new Term(arg.getFiller().toString(), Term.Type.LITERAL));
-		return this.createLogicalFormula(a);
+		LogicalFormula f = arg.getProperty().accept(new OWLPropertyExpressionVisitorImpl(
+				glueVariable, new Term(arg.getFiller().toString(), Term.Type.LITERAL)));
+		return f;
 	}
 
 	@Override
@@ -226,36 +226,6 @@ public class OWLClassExpressionVisitorImpl implements
 
 	private Atom createAtom(Predicate p, Term... terms) {
 		return new DefaultAtom(p, terms);
-	}
-
-	/**
-	 * @param property
-	 * @return
-	 */
-	private Predicate createPredicate(OWLObjectPropertyExpression property) {
-		Predicate predicate = null;
-		if (!property.isAnonymous()) {
-			predicate = new Predicate(property.asOWLObjectProperty().getIRI()
-					.toString(), 2);
-		} else {
-			throw new Error("not yet implemented");
-		}
-		return predicate;
-	}
-	
-	/**
-	 * @param property
-	 * @return
-	 */
-	private Predicate createPredicate(OWLDataPropertyExpression property) {
-		Predicate predicate = null;
-		if (!property.isAnonymous()) {
-			predicate = new Predicate(property.asOWLDataProperty().getIRI()
-					.toString(), 2);
-		} else {
-			throw new Error("not yet implemented");
-		}
-		return predicate;
 	}
 	
 	/**

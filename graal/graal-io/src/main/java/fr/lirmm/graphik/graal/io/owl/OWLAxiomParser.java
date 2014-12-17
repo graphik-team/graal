@@ -145,6 +145,7 @@ public class OWLAxiomParser implements
 
 	@Override
 	public Iterable<? extends Object> visit(OWLEquivalentClassesAxiom arg) {
+		freeVarGen.setIndex(1);
 		Collection<Rule> c = this.<Rule> createCollection();
 		LogicalFormula f1, f2, f1_save;
 		List<OWLClassExpression> classes = new LinkedList<OWLClassExpression>(
@@ -188,6 +189,7 @@ public class OWLAxiomParser implements
 	
 	@Override
 	public Iterable<? extends Object> visit(OWLDisjointClassesAxiom arg) {
+		freeVarGen.setIndex(1);
 		LogicalFormula c, tmp;
 
 		List<LogicalFormula> list = new LinkedList<LogicalFormula>();
@@ -230,6 +232,23 @@ public class OWLAxiomParser implements
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
+	public Iterable<? extends Object> visit(OWLObjectPropertyDomainAxiom arg) {
+		return this.visit((OWLPropertyDomainAxiom<?>) arg);
+	}
+	
+	@Override
+	public Iterable<? extends Object> visit(OWLObjectPropertyRangeAxiom arg) {
+		freeVarGen.setIndex(2);
+		LogicalFormula property = arg.getProperty().accept(propertyVisitorXY);
+		LogicalFormula range = arg.getRange().accept(classVisitorY);
+
+		property.not();
+		property.or(range);
+
+		return LogicalFormulaRuleTranslator.getInstance().translate(property);
+	}
+	
+	@Override
 	public Iterable<? extends Object> visit(OWLAsymmetricObjectPropertyAxiom arg) {
 		LogicalFormula f = arg.getProperty().accept(propertyVisitorXY);
 		f.and(arg.getProperty().accept(propertyVisitorYX));
@@ -242,11 +261,6 @@ public class OWLAxiomParser implements
 	public Iterable<? extends Object> visit(OWLReflexiveObjectPropertyAxiom arg0) {
 		// TODO implement this method
 		throw new Error("This method isn't implemented");
-	}
-	
-	@Override
-	public Iterable<? extends Object> visit(OWLObjectPropertyDomainAxiom arg) {
-		return this.visit((OWLPropertyDomainAxiom<?>) arg);
 	}
 
 	@Override
@@ -308,17 +322,6 @@ public class OWLAxiomParser implements
 			OWLDisjointObjectPropertiesAxiom arg0) {
 		// TODO implement this method
 		throw new Error("This method isn't implemented");
-	}
-
-	@Override
-	public Iterable<? extends Object> visit(OWLObjectPropertyRangeAxiom arg) {
-		LogicalFormula property = arg.getProperty().accept(propertyVisitorXY);
-		LogicalFormula range = arg.getRange().accept(classVisitorY);
-
-		property.not();
-		property.or(range);
-
-		return LogicalFormulaRuleTranslator.getInstance().translate(property);
 	}
 
 	@Override
@@ -595,6 +598,7 @@ public class OWLAxiomParser implements
 	// /////////////////////////////////////////////////////////////////////////
 
 	private Iterable<? extends Object> visit(OWLPropertyDomainAxiom<?> arg) {
+		freeVarGen.setIndex(2);
 		LogicalFormula property = arg.getProperty().accept(propertyVisitorXY);
 		LogicalFormula domain = arg.getDomain().accept(classVisitorX);
 

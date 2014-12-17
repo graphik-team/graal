@@ -34,10 +34,12 @@ public class OWLParser {
 		DlgpWriter writer = new DlgpWriter(System.out);
 		
 		File f;
-		f = new File("../graal/graal-io/src/test/resources/test.owl");
+		f = new File("../graal/graal-io/src/test/resources/test2.owl");
 		//f = new File("/home/clement/graphik/ontologies/U/U.owl");
 		
-		//test(f);
+		test(f);
+		
+		System.out.println("\n############################################\n");
 		
 		OWLOntologyManager man = OWLManager.createOWLOntologyManager();
 		OWLOntology onto;

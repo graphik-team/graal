@@ -5,6 +5,7 @@ package fr.lirmm.graphik.graal.io.owl;
 
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
 import org.semanticweb.owlapi.model.OWLObjectInverseOf;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
@@ -50,15 +51,16 @@ public class OWLPropertyExpressionVisitorImpl implements
 
 	@Override
 	public LogicalFormula visit(OWLObjectInverseOf property) {
-		LogicalFormula f = property.getInverse().accept(this);
-		f.not();
-		return f;
+		Predicate p = this.createPredicate(property.getInverse());
+		Atom a = this.createAtom(p, glueVariable2, glueVariable1);
+		return this.createLogicalFormula(a);
 	}
 
 	@Override
 	public LogicalFormula visit(OWLDataProperty property) {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
+		Predicate p = this.createPredicate(property);
+		Atom a = this.createAtom(p, glueVariable1, glueVariable2);
+		return this.createLogicalFormula(a);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -73,6 +75,17 @@ public class OWLPropertyExpressionVisitorImpl implements
 		Predicate predicate = null;
 		if (!property.isAnonymous()) {
 			predicate = new Predicate(property.asOWLObjectProperty().getIRI()
+					.toString(), 2);
+		} else {
+			throw new Error("not yet implemented");
+		}
+		return predicate;
+	}
+	
+	private Predicate createPredicate(OWLDataPropertyExpression property) {
+		Predicate predicate = null;
+		if (!property.isAnonymous()) {
+			predicate = new Predicate(property.asOWLDataProperty().getIRI()
 					.toString(), 2);
 		} else {
 			throw new Error("not yet implemented");
