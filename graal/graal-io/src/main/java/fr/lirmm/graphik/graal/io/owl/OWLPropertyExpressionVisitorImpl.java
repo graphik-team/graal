@@ -15,8 +15,8 @@ import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.graal.logic.Literal;
-import fr.lirmm.graphik.graal.logic.LogicalFormula;
+import fr.lirmm.graphik.graal.io.owl.logic.Literal;
+import fr.lirmm.graphik.graal.io.owl.logic.LogicalFormula;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}

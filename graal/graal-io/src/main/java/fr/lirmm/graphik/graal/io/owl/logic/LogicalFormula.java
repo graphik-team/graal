@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.lirmm.graphik.graal.logic;
+package fr.lirmm.graphik.graal.io.owl.logic;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -13,47 +13,56 @@ import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
  * @author clement
  *
  */
-public class LogicalFormulaDisjunctiveForm implements Iterable<Collection<Literal>> {
+public class LogicalFormula implements Iterable<Collection<Literal>> {
 	
-	private Collection<Collection<Literal>> disjunctiveNormalForm = new LinkedList<Collection<Literal>>();
+	private Collection<Collection<Literal>> conjunctiveNormalForm = new LinkedList<Collection<Literal>>();
 	
-	public LogicalFormulaDisjunctiveForm() {
-		this.disjunctiveNormalForm = new LinkedList<Collection<Literal>>();
+	public LogicalFormula() {
+		this.conjunctiveNormalForm = new LinkedList<Collection<Literal>>();
 	}
 	
-	public LogicalFormulaDisjunctiveForm(Literal l) {
+	public LogicalFormula(Literal l) {
 		this();
-		Collection<Literal> conjunctiveClause = new LinkedList<Literal>();
-		conjunctiveClause.add(l);
-		this.disjunctiveNormalForm.add(conjunctiveClause);
+		Collection<Literal> clause = new LinkedList<Literal>();
+		clause.add(l);
+		this.conjunctiveNormalForm.add(clause);
+	}
+	
+	/**
+	 * Copy constructor
+	 * @param f
+	 */
+	public LogicalFormula(LogicalFormula f) {
+		this();
+		this.and(f);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// 
 	// /////////////////////////////////////////////////////////////////////////
 	
-	public void or(LogicalFormulaDisjunctiveForm f) {
+	public void and(LogicalFormula f) {
 		for(Collection<Literal> conjunctiveClause : f) {
-			this.disjunctiveNormalForm.add(conjunctiveClause);
+			this.conjunctiveNormalForm.add(conjunctiveClause);
 		}
 	}
 	
-	public void or(Literal l) {
+	public void and(Literal l) {
 		Collection<Literal> conjunctiveClause = new LinkedList<Literal>();
 		conjunctiveClause.add(l);
-		this.disjunctiveNormalForm.add(conjunctiveClause);
+		this.conjunctiveNormalForm.add(conjunctiveClause);
 	}
 	
-	public void and(LogicalFormulaDisjunctiveForm f) {
+	public void or(LogicalFormula f) {
 		Collection<Collection<Literal>> newDisjunctiveNormalForm = new LinkedList<Collection<Literal>>();
 
-		if(this.disjunctiveNormalForm.isEmpty()) {
+		if(this.conjunctiveNormalForm.isEmpty()) {
 			for(Collection<Literal> conjClause : f) {
 				Collection<Literal> conjunctiveClause = new LinkedList<Literal>();
 				conjunctiveClause.addAll(conjClause);
 				newDisjunctiveNormalForm.add(conjunctiveClause);
 			}
-		} else if(f.disjunctiveNormalForm.isEmpty()) {
+		} else if(f.conjunctiveNormalForm.isEmpty()) {
 			for(Collection<Literal> conjClause : this) {
 				Collection<Literal> conjunctiveClause = new LinkedList<Literal>();
 				conjunctiveClause.addAll(conjClause);
@@ -70,14 +79,14 @@ public class LogicalFormulaDisjunctiveForm implements Iterable<Collection<Litera
 			}
 		}
 		
-		this.disjunctiveNormalForm = newDisjunctiveNormalForm;
+		this.conjunctiveNormalForm = newDisjunctiveNormalForm;
 	}
 	
-	public void and(Literal l) {
-		if(this.disjunctiveNormalForm.isEmpty()) {
+	public void or(Literal l) {
+		if(this.conjunctiveNormalForm.isEmpty()) {
 			Collection<Literal> conjunctiveClause = new LinkedList<Literal>();
 			conjunctiveClause.add(l);
-			this.disjunctiveNormalForm.add(conjunctiveClause);
+			this.conjunctiveNormalForm.add(conjunctiveClause);
 		} else {
 			for(Collection<Literal> conjClauseIntern : this) {
 				conjClauseIntern.add(l);
@@ -86,29 +95,29 @@ public class LogicalFormulaDisjunctiveForm implements Iterable<Collection<Litera
 	}
 	
 	public void not() {
-		LogicalFormulaDisjunctiveForm newFormula = new LogicalFormulaDisjunctiveForm();
+		LogicalFormula newFormula = new LogicalFormula();
 
 		Iterator<Collection<Literal>> it = this.iterator();
 		if(it.hasNext()) {
 			for(Literal l : it.next()) {
-				newFormula.or(new Literal(l, !l.isPositive));
+				newFormula.and(new Literal(l, !l.isPositive));
 			}
 		}
 		
 		while(it.hasNext()) {
-			LogicalFormulaDisjunctiveForm tmpFormula = new LogicalFormulaDisjunctiveForm();
+			LogicalFormula tmpFormula = new LogicalFormula();
 			for(Literal l : it.next()) {
-				tmpFormula.or(new Literal(l, !l.isPositive));
+				tmpFormula.and(new Literal(l, !l.isPositive));
 			}
-			newFormula.and(tmpFormula);
+			newFormula.or(tmpFormula);
 		}
 		
-		this.disjunctiveNormalForm = newFormula.disjunctiveNormalForm;
+		this.conjunctiveNormalForm = newFormula.conjunctiveNormalForm;
 	}
 
 	@Override
 	public Iterator<Collection<Literal>> iterator() {
-		return this.disjunctiveNormalForm.iterator();
+		return this.conjunctiveNormalForm.iterator();
 	}
 	
 	// /////////////////////////////////////////////////////////////////////////
@@ -121,9 +130,9 @@ public class LogicalFormulaDisjunctiveForm implements Iterable<Collection<Litera
 			sb.append("(");
 			for(Literal l : conjClause) {
 				l.toString(sb);
-				sb.append(" ^ ");
+				sb.append(" v ");
 			}
-			sb.append(") v");
+			sb.append(") ^ ");
 		}
 		return sb.toString();
 	}
@@ -133,30 +142,30 @@ public class LogicalFormulaDisjunctiveForm implements Iterable<Collection<Litera
 	// /////////////////////////////////////////////////////////////////////////
 	
 	public static void main(String[] args) {
-		LogicalFormulaDisjunctiveForm f = new LogicalFormulaDisjunctiveForm();
-		LogicalFormulaDisjunctiveForm f1 = new LogicalFormulaDisjunctiveForm();
-		LogicalFormulaDisjunctiveForm f2 = new LogicalFormulaDisjunctiveForm();
-		LogicalFormulaDisjunctiveForm f3 = new LogicalFormulaDisjunctiveForm();
+		LogicalFormula f = new LogicalFormula();
+		LogicalFormula f1 = new LogicalFormula();
+		LogicalFormula f2 = new LogicalFormula();
+		LogicalFormula f3 = new LogicalFormula();
 		
-		f1.and(new Literal(DlgpParser.parseAtom("a1(X)."), true));
-		f1.and(new Literal(DlgpParser.parseAtom("a2(X)."), false));
-		f1.and(new Literal(DlgpParser.parseAtom("a3(X)."), true));
+		f1.or(new Literal(DlgpParser.parseAtom("a1(X)."), true));
+		f1.or(new Literal(DlgpParser.parseAtom("a2(X)."), false));
+		f1.or(new Literal(DlgpParser.parseAtom("a3(X)."), true));
 		
-		f2.and(new Literal(DlgpParser.parseAtom("b1(X)."), true));
-		f2.and(new Literal(DlgpParser.parseAtom("b2(X)."), false));
-		f2.and(new Literal(DlgpParser.parseAtom("b3(X)."), true));
+		f2.or(new Literal(DlgpParser.parseAtom("b1(X)."), true));
+		f2.or(new Literal(DlgpParser.parseAtom("b2(X)."), false));
+		f2.or(new Literal(DlgpParser.parseAtom("b3(X)."), true));
 		
-		f3.and(new Literal(DlgpParser.parseAtom("c1(X)."), true));
-		f3.and(new Literal(DlgpParser.parseAtom("c2(X)."), false));
-		f3.and(new Literal(DlgpParser.parseAtom("c3(X)."), true));
+		f3.or(new Literal(DlgpParser.parseAtom("c1(X)."), true));
+		f3.or(new Literal(DlgpParser.parseAtom("c2(X)."), false));
+		f3.or(new Literal(DlgpParser.parseAtom("c3(X)."), true));
 		System.out.println(f3);
 		
 		System.out.println("=================");
-		f.or(f1);
+		f.and(f1);
 		System.out.println(f);
-		f.or(f2);
+		f.and(f2);
 		System.out.println(f);
-		f.or(f3);
+		f.and(f3);
 		System.out.println(f);
 		f.not();
 		System.out.println("===================");

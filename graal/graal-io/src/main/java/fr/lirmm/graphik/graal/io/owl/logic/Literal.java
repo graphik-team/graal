@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.lirmm.graphik.graal.logic;
+package fr.lirmm.graphik.graal.io.owl.logic;
 
 import java.util.List;
 

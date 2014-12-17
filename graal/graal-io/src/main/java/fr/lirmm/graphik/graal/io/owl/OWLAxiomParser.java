@@ -63,9 +63,9 @@ import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.SymbolGenerator;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.Term.Type;
-import fr.lirmm.graphik.graal.logic.Literal;
-import fr.lirmm.graphik.graal.logic.LogicalFormula;
-import fr.lirmm.graphik.graal.logic.LogicalFormulaRuleTranslator;
+import fr.lirmm.graphik.graal.io.owl.logic.Literal;
+import fr.lirmm.graphik.graal.io.owl.logic.LogicalFormula;
+import fr.lirmm.graphik.graal.io.owl.logic.LogicalFormulaRuleTranslator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
