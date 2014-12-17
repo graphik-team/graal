@@ -8,7 +8,6 @@
 	</parent>
 	
 	<artifactId>graal-apps</artifactId>
-  <version>0.6.2-SNAPSHOT </version>
 	<name>graal-apps</name>
 	<packaging>pom</packaging>
     
@@ -36,6 +35,7 @@
 		<module>graal-cli</module>
 		<module>kiabora</module>
 		<module>pure-rewriter</module>
+		<module>owl2dlp</module>
 	</modules>
 
 	<build>
