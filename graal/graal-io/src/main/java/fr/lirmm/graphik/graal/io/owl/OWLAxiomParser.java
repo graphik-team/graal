@@ -18,7 +18,9 @@ import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLDataPropertyDomainAxiom;
+import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
 import org.semanticweb.owlapi.model.OWLDataPropertyRangeAxiom;
+import org.semanticweb.owlapi.model.OWLDataRange;
 import org.semanticweb.owlapi.model.OWLDatatypeDefinitionAxiom;
 import org.semanticweb.owlapi.model.OWLDeclarationAxiom;
 import org.semanticweb.owlapi.model.OWLDifferentIndividualsAxiom;
@@ -42,7 +44,7 @@ import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyDomainAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLObjectPropertyRangeAxiom;
-import org.semanticweb.owlapi.model.OWLPropertyDomainAxiom;
+import org.semanticweb.owlapi.model.OWLPropertyExpression;
 import org.semanticweb.owlapi.model.OWLReflexiveObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLSameIndividualAxiom;
 import org.semanticweb.owlapi.model.OWLSubAnnotationPropertyOfAxiom;
@@ -67,6 +69,7 @@ import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.io.owl.logic.Literal;
 import fr.lirmm.graphik.graal.io.owl.logic.LogicalFormula;
 import fr.lirmm.graphik.graal.io.owl.logic.LogicalFormulaRuleTranslator;
+import fr.lirmm.graphik.graal.logic.test.LogicalFormulaRuleTranslatorTest;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -94,8 +97,6 @@ public class OWLAxiomParser implements
 	private OWLPropertyExpressionVisitorImpl propertyVisitorXZ;
 	private OWLPropertyExpressionVisitorImpl propertyVisitorYZ;
 
-	
-
 	public OWLAxiomParser(DefaultPrefixManager prefixManager) {
 		this.prefixManager = prefixManager;
 		this.glueVarX = freeVarGen.getFreeVar();
@@ -119,11 +120,10 @@ public class OWLAxiomParser implements
 				this.prefixManager, glueVarY, glueVarZ);
 	}
 
-
 	// /////////////////////////////////////////////////////////////////////////
 	// Declaration
 	// /////////////////////////////////////////////////////////////////////////
-	
+
 	@Override
 	public Iterable<? extends Object> visit(OWLDeclarationAxiom arg) {
 		if (logger.isInfoEnabled()) {
@@ -131,7 +131,7 @@ public class OWLAxiomParser implements
 		}
 		return null;
 	}
-	
+
 	// /////////////////////////////////////////////////////////////////////////
 	// ClassAxiom
 	// /////////////////////////////////////////////////////////////////////////
@@ -191,7 +191,7 @@ public class OWLAxiomParser implements
 		}
 		return c;
 	}
-	
+
 	@Override
 	public Iterable<? extends Object> visit(OWLDisjointClassesAxiom arg) {
 		freeVarGen.setIndex(1);
@@ -222,11 +222,11 @@ public class OWLAxiomParser implements
 
 		return LogicalFormulaRuleTranslator.getInstance().translate(c);
 	}
-	
+
 	@Override
 	public Iterable<? extends Object> visit(OWLDisjointUnionAxiom arg) {
 		if (logger.isWarnEnabled()) {
-			logger.warn("OWLDisjointUnionAxion is not enable. This axioms was skipped : "
+			logger.warn("OWLDisjointUnionAxion is not supported. This axioms was skipped : "
 					+ arg);
 		}
 		return Collections.emptyList();
@@ -238,9 +238,9 @@ public class OWLAxiomParser implements
 
 	@Override
 	public Iterable<? extends Object> visit(OWLObjectPropertyDomainAxiom arg) {
-		return this.visit((OWLPropertyDomainAxiom<?>) arg);
+		return this.propertyDomainAxiom(arg.getProperty(), arg.getDomain());
 	}
-	
+
 	@Override
 	public Iterable<? extends Object> visit(OWLObjectPropertyRangeAxiom arg) {
 		freeVarGen.setIndex(2);
@@ -252,7 +252,7 @@ public class OWLAxiomParser implements
 
 		return LogicalFormulaRuleTranslator.getInstance().translate(property);
 	}
-	
+
 	@Override
 	public Iterable<? extends Object> visit(OWLAsymmetricObjectPropertyAxiom arg) {
 		LogicalFormula f = arg.getProperty().accept(propertyVisitorXY);
@@ -271,45 +271,9 @@ public class OWLAxiomParser implements
 	@Override
 	public Iterable<? extends Object> visit(
 			OWLEquivalentObjectPropertiesAxiom arg) {
-		Collection<Rule> c = this.<Rule> createCollection();
-		LogicalFormula f1, f2, f1_save;
-		LinkedList<OWLObjectPropertyExpression> properties = new LinkedList<OWLObjectPropertyExpression>(
+		List<OWLPropertyExpression> properties = new LinkedList<OWLPropertyExpression>(
 				arg.getProperties());
-
-		Iterator<OWLObjectPropertyExpression> it1, it2;
-		it1 = properties.iterator();
-		while (it1.hasNext()) {
-			OWLObjectPropertyExpression propExpr = it1.next();
-			it1.remove();
-
-			it2 = properties.iterator();
-			while (it2.hasNext()) {
-				f1 = propExpr.accept(propertyVisitorXY);
-				f1_save = new LogicalFormula(f1);
-				OWLObjectPropertyExpression next = it2.next();
-				f2 = next.accept(propertyVisitorXY);
-
-				// 1 -> 2
-				f1.not();
-				f1.or(f2);
-
-				for (Rule r : LogicalFormulaRuleTranslator.getInstance()
-						.translate(f1)) {
-					c.add(r);
-				}
-
-				// 2 -> 1
-				f2.not();
-				f2.or(f1_save);
-
-				for (Rule r : LogicalFormulaRuleTranslator.getInstance()
-						.translate(f2)) {
-					c.add(r);
-				}
-
-			}
-		}
-		return c;
+		return this.equivalentPropertiesAxiom(properties);
 	}
 
 	@Override
@@ -342,16 +306,7 @@ public class OWLAxiomParser implements
 
 	@Override
 	public Iterable<? extends Object> visit(OWLFunctionalObjectPropertyAxiom arg) {
-		// =(Y, Z) :- p(X, Y), p(X, Z).
-
-		LogicalFormula f = arg.getProperty().accept(propertyVisitorXY);
-		f.and(arg.getProperty().accept(propertyVisitorXZ));
-
-		f.not();
-		f.or(new Literal(
-				new DefaultAtom(equalityPredicate, glueVarX, glueVarY), true));
-
-		return LogicalFormulaRuleTranslator.getInstance().translate(f);
+		return this.functionalPropertyAxiom(arg.getProperty());
 	}
 
 	@Override
@@ -416,11 +371,11 @@ public class OWLAxiomParser implements
 
 		return rules;
 	}
-	
+
 	// /////////////////////////////////////////////////////////////////////////
 	// PropertyChain
 	// /////////////////////////////////////////////////////////////////////////
-	
+
 	@Override
 	public Iterable<? extends Object> visit(OWLSubPropertyChainOfAxiom arg0) {
 		// TODO implement this method
@@ -433,36 +388,32 @@ public class OWLAxiomParser implements
 
 	@Override
 	public Iterable<? extends Object> visit(OWLDataPropertyDomainAxiom arg) {
-		return this.visit((OWLPropertyDomainAxiom<?>) arg);
-	}
-	
-	@Override
-	public Iterable<? extends Object> visit(OWLFunctionalDataPropertyAxiom arg0) {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
+		return this.propertyDomainAxiom(arg.getProperty(), arg.getDomain());
 	}
 
 	@Override
-	public Iterable<? extends Object> visit(
-			OWLEquivalentDataPropertiesAxiom arg0) {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
+	public Iterable<? extends Object> visit(OWLDataPropertyRangeAxiom arg) {
+		if (logger.isWarnEnabled()) {
+			logger.warn("OWLDataPropertyRangeAxiom is not supported. This axioms was skipped : "
+					+ arg);
+		}
+		return Collections.emptyList();
 	}
 
 	@Override
-	public Iterable<? extends Object> visit(OWLDataPropertyAssertionAxiom arg0) {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
+	public Iterable<? extends Object> visit(OWLFunctionalDataPropertyAxiom arg) {
+		return this.functionalPropertyAxiom(arg.getProperty());
+	}
+
+	@Override
+	public Iterable<? extends Object> visit(OWLEquivalentDataPropertiesAxiom arg) {
+		List<OWLPropertyExpression> properties = new LinkedList<OWLPropertyExpression>(
+				arg.getProperties());
+		return this.equivalentPropertiesAxiom(properties);
 	}
 
 	@Override
 	public Iterable<? extends Object> visit(OWLDisjointDataPropertiesAxiom arg0) {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
-	}
-
-	@Override
-	public Iterable<? extends Object> visit(OWLDataPropertyRangeAxiom arg0) {
 		// TODO implement this method
 		throw new Error("This method isn't implemented");
 	}
@@ -488,14 +439,48 @@ public class OWLAxiomParser implements
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public Iterable<? extends Object> visit(OWLHasKeyAxiom arg0) {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
+	public Iterable<? extends Object> visit(OWLHasKeyAxiom arg) {
+		// =(Y, Z) :- C(Y), C(Z), p1(Y, X1), p1(Z, X1), ..., pn(Y, Xn), pn(Z, Xn).
+		
+		freeVarGen.setIndex(2);
+		LogicalFormula f = arg.getClassExpression().accept(classVisitorX);
+		f.and(arg.getClassExpression().accept(classVisitorY));
+		
+		for(OWLPropertyExpression pe : arg.getPropertyExpressions()) {
+			Term var = freeVarGen.getFreeVar();
+			f.and(pe.accept(new OWLPropertyExpressionVisitorImpl(this.prefixManager, glueVarX, var)));
+			f.and(pe.accept(new OWLPropertyExpressionVisitorImpl(this.prefixManager, glueVarY, var)));
+		}
+		
+		f.not();
+		f.or(new LogicalFormula(new Literal(new DefaultAtom(equalityPredicate, glueVarX, glueVarY), true)));
+		
+		return LogicalFormulaRuleTranslator.getInstance().translate(f);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// Assertion
 	// /////////////////////////////////////////////////////////////////////////
+
+	@Override
+	public Iterable<? extends Object> visit(OWLClassAssertionAxiom arg) {
+		freeVarGen.setIndex(0);
+		Term i = new Term(this.prefixManager.getShortForm(arg.getIndividual().asOWLNamedIndividual().getIRI()), Type.CONSTANT);
+		LogicalFormula f = arg.getClassExpression().accept(
+				new OWLClassExpressionVisitorImpl(this.prefixManager,
+						freeVarGen, i));
+		return Collections.singleton(f.iterator().next().iterator().next());
+	}
+
+	@Override
+	public Iterable<? extends Object> visit(OWLObjectPropertyAssertionAxiom arg) {
+		freeVarGen.setIndex(0);
+		Term a = new Term(this.prefixManager.getShortForm(arg.getSubject().asOWLNamedIndividual().getIRI()), Type.CONSTANT);
+		Term b = new Term(this.prefixManager.getShortForm(arg.getObject().asOWLNamedIndividual().getIRI()), Type.CONSTANT);
+		LogicalFormula f = arg.getProperty().accept(
+				new OWLPropertyExpressionVisitorImpl(this.prefixManager, a, b));
+		return Collections.singleton(f.iterator().next().iterator().next());
+	}
 
 	@Override
 	public Iterable<? extends Object> visit(
@@ -505,30 +490,20 @@ public class OWLAxiomParser implements
 	}
 
 	@Override
+	public Iterable<? extends Object> visit(OWLDataPropertyAssertionAxiom arg) {
+		freeVarGen.setIndex(0);
+		Term a = new Term(arg.getSubject().toString(), Type.CONSTANT);
+		Term b = new Term(arg.getObject().toString(), Type.CONSTANT);
+		LogicalFormula f = arg.getProperty().accept(
+				new OWLPropertyExpressionVisitorImpl(this.prefixManager, a, b));
+		return Collections.singleton(f.iterator().next().iterator().next());
+	}
+
+	@Override
 	public Iterable<? extends Object> visit(
 			OWLNegativeDataPropertyAssertionAxiom arg0) {
 		// TODO implement this method
 		throw new Error("This method isn't implemented");
-	}
-
-	@Override
-	public Iterable<? extends Object> visit(OWLDifferentIndividualsAxiom arg0) {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
-	}
-
-	@Override
-	public Iterable<? extends Object> visit(OWLObjectPropertyAssertionAxiom arg0) {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
-	}
-
-	@Override
-	public Iterable<? extends Object> visit(OWLClassAssertionAxiom arg) {
-		freeVarGen.setIndex(0);
-		Term i = new Term(arg.getIndividual().toString(), Type.CONSTANT);
-		return arg.getClassExpression().accept(
-				new OWLClassExpressionVisitorImpl(this.prefixManager, freeVarGen, i));
 	}
 
 	@Override
@@ -556,6 +531,12 @@ public class OWLAxiomParser implements
 			}
 		}
 		return c;
+	}
+	
+	@Override
+	public Iterable<? extends Object> visit(OWLDifferentIndividualsAxiom arg0) {
+		// TODO implement this method
+		throw new Error("This method isn't implemented");
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -602,15 +583,75 @@ public class OWLAxiomParser implements
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	private Iterable<? extends Object> visit(OWLPropertyDomainAxiom<?> arg) {
+	private Iterable<? extends Object> propertyDomainAxiom(
+			OWLPropertyExpression property, OWLClassExpression domain) {
 		freeVarGen.setIndex(2);
-		LogicalFormula property = arg.getProperty().accept(propertyVisitorXY);
-		LogicalFormula domain = arg.getDomain().accept(classVisitorX);
+		LogicalFormula p = property.accept(propertyVisitorXY);
+		LogicalFormula d = domain.accept(classVisitorX);
 
-		property.not();
-		property.or(domain);
+		p.not();
+		p.or(d);
 
-		return LogicalFormulaRuleTranslator.getInstance().translate(property);
+		return LogicalFormulaRuleTranslator.getInstance().translate(p);
+	}
+
+	private Iterable<? extends Object> propertyRangeAxiom(
+			OWLDataPropertyExpression property, OWLDataRange range) {
+		// TODO implement this method
+		throw new Error("This method isn't implemented");
+	}
+
+	private Iterable<? extends Object> functionalPropertyAxiom(
+			OWLPropertyExpression property) {
+		LogicalFormula f = property.accept(propertyVisitorXY);
+		f.and(property.accept(propertyVisitorXZ));
+
+		f.not();
+		f.or(new Literal(
+				new DefaultAtom(equalityPredicate, glueVarX, glueVarY), true));
+
+		return LogicalFormulaRuleTranslator.getInstance().translate(f);
+	}
+
+	private Iterable<? extends Object> equivalentPropertiesAxiom(
+			List<OWLPropertyExpression> properties) {
+		Collection<Rule> c = this.<Rule> createCollection();
+		LogicalFormula f1, f2, f1_save;
+
+		Iterator<OWLPropertyExpression> it1, it2;
+		it1 = properties.iterator();
+		while (it1.hasNext()) {
+			OWLPropertyExpression propExpr = it1.next();
+			it1.remove();
+
+			it2 = properties.iterator();
+			while (it2.hasNext()) {
+				f1 = propExpr.accept(propertyVisitorXY);
+				f1_save = new LogicalFormula(f1);
+				OWLPropertyExpression next = it2.next();
+				f2 = next.accept(propertyVisitorXY);
+
+				// 1 -> 2
+				f1.not();
+				f1.or(f2);
+
+				for (Rule r : LogicalFormulaRuleTranslator.getInstance()
+						.translate(f1)) {
+					c.add(r);
+				}
+
+				// 2 -> 1
+				f2.not();
+				f2.or(f1_save);
+
+				for (Rule r : LogicalFormulaRuleTranslator.getInstance()
+						.translate(f2)) {
+					c.add(r);
+				}
+
+			}
+		}
+		return c;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

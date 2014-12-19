@@ -38,9 +38,9 @@ public class OWLParser {
 		
 		File f;
 		f = new File("../graal/graal-io/src/test/resources/test2.owl");
-		//f = new File("/home/clement/graphik/ontologies/U/U.owl");
+		//f = new File("/home/clement/graphik/ontologies/V/V.owl");
 		
-		test(f);
+		//test(f);
 		
 		System.out.println("\n############################################\n");
 		
@@ -74,7 +74,7 @@ public class OWLParser {
 					writer.write(">\n");
 				}
 			}
-			writer.write(">\n");
+			writer.write("\n");
 		}
 		
 
@@ -82,7 +82,7 @@ public class OWLParser {
 		
 
 		for (OWLAxiom a : onto.getAxioms()) {
-			Iterable iterable = a.accept(visitor);
+			Iterable<?> iterable = a.accept(visitor);
 			if(iterable != null) {
 				for(Object o : iterable) {
 					 writer.write(o);
