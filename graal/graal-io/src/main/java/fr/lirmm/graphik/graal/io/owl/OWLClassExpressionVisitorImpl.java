@@ -3,6 +3,8 @@
  */
 package fr.lirmm.graphik.graal.io.owl;
 
+import java.util.Collections;
+
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLClassExpressionVisitorEx;
@@ -25,6 +27,8 @@ import org.semanticweb.owlapi.model.OWLObjectOneOf;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLObjectUnionOf;
 import org.semanticweb.owlapi.util.DefaultPrefixManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
@@ -41,6 +45,9 @@ import fr.lirmm.graphik.graal.io.owl.logic.LogicalFormula;
 public class OWLClassExpressionVisitorImpl implements
 		OWLClassExpressionVisitorEx<LogicalFormula> {
 
+	private static final Logger logger = LoggerFactory
+			.getLogger(OWLClassExpressionVisitorImpl.class);
+	
 	private Term glueVariable;
 	private SymbolGenerator varGen;
 	private DefaultPrefixManager prefixManager;
@@ -51,10 +58,8 @@ public class OWLClassExpressionVisitorImpl implements
 		this.varGen = varGen;
 	}
 
-
-
 	// /////////////////////////////////////////////////////////////////////////
-	//
+	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
@@ -63,6 +68,10 @@ public class OWLClassExpressionVisitorImpl implements
 		Atom a = this.createAtom(p, glueVariable);
 		return this.createLogicalFormula(a);
 	}
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// OBJECT CLASS EXPRESSION
+	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
 	public LogicalFormula visit(OWLObjectIntersectionOf arg) {
@@ -108,14 +117,19 @@ public class OWLClassExpressionVisitorImpl implements
 		
 		f.and(arg.getFiller().accept(
 				new OWLClassExpressionVisitorImpl(this.prefixManager, varGen, newGlueVariable)));
+		
 		return f;
-
 	}
 
 	@Override
-	public LogicalFormula visit(OWLObjectAllValuesFrom arg0) {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
+	public LogicalFormula visit(OWLObjectAllValuesFrom arg) {
+		Term var = this.varGen.getFreeVar();
+		LogicalFormula f = arg.getProperty().accept(new OWLPropertyExpressionVisitorImpl(
+				this.prefixManager, glueVariable, var));
+		f.not();
+		f.or(arg.getFiller().accept(new OWLClassExpressionVisitorImpl(this.prefixManager, varGen, var)));
+		
+		return f;
 	}
 
 	@Override
@@ -126,21 +140,41 @@ public class OWLClassExpressionVisitorImpl implements
 	}
 
 	@Override
-	public LogicalFormula visit(OWLObjectMinCardinality arg0) {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
+	public LogicalFormula visit(OWLObjectMinCardinality arg) {
+		if(arg.getCardinality() == 1) {
+			Term newGlueVariable = varGen.getFreeVar();
+			
+			LogicalFormula f = arg.getProperty().accept(new OWLPropertyExpressionVisitorImpl(
+					this.prefixManager, glueVariable, newGlueVariable));
+			
+			f.and(arg.getFiller().accept(
+					new OWLClassExpressionVisitorImpl(this.prefixManager, varGen, newGlueVariable)));
+			return f;
+		} else {
+			if (logger.isWarnEnabled()) {
+				logger.warn("OWLObjectMinCardinality with cardinality other than 1 is not supported. This axioms was skipped : "
+						+ arg);
+			}
+			return new LogicalFormula();
+		}
 	}
 
 	@Override
-	public LogicalFormula visit(OWLObjectExactCardinality arg0) {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
+	public LogicalFormula visit(OWLObjectExactCardinality arg) {
+		if (logger.isWarnEnabled()) {
+			logger.warn("OWLObjectExactCardinality is not supported. This axioms was skipped : "
+					+ arg);
+		}
+		return new LogicalFormula();
 	}
 
 	@Override
-	public LogicalFormula visit(OWLObjectMaxCardinality arg0) {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
+	public LogicalFormula visit(OWLObjectMaxCardinality arg) {
+		if (logger.isWarnEnabled()) {
+			logger.warn("OWLObjectMaxCardinality is not supported. This axioms was skipped : "
+					+ arg);
+		}
+		return new LogicalFormula();
 	}
 
 	@Override
@@ -159,10 +193,20 @@ public class OWLClassExpressionVisitorImpl implements
 		return atomset;
 	}
 
+	// /////////////////////////////////////////////////////////////////////////
+	// DATA CLASS EXPRESSION
+	// /////////////////////////////////////////////////////////////////////////
+	
 	@Override
-	public LogicalFormula visit(OWLDataSomeValuesFrom arg0) {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
+	public LogicalFormula visit(OWLDataSomeValuesFrom arg) {
+		Term newGlueVariable = varGen.getFreeVar();
+		
+		LogicalFormula f = arg.getProperty().accept(new OWLPropertyExpressionVisitorImpl(
+				this.prefixManager, glueVariable, newGlueVariable));
+		
+		f.and(arg.getFiller().accept(
+				new OWLDataRangeVisitorImpl()));
+		return f;
 	}
 
 	@Override
@@ -179,9 +223,23 @@ public class OWLClassExpressionVisitorImpl implements
 	}
 
 	@Override
-	public LogicalFormula visit(OWLDataMinCardinality arg0) {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
+	public LogicalFormula visit(OWLDataMinCardinality arg) {
+		if(arg.getCardinality() == 1) {
+			Term newGlueVariable = varGen.getFreeVar();
+			
+			LogicalFormula f = arg.getProperty().accept(new OWLPropertyExpressionVisitorImpl(
+					this.prefixManager, glueVariable, newGlueVariable));
+			
+			f.and(arg.getFiller().accept(
+					new OWLDataRangeVisitorImpl()));
+			return f;
+		} else {
+			if (logger.isWarnEnabled()) {
+				logger.warn("OWLObjectMinCardinality with cardinality other than 1 is not supported. This axioms was skipped : "
+						+ arg);
+			}
+			return new LogicalFormula();
+		}
 	}
 
 	@Override
