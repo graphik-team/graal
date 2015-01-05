@@ -11,8 +11,9 @@
 ]>
 
 
-<rdf:RDF xmlns="http://vicodi.org/ontology#"
+<rdf:RDF xmlns="file://test/"
      xml:base="file://test/"
+     xmlns:test="file://test/"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -34,7 +35,7 @@
     
     <owl:IrreflexiveProperty rdf:about="IrreflexiveProperty" />
     
-    <!-- Does not appear -->
+    <owl:ObjectProperty rdf:about="FunctionalProperty" />
     <owl:FunctionalProperty rdf:about="FunctionalProperty" />
         
     <owl:InverseFunctionalProperty rdf:about="InverseFunctionalProperty" />
@@ -43,16 +44,6 @@
     	<owl:sameAs rdf:resource="individuBB" />
     </owl:NamedIndividual>
     
-   <!--
-    <owl:sameAs>
-      <owl:members rdf:parseType="Collection">
-	    <owl:NamedIndividual rdf:about="individuA" />
-    	<owl:NamedIndividual rdf:about="individuB" />
-    	<owl:NamedIndividual rdf:about="individuC" />
-	  </owl:members>
-    </owl:sameAs>
-    -->
-    
     <owl:AllDisjointClasses>
 	   <owl:members rdf:parseType="Collection">
 	    <owl:Class rdf:about="DisjointClassA" />
@@ -60,10 +51,12 @@
     	<owl:Class rdf:about="DisjointClassC" />
 	   </owl:members>
 	</owl:AllDisjointClasses>
-    	    
+	
+	<owl:Class rdf:about="range"/>
+	<owl:Class rdf:about="domain"/>    	    
    	<owl:ObjectProperty rdf:about="property">
         <rdfs:range rdf:resource="range"/>  
-        <!-- strange behavior <rdfs:domain rdf:resource="domain"/> -->
+        <rdfs:domain rdf:resource="domain"/>
     </owl:ObjectProperty>
     
 
