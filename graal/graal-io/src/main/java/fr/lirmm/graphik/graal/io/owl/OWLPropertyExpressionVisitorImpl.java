@@ -11,6 +11,8 @@ import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLPropertyExpressionVisitorEx;
 import org.semanticweb.owlapi.util.DefaultPrefixManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
@@ -25,7 +27,10 @@ import fr.lirmm.graphik.graal.io.owl.logic.LogicalFormula;
  */
 public class OWLPropertyExpressionVisitorImpl implements
 		OWLPropertyExpressionVisitorEx<LogicalFormula> {
-
+	
+	private static final Logger logger = LoggerFactory
+			.getLogger(OWLPropertyExpressionVisitorImpl.class);
+	
 	private Term glueVariable1, glueVariable2;
 	private DefaultPrefixManager prefixManager;
 
@@ -40,9 +45,11 @@ public class OWLPropertyExpressionVisitorImpl implements
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public LogicalFormula visit(OWLAnnotationProperty arg0) {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
+	public LogicalFormula visit(OWLAnnotationProperty arg) {
+		if (logger.isInfoEnabled()) {
+			logger.info("Visit OWLAnnotationProperty is not implemented: " + arg);
+		}
+		return null;
 	}
 	
 	@Override

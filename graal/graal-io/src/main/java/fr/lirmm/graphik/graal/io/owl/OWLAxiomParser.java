@@ -432,9 +432,9 @@ public class OWLAxiomParser implements
 	public Iterable<? extends Object> visit(OWLSubPropertyChainOfAxiom arg) {
 		LogicalFormula f = new LogicalFormula();
 		Term varX, varY, firstVarInChain;
-		firstVarInChain = varX = this.freeVarGen.getFreeVar();
+		firstVarInChain = varX = freeVarGen.getFreeVar();
 		for(OWLPropertyExpression pe : arg.getPropertyChain()) {
-			varY = this.freeVarGen.getFreeVar();
+			varY = freeVarGen.getFreeVar();
 			f.and(pe.accept(new OWLPropertyExpressionVisitorImpl(this.prefixManager, varX, varY)));
 			varX = varY;
 		}

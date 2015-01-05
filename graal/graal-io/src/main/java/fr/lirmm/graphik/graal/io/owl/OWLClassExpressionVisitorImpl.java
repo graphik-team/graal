@@ -3,8 +3,6 @@
  */
 package fr.lirmm.graphik.graal.io.owl;
 
-import java.util.Collections;
-
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLClassExpressionVisitorEx;
@@ -186,11 +184,11 @@ public class OWLClassExpressionVisitorImpl implements
 
 	@Override
 	public LogicalFormula visit(OWLObjectOneOf arg) {
-		LogicalFormula atomset = this.createLogicalFormula();
-		for (OWLIndividual i : arg.getIndividuals()) {
-			// atomset.add(atom)
+		if (logger.isWarnEnabled()) {
+			logger.warn("OWLObjectOneOf is not supported. This axioms was skipped : "
+					+ arg);
 		}
-		return atomset;
+		return new LogicalFormula();
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -210,9 +208,14 @@ public class OWLClassExpressionVisitorImpl implements
 	}
 
 	@Override
-	public LogicalFormula visit(OWLDataAllValuesFrom arg0) {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
+	public LogicalFormula visit(OWLDataAllValuesFrom arg) {
+		Term var = this.varGen.getFreeVar();
+		LogicalFormula f = arg.getProperty().accept(new OWLPropertyExpressionVisitorImpl(
+				this.prefixManager, glueVariable, var));
+		f.not();
+		f.or(arg.getFiller().accept(new OWLDataRangeVisitorImpl()));
+		
+		return f;
 	}
 
 	@Override
@@ -243,15 +246,21 @@ public class OWLClassExpressionVisitorImpl implements
 	}
 
 	@Override
-	public LogicalFormula visit(OWLDataExactCardinality arg0) {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
+	public LogicalFormula visit(OWLDataExactCardinality arg) {
+		if (logger.isWarnEnabled()) {
+			logger.warn("OWLDataExactCardinality is not supported. This axioms was skipped : "
+					+ arg);
+		}
+		return new LogicalFormula();
 	}
 
 	@Override
-	public LogicalFormula visit(OWLDataMaxCardinality arg0) {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
+	public LogicalFormula visit(OWLDataMaxCardinality arg) {
+		if (logger.isWarnEnabled()) {
+			logger.warn("OWLDataMaxCardinality is not supported. This axioms was skipped : "
+					+ arg);
+		}
+		return new LogicalFormula();
 	}
 	
 	// /////////////////////////////////////////////////////////////////////////
