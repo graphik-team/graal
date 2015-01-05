@@ -4,6 +4,7 @@
 package fr.lirmm.graphik.graal.io.owl.logic;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
@@ -49,10 +50,13 @@ public class LogicalFormulaRuleTranslator {
 				if(!it.hasNext()) { // head.size == 1
 					add(ruleList,r);
 				} else {
-					System.err.println("rejected: ");
-					System.err.println(r);
 					// if head.size == 2, the rule imply a disjunction
 					// we does not deal with disjunction in the conclusion part
+					System.err.println("rejected: ");
+					for(Collection<Literal> c : f) {
+						System.err.println(c);
+					}
+					return Collections.emptyList();
 				}
 			}
 		}
