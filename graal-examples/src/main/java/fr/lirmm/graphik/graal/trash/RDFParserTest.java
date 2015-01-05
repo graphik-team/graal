@@ -28,9 +28,7 @@ public class RDFParserTest {
 	public static void main(String args[]) throws IOException, RDFParseException, RDFHandlerException {
 		
 		 long time = System.currentTimeMillis();
-		
-		 methodB();
-	       
+			       
 	        System.out.println(System.currentTimeMillis() - time);
 	    
 	        System.out.println("THE END");
@@ -50,13 +48,13 @@ public class RDFParserTest {
 		rdfParser.parse(inputStream, documentUrl.toString());
 	}
 	
-	static void methodB() throws IOException {
+	/*static void methodB() throws IOException {
 		
        RDFParser parser =  new RDFParser(new FileReader("/home/clement/projets/query-rewriting/dataset/univ-bench/univ-bench.owl"));
 
        for(Atom a : parser)
     	   System.out.println(a);
-	}
+	}*/
 	
 	static class StatementCounter extends RDFHandlerBase {
 		 

@@ -21,6 +21,7 @@ import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
+import fr.lirmm.graphik.graal.io.Prefix;
 import fr.lirmm.graphik.graal.writer.ConjunctiveQueryWriter;
 import fr.lirmm.graphik.util.stream.ObjectWriter;
 
@@ -28,7 +29,7 @@ import fr.lirmm.graphik.util.stream.ObjectWriter;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class DlgpWriter extends Writer implements ObjectWriter, ConjunctiveQueryWriter {
+public class DlgpWriter extends Writer implements ObjectWriter<Object>, ConjunctiveQueryWriter {
 
 	protected Writer writer;
 
@@ -61,7 +62,7 @@ public class DlgpWriter extends Writer implements ObjectWriter, ConjunctiveQuery
 	// /////////////////////////////////////////////////////////////////////////
 	
 	@Override
-	public void write(Iterable it) throws IOException {
+	public void write(Iterable<Object> it) throws IOException {
 		for(Object o: it)
 			this.write(o);
 	}
@@ -76,6 +77,8 @@ public class DlgpWriter extends Writer implements ObjectWriter, ConjunctiveQuery
 			this.write((Rule)o);
 		} else if(o instanceof ConjunctiveQuery) {
 			this.write((ConjunctiveQuery)o);
+		} else if(o instanceof Prefix) {
+			this.write((Prefix)o);
 		}
 	}
 
@@ -128,7 +131,7 @@ public class DlgpWriter extends Writer implements ObjectWriter, ConjunctiveQuery
 			this.write((ConjunctiveQuery)query);
 		}
 		else if (query instanceof Iterable) {
-			for (Object q : (Iterable)query) {
+			for (Object q : (Iterable<?>)query) {
 				if (q instanceof ConjunctiveQuery) {
 					this.write((ConjunctiveQuery)q);
 				}
@@ -160,6 +163,14 @@ public class DlgpWriter extends Writer implements ObjectWriter, ConjunctiveQuery
 		this.writer.flush();
 	}
 	
+	public void write(Prefix prefix) throws IOException {
+		this.writer.write("@prefix ");
+		this.writer.write(prefix.getPrefixName());
+		this.writer.write(" <");
+		this.writer.write(prefix.getPrefix());
+		this.writer.write(">\n");
+	}
+
 	// /////////////////////////////////////////////////////////////////////////
 	// OVERRIDE METHODS
 	// /////////////////////////////////////////////////////////////////////////

@@ -1,0 +1,116 @@
+<!DOCTYPE rdf:RDF [
+    <!ENTITY ontology "http://vicodi.org/ontology#" >
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY owl2xml "http://www.w3.org/2006/12/owl2-xml#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+    <!ENTITY test "file://test#" >
+]>
+
+
+<rdf:RDF xmlns="file://test#"
+     xml:base="file://test#"
+     xmlns:test="file://test#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#" >
+
+    <owl:Ontology rdf:about=""/>
+    
+    <!-- <owl:Class rdf:about="#Abbey">
+        <rdfs:subClassOf>
+        	 <owl:Restriction>
+		          <owl:onProperty>
+		          	<owl:ObjectProperty>
+		            <owl:inverseOf>
+				    	<owl:ObjectProperty rdf:about="InverseProperty" />
+				    </owl:inverseOf>
+				    </owl:ObjectProperty>
+		          </owl:onProperty>
+		          <owl:someValuesFrom>
+		          		<owl:Class rdf:about="#tutu" />
+		          </owl:someValuesFrom>
+		     </owl:Restriction>
+		</rdfs:subClassOf>
+    </owl:Class>
+    
+    <owl:Class rdf:about="#Test1">
+      <owl:intersectionOf rdf:parseType="Collection">
+        <owl:Class rdf:about="#A" />
+        <owl:Restriction>
+          <owl:onProperty rdf:resource="#p" />
+          <owl:hasSelf rdf:datatype="&xsd;boolean">true</owl:hasSelf>
+        </owl:Restriction>
+        <owl:Restriction>
+          <owl:onProperty rdf:resource="#q" />
+          <owl:hasValue rdf:datatype="&xsd;int">1</owl:hasValue>
+        </owl:Restriction>
+        <owl:Restriction>
+          <owl:onProperty rdf:resource="#r"/>
+          <owl:someValuesFrom>
+          	<owl:Class>
+	          <owl:complementOf>
+	            <owl:Class>
+	              <owl:unionOf rdf:parseType="Collection">
+	              	<owl:Class>
+	                  <owl:complementOf>
+	                	<owl:Class rdf:about="#E"/>
+	                  </owl:complementOf>
+	                </owl:Class>
+	                <owl:Class>
+	              	  <owl:complementOf>
+	                	<owl:Class rdf:about="#F"/>
+	                  </owl:complementOf>
+	                </owl:Class>
+	              </owl:unionOf>
+	            </owl:Class>
+	          </owl:complementOf>
+	        </owl:Class>
+          </owl:someValuesFrom>
+        </owl:Restriction>
+      </owl:intersectionOf>
+    </owl:Class> -->
+    	
+	<owl:Class rdf:about="#Class"/>
+	<owl:Class rdf:about="#ClassRange"/>
+    <owl:Class rdf:about="#ClassDomain"/>
+    
+    <owl:ObjectProperty rdf:about="#property">
+    	<rdfs:range rdf:resource="#ClassRange"/>
+    	<rdfs:domain rdf:resource="#ClassDomain"/>
+    </owl:ObjectProperty>
+    
+    <owl:DataProperty rdf:about="#hasSSN" />
+   
+   
+   	<Class rdf:about="#a"/>
+        
+    <rdf:Description rdf:about="#a">
+	    <property rdf:resource="#b"/>
+	</rdf:Description>
+
+	<owl:Class rdf:about="#Class">
+	   <owl:hasKey rdf:parseType="Collection">
+	   	 <owl:ObjectProperty rdf:about="#property"/>
+	     <owl:DataProperty rdf:about="#hasSSN"/>
+	   </owl:hasKey>
+	</owl:Class>
+	
+	<owl:ObjectProperty rdf:about="#EquivProperty">
+    	 <owl:ObjectProperty rdf:about="#property"/>
+    </owl:ObjectProperty>
+	
+	<owl:ObjectProperty rdf:about="hasUncle">
+	   <owl:propertyChainAxiom rdf:parseType="Collection">
+	     <owl:ObjectProperty rdf:about="hasFather"/>
+	     <owl:ObjectProperty rdf:about="hasBrother"/>
+	   </owl:propertyChainAxiom>
+	</owl:ObjectProperty>
+
+	
+	
+ 
+</rdf:RDF>
+    

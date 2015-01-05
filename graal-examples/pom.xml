@@ -8,7 +8,6 @@
 	</parent>
 	
 	<artifactId>graal-examples</artifactId>
-  <version>0.6.2-SNAPSHOT </version>
 	<packaging>jar</packaging>
 	<name>graal-examples</name>
 

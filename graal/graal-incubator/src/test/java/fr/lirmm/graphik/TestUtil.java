@@ -35,16 +35,16 @@ public final class TestUtil {
 
 			}
 			return new AtomSet[] { new MemoryGraphAtomSet(),
-					new LinkedListAtomSet(),
-					new DefaultRdbmsStore(new SqliteDriver(file)) };
+					new LinkedListAtomSet()/*,
+					new DefaultRdbmsStore(new SqliteDriver(file))*/ };
 		} catch (IOException e) {
 			// TODO treat this exception
 			e.printStackTrace();
 			throw new Error("Untreated exception");
-		} catch (StoreException e) {
+		} /*catch (StoreException e) {
 			// TODO treat this exception
 			e.printStackTrace();
 			throw new Error("Untreated exception");
-		}
+		}*/
 	}
 }

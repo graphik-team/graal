@@ -1,16 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
+	
 	<modelVersion>4.0.0</modelVersion>
 	
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
-		<artifactId>graal</artifactId>
-		<version>0.6.2-SNAPSHOT </version>
+		<artifactId>graal-apps</artifactId>
+		<version>0.6.2-SNAPSHOT</version>
 	</parent>
 	
-	<artifactId>graal-io</artifactId>
+	<artifactId>owl2dlp</artifactId>
+	<name>owl2dlp</name>
 	<packaging>jar</packaging>
-	<name>graal-io</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -33,51 +33,32 @@
 	</developers>
 
 	<dependencies>
-	    <dependency>
+		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-core</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-		<dependency>
+                <dependency>
 			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>dlgp-parser</artifactId>
-			<version>1.1.0</version>
+			<artifactId>graal-io</artifactId>
+			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.11</version>
-			<scope>test</scope>
+			<groupId>com.beust</groupId>
+			<artifactId>jcommander</artifactId>
+			<version>1.35</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>1.1.1</version>
 		</dependency>
-		<dependency>
-			<groupId>org.openrdf.sesame</groupId>
-			<artifactId>sesame-rio-api</artifactId>
-			<version>2.7.11</version>
-		</dependency>
-		<dependency>
-			<groupId>org.openrdf.sesame</groupId>
-			<artifactId>sesame-rio-rdfxml</artifactId>
-			<version>2.7.11</version>
-		</dependency>
-		<dependency>
-			<groupId>org.openrdf.sesame</groupId>
-			<artifactId>sesame-rio-ntriples</artifactId>
-			<version>2.7.11</version>
-		</dependency>
-		<dependency>
-		    <groupId>net.sourceforge.owlapi</groupId>
-		    <artifactId>owlapi-distribution</artifactId>
-		    <version>4.0.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.3.2</version>
+                <!-- TEST -->
+                <dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
@@ -92,13 +73,30 @@
 					<target>${jdk.version}</target>
 				</configuration>
 			</plugin>
-			<plugin>
+            <plugin>
 			  <artifactId>maven-release-plugin</artifactId>
 			  <version>2.1</version>
 			  <configuration>
 			    <preparationGoals>clean install</preparationGoals>
 			  </configuration>
 			</plugin>
+			<plugin>
+		      <artifactId>maven-assembly-plugin</artifactId>
+		      <version>2.4.1</version>
+		      <configuration>
+		        <preparationGoals>compile</preparationGoals>
+		      	<finalName>owl2dlp-${project.parent.version}</finalName>
+		        <archive>
+		          <manifest>
+		          	<addClasspath>true</addClasspath>
+		            <mainClass>fr.lirmm.graphik.graal.apps.OWL2DLP</mainClass>
+		          </manifest>
+		        </archive>
+		        <descriptorRefs>
+		          <descriptorRef>jar-with-dependencies</descriptorRef>
+		        </descriptorRefs>
+		      </configuration>
+		    </plugin>
 		</plugins>
 	</build>
 
