@@ -114,7 +114,6 @@ public final class DlgpParser extends AbstractReader<Object> {
 				buffer.close();
 			}
 		}
-
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -178,15 +177,15 @@ public final class DlgpParser extends AbstractReader<Object> {
 	
 	/**
 	 * Closes the stream and releases any system resources associated with it.
-	 * Once the stream has been closed, further read(), ready(), mark(),
-	 * reset(), or skip() invocations will throw an IOException. Closing a
-	 * previously closed stream has no effect.
+	 * Closing a previously closed parser has no effect.
 	 * 
 	 * @throws IOException
 	 */
 	public void close() throws IOException {
-		this.reader.close();
-		this.reader = null;
+		if(this.reader != null) {
+			this.reader.close();
+			this.reader = null;
+		}
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
