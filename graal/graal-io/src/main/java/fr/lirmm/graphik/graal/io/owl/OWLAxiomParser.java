@@ -518,8 +518,8 @@ public class OWLAxiomParser implements
 	@Override
 	public Iterable<? extends Object> visit(OWLDataPropertyAssertionAxiom arg) {
 		freeVarGen.setIndex(0);
-		Term a = new Term(arg.getSubject().toString(), Type.CONSTANT);
-		Term b = new Term(arg.getObject().toString(), Type.CONSTANT);
+		Term a = new Term(this.prefixManager.getShortForm(arg.getSubject().asOWLNamedIndividual()), Type.CONSTANT);
+		Term b = new Term(arg.getObject().getLiteral(), Type.LITERAL);
 		LogicalFormula f = arg.getProperty().accept(
 				new OWLPropertyExpressionVisitorImpl(this.prefixManager, a, b));
 		return Collections.singleton(f.iterator().next().iterator().next());
