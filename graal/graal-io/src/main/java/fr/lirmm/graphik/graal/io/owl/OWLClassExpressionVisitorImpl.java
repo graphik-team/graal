@@ -24,7 +24,7 @@ import org.semanticweb.owlapi.model.OWLObjectMinCardinality;
 import org.semanticweb.owlapi.model.OWLObjectOneOf;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLObjectUnionOf;
-import org.semanticweb.owlapi.util.DefaultPrefixManager;
+import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,9 +48,9 @@ public class OWLClassExpressionVisitorImpl implements
 	
 	private Term glueVariable;
 	private SymbolGenerator varGen;
-	private DefaultPrefixManager prefixManager;
+	private ShortFormProvider prefixManager;
 
-	public OWLClassExpressionVisitorImpl(DefaultPrefixManager prefixManager, SymbolGenerator varGen, Term glueVariable) {
+	public OWLClassExpressionVisitorImpl(ShortFormProvider prefixManager, SymbolGenerator varGen, Term glueVariable) {
 		this.prefixManager = prefixManager;
 		this.glueVariable = glueVariable;
 		this.varGen = varGen;
@@ -284,7 +284,7 @@ public class OWLClassExpressionVisitorImpl implements
 		Predicate predicate = null;
 		if (!owlClass.isAnonymous()) {
 			predicate = new Predicate(
-					this.prefixManager.getShortForm(owlClass.asOWLClass().getIRI()), 1);
+					this.prefixManager.getShortForm(owlClass.asOWLClass()), 1);
 		} else {
 			System.out.println("###" + owlClass);
 			// this.tmpManageOWLClass(owlClass);

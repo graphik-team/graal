@@ -53,7 +53,7 @@ import org.semanticweb.owlapi.model.OWLSubPropertyChainOfAxiom;
 import org.semanticweb.owlapi.model.OWLSymmetricObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLTransitiveObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.SWRLRule;
-import org.semanticweb.owlapi.util.DefaultPrefixManager;
+import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,7 +84,7 @@ public class OWLAxiomParser implements
 	private Term glueVarY;
 	private Term glueVarZ;
 
-	private DefaultPrefixManager prefixManager;
+	private ShortFormProvider prefixManager;
 	private Predicate equalityPredicate;
 	private OWLClassExpressionVisitorImpl classVisitorX;
 	private OWLClassExpressionVisitorImpl classVisitorY;
@@ -94,7 +94,7 @@ public class OWLAxiomParser implements
 	private OWLPropertyExpressionVisitorImpl propertyVisitorXZ;
 	private OWLPropertyExpressionVisitorImpl propertyVisitorYZ;
 
-	public OWLAxiomParser(DefaultPrefixManager prefixManager) {
+	public OWLAxiomParser(ShortFormProvider prefixManager) {
 		this.prefixManager = prefixManager;
 		this.glueVarX = freeVarGen.getFreeVar();
 		this.glueVarY = freeVarGen.getFreeVar();
@@ -488,7 +488,7 @@ public class OWLAxiomParser implements
 	@Override
 	public Iterable<? extends Object> visit(OWLClassAssertionAxiom arg) {
 		freeVarGen.setIndex(0);
-		Term i = new Term(this.prefixManager.getShortForm(arg.getIndividual().asOWLNamedIndividual().getIRI()), Type.CONSTANT);
+		Term i = new Term(this.prefixManager.getShortForm(arg.getIndividual().asOWLNamedIndividual()), Type.CONSTANT);
 		LogicalFormula f = arg.getClassExpression().accept(
 				new OWLClassExpressionVisitorImpl(this.prefixManager,
 						freeVarGen, i));
@@ -498,8 +498,8 @@ public class OWLAxiomParser implements
 	@Override
 	public Iterable<? extends Object> visit(OWLObjectPropertyAssertionAxiom arg) {
 		freeVarGen.setIndex(0);
-		Term a = new Term(this.prefixManager.getShortForm(arg.getSubject().asOWLNamedIndividual().getIRI()), Type.CONSTANT);
-		Term b = new Term(this.prefixManager.getShortForm(arg.getObject().asOWLNamedIndividual().getIRI()), Type.CONSTANT);
+		Term a = new Term(this.prefixManager.getShortForm(arg.getSubject().asOWLNamedIndividual()), Type.CONSTANT);
+		Term b = new Term(this.prefixManager.getShortForm(arg.getObject().asOWLNamedIndividual()), Type.CONSTANT);
 		LogicalFormula f = arg.getProperty().accept(
 				new OWLPropertyExpressionVisitorImpl(this.prefixManager, a, b));
 		return Collections.singleton(f.iterator().next().iterator().next());
