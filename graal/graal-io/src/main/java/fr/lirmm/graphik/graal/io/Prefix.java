@@ -28,4 +28,13 @@ public class Prefix {
 	public String getPrefix() {
 		return prefix;
 	}
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// OBJECT METHODS
+	// /////////////////////////////////////////////////////////////////////////
+	
+	@Override
+	public String toString() {
+		return "prefix[" + this.prefixName + ", " + this.prefix + "]";
+	}
 }
