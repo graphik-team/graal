@@ -10,7 +10,7 @@ import fr.lirmm.graphik.graal.core.Rule;
  * @author Swan Rocher
  * 
  */
-public class DisconnectedProperty extends AbstractRuleProperty {
+public final class DisconnectedProperty extends AbstractRuleProperty {
 
 	private static DisconnectedProperty instance = null;
 	

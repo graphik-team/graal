@@ -24,7 +24,7 @@ import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public class RecursiveBacktrackHomomorphism implements Homomorphism<ConjunctiveQuery, ReadOnlyAtomSet> {
+public final class RecursiveBacktrackHomomorphism implements Homomorphism<ConjunctiveQuery, ReadOnlyAtomSet> {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(RecursiveBacktrackHomomorphism.class);

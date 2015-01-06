@@ -17,7 +17,7 @@ import fr.lirmm.graphik.graal.store.rdbms.ResultSetSubstitutionReader;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public class SqlHomomorphism implements Homomorphism<ConjunctiveQuery, RdbmsStore> {
+public final class SqlHomomorphism implements Homomorphism<ConjunctiveQuery, RdbmsStore> {
 	
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(SqlHomomorphism.class);

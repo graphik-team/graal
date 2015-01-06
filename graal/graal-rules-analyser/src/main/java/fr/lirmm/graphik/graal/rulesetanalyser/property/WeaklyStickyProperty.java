@@ -26,7 +26,7 @@ import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
  * @author Swan Rocher
  * 
  */
-public class WeaklyStickyProperty implements RuleProperty {
+public final class WeaklyStickyProperty implements RuleProperty {
 
 	private static WeaklyStickyProperty instance = null;
 

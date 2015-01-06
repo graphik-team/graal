@@ -310,7 +310,7 @@ public class RuleAnalyser {
 	 * 
 	 * @return
 	 */
-	public Collection<RuleProperty> getAllProperty() {
+	public final Collection<RuleProperty> getAllProperty() {
 		return this.propertiesList;
 	}
 

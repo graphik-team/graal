@@ -12,7 +12,7 @@ import fr.lirmm.graphik.graal.core.Rule;
  * @author Swan Rocher
  * 
  */
-public class AtomicBodyProperty extends AbstractRuleProperty {
+public final class AtomicBodyProperty extends AbstractRuleProperty {
 
 	private static AtomicBodyProperty instance = null;
 	

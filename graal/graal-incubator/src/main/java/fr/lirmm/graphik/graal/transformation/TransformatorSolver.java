@@ -12,7 +12,7 @@ import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class TransformatorSolver implements Homomorphism<ConjunctiveQuery, TransformAtomSet> {
+public final class TransformatorSolver implements Homomorphism<ConjunctiveQuery, TransformAtomSet> {
 
 	private static TransformatorSolver instance;
 

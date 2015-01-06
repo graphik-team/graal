@@ -12,7 +12,7 @@ import fr.lirmm.graphik.graal.core.Term;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */
-public class TestUtils {
+public final class TestUtils {
 
 	private TestUtils() {
 	}

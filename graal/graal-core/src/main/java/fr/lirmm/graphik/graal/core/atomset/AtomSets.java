@@ -14,7 +14,7 @@ import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */
-public class AtomSets {
+public final class AtomSets {
 
 	private AtomSets() {
 	}

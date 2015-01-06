@@ -16,7 +16,7 @@ import fr.lirmm.graphik.graal.homomorphism.checker.HomomorphismChecker;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public class DefaultHomomorphismFactory implements HomomorphismFactory {
+public final class DefaultHomomorphismFactory implements HomomorphismFactory {
 	
 	private SortedSet<HomomorphismChecker> elements;
 	

@@ -12,7 +12,7 @@ import fr.lirmm.graphik.graal.core.Rule;
  * @author Swan Rocher
  *
  */
-public class RangeRestrictedProperty extends AbstractRuleProperty {
+public final class RangeRestrictedProperty extends AbstractRuleProperty {
 
 	private static RangeRestrictedProperty instance = null;
 	

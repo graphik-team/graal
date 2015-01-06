@@ -21,7 +21,7 @@ import fr.lirmm.graphik.graal.core.Term;
  * @author clement
  *
  */
-public class LogicalFormulaRuleTranslator {
+public final class LogicalFormulaRuleTranslator {
 
 	private static LogicalFormulaRuleTranslator instance;
 

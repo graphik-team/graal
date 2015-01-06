@@ -14,7 +14,7 @@ import fr.lirmm.graphik.graal.core.Term;
  * @author Swan Rocher
  * 
  */
-public class GuardedProperty extends AbstractRuleProperty {
+public final class GuardedProperty extends AbstractRuleProperty {
 
 	private static GuardedProperty instance = null;
 	

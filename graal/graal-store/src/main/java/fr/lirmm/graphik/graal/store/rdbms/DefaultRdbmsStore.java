@@ -542,7 +542,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	// PROTECTED METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	protected String getInsertTermQuery() {
+	private final String getInsertTermQuery() {
 		return "INSERT INTO "
 			   + TERM_TABLE_NAME
 			   + " (term, term_type) "

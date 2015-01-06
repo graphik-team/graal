@@ -44,21 +44,20 @@ public class ComplexHomomorphism<Q extends ConjunctiveQuery, F extends ReadOnlyA
 
 		public BuiltInSubstitutionReader(SubstitutionReader reader) {
 			this.rawReader = reader;
-			this.next = this.computeNext();
-			this.next();
 		}
 
 		@Override
     	public boolean hasNext() {
-			return this.current != null;
+			if(this.next == null)
+				this.next = this.computeNext();
+			return this.next != null;
 		}
 
 		@Override
     	public Substitution next() {
-			Substitution res = this.current;
-			this.current = next;
-			if (this.current != null)
-				this.next = computeNext();
+			hasNext();
+			Substitution res = this.next;
+			this.next = null;
 			return res;
 		}
 

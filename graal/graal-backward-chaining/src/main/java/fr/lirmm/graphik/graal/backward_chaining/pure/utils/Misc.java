@@ -24,7 +24,7 @@ import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */
-public class Misc {
+public final class Misc {
 
 	private static DefaultFreeVarGen varGen = new DefaultFreeVarGen("X"
 			+ Integer.toString(Misc.class.hashCode()));

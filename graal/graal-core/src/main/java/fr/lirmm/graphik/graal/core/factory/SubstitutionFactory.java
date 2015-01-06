@@ -10,7 +10,7 @@ import fr.lirmm.graphik.graal.core.Substitution;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class SubstitutionFactory {
+public final class SubstitutionFactory {
 
 	private static SubstitutionFactory instance = new SubstitutionFactory();
 	

@@ -62,6 +62,7 @@
 					<failurePriority>1</failurePriority>
 					<rulesets>
             			<ruleset>/rulesets/java/naming.xml</ruleset>
+            			<ruleset>/rulesets/java/design.xml</ruleset>
             		</rulesets>
             		<excludes>
 			            <exclude>**/graal-cli/**</exclude>

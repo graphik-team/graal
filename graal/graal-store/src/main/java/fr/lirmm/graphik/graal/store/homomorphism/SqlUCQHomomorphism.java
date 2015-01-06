@@ -22,7 +22,7 @@ import fr.lirmm.graphik.graal.store.rdbms.ResultSetSubstitutionReader;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public class SqlUCQHomomorphism implements UnionConjunctiveQueriesHomomorphism<RdbmsStore> {
+public final class SqlUCQHomomorphism implements UnionConjunctiveQueriesHomomorphism<RdbmsStore> {
 
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(SqlUCQHomomorphism.class);

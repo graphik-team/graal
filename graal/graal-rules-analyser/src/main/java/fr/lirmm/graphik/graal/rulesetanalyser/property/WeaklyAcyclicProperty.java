@@ -19,7 +19,7 @@ import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
  * @author Swan Rocher
  * 
  */
-public class WeaklyAcyclicProperty implements RuleProperty {
+public final class WeaklyAcyclicProperty implements RuleProperty {
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
