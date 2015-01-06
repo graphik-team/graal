@@ -8,7 +8,6 @@
 	</parent>
 
 	<artifactId>graal</artifactId>
-  <version>0.6.3-SNAPSHOT </version>
 	<name>GRAAL - Generic Rules ApplicAtion Library</name>
 	<packaging>pom</packaging>
 
