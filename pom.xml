@@ -37,6 +37,7 @@
 
 	<modules>
 		<module>graal</module>
+		<module>graal-util</module>
 		<module>graal-apps</module>
 		<module>graal-examples</module>
 		<module>graal-distro</module>

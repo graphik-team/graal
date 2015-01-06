@@ -1,17 +1,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
 	<modelVersion>4.0.0</modelVersion>
-
+	
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
-		<artifactId>graal</artifactId>
-		<version>0.6.2-SNAPSHOT </version>
+		<artifactId>graal-main-project</artifactId>
+		<version>0.6.2-SNAPSHOT</version>
 	</parent>
-
-	<artifactId>graal-core</artifactId>
+	
+	<artifactId>graal-util</artifactId>
 	<packaging>jar</packaging>
-	<name>graal-core</name>
+	<name>graal-util</name>
 
+	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>1.6</jdk.version>
@@ -20,8 +20,8 @@
 	<inceptionYear>2014</inceptionYear>
 
 	<organization>
-		<name>INRIA</name>
-		<url>http://www.inria.fr/</url>
+		<name>GraphIK</name>
+		<url>https://team.inria.fr/graphik/</url>
 	</organization>
 
 	<developers>
@@ -34,22 +34,14 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-util</artifactId>
-			<version>${project.parent.version}</version>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.3.2</version>
 		</dependency>
 		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<version>1.1.1</version>
-		</dependency>
-		
-		<!-- Test -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.11</version>
-			<scope>test</scope>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>graph-for-graal</artifactId>
+			<version>0.1</version>
 		</dependency>
 	</dependencies>
 
