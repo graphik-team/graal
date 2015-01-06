@@ -5,6 +5,7 @@ package fr.lirmm.graphik;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.junit.Assert;
@@ -74,7 +75,7 @@ public class ChaseTest {
 		chase.execute();
 		
 		int size = 0;
-		for(Atom a : atomSet) {
+		for(Iterator<Atom> it = atomSet.iterator(); it.hasNext(); it.next()) {
 			++size;
 		}
 		
@@ -98,7 +99,7 @@ public class ChaseTest {
 		chase.execute();
 		
 		int size = 0;
-		for(Atom a : atomSet) {
+		for(Iterator<Atom> it = atomSet.iterator(); it.hasNext(); it.next()) {
 			++size;
 		}
 		

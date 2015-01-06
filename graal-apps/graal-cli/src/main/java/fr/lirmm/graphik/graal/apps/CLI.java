@@ -316,9 +316,6 @@ public class CLI {
 	}
 
 	public void printHelp() {
-		int i;
-		final int v = 24;
-		final int c = 40;
 		System.out.println(PROGRAM_NAME);
 		System.out.println(" [-h] [-v] [-f <input_file>] [-d <db_file>] [-u <ucq_file|ucq_string>] [-s [<n>]]");
 		System.out.print("---------");

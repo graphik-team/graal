@@ -3,6 +3,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -66,7 +67,7 @@ public class MelanieQueryTest {
 			time2 = System.currentTimeMillis();
 			
 			int i = 0;
-			for(Substitution s : subR) 
+			for(Iterator<Substitution> it = subR.iterator(); it.hasNext(); it.next())
 				++i;
 			
 			System.out.println(i + " results in " + (time2 - time) + "ms");

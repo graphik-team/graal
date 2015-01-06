@@ -20,7 +20,6 @@ import fr.lirmm.graphik.graal.core.factory.RuleFactory;
 public class UnifierTest {
 	
 	private static Predicate p = new Predicate("p", 2);
-	private static Predicate q = new Predicate("q", 1);
 	
 	private static final Term x = new Term("X", Term.Type.VARIABLE);
 	private static final Term y = new Term("Y", Term.Type.VARIABLE);

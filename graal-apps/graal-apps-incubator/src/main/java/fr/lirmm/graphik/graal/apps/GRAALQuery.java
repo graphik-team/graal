@@ -14,9 +14,7 @@ import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
-import fr.lirmm.graphik.graal.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
-import fr.lirmm.graphik.graal.grd.GraphOfRuleDependenciesWithUnifiers;
 import fr.lirmm.graphik.graal.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
@@ -73,9 +71,6 @@ public class GRAALQuery {
 		RdbmsDriver driver;
 		driver = new MysqlDriver(options.database_host, options.database, options.database_user, options.database_password);
 		AtomSet atomSet = new DefaultRdbmsStore(driver);
-		
-		Chase chase = null;
-		GraphOfRuleDependenciesWithUnifiers grd = null;
 
 		DlgpParser parser = new DlgpParser(new File(options.file));
 		UnionConjunctiveQueries ucq = new UnionConjunctiveQueries();

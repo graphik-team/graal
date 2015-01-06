@@ -135,6 +135,7 @@ public class HierarchyVSEnumBenchmark {
 				++j;
 			}
 		}
+		System.out.println(j);
 	}
 	
 	public static void a2() {
@@ -162,6 +163,7 @@ public class HierarchyVSEnumBenchmark {
 				++j;
 			}
 		}
+		System.out.println(j);
 	}
 	
 	public static void a3() {
@@ -189,6 +191,7 @@ public class HierarchyVSEnumBenchmark {
 				++j;
 			}
 		}
+		System.out.println(j);
 	}
 	
 
@@ -218,6 +221,7 @@ public class HierarchyVSEnumBenchmark {
 					++j;
 				}
 			}
+			System.out.println(j);
 	}
 	
 	public static void c() {
@@ -245,6 +249,7 @@ public class HierarchyVSEnumBenchmark {
 					++j;
 				}
 			}
+			System.out.println(j);
 	}
 	
 

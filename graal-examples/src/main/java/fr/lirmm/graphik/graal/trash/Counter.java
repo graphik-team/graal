@@ -13,7 +13,7 @@ import fr.lirmm.graphik.util.stream.AbstractReader;
  */
 public class Counter<T> extends AbstractReader<T> {
 	
-	private final Object lock = new Object();
+	//private final Object lock = new Object();
 	private Iterator<T> objects;
 	private int count = 0;
 	

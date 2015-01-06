@@ -47,12 +47,4 @@ public class OxfordQuery2Sparql {
 		}
 	}
 
-
-	/**
-	 * 
-	 */
-	private static void usage() {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
-	}
 }

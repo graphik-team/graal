@@ -47,8 +47,8 @@ public class RuleAnalyser {
 	private static class ComponentCalculabilityValue {
 		static final int FES = 1;
 		static final int FUS = 2;
-		static final int BTS = 4;
-		static final int UNKNOWN = 0;
+		//static final int BTS = 4;
+		//static final int UNKNOWN = 0;
 	}
 
 	private RuleHierarchyGraph hierarchy;

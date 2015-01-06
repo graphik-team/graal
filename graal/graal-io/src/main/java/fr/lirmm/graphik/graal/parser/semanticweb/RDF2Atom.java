@@ -57,7 +57,7 @@ public class RDF2Atom extends AbstractReader<Atom> {
 	private Map<String, LinkedList<String>> reverseCollectionMap = new TreeMap<String, LinkedList<String>>();
 
 	private Atom atom = null;
-	private Map<String, LinkedList<Atom>> atomPendingBlankNodeResolution = new TreeMap<String, LinkedList<Atom>>();
+	//private Map<String, LinkedList<Atom>> atomPendingBlankNodeResolution = new TreeMap<String, LinkedList<Atom>>();
 	private Iterator<Atom> reader;
 	
 

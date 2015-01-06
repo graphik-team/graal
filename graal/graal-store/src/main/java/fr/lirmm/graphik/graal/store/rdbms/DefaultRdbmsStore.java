@@ -78,8 +78,6 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 														  + counterTableName
 														  + " SET value = ? WHERE counter_name = ?;";
 
-	// misc queries
-	private static final String EMPTY_QUERY = "select 0 from (select 0) as t where 0;";
 	private static final String TEST_SCHEMA_QUERY = "SELECT 0 FROM "
 													+ predicateTableName
 													+ " LIMIT 1";
@@ -753,6 +751,12 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		return new DefaultRdbmsPredicateReader(this.getDriver());
 	}
 	
+	/**
+	 * Return a SQL query like below:
+	 * "select 0, …, 0 from (select 0) as t where 0;"
+	 * @param nbAnswerVars number of column needed
+	 * @return 
+	 */
 	private String createEmptyQuery(int nbAnswerVars) {
 		StringBuilder s = new StringBuilder("select 0");
 		

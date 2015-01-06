@@ -16,7 +16,6 @@ import com.beust.jcommander.Parameter;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
-import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
 import fr.lirmm.graphik.graal.rulesetanalyser.RuleAnalyser;
 
 /**
@@ -24,8 +23,6 @@ import fr.lirmm.graphik.graal.rulesetanalyser.RuleAnalyser;
  * 
  */
 public class Kiabora {
-
-	private static DlgpWriter writer = new DlgpWriter();
 
 	@Parameter(names = { "-f", "--file" }, description = "DLP file")
 	private String file = "";
