@@ -4,6 +4,7 @@
 package fr.lirmm.graphik;
 
 import java.io.File;
+import java.io.IOError;
 import java.io.IOException;
 
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
@@ -35,13 +36,7 @@ public final class TestUtil {
 					new LinkedListAtomSet()/*,
 					new DefaultRdbmsStore(new SqliteDriver(file))*/ };
 		} catch (IOException e) {
-			// TODO treat this exception
-			e.printStackTrace();
-			throw new Error("Untreated exception");
-		} /*catch (StoreException e) {
-			// TODO treat this exception
-			e.printStackTrace();
-			throw new Error("Untreated exception");
-		}*/
+			throw new IOError(e);
+		}
 	}
 }

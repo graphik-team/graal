@@ -7,6 +7,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.HashMapSubstitution;
 import fr.lirmm.graphik.graal.core.Rule;
@@ -21,6 +24,10 @@ import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
  *
  */
 public class RuleVariableRenamer {
+	
+	
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(RuleVariableRenamer.class);
 	
 	public static void main(String[] args) throws IOException {
 		DlgpParser parser;
@@ -62,7 +69,9 @@ public class RuleVariableRenamer {
 					++objectNumber;
 				} else {
 					writer.close();
-					throw new Error("Untreated kind of logical object, please contribute !");
+					if(LOGGER.isWarnEnabled()) {
+						LOGGER.warn("Untreated kind of logical object (" + o.getClass() + "), please contribute !");
+					}
 				}
 			}
 		} catch(IOException e) {

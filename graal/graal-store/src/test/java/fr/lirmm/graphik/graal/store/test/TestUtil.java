@@ -4,6 +4,7 @@
 package fr.lirmm.graphik.graal.store.test;
 
 import java.io.File;
+import java.io.IOError;
 import java.io.IOException;
 
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
@@ -28,7 +29,7 @@ public final class TestUtil {
 				if (file.delete()) {
 					file.createNewFile();
 				} else {
-					throw new Error("I can't delete the file " + DB_TEST);
+					throw new IOError(new Error("I can't delete the file " + DB_TEST));
 				}
 
 			}
@@ -36,11 +37,11 @@ public final class TestUtil {
 		} catch (IOException e) {
 			// TODO treat this exception
 			e.printStackTrace();
-			throw new Error("Untreated exception");
+			throw new IOError(e);
 		} catch (StoreException e) {
 			// TODO treat this exception
 			e.printStackTrace();
-			throw new Error("Untreated exception");
+			throw new Error("Untreated exception", e);
 		}
 	}
 }

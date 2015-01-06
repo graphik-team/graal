@@ -83,23 +83,15 @@ public class OWLPropertyExpressionVisitorImpl implements
 	 */
 	private Predicate createPredicate(OWLObjectPropertyExpression property) {
 		Predicate predicate = null;
-		if (!property.isAnonymous()) {
-			String name = this.prefixManager.getShortForm(property.asOWLObjectProperty());
-			predicate = new Predicate(name , 2);
-		} else {
-			throw new Error("not yet implemented");
-		}
+		String name = this.prefixManager.getShortForm(property.asOWLObjectProperty());
+		predicate = new Predicate(name , 2);
 		return predicate;
 	}
 	
 	private Predicate createPredicate(OWLDataPropertyExpression property) {
 		Predicate predicate = null;
-		if (!property.isAnonymous()) {
-			String name = this.prefixManager.getShortForm(property.asOWLDataProperty());
-			predicate = new Predicate(name , 2);
-		} else {
-			throw new Error("not yet implemented");
-		}
+		String name = this.prefixManager.getShortForm(property.asOWLDataProperty());
+		predicate = new Predicate(name , 2);
 		return predicate;
 	}
 

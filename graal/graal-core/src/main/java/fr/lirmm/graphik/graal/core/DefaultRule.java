@@ -47,24 +47,13 @@ public class DefaultRule implements Rule {
 
 	public DefaultRule(String label, Iterable<Atom> body, Iterable<Atom> head) {
 		this.label = label;
-		AtomSet atomSet = new LinkedListAtomSet();
-		try {
-			atomSet.addAll(body);
-		} catch (AtomSetException e) {
-			// TODO treat this exception
-			e.printStackTrace();
-			throw new Error("Untreated exception");
-		}
+		LinkedListAtomSet atomSet = new LinkedListAtomSet();
+		atomSet.addAll(body);
 		this.body = atomSet;
 
 		atomSet = new LinkedListAtomSet();
-		try {
-			atomSet.addAll(head);
-		} catch (AtomSetException e) {
-			// TODO treat this exception
-			e.printStackTrace();
-			throw new Error("Untreated exception");
-		}
+		atomSet.addAll(head);
+
 		this.head = atomSet;
 	}
 

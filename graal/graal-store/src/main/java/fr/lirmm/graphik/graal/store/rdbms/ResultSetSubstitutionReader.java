@@ -17,6 +17,7 @@ import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 import fr.lirmm.graphik.graal.store.StoreException;
+import fr.lirmm.graphik.util.MethodNotImplementedError;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -86,7 +87,7 @@ public class ResultSetSubstitutionReader implements SubstitutionReader {
     @Override
     public void remove() {
         // TODO implement this method
-        throw new Error("This method isn't implemented");
+        throw new MethodNotImplementedError();
     }
 
     /*

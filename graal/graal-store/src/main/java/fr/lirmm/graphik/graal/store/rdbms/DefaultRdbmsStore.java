@@ -28,6 +28,7 @@ import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.store.StoreException;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
+import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.stream.ObjectReader;
 
 /**
@@ -391,7 +392,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	@Override
 	public Set<Term> getTerms(Type type) {
 		// TODO implement this method
-		throw new Error("This method isn't implemented");
+		throw new MethodNotImplementedError("This method isn't implemented");
 	}
 
 	/**
@@ -771,7 +772,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	@Override
 	public void clear() {
 		// TODO implement this method
-		throw new Error("This method isn't implemented");
+		throw new MethodNotImplementedError("This method isn't implemented");
 	}
 
 }

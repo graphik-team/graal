@@ -63,6 +63,7 @@
 					<rulesets>
             			<ruleset>/rulesets/java/naming.xml</ruleset>
             			<ruleset>/rulesets/java/design.xml</ruleset>
+            			<ruleset>/rulesets/java/strictexception.xml</ruleset>
             		</rulesets>
             		<excludes>
 			            <exclude>**/graal-cli/**</exclude>

@@ -17,6 +17,7 @@ import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.store.ReadOnlyStore;
 import fr.lirmm.graphik.graal.store.StoreException;
+import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.stream.ObjectReader;
 
 public class ReadOnlyTransformStore implements ReadOnlyStore {
@@ -116,19 +117,19 @@ public class ReadOnlyTransformStore implements ReadOnlyStore {
 	@Override
 	public ObjectReader<Predicate> getAllPredicates() throws AtomSetException {
 		// TODO implement this method
-		throw new Error("This method isn't implemented");
+		throw new MethodNotImplementedError();
 	}
 
 	@Override
 	public boolean isSubSetOf(AtomSet atomset) {
 		// TODO implement this method
-		throw new Error("This method isn't implemented");
+		throw new MethodNotImplementedError();
 	}
 
 	@Override
 	public boolean isEmpty() {
 		// TODO implement this method
-		throw new Error("This method isn't implemented");
+		throw new MethodNotImplementedError();
 	}
 
 }
