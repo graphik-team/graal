@@ -28,7 +28,7 @@ import fr.lirmm.graphik.util.stream.ObjectReader;
 public class PlainTableRDBMSStore extends AbstractRdbmsStore {
 
 	
-	private static final Logger logger = LoggerFactory
+	private static final Logger LOGGER = LoggerFactory
 			.getLogger(PlainTableRDBMSStore.class);
 	
 	// /////////////////////////////////////////////////////////////////////////
@@ -122,8 +122,8 @@ public class PlainTableRDBMSStore extends AbstractRdbmsStore {
 			String tableName = this.getPredicateTableName(atom.getPredicate());
 			String query = this.getDriver().getInsertOrIgnoreStatement(tableName, atom.getTerms());
 
-			if (logger.isDebugEnabled()) {
-				logger.debug(atom.toString() + " : " + query);
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug(atom.toString() + " : " + query);
 			}
 			statement.addBatch(query);
 		} catch (SQLException e) {

@@ -46,7 +46,7 @@ public class GRDParser {
 
 	}
 
-	private static final Logger logger = LoggerFactory
+	private static final Logger LOGGER = LoggerFactory
 			.getLogger(GRDParser.class);
 	
 	private static GRDParser instance;
@@ -125,8 +125,8 @@ public class GRDParser {
 			dest = rules.get(matcher.group(2));
 			for (String unificator : matcher.group(3).split("\\}\\s*\\{")) {
 				Substitution sub = parseSubstitution(unificator);
-				if (logger.isDebugEnabled()) {
-					logger.debug("add dependency: " + src.getLabel() + "--"
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug("add dependency: " + src.getLabel() + "--"
 							+ sub + "-->" + dest.getLabel());
 				}
 				grd.addDependency(src, sub, dest);

@@ -13,10 +13,10 @@ import fr.lirmm.graphik.util.string.NumberStringComparator;
  */
 public class LabelRuleComparator implements Comparator<Rule> {
 
-	private static final NumberStringComparator comparator = new NumberStringComparator();
+	private static final NumberStringComparator COMPARATOR = new NumberStringComparator();
 	
 	@Override
 	public int compare(Rule o1, Rule o2) {
-		return comparator.compare(o1.getLabel(), o2.getLabel());
+		return COMPARATOR.compare(o1.getLabel(), o2.getLabel());
 	}
 }

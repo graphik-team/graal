@@ -21,7 +21,7 @@ import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
  */
 public class RestrictedChaseStopCondition implements ChaseStopCondition {
 
-	private static final Logger logger = LoggerFactory
+	private static final Logger LOGGER = LoggerFactory
 			.getLogger(RestrictedChaseStopCondition.class);
 	
 	/* (non-Javadoc)
@@ -31,8 +31,8 @@ public class RestrictedChaseStopCondition implements ChaseStopCondition {
 	public boolean canIAdd(ReadOnlyAtomSet atomSet, Set<Term> fixedTerms, ReadOnlyAtomSet base) throws HomomorphismFactoryException, HomomorphismException {
 		
 		Query query = new ConjunctiveQueryWithFixedVariables(atomSet, fixedTerms);
-		if(logger.isDebugEnabled()) {
-			logger.debug("Fixed Query:" + query);
+		if(LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Fixed Query:" + query);
 		}
 		if (StaticHomomorphism.executeQuery(query, base).hasNext()) {
 			return false;

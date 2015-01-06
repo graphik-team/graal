@@ -24,7 +24,7 @@ import fr.lirmm.graphik.graal.store.StoreException;
  */
 public class ResultSetSubstitutionReader implements SubstitutionReader {
 
-    private static final Logger logger = LoggerFactory
+    private static final Logger LOGGER = LoggerFactory
             .getLogger(ResultSetSubstitutionReader.class);
     private ResultSet results;
     private ResultSetMetaData metaData;
@@ -102,7 +102,7 @@ public class ResultSetSubstitutionReader implements SubstitutionReader {
             try {
                 this.hasNext = this.results.next();
             } catch (SQLException e) {
-                logger.error("Error during atom reading", e);
+                LOGGER.error("Error during atom reading", e);
                 this.hasNext = false;
             }
         }
@@ -134,7 +134,7 @@ public class ResultSetSubstitutionReader implements SubstitutionReader {
             }
             return substitution;
         } catch (Exception e) {
-        	logger.error("Error while reading the next substitution", e);
+        	LOGGER.error("Error while reading the next substitution", e);
             return null;
         }
     }
@@ -158,7 +158,7 @@ public class ResultSetSubstitutionReader implements SubstitutionReader {
             this.results.close();
             this.statement.close();
         } catch (SQLException e) {
-            logger.warn(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e);
         }
     }
     

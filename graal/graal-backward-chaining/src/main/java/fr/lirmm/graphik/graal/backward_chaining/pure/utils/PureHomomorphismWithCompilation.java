@@ -18,7 +18,7 @@ import fr.lirmm.graphik.graal.homomorphism.PureHomomorphism;
  */
 public class PureHomomorphismWithCompilation extends PureHomomorphism {
 
-	private static final Logger logger = LoggerFactory
+	private static final Logger LOGGER = LoggerFactory
 			.getLogger(PureHomomorphismWithCompilation.class);
 	
 	private static PureHomomorphismWithCompilation instance;
@@ -50,8 +50,8 @@ public class PureHomomorphismWithCompilation extends PureHomomorphism {
 
 		// check if the query is empty
 		if (source == null || !source.iterator().hasNext()) {
-			if (logger.isInfoEnabled()) {
-				logger.info("Empty query");
+			if (LOGGER.isInfoEnabled()) {
+				LOGGER.info("Empty query");
 			}
 			return true;
 		}

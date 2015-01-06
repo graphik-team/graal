@@ -33,9 +33,9 @@ public class BackwardChainingTest {
 	private static Predicate p = new Predicate("p", 2);
 	private static Predicate q = new Predicate("q", 2);
 
-	private static final Term x = new Term("X", Term.Type.VARIABLE);
-	private static final Term y = new Term("Y", Term.Type.VARIABLE);
-	private static final Term z = new Term("Z", Term.Type.VARIABLE);
+	private static final Term X = new Term("X", Term.Type.VARIABLE);
+	private static final Term Y = new Term("Y", Term.Type.VARIABLE);
+	private static final Term Z = new Term("Z", Term.Type.VARIABLE);
 	// private static final Term u = new Term("U", Term.Type.VARIABLE);
 	// private static final Term v = new Term("V", Term.Type.VARIABLE);
 	// private static final Term w = new Term("w", Term.Type.VARIABLE);
@@ -43,23 +43,23 @@ public class BackwardChainingTest {
 	// private static final Term a = new Term("a", Term.Type.CONSTANT);
 	// private static final Term b = new Term("b", Term.Type.CONSTANT);
 	//
-	private static Atom p_xy, q_yx, q_yz;
+	private static Atom pXY, qYX, qYZ;
 
 	static {
 		Term[] terms = new Term[2];
-		terms[0] = x;
-		terms[1] = y;
-		p_xy = new DefaultAtom(p, Arrays.asList(terms));
+		terms[0] = X;
+		terms[1] = Y;
+		pXY = new DefaultAtom(p, Arrays.asList(terms));
 
 		terms = new Term[2];
-		terms[0] = y;
-		terms[1] = x;
-		q_yx = new DefaultAtom(q, Arrays.asList(terms));
+		terms[0] = Y;
+		terms[1] = X;
+		qYX = new DefaultAtom(q, Arrays.asList(terms));
 
 		terms = new Term[2];
-		terms[0] = y;
-		terms[1] = z;
-		q_yz = new DefaultAtom(q, Arrays.asList(terms));
+		terms[0] = Y;
+		terms[1] = Z;
+		qYZ = new DefaultAtom(q, Arrays.asList(terms));
 	}
 
 	/**
@@ -70,18 +70,18 @@ public class BackwardChainingTest {
 		RuleSet rules = new LinkedListRuleSet();
 
 		Rule rule = RuleFactory.getInstance().createRule();
-		rule.getBody().add(p_xy);
-		rule.getHead().add(q_yx);
+		rule.getBody().add(pXY);
+		rule.getHead().add(qYX);
 		rules.add(rule);
 
 		rule = RuleFactory.getInstance().createRule();
-		rule.getBody().add(q_yx);
-		rule.getHead().add(p_xy);
+		rule.getBody().add(qYX);
+		rule.getHead().add(pXY);
 		rules.add(rule);
 
 		AtomSet atomset = AtomSetFactory.getInstance().createAtomSet();
-		atomset.add(p_xy);
-		atomset.add(q_yz);
+		atomset.add(pXY);
+		atomset.add(qYZ);
 		ConjunctiveQuery query = new DefaultConjunctiveQuery(atomset);
 
 		BackwardChainer bc = new PureRewriter(query, rules);

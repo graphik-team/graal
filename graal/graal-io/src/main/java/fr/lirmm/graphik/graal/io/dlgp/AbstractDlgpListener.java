@@ -24,7 +24,7 @@ import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
  */
 abstract class AbstractDlgpListener implements ParserListener {
     
-	private static final Logger logger = LoggerFactory
+	private static final Logger LOGGER = LoggerFactory
 			.getLogger(AbstractDlgpListener.class);
 	
 	private List<Term> answerVars;
@@ -62,7 +62,7 @@ abstract class AbstractDlgpListener implements ParserListener {
 		case FACT:
 			break;
 		default:
-			logger.warn("Unrecognized object type: " + objectType);
+			LOGGER.warn("Unrecognized object type: " + objectType);
 			break;
 		}
 		
@@ -108,7 +108,7 @@ abstract class AbstractDlgpListener implements ParserListener {
 
 	@Override
 	public void createsEquality(Object term1, Object term2) {
-		logger.warn("Unsupported equality predicate !");
+		LOGGER.warn("Unsupported equality predicate !");
 	}
 
 	@Override

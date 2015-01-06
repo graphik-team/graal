@@ -35,20 +35,20 @@ public class QREAggregAllRulesBasic extends QREAggregSingleRule {
 	protected Collection<ConjunctiveQuery> getRewritesFrom(ConjunctiveQuery q) {
 
 		LinkedList<ConjunctiveQuery> currentRewrites = new LinkedList<ConjunctiveQuery>();
-		LinkedList<QueryUnifier> SRUnifiers = new LinkedList<QueryUnifier>();
+		LinkedList<QueryUnifier> srUnifiers = new LinkedList<QueryUnifier>();
 		LinkedList<QueryUnifier> unifiers = new LinkedList<QueryUnifier>();
 		try {
 			for (Rule r : getUnifiableRules(q.getAtomSet().getAllPredicates(),
 					getRuleSet(), getRulesCompilation())) {
 
 				/** compute the single rule unifiers **/
-				SRUnifiers.addAll(getSRUnifier(q, r));
+				srUnifiers.addAll(getSRUnifier(q, r));
 			}
 		} catch (AtomSetException e) {
 		}
 
 		/** compute the aggregated unifier **/
-		unifiers = getAggregatedUnifiers(SRUnifiers);
+		unifiers = getAggregatedUnifiers(srUnifiers);
 
 		/** compute the rewrite from the unifier **/
 		for (QueryUnifier u : unifiers) {

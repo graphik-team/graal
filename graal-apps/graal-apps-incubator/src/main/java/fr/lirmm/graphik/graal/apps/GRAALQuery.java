@@ -37,19 +37,19 @@ public class GRAALQuery {
 	private String file = "";
 	
 	@Parameter(names = { "--driver"}, description = "mysql|sqlite")
-	private String driver_name = "mysql";
+	private String driverName = "mysql";
 	
 	@Parameter(names = { "--db"}, description = "database name")
 	private String database = "";
 	
 	@Parameter(names = { "--host"}, description = "database host")
-	private String database_host = "localhost";
+	private String databaseHost = "localhost";
 	
 	@Parameter(names = { "--user"}, description = "database user")
-	private String database_user = "root";
+	private String databaseUser = "root";
 	
 	@Parameter(names = { "--password"}, description = "database password")
-	private String database_password = "root";
+	private String databasePassword = "root";
 	
 	
 
@@ -69,7 +69,7 @@ public class GRAALQuery {
 		
 		// Driver
 		RdbmsDriver driver;
-		driver = new MysqlDriver(options.database_host, options.database, options.database_user, options.database_password);
+		driver = new MysqlDriver(options.databaseHost, options.database, options.databaseUser, options.databasePassword);
 		AtomSet atomSet = new DefaultRdbmsStore(driver);
 
 		DlgpParser parser = new DlgpParser(new File(options.file));

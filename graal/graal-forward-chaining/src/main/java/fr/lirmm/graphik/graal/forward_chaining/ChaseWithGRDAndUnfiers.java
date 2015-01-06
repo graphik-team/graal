@@ -31,7 +31,7 @@ import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
  */
 public class ChaseWithGRDAndUnfiers extends AbstractChase {
 	
-	private static final Logger logger = LoggerFactory
+	private static final Logger LOGGER = LoggerFactory
 			.getLogger(ChaseWithGRDAndUnfiers.class);
 	
 	private ChaseStopCondition stopCondition = new RestrictedChaseStopCondition();
@@ -71,14 +71,14 @@ public class ChaseWithGRDAndUnfiers extends AbstractChase {
 				rule = pair.getLeft();
 				unifiedRule = unificator.getSubstitut(pair.getLeft());
 				query = new DefaultConjunctiveQuery(unifiedRule.getBody(), unifiedRule.getFrontier());
-				if(logger.isDebugEnabled()) {
-					logger.debug("Execute rule: " + rule + " with unificator " + unificator);
-					logger.debug("-- Query: " + query);
+				if(LOGGER.isDebugEnabled()) {
+					LOGGER.debug("Execute rule: " + rule + " with unificator " + unificator);
+					LOGGER.debug("-- Query: " + query);
 				}
 				
 				for (Substitution substitution : StaticHomomorphism.executeQuery(query, atomSet)) {
-					if(logger.isDebugEnabled()) {
-						logger.debug("-- Found homomorphism: " + substitution );
+					if(LOGGER.isDebugEnabled()) {
+						LOGGER.debug("-- Found homomorphism: " + substitution );
 					}
 					Set<Term> fixedTerm = substitution.getValues();
 					
@@ -94,9 +94,9 @@ public class ChaseWithGRDAndUnfiers extends AbstractChase {
 						this.atomSet.addAll(deductedAtomSet);
 						for(Rule triggeredRule : this.grd.getOutEdges(rule)) {
 							for(Substitution u : this.grd.getUnifiers(rule, triggeredRule)) {
-								if(logger.isDebugEnabled()) {
-									logger.debug("-- -- Dependency: " + triggeredRule + " with " + u);
-									logger.debug("-- -- Unificator: " + u);
+								if(LOGGER.isDebugEnabled()) {
+									LOGGER.debug("-- -- Dependency: " + triggeredRule + " with " + u);
+									LOGGER.debug("-- -- Unificator: " + u);
 								}
 								if(u != null) {
 									this.queue.add(new ImmutablePair<Rule, Substitution>(triggeredRule, u));

@@ -25,19 +25,19 @@ public class ComplexHomomorphism<Q extends ConjunctiveQuery, F extends ReadOnlyA
 	}
 
     public SubstitutionReader execute(Q q, F f) throws HomomorphismException {
-	    AtomSet raw_atoms = new LinkedListAtomSet();
+	    AtomSet rawAtoms = new LinkedListAtomSet();
 		this.builtInAtoms = new LinkedList<Atom>();
 		for (Atom a : q) {
 			if (a.getPredicate() instanceof BuiltInPredicate) {
 				this.builtInAtoms.add(a);
 			}
 			else {
-				raw_atoms.add(a);
+				rawAtoms.add(a);
 			}
 		}
-		DefaultConjunctiveQuery raw_query = new DefaultConjunctiveQuery(raw_atoms);
-		raw_query.setAnswerVariables(q.getAnswerVariables());
-		return new BuiltInSubstitutionReader(this.rawSolver.execute(raw_query,f));
+		DefaultConjunctiveQuery rawQuery = new DefaultConjunctiveQuery(rawAtoms);
+		rawQuery.setAnswerVariables(q.getAnswerVariables());
+		return new BuiltInSubstitutionReader(this.rawSolver.execute(rawQuery,f));
 	}
 
 	protected class BuiltInSubstitutionReader implements SubstitutionReader {

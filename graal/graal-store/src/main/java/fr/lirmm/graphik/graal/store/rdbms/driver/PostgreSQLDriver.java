@@ -23,7 +23,7 @@ import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 public class PostgreSQLDriver extends AbstractRdbmsDriver {
 
 	
-	private static final Logger logger = LoggerFactory
+	private static final Logger LOGGER = LoggerFactory
 			.getLogger(PostgreSQLDriver.class);
 	
 	// /////////////////////////////////////////////////////////////////////////
@@ -51,7 +51,7 @@ public class PostgreSQLDriver extends AbstractRdbmsDriver {
 			connection = DriverManager.getConnection("jdbc:postgresql://" + host
 					+ "/" + dbName + "?user=" + user + "&password=" + password);
 		} catch (SQLException e) {
-			logger.error(e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 			throw new StoreException(e.getMessage(), e);
 		}
 		return connection;

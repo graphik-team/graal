@@ -21,11 +21,11 @@ import fr.lirmm.graphik.util.stream.AbstractReader;
  */
 class DefaultRdbmsPredicateReader extends AbstractReader<Predicate> {
 
-	private static final Logger logger = LoggerFactory
+	private static final Logger LOGGER = LoggerFactory
 			.getLogger(DefaultRdbmsPredicateReader.class);
 	
-	private static final String getAllPredicatesQuery = "SELECT * FROM "
-														+ DefaultRdbmsStore.predicateTableName
+	private static final String GET_ALL_PREDICATES_QUERY = "SELECT * FROM "
+														+ DefaultRdbmsStore.PREDICATE_TABLE_NAME
 														+ ";";
 	private boolean hasNextCallDone = false;
 	private boolean hasNext; 
@@ -40,7 +40,7 @@ class DefaultRdbmsPredicateReader extends AbstractReader<Predicate> {
 		Statement stat;
 		try {
 			stat = driver.createStatement();
-			results = stat.executeQuery(getAllPredicatesQuery);
+			results = stat.executeQuery(GET_ALL_PREDICATES_QUERY);
 		} catch (SQLException e) {
 			throw new StoreException(e);
 		}
@@ -63,7 +63,7 @@ class DefaultRdbmsPredicateReader extends AbstractReader<Predicate> {
 			try {
 				this.hasNext = this.results.next();
 			} catch (SQLException e) {
-				logger.error(e.getMessage(), e);
+				LOGGER.error(e.getMessage(), e);
 				this.hasNext = false;
 			}
 		}
@@ -83,7 +83,7 @@ class DefaultRdbmsPredicateReader extends AbstractReader<Predicate> {
 		try {
 			return this.readPredicate(this.results);
 		} catch (SQLException e) {
-			logger.error(e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 			return null;
 		}
 	}

@@ -21,13 +21,13 @@ import fr.lirmm.graphik.graal.io.owl.logic.LogicalFormula;
  */
 public class OWLDataRangeVisitorImpl implements OWLDataRangeVisitorEx<LogicalFormula> {
 
-	private static final Logger logger = LoggerFactory
+	private static final Logger LOGGER = LoggerFactory
 			.getLogger(OWLDataRangeVisitorImpl.class);
 		
 	@Override
 	public LogicalFormula visit(OWLDatatype node) {
-		if (logger.isWarnEnabled()) {
-			logger.warn("OWLDatatype is not supported. This axioms was skipped : "
+		if (LOGGER.isWarnEnabled()) {
+			LOGGER.warn("OWLDatatype is not supported. This axioms was skipped : "
 					+ node);
 		}
 		return new LogicalFormula();
@@ -35,8 +35,8 @@ public class OWLDataRangeVisitorImpl implements OWLDataRangeVisitorEx<LogicalFor
 
 	@Override
 	public LogicalFormula visit(OWLDataOneOf node) {
-		if (logger.isWarnEnabled()) {
-			logger.warn("OWLDataOneOf is not supported. This axioms was skipped : "
+		if (LOGGER.isWarnEnabled()) {
+			LOGGER.warn("OWLDataOneOf is not supported. This axioms was skipped : "
 					+ node);
 		}
 		return new LogicalFormula();
@@ -44,8 +44,8 @@ public class OWLDataRangeVisitorImpl implements OWLDataRangeVisitorEx<LogicalFor
 
 	@Override
 	public LogicalFormula visit(OWLDataComplementOf node) {
-		if (logger.isWarnEnabled()) {
-			logger.warn("OWLDataComplementOf is not supported. This axioms was skipped : "
+		if (LOGGER.isWarnEnabled()) {
+			LOGGER.warn("OWLDataComplementOf is not supported. This axioms was skipped : "
 					+ node);
 		}
 		return new LogicalFormula();
@@ -53,8 +53,8 @@ public class OWLDataRangeVisitorImpl implements OWLDataRangeVisitorEx<LogicalFor
 
 	@Override
 	public LogicalFormula visit(OWLDataIntersectionOf node) {
-		if (logger.isWarnEnabled()) {
-			logger.warn("OWLDataIntersectionOf is not supported. This axioms was skipped : "
+		if (LOGGER.isWarnEnabled()) {
+			LOGGER.warn("OWLDataIntersectionOf is not supported. This axioms was skipped : "
 					+ node);
 		}
 		return new LogicalFormula();
@@ -62,8 +62,8 @@ public class OWLDataRangeVisitorImpl implements OWLDataRangeVisitorEx<LogicalFor
 
 	@Override
 	public LogicalFormula visit(OWLDataUnionOf node) {
-		if (logger.isWarnEnabled()) {
-			logger.warn("OWLDataUnionOf is not supported. This axioms was skipped : "
+		if (LOGGER.isWarnEnabled()) {
+			LOGGER.warn("OWLDataUnionOf is not supported. This axioms was skipped : "
 					+ node);
 		}
 		return new LogicalFormula();
@@ -71,8 +71,8 @@ public class OWLDataRangeVisitorImpl implements OWLDataRangeVisitorEx<LogicalFor
 
 	@Override
 	public LogicalFormula visit(OWLDatatypeRestriction node) {
-		if (logger.isWarnEnabled()) {
-			logger.warn("OWLDatatypeRestriction is not supported. This axioms was skipped : "
+		if (LOGGER.isWarnEnabled()) {
+			LOGGER.warn("OWLDatatypeRestriction is not supported. This axioms was skipped : "
 					+ node);
 		}
 		return new LogicalFormula();

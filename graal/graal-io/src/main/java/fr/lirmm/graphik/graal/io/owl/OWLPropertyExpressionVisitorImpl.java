@@ -28,7 +28,7 @@ import fr.lirmm.graphik.graal.io.owl.logic.LogicalFormula;
 public class OWLPropertyExpressionVisitorImpl implements
 		OWLPropertyExpressionVisitorEx<LogicalFormula> {
 	
-	private static final Logger logger = LoggerFactory
+	private static final Logger LOGGER = LoggerFactory
 			.getLogger(OWLPropertyExpressionVisitorImpl.class);
 	
 	private Term glueVariable1, glueVariable2;
@@ -46,8 +46,8 @@ public class OWLPropertyExpressionVisitorImpl implements
 
 	@Override
 	public LogicalFormula visit(OWLAnnotationProperty arg) {
-		if (logger.isInfoEnabled()) {
-			logger.info("Visit OWLAnnotationProperty is not implemented: " + arg);
+		if (LOGGER.isInfoEnabled()) {
+			LOGGER.info("Visit OWLAnnotationProperty is not implemented: " + arg);
 		}
 		return null;
 	}

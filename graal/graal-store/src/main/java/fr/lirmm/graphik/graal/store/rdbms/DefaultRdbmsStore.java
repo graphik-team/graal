@@ -37,7 +37,7 @@ import fr.lirmm.graphik.util.stream.ObjectReader;
  *         Database System where each predicates is stored in a dedicated table.
  */
 public class DefaultRdbmsStore extends AbstractRdbmsStore {
-	private static final Logger logger = LoggerFactory
+	private static final Logger LOGGER = LoggerFactory
 			.getLogger(DefaultRdbmsStore.class);
 
 	private static final int VARCHAR_SIZE = 128;
@@ -46,40 +46,40 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	private static final String MAX_PREDICATE_ID_COUNTER = "max_predicate_id";
 
 	// tables names
-	static final String counterTableName = "counters";
-	static final String predicateTableName = "predicates";
-	static final String termTableName = "terms";
+	static final String COUNTER_TABLE_NAME = "counters";
+	static final String PREDICATE_TABLE_NAME = "predicates";
+	static final String TERM_TABLE_NAME = "terms";
 
 	// table fields name
 	static final String PREFIX_TERM_FIELD = "term";
 
 	// queries
-	private static final String getPredicateQuery = "SELECT * FROM "
-													+ predicateTableName
+	private static final String GET_PREDICATE_QUERY = "SELECT * FROM "
+													+ PREDICATE_TABLE_NAME
 													+ " WHERE predicate_label = ? " 
 													+ " AND predicate_arity = ?;";
-	private static final String insertPredicateQuery = "INSERT INTO "
-													   + predicateTableName
+	private static final String INSERT_PREDICATE_QUERY = "INSERT INTO "
+													   + PREDICATE_TABLE_NAME
 													   + " VALUES ( ?, ?, ?)";
 
-	private static final String getAllTermsQuery = "SELECT * FROM "
-												   + termTableName
+	private static final String GET_ALL_TERMS_QUERY = "SELECT * FROM "
+												   + TERM_TABLE_NAME
 												   + ";";
-	private static final String getTermQuery = "SELECT * FROM "
-											   + termTableName
+	private static final String GET_TERM_QUERY = "SELECT * FROM "
+											   + TERM_TABLE_NAME
 											   + " WHERE term = ?;";
 
 	// counter queries
-	private static final String getCounterValueQuery = "SELECT value FROM "
-													   + counterTableName
+	private static final String GET_COUNTER_VALUE_QUERY = "SELECT value FROM "
+													   + COUNTER_TABLE_NAME
 													   + " WHERE counter_name = ?;";
 
-	private static final String updateCounterValueQuery = "UPDATE "
-														  + counterTableName
+	private static final String UPDATE_COUNTER_VALUE_QUERY = "UPDATE "
+														  + COUNTER_TABLE_NAME
 														  + " SET value = ? WHERE counter_name = ?;";
 
 	private static final String TEST_SCHEMA_QUERY = "SELECT 0 FROM "
-													+ predicateTableName
+													+ PREDICATE_TABLE_NAME
 													+ " LIMIT 1";
 
 	private PreparedStatement getPredicateTableStatement;
@@ -106,17 +106,17 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 
 		try {
 			this.getPredicateTableStatement = this.getConnection()
-					.prepareStatement(getPredicateQuery);
+					.prepareStatement(GET_PREDICATE_QUERY);
 			this.insertPredicateStatement = this.getConnection()
-					.prepareStatement(insertPredicateQuery);
+					.prepareStatement(INSERT_PREDICATE_QUERY);
 			this.getCounterValueStatement = this.getConnection()
-					.prepareStatement(getCounterValueQuery);
+					.prepareStatement(GET_COUNTER_VALUE_QUERY);
 			this.updateCounterValueStatement = this.getConnection()
-					.prepareStatement(updateCounterValueQuery);
+					.prepareStatement(UPDATE_COUNTER_VALUE_QUERY);
 			this.insertTermStatement = this.getConnection().prepareStatement(
 					this.getInsertTermQuery());
 			this.getTermStatement = this.getConnection().prepareStatement(
-					getTermQuery);
+					GET_TERM_QUERY);
 		} catch (SQLException e) {
 			throw new StoreException(e.getMessage(), e);
 		}
@@ -151,7 +151,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	@Override
 	protected void createDatabaseSchema() throws StoreException {
 		final String createPredicateTableQuery = "CREATE TABLE IF NOT EXISTS "
-												 + predicateTableName
+												 + PREDICATE_TABLE_NAME
 												 + "(predicate_label varchar("
 												 + VARCHAR_SIZE
 												 + "), predicate_arity int, "
@@ -160,7 +160,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 												 + "), PRIMARY KEY (predicate_label, predicate_arity));";
 
 		final String createTermTableQuery = "CREATE TABLE IF NOT EXISTS "
-											+ termTableName
+											+ TERM_TABLE_NAME
 											+ " (term varchar("
 											+ VARCHAR_SIZE
 											+ "), term_type varchar("
@@ -181,15 +181,15 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		PreparedStatement pstat = null;
 		try {
 			statement = this.createStatement();
-			if (logger.isDebugEnabled())
-				logger.debug("Create database schema");
+			if (LOGGER.isDebugEnabled())
+				LOGGER.debug("Create database schema");
 
-			if (logger.isDebugEnabled())
-				logger.debug(createPredicateTableQuery);
+			if (LOGGER.isDebugEnabled())
+				LOGGER.debug(createPredicateTableQuery);
 			statement.executeUpdate(createPredicateTableQuery);
 
-			if (logger.isDebugEnabled())
-				logger.debug(createTermTypeTableQuery);
+			if (LOGGER.isDebugEnabled())
+				LOGGER.debug(createTermTypeTableQuery);
 			statement.executeUpdate(createTermTypeTableQuery);
 
 			pstat = this.getConnection().prepareStatement(insertTermTypeQuery);
@@ -201,16 +201,16 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			pstat.executeBatch();
 			pstat.close();
 
-			if (logger.isDebugEnabled())
-				logger.debug(createTermTableQuery);
+			if (LOGGER.isDebugEnabled())
+				LOGGER.debug(createTermTableQuery);
 			statement.executeUpdate(createTermTableQuery);
 
 			final String createCounterTableQuery = "CREATE TABLE IF NOT EXISTS "
-												   + counterTableName
+												   + COUNTER_TABLE_NAME
 												   + " (counter_name varchar(64), value BIGINT, PRIMARY KEY (counter_name));";
 
-			if (logger.isDebugEnabled())
-				logger.debug(createCounterTableQuery);
+			if (LOGGER.isDebugEnabled())
+				LOGGER.debug(createCounterTableQuery);
 			statement.executeUpdate(createCounterTableQuery);
 		} catch (SQLException e) {
 			throw new StoreException(e.getMessage(), e);
@@ -226,7 +226,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		
 		try {
 			final String insertCounterTableQuery = "INSERT INTO "
-					   + counterTableName
+					   + COUNTER_TABLE_NAME
 					   + " values (?, -1);";
 			final String[] counters = { MAX_PREDICATE_ID_COUNTER,
 					MAX_VARIABLE_ID_COUNTER };
@@ -261,7 +261,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		try {
 			return new DefaultRdbmsIterator(this);
 		} catch (AtomSetException e) {
-			logger.error(e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 			return null;
 		}
 	}
@@ -274,8 +274,8 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	@Override
 	public SymbolGenerator getFreeVarGen() {
 		return new RdbmsSymbolGenenrator(this.getConnection(),
-				MAX_VARIABLE_ID_COUNTER, getCounterValueQuery,
-				updateCounterValueQuery);
+				MAX_VARIABLE_ID_COUNTER, GET_COUNTER_VALUE_QUERY,
+				UPDATE_COUNTER_VALUE_QUERY);
 	}
 
 	/*
@@ -292,8 +292,8 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		Statement statement = null;
 		int termIndex = -1;
 		String tableName = this.predicateTableExist(atom.getPredicate());
-		if (logger.isDebugEnabled()) {
-			logger.debug(atom.getPredicate() + " -- > " + tableName);
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug(atom.getPredicate() + " -- > " + tableName);
 		}
 		if (tableName != null) {
 
@@ -317,8 +317,8 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			}
 			query.append(" LIMIT 1;");
 
-			if (logger.isDebugEnabled()) {
-				logger.debug(atom.toString() + " : " + query.toString());
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug(atom.toString() + " : " + query.toString());
 			}
 			ResultSet results;
 			try {
@@ -355,7 +355,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		Set<Term> terms;
 		
 		try {
-			results = statement.executeQuery(getAllTermsQuery);
+			results = statement.executeQuery(GET_ALL_TERMS_QUERY);
 			terms = new TreeSet<Term>();
 
 			while (results.next()) {
@@ -529,8 +529,8 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 
 		query.append(';');
 
-		if (logger.isDebugEnabled())
-			logger.debug("Generated SQL query :"
+		if (LOGGER.isDebugEnabled())
+			LOGGER.debug("Generated SQL query :"
 						 + cquery
 						 + " --> "
 						 + query.toString());
@@ -544,12 +544,12 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 
 	protected String getInsertTermQuery() {
 		return "INSERT INTO "
-			   + termTableName
+			   + TERM_TABLE_NAME
 			   + " (term, term_type) "
 			   + "SELECT ?, ? FROM (SELECT 0) AS t "
 			   + "WHERE "
 			   + "  NOT EXISTS ("
-			   + "       SELECT 1 FROM " + termTableName + " WHERE term = ?"
+			   + "       SELECT 1 FROM " + TERM_TABLE_NAME + " WHERE term = ?"
 			   + "  );";
 	}
 
@@ -568,8 +568,8 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			String tableName = this.getPredicateTable(atom.getPredicate());
 			String query = this.getDriver().getInsertOrIgnoreStatement(tableName, atom.getTerms());
 
-			if (logger.isDebugEnabled()) {
-				logger.debug(atom.toString() + " : " + query.toString());
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug(atom.toString() + " : " + query.toString());
 			}
 			statement.addBatch(query);
 		} catch (SQLException e) {
@@ -602,8 +602,8 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			}
 			query.append(";");
 
-			if (logger.isDebugEnabled()) {
-				logger.debug("Removing " + atom.toString() + " : " + query.toString());
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("Removing " + atom.toString() + " : " + query.toString());
 			}
 			statement.addBatch(query.toString());
 		} catch (SQLException e) {

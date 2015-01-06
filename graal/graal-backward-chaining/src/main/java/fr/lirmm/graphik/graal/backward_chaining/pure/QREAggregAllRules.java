@@ -43,19 +43,19 @@ public class QREAggregAllRules extends QREAggregAllRulesBasic {
 	 * 
 	 * @param query
 	 *            the query to unify
-	 * @param R
+	 * @param r
 	 *            the rule whose has the head to unify
 	 * @return the list of the atoms of the query that have the same predicate
 	 *         as the head atom of R and that are recently created in query
 	 * @throws Exception
 	 */
 	@Override
-	protected LinkedList<Atom> getUnifiableAtoms(ConjunctiveQuery q, Rule R) {
+	protected LinkedList<Atom> getUnifiableAtoms(ConjunctiveQuery q, Rule r) {
 		MarkedQuery query;
 		if (q instanceof MarkedQuery) {
 			query = (MarkedQuery) q;
 			LinkedList<Atom> atoms;
-			atoms = super.getUnifiableAtoms(q, R);
+			atoms = super.getUnifiableAtoms(q, r);
 
 			LinkedList<Atom> res = new LinkedList<Atom>();
 			// keep only the recently created so marked in query
@@ -65,7 +65,7 @@ public class QREAggregAllRules extends QREAggregAllRulesBasic {
 				}
 			return res;
 		} else
-			return super.getUnifiableAtoms(q, R);
+			return super.getUnifiableAtoms(q, r);
 
 	}
 

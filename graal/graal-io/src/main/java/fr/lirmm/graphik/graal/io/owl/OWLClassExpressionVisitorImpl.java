@@ -43,7 +43,7 @@ import fr.lirmm.graphik.graal.io.owl.logic.LogicalFormula;
 public class OWLClassExpressionVisitorImpl implements
 		OWLClassExpressionVisitorEx<LogicalFormula> {
 
-	private static final Logger logger = LoggerFactory
+	private static final Logger LOGGER = LoggerFactory
 			.getLogger(OWLClassExpressionVisitorImpl.class);
 	
 	private Term glueVariable;
@@ -149,8 +149,8 @@ public class OWLClassExpressionVisitorImpl implements
 					new OWLClassExpressionVisitorImpl(this.prefixManager, varGen, newGlueVariable)));
 			return f;
 		} else {
-			if (logger.isWarnEnabled()) {
-				logger.warn("OWLObjectMinCardinality with cardinality other than 1 is not supported. This axioms was skipped : "
+			if (LOGGER.isWarnEnabled()) {
+				LOGGER.warn("OWLObjectMinCardinality with cardinality other than 1 is not supported. This axioms was skipped : "
 						+ arg);
 			}
 			return new LogicalFormula();
@@ -159,8 +159,8 @@ public class OWLClassExpressionVisitorImpl implements
 
 	@Override
 	public LogicalFormula visit(OWLObjectExactCardinality arg) {
-		if (logger.isWarnEnabled()) {
-			logger.warn("OWLObjectExactCardinality is not supported. This axioms was skipped : "
+		if (LOGGER.isWarnEnabled()) {
+			LOGGER.warn("OWLObjectExactCardinality is not supported. This axioms was skipped : "
 					+ arg);
 		}
 		return new LogicalFormula();
@@ -168,8 +168,8 @@ public class OWLClassExpressionVisitorImpl implements
 
 	@Override
 	public LogicalFormula visit(OWLObjectMaxCardinality arg) {
-		if (logger.isWarnEnabled()) {
-			logger.warn("OWLObjectMaxCardinality is not supported. This axioms was skipped : "
+		if (LOGGER.isWarnEnabled()) {
+			LOGGER.warn("OWLObjectMaxCardinality is not supported. This axioms was skipped : "
 					+ arg);
 		}
 		return new LogicalFormula();
@@ -184,8 +184,8 @@ public class OWLClassExpressionVisitorImpl implements
 
 	@Override
 	public LogicalFormula visit(OWLObjectOneOf arg) {
-		if (logger.isWarnEnabled()) {
-			logger.warn("OWLObjectOneOf is not supported. This axioms was skipped : "
+		if (LOGGER.isWarnEnabled()) {
+			LOGGER.warn("OWLObjectOneOf is not supported. This axioms was skipped : "
 					+ arg);
 		}
 		return new LogicalFormula();
@@ -237,8 +237,8 @@ public class OWLClassExpressionVisitorImpl implements
 					new OWLDataRangeVisitorImpl()));
 			return f;
 		} else {
-			if (logger.isWarnEnabled()) {
-				logger.warn("OWLObjectMinCardinality with cardinality other than 1 is not supported. This axioms was skipped : "
+			if (LOGGER.isWarnEnabled()) {
+				LOGGER.warn("OWLObjectMinCardinality with cardinality other than 1 is not supported. This axioms was skipped : "
 						+ arg);
 			}
 			return new LogicalFormula();
@@ -247,8 +247,8 @@ public class OWLClassExpressionVisitorImpl implements
 
 	@Override
 	public LogicalFormula visit(OWLDataExactCardinality arg) {
-		if (logger.isWarnEnabled()) {
-			logger.warn("OWLDataExactCardinality is not supported. This axioms was skipped : "
+		if (LOGGER.isWarnEnabled()) {
+			LOGGER.warn("OWLDataExactCardinality is not supported. This axioms was skipped : "
 					+ arg);
 		}
 		return new LogicalFormula();
@@ -256,8 +256,8 @@ public class OWLClassExpressionVisitorImpl implements
 
 	@Override
 	public LogicalFormula visit(OWLDataMaxCardinality arg) {
-		if (logger.isWarnEnabled()) {
-			logger.warn("OWLDataMaxCardinality is not supported. This axioms was skipped : "
+		if (LOGGER.isWarnEnabled()) {
+			LOGGER.warn("OWLDataMaxCardinality is not supported. This axioms was skipped : "
 					+ arg);
 		}
 		return new LogicalFormula();

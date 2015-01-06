@@ -52,7 +52,7 @@ public class PureRewriter {
 
 	@Parameters(separators = "=", commandDescription = "Compile an ontology")
 	private static class CommandCompile {
-		public static final String name = "compile";
+		public static final String NAME = "compile";
 
 		@Parameter(names = { "-h", "--help" }, description = "Print this message", help = true)
 		private boolean help;
@@ -75,7 +75,7 @@ public class PureRewriter {
 		 */
 		public void run(JCommander commander) throws FileNotFoundException {
 			if (this.help) {
-				commander.usage(name);
+				commander.usage(NAME);
 				System.exit(0);
 			}
 
@@ -97,7 +97,7 @@ public class PureRewriter {
 
 	@Parameters(commandDescription = "Add file contents to the index")
 	public static class CommandRewrite {
-		public static final String name = "rewrite";
+		public static final String NAME = "rewrite";
 
 		@Parameter(names = { "-h", "--help" }, description = "Print this message", help = true)
 		private boolean help;
@@ -117,7 +117,7 @@ public class PureRewriter {
 		 */
 		public void run(JCommander commander) throws FileNotFoundException {
 			if (this.help) {
-				commander.usage(name);
+				commander.usage(NAME);
 				System.exit(0);
 			}
 
@@ -188,8 +188,8 @@ public class PureRewriter {
 		CommandCompile cmdCompile = new CommandCompile();
 		CommandRewrite cmdRewrite = new CommandRewrite();
 
-		commander.addCommand(CommandCompile.name, cmdCompile);
-		commander.addCommand(CommandRewrite.name, cmdRewrite);
+		commander.addCommand(CommandCompile.NAME, cmdCompile);
+		commander.addCommand(CommandRewrite.NAME, cmdRewrite);
 
 		try {
 			commander.parse(args);
@@ -226,9 +226,9 @@ public class PureRewriter {
 		// Main part
 		try {
 			String command = commander.getParsedCommand();
-			if (CommandCompile.name.equals(command)) {
+			if (CommandCompile.NAME.equals(command)) {
 				cmdCompile.run(commander);
-			} else if (CommandRewrite.name.equals(command)) {
+			} else if (CommandRewrite.NAME.equals(command)) {
 				cmdRewrite.run(commander);
 			}
 		} catch (FileNotFoundException e) {

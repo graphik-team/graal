@@ -261,18 +261,18 @@ public class QueryRewritingEngine implements Verbosable, Profilable {
 		return null;
 	}
 
-	public LinkedList<QueryUnifier> getSinglePieceUnifiers(ConjunctiveQuery Q,
-			Rule R) {
+	public LinkedList<QueryUnifier> getSinglePieceUnifiers(ConjunctiveQuery q,
+			Rule r) {
 		if (atomic)
 			if (!(compilation instanceof IDCompilation))
-				return getSinglePieceUnifiersAHR(Q, (AtomicHeadRule) R);
+				return getSinglePieceUnifiersAHR(q, (AtomicHeadRule) r);
 			else {
 				System.err
 						.println("IDCompilation is not compatible with atomic unification");
-				return getSinglePieceUnifiersNAHR(Q, R);
+				return getSinglePieceUnifiersNAHR(q, r);
 			}
 		else {
-			return getSinglePieceUnifiersNAHR(Q, R);
+			return getSinglePieceUnifiersNAHR(q, r);
 		}
 	}
 
@@ -291,28 +291,28 @@ public class QueryRewritingEngine implements Verbosable, Profilable {
 	 * @throws Exception
 	 */
 	public LinkedList<QueryUnifier> getSinglePieceUnifiersAHR(
-			ConjunctiveQuery Q, AtomicHeadRule R) {
-		LinkedList<Atom> UnifiableAtoms = getUnifiableAtoms(Q, R);
+			ConjunctiveQuery q, AtomicHeadRule r) {
+		LinkedList<Atom> unifiableAtoms = getUnifiableAtoms(q, r);
 		LinkedList<QueryUnifier> unifiers = new LinkedList<QueryUnifier>();
 
-		Iterator<Atom> i = UnifiableAtoms.iterator();
+		Iterator<Atom> i = unifiableAtoms.iterator();
 		while (i.hasNext()) {
-			AtomSet P = new LinkedListAtomSet();
-			Rule tmpRule = Misc.getSafeCopy(R);
+			AtomSet p = new LinkedListAtomSet();
+			Rule tmpRule = Misc.getSafeCopy(r);
 			AtomicHeadRule copy = new AtomicHeadRule(tmpRule.getBody(), tmpRule
 					.getHead().iterator().next());
 			Atom toUnif = i.next();
-			P.add(toUnif);
+			p.add(toUnif);
 			TermPartition partition = TermPartition.getPartitionByPosition(
 					toUnif, copy.getHead().getAtom());
 			// compute separating variable
-			LinkedList<Term> sep = AtomSets.sep(P, Q.getAtomSet());
+			LinkedList<Term> sep = AtomSets.sep(p, q.getAtomSet());
 			// compute sticky variable
 			LinkedList<Term> sticky = partition.getStickyVariable(sep, copy);
-			AtomSet Pbar = AtomSets.minus(Q.getAtomSet(), P);
+			AtomSet pBar = AtomSets.minus(q.getAtomSet(), p);
 			while (partition != null && !sticky.isEmpty()) {
 
-				Iterator<Atom> ia = Pbar.iterator();
+				Iterator<Atom> ia = pBar.iterator();
 				while (partition != null && ia.hasNext()) {
 
 					Atom a = ia.next();
@@ -323,12 +323,12 @@ public class QueryRewritingEngine implements Verbosable, Profilable {
 						// all the atoms of Q/P which contain x must be add to P
 						if (a.getTerms().contains(x)) {
 							if (isUnifiable(a, copy.getHead().getAtom())) {
-								P.add(a);
-								TermPartition p = partition.join(TermPartition
+								p.add(a);
+								TermPartition part = partition.join(TermPartition
 										.getPartitionByPosition(a, copy
 												.getHead().getAtom()));
-								if (p.isAdmissible(copy)) {
-									partition = p;
+								if (part.isAdmissible(copy)) {
+									partition = part;
 								} else
 									partition = null;
 							} else
@@ -337,14 +337,14 @@ public class QueryRewritingEngine implements Verbosable, Profilable {
 					}
 				}
 				if (partition != null) {
-					sep = AtomSets.sep(P, Q.getAtomSet());
-					Pbar = AtomSets.minus(Q.getAtomSet(), P);
+					sep = AtomSets.sep(p, q.getAtomSet());
+					pBar = AtomSets.minus(q.getAtomSet(), p);
 					sticky = partition.getStickyVariable(sep, copy);
 				}
 			}
 			i.remove();
 			if (partition != null) {
-				QueryUnifier u = new QueryUnifier(P, partition, copy, Q);
+				QueryUnifier u = new QueryUnifier(p, partition, copy, q);
 				unifiers.add(u);
 			}
 		}
@@ -365,12 +365,12 @@ public class QueryRewritingEngine implements Verbosable, Profilable {
 	 * @throws Exception
 	 */
 	public LinkedList<QueryUnifier> getSinglePieceUnifiersNAHR(
-			ConjunctiveQuery Q, Rule R) {
+			ConjunctiveQuery q, Rule r) {
 		LinkedList<QueryUnifier> u = new LinkedList<QueryUnifier>();
-		Rule ruleCopy = Misc.getSafeCopy(R);
+		Rule ruleCopy = Misc.getSafeCopy(r);
 		HashMap<Atom, LinkedList<TermPartition>> possibleUnification = new HashMap<Atom, LinkedList<TermPartition>>();
 		// compute possible unification between atoms of Q and head(R)
-		for (Atom a : Q) {
+		for (Atom a : q) {
 			for (Atom b : ruleCopy.getHead()) {
 				if (isUnifiable(a, b)) {
 					Collection<? extends TermPartition> unification = getUnification(a, b);
@@ -385,7 +385,7 @@ public class QueryRewritingEngine implements Verbosable, Profilable {
 			}
 		}
 
-		LinkedList<Atom> atoms = getUnifiableAtoms(Q, R);
+		LinkedList<Atom> atoms = getUnifiableAtoms(q, r);
 		for (Atom a : atoms) {
 			LinkedList<TermPartition> partitionList = possibleUnification.get(a);
 			if (partitionList != null) {
@@ -394,7 +394,7 @@ public class QueryRewritingEngine implements Verbosable, Profilable {
 					TermPartition unif = i.next();
 					AtomSet p = new LinkedListAtomSet();
 					p.add(a);
-					u.addAll(extend(p, unif, possibleUnification, Q, ruleCopy));
+					u.addAll(extend(p, unif, possibleUnification, q, ruleCopy));
 					i.remove();
 				}
 			}
@@ -403,39 +403,39 @@ public class QueryRewritingEngine implements Verbosable, Profilable {
 		return u;
 	}
 
-	private Collection<? extends QueryUnifier> extend(AtomSet P,
+	private Collection<? extends QueryUnifier> extend(AtomSet p,
 			TermPartition unif,
 			HashMap<Atom, LinkedList<TermPartition>> possibleUnification,
-			ConjunctiveQuery Q, Rule R) {
+			ConjunctiveQuery q, Rule r) {
 		LinkedList<QueryUnifier> u = new LinkedList<QueryUnifier>();
 
 		// compute separating variable
-		LinkedList<Term> sep = AtomSets.sep(P, Q.getAtomSet());
+		LinkedList<Term> sep = AtomSets.sep(p, q.getAtomSet());
 		// compute sticky variable
-		LinkedList<Term> sticky = unif.getStickyVariable(sep, R);
+		LinkedList<Term> sticky = unif.getStickyVariable(sep, r);
 		if (sticky.isEmpty()) {
-			u.add(new QueryUnifier(P, unif, R, Q));
+			u.add(new QueryUnifier(p, unif, r, q));
 		} else {
 			// compute Pext the atoms of Pbar linked to P by the sticky
 			// variables
-			AtomSet Pbar = AtomSets.minus(Q.getAtomSet(), P);
-			AtomSet Pext = new LinkedListAtomSet();
+			AtomSet pBar = AtomSets.minus(q.getAtomSet(), p);
+			AtomSet pExt = new LinkedListAtomSet();
 			for (Term t : sticky) {
-				Iterator<Atom> ib = Pbar.iterator();
+				Iterator<Atom> ib = pBar.iterator();
 				while (ib.hasNext()) {
 					Atom b = ib.next();
 					if (b.getTerms().contains(t)) {
-						Pext.add(b);
+						pExt.add(b);
 						ib.remove();
 					}
 				}
 			}
 			TermPartition part;
-			for (TermPartition Uext : preUnifier(Pext, R, possibleUnification)) {
-				part = unif.join(Uext);
-				if (part != null && part.isAdmissible(R)) {
-					u.addAll(extend(AtomSets.union(P, Pext), part,
-							possibleUnification, Q, R));
+			for (TermPartition uExt : preUnifier(pExt, r, possibleUnification)) {
+				part = unif.join(uExt);
+				if (part != null && part.isAdmissible(r)) {
+					u.addAll(extend(AtomSets.union(p, pExt), part,
+							possibleUnification, q, r));
 				}
 			}
 
@@ -444,25 +444,25 @@ public class QueryRewritingEngine implements Verbosable, Profilable {
 		return u;
 	}
 
-	private LinkedList<TermPartition> preUnifier(AtomSet P, Rule R,
+	private LinkedList<TermPartition> preUnifier(AtomSet p, Rule r,
 			HashMap<Atom, LinkedList<TermPartition>> possibleUnification) {
 		LinkedList<TermPartition> res = new LinkedList<TermPartition>();
-		for (Atom a : P) {
+		for (Atom a : p) {
 			if (possibleUnification.get(a) != null)
 				for (TermPartition ua : possibleUnification.get(a)) {
 					AtomSet fa = new LinkedListAtomSet();
 					fa.add(a);
 					AtomSet aBar = null;
-					aBar = AtomSets.minus(P, fa);
+					aBar = AtomSets.minus(p, fa);
 
 					if (!aBar.iterator().hasNext())
 						res.add(ua);
 					else {
 						TermPartition part;
-						for (TermPartition u : preUnifier(aBar, R,
+						for (TermPartition u : preUnifier(aBar, r,
 								possibleUnification)) {
 							part = ua.join(u);
-							if (part != null && part.isAdmissible(R)) {
+							if (part != null && part.isAdmissible(r)) {
 								res.add(part);
 							}
 						}
@@ -499,12 +499,12 @@ public class QueryRewritingEngine implements Verbosable, Profilable {
 	 * 
 	 * @param query
 	 *            the query to unify
-	 * @param R
+	 * @param r
 	 *            the rule whose has the head to unify
 	 * @return the list of the atoms of the query that have the same predicate
 	 *         as the head atom of R
 	 */
-	protected LinkedList<Atom> getUnifiableAtoms(ConjunctiveQuery query, Rule R) {
+	protected LinkedList<Atom> getUnifiableAtoms(ConjunctiveQuery query, Rule r) {
 		LinkedList<Atom> answer = new LinkedList<Atom>();
 		// ArrayList<Predicate> predicate = new ArrayList<Predicate>();
 		// for(Atom h : R.getHead().getAtoms())
@@ -516,7 +516,7 @@ public class QueryRewritingEngine implements Verbosable, Profilable {
 		// for(Predicate p : predicate)
 		// answer.addAll(query.getAtomsByPredicate(p));
 		for (Atom a : query)
-			for (Atom b : R.getHead())
+			for (Atom b : r.getHead())
 				if (isUnifiable(a, b))
 					answer.add(a);
 		return answer;
@@ -530,12 +530,12 @@ public class QueryRewritingEngine implements Verbosable, Profilable {
 				return o1.toString().compareTo(o2.toString());
 			}
 		});
-		TreeSet<Predicate> unifiable_preds = new TreeSet<Predicate>();
+		TreeSet<Predicate> unifiablePreds = new TreeSet<Predicate>();
 		if (compilation != null) {
 			for (Predicate pred : preds) {
-				unifiable_preds.addAll(compilation.getUnifiablePredicate(pred));
+				unifiablePreds.addAll(compilation.getUnifiablePredicate(pred));
 			}
-			for (Predicate pred : unifiable_preds) {
+			for (Predicate pred : unifiablePreds) {
 				for (Rule r : ruleSet.getRulesByHeadPredicate(pred)) {
 					res.add(r);
 				}

@@ -34,12 +34,12 @@ public class AtomSets {
 	/**
 	 * Return the terms occuring both in Q\P and P
 	 */
-	public static LinkedList<Term> sep(AtomSet P, AtomSet Q) {
-		AtomSet Pbar = minus(Q, P);
+	public static LinkedList<Term> sep(AtomSet p, AtomSet q) {
+		AtomSet pBar = minus(q, p);
 		LinkedList<Term> sep = new LinkedList<Term>();
 		try {
-			for (Term t : Pbar.getTerms()) {
-				for (Term x : Q.getTerms())
+			for (Term t : pBar.getTerms()) {
+				for (Term x : q.getTerms())
 					if (x.equals(t))
 						sep.add(t);
 			}

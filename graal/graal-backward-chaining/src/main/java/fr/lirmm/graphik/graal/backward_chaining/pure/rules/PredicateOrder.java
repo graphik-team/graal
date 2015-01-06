@@ -26,7 +26,7 @@ public class PredicateOrder extends AbstractRulesCompilation {
 	// a matrix for code the order order[i][j] = 1 iff predicate(i) >
 	// predicate(j)
 	private byte[][] order;
-	int size_order; // size of the tab order used by this
+	int sizeOrder; // size of the tab order used by this
 
 	// the list of the compiled rules
 	private LinkedList<Rule> rules;
@@ -41,7 +41,7 @@ public class PredicateOrder extends AbstractRulesCompilation {
 			this.rules.add(r);
 		}
 		predicateIndex = new HashMap<Predicate, Integer>();
-		size_order = 0;
+		sizeOrder = 0;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -62,7 +62,7 @@ public class PredicateOrder extends AbstractRulesCompilation {
 		Iterator<Rule> i = rules.iterator();
 		Rule r;
 		TreeSet<Predicate> set = new TreeSet<Predicate>();
-		int nb_pred = 0;
+		int nbPred = 0;
 
 		while (i.hasNext()) {
 			r = i.next();
@@ -73,11 +73,11 @@ public class PredicateOrder extends AbstractRulesCompilation {
 				try {
 					for (Predicate p : r.getBody().getAllPredicates())
 						if (set.add(p))
-							nb_pred++;
+							nbPred++;
 
 					for (Predicate p : r.getHead().getAllPredicates())
 						if (set.add(p))
-							nb_pred++;
+							nbPred++;
 				} catch (AtomSetException e) {
 
 				}
@@ -91,8 +91,8 @@ public class PredicateOrder extends AbstractRulesCompilation {
 		// System.out.println("nb pred: "+nb_pred);
 		set = null;
 		System.gc();
-		order = new byte[nb_pred][nb_pred];
-		indexPredicate = new ArrayList<Predicate>(nb_pred);
+		order = new byte[nbPred][nbPred];
+		indexPredicate = new ArrayList<Predicate>(nbPred);
 		for (Rule ru : this.rules) {
 			father = ru.getHead().iterator().next();
 			son = ru.getBody().iterator().next();
@@ -127,14 +127,14 @@ public class PredicateOrder extends AbstractRulesCompilation {
 	}
 
 	private void addRule(Atom father, Atom son) {
-		Predicate pred_father = father.getPredicate();
-		Predicate pred_son = son.getPredicate();
-		if (predicateIndex.get(pred_father) == null)
-			addPredicate(pred_father);
-		if (predicateIndex.get(pred_son) == null)
-			addPredicate(pred_son);
-		Integer f = predicateIndex.get(pred_father);
-		Integer s = predicateIndex.get(pred_son);
+		Predicate predFather = father.getPredicate();
+		Predicate predSon = son.getPredicate();
+		if (predicateIndex.get(predFather) == null)
+			addPredicate(predFather);
+		if (predicateIndex.get(predSon) == null)
+			addPredicate(predSon);
+		Integer f = predicateIndex.get(predFather);
+		Integer s = predicateIndex.get(predSon);
 		order[f][s] = 1;
 		computeTransitiveClosure(f, s);
 	}
@@ -145,17 +145,17 @@ public class PredicateOrder extends AbstractRulesCompilation {
 	 */
 	private void computeTransitiveClosure(int father, int son) {
 		// compute new descendant
-		for (int i = 0; i < size_order; i++) {
+		for (int i = 0; i < sizeOrder; i++) {
 			// if son has descendant we add its in father
 			if (order[son][i] == 1)
 				order[father][i] = 1;
 		}
 
 		// actualize ancestor
-		for (int j = 0; j < size_order; j++) {
+		for (int j = 0; j < sizeOrder; j++) {
 			// if this is an ancestor of father
 			if (order[j][father] == 1) {
-				for (int i = 0; i < size_order; i++) {
+				for (int i = 0; i < sizeOrder; i++) {
 					// we add descendant of father in it ancestor
 					if (order[father][i] == 1)
 						order[j][i] = 1;
@@ -169,18 +169,18 @@ public class PredicateOrder extends AbstractRulesCompilation {
 	 */
 	private void addPredicate(Predicate p) {
 		if (predicateIndex.get(p) == null) {
-			predicateIndex.put(p, size_order);
+			predicateIndex.put(p, sizeOrder);
 			indexPredicate.add(p);
-			size_order++;
+			sizeOrder++;
 		}
 	}
 
 	@Override
 	public String toString() {
 		String s = "";
-		for (int i = 0; i < size_order; i++) {
+		for (int i = 0; i < sizeOrder; i++) {
 			s += indexPredicate.get(i) + " | ";
-			for (int j = 0; j < size_order; j++) {
+			for (int j = 0; j < sizeOrder; j++) {
 				if (order[i][j] == 1)
 					s += indexPredicate.get(j) + " ";
 			}
@@ -192,12 +192,12 @@ public class PredicateOrder extends AbstractRulesCompilation {
 	// can answer true if there is no homomorphism
 	@Override
 	public boolean isMappable(Atom father, Atom son) {
-		Predicate pred_father = father.getPredicate();
-		Predicate pred_son = son.getPredicate();
-		if (pred_son.equals(pred_father))
+		Predicate predFather = father.getPredicate();
+		Predicate predSon = son.getPredicate();
+		if (predSon.equals(predFather))
 			return true;
-		Integer f = predicateIndex.get(pred_father);
-		Integer s = predicateIndex.get(pred_son);
+		Integer f = predicateIndex.get(predFather);
+		Integer s = predicateIndex.get(predSon);
 		if (f != null && s != null)
 			return order[f][s] == 1;
 		return false;
@@ -229,12 +229,12 @@ public class PredicateOrder extends AbstractRulesCompilation {
 	// can answer true if there is no unifier
 	@Override
 	public boolean isUnifiable(Atom father, Atom son) {
-		Predicate pred_father = father.getPredicate();
-		Predicate pred_son = son.getPredicate();
-		if (pred_son.equals(pred_father))
+		Predicate predFather = father.getPredicate();
+		Predicate predSon = son.getPredicate();
+		if (predSon.equals(predFather))
 			return true;
-		Integer f = predicateIndex.get(pred_father);
-		Integer s = predicateIndex.get(pred_son);
+		Integer f = predicateIndex.get(predFather);
+		Integer s = predicateIndex.get(predSon);
 		if (f != null && s != null) {
 			return order[f][s] == 1;
 		}
@@ -254,10 +254,10 @@ public class PredicateOrder extends AbstractRulesCompilation {
 
 	@Override
 	public boolean isImplied(Atom father, Atom son) {
-		Predicate pred_father = father.getPredicate();
-		Predicate pred_son = son.getPredicate();
-		Integer f = predicateIndex.get(pred_father);
-		Integer s = predicateIndex.get(pred_son);
+		Predicate predFather = father.getPredicate();
+		Predicate predSon = son.getPredicate();
+		Integer f = predicateIndex.get(predFather);
+		Integer s = predicateIndex.get(predSon);
 		if (f != null && s != null && father.getTerms().equals(son.getTerms()))
 			return order[f][s] == 1;
 		else
@@ -271,7 +271,7 @@ public class PredicateOrder extends AbstractRulesCompilation {
 
 		Integer index = predicateIndex.get(p);
 		if (index != null)
-			for (int i = 0; i < size_order; i++) {
+			for (int i = 0; i < sizeOrder; i++) {
 				if (order[index][i] == 1) {
 					res.add(indexPredicate.get(i));
 				}
@@ -286,7 +286,7 @@ public class PredicateOrder extends AbstractRulesCompilation {
 
 		Integer index = predicateIndex.get(father.getPredicate());
 		if (index != null)
-			for (int i = 0; i < size_order; i++) {
+			for (int i = 0; i < sizeOrder; i++) {
 				if (order[index][i] == 1) {
 					Atom a = new DefaultAtom(father);
 					a.setPredicate(indexPredicate.get(i));

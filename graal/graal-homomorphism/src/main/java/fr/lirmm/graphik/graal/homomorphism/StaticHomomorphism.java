@@ -16,7 +16,7 @@ import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
  */
 public class StaticHomomorphism {
 
-	private static final Logger logger = LoggerFactory
+	private static final Logger LOGGER = LoggerFactory
 			.getLogger(StaticHomomorphism.class);
 	
 	public static HomomorphismFactory getSolverFactory() {
@@ -36,8 +36,8 @@ public class StaticHomomorphism {
 	public static SubstitutionReader executeQuery(Query query,
 			ReadOnlyAtomSet atomSet) throws HomomorphismFactoryException,
 			HomomorphismException {
-		if (logger.isDebugEnabled())
-			logger.debug("Query : " + query);
+		if (LOGGER.isDebugEnabled())
+			LOGGER.debug("Query : " + query);
 
 		Homomorphism solver = DefaultHomomorphismFactory.getInstance().getSolver(query,
 				atomSet);

@@ -24,7 +24,7 @@ import fr.lirmm.graphik.graal.store.rdbms.ResultSetSubstitutionReader;
  */
 public class SqlUCQHomomorphism implements UnionConjunctiveQueriesHomomorphism<RdbmsStore> {
 
-	private static final Logger logger = LoggerFactory
+	private static final Logger LOGGER = LoggerFactory
 			.getLogger(SqlUCQHomomorphism.class);
 	
 	private static SqlUCQHomomorphism instance;
@@ -48,8 +48,8 @@ public class SqlUCQHomomorphism implements UnionConjunctiveQueriesHomomorphism<R
 			RdbmsStore store) throws HomomorphismException {
 		String sqlQuery = preprocessing(queries, store);
 		try {
-			if(logger.isDebugEnabled()) {
-				logger.debug(sqlQuery);
+			if(LOGGER.isDebugEnabled()) {
+				LOGGER.debug(sqlQuery);
 			}
 			return new ResultSetSubstitutionReader(store, sqlQuery.toString(), queries.isBoolean());
 		} catch (Exception e) {
