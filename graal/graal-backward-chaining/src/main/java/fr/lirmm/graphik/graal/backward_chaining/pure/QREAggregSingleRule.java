@@ -18,7 +18,7 @@ import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
  * @author Mélanie KÖNIG Query rewriting engine that rewrite query using
  *         aggregation by rule of most general single piece-unifiers
  */
-@SuppressWarnings({ "unused", "rawtypes", "unchecked" })
+@SuppressWarnings({ "unchecked" })
 public class QREAggregSingleRule extends QueryRewritingEngine {
 
 	public QREAggregSingleRule(PureQuery query, Iterable<Rule> rules,
