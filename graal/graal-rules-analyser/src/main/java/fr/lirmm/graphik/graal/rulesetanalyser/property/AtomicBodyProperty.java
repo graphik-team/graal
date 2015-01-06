@@ -4,7 +4,6 @@ import java.util.Iterator;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
 
 /**
  * The body contains only one atom.

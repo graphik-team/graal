@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
-import fr.lirmm.graphik.graal.backward_chaining.pure.utils.Misc;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultAtom;

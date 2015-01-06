@@ -3,7 +3,6 @@
  */
 package fr.lirmm.graphik.graal.store.rdbms;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Set;

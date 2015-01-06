@@ -4,20 +4,10 @@
 package fr.lirmm.graphik.graal.io.dtg;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.Collection;
-
-import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.NegativeConstraint;
-import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
 
 /**

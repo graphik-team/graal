@@ -12,7 +12,6 @@ import java.util.TreeSet;
 import fr.lirmm.graphik.graal.backward_chaining.pure.queries.PureQuery;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.AtomicHeadRule;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.IDCompilation;
-import fr.lirmm.graphik.graal.backward_chaining.pure.rules.PredicateOrder;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
 import fr.lirmm.graphik.graal.backward_chaining.pure.utils.Misc;
 import fr.lirmm.graphik.graal.backward_chaining.pure.utils.QueryUnifier;

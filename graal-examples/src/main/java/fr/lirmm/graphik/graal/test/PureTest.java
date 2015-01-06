@@ -4,8 +4,6 @@
 package fr.lirmm.graphik.graal.test;
 
 import java.util.Collection;
-import java.util.Date;
-
 import fr.lirmm.graphik.graal.backward_chaining.pure.QREAggregSingleRule;
 import fr.lirmm.graphik.graal.backward_chaining.pure.QueryRewritingEngine;
 import fr.lirmm.graphik.graal.backward_chaining.pure.queries.PureQuery;

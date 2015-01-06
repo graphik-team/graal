@@ -1,8 +1,4 @@
 package fr.lirmm.graphik.graal.trash;
-/**
- * 
- */
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -13,12 +9,10 @@ import org.openrdf.rio.RDFParseException;
 import org.openrdf.rio.Rio;
 import org.openrdf.rio.helpers.RDFHandlerBase;
 
-import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.Term.Type;
-import fr.lirmm.graphik.graal.parser.semanticweb.RDFParser;
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
