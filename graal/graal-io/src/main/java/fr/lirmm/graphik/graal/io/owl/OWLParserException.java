@@ -11,6 +11,8 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
  */
 public class OWLParserException extends Exception {
 
+	private static final long serialVersionUID = 9139309286569714679L;
+
 	/**
 	 * @param e
 	 */
