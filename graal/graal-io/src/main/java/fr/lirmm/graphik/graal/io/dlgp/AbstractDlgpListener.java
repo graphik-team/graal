@@ -62,7 +62,9 @@ abstract class AbstractDlgpListener implements ParserListener {
 		case FACT:
 			break;
 		default:
-			LOGGER.warn("Unrecognized object type: " + objectType);
+			if(LOGGER.isWarnEnabled()) {
+				LOGGER.warn("Unrecognized object type: " + objectType);
+			}
 			break;
 		}
 		
@@ -77,9 +79,9 @@ abstract class AbstractDlgpListener implements ParserListener {
 		for (Object t : terms)
 			list.add((Term) t);
 		
-		predicate = removeQuotes(predicate);
+		String predicateWithoutQuotes = removeQuotes(predicate);
 
-		atom = new DefaultAtom(new Predicate(predicate, terms.length), list);
+		atom = new DefaultAtom(new Predicate(predicateWithoutQuotes, terms.length), list);
 
 		switch (objectType) {
 		case FACT:

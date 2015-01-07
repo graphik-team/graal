@@ -216,7 +216,7 @@ public class DefaultRule implements Rule {
 		return this.equals((Rule) obj);
 	}
 
-	public boolean equals(Rule other) {
+	public boolean equals(Rule other) { // NOPMD
 		if(this.label.compareTo(other.getLabel()) != 0)
 			return false;
 		if(!other.getHead().equals(this.getHead()))

@@ -58,16 +58,14 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
 				<version>3.3</version>
-				<configuration>		
-					<failurePriority>1</failurePriority>
+				<configuration>
+					<minimumPriority>2</minimumPriority>
+					<failurePriority>2</failurePriority>
 					<rulesets>
             			<ruleset>/rulesets/java/naming.xml</ruleset>
             			<ruleset>/rulesets/java/design.xml</ruleset>
             			<ruleset>/rulesets/java/strictexception.xml</ruleset>
             		</rulesets>
-            		<excludes>
-			            <exclude>**/graal-cli/**</exclude>
-			        </excludes>
 				</configuration>
 				<executions>
 					<execution>

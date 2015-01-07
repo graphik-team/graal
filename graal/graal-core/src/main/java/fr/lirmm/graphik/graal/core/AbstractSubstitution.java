@@ -89,24 +89,24 @@ public abstract class AbstractSubstitution implements Substitution {
 
 	@Override
 	public boolean compose(Term term, Term substitut) {
-		term = this.getSubstitute(term);
-		substitut = this.getSubstitute(substitut);
+		Term termSubstitut = this.getSubstitute(term);
+		Term substitutSubstitut = this.getSubstitute(substitut);
 
-		if (Term.Type.CONSTANT.equals(term.getType())) {
-			Term tmp = term;
-			term = substitut;
-			substitut = tmp;
+		if (Term.Type.CONSTANT.equals(termSubstitut.getType())) {
+			Term tmp = termSubstitut;
+			termSubstitut = substitutSubstitut;
+			substitutSubstitut = tmp;
 		}
 
 		for (Term t : this.getTerms()) {
-			if (term.equals(this.getSubstitute(t))) {
-				if (!this.put(t, substitut)) {
+			if (termSubstitut.equals(this.getSubstitute(t))) {
+				if (!this.put(t, substitutSubstitut)) {
 					return false;
 				}
 			}
 		}
 
-		if (!this.put(term, substitut)) {
+		if (!this.put(termSubstitut, substitutSubstitut)) {
 			return false;
 		}
 		return true;
@@ -168,7 +168,7 @@ public abstract class AbstractSubstitution implements Substitution {
 		return this.equals((Substitution) obj);
 	}
 
-	public boolean equals(Substitution other) {
+	public boolean equals(Substitution other) { // NOPMD
 		for (Term t : this.getTerms()) {
 			if (!this.getSubstitute(t).equals(other.getSubstitute(t)))
 				return false;

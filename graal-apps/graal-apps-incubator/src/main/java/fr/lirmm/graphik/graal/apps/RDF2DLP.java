@@ -17,9 +17,11 @@ import fr.lirmm.graphik.graal.parser.semanticweb.RDFParser;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public class RDF2DLP {
+public final class RDF2DLP {
 
-	public static void main(String[] args) throws IOException {
+	private RDF2DLP(){}
+
+	public static void main(final String[] args) throws IOException {
 		if(args.length == 0)
 			System.out.println("give me a RDF file path.");
 		

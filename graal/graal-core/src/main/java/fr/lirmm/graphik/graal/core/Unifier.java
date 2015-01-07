@@ -63,14 +63,14 @@ public class Unifier {
 
 	public boolean existPieceUnifier(Rule rule, AtomSet atomset) {
 		FreeVarSubstitution substitution = new FreeVarSubstitution();
-		atomset = substitution.getSubstitut(atomset);
+		AtomSet atomsetSubstitut = substitution.getSubstitut(atomset);
 
 		Queue<Atom> atomQueue = new LinkedList<Atom>();
-		for (Atom a : atomset) {
+		for (Atom a : atomsetSubstitut) {
 			atomQueue.add(a);
 		}
 
-		for (Atom a : atomset) {
+		for (Atom a : atomsetSubstitut) {
 			Queue<Atom> tmp = new LinkedList<Atom>(atomQueue);
 			if (existExtendedUnifier(rule, tmp, a, new TreeMapSubstitution())) {
 				return true;
@@ -152,25 +152,25 @@ public class Unifier {
 
 	private static boolean compose(Substitution u, Set<Term> frontierVars,
 			Set<Term> existentials, Term term, Term substitut) {
-		term = u.getSubstitute(term);
-		substitut = u.getSubstitute(substitut);
+		Term termSubstitut = u.getSubstitute(term);
+		Term substitutSubstitut = u.getSubstitute(substitut);
 
-		if (Term.Type.CONSTANT.equals(term.getType())
-				|| existentials.contains(term)) {
-			Term tmp = term;
-			term = substitut;
-			substitut = tmp;
+		if (Term.Type.CONSTANT.equals(termSubstitut.getType())
+				|| existentials.contains(termSubstitut)) {
+			Term tmp = termSubstitut;
+			termSubstitut = substitutSubstitut;
+			substitutSubstitut = tmp;
 		}
 
 		for (Term t : u.getTerms()) {
-			if (term.equals(u.getSubstitute(t))) {
-				if (!put(u, frontierVars, existentials, t, substitut)) {
+			if (termSubstitut.equals(u.getSubstitute(t))) {
+				if (!put(u, frontierVars, existentials, t, substitutSubstitut)) {
 					return false;
 				}
 			}
 		}
 
-		if (!put(u, frontierVars, existentials, term, substitut)) {
+		if (!put(u, frontierVars, existentials, termSubstitut, substitutSubstitut)) {
 			return false;
 		}
 		return true;

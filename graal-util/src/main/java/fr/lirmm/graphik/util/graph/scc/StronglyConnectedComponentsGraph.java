@@ -94,12 +94,12 @@ public class StronglyConnectedComponentsGraph<V> extends
 		}
 		for (int i : firstLayer) {
 			layers[i] = 0;
-			layers = computeLayersRec(i, layers, 1, direction);
+			computeLayersRec(i, layers, 1, direction);
 		}
 		return layers;
 	}
 
-	private int[] computeLayersRec(int v, int[] layers, int actualLayer, boolean direction) {
+	private void computeLayersRec(int v, int[] layers, int actualLayer, boolean direction) {
 		Iterable<Integer> it = null;
 		if(direction)
 			it = this.getOutbound(v);
@@ -109,10 +109,9 @@ public class StronglyConnectedComponentsGraph<V> extends
 		for (int succ : it) {
 			if (layers[succ] < actualLayer && v != succ) {
 				layers[succ] = actualLayer;
-				layers = computeLayersRec(succ, layers, actualLayer + 1, direction);
+				computeLayersRec(succ, layers, actualLayer + 1, direction);
 			}
 		}
-		return layers;
 	}
 
 }
