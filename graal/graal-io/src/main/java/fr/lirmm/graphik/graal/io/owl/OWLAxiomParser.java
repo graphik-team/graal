@@ -126,7 +126,7 @@ public class OWLAxiomParser implements
 		if (LOGGER.isInfoEnabled()) {
 			LOGGER.info("Visit OWLDeclarationAxiom: " + arg);
 		}
-		return null;
+		return Collections.emptyList();
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -454,7 +454,7 @@ public class OWLAxiomParser implements
 		if (LOGGER.isInfoEnabled()) {
 			LOGGER.info("Visit OWLDatatypeDefinitionAxiom is not implemented: " + arg);
 		}
-		return null;
+		return Collections.emptyList();
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -580,7 +580,7 @@ public class OWLAxiomParser implements
 		if (LOGGER.isWarnEnabled()) {
 			LOGGER.warn("Visit SWRLRule is not implemented: " + arg);
 		}
-		return null;
+		return Collections.emptyList();
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -592,7 +592,7 @@ public class OWLAxiomParser implements
 		if (LOGGER.isInfoEnabled()) {
 			LOGGER.info("Visit OWLAnnotationAssertionAxiom is not implemented: " + arg);
 		}
-		return null;
+		return Collections.emptyList();
 	}
 
 	@Override
@@ -600,7 +600,7 @@ public class OWLAxiomParser implements
 		if (LOGGER.isInfoEnabled()) {
 			LOGGER.info("Visit OWLSubAnnotationPropertyOfAxiom is not implemented: " + arg);
 		}
-		return null;
+		return Collections.emptyList();
 	}
 
 	@Override
@@ -608,7 +608,7 @@ public class OWLAxiomParser implements
 		if (LOGGER.isInfoEnabled()) {
 			LOGGER.info("Visit OWLAnnotationPropertyDomainAxiom is not implemented: " + arg);
 		}
-		return null;
+		return Collections.emptyList();
 	}
 
 	@Override
@@ -616,7 +616,7 @@ public class OWLAxiomParser implements
 		if (LOGGER.isInfoEnabled()) {
 			LOGGER.info("Visit OWLAnnotationPropertyRangeAxiom is not implemented: " + arg);
 		}
-		return null;
+		return Collections.emptyList();
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
