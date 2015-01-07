@@ -36,6 +36,7 @@ public class PredicateOrder extends AbstractRulesCompilation {
 	// /////////////////////////////////////////////////////////////////////////
 
 	public PredicateOrder(Iterable<Rule> rules) {
+		this.rules = new LinkedList<Rule>();
 		for (Rule r : rules) {
 			this.rules.add(r);
 		}
