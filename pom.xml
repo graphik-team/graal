@@ -67,14 +67,6 @@
             			<ruleset>/rulesets/java/strictexception.xml</ruleset>
             		</rulesets>
 				</configuration>
-				<executions>
-					<execution>
-						<phase>verify</phase>
-						<goals>
-							<goal>check</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -86,14 +78,6 @@
 					<threshold>Low</threshold>
 					<xmlOutput>true</xmlOutput>
 				</configuration>
-				<executions>
-					<execution>
-						<phase>verify</phase>
-						<goals>
-							<goal>check</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
