@@ -67,6 +67,11 @@ public class DlgpWriter extends Writer implements ObjectWriter<Object>, Conjunct
 			this.write(o);
 	}
 	
+	public void writeIterable(Iterable<?> it) throws IOException {
+		for(Object o: it)
+			this.write(o);
+	}
+	
 	@Override
 	public void write(Object o) throws IOException {
 		if(o instanceof Atom) {
@@ -79,6 +84,8 @@ public class DlgpWriter extends Writer implements ObjectWriter<Object>, Conjunct
 			this.write((ConjunctiveQuery)o);
 		} else if(o instanceof Prefix) {
 			this.write((Prefix)o);
+		} else if(o instanceof Iterable<?>) {
+			this.writeIterable((Iterable<?>)o);
 		}
 	}
 
