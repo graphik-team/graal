@@ -20,8 +20,8 @@
 	<inceptionYear>2014</inceptionYear>
 
 	<organization>
-		<name>INRIA</name>
-		<url>http://www.inria.fr/</url>
+		<name>GraphIK (INRIA - LIRMM)</name>
+		<url>https://team.inria.fr/graphik/</url>
 	</organization>
 
 	<developers>
@@ -94,15 +94,18 @@
 			    <preparationGoals>clean install</preparationGoals>
 			  </configuration>
 			</plugin>
-			<plugin>
+		    <plugin>
 		      <artifactId>maven-assembly-plugin</artifactId>
-		      <version>2.4.1</version>
+		      <version>2.5.3</version>
 		      <configuration>
 		        <preparationGoals>compile</preparationGoals>
-		      	<finalName>PureRewriter-${project.parent.version}</finalName>
+				<finalName>pure-rewriter-${project.parent.version}</finalName>
 		        <archive>
+		          <manifestEntries>
+		            <Built-On>${maven.build.timestamp}</Built-On>
+		          </manifestEntries>
 		          <manifest>
-		          	<addClasspath>true</addClasspath>
+					<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
 		            <mainClass>fr.lirmm.graphik.graal.apps.PureRewriter</mainClass>
 		          </manifest>
 		        </archive>

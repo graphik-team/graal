@@ -101,7 +101,7 @@ public class QREAggregSingleRule extends QueryRewritingEngine {
 		Collection<QueryUnifier> unifiers = new LinkedList<QueryUnifier>();
 		try {
 			for (Rule r : getUnifiableRules(q.getAtomSet().getAllPredicates(),
-					getRuleSet(), getRulesCompilation())) {
+					this.getRuleSet(), this.getRulesCompilation())) {
 				unifiers.addAll(getSRUnifier(q, r));
 			}
 		} catch (AtomSetException e) {

@@ -14,9 +14,16 @@ import fr.lirmm.graphik.util.Profilable;
 public interface RulesCompilation extends Profilable {
 
 	/**
-	 * 
+	 * Extract compilable rules from the specified ruleset and compile them.
+	 * @param ruleset
 	 */
-	public void compile();
+	public void compile(Iterable<Rule> ruleset);
+	
+	/**
+	 * Load compilation from a preprocessed ruleset
+	 * @param ruleset
+	 */
+	public void load(Iterable<Rule> ruleset);
 
 	public Iterable<Rule> getSaturation();
 
@@ -30,7 +37,8 @@ public interface RulesCompilation extends Profilable {
 			Iterable<ConjunctiveQuery> pivotRewritingSet);
 
 	/**
-	 * Return true if the given rule is compilable by this
+	 * Return true if the given rule is compilable by this kind of rules 
+	 * compilation.
 	 */
 	public boolean isCompilable(Rule r);
 

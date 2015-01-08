@@ -2,10 +2,9 @@ package fr.lirmm.graphik.graal.backward_chaining.pure.rules;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.TreeSet;
+import java.util.TreeMap;
 
 import fr.lirmm.graphik.graal.backward_chaining.pure.utils.TermPartition;
 import fr.lirmm.graphik.graal.core.Atom;
@@ -17,10 +16,10 @@ import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
 
-public class PredicateOrder extends AbstractRulesCompilation {
+public class HierarchicalCompilation extends AbstractRulesCompilation {
 
 	// relies the Predicate and the index in the matrix order
-	private HashMap<Predicate, Integer> predicateIndex;
+	private TreeMap<Predicate, Integer> predicateIndex;
 	private ArrayList<Predicate> indexPredicate;
 
 	// a matrix for code the order order[i][j] = 1 iff predicate(i) >
@@ -35,13 +34,11 @@ public class PredicateOrder extends AbstractRulesCompilation {
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 
-	public PredicateOrder(Iterable<Rule> rules) {
+	public HierarchicalCompilation() {
 		this.rules = new LinkedList<Rule>();
-		for (Rule r : rules) {
-			this.rules.add(r);
-		}
-		predicateIndex = new HashMap<Predicate, Integer>();
-		sizeOrder = 0;
+		this.predicateIndex = new TreeMap<Predicate, Integer>();
+		this.indexPredicate = new ArrayList<Predicate>();
+		this.sizeOrder = 0;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -58,48 +55,25 @@ public class PredicateOrder extends AbstractRulesCompilation {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public void compile() {
-		Iterator<Rule> i = rules.iterator();
-		Rule r;
-		TreeSet<Predicate> set = new TreeSet<Predicate>();
-		int nbPred = 0;
-
-		while (i.hasNext()) {
-			r = i.next();
-			if (isCompilable(r)) {
-				i.remove();
-				this.rules.add(r);
-				// count the number of new pred in r
-				try {
-					for (Predicate p : r.getBody().getAllPredicates())
-						if (set.add(p))
-							nbPred++;
-
-					for (Predicate p : r.getHead().getAllPredicates())
-						if (set.add(p))
-							nbPred++;
-				} catch (AtomSetException e) {
-
-				}
-			}
-		}
-
-		if (this.getProfiler() != null)
-			System.out.println("hierarchical rules: " + this.rules.size());
-		Atom father;
-		Atom son;
-		// System.out.println("nb pred: "+nb_pred);
-		set = null;
-		System.gc();
-		order = new byte[nbPred][nbPred];
-		indexPredicate = new ArrayList<Predicate>(nbPred);
-		for (Rule ru : this.rules) {
-			father = ru.getHead().iterator().next();
-			son = ru.getBody().iterator().next();
-			this.addRule(father, son);
-		}
+	public void compile(Iterable<Rule> ruleset) {
+		this.rules = extractCompilable(ruleset);
+		this.computeIndex(this.rules);
 	}
 
+	public void load(Iterable<Rule> ruleset) {
+		for(Rule r : ruleset) {
+			this.rules.add(r);
+		}
+		this.computeIndex(this.rules);
+	}
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// CONST METHODS
+	// /////////////////////////////////////////////////////////////////////////
+	
+	/**
+	 * Return true if the specified rule is compilable.
+	 */
 	@Override
 	public boolean isCompilable(Rule rule) {
 		Iterator<Atom> headIt = rule.getHead().iterator();
@@ -125,71 +99,10 @@ public class PredicateOrder extends AbstractRulesCompilation {
 		}
 		return false;
 	}
-
-	private void addRule(Atom father, Atom son) {
-		Predicate predFather = father.getPredicate();
-		Predicate predSon = son.getPredicate();
-		if (predicateIndex.get(predFather) == null)
-			addPredicate(predFather);
-		if (predicateIndex.get(predSon) == null)
-			addPredicate(predSon);
-		Integer f = predicateIndex.get(predFather);
-		Integer s = predicateIndex.get(predSon);
-		order[f][s] = 1;
-		computeTransitiveClosure(f, s);
-	}
-
+	
 	/**
-	 * update the transitive closure of the predicate order when the subsumption
-	 * father > son has been added
+	 *  can answer true if there is no homomorphism
 	 */
-	private void computeTransitiveClosure(int father, int son) {
-		// compute new descendant
-		for (int i = 0; i < sizeOrder; i++) {
-			// if son has descendant we add its in father
-			if (order[son][i] == 1)
-				order[father][i] = 1;
-		}
-
-		// actualize ancestor
-		for (int j = 0; j < sizeOrder; j++) {
-			// if this is an ancestor of father
-			if (order[j][father] == 1) {
-				for (int i = 0; i < sizeOrder; i++) {
-					// we add descendant of father in it ancestor
-					if (order[father][i] == 1)
-						order[j][i] = 1;
-				}
-			}
-		}
-	}
-
-	/**
-	 * Add a new Predicate in the order
-	 */
-	private void addPredicate(Predicate p) {
-		if (predicateIndex.get(p) == null) {
-			predicateIndex.put(p, sizeOrder);
-			indexPredicate.add(p);
-			sizeOrder++;
-		}
-	}
-
-	@Override
-	public String toString() {
-		String s = "";
-		for (int i = 0; i < sizeOrder; i++) {
-			s += indexPredicate.get(i) + " | ";
-			for (int j = 0; j < sizeOrder; j++) {
-				if (order[i][j] == 1)
-					s += indexPredicate.get(j) + " ";
-			}
-			s += "\n";
-		}
-		return s;
-	}
-
-	// can answer true if there is no homomorphism
 	@Override
 	public boolean isMappable(Atom father, Atom son) {
 		Predicate predFather = father.getPredicate();
@@ -229,26 +142,16 @@ public class PredicateOrder extends AbstractRulesCompilation {
 	// can answer true if there is no unifier
 	@Override
 	public boolean isUnifiable(Atom father, Atom son) {
-		Predicate predFather = father.getPredicate();
-		Predicate predSon = son.getPredicate();
-		if (predSon.equals(predFather))
-			return true;
-		Integer f = predicateIndex.get(predFather);
-		Integer s = predicateIndex.get(predSon);
-		if (f != null && s != null) {
-			return order[f][s] == 1;
-		}
-		return false;
+		return isMappable(father, son);
 	}
 
 	@Override
 	public Collection<TermPartition> getUnification(Atom father, Atom son) {
 		LinkedList<TermPartition> res = new LinkedList<TermPartition>();
-		if (isUnifiable(father, son)) {
-			TermPartition p = TermPartition.getPartitionByPosition(father, son);
-			if (p != null)
-				res.add(p);
-		}
+		TermPartition p = TermPartition.getPartitionByPosition(father, son);
+		if (p != null)
+			res.add(p);
+		
 		return res;
 	}
 
@@ -295,6 +198,104 @@ public class PredicateOrder extends AbstractRulesCompilation {
 			}
 
 		return res;
+	}
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+	// /////////////////////////////////////////////////////////////////////////
+	
+	/**
+	 * update the transitive closure of the predicate order when the subsumption
+	 * father > son has been added
+	 */
+	private void computeTransitiveClosure(int father, int son) {
+		// compute new descendant
+		for (int i = 0; i < sizeOrder; i++) {
+			// if son has descendant we add its in father
+			if (order[son][i] == 1)
+				order[father][i] = 1;
+		}
+
+		// actualize ancestor
+		for (int j = 0; j < sizeOrder; j++) {
+			// if this is an ancestor of father
+			if (order[j][father] == 1) {
+				for (int i = 0; i < sizeOrder; i++) {
+					// we add descendant of father in it ancestor
+					if (order[father][i] == 1)
+						order[j][i] = 1;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Add a new Predicate in the order
+	 */
+	private boolean addPredicate(Predicate p) {
+		if (predicateIndex.get(p) == null) {
+			predicateIndex.put(p, sizeOrder++);
+			indexPredicate.add(p);
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	private void addRule(Atom father, Atom son) {
+		Predicate predFather = father.getPredicate();
+		Predicate predSon = son.getPredicate();
+
+		Integer f = predicateIndex.get(predFather);
+		Integer s = predicateIndex.get(predSon);
+		order[f][s] = 1;
+		computeTransitiveClosure(f, s);
+	}
+	
+	private void computeIndex(Iterable<Rule> ruleset) {
+		int nbPred = 0;
+		
+		for (Rule rule : ruleset) {
+			// count the number of new pred in r
+			try {
+				for (Predicate p : rule.getBody().getAllPredicates())
+					if (this.addPredicate(p))
+						nbPred++;
+
+				for (Predicate p : rule.getHead().getAllPredicates())
+					if (this.addPredicate(p))
+						nbPred++;
+				
+			} catch (AtomSetException e) {
+
+			}
+		}
+		
+		Atom father, son;
+		this.order = new byte[nbPred][nbPred];
+		for (Rule ru : ruleset) {
+			father = ru.getHead().iterator().next();
+			son = ru.getBody().iterator().next();
+			this.addRule(father, son);
+		}
+	}
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// OBJECT METHODS
+	// /////////////////////////////////////////////////////////////////////////
+	
+	@Override
+	public String toString() {
+		String s = "";
+		for (int i = 0; i < sizeOrder; i++) {
+			s += indexPredicate.get(i) + " | ";
+			for (int j = 0; j < sizeOrder; j++) {
+				if (order[i][j] == 1)
+					s += indexPredicate.get(j) + " ";
+			}
+			s += "\n";
+		}
+		return s;
 	}
 
 }

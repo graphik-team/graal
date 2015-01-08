@@ -1,8 +1,8 @@
 package fr.lirmm.graphik.graal.backward_chaining.pure.rules;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,8 +29,6 @@ public class IDCompilation extends AbstractRulesCompilation {
 	private static DefaultFreeVarGen varGen = new DefaultFreeVarGen("X"
 			+ Integer.toString(IDCompilation.class.hashCode()));
 
-	private TreeSet<Predicate> predicates = new TreeSet<Predicate>();
-
 	// a matrix for store conditions ( p -> q : [q][p] )
 	private Map<Predicate, TreeMap<Predicate, LinkedList<IDCondition>>> conditions;
 
@@ -40,16 +38,9 @@ public class IDCompilation extends AbstractRulesCompilation {
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public IDCompilation(Iterable<Rule> ruleSet) {
+	public IDCompilation() {
 		super();
-		this.saturation = extractCompilable(ruleSet);
-
-	}
-
-	public IDCompilation(Iterable<Rule> ruleSet, Iterable<Rule> compilation) {
-		super();
-		this.saturation = extractCompilable(ruleSet);
-		this.load(compilation);
+		this.conditions = new TreeMap<Predicate, TreeMap<Predicate, LinkedList<IDCondition>>>();
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -60,26 +51,13 @@ public class IDCompilation extends AbstractRulesCompilation {
 		return this.saturation;
 	}
 
-	/**
-	 * load a ruleSet
-	 * 
-	 * @param file
-	 * @throws FileNotFoundException
-	 */
-	public void load(Iterable<Rule> saturation) {
-		this.saturation = new LinkedList<Rule>();
-		for (Rule r : saturation) {
-			this.saturation.add(r);
-		}
-		this.createIDCondition();
-	}
-
 	// /////////////////////////////////////////////////////////////////////////
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public void compile() {
+	public void compile(Iterable<Rule> ruleset) {
+		this.saturation = this.extractCompilable(ruleset);
 		if (this.getProfiler() != null) {
 			this.getProfiler().start("Compilation total time");
 		}
@@ -90,7 +68,21 @@ public class IDCompilation extends AbstractRulesCompilation {
 		}
 	}
 
-	public LinkedList<IDCondition> getConditions(Predicate predB,
+	@Override
+	public void load(Iterable<Rule> saturation) {
+		this.saturation = new LinkedList<Rule>();
+		for (Rule r : saturation) {
+			this.saturation.add(r);
+		}
+		this.createIDCondition();
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// CONST METHODS
+	// /////////////////////////////////////////////////////////////////////////
+	
+	
+	public List<IDCondition> getConditions(Predicate predB,
 			Predicate predH) {
 		LinkedList<IDCondition> res = null;
 		if (predB.equals(predH)) {
@@ -111,49 +103,31 @@ public class IDCompilation extends AbstractRulesCompilation {
 		if (res != null)
 			return res;
 		else
-			return new LinkedList<IDCondition>();
+			return Collections.emptyList();
 	}
-
+	
 	/**
-	 * Remove compilable rule from ruleset and return a List of compilable
-	 * rules.
-	 * 
-	 * @param ruleset
-	 * @return
+	 * Return true if the specified rule is compilable.
 	 */
-	public LinkedList<Rule> extractCompilable(Iterable<Rule> ruleset) {
-		LinkedList<Rule> compilable = new LinkedList<Rule>();
-		Rule r;
-
-		Iterator<Rule> it = ruleset.iterator();
-		while (it.hasNext()) {
-			r = it.next();
-			if (this.isCompilable(r)) {
-				compilable.add(r);
-				it.remove();
-			}
-		}
-
-		return compilable;
-	}
-
 	@Override
 	public boolean isCompilable(Rule r) {
 		Iterator<Atom> bodyIt = r.getBody().iterator();
 		Iterator<Atom> headIt = r.getHead().iterator();
 
 		if (bodyIt.hasNext() && headIt.hasNext()) {
-			Atom b = bodyIt.next();
-			Atom h = headIt.next();
+			bodyIt.next();
+			headIt.next();
 
 			if (!bodyIt.hasNext() && !headIt.hasNext()) {
 				// atomic head and body
-				predicates.add(b.getPredicate());
-				predicates.add(h.getPredicate());
 
-				for (Term t : h.getTerms())
-					if (t.isConstant() || r.getExistentials().contains(t))
-						return false;
+				if(!r.getExistentials().isEmpty()) {
+					return false;
+				} 
+				if(!r.getTerms(Term.Type.CONSTANT).isEmpty()) {
+					return false;
+				}
+				
 				return true;
 			}
 		}
@@ -179,7 +153,7 @@ public class IDCompilation extends AbstractRulesCompilation {
 		LinkedList<Substitution> res = new LinkedList<Substitution>();
 		Predicate predB = son.getPredicate();
 		Predicate predH = father.getPredicate();
-		LinkedList<IDCondition> conds = getConditions(predB, predH);
+		List<IDCondition> conds = getConditions(predB, predH);
 		for (IDCondition cond : conds) {
 			if (cond.checkBody(son.getTerms()))
 				res.add(cond.getSubstitution(son.getTerms(), father.getTerms()));
@@ -200,7 +174,7 @@ public class IDCompilation extends AbstractRulesCompilation {
 		LinkedList<TermPartition> res = new LinkedList<TermPartition>();
 		Predicate predB = son.getPredicate();
 		Predicate predH = father.getPredicate();
-		LinkedList<IDCondition> conds = getConditions(predB, predH);
+		List<IDCondition> conds = getConditions(predB, predH);
 		for (IDCondition cond : conds) {
 			res.add(cond.getUnification(son.getTerms(), father.getTerms()));
 		}
@@ -211,10 +185,12 @@ public class IDCompilation extends AbstractRulesCompilation {
 	public boolean isImplied(Atom father, Atom son) {
 		Predicate predB = son.getPredicate();
 		Predicate predH = father.getPredicate();
-		LinkedList<IDCondition> conds = getConditions(predB, predH);
-		for (IDCondition cond : conds)
-			if (cond.check(son.getTerms(), father.getTerms()))
+		List<IDCondition> conds = getConditions(predB, predH);
+		for (IDCondition cond : conds) {
+			if (cond.check(son.getTerms(), father.getTerms())) {
 				return true;
+			}
+		}
 
 		return false;
 	}
@@ -261,14 +237,13 @@ public class IDCompilation extends AbstractRulesCompilation {
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
-
+	
 	private void createIDCondition() {
 		if (this.getProfiler() != null) {
 			this.getProfiler().start("Compilation create IDCondition time");
 		}
 		Atom b;
 		Atom h;
-		this.conditions = new TreeMap<Predicate, TreeMap<Predicate, LinkedList<IDCondition>>>();
 		for (Rule ru : this.saturation) {
 			h = ru.getHead().iterator().next();
 			b = ru.getBody().iterator().next();
@@ -373,4 +348,20 @@ public class IDCompilation extends AbstractRulesCompilation {
 		conds.add(new IDCondition(b, h));
 	}
 
+	// /////////////////////////////////////////////////////////////////////////
+	// OBJECT METHODS OVERRIDING
+	// /////////////////////////////////////////////////////////////////////////
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		this.appendTo(sb);
+		return sb.toString();
+	}
+	
+	public void appendTo(StringBuilder sb) {
+		for(Rule r : this.saturation) {
+			r.appendTo(sb);
+		}
+	}
 }

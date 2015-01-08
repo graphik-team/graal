@@ -9,6 +9,9 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.TreeSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.lirmm.graphik.graal.backward_chaining.pure.queries.PureQuery;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.AtomicHeadRule;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.IDCompilation;
@@ -36,6 +39,9 @@ import fr.lirmm.graphik.util.Verbosable;
  *         most general single-piece unifiers not prunable
  */
 public class QueryRewritingEngine implements Verbosable, Profilable {
+
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(QueryRewritingEngine.class);
 
 	private boolean verbose = false;
 	private Profiler profiler;
@@ -267,8 +273,9 @@ public class QueryRewritingEngine implements Verbosable, Profilable {
 			if (!(compilation instanceof IDCompilation))
 				return getSinglePieceUnifiersAHR(q, (AtomicHeadRule) r);
 			else {
-				System.err
-						.println("IDCompilation is not compatible with atomic unification");
+				if(LOGGER.isWarnEnabled()) {
+					LOGGER.warn("IDCompilation is not compatible with atomic unification");
+				}
 				return getSinglePieceUnifiersNAHR(q, r);
 			}
 		else {
@@ -322,7 +329,7 @@ public class QueryRewritingEngine implements Verbosable, Profilable {
 						Term x = ix.next();
 						// all the atoms of Q/P which contain x must be add to P
 						if (a.getTerms().contains(x)) {
-							if (isUnifiable(a, copy.getHead().getAtom())) {
+							if (this.compilation.isUnifiable(a, copy.getHead().getAtom())) {
 								p.add(a);
 								TermPartition part = partition.join(TermPartition
 										.getPartitionByPosition(a, copy
@@ -372,8 +379,8 @@ public class QueryRewritingEngine implements Verbosable, Profilable {
 		// compute possible unification between atoms of Q and head(R)
 		for (Atom a : q) {
 			for (Atom b : ruleCopy.getHead()) {
-				if (isUnifiable(a, b)) {
-					Collection<? extends TermPartition> unification = getUnification(a, b);
+				if (compilation.isUnifiable(a, b)) {
+					Collection<? extends TermPartition> unification = compilation.getUnification(a, b);
 					for(TermPartition partition : unification) {
 						if(partition.isAdmissible(ruleCopy) ) {
 							if(possibleUnification.get(a) == null)
@@ -474,25 +481,6 @@ public class QueryRewritingEngine implements Verbosable, Profilable {
 		return res;
 	}
 
-	private Collection<? extends TermPartition> getUnification(Atom a, Atom b) {
-		if (compilation != null)
-			return compilation.getUnification(a, b);
-		else {
-			LinkedList<TermPartition> res = new LinkedList<TermPartition>();
-			TermPartition p = TermPartition.getPartitionByPosition(a, b);
-			if (p != null)
-				res.add(p);
-			return res;
-		}
-	}
-
-	private boolean isUnifiable(Atom a, Atom b) {
-		if (compilation != null)
-			return compilation.isUnifiable(a, b);
-		else
-			return a.getPredicate().equals(b.getPredicate());
-	}
-
 	/**
 	 * Returns the list of the atoms of the query that can be unify with the
 	 * head of R
@@ -517,34 +505,21 @@ public class QueryRewritingEngine implements Verbosable, Profilable {
 		// answer.addAll(query.getAtomsByPredicate(p));
 		for (Atom a : query)
 			for (Atom b : r.getHead())
-				if (isUnifiable(a, b))
+				if (this.compilation.isUnifiable(a, b))
 					answer.add(a);
 		return answer;
 	}
 
 	public static Collection<Rule> getUnifiableRules(Iterable<Predicate> preds,
 			IndexedByHeadPredicatesRuleSet ruleSet, RulesCompilation compilation) {
-		TreeSet<Rule> res = new TreeSet<Rule>(new Comparator<Rule>() {
-			@Override
-			public int compare(Rule o1, Rule o2) {
-				return o1.toString().compareTo(o2.toString());
-			}
-		});
+		TreeSet<Rule> res = new TreeSet<Rule>(RuleOrder.getInstance());
 		TreeSet<Predicate> unifiablePreds = new TreeSet<Predicate>();
-		if (compilation != null) {
-			for (Predicate pred : preds) {
-				unifiablePreds.addAll(compilation.getUnifiablePredicate(pred));
-			}
-			for (Predicate pred : unifiablePreds) {
-				for (Rule r : ruleSet.getRulesByHeadPredicate(pred)) {
-					res.add(r);
-				}
-			}
-		} else {
-			for (Predicate pred : preds) {
-				for (Rule r : ruleSet.getRulesByHeadPredicate(pred)) {
-					res.add(r);
-				}
+		for (Predicate pred : preds) {
+			unifiablePreds.addAll(compilation.getUnifiablePredicate(pred));
+		}
+		for (Predicate pred : unifiablePreds) {
+			for (Rule r : ruleSet.getRulesByHeadPredicate(pred)) {
+				res.add(r);
 			}
 		}
 
@@ -566,4 +541,27 @@ public class QueryRewritingEngine implements Verbosable, Profilable {
 		this.verbose = enable;
 	}
 
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE CLASSES
+	// /////////////////////////////////////////////////////////////////////////
+	
+	private static class RuleOrder implements Comparator<Rule> {
+		
+		private static RuleOrder instance;
+
+		private RuleOrder() {
+		}
+
+		public static synchronized RuleOrder getInstance() {
+			if (instance == null)
+				instance = new RuleOrder();
+
+			return instance;
+		}
+		
+		@Override
+		public int compare(Rule o1, Rule o2) {
+			return o1.toString().compareTo(o2.toString());
+		}
+	}
 }

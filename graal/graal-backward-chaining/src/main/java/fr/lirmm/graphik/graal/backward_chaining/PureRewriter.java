@@ -5,10 +5,11 @@ package fr.lirmm.graphik.graal.backward_chaining;
 
 import java.util.Iterator;
 
+import fr.lirmm.graphik.graal.backward_chaining.pure.QREAggregAllRules;
 import fr.lirmm.graphik.graal.backward_chaining.pure.QREAggregSingleRule;
 import fr.lirmm.graphik.graal.backward_chaining.pure.QueryRewritingEngine;
 import fr.lirmm.graphik.graal.backward_chaining.pure.queries.PureQuery;
-import fr.lirmm.graphik.graal.backward_chaining.pure.rules.IDCompilation;
+import fr.lirmm.graphik.graal.backward_chaining.pure.rules.NoCompilation;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Rule;
@@ -40,6 +41,8 @@ public class PureRewriter extends AbstractBackwardChainer implements Verbosable 
 	public PureRewriter(ConjunctiveQuery query, Iterable<Rule> rules) {
 		this.pquery = new PureQuery(query);
 		this.ruleset = new LinkedListRuleSet(rules);
+		this.compilation = new NoCompilation();
+		this.compilation.compile(rules);
 	}
 
 	/**
@@ -82,26 +85,10 @@ public class PureRewriter extends AbstractBackwardChainer implements Verbosable 
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
-	// STATIC METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	public static RulesCompilation loadCompilation(Iterable<Rule> ruleset,
-			Iterable<Rule> saturation) {
-		IDCompilation compilation = new IDCompilation(ruleset, saturation);
-		return compilation;
-	}
-
-	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
 	private void compute() {
-
-		// preprocessing
-		if (this.compilation == null) {
-			this.compilation = new IDCompilation(ruleset);
-			this.compilation.compile();
-		}
 
 		// rewriting
 		QueryRewritingEngine qre = new QREAggregSingleRule(pquery, ruleset,
