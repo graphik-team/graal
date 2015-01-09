@@ -15,10 +15,13 @@ import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSets;
 
 /**
- * @author Mélanie KÖNIG Query rewriting engine that rewrite query using
- *         aggregation all rule of most general single piece-unifiers, selecting
- *         unifiers during the aggregation and using a marking system to avoid
- *         redundant rewritings
+ * Rewriting operator ARAM
+ * rewriting engine that rewrite query using
+ * aggregation all rule of most general single piece-unifiers, selecting
+ * unifiers during the aggregation and using a marking system to avoid
+ * redundant rewritings
+ * 
+ * @author Mélanie KÖNIG Query
  */
 public class QREAggregAllRules extends QREAggregAllRulesBasic {
 

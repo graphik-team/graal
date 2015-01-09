@@ -15,8 +15,11 @@ import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 
 /**
- * @author Mélanie KÖNIG Query rewriting engine that rewrite query using
- *         aggregation by rule of most general single piece-unifiers
+ * Rewriting operator SRA
+ * Query rewriting engine that rewrite query using
+ * aggregation by rule of most general single piece-unifiers
+ * 
+ * @author Mélanie KÖNIG
  */
 @SuppressWarnings({ "unchecked" })
 public class QREAggregSingleRule extends QueryRewritingEngine {
