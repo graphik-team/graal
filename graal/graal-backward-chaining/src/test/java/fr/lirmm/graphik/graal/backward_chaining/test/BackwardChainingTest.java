@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
 
 import fr.lirmm.graphik.graal.backward_chaining.BackwardChainer;
 import fr.lirmm.graphik.graal.backward_chaining.PureRewriter;
+import fr.lirmm.graphik.graal.backward_chaining.pure.AggregSingleRuleOperator;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.HierarchicalCompilation;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.IDCompilation;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.NoCompilation;
@@ -45,7 +46,7 @@ public class BackwardChainingTest {
 		ConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y,Z) :- p(X, Y), q(Y,Z).");
 
 		compilation.compile(rules);
-		BackwardChainer bc = new PureRewriter(query, rules, compilation);
+		BackwardChainer bc = new PureRewriter(query, rules, compilation, new AggregSingleRuleOperator());
 		
 		int i = 0;
 		while (bc.hasNext()) {

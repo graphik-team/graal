@@ -14,6 +14,7 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.Parameters;
 
+import fr.lirmm.graphik.graal.backward_chaining.pure.AggregSingleRuleOperator;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.HierarchicalCompilation;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.IDCompilation;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.NoCompilation;
@@ -263,7 +264,7 @@ public class PureRewriter {
 					profiler.add("Initial query", query);
 				}
 				fr.lirmm.graphik.graal.backward_chaining.PureRewriter bc = new fr.lirmm.graphik.graal.backward_chaining.PureRewriter(
-						query, rules, compilation);
+						query, rules, compilation, new AggregSingleRuleOperator());
 
 				if (options.verbose) {
 					bc.setProfiler(profiler);

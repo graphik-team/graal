@@ -12,6 +12,7 @@ import java.util.TreeSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.lirmm.graphik.graal.backward_chaining.pure.queries.MarkedQuery;
 import fr.lirmm.graphik.graal.backward_chaining.pure.queries.PureQuery;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.AtomicHeadRule;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.IDCompilation;
@@ -38,248 +39,35 @@ import fr.lirmm.graphik.util.Verbosable;
  * @author Mélanie KÖNIG Query Rewriting Engine that rewrites query using only
  *         most general single-piece unifiers not prunable
  */
-public class QueryRewritingEngine implements Verbosable, Profilable {
+public abstract class AbstractRewritingOperator implements RewritingOperator, Profilable {
 
 	private static final Logger LOGGER = LoggerFactory
-			.getLogger(QueryRewritingEngine.class);
+			.getLogger(AbstractRewritingOperator.class);
 
-	private boolean verbose = false;
 	private Profiler profiler;
-
-	private PureQuery query;
-	private IndexedByHeadPredicatesRuleSet ruleSet;
-
-	protected RulesCompilation compilation;
-
-	protected LinkedList<ConjunctiveQuery> pivotRewritingSet;
-
+	private LinkedList<ConjunctiveQuery> pivotRewritingSet;
 
 	// attributs temporaires
 	public boolean atomic = false;
 
-	// /////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	// /////////////////////////////////////////////////////////////////////////
-
-	public QueryRewritingEngine(PureQuery query, Iterable<Rule> rules,
-			RulesCompilation comp) {
-		this.query = query;
-		this.ruleSet = new IndexedByHeadPredicatesRuleSet(rules);
-		this.compilation = comp;
-	}
 
 	// /////////////////////////////////////////////////////////////////////////
-	// GETTERS
+	// PRIVATE AND PROTECTED METHODS
 	// /////////////////////////////////////////////////////////////////////////
-
-	public ConjunctiveQuery getQuery() {
-		return query;
-	}
-
-	public IndexedByHeadPredicatesRuleSet getRuleSet() {
-		return this.ruleSet;
-	}
-
-	public RulesCompilation getRulesCompilation() {
-		return this.compilation;
-	}
-
-	public LinkedList<ConjunctiveQuery> getPivotRewritingSet() {
-		return pivotRewritingSet;
-	}
-
-	// /////////////////////////////////////////////////////////////////////////
-	// METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	/**
-	 * Compute and returns all the most general rewrites of the object's query
-	 * 
-	 * @return a list of the most general rewrite computed from the query and
-	 *         set of rule stored in the object
-	 * @throws Exception
-	 */
-	public Collection<ConjunctiveQuery> computeRewritings() {
-		this.pivotRewritingSet = new LinkedList<ConjunctiveQuery>();
-		int exploredRewrites = 0;
-		int generatedRewrites = 0;
-
-		if(this.verbose) {
-			this.profiler.start("rewriting time");
-		}
-
-		this.query = new PureQuery(compilation.getIrredondant(query.getAtomSet()), query.getAnswerVariables());
-		Collection<ConjunctiveQuery> currentRewriteSet;
-		Queue<ConjunctiveQuery> rewriteSetToExplore = new LinkedList<ConjunctiveQuery>();
-
-		this.query.addAnswerPredicate();
-		rewriteSetToExplore.add(this.query);
-		pivotRewritingSet.add(this.query);
-
-		ConjunctiveQuery q;
-		while (!rewriteSetToExplore.isEmpty()) {
-
-			/* take the first query to rewrite */
-			q = rewriteSetToExplore.poll();
-			++exploredRewrites; // stats
-
-			/* compute all the rewrite from it */
-			currentRewriteSet = this.getRewritesFrom(q);
-			generatedRewrites += currentRewriteSet.size(); // stats
-
-			/* keep only the most general among query just computed */
-			Misc.computeCover(currentRewriteSet, this.compilation);
-
-			/*
-			 * keep only the query just computed that are more general than
-			 * query already compute
-			 */
-			selectMostGeneralFromRelativeTo(currentRewriteSet,
-					pivotRewritingSet);
-
-			/* keep to explore only most general query */
-			selectMostGeneralFromRelativeTo(rewriteSetToExplore,
-					currentRewriteSet);
-
-			/*
-			 * keep in final rewrite set only query more general than query just
-			 * computed
-			 */
-			selectMostGeneralFromRelativeTo(pivotRewritingSet,
-					currentRewriteSet);
-
-			// add to explore the query just computed that we keep
-			rewriteSetToExplore.addAll(currentRewriteSet);
-
-			// add in final rewrite set the query just compute that we keep
-			pivotRewritingSet.addAll(currentRewriteSet);
-
-		}
-
-		if(this.verbose) {
-			this.profiler.add("Generated rewritings", generatedRewrites);
-			this.profiler.add("Explored rewritings", exploredRewrites);
-			this.profiler.add("Pivots rewritings", pivotRewritingSet.size());
-			this.profiler.stop("rewriting time");
-		}
-
-		return pivotRewritingSet;
-	}
-
-	public static int estimateNbDevelopedRew(Collection<ConjunctiveQuery> pivotRewritingSet, RulesCompilation compilation) {
-		int res = 0;
-		int nb;
-		for (ConjunctiveQuery query : pivotRewritingSet) {
-			nb = 1;
-			for (Atom a : query) {
-				nb = nb * compilation.getRewritingOf(a).size();
-			}
-			res += nb;
-		}
-		return res;
-	}
-
-	/**
-	 * Remove from toSelect the Fact that are not more general than all the fact
-	 * of relativeTo
-	 * 
-	 * @param toSelect
-	 * @param rewritingSet
-	 */
-	public void selectMostGeneralFromRelativeTo(
-			Collection<ConjunctiveQuery> toSelect,
-			Collection<ConjunctiveQuery> rewritingSet) {
-		Iterator<? extends ConjunctiveQuery> i = toSelect.iterator();
-		while (i.hasNext()) {
-			AtomSet f = i.next().getAtomSet();
-			if (containMoreGeneral(f, rewritingSet))
-				i.remove();
-		}
-	}
-
-	/**
-	 * Returns true if rewriteSet contains a fact more general than f, else
-	 * returns false
-	 * 
-	 * @param f
-	 * @param rewriteSet
-	 * @param comp
-	 * @return
-	 */
-	public boolean containMoreGeneral(AtomSet f,
-			Collection<ConjunctiveQuery> rewriteSet) {
-		for(ConjunctiveQuery q : rewriteSet) {
-			AtomSet a = q.getAtomSet();
-			if (Misc.isMoreGeneralThan(a, f, this.compilation))
-				return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Returns the rewrites compute from the given fact and the rule set of the
-	 * receiving object.
-	 * 
-	 * @param q
-	 *            A fact
-	 * @return the ArrayList that contains the rewrites compute from the given
-	 *         fact and the rule set of the receiving object.
-	 * @throws Exception
-	 */
-	protected Collection<ConjunctiveQuery> getRewritesFrom(ConjunctiveQuery q) {
-		LinkedList<ConjunctiveQuery> rewriteSet = new LinkedList<ConjunctiveQuery>();
-		LinkedList<QueryUnifier> unifiers;
-		try {
-			for (Rule r : getUnifiableRules(q.getAtomSet().getAllPredicates(),
-					ruleSet, compilation)) {
-				unifiers = getSinglePieceUnifiers(q, r);
-				for (QueryUnifier u : unifiers) {
-					rewriteSet.add(rewrite(q, u));
-				}
-			}
-		} catch (AtomSetException e) {
-		}
-		return rewriteSet;
-	}
-
-	/**
-	 * Rewrite the fact q according to the unifier u between the head of r and q
-	 * 
-	 * @param q
-	 *            the fact to rewrite
-	 * @param r
-	 *            the rule which is unified with q
-	 * @param u
-	 *            the unifier between q and r
-	 * @return the rewrite of q according to the unifier u between the head of r
-	 *         and q
-	 */
-	public ConjunctiveQuery rewrite(ConjunctiveQuery q, QueryUnifier u) {
-		AtomSet ajout = u.getImageOf(u.getRule().getBody());
-		AtomSet restant = u.getImageOf(AtomSets.minus(q.getAtomSet(),
-				u.getPiece()));
-		if(ajout != null && restant != null) { // FIXME
-			AtomSet res = AtomSets.union(ajout, restant);
-			ArrayList<Term> ansVar = new ArrayList<Term>();
-			ansVar.addAll(q.getAnswerVariables());
-			return new DefaultConjunctiveQuery(res, ansVar);
-		}
-		return null;
-	}
-
-	public LinkedList<QueryUnifier> getSinglePieceUnifiers(ConjunctiveQuery q,
-			Rule r) {
+	
+	protected LinkedList<QueryUnifier> getSinglePieceUnifiers(ConjunctiveQuery q,
+			Rule r, RulesCompilation compilation) {
 		if (atomic)
 			if (!(compilation instanceof IDCompilation))
-				return getSinglePieceUnifiersAHR(q, (AtomicHeadRule) r);
+				return getSinglePieceUnifiersAHR(q, (AtomicHeadRule) r, compilation);
 			else {
 				if(LOGGER.isWarnEnabled()) {
 					LOGGER.warn("IDCompilation is not compatible with atomic unification");
 				}
-				return getSinglePieceUnifiersNAHR(q, r);
+				return getSinglePieceUnifiersNAHR(q, r, compilation);
 			}
 		else {
-			return getSinglePieceUnifiersNAHR(q, r);
+			return getSinglePieceUnifiersNAHR(q, r, compilation);
 		}
 	}
 
@@ -297,9 +85,9 @@ public class QueryRewritingEngine implements Verbosable, Profilable {
 	 *         the receiving object and R an atomic-head rule
 	 * @throws Exception
 	 */
-	public LinkedList<QueryUnifier> getSinglePieceUnifiersAHR(
-			ConjunctiveQuery q, AtomicHeadRule r) {
-		LinkedList<Atom> unifiableAtoms = getUnifiableAtoms(q, r);
+	private LinkedList<QueryUnifier> getSinglePieceUnifiersAHR(
+			ConjunctiveQuery q, AtomicHeadRule r, RulesCompilation compilation) {
+		LinkedList<Atom> unifiableAtoms = getUnifiableAtoms(q, r, compilation);
 		LinkedList<QueryUnifier> unifiers = new LinkedList<QueryUnifier>();
 
 		Iterator<Atom> i = unifiableAtoms.iterator();
@@ -329,7 +117,7 @@ public class QueryRewritingEngine implements Verbosable, Profilable {
 						Term x = ix.next();
 						// all the atoms of Q/P which contain x must be add to P
 						if (a.getTerms().contains(x)) {
-							if (this.compilation.isUnifiable(a, copy.getHead().getAtom())) {
+							if (compilation.isUnifiable(a, copy.getHead().getAtom())) {
 								p.add(a);
 								TermPartition part = partition.join(TermPartition
 										.getPartitionByPosition(a, copy
@@ -371,8 +159,8 @@ public class QueryRewritingEngine implements Verbosable, Profilable {
 	 *         the receiving object and R an atomic-head rule
 	 * @throws Exception
 	 */
-	public LinkedList<QueryUnifier> getSinglePieceUnifiersNAHR(
-			ConjunctiveQuery q, Rule r) {
+	private LinkedList<QueryUnifier> getSinglePieceUnifiersNAHR(
+			ConjunctiveQuery q, Rule r, RulesCompilation compilation) {
 		LinkedList<QueryUnifier> u = new LinkedList<QueryUnifier>();
 		Rule ruleCopy = Misc.getSafeCopy(r);
 		HashMap<Atom, LinkedList<TermPartition>> possibleUnification = new HashMap<Atom, LinkedList<TermPartition>>();
@@ -392,7 +180,7 @@ public class QueryRewritingEngine implements Verbosable, Profilable {
 			}
 		}
 
-		LinkedList<Atom> atoms = getUnifiableAtoms(q, r);
+		LinkedList<Atom> atoms = getUnifiableAtoms(q, r, compilation);
 		for (Atom a : atoms) {
 			LinkedList<TermPartition> partitionList = possibleUnification.get(a);
 			if (partitionList != null) {
@@ -409,6 +197,120 @@ public class QueryRewritingEngine implements Verbosable, Profilable {
 
 		return u;
 	}
+
+	protected Collection<Rule> getUnifiableRules(Iterable<Predicate> preds,
+			IndexedByHeadPredicatesRuleSet ruleSet, RulesCompilation compilation) {
+		TreeSet<Rule> res = new TreeSet<Rule>(RuleOrder.getInstance());
+		TreeSet<Predicate> unifiablePreds = new TreeSet<Predicate>();
+		for (Predicate pred : preds) {
+			unifiablePreds.addAll(compilation.getUnifiablePredicate(pred));
+		}
+		for (Predicate pred : unifiablePreds) {
+			for (Rule r : ruleSet.getRulesByHeadPredicate(pred)) {
+				res.add(r);
+			}
+		}
+
+		return res;
+	}
+	
+	/**
+	 * Returns the list of the atoms of the query that can be unify with the
+	 * head of R
+	 * 
+	 * @param query
+	 *            the query to unify
+	 * @param r
+	 *            the rule whose has the head to unify
+	 * @return the list of the atoms of the query that have the same predicate
+	 *         as the head atom of R
+	 */
+	protected LinkedList<Atom> getUnifiableAtoms(ConjunctiveQuery query, Rule r, RulesCompilation compilation) {
+		LinkedList<Atom> answer = new LinkedList<Atom>();
+		for (Atom a : query)
+			for (Atom b : r.getHead())
+				if (compilation.isUnifiable(a, b))
+					answer.add(a);
+		return answer;
+	}
+
+	protected LinkedList<QueryUnifier> getSRUnifier(ConjunctiveQuery q, Rule r, RulesCompilation compilation) {
+		LinkedList<QueryUnifier> unifiers = new LinkedList<QueryUnifier>();
+
+		/** compute the simple unifiers **/
+		unifiers = getSinglePieceUnifiers(q, r, compilation);
+
+		/** compute the aggregated unifier by rule **/
+		if (!unifiers.isEmpty())
+			unifiers = getAggregatedUnifiers(unifiers);
+
+		return unifiers;
+	}
+
+	/**
+	 * Returns all the aggregated unifiers compute from the given unifiers
+	 */
+	@SuppressWarnings({ "unchecked" })
+	protected LinkedList<QueryUnifier> getAggregatedUnifiers(
+			LinkedList<QueryUnifier> unifToAggregate) {
+		LinkedList<QueryUnifier> unifAggregated = new LinkedList<QueryUnifier>();
+		LinkedList<QueryUnifier> restOfUnifToAggregate = (LinkedList<QueryUnifier>) unifToAggregate
+				.clone();
+		Iterator<QueryUnifier> itr = unifToAggregate.iterator();
+		QueryUnifier u;
+		while (itr.hasNext()) {
+			u = itr.next();
+			restOfUnifToAggregate.remove(u);
+
+			// add to the result all the aggregated piece-unifier build from u
+			// and the rest of the mgu single piece-unifiers
+			unifAggregated.addAll(aggregate(u, restOfUnifToAggregate));
+		}
+		return unifAggregated;
+	}
+	
+	/**
+	 * Returns the list of all the aggregated unifiers that can be build from u
+	 * and others unifiers of lu. recursive function
+	 * 
+	 * @param u
+	 *            the unifier whose we want aggregate with the unifiers of lu
+	 * @param lu
+	 *            list of unifiers
+	 * @return the list of all aggregated unifier build from u and unifiers of
+	 *         lu
+	 * @throws Exception
+	 */
+	@SuppressWarnings({ "unchecked" })
+	private LinkedList<QueryUnifier> aggregate(QueryUnifier u,
+			LinkedList<QueryUnifier> l) {
+		LinkedList<QueryUnifier> lu = (LinkedList<QueryUnifier>) l.clone();
+		// if there is no more unifier to aggregate
+		if (lu.isEmpty()) {
+			LinkedList<QueryUnifier> res = new LinkedList<QueryUnifier>();
+			res.add(u);
+			return res;
+		} else {
+			QueryUnifier first = lu.getFirst(); // take the first one
+			lu.removeFirst(); // remove first one from lu
+			// if first can be aggregated with u
+			LinkedList<QueryUnifier> res = aggregate(u, lu);
+			if (u.isCompatible(first)) {
+				// System.out.println("oui");
+				// compute the others aggregation from the aggregation of u and
+				// first and the rest of lu
+				res.addAll(aggregate(u.aggregate(first), lu));
+				// concatenate this result and the others aggregations from u
+				// and the rest of lu
+
+			}
+			return res;
+		}
+	}
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// 
+	// /////////////////////////////////////////////////////////////////////////
 
 	private Collection<? extends QueryUnifier> extend(AtomSet p,
 			TermPartition unif,
@@ -480,52 +382,11 @@ public class QueryRewritingEngine implements Verbosable, Profilable {
 		}
 		return res;
 	}
-
-	/**
-	 * Returns the list of the atoms of the query that can be unify with the
-	 * head of R
-	 * 
-	 * @param query
-	 *            the query to unify
-	 * @param r
-	 *            the rule whose has the head to unify
-	 * @return the list of the atoms of the query that have the same predicate
-	 *         as the head atom of R
-	 */
-	protected LinkedList<Atom> getUnifiableAtoms(ConjunctiveQuery query, Rule r) {
-		LinkedList<Atom> answer = new LinkedList<Atom>();
-		// ArrayList<Predicate> predicate = new ArrayList<Predicate>();
-		// for(Atom h : R.getHead().getAtoms())
-		// for(Predicate p :
-		// predicateOrder.getHighterPredicate(h.getPredicate()))
-		// if(!predicate.contains(p))
-		// predicate.add(p);
-		//
-		// for(Predicate p : predicate)
-		// answer.addAll(query.getAtomsByPredicate(p));
-		for (Atom a : query)
-			for (Atom b : r.getHead())
-				if (this.compilation.isUnifiable(a, b))
-					answer.add(a);
-		return answer;
-	}
-
-	public static Collection<Rule> getUnifiableRules(Iterable<Predicate> preds,
-			IndexedByHeadPredicatesRuleSet ruleSet, RulesCompilation compilation) {
-		TreeSet<Rule> res = new TreeSet<Rule>(RuleOrder.getInstance());
-		TreeSet<Predicate> unifiablePreds = new TreeSet<Predicate>();
-		for (Predicate pred : preds) {
-			unifiablePreds.addAll(compilation.getUnifiablePredicate(pred));
-		}
-		for (Predicate pred : unifiablePreds) {
-			for (Rule r : ruleSet.getRulesByHeadPredicate(pred)) {
-				res.add(r);
-			}
-		}
-
-		return res;
-	}
-
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// GETTERS
+	// /////////////////////////////////////////////////////////////////////////
+	
 	@Override
 	public void setProfiler(Profiler profiler) {
 		this.profiler = profiler;
@@ -535,12 +396,7 @@ public class QueryRewritingEngine implements Verbosable, Profilable {
 	public Profiler getProfiler() {
 		return this.profiler;
 	}
-
-	@Override
-	public void enableVerbose(boolean enable) {
-		this.verbose = enable;
-	}
-
+	
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE CLASSES
 	// /////////////////////////////////////////////////////////////////////////

@@ -5,15 +5,18 @@ package fr.lirmm.graphik.graal.backward_chaining;
 
 import java.util.Iterator;
 
-import fr.lirmm.graphik.graal.backward_chaining.pure.QREAggregAllRules;
-import fr.lirmm.graphik.graal.backward_chaining.pure.QREAggregSingleRule;
-import fr.lirmm.graphik.graal.backward_chaining.pure.QueryRewritingEngine;
+import fr.lirmm.graphik.graal.backward_chaining.pure.AggregAllRulesOperator;
+import fr.lirmm.graphik.graal.backward_chaining.pure.AggregSingleRuleOperator;
+import fr.lirmm.graphik.graal.backward_chaining.pure.RewritingAlgorithm;
+import fr.lirmm.graphik.graal.backward_chaining.pure.AbstractRewritingOperator;
+import fr.lirmm.graphik.graal.backward_chaining.pure.RewritingOperator;
 import fr.lirmm.graphik.graal.backward_chaining.pure.queries.PureQuery;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.NoCompilation;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
+import fr.lirmm.graphik.graal.core.ruleset.IndexedByHeadPredicatesRuleSet;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.util.Verbosable;
 
@@ -29,6 +32,7 @@ public class PureRewriter extends AbstractBackwardChainer implements Verbosable 
 	UnionConjunctiveQueries ucqs = null;
 	Iterator<ConjunctiveQuery> rewrites = null;
 	private boolean verbose;
+	private RewritingOperator operator;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -50,10 +54,11 @@ public class PureRewriter extends AbstractBackwardChainer implements Verbosable 
 	 * 
 	 */
 	public PureRewriter(ConjunctiveQuery query, Iterable<Rule> rules,
-			RulesCompilation compilation) {
+			RulesCompilation compilation, RewritingOperator operator) {
 		this.pquery = new PureQuery(query);
 		this.ruleset = new LinkedListRuleSet(rules);
 		this.compilation = compilation;
+		this.operator = operator;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -89,13 +94,16 @@ public class PureRewriter extends AbstractBackwardChainer implements Verbosable 
 	// /////////////////////////////////////////////////////////////////////////
 
 	private void compute() {
-
+		IndexedByHeadPredicatesRuleSet indexedRuleSet = new IndexedByHeadPredicatesRuleSet(this.ruleset);
+		
 		// rewriting
-		QueryRewritingEngine qre = new QREAggregSingleRule(pquery, ruleset,
-				this.compilation);
-		qre.enableVerbose(this.verbose);
-		qre.setProfiler(this.getProfiler());
-		Iterable<ConjunctiveQuery> queries = qre.computeRewritings();
+		RewritingAlgorithm algo = new RewritingAlgorithm(this.operator);
+		
+		algo.enableVerbose(this.verbose);
+		operator.setProfiler(this.getProfiler());
+		algo.setProfiler(this.getProfiler());
+		
+		Iterable<ConjunctiveQuery> queries = algo.execute(pquery, indexedRuleSet, compilation);
 
 		// unfolding
 		if (this.getProfiler() != null) {

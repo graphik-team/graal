@@ -3,12 +3,13 @@ package fr.lirmm.graphik.graal.backward_chaining.pure;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import fr.lirmm.graphik.graal.backward_chaining.pure.queries.PureQuery;
+import fr.lirmm.graphik.graal.backward_chaining.pure.queries.QueryUtils;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
 import fr.lirmm.graphik.graal.backward_chaining.pure.utils.QueryUnifier;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
+import fr.lirmm.graphik.graal.core.ruleset.IndexedByHeadPredicatesRuleSet;
 
 /**
  * Rewriting operator ARA
@@ -17,12 +18,11 @@ import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
  *         
  * @author Mélanie KÖNIG
  */
-public class QREAggregAllRulesBasic extends QREAggregSingleRule {
+public class BasicAggregAllRulesOperator extends AbstractRewritingOperator {
 
-	public QREAggregAllRulesBasic(PureQuery query, Iterable<Rule> rules,
-			RulesCompilation order) {
-		super(query, rules, order);
-	}
+	// /////////////////////////////////////////////////////////////////////////
+	// METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * Returns the rewrites compute from the given fact and the rule set of the
@@ -35,17 +35,16 @@ public class QREAggregAllRulesBasic extends QREAggregSingleRule {
 	 * @throws Exception
 	 */
 	@Override
-	protected Collection<ConjunctiveQuery> getRewritesFrom(ConjunctiveQuery q) {
-
+	public Collection<ConjunctiveQuery>  getRewritesFrom(ConjunctiveQuery q, IndexedByHeadPredicatesRuleSet ruleSet, RulesCompilation compilation) {		
 		LinkedList<ConjunctiveQuery> currentRewrites = new LinkedList<ConjunctiveQuery>();
 		LinkedList<QueryUnifier> srUnifiers = new LinkedList<QueryUnifier>();
 		LinkedList<QueryUnifier> unifiers = new LinkedList<QueryUnifier>();
 		try {
 			for (Rule r : getUnifiableRules(q.getAtomSet().getAllPredicates(),
-					getRuleSet(), getRulesCompilation())) {
+					ruleSet, compilation)) {
 
 				/** compute the single rule unifiers **/
-				srUnifiers.addAll(getSRUnifier(q, r));
+				srUnifiers.addAll(getSRUnifier(q, r, compilation));
 			}
 		} catch (AtomSetException e) {
 		}
@@ -55,7 +54,7 @@ public class QREAggregAllRulesBasic extends QREAggregSingleRule {
 
 		/** compute the rewrite from the unifier **/
 		for (QueryUnifier u : unifiers) {
-			ConjunctiveQuery a = rewrite(q, u);
+			ConjunctiveQuery a = QueryUtils.rewrite(q, u);
 			currentRewrites.add(a);
 		}
 
