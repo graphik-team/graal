@@ -191,6 +191,12 @@ public class DefaultRule implements Rule {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
+		this.appendTo(builder);
+		return builder.toString();
+	}
+	
+	@Override
+	public void appendTo(StringBuilder builder) {
 		if (!this.label.isEmpty()) {
 			builder.append('[');
 			builder.append(this.label);
@@ -199,7 +205,6 @@ public class DefaultRule implements Rule {
 		builder.append(this.body.toString());
 		builder.append(" -> ");
 		builder.append(this.head);
-		return builder.toString();
 	}
 	
 	@Override
