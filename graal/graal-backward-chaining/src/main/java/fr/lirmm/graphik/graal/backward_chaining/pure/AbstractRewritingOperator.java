@@ -1,19 +1,15 @@
 package fr.lirmm.graphik.graal.backward_chaining.pure;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Queue;
 import java.util.TreeSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.backward_chaining.pure.queries.MarkedQuery;
-import fr.lirmm.graphik.graal.backward_chaining.pure.queries.PureQuery;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.AtomicHeadRule;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.IDCompilation;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
@@ -22,18 +18,15 @@ import fr.lirmm.graphik.graal.backward_chaining.pure.utils.QueryUnifier;
 import fr.lirmm.graphik.graal.backward_chaining.pure.utils.TermPartition;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.atomset.AtomSets;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByHeadPredicatesRuleSet;
 import fr.lirmm.graphik.util.Profilable;
 import fr.lirmm.graphik.util.Profiler;
-import fr.lirmm.graphik.util.Verbosable;
 
 /**
  * @author Mélanie KÖNIG Query Rewriting Engine that rewrites query using only
@@ -45,7 +38,6 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 			.getLogger(AbstractRewritingOperator.class);
 
 	private Profiler profiler;
-	private LinkedList<ConjunctiveQuery> pivotRewritingSet;
 
 	// attributs temporaires
 	public boolean atomic = false;

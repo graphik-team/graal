@@ -4,10 +4,8 @@
 package fr.lirmm.graphik.graal.backward_chaining.pure;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 
-import fr.lirmm.graphik.graal.backward_chaining.pure.queries.PureQuery;
 import fr.lirmm.graphik.graal.backward_chaining.pure.queries.QueryUtils;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
 import fr.lirmm.graphik.graal.backward_chaining.pure.utils.QueryUnifier;

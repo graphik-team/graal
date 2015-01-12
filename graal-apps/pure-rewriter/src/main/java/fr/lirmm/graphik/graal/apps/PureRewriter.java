@@ -14,7 +14,10 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.Parameters;
 
+import fr.lirmm.graphik.graal.backward_chaining.pure.AggregAllRulesOperator;
 import fr.lirmm.graphik.graal.backward_chaining.pure.AggregSingleRuleOperator;
+import fr.lirmm.graphik.graal.backward_chaining.pure.BasicAggregAllRulesOperator;
+import fr.lirmm.graphik.graal.backward_chaining.pure.RewritingOperator;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.HierarchicalCompilation;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.IDCompilation;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.NoCompilation;
@@ -206,12 +209,15 @@ public class PureRewriter {
 		@Parameter(names = { "-q", "--query" }, description = "The queries to rewrite in DLP", required = true)
 		private String query = null;
 
-		@Parameter(names = { "-c", "--compilation" }, description = "The compilation file")
+		@Parameter(names = { "-c", "--compilationFile" }, description = "The compilation file")
 		private String compilationFile = "";
 
-		@Parameter(names = { "-t", "--type" }, description = "Compilation type H, ID, NONE", required = false)
+		@Parameter(names = { "-t", "--compilationType" }, description = "Compilation type H, ID, NONE", required = false)
 		private String compilationType = "NONE";
 
+		@Parameter(names = { "-p", "--operator" }, description = "Rewriting operator SRA, ARA, ARAM", required = false)
+		private String operator = "SRA";
+		
 		/**
 		 * @param commander
 		 * @throws FileNotFoundException
@@ -223,8 +229,24 @@ public class PureRewriter {
 			}
 
 			RuleSet rules = parseOntology(this.ontologyFile);
-			RulesCompilation compilation;
+			RulesCompilation compilation = selectCompilationType();
+			RewritingOperator operator = selectOperator();
 
+			compilation.setProfiler(profiler);
+			operator.setProfiler(profiler);
+			
+			if (this.compilationFile.isEmpty()) {
+				compilation.compile(rules);
+			} else {
+				compilation.load(new FilterReader<Rule, Object>(new DlgpParser(
+						new File(this.compilationFile)), new RulesFilter()));
+			}
+		
+			this.processQuery(rules, compilation, operator);
+		}
+		
+		private RulesCompilation selectCompilationType() {
+			RulesCompilation compilation = null;
 			if ("H".equals(this.compilationType)) {
 				compilation = new HierarchicalCompilation();
 			} else if ("ID".equals(this.compilationType)) {
@@ -232,20 +254,22 @@ public class PureRewriter {
 			} else {
 				compilation = new NoCompilation();
 			}
-
-			compilation.setProfiler(profiler);
-
-			if (this.compilationFile.isEmpty()) {
-				compilation.compile(rules);
-			} else {
-				compilation.load(new FilterReader<Rule, Object>(new DlgpParser(
-						new File(this.compilationFile)), new RulesFilter()));
-			}
-
-			this.processQuery(rules, compilation);
+			return compilation;
 		}
 
-		private void processQuery(RuleSet rules, RulesCompilation compilation)
+		private RewritingOperator selectOperator() {
+			RewritingOperator operator = null;	
+			if("SRA".equals(this.operator)) {
+				operator = new AggregSingleRuleOperator();
+			} else if ("ARAM".equals(this.operator)) {
+				operator = new AggregAllRulesOperator();
+			} else {
+				operator = new BasicAggregAllRulesOperator();
+			}
+			return operator;
+		}
+		
+		private void processQuery(RuleSet rules, RulesCompilation compilation, RewritingOperator operator)
 				throws FileNotFoundException {
 			List<ConjunctiveQuery> queries = new LinkedList<ConjunctiveQuery>();
 			File file = new File(this.query);
@@ -264,7 +288,7 @@ public class PureRewriter {
 					profiler.add("Initial query", query);
 				}
 				fr.lirmm.graphik.graal.backward_chaining.PureRewriter bc = new fr.lirmm.graphik.graal.backward_chaining.PureRewriter(
-						query, rules, compilation, new AggregSingleRuleOperator());
+						query, rules, compilation, operator);
 
 				if (options.verbose) {
 					bc.setProfiler(profiler);

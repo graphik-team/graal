@@ -5,10 +5,7 @@ package fr.lirmm.graphik.graal.backward_chaining;
 
 import java.util.Iterator;
 
-import fr.lirmm.graphik.graal.backward_chaining.pure.AggregAllRulesOperator;
-import fr.lirmm.graphik.graal.backward_chaining.pure.AggregSingleRuleOperator;
 import fr.lirmm.graphik.graal.backward_chaining.pure.RewritingAlgorithm;
-import fr.lirmm.graphik.graal.backward_chaining.pure.AbstractRewritingOperator;
 import fr.lirmm.graphik.graal.backward_chaining.pure.RewritingOperator;
 import fr.lirmm.graphik.graal.backward_chaining.pure.queries.PureQuery;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.NoCompilation;

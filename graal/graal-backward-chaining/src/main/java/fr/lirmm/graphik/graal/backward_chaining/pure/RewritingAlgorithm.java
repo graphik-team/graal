@@ -51,6 +51,9 @@ public class RewritingAlgorithm implements Verbosable, Profilable {
 	 * @author Mélanie KÖNIG
 	 */
 	public Collection<ConjunctiveQuery> execute(ConjunctiveQuery query, IndexedByHeadPredicatesRuleSet ruleSet, RulesCompilation compilation) {
+		if(this.verbose) {
+			this.profiler.add("CONFIG", operator.toString());
+		}
 		LinkedList<ConjunctiveQuery> finalRewritingSet = new LinkedList<ConjunctiveQuery>();
 		Queue<ConjunctiveQuery> rewriteSetToExplore = new LinkedList<ConjunctiveQuery>();
 		Collection<ConjunctiveQuery> currentRewriteSet;

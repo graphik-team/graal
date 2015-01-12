@@ -3,16 +3,13 @@
  */
 package fr.lirmm.graphik.graal.backward_chaining.pure.utils;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
-import fr.lirmm.graphik.graal.backward_chaining.pure.queries.MarkedQuery;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultFreeVarGen;
 import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.Rule;
@@ -20,7 +17,6 @@ import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.core.atomset.AtomSets;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
 

@@ -4,13 +4,11 @@
 package fr.lirmm.graphik.graal.backward_chaining.pure.queries;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 import fr.lirmm.graphik.graal.backward_chaining.pure.utils.QueryUnifier;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSets;
@@ -19,7 +17,7 @@ import fr.lirmm.graphik.graal.core.atomset.AtomSets;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class QueryUtils {
+public final class QueryUtils {
 	
 	private QueryUtils() {}
 	
@@ -77,13 +75,13 @@ public class QueryUtils {
 			ArrayList<Term> ansVar = new ArrayList<Term>();
 			ansVar.addAll(q.getAnswerVariables());
 			rew = new MarkedQuery(res, ansVar);
+
+			ArrayList<Atom> markedAtoms = new ArrayList<Atom>();
+			for (Atom a : ajout)
+				markedAtoms.add(a);
+	
+			rew.setMarkedAtom(markedAtoms);
 		}
-
-		ArrayList<Atom> markedAtoms = new ArrayList<Atom>();
-		for (Atom a : ajout)
-			markedAtoms.add(a);
-
-		rew.setMarkedAtom(markedAtoms);
 
 		return rew;
 	}
