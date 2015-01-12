@@ -3,7 +3,7 @@
 
 	<groupId>fr.lirmm.graphik</groupId>
 	<artifactId>graal-main-project</artifactId>
-	<version>0.6.4-SNAPSHOT</version>
+	<version>0.6.4</version>
 	<name>Generic Rule ApplicAtion Library</name>
 
 	<packaging>pom</packaging>
