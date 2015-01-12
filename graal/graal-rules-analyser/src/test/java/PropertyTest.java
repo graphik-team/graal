@@ -9,7 +9,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlpParser;
 import fr.lirmm.graphik.graal.rulesetanalyser.RuleAnalyser;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.AtomicBodyProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.DisconnectedProperty;
@@ -55,15 +55,15 @@ public class PropertyTest {
 	public static void setUp() {
 		try {
 
-		r0 = DlgpParser.parseRule("r(X,Y) :- p(X), q(X,Y).");
-		r1 = DlgpParser.parseRule("r(a,Z) :- p(X), q(a,Y).");
-		r2 = DlgpParser.parseRule("q(X,X) :- p(X).");
-		r3 = DlgpParser.parseRule("s(a,Z) :- p(X),q(X,Y).");
-		r4 = DlgpParser.parseRule("t(a,Z,X) :- p(X),q(Y,Y),p(a).");
-		r5 = DlgpParser.parseRule("s(X,Y) :- p(X),q(Y,a).");
+		r0 = DlpParser.parseRule("r(X,Y) :- p(X), q(X,Y).");
+		r1 = DlpParser.parseRule("r(a,Z) :- p(X), q(a,Y).");
+		r2 = DlpParser.parseRule("q(X,X) :- p(X).");
+		r3 = DlpParser.parseRule("s(a,Z) :- p(X),q(X,Y).");
+		r4 = DlpParser.parseRule("t(a,Z,X) :- p(X),q(Y,Y),p(a).");
+		r5 = DlpParser.parseRule("s(X,Y) :- p(X),q(Y,a).");
 
-		nr0 = DlgpParser.parseRule("r(X,Y,Z),s(a),s(b) :- p(X,Y),q(Z,Y).");
-		nr1 = DlgpParser.parseRule("r(Y,Y,Z),s(a),s(X) :- p(X,Y),q(Z,Y).");
+		nr0 = DlpParser.parseRule("r(X,Y,Z),s(a),s(b) :- p(X,Y),q(Z,Y).");
+		nr1 = DlpParser.parseRule("r(Y,Y,Z),s(a),s(X) :- p(X,Y),q(Z,Y).");
 
 		rSet0 = new LinkedList<Rule>();
 		rSet0.add(r0);
@@ -74,35 +74,35 @@ public class PropertyTest {
 		rSet0.add(r5);
 		
 		rSet1 = new LinkedList<Rule>();
-		rSet1.add((Rule)(DlgpParser.parseRule("emp(W,V,X,Y) :- dept(V,W).")));
-		rSet1.add((Rule)(DlgpParser.parseRule("pR1(V,W,X,Y,Z) :- emp(V,W,X,Y).")));
-		rSet1.add((Rule)(DlgpParser.parseRule("dept(W,Z) :- pR1(V,W,X,Y,Z).")));
-		rSet1.add((Rule)(DlgpParser.parseRule("runs(W,Y) :- pR1(V,W,X,Y,Z).")));
-		rSet1.add((Rule)(DlgpParser.parseRule("area(Y,X) :- pR1(V,W,X,Y,Z).")));
-		rSet1.add((Rule)(DlgpParser.parseRule("eXt(Z,Y,X) :- runs(W,X),area(X,Y).")));
-		rSet1.add((Rule)(DlgpParser.parseRule("emp(W,V,X,Y) :- dept(V,W).")));
-		rSet1.add((Rule)(DlgpParser.parseRule(" pR1(V2,W2,X2,Y2,Z2) :- emp(V2,W2,X2,Y2).")));
-		rSet1.add((Rule)(DlgpParser.parseRule("dept(W3,Z3) :- pR1(V3,W3,X3,Y3,Z3).")));
-		rSet1.add((Rule)(DlgpParser.parseRule("runs(W4,Y4) :- pR1(V4,W4,X4,Y4,Z4).")));
-		rSet1.add((Rule)(DlgpParser.parseRule("area(Y5,X5) :- pR1(V5,W5,X5,Y5,Z5). ")));
-		rSet1.add((Rule)(DlgpParser.parseRule(" eXt(Z6,Y6,X6) :- runs(W6,X6),area(X6,Y6).")));
+		rSet1.add((Rule)(DlpParser.parseRule("emp(W,V,X,Y) :- dept(V,W).")));
+		rSet1.add((Rule)(DlpParser.parseRule("pR1(V,W,X,Y,Z) :- emp(V,W,X,Y).")));
+		rSet1.add((Rule)(DlpParser.parseRule("dept(W,Z) :- pR1(V,W,X,Y,Z).")));
+		rSet1.add((Rule)(DlpParser.parseRule("runs(W,Y) :- pR1(V,W,X,Y,Z).")));
+		rSet1.add((Rule)(DlpParser.parseRule("area(Y,X) :- pR1(V,W,X,Y,Z).")));
+		rSet1.add((Rule)(DlpParser.parseRule("eXt(Z,Y,X) :- runs(W,X),area(X,Y).")));
+		rSet1.add((Rule)(DlpParser.parseRule("emp(W,V,X,Y) :- dept(V,W).")));
+		rSet1.add((Rule)(DlpParser.parseRule(" pR1(V2,W2,X2,Y2,Z2) :- emp(V2,W2,X2,Y2).")));
+		rSet1.add((Rule)(DlpParser.parseRule("dept(W3,Z3) :- pR1(V3,W3,X3,Y3,Z3).")));
+		rSet1.add((Rule)(DlpParser.parseRule("runs(W4,Y4) :- pR1(V4,W4,X4,Y4,Z4).")));
+		rSet1.add((Rule)(DlpParser.parseRule("area(Y5,X5) :- pR1(V5,W5,X5,Y5,Z5). ")));
+		rSet1.add((Rule)(DlpParser.parseRule(" eXt(Z6,Y6,X6) :- runs(W6,X6),area(X6,Y6).")));
 
 
 		rSet2 = new LinkedList<Rule>();
-		rSet2.add((Rule)(DlgpParser.parseRule("dept(W,Z) :- emp(V,W,X,Y).")));
-		rSet2.add((Rule)(DlgpParser.parseRule("pro(Y,X) :- runs(W,X),dept(W,Y).")));
+		rSet2.add((Rule)(DlpParser.parseRule("dept(W,Z) :- emp(V,W,X,Y).")));
+		rSet2.add((Rule)(DlpParser.parseRule("pro(Y,X) :- runs(W,X),dept(W,Y).")));
 
 		rSet3 = new LinkedList<Rule>();
-		rSet3.add((Rule)(DlgpParser.parseRule("emp(W,V,X,Y) :- dept(V,W).")));
-		rSet3.add((Rule)(DlgpParser.parseRule("pR1(V,W,X,Y,Z) :- emp(V,W,X,Y).")));
-		rSet3.add((Rule)(DlgpParser.parseRule("dept(W,Z) :- pR1(V,W,X,Y,Z).")));
-		rSet3.add((Rule)(DlgpParser.parseRule("runs(W,Y) :- pR1(V,W,X,Y,Z).")));
-		rSet3.add((Rule)(DlgpParser.parseRule("pro(Y,X):- runs(W,X),dept(W,Y).")));
+		rSet3.add((Rule)(DlpParser.parseRule("emp(W,V,X,Y) :- dept(V,W).")));
+		rSet3.add((Rule)(DlpParser.parseRule("pR1(V,W,X,Y,Z) :- emp(V,W,X,Y).")));
+		rSet3.add((Rule)(DlpParser.parseRule("dept(W,Z) :- pR1(V,W,X,Y,Z).")));
+		rSet3.add((Rule)(DlpParser.parseRule("runs(W,Y) :- pR1(V,W,X,Y,Z).")));
+		rSet3.add((Rule)(DlpParser.parseRule("pro(Y,X):- runs(W,X),dept(W,Y).")));
 
 		rSetWAFalse = new LinkedList<Rule>();
-		rSetWAFalse.add((Rule)(DlgpParser.parseRule("emp(W,V,X,Y) :- dept(V,W).")));
-		rSetWAFalse.add((Rule)(DlgpParser.parseRule("pR1(V,W,X,Y,Z) :- emp(V,W,X,Y).")));
-		rSetWAFalse.add((Rule)(DlgpParser.parseRule("dept(W,Z) :- pR1(V,W,X,Y,Z).")));
+		rSetWAFalse.add((Rule)(DlpParser.parseRule("emp(W,V,X,Y) :- dept(V,W).")));
+		rSetWAFalse.add((Rule)(DlpParser.parseRule("pR1(V,W,X,Y,Z) :- emp(V,W,X,Y).")));
+		rSetWAFalse.add((Rule)(DlpParser.parseRule("dept(W,Z) :- pR1(V,W,X,Y,Z).")));
 		}
 		catch (Exception e) {
 			e.printStackTrace();

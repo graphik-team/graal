@@ -13,7 +13,7 @@ import org.junit.runner.RunWith;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlpParser;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -29,8 +29,8 @@ public class StoreTest {
 	
 	@Theory
 	public void add(AtomSet store) {		
-		store.add(DlgpParser.parseAtom("p(a,b)."));
-		store.add(DlgpParser.parseAtom("q(b,c)."));
+		store.add(DlpParser.parseAtom("p(a,b)."));
+		store.add(DlpParser.parseAtom("q(b,c)."));
 		
 		Iterator<Atom> it = store.iterator();
 		int i = 0;

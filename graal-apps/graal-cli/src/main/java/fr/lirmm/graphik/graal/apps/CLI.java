@@ -25,8 +25,8 @@ import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
 import fr.lirmm.graphik.graal.homomorphism.ComplexHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
-import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
-import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
+import fr.lirmm.graphik.graal.io.dlp.DlpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlpWriter;
 import fr.lirmm.graphik.graal.store.homomorphism.SqlHomomorphism;
 import fr.lirmm.graphik.graal.store.rdbms.AbstractRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
@@ -87,7 +87,7 @@ public class CLI {
 		try { k = Integer.parseInt(args.get(SATURATE)); }
 		catch (NumberFormatException e) { } // no saturation requested
 
-		DlgpWriter writer = new DlgpWriter(System.out);
+		DlpWriter writer = new DlpWriter(System.out);
 		Homomorphism solver = new ComplexHomomorphism(SqlHomomorphism.getInstance());
 
 		DefaultChase chase = new DefaultChase(rules,atomset,solver);
@@ -184,7 +184,7 @@ public class CLI {
 					if (verbose) System.out.println("Opening file "+inputFile+"...");
 					reader = new FileReader(inputFile);
 				}
-				DlgpParser parser = new DlgpParser(reader);
+				DlpParser parser = new DlpParser(reader);
 				for (Object o : parser) {
 					if (o instanceof Atom) {
 						if (verbose) System.out.println("Adding atom " + (Atom)o);
@@ -218,7 +218,7 @@ public class CLI {
 			UnionConjunctiveQueries ucq = new UnionConjunctiveQueries();
 			if (verbose) System.out.println("Opening UCQ file "+ucqFile+"...");
 			try {
-				DlgpParser parser = new DlgpParser(new FileReader(ucqFile));
+				DlpParser parser = new DlpParser(new FileReader(ucqFile));
 				for (Object o : parser) {
 					if (o instanceof ConjunctiveQuery) {
 						if (verbose) System.out.println("Adding query to union " + (Query)o);
@@ -249,7 +249,7 @@ public class CLI {
 			UnionConjunctiveQueries ucq = new UnionConjunctiveQueries();
 			if (verbose) System.out.println("Reading UCQ string "+ucqString+"...");
 			try {
-				DlgpParser parser = new DlgpParser(new StringReader(ucqString));
+				DlpParser parser = new DlpParser(new StringReader(ucqString));
 				for (Object o : parser) {
 					if (o instanceof ConjunctiveQuery) {
 						if (verbose) System.out.println("Adding query to union " + (Query)o);

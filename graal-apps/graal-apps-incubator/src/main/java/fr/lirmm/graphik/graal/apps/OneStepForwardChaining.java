@@ -15,7 +15,7 @@ import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
-import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlpParser;
 import fr.lirmm.graphik.graal.parser.ParseException;
 import fr.lirmm.graphik.graal.store.StoreException;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
@@ -71,7 +71,7 @@ public class OneStepForwardChaining {
 		
 		Chase chase = null;
 		
-		DlgpParser parser = new DlgpParser(new File(options.file));
+		DlpParser parser = new DlpParser(new File(options.file));
 		LinkedList<Rule> rules = new LinkedList<Rule>();
 		for(Object o : parser) {
 			if(o instanceof Rule) {

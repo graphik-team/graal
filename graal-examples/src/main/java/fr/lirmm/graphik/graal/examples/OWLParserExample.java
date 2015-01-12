@@ -8,7 +8,7 @@ import java.io.IOException;
 
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
-import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
+import fr.lirmm.graphik.graal.io.dlp.DlpWriter;
 import fr.lirmm.graphik.graal.io.owl.OWLParser;
 import fr.lirmm.graphik.graal.io.owl.OWLParserException;
 
@@ -21,7 +21,7 @@ public class OWLParserExample {
 	public static void main(String args[]) throws OWLOntologyCreationException,
 			IOException, OWLParserException {
 
-		DlgpWriter writer = new DlgpWriter();
+		DlpWriter writer = new DlpWriter();
 		File f = new File("../graal/graal-io/src/test/resources/test.owl");
 
 		OWLParser parser = new OWLParser(f);

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.lirmm.graphik.graal.io.dlgp;
+package fr.lirmm.graphik.graal.io.dlp;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -22,10 +22,10 @@ import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-abstract class AbstractDlgpListener implements ParserListener {
+abstract class AbstractDlpListener implements ParserListener {
     
 	private static final Logger LOGGER = LoggerFactory
-			.getLogger(AbstractDlgpListener.class);
+			.getLogger(AbstractDlpListener.class);
 	
 	private List<Term> answerVars;
 	private LinkedListAtomSet atomSet = null;

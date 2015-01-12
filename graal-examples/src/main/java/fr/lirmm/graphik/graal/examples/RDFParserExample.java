@@ -12,7 +12,7 @@ import org.openrdf.rio.RDFFormat;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
-import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
+import fr.lirmm.graphik.graal.io.dlp.DlpWriter;
 import fr.lirmm.graphik.graal.parser.semanticweb.RDFParser;
 
 /**
@@ -25,7 +25,7 @@ public class RDFParserExample {
 			HomomorphismException, URISyntaxException, IOException {
 
 		URL url = new URL("http://dbpedia.org/data/Montpellier.ntriples");
-		DlgpWriter writer = new DlgpWriter(System.out);
+		DlpWriter writer = new DlpWriter(System.out);
 		
 		RDFParser parser = new RDFParser(url, RDFFormat.NTRIPLES);
 		

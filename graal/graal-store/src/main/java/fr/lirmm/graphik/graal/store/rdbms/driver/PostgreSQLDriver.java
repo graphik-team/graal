@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlpParser;
 import fr.lirmm.graphik.graal.store.StoreException;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 
@@ -102,7 +102,7 @@ public class PostgreSQLDriver extends AbstractRdbmsDriver {
 		driver.createStatement().executeUpdate("CREATE TABLE IF NOT EXISTS lulu (titi varchar(128));");
 		driver.getConnection().commit();*/
 		AtomSet atomset = new DefaultRdbmsStore(driver);
-		atomset.add(DlgpParser.parseAtom("p(i,j)."));
+		atomset.add(DlpParser.parseAtom("p(i,j)."));
 		for(Atom a : atomset) {
 			System.out.println("## -- " + a);
 		}

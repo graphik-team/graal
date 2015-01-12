@@ -11,7 +11,7 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
-import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
+import fr.lirmm.graphik.graal.io.dlp.DlpWriter;
 import fr.lirmm.graphik.graal.io.owl.OWLParser;
 import fr.lirmm.graphik.graal.io.owl.OWLParserException;
 import fr.lirmm.graphik.util.Apps;
@@ -43,7 +43,7 @@ public class OWL2DLP {
 	public static void main(String args[]) throws OWLOntologyCreationException,
 			IOException, OWLParserException {
 
-		DlgpWriter writer;
+		DlpWriter writer;
 		OWL2DLP options = new OWL2DLP();
 		JCommander commander = new JCommander(options, args);
 
@@ -65,9 +65,9 @@ public class OWL2DLP {
 		}
 
 		if (options.outputFile.isEmpty()) {
-			writer = new DlgpWriter(System.out);
+			writer = new DlpWriter(System.out);
 		} else {
-			writer = new DlgpWriter(new File(options.outputFile));
+			writer = new DlpWriter(new File(options.outputFile));
 		}
 
 		parser.prefixEnable(!options.prefixDisable);

@@ -21,8 +21,8 @@ import fr.lirmm.graphik.graal.forward_chaining.StaticChase;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
-import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
-import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
+import fr.lirmm.graphik.graal.io.dlp.DlpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlpWriter;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -30,10 +30,10 @@ import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
  */
 public class DLPProgram {
 	public static void main(String[] args) throws ChaseException, IOException, HomomorphismFactoryException, HomomorphismException {
-		DlgpWriter writer = new DlgpWriter();
-		DlgpParser parser = new DlgpParser(System.in);
+		DlpWriter writer = new DlpWriter();
+		DlpParser parser = new DlpParser(System.in);
 		if(args.length > 0)
-			 parser = new DlgpParser(new File(args[0]));
+			 parser = new DlpParser(new File(args[0]));
 		
 		AtomSet atomSet = new MemoryGraphAtomSet();
 		RuleSet ruleSet = new LinkedListRuleSet();

@@ -7,8 +7,8 @@ import java.io.File;
 import java.io.IOException;
 
 import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
-import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
+import fr.lirmm.graphik.graal.io.dlp.DlpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlpWriter;
 
 /**
  * @author clement
@@ -17,18 +17,18 @@ import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
 public class RuleNamer {
 	
 	public static void main(String[] args) throws IOException {
-		DlgpParser parser;
-		DlgpWriter writer;
+		DlpParser parser;
+		DlpWriter writer;
 		if(args.length >= 1) {
-			parser = new DlgpParser(new File(args[0]));
+			parser = new DlpParser(new File(args[0]));
 			if(args.length >= 2) {
-				writer = new DlgpWriter(new File(args[1]));
+				writer = new DlpWriter(new File(args[1]));
 			} else {
-				writer = new DlgpWriter(System.out);
+				writer = new DlpWriter(System.out);
 			}
 		} else {
-			parser = new DlgpParser(System.in);
-			writer = new DlgpWriter(System.out);
+			parser = new DlpParser(System.in);
+			writer = new DlpWriter(System.out);
 		}
 		
 		int objectNumber = 0;

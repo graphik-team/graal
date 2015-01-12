@@ -21,8 +21,8 @@ import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
-import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
-import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
+import fr.lirmm.graphik.graal.io.dlp.DlpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlpWriter;
 import fr.lirmm.graphik.graal.rulesetanalyser.RuleAnalyser;
 
 
@@ -33,14 +33,14 @@ import fr.lirmm.graphik.graal.rulesetanalyser.RuleAnalyser;
 public class AnimalsExample {
 
 	private static String filePath = "./src/main/resources/animals.dlp";
-	private static DlgpWriter writer = new DlgpWriter();
+	private static DlpWriter writer = new DlpWriter();
 
 	public static void main(String args[]) throws ChaseException, IOException,
 			HomomorphismFactoryException, HomomorphismException {
 		KnowledgeBase kb = new DefaultKnowledgeBase();
 
 		Reader reader = new FileReader(filePath);
-		DlgpParser.parseKnowledgeBase(reader, kb);
+		DlpParser.parseKnowledgeBase(reader, kb);
 
 		writer.write("\n= Ontology =\n");
 		writer.write(kb.getRuleSet());
@@ -52,7 +52,7 @@ public class AnimalsExample {
 		waitEntry();
 
 		writer.write("\n= Query =\n");
-		ConjunctiveQuery query = DlgpParser
+		ConjunctiveQuery query = DlpParser
 				.parseQuery("?(X) :- \"mammifère\"(X).");
 		writer.write(query);
 		waitEntry();

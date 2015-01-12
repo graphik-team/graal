@@ -8,8 +8,8 @@ import fr.lirmm.graphik.graal.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseWithGRDAndUnfiers;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependenciesWithUnifiers;
-import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
-import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
+import fr.lirmm.graphik.graal.io.dlp.DlpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlpWriter;
 import fr.lirmm.graphik.graal.io.grd.GRDParser;
 import fr.lirmm.graphik.graal.parser.ParseException;
 
@@ -23,13 +23,13 @@ public class GrdChaseExample {
 		GraphOfRuleDependenciesWithUnifiers grd = GRDParser.getInstance().parse(new File("./src/main/resources/test-grd.grd"));
 		
 		AtomSet facts = new MemoryGraphAtomSet();
-		facts.add(DlgpParser.parseAtom("r(a)."));
+		facts.add(DlpParser.parseAtom("r(a)."));
 
 		Chase chase = new ChaseWithGRDAndUnfiers(grd, facts);
 		chase.execute();
 		
 		System.out.println("########### SATURATED FACTS BASE ##############");
-		DlgpWriter writer = new DlgpWriter();
+		DlpWriter writer = new DlpWriter();
 		writer.write(facts);
 		writer.close();
 		System.out.println("###############################################");

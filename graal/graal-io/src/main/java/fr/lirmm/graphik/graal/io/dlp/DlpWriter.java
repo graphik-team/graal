@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.lirmm.graphik.graal.io.dlgp;
+package fr.lirmm.graphik.graal.io.dlp;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -29,7 +29,7 @@ import fr.lirmm.graphik.util.stream.ObjectWriter;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class DlgpWriter extends Writer implements ObjectWriter<Object>, ConjunctiveQueryWriter {
+public class DlpWriter extends Writer implements ObjectWriter<Object>, ConjunctiveQueryWriter {
 
 	protected Writer writer;
 
@@ -37,23 +37,23 @@ public class DlgpWriter extends Writer implements ObjectWriter<Object>, Conjunct
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 
-	public DlgpWriter() {
+	public DlpWriter() {
 		this.writer = new OutputStreamWriter(System.out);
 	}
 	
-	public DlgpWriter(OutputStream out) {
+	public DlpWriter(OutputStream out) {
 		this.writer = new OutputStreamWriter(out);
 	}
 	
-	public DlgpWriter(Writer out) {
+	public DlpWriter(Writer out) {
 		this.writer = out;
 	}
 	
-	public DlgpWriter(File file) throws IOException {
+	public DlpWriter(File file) throws IOException {
 		this(new FileWriter(file));
 	}
 	
-	public DlgpWriter(String path) throws IOException {
+	public DlpWriter(String path) throws IOException {
 		 this(new FileWriter(path));
 	}
 	

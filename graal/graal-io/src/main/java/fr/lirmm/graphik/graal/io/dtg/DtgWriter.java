@@ -7,14 +7,15 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
+
 import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
+import fr.lirmm.graphik.graal.io.dlp.DlpWriter;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class DtgWriter extends DlgpWriter {
+public class DtgWriter extends DlpWriter {
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR

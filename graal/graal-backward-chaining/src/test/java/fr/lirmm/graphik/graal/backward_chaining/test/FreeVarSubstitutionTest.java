@@ -9,7 +9,7 @@ import org.junit.Test;
 import fr.lirmm.graphik.graal.core.FreeVarSubstitution;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlpParser;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -23,7 +23,7 @@ public class FreeVarSubstitutionTest {
 		final Term Y = new Term("Y", Term.Type.VARIABLE);
 		final Term Z = new Term("Z", Term.Type.VARIABLE);
 		
-		Rule rule = DlgpParser.parseRule("p(X,Y,Z) :- q(X,Y), q(Y,Z).");
+		Rule rule = DlpParser.parseRule("p(X,Y,Z) :- q(X,Y), q(Y,Z).");
 		
 		FreeVarSubstitution subtitution = new FreeVarSubstitution();
 		

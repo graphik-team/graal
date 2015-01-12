@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.lirmm.graphik.graal.io.dlgp;
+package fr.lirmm.graphik.graal.io.dlp;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -35,12 +35,12 @@ import fr.lirmm.graphik.util.stream.FilterReader;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public final class DlgpParser extends AbstractReader<Object> {
+public final class DlpParser extends AbstractReader<Object> {
 
 	private ArrayBlockingStream<Object> buffer = new ArrayBlockingStream<Object>(
 			512);
 
-	private static class DlgpListener extends AbstractDlgpListener {
+	private static class DlgpListener extends AbstractDlpListener {
 
 		private ArrayBlockingStream<Object> set;
 
@@ -126,7 +126,7 @@ public final class DlgpParser extends AbstractReader<Object> {
 	 * Constructor for parsing from the given reader.
 	 * @param reader
 	 */
-	public DlgpParser(Reader reader) {
+	public DlpParser(Reader reader) {
 		this.reader = reader;
 		new Thread(new Producer(reader,buffer)).start();
 	}
@@ -134,7 +134,7 @@ public final class DlgpParser extends AbstractReader<Object> {
 	/**
 	 * Constructor for parsing from the standard input.
 	 */
-	public DlgpParser() {
+	public DlpParser() {
 		this(new InputStreamReader(System.in));
 	}
 	
@@ -143,7 +143,7 @@ public final class DlgpParser extends AbstractReader<Object> {
 	 * @param file
 	 * @throws FileNotFoundException
 	 */
-	public DlgpParser(File file) throws FileNotFoundException {
+	public DlpParser(File file) throws FileNotFoundException {
 		this(new FileReader(file));
 	}
 
@@ -151,7 +151,7 @@ public final class DlgpParser extends AbstractReader<Object> {
 	 * Constructor for parsing the content of the string s as DLGP content.
 	 * @param s
 	 */
-	public DlgpParser(String s) {
+	public DlpParser(String s) {
 		this(new StringReader(s));
 	}
 	
@@ -159,7 +159,7 @@ public final class DlgpParser extends AbstractReader<Object> {
 	 * Constructor for parsing the given InputStream.
 	 * @param in
 	 */
-	public DlgpParser(InputStream in) {
+	public DlpParser(InputStream in) {
 		this(new InputStreamReader(in));
 	}
 
@@ -193,23 +193,23 @@ public final class DlgpParser extends AbstractReader<Object> {
 	// /////////////////////////////////////////////////////////////////////////
 
 	public static DefaultConjunctiveQuery parseQuery(String s) {
-		return (DefaultConjunctiveQuery) new DlgpParser(s).next();
+		return (DefaultConjunctiveQuery) new DlpParser(s).next();
 	}
 
 	public static Atom parseAtom(String s) {
-		return (Atom) new DlgpParser(s).next();
+		return (Atom) new DlpParser(s).next();
 	}
 	
 	public static Iterable<Atom> parseAtomSet(String s) {
-		return new FilterReader<Atom, Object>(new DlgpParser(s), new AtomFilter());
+		return new FilterReader<Atom, Object>(new DlpParser(s), new AtomFilter());
 	}
 	
 	public static Rule parseRule(String s) {
-		return (Rule) new DlgpParser(s).next();
+		return (Rule) new DlpParser(s).next();
 	}
 	
 	public static NegativeConstraint parseNegativeConstraint(String s) {
-		return (NegativeConstraint) new DlgpParser(s).next();
+		return (NegativeConstraint) new DlpParser(s).next();
 	}
 	
 	/**
@@ -219,7 +219,7 @@ public final class DlgpParser extends AbstractReader<Object> {
 	 * @param target
 	 */
 	public static void parseKnowledgeBase(Reader src, KnowledgeBase target) {
-		DlgpParser parser = new DlgpParser(src);
+		DlpParser parser = new DlpParser(src);
 
 		for (Object o : parser) {
 			if (o instanceof Rule) {

@@ -17,7 +17,7 @@ import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlpParser;
 import fr.lirmm.graphik.graal.parser.ParseException;
 import fr.lirmm.graphik.graal.store.StoreException;
 import fr.lirmm.graphik.graal.store.homomorphism.SqlUCQHomomorphism;
@@ -72,7 +72,7 @@ public class GRAALQuery {
 		driver = new MysqlDriver(options.databaseHost, options.database, options.databaseUser, options.databasePassword);
 		AtomSet atomSet = new DefaultRdbmsStore(driver);
 
-		DlgpParser parser = new DlgpParser(new File(options.file));
+		DlpParser parser = new DlpParser(new File(options.file));
 		UnionConjunctiveQueries ucq = new UnionConjunctiveQueries();
 		for(Object o : parser) {
 			if(o instanceof ConjunctiveQuery) {

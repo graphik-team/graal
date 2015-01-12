@@ -20,7 +20,7 @@ import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
-import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlpParser;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -40,10 +40,10 @@ public class BackwardChainingTest {
 	@Theory
 	public void forbiddenFoldingTest(RulesCompilation compilation) {
 		RuleSet rules = new LinkedListRuleSet();
-		rules.add(DlgpParser.parseRule("q(Y,X) :- p(X,Y)."));
-		rules.add(DlgpParser.parseRule("p(X,Y) :- q(Y,X)."));
+		rules.add(DlpParser.parseRule("q(Y,X) :- p(X,Y)."));
+		rules.add(DlpParser.parseRule("p(X,Y) :- q(Y,X)."));
 
-		ConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y,Z) :- p(X, Y), q(Y,Z).");
+		ConjunctiveQuery query = DlpParser.parseQuery("?(X,Y,Z) :- p(X, Y), q(Y,Z).");
 
 		compilation.compile(rules);
 		BackwardChainer bc = new PureRewriter(query, rules, compilation, new AggregSingleRuleOperator());

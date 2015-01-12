@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlpParser;
 
 /**
  * @author clement
@@ -138,17 +138,17 @@ public class LogicalFormulaDisjunctiveForm implements Iterable<Collection<Litera
 		LogicalFormulaDisjunctiveForm f2 = new LogicalFormulaDisjunctiveForm();
 		LogicalFormulaDisjunctiveForm f3 = new LogicalFormulaDisjunctiveForm();
 		
-		f1.and(new Literal(DlgpParser.parseAtom("a1(X)."), true));
-		f1.and(new Literal(DlgpParser.parseAtom("a2(X)."), false));
-		f1.and(new Literal(DlgpParser.parseAtom("a3(X)."), true));
+		f1.and(new Literal(DlpParser.parseAtom("a1(X)."), true));
+		f1.and(new Literal(DlpParser.parseAtom("a2(X)."), false));
+		f1.and(new Literal(DlpParser.parseAtom("a3(X)."), true));
 		
-		f2.and(new Literal(DlgpParser.parseAtom("b1(X)."), true));
-		f2.and(new Literal(DlgpParser.parseAtom("b2(X)."), false));
-		f2.and(new Literal(DlgpParser.parseAtom("b3(X)."), true));
+		f2.and(new Literal(DlpParser.parseAtom("b1(X)."), true));
+		f2.and(new Literal(DlpParser.parseAtom("b2(X)."), false));
+		f2.and(new Literal(DlpParser.parseAtom("b3(X)."), true));
 		
-		f3.and(new Literal(DlgpParser.parseAtom("c1(X)."), true));
-		f3.and(new Literal(DlgpParser.parseAtom("c2(X)."), false));
-		f3.and(new Literal(DlgpParser.parseAtom("c3(X)."), true));
+		f3.and(new Literal(DlpParser.parseAtom("c1(X)."), true));
+		f3.and(new Literal(DlpParser.parseAtom("c2(X)."), false));
+		f3.and(new Literal(DlpParser.parseAtom("c3(X)."), true));
 		System.out.println(f3);
 		
 		System.out.println("=================");
