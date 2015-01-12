@@ -3,8 +3,6 @@
  */
 package fr.lirmm.graphik.graal.io.owl;
 
-import java.util.Collections;
-
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
