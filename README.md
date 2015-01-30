@@ -4,6 +4,11 @@
 
 ## How to build graal? ##
 
+* clone the repository
+  git clone <repo>
+
+* build the project
+mvn validate 
 mvn package
 
 
