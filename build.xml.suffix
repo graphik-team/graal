@@ -1,7 +1,7 @@
 	<property name="lib-test"		value="${lib}:lib/junit-4.11.jar"/>
 
 	<property name="src"
-	value="graal/graal-backward-chaining/src/main/java:graal/graal-core/src/main/java:graal/graal-forward-chaining/src/main/java:graal/graal-homomorphism/src/main/java:graal/graal-io/src/main/java:graal/graal-rules-analyser/src/main/java:graal/graal-store/src/main/java:graal-util/src/main/java" />
+	value="graal/graal-backward-chaining/src/main/java:graal/graal-core/src/main/java:graal/graal-forward-chaining/src/main/java:graal/graal-homomorphism/src/main/java:graal/graal-io/src/main/java:graal/graal-rules-analyser/src/main/java:graal/graal-store/src/main/java:graal-util/src/main/java:graal-apps/graal-cli/src/main/java:graal-apps/kiabora/src/main/java" />
 	<property name="src-test"       value="src/test/java"/>
 
 	<property name="target"         value="target"/>

@@ -7,7 +7,7 @@ import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
 
-public class ChaseStopConditionWithHandler {
+public class ChaseStopConditionWithHandler implements ChaseStopCondition {
 
 	public ChaseStopConditionWithHandler(ChaseStopCondition c, RuleApplicationHandler h) {
 		_realHaltingCondition = c;
@@ -30,7 +30,7 @@ public class ChaseStopConditionWithHandler {
 	public boolean canIAdd(ReadOnlyAtomSet atomSet, Set<Term> fixedTerm,
 	                       ReadOnlyAtomSet from, ReadOnlyAtomSet base) 
 		throws HomomorphismFactoryException, HomomorphismException {
-		if (_handler.onRuleApplication(from,atomSet)) {
+		if (_handler.onRuleApplication(from,atomSet,base)) {
 			return _realHaltingCondition.canIAdd(atomSet,fixedTerm,from,base);
 		}
 		return false;
