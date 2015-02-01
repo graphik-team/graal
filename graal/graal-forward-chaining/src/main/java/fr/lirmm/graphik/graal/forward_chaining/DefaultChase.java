@@ -62,6 +62,10 @@ public class DefaultChase extends AbstractChase {
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLICS METHODS
 	// /////////////////////////////////////////////////////////////////////////
+
+	public void setHaltingCondition(ChaseStopCondition c) {
+		this.stopCondition = c;
+	}
 	
 	public void next() throws ChaseException {
 		try {
@@ -80,8 +84,9 @@ public class DefaultChase extends AbstractChase {
 
 						// the atom set producted by the rule application
 						ReadOnlyAtomSet deductedAtomSet = s.getSubstitut(rule.getHead());
+						ReadOnlyAtomSet bodyAtomSet = s.getSubstitut(rule.getBody());
 						
-						if(stopCondition.canIAdd(deductedAtomSet, fixedTerm, this.atomSet)) {
+						if(stopCondition.canIAdd(deductedAtomSet, fixedTerm, bodyAtomSet, this.atomSet)) {
 							this.atomSet.addAll(deductedAtomSet);
 							this.hasNext = true;
 						}

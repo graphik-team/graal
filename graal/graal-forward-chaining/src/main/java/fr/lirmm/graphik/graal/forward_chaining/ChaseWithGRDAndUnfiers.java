@@ -89,8 +89,9 @@ public class ChaseWithGRDAndUnfiers extends AbstractChase {
 
 					// the atom set producted by the rule application
 					ReadOnlyAtomSet deductedAtomSet = substitution.getSubstitut(unifiedRule.getHead());
+					ReadOnlyAtomSet bodyAtomSet = substitution.getSubstitut(unifiedRule.getBody());
 	
-					if(stopCondition.canIAdd(deductedAtomSet, fixedTerm, this.atomSet)) {
+					if(stopCondition.canIAdd(deductedAtomSet, fixedTerm, bodyAtomSet, this.atomSet)) {
 						this.atomSet.addAll(deductedAtomSet);
 						for(Rule triggeredRule : this.grd.getOutEdges(rule)) {
 							for(Substitution u : this.grd.getUnifiers(rule, triggeredRule)) {

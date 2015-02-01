@@ -28,7 +28,7 @@ public class RestrictedChaseStopCondition implements ChaseStopCondition {
 	 * @see fr.lirmm.graphik.alaska.chase.ChaseStopCondition#canIAdd(fr.lirmm.graphik.kb.core.AtomSet)
 	 */
 	@Override
-	public boolean canIAdd(ReadOnlyAtomSet atomSet, Set<Term> fixedTerms, ReadOnlyAtomSet base) throws HomomorphismFactoryException, HomomorphismException {
+	public boolean canIAdd(ReadOnlyAtomSet atomSet, Set<Term> fixedTerms, ReadOnlyAtomSet from, ReadOnlyAtomSet base) throws HomomorphismFactoryException, HomomorphismException {
 		
 		Query query = new ConjunctiveQueryWithFixedVariables(atomSet, fixedTerms);
 		if(LOGGER.isDebugEnabled()) {

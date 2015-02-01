@@ -25,7 +25,7 @@ public interface ChaseStopCondition {
 	 * @throws HomomorphismFactoryException
 	 * @throws HomomorphismException
 	 */
-	boolean canIAdd(ReadOnlyAtomSet atomSet, Set<Term> fixedTerm,
-			ReadOnlyAtomSet base) throws HomomorphismFactoryException,
-			HomomorphismException;
+	boolean canIAdd(ReadOnlyAtomSet atomSet, Set<Term> fixedTerm, 
+	                ReadOnlyAtomSet from, ReadOnlyAtomSet base)
+		throws HomomorphismFactoryException, HomomorphismException;
 }
