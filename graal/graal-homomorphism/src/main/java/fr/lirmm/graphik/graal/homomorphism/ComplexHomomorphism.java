@@ -25,40 +25,39 @@ public class ComplexHomomorphism<Q extends ConjunctiveQuery, F extends ReadOnlyA
 	}
 
     public SubstitutionReader execute(Q q, F f) throws HomomorphismException {
-	    AtomSet raw_atoms = new LinkedListAtomSet();
+	    AtomSet rawAtoms = new LinkedListAtomSet();
 		this.builtInAtoms = new LinkedList<Atom>();
 		for (Atom a : q) {
 			if (a.getPredicate() instanceof BuiltInPredicate) {
 				this.builtInAtoms.add(a);
 			}
 			else {
-				raw_atoms.add(a);
+				rawAtoms.add(a);
 			}
 		}
-		DefaultConjunctiveQuery raw_query = new DefaultConjunctiveQuery(raw_atoms);
-		raw_query.setAnswerVariables(q.getAnswerVariables());
-		return new BuiltInSubstitutionReader(this.rawSolver.execute(raw_query,f));
+		DefaultConjunctiveQuery rawQuery = new DefaultConjunctiveQuery(rawAtoms);
+		rawQuery.setAnswerVariables(q.getAnswerVariables());
+		return new BuiltInSubstitutionReader(this.rawSolver.execute(rawQuery,f));
 	}
 
 	protected class BuiltInSubstitutionReader implements SubstitutionReader {
 
 		public BuiltInSubstitutionReader(SubstitutionReader reader) {
 			this.rawReader = reader;
-			this.next = this.computeNext();
-			this.next();
 		}
 
 		@Override
     	public boolean hasNext() {
-			return this.current != null;
+			if(this.next == null)
+				this.next = this.computeNext();
+			return this.next != null;
 		}
 
 		@Override
     	public Substitution next() {
-			Substitution res = this.current;
-			this.current = next;
-			if (this.current != null)
-				this.next = computeNext();
+			hasNext();
+			Substitution res = this.next;
+			this.next = null;
 			return res;
 		}
 

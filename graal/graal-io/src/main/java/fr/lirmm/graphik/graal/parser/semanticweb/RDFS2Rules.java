@@ -42,9 +42,9 @@ public class RDFS2Rules extends AbstractReader<Object> {
 	/** */
 	public static final String RDFS_COMMENT = RDFS_PREFIX + "comment";
 
-	protected static final Term x = new Term("X", Type.VARIABLE);
-	protected static final Term y = new Term("Y", Type.VARIABLE);
-	protected static final Term z = new Term("Z", Type.VARIABLE);
+	protected static final Term X = new Term("X", Type.VARIABLE);
+	protected static final Term Y = new Term("Y", Type.VARIABLE);
+	protected static final Term Z = new Term("Z", Type.VARIABLE);
 
 	private Iterator<Atom> reader;
 	
@@ -71,33 +71,33 @@ public class RDFS2Rules extends AbstractReader<Object> {
 		if (RDFS_RANGE.equals(predicateLabel)) {
 			Rule rule = new DefaultRule();
 			Predicate p = new Predicate(a.getTerm(0).toString(), 2);
-			rule.getBody().add(new DefaultAtom(p, x, y));
+			rule.getBody().add(new DefaultAtom(p, X, Y));
 			p = new Predicate(a.getTerm(1).toString(), 1);
-			rule.getHead().add(new DefaultAtom(p, y));
+			rule.getHead().add(new DefaultAtom(p, Y));
 			o = rule;
 
 		} else if (RDFS_DOMAIN.equals(predicateLabel)) {
 			Rule rule = new DefaultRule();
 			Predicate p = new Predicate(a.getTerm(0).toString(), 2);
-			rule.getBody().add(new DefaultAtom(p, x, y));
+			rule.getBody().add(new DefaultAtom(p, X, Y));
 			p = new Predicate(a.getTerm(1).toString(), 1);
-			rule.getHead().add(new DefaultAtom(p, x));
+			rule.getHead().add(new DefaultAtom(p, X));
 			o = rule;
 			
 		} else if (RDFS_SUB_CLASS_OF.equals(predicateLabel)) {
 			Rule rule = new DefaultRule();
 			Predicate p1 = new Predicate(a.getTerm(0).toString(), 1);
 			Predicate p2 = new Predicate(a.getTerm(1).toString(), 1);
-			rule.getBody().add(new DefaultAtom(p1, x));
-			rule.getHead().add(new DefaultAtom(p2, x));
+			rule.getBody().add(new DefaultAtom(p1, X));
+			rule.getHead().add(new DefaultAtom(p2, X));
 			o = rule;
 			
 		} else if (RDFS_SUB_PROPERTY_OF.equals(predicateLabel)) {
 			Rule rule = new DefaultRule();
 			Predicate p1 = new Predicate(a.getTerm(0).toString(), 2);
 			Predicate p2 = new Predicate(a.getTerm(1).toString(), 2);
-			rule.getBody().add(new DefaultAtom(p1, x, y));
-			rule.getHead().add(new DefaultAtom(p2, x, y));
+			rule.getBody().add(new DefaultAtom(p1, X, Y));
+			rule.getHead().add(new DefaultAtom(p2, X, Y));
 			o = rule;
 			
 		} else {

@@ -15,7 +15,7 @@ import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
-import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlpParser;
 import fr.lirmm.graphik.graal.parser.ParseException;
 import fr.lirmm.graphik.graal.store.StoreException;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
@@ -34,19 +34,19 @@ public class OneStepForwardChaining {
 	private String file = "";
 	
 	@Parameter(names = { "--driver"}, description = "mysql|sqlite")
-	private String driver_name = "mysql";
+	private String driverName = "mysql";
 	
 	@Parameter(names = { "--db"}, description = "database name")
 	private String database = "";
 	
 	@Parameter(names = { "--host"}, description = "database host")
-	private String database_host = "localhost";
+	private String databaseHost = "localhost";
 	
 	@Parameter(names = { "--user"}, description = "database user")
-	private String database_user = "root";
+	private String databaseUser = "root";
 	
 	@Parameter(names = { "--password"}, description = "database password")
-	private String database_password = "root";
+	private String databasePassword = "root";
 	
 	
 
@@ -66,12 +66,12 @@ public class OneStepForwardChaining {
 		
 		// Driver
 		RdbmsDriver driver;
-		driver = new MysqlDriver(options.database_host, options.database, options.database_user, options.database_password);
+		driver = new MysqlDriver(options.databaseHost, options.database, options.databaseUser, options.databasePassword);
 		AtomSet atomSet = new DefaultRdbmsStore(driver);
 		
 		Chase chase = null;
 		
-		DlgpParser parser = new DlgpParser(new File(options.file));
+		DlpParser parser = new DlpParser(new File(options.file));
 		LinkedList<Rule> rules = new LinkedList<Rule>();
 		for(Object o : parser) {
 			if(o instanceof Rule) {

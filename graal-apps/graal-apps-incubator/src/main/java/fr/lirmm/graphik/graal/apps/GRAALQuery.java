@@ -14,12 +14,10 @@ import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
-import fr.lirmm.graphik.graal.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
-import fr.lirmm.graphik.graal.grd.GraphOfRuleDependenciesWithUnifiers;
 import fr.lirmm.graphik.graal.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlpParser;
 import fr.lirmm.graphik.graal.parser.ParseException;
 import fr.lirmm.graphik.graal.store.StoreException;
 import fr.lirmm.graphik.graal.store.homomorphism.SqlUCQHomomorphism;
@@ -39,19 +37,19 @@ public class GRAALQuery {
 	private String file = "";
 	
 	@Parameter(names = { "--driver"}, description = "mysql|sqlite")
-	private String driver_name = "mysql";
+	private String driverName = "mysql";
 	
 	@Parameter(names = { "--db"}, description = "database name")
 	private String database = "";
 	
 	@Parameter(names = { "--host"}, description = "database host")
-	private String database_host = "localhost";
+	private String databaseHost = "localhost";
 	
 	@Parameter(names = { "--user"}, description = "database user")
-	private String database_user = "root";
+	private String databaseUser = "root";
 	
 	@Parameter(names = { "--password"}, description = "database password")
-	private String database_password = "root";
+	private String databasePassword = "root";
 	
 	
 
@@ -71,13 +69,10 @@ public class GRAALQuery {
 		
 		// Driver
 		RdbmsDriver driver;
-		driver = new MysqlDriver(options.database_host, options.database, options.database_user, options.database_password);
+		driver = new MysqlDriver(options.databaseHost, options.database, options.databaseUser, options.databasePassword);
 		AtomSet atomSet = new DefaultRdbmsStore(driver);
-		
-		Chase chase = null;
-		GraphOfRuleDependenciesWithUnifiers grd = null;
 
-		DlgpParser parser = new DlgpParser(new File(options.file));
+		DlpParser parser = new DlpParser(new File(options.file));
 		UnionConjunctiveQueries ucq = new UnionConjunctiveQueries();
 		for(Object o : parser) {
 			if(o instanceof ConjunctiveQuery) {

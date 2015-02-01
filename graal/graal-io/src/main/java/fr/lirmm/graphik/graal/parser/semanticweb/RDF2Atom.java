@@ -26,7 +26,7 @@ import fr.lirmm.graphik.util.stream.AbstractReader;
 public class RDF2Atom extends AbstractReader<Atom> {
 
 	
-	private static final Logger logger = LoggerFactory
+	private static final Logger LOGGER = LoggerFactory
 			.getLogger(RDF2Atom.class);
 	
 	public static final String RDF_PREFIX = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
@@ -57,7 +57,7 @@ public class RDF2Atom extends AbstractReader<Atom> {
 	private Map<String, LinkedList<String>> reverseCollectionMap = new TreeMap<String, LinkedList<String>>();
 
 	private Atom atom = null;
-	private Map<String, LinkedList<Atom>> atomPendingBlankNodeResolution = new TreeMap<String, LinkedList<Atom>>();
+	//private Map<String, LinkedList<Atom>> atomPendingBlankNodeResolution = new TreeMap<String, LinkedList<Atom>>();
 	private Iterator<Atom> reader;
 	
 
@@ -84,8 +84,8 @@ public class RDF2Atom extends AbstractReader<Atom> {
 			Atom a = this.reader.next();
 			String predicateStr = a.getPredicate().toString();
 			
-			if(logger.isDebugEnabled())
-				logger.debug("RDF Predicate: " + predicateStr);
+			if(LOGGER.isDebugEnabled())
+				LOGGER.debug("RDF Predicate: " + predicateStr);
 			
 			if(RDF_TYPE.equals(predicateStr)) {
 				Predicate p = new Predicate(a.getTerm(1).toString(), 1);

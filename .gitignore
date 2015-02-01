@@ -52,3 +52,6 @@ Thumbs.db
 *.swn
 *.*~
 
+# OTHER tools #
+###############
+.pmd

@@ -8,22 +8,22 @@ import fr.lirmm.graphik.util.stream.AbstractReader;
 public class IteratorRuleReader extends AbstractReader<Rule> {
 	
 	public IteratorRuleReader(Iterator<Rule>  iterator) {
-		_iterator = iterator;
+		this.iterator = iterator;
 	}
 
 	@Override
 	public void remove() {
-		_iterator.remove();
+		this.iterator.remove();
 	}
 
 	@Override
 	public boolean hasNext() {
-		return _iterator.hasNext();
+		return this.iterator.hasNext();
 	}
 
 	@Override
 	public Rule next() {
-		return _iterator.next();
+		return this.iterator.next();
 	}
 
 	@Override
@@ -31,6 +31,6 @@ public class IteratorRuleReader extends AbstractReader<Rule> {
 		return this;
 	}
 
-	private Iterator<Rule> _iterator;
+	private Iterator<Rule> iterator;
 
 }

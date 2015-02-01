@@ -34,10 +34,11 @@ public class Term implements Comparable<Term>, Serializable {
 	 * @param type
 	 */
 	public Term(Object value, Type type) {
-		if (Type.VARIABLE.equals(type))
-			value = value.toString();
-
-		this.value = value;
+		if (Type.VARIABLE.equals(type)) {
+			this.value = value.toString();
+		} else {
+			this.value = value;
+		}
 		this.type = type;
 	}
 

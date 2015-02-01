@@ -17,6 +17,7 @@ import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.store.StoreException;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
+import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.stream.ObjectReader;
 
 /**
@@ -40,7 +41,7 @@ public class NoConstraintRdbmsStore extends AbstractRdbmsStore {
 	@Override
 	public boolean remove(Atom atom) {
 		// TODO implement this method
-		throw new Error("This method isn't implemented");
+		throw new MethodNotImplementedError("This method isn't implemented");
 	}
 
 	/* (non-Javadoc)
@@ -49,7 +50,7 @@ public class NoConstraintRdbmsStore extends AbstractRdbmsStore {
 	@Override
 	public ObjectReader<Atom> iterator() {
 		// TODO implement this method
-		throw new Error("This method isn't implemented");
+		throw new MethodNotImplementedError("This method isn't implemented");
 	}
 
 	/* (non-Javadoc)
@@ -58,7 +59,7 @@ public class NoConstraintRdbmsStore extends AbstractRdbmsStore {
 	@Override
 	public SymbolGenerator getFreeVarGen() {
 		// TODO implement this method
-		throw new Error("This method isn't implemented");
+		throw new MethodNotImplementedError("This method isn't implemented");
 	}
 
 	/* (non-Javadoc)
@@ -67,7 +68,7 @@ public class NoConstraintRdbmsStore extends AbstractRdbmsStore {
 	@Override
 	public boolean contains(Atom atom) {
 		// TODO implement this method
-		throw new Error("This method isn't implemented");
+		throw new MethodNotImplementedError("This method isn't implemented");
 	}
 
 	/* (non-Javadoc)
@@ -76,7 +77,7 @@ public class NoConstraintRdbmsStore extends AbstractRdbmsStore {
 	@Override
 	public Set<Term> getTerms() {
 		// TODO implement this method
-		throw new Error("This method isn't implemented");
+		throw new MethodNotImplementedError("This method isn't implemented");
 	}
 
 	/* (non-Javadoc)
@@ -85,7 +86,7 @@ public class NoConstraintRdbmsStore extends AbstractRdbmsStore {
 	@Override
 	public Set<Term> getTerms(Type type) {
 		// TODO implement this method
-		throw new Error("This method isn't implemented");
+		throw new MethodNotImplementedError("This method isn't implemented");
 	}
 	
 	 /* (non-Javadoc)
@@ -134,7 +135,8 @@ public class NoConstraintRdbmsStore extends AbstractRdbmsStore {
     
     protected boolean testDatabaseSchema() throws StoreException {
     	try {
-			this.createStatement().executeQuery("SELECT * FROM alaskavars limit 1;");
+			ResultSet rs = this.createStatement().executeQuery("SELECT * FROM alaskavars limit 1;");
+			rs.close();
 		} catch (SQLException e) {
 			return false;
 		}

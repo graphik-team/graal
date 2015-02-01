@@ -4,6 +4,7 @@ import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.homomorphism.DefaultHomomorphismFactory;
+import fr.lirmm.graphik.graal.store.StoreException;
 
 /**
  * 
@@ -37,9 +38,7 @@ public class TransformAtomSet extends ReadOnlyTransformStore implements
             this.getStore().addAll(
                     this.getAtomTransformator().transform(atom).iterator());
         } catch (AtomSetException e) {
-            // TODO treat this exception
-            e.printStackTrace();
-            throw new Error("Untreated exception");
+            return false;
         }
         return true;
     }
@@ -50,35 +49,28 @@ public class TransformAtomSet extends ReadOnlyTransformStore implements
             this.getStore().remove(
                     this.getAtomTransformator().transform(atom).iterator());
         } catch (AtomSetException e) {
-            // TODO treat this exception
-            e.printStackTrace();
-            throw new Error("Untreated exception");
+            return false;
         }
         return true;
     }
 
     @Override
-    public void addAll(Iterable<Atom> atoms) {
+    public void addAll(Iterable<Atom> atoms) throws StoreException {
         try {
             this.getStore().addAll(this.getAtomTransformator().transform(atoms));
         } catch (AtomSetException e) {
-            // TODO treat this exception
-            e.printStackTrace();
-            throw new Error("Untreated exception");
+            throw new StoreException(e);
 
         }
     }
 
     @Override
-    public void remove(Iterable<Atom> stream) {
+    public void remove(Iterable<Atom> stream) throws StoreException {
         try {
             this.getStore().remove(
                     this.getAtomTransformator().transform(stream));
         } catch (AtomSetException e) {
-            // TODO treat this exception
-            e.printStackTrace();
-            throw new Error("Untreated exception");
-
+            throw new StoreException(e);
         }
     }
 

@@ -20,7 +20,7 @@ import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
  * @author Swan Rocher
  * 
  */
-public class StickyProperty implements RuleProperty {
+public final class StickyProperty implements RuleProperty {
 
 	private static StickyProperty instance = null;
 	

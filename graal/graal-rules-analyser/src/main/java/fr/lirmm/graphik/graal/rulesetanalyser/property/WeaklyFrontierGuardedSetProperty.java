@@ -20,7 +20,7 @@ import fr.lirmm.graphik.graal.rulesetanalyser.util.RuleUtil;
  * @author Swan Rocher
  * 
  */
-public class WeaklyFrontierGuardedSetProperty implements RuleProperty {
+public final class WeaklyFrontierGuardedSetProperty implements RuleProperty {
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS

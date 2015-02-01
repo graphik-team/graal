@@ -1,8 +1,4 @@
 package fr.lirmm.graphik.graal.trash;
-/**
- * 
- */
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -13,12 +9,10 @@ import org.openrdf.rio.RDFParseException;
 import org.openrdf.rio.Rio;
 import org.openrdf.rio.helpers.RDFHandlerBase;
 
-import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.Term.Type;
-import fr.lirmm.graphik.graal.parser.semanticweb.RDFParser;
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
@@ -28,9 +22,7 @@ public class RDFParserTest {
 	public static void main(String args[]) throws IOException, RDFParseException, RDFHandlerException {
 		
 		 long time = System.currentTimeMillis();
-		
-		 methodB();
-	       
+			       
 	        System.out.println(System.currentTimeMillis() - time);
 	    
 	        System.out.println("THE END");
@@ -50,13 +42,13 @@ public class RDFParserTest {
 		rdfParser.parse(inputStream, documentUrl.toString());
 	}
 	
-	static void methodB() throws IOException {
+	/*static void methodB() throws IOException {
 		
        RDFParser parser =  new RDFParser(new FileReader("/home/clement/projets/query-rewriting/dataset/univ-bench/univ-bench.owl"));
 
        for(Atom a : parser)
     	   System.out.println(a);
-	}
+	}*/
 	
 	static class StatementCounter extends RDFHandlerBase {
 		 

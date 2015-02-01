@@ -6,6 +6,7 @@ package fr.lirmm.graphik.graal.transformation;
 import java.util.Iterator;
 
 import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.stream.AbstractReader;
 
 /**
@@ -42,7 +43,7 @@ public class TransformatorReader extends AbstractReader<Atom> {
     @Override
     public void remove() {
         // TODO implement this method
-        throw new Error("This method isn't implemented");
+        throw new MethodNotImplementedError();
     }
 
     /*

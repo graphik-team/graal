@@ -31,7 +31,7 @@ import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 public class PureHomomorphism implements
 		Homomorphism<ReadOnlyAtomSet, ReadOnlyAtomSet> {
 
-	private static final Logger logger = LoggerFactory
+	private static final Logger LOGGER = LoggerFactory
 			.getLogger(PureHomomorphism.class);
 
 	private static PureHomomorphism instance;
@@ -67,8 +67,8 @@ public class PureHomomorphism implements
 
 		// check if the query is empty
 		if (source == null || !source.iterator().hasNext()) {
-			if (logger.isInfoEnabled()) {
-				logger.info("Empty query");
+			if (LOGGER.isInfoEnabled()) {
+				LOGGER.info("Empty query");
 			}
 			return true;
 		}

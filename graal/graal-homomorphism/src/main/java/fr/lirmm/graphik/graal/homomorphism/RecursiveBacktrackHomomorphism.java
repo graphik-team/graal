@@ -24,9 +24,9 @@ import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public class RecursiveBacktrackHomomorphism implements Homomorphism<ConjunctiveQuery, ReadOnlyAtomSet> {
+public final class RecursiveBacktrackHomomorphism implements Homomorphism<ConjunctiveQuery, ReadOnlyAtomSet> {
 
-    private static final Logger logger = LoggerFactory
+    private static final Logger LOGGER = LoggerFactory
             .getLogger(RecursiveBacktrackHomomorphism.class);
     
     private static RecursiveBacktrackHomomorphism instance;
@@ -55,8 +55,8 @@ public class RecursiveBacktrackHomomorphism implements Homomorphism<ConjunctiveQ
      */
     @Override
     public SubstitutionReader execute(ConjunctiveQuery query, ReadOnlyAtomSet facts) throws HomomorphismException {
-        if(logger.isTraceEnabled()) {
-            logger.trace(query.toString());
+        if(LOGGER.isTraceEnabled()) {
+            LOGGER.trace(query.toString());
         }
         List<Term> orderedVars = order(query.getAtomSet().getTerms(
                 Term.Type.VARIABLE));
@@ -190,8 +190,8 @@ public class RecursiveBacktrackHomomorphism implements Homomorphism<ConjunctiveQ
     private static boolean isHomomorphism(Collection<Atom> atomsFrom,
             ReadOnlyAtomSet atomsTo, Substitution substitution) throws Exception {
         for (Atom atom : atomsFrom) {
-            if (logger.isDebugEnabled())
-                logger.debug("contains? " + substitution.getSubstitut(atom));
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("contains? " + substitution.getSubstitut(atom));
 
             if (!atomsTo.contains(substitution.getSubstitut(atom)))
                 return false;

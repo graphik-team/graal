@@ -9,7 +9,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,9 +21,8 @@ import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependenciesWithUnifiers;
-import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlpParser;
 import fr.lirmm.graphik.graal.parser.ParseException;
-import fr.lirmm.graphik.util.LinkedSet;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -48,7 +46,7 @@ public class GRDParser {
 
 	}
 
-	private static final Logger logger = LoggerFactory
+	private static final Logger LOGGER = LoggerFactory
 			.getLogger(GRDParser.class);
 	
 	private static GRDParser instance;
@@ -110,7 +108,7 @@ public class GRDParser {
 
 	private static void parseRule(String line, GRD grd,
 			Map<String, Rule> rules) {
-		Rule r = DlgpParser.parseRule(line);
+		Rule r = DlpParser.parseRule(line);
 		rules.put(r.getLabel(), r);
 		grd.addRule(r);
 	}
@@ -127,8 +125,8 @@ public class GRDParser {
 			dest = rules.get(matcher.group(2));
 			for (String unificator : matcher.group(3).split("\\}\\s*\\{")) {
 				Substitution sub = parseSubstitution(unificator);
-				if (logger.isDebugEnabled()) {
-					logger.debug("add dependency: " + src.getLabel() + "--"
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug("add dependency: " + src.getLabel() + "--"
 							+ sub + "-->" + dest.getLabel());
 				}
 				grd.addDependency(src, sub, dest);

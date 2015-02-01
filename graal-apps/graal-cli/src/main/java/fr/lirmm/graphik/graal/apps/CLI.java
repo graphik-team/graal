@@ -25,10 +25,9 @@ import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
 import fr.lirmm.graphik.graal.homomorphism.ComplexHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
-import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
-import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
+import fr.lirmm.graphik.graal.io.dlp.DlpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlpWriter;
 import fr.lirmm.graphik.graal.store.homomorphism.SqlHomomorphism;
-import fr.lirmm.graphik.graal.store.homomorphism.SqlUCQHomomorphism;
 import fr.lirmm.graphik.graal.store.rdbms.AbstractRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
@@ -85,17 +84,17 @@ public class CLI {
 		int error = 0;
 		int i = 0;
 		int k = 0;
-		try { k = Integer.parseInt(_args.get(SATURATE)); }
+		try { k = Integer.parseInt(args.get(SATURATE)); }
 		catch (NumberFormatException e) { } // no saturation requested
 
-		DlgpWriter writer = new DlgpWriter(System.out);
+		DlpWriter writer = new DlpWriter(System.out);
 		Homomorphism solver = new ComplexHomomorphism(SqlHomomorphism.getInstance());
 
-		DefaultChase chase = new DefaultChase(_rules,_atomset,solver);
+		DefaultChase chase = new DefaultChase(rules,atomset,solver);
 
 		if (k != 0) {
 			if (k < 0) {
-				if (_verbose) System.out.println("Saturating until fix point...");
+				if (verbose) System.out.println("Saturating until fix point...");
 				try { chase.execute(); } 
 				catch (Exception e) {
 					error |= ERROR_CHASE;
@@ -104,35 +103,35 @@ public class CLI {
 				}
 			}
 			else {
-				if (_verbose) System.out.println("Saturating "+k+" steps...");
+				if (verbose) System.out.println("Saturating "+k+" steps...");
 				try { for (i = 0 ; i < k ; ++i) if (chase.hasNext()) chase.next(); }
 				catch (Exception e) {
 					error |= ERROR_CHASE;
 					System.err.println("An error has occured during the " + i + " step of saturation: "+e);
 				}
 			}
-			if (_verbose) System.out.println("Atomset saturated!");
+			if (verbose) System.out.println("Atomset saturated!");
 		}
 
-		if (!_queries.isEmpty()) {
-			if (_verbose) System.out.println("Querying...");
-			for (Query q : _queries) {
+		if (!queries.isEmpty()) {
+			if (verbose) System.out.println("Querying...");
+			for (Query q : queries) {
 				try {
 					writer.write(q);
-					for (Substitution s : StaticHomomorphism.executeQuery(q,_atomset)) System.out.println(s);
+					for (Substitution s : StaticHomomorphism.executeQuery(q,atomset)) System.out.println(s);
 				}
 				catch (Exception e) {
 					error |= ERROR_QUERY;
 					System.err.println("An exception has occured while querying: " + e);
 				}
 			}
-			if (_verbose) System.out.println("Querying done!");
+			if (verbose) System.out.println("Querying done!");
 		}
 
-		if (_args.get(PRINTFACT) != null) {
-			if (_verbose) System.out.println("Printing fact...");
+		if (args.get(PRINTFACT) != null) {
+			if (verbose) System.out.println("Printing fact...");
 			try {
-				for (Atom a : _atomset)
+				for (Atom a : atomset)
 					System.out.println(a);
 			}
 			catch (Exception e) {
@@ -147,7 +146,7 @@ public class CLI {
 				e.printStackTrace();
 				error |= ERROR_PRINTFACT;
 			}
-			if (_verbose) System.out.println("Fact printed!");
+			if (verbose) System.out.println("Fact printed!");
 		}
 
 		return error;
@@ -156,57 +155,57 @@ public class CLI {
 	public int prepare() {
 		int error = 0;
 
-		_verbose = _args.get(VERBOSE) != null;
+		verbose = args.get(VERBOSE) != null;
 
 		String database;
-		if ((database = _args.get(FILE_OUTPUT)) == null) database = "_default_graal.db";
-		if (_verbose) System.out.println("Database filepath: " + database);
+		if ((database = args.get(FILE_OUTPUT)) == null) database = "_default_graal.db";
+		if (verbose) System.out.println("Database filepath: " + database);
 
-		if (_verbose) System.out.println("Opening database...");
+		if (verbose) System.out.println("Opening database...");
 		try {
 			File f = new File(database);
-			_atomset = new DefaultRdbmsStore(new SqliteDriver(f));
+			atomset = new DefaultRdbmsStore(new SqliteDriver(f));
 		}
 		catch (Exception e) {
 			System.err.println("An error has occured while opening database: " +e);
 			return ERROR_DB_OPEN;
 		}
-		if (_verbose) System.out.println("Database opened!");
+		if (verbose) System.out.println("Database opened!");
 
-		String input_file = _args.get(FILE_INPUT);
-		if (input_file != null) {
+		String inputFile = args.get(FILE_INPUT);
+		if (inputFile != null) {
 			try {
 				Reader reader;
-				if (input_file.equals("-")) {
-					if (_verbose) System.out.println("Reading stdin...");
+				if (inputFile.equals("-")) {
+					if (verbose) System.out.println("Reading stdin...");
 					reader = new InputStreamReader(System.in);
 				}
 				else {
-					if (_verbose) System.out.println("Opening file "+input_file+"...");
-					reader = new FileReader(input_file);
+					if (verbose) System.out.println("Opening file "+inputFile+"...");
+					reader = new FileReader(inputFile);
 				}
-				DlgpParser parser = new DlgpParser(reader);
+				DlpParser parser = new DlpParser(reader);
 				for (Object o : parser) {
 					if (o instanceof Atom) {
-						if (_verbose) System.out.println("Adding atom " + (Atom)o);
-						_atomset.addUnbatched((Atom)o);
-						if (_verbose) System.out.println("Atom added!");
+						if (verbose) System.out.println("Adding atom " + (Atom)o);
+						atomset.addUnbatched((Atom)o);
+						if (verbose) System.out.println("Atom added!");
 					}
 					else if (o instanceof Rule) {
-						if (_verbose) System.out.println("Adding rule " + (Rule)o);
-						_rules.add((Rule)o);
-						if (_verbose) System.out.println("Rule added!");
+						if (verbose) System.out.println("Adding rule " + (Rule)o);
+						rules.add((Rule)o);
+						if (verbose) System.out.println("Rule added!");
 					}
 					else if (o instanceof Query) {
-						if (_verbose) System.out.println("Adding query " + (Query)o);
-						_queries.add((Query)o);
-						if (_verbose) System.out.println("Query added!");
+						if (verbose) System.out.println("Adding query " + (Query)o);
+						queries.add((Query)o);
+						if (verbose) System.out.println("Query added!");
 					}
 					else {
-						if (_verbose) System.out.println("Ignoring non recognized object: " + o);
+						if (verbose) System.out.println("Ignoring non recognized object: " + o);
 					}
 				}
-				_atomset.commitAtoms();
+				atomset.commitAtoms();
 			}
 			catch (Exception e) {
 				System.err.println("An error has occured: " +e);
@@ -214,25 +213,25 @@ public class CLI {
 			}
 		}
 
-		String ucq_file = _args.get(FILE_UCQ);
-		if (ucq_file != null) {
+		String ucqFile = args.get(FILE_UCQ);
+		if (ucqFile != null) {
 			UnionConjunctiveQueries ucq = new UnionConjunctiveQueries();
-			if (_verbose) System.out.println("Opening UCQ file "+ucq_file+"...");
+			if (verbose) System.out.println("Opening UCQ file "+ucqFile+"...");
 			try {
-				DlgpParser parser = new DlgpParser(new FileReader(ucq_file));
+				DlpParser parser = new DlpParser(new FileReader(ucqFile));
 				for (Object o : parser) {
 					if (o instanceof ConjunctiveQuery) {
-						if (_verbose) System.out.println("Adding query to union " + (Query)o);
+						if (verbose) System.out.println("Adding query to union " + (Query)o);
 						ucq.add((ConjunctiveQuery)o);
 					}
 					else {
-						if (_verbose) System.out.println("Ignoring non query object: " + o);
+						if (verbose) System.out.println("Ignoring non query object: " + o);
 					}
 				}
-				_queries.add(ucq);
+				queries.add(ucq);
 				try {
 					parser.close();
-					if (_verbose) System.out.println("File closed!");
+					if (verbose) System.out.println("File closed!");
 				}
 				catch (Exception e) {
 					System.err.println("Cannot close file: " + e);
@@ -245,22 +244,22 @@ public class CLI {
 			}
 		}
 
-		String ucq_string = _args.get(STRING_UCQ);
-		if (ucq_string != null) {
+		String ucqString = args.get(STRING_UCQ);
+		if (ucqString != null) {
 			UnionConjunctiveQueries ucq = new UnionConjunctiveQueries();
-			if (_verbose) System.out.println("Reading UCQ string "+ucq_string+"...");
+			if (verbose) System.out.println("Reading UCQ string "+ucqString+"...");
 			try {
-				DlgpParser parser = new DlgpParser(new StringReader(ucq_string));
+				DlpParser parser = new DlpParser(new StringReader(ucqString));
 				for (Object o : parser) {
 					if (o instanceof ConjunctiveQuery) {
-						if (_verbose) System.out.println("Adding query to union " + (Query)o);
+						if (verbose) System.out.println("Adding query to union " + (Query)o);
 						ucq.add(prepareConjunctiveQuery((ConjunctiveQuery)o));
 					}
 					else {
-						if (_verbose) System.out.println("Ignoring non query object: " + o);
+						if (verbose) System.out.println("Ignoring non query object: " + o);
 					}
 				}
-				_queries.add(ucq);
+				queries.add(ucq);
 			}
 			catch (Exception e) {
 				System.err.println("An error has occured: " +e);
@@ -280,33 +279,33 @@ public class CLI {
 				System.exit(0);
 			}
 			else if (isArg(argv[i],ARG_VERBOSE)) {
-				_args.put(VERBOSE,"1");
+				args.put(VERBOSE,"1");
 			}
 			else if (isArg(argv[i],ARG_PRINTFACT)) {
-				_args.put(PRINTFACT,"1");
+				args.put(PRINTFACT,"1");
 			}
 			else if (isArg(argv[i],ARG_FILE_INPUT)) {
 				++i;
 				if (i >= n) return ERROR_ARG_FILE_INPUT;
-				_args.put(FILE_INPUT,argv[i]);
+				args.put(FILE_INPUT,argv[i]);
 			}
 			else if (isArg(argv[i],ARG_FILE_OUTPUT)) {
 				++i;
 				if (i >= n) return ERROR_ARG_FILE_OUTPUT;
-				_args.put(FILE_OUTPUT,argv[i]);
+				args.put(FILE_OUTPUT,argv[i]);
 			}
 			else if (isArg(argv[i],ARG_UCQ)) {
 				++i;
 				if (i >= n) return ERROR_ARG_UCQ;
-				if (argv[i].charAt(0) == '?') _args.put(STRING_UCQ,argv[i]);
-				else _args.put(FILE_UCQ,argv[i]);
+				if (argv[i].charAt(0) == '?') args.put(STRING_UCQ,argv[i]);
+				else args.put(FILE_UCQ,argv[i]);
 			}
 			else if (isArg(argv[i],ARG_SATURATE)) {
 				if ((i+1 < n) && (argv[i+1].charAt(0) != '-')) {
 					++i;
-					_args.put(SATURATE,argv[i]);
+					args.put(SATURATE,argv[i]);
 				}
-				else _args.put(SATURATE,"-1");
+				else args.put(SATURATE,"-1");
 			}
 			else {
 				System.err.println("Ignoring unrecognized argument: " + argv[i]);
@@ -317,9 +316,6 @@ public class CLI {
 	}
 
 	public void printHelp() {
-		int i;
-		final int v = 24;
-		final int c = 40;
 		System.out.println(PROGRAM_NAME);
 		System.out.println(" [-h] [-v] [-f <input_file>] [-d <db_file>] [-u <ucq_file|ucq_string>] [-s [<n>]]");
 		System.out.print("---------");
@@ -340,8 +336,8 @@ public class CLI {
 	}
 
 	public ConjunctiveQuery prepareConjunctiveQuery(ConjunctiveQuery q) {
-		DefaultConjunctiveQuery q_rw = new DefaultConjunctiveQuery(new LinkedListAtomSet());
-		q_rw.setAnswerVariables(q.getAnswerVariables());
+		DefaultConjunctiveQuery qRw = new DefaultConjunctiveQuery(new LinkedListAtomSet());
+		qRw.setAnswerVariables(q.getAnswerVariables());
 		for (Atom a : q) {
 			Atom a2 = new DefaultAtom(a.getPredicate());
 			int i = 0;
@@ -349,9 +345,9 @@ public class CLI {
 				a2.setTerm(i,prepareConjunctiveQueryAtomTerm(t));
 				++i;
 			}
-			q_rw.getAtomSet().add(a2);
+			qRw.getAtomSet().add(a2);
 		}
-		return q_rw;
+		return qRw;
 	}
 
 	public Term prepareConjunctiveQueryAtomTerm(Term t) {
@@ -374,12 +370,12 @@ public class CLI {
 	private static final String STRING_UCQ  = "ucq_str";
 	private static final String PRINTFACT   = "print_fact";
 
-	private Map<String,String> _args = new TreeMap<String,String>();
-	private boolean _verbose = false;
+	private Map<String,String> args = new TreeMap<String,String>();
+	private boolean verbose = false;
 	//private AtomSet _atomset = null;
-	private AbstractRdbmsStore _atomset = null;
-	private RuleSet _rules = new LinkedListRuleSet();
-	private LinkedList<Query> _queries = new LinkedList<Query>();
+	private AbstractRdbmsStore atomset = null;
+	private RuleSet rules = new LinkedListRuleSet();
+	private LinkedList<Query> queries = new LinkedList<Query>();
 
 };
 

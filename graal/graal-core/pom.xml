@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
 		<artifactId>graal</artifactId>
-		<version>0.6.2-SNAPSHOT </version>
+		<version>0.6.5-SNAPSHOT </version>
 	</parent>
 
 	<artifactId>graal-core</artifactId>
@@ -34,19 +34,14 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>fr.lirmm.graphik</groupId>
+			<artifactId>graal-util</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>1.1.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.3.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>graph-for-graal</artifactId>
-			<version>0.1</version>
 		</dependency>
 		
 		<!-- Test -->

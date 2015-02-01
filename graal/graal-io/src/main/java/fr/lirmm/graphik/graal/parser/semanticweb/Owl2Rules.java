@@ -30,7 +30,7 @@ import fr.lirmm.graphik.util.stream.AbstractReader;
  */
 public class Owl2Rules extends AbstractReader<Object> {
 
-	private static final Logger logger = LoggerFactory
+	private static final Logger LOGGER = LoggerFactory
 			.getLogger(Owl2Rules.class);
 	
 	public static final String OWL_PREFIX = "http://www.w3.org/2002/07/owl#";
@@ -56,9 +56,9 @@ public class Owl2Rules extends AbstractReader<Object> {
 
 	private Iterator<Object> reader;
 
-	protected static final Term x = new Term("X", Type.VARIABLE);
-	protected static final Term y = new Term("Y", Type.VARIABLE);
-	protected static final Term z = new Term("Z", Type.VARIABLE);
+	protected static final Term X = new Term("X", Type.VARIABLE);
+	protected static final Term Y = new Term("Y", Type.VARIABLE);
+	protected static final Term Z = new Term("Z", Type.VARIABLE);
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
@@ -97,15 +97,15 @@ public class Owl2Rules extends AbstractReader<Object> {
 				Atom a = (Atom) o;
 				String predicateStr = a.getPredicate().toString();
 				
-				if(logger.isDebugEnabled()) 
-					logger.debug(predicateStr);
+				if(LOGGER.isDebugEnabled()) 
+					LOGGER.debug(predicateStr);
 				
 				if (OWL_INVERSE_OF.equals(predicateStr)) {
 					Rule rule = new DefaultRule();
 					Predicate p1 = new Predicate(a.getTerm(0).toString(), 2);
 					Predicate p2 = new Predicate(a.getTerm(1).toString(), 2);
-					rule.getBody().add(new DefaultAtom(p1, x, y));
-					rule.getHead().add(new DefaultAtom(p2, y, x));
+					rule.getBody().add(new DefaultAtom(p1, X, Y));
+					rule.getHead().add(new DefaultAtom(p2, Y, X));
 
 					o = rule;
 					// inverse
@@ -115,8 +115,8 @@ public class Owl2Rules extends AbstractReader<Object> {
 					Rule rule = new DefaultRule();
 					Predicate p1 = new Predicate(a.getTerm(0).toString(), 2);
 					Predicate p2 = new Predicate(a.getTerm(1).toString(), 2);
-					rule.getBody().add(new DefaultAtom(p1, x, y));
-					rule.getHead().add(new DefaultAtom(p2, x, y));
+					rule.getBody().add(new DefaultAtom(p1, X, Y));
+					rule.getHead().add(new DefaultAtom(p2, X, Y));
 
 					o = rule;
 					// inverse
@@ -124,9 +124,9 @@ public class Owl2Rules extends AbstractReader<Object> {
 				} else if (OWL_TRANSITIVE_PROPERTY.equals(predicateStr)) {
 					Rule rule = new DefaultRule();
 					Predicate p = new Predicate(a.getTerm(0).toString(), 2);
-					rule.getBody().add(new DefaultAtom(p, x, y));
-					rule.getBody().add(new DefaultAtom(p, y, z));
-					rule.getHead().add(new DefaultAtom(p, x, z));
+					rule.getBody().add(new DefaultAtom(p, X, Y));
+					rule.getBody().add(new DefaultAtom(p, Y, Z));
+					rule.getHead().add(new DefaultAtom(p, X, Z));
 					o = rule;
 				}
 			}

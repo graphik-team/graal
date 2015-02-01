@@ -18,7 +18,7 @@ import fr.lirmm.graphik.graal.store.StoreException;
  */
 public class MysqlDriver extends AbstractRdbmsDriver {
 
-	private static final Logger logger = LoggerFactory
+	private static final Logger LOGGER = LoggerFactory
             .getLogger(MysqlDriver.class);
 	
 	private static final String INSERT_IGNORE = "INSERT IGNORE INTO ";
@@ -43,13 +43,13 @@ public class MysqlDriver extends AbstractRdbmsDriver {
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 		} catch (InstantiationException e) {
-			logger.error(e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 			throw new StoreException(e.getMessage(), e);
 		} catch (IllegalAccessException e) {
-			logger.error(e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 			throw new StoreException(e.getMessage(), e);
 		} catch (ClassNotFoundException e) {
-			logger.error(e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 			throw new StoreException(e.getMessage(), e);
 		}
 
@@ -57,7 +57,7 @@ public class MysqlDriver extends AbstractRdbmsDriver {
 			connection = DriverManager.getConnection("jdbc:mysql://" + host
 					+ "/" + dbName + "?user=" + user + "&password=" + password);
 		} catch (SQLException e) {
-			logger.error(e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 			throw new StoreException(e.getMessage(), e);
 		}
 		return connection;

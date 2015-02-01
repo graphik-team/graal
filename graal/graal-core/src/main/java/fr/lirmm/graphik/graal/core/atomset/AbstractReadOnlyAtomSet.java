@@ -58,7 +58,7 @@ public abstract class AbstractReadOnlyAtomSet implements ReadOnlyAtomSet {
 		return this.equals((AtomSet) obj);
 	}
 
-	public boolean equals(AtomSet other) {
+	public boolean equals(AtomSet other) { // NOPMD
 		try {
 			for(Atom a : this) {
 				if(!other.contains(a)) {

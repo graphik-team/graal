@@ -3,7 +3,7 @@
 
 	<groupId>fr.lirmm.graphik</groupId>
 	<artifactId>graal-main-project</artifactId>
-	<version>0.6.2-SNAPSHOT</version>
+	<version>0.6.5-SNAPSHOT</version>
 	<name>Generic Rule ApplicAtion Library</name>
 
 	<packaging>pom</packaging>
@@ -37,6 +37,7 @@
 
 	<modules>
 		<module>graal</module>
+		<module>graal-util</module>
 		<module>graal-apps</module>
 		<module>graal-examples</module>
 		<module>graal-distro</module>
@@ -51,6 +52,31 @@
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>3.3</version>
+				<configuration>
+					<minimumPriority>2</minimumPriority>
+					<failurePriority>2</failurePriority>
+					<rulesets>
+            			<ruleset>/rulesets/java/naming.xml</ruleset>
+            			<ruleset>/rulesets/java/design.xml</ruleset>
+            			<ruleset>/rulesets/java/strictexception.xml</ruleset>
+            		</rulesets>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+				<version>3.0.0</version>
+				<configuration>
+					<maxRank>9</maxRank>
+					<effort>Max</effort>
+					<threshold>Low</threshold>
+					<xmlOutput>true</xmlOutput>
 				</configuration>
 			</plugin>
 			<plugin>

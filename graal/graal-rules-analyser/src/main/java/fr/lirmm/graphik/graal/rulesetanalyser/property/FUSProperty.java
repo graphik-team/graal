@@ -10,7 +10,7 @@ import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class FUSProperty implements RuleProperty {
+public final class FUSProperty implements RuleProperty {
 
 	private static FUSProperty instance;
 

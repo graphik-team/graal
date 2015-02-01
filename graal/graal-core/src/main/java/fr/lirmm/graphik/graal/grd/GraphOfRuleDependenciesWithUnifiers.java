@@ -59,11 +59,13 @@ public class GraphOfRuleDependenciesWithUnifiers extends GraphOfRuleDependencies
 
 	public Set<Substitution> getUnifiers(Rule src, Rule dest) {
 		Integer index = this.graph.getEdge(src, dest);
-		Set<Substitution> res = null;
+		Set<Substitution> res;
 		if (index != null) {
-			res = this.edgesValue.get(index);
+			res = Collections.unmodifiableSet(this.edgesValue.get(index));
+		} else {
+			res = Collections.emptySet();
 		}
-		return Collections.unmodifiableSet(res);
+		return res;
 	}
 
 	/**

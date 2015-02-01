@@ -19,6 +19,7 @@ import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.store.StoreException;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
+import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.stream.ObjectReader;
 
 /**
@@ -28,7 +29,7 @@ import fr.lirmm.graphik.util.stream.ObjectReader;
 public class PlainTableRDBMSStore extends AbstractRdbmsStore {
 
 	
-	private static final Logger logger = LoggerFactory
+	private static final Logger LOGGER = LoggerFactory
 			.getLogger(PlainTableRDBMSStore.class);
 	
 	// /////////////////////////////////////////////////////////////////////////
@@ -52,25 +53,25 @@ public class PlainTableRDBMSStore extends AbstractRdbmsStore {
 	@Override
 	public String transformToSQL(ConjunctiveQuery cquery) throws StoreException {
 		// TODO implement this method
-		throw new Error("This method isn't implemented");
+		throw new MethodNotImplementedError("This method isn't implemented");
 	}
 
 	@Override
 	public Term getTerm(String label) throws StoreException {
 		// TODO implement this method
-		throw new Error("This method isn't implemented");
+		throw new MethodNotImplementedError("This method isn't implemented");
 	}
 
 	@Override
 	public ObjectReader<Atom> iterator() {
 		// TODO implement this method
-		throw new Error("This method isn't implemented");
+		throw new MethodNotImplementedError("This method isn't implemented");
 	}
 
 	@Override
 	public SymbolGenerator getFreeVarGen() {
 		// TODO implement this method
-		throw new Error("This method isn't implemented");
+		throw new MethodNotImplementedError("This method isn't implemented");
 	}
 
 	@Override
@@ -122,8 +123,8 @@ public class PlainTableRDBMSStore extends AbstractRdbmsStore {
 			String tableName = this.getPredicateTableName(atom.getPredicate());
 			String query = this.getDriver().getInsertOrIgnoreStatement(tableName, atom.getTerms());
 
-			if (logger.isDebugEnabled()) {
-				logger.debug(atom.toString() + " : " + query);
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug(atom.toString() + " : " + query);
 			}
 			statement.addBatch(query);
 		} catch (SQLException e) {

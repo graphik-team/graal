@@ -47,24 +47,13 @@ public class DefaultRule implements Rule {
 
 	public DefaultRule(String label, Iterable<Atom> body, Iterable<Atom> head) {
 		this.label = label;
-		AtomSet atomSet = new LinkedListAtomSet();
-		try {
-			atomSet.addAll(body);
-		} catch (AtomSetException e) {
-			// TODO treat this exception
-			e.printStackTrace();
-			throw new Error("Untreated exception");
-		}
+		LinkedListAtomSet atomSet = new LinkedListAtomSet();
+		atomSet.addAll(body);
 		this.body = atomSet;
 
 		atomSet = new LinkedListAtomSet();
-		try {
-			atomSet.addAll(head);
-		} catch (AtomSetException e) {
-			// TODO treat this exception
-			e.printStackTrace();
-			throw new Error("Untreated exception");
-		}
+		atomSet.addAll(head);
+
 		this.head = atomSet;
 	}
 
@@ -202,6 +191,12 @@ public class DefaultRule implements Rule {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
+		this.appendTo(builder);
+		return builder.toString();
+	}
+	
+	@Override
+	public void appendTo(StringBuilder builder) {
 		if (!this.label.isEmpty()) {
 			builder.append('[');
 			builder.append(this.label);
@@ -210,7 +205,6 @@ public class DefaultRule implements Rule {
 		builder.append(this.body.toString());
 		builder.append(" -> ");
 		builder.append(this.head);
-		return builder.toString();
 	}
 	
 	@Override
@@ -227,7 +221,7 @@ public class DefaultRule implements Rule {
 		return this.equals((Rule) obj);
 	}
 
-	public boolean equals(Rule other) {
+	public boolean equals(Rule other) { // NOPMD
 		if(this.label.compareTo(other.getLabel()) != 0)
 			return false;
 		if(!other.getHead().equals(this.getHead()))

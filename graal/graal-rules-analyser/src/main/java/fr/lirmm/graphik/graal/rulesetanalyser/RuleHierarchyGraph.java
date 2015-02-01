@@ -32,14 +32,14 @@ public class RuleHierarchyGraph {
 	 * @param label
 	 * @param parentLabel
 	 */
-	public void addParent(String label, String parentLabel) {
+	public final void addParent(String label, String parentLabel) {
 		this.graph.addEdge(label, parentLabel);
 	}
 
 	/**
 	 * @param property
 	 */
-	public void add(RuleProperty property) {
+	public final void add(RuleProperty property) {
 		this.index.put(property.getLabel(), property);
 		this.graph.addVertex(property.getLabel());
 	}

@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY ontology "http://vicodi.org/ontology#" >
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY owl2xml "http://www.w3.org/2006/12/owl2-xml#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+]>
+
+
+<rdf:RDF xmlns="file://test/"
+     xml:base="file://test/"
+     xmlns:test="file://test/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#" >
+
+    <owl:Ontology rdf:about=""/>
+    
+    <owl:ObjectProperty rdf:about="Property">
+	    <owl:inverseOf>
+	    	<owl:ObjectProperty rdf:about="InverseProperty" />
+	    </owl:inverseOf>
+	</owl:ObjectProperty>
+    
+    <owl:AsymmetricProperty rdf:about="AsymmetricProperty" />
+    
+    <owl:SymmetricProperty rdf:about="SymmetricProperty" />
+    
+    <owl:TransitiveProperty rdf:about="TransitiveProperty" />
+    
+    <owl:IrreflexiveProperty rdf:about="IrreflexiveProperty" />
+    
+    <owl:ObjectProperty rdf:about="FunctionalProperty" />
+    <owl:FunctionalProperty rdf:about="FunctionalProperty" />
+        
+    <owl:InverseFunctionalProperty rdf:about="InverseFunctionalProperty" />
+    
+    <owl:NamedIndividual rdf:about="individuAA" >
+    	<owl:sameAs rdf:resource="individuBB" />
+    </owl:NamedIndividual>
+    
+    <owl:AllDisjointClasses>
+	   <owl:members rdf:parseType="Collection">
+	    <owl:Class rdf:about="DisjointClassA" />
+    	<owl:Class rdf:about="DisjointClassB" />
+    	<owl:Class rdf:about="DisjointClassC" />
+	   </owl:members>
+	</owl:AllDisjointClasses>
+	
+	<owl:Class rdf:about="range"/>
+	<owl:Class rdf:about="domain"/>    	    
+   	<owl:ObjectProperty rdf:about="property">
+        <rdfs:range rdf:resource="range"/>  
+        <rdfs:domain rdf:resource="domain"/>
+    </owl:ObjectProperty>
+    
+
+</rdf:RDF>
+
+
+
+

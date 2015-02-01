@@ -4,7 +4,6 @@ import java.util.Iterator;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
 
 /**
  * The body contains only one atom.
@@ -13,7 +12,7 @@ import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
  * @author Swan Rocher
  * 
  */
-public class AtomicBodyProperty extends AbstractRuleProperty {
+public final class AtomicBodyProperty extends AbstractRuleProperty {
 
 	private static AtomicBodyProperty instance = null;
 	

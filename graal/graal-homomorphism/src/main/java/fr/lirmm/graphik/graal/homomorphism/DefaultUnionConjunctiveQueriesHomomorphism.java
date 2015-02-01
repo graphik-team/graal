@@ -11,7 +11,7 @@ import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class DefaultUnionConjunctiveQueriesHomomorphism implements UnionConjunctiveQueriesHomomorphism<ReadOnlyAtomSet> {
+public final class DefaultUnionConjunctiveQueriesHomomorphism implements UnionConjunctiveQueriesHomomorphism<ReadOnlyAtomSet> {
 
 	private static DefaultUnionConjunctiveQueriesHomomorphism instance;
     

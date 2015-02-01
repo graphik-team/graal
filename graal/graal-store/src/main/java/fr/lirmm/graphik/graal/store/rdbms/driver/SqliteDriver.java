@@ -19,7 +19,7 @@ import fr.lirmm.graphik.graal.store.StoreException;
  */
 public class SqliteDriver extends AbstractRdbmsDriver {
 	
-	private static final Logger logger = LoggerFactory
+	private static final Logger LOGGER = LoggerFactory
             .getLogger(SqliteDriver.class);
 	
 	private static final String INSERT_IGNORE = "INSERT OR IGNORE INTO ";
@@ -39,14 +39,14 @@ public class SqliteDriver extends AbstractRdbmsDriver {
 		try {
 			Class.forName("org.sqlite.JDBC");
 		} catch (ClassNotFoundException e) {
-			logger.error(e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 			throw new StoreException(e.getMessage(), e);
 		}
 		
 		try {
 			connection = DriverManager.getConnection("jdbc:sqlite:" + file);
 		} catch (SQLException e) {
-			logger.error(e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 			throw new StoreException(e.getMessage(), e);
 		}
 		

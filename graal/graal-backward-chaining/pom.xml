@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
 		<artifactId>graal</artifactId>
-		<version>0.6.2-SNAPSHOT </version>
+		<version>0.6.5-SNAPSHOT </version>
 	</parent>
 	
 	<artifactId>graal-backward-chaining</artifactId>
@@ -33,6 +33,11 @@
 	</developers>
 
 	<dependencies>
+		<dependency>
+			<groupId>fr.lirmm.graphik</groupId>
+			<artifactId>graal-util</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
 	    <dependency>
 			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-core</artifactId>

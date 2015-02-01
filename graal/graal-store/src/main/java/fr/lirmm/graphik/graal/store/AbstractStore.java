@@ -3,9 +3,7 @@
  */
 package fr.lirmm.graphik.graal.store;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import fr.lirmm.graphik.graal.core.SymbolGenerator;
 import fr.lirmm.graphik.graal.core.atomset.AbstractReadOnlyAtomSet;
 
 /**
@@ -14,5 +12,6 @@ import fr.lirmm.graphik.graal.core.atomset.AbstractReadOnlyAtomSet;
  */
 public abstract class AbstractStore extends AbstractReadOnlyAtomSet implements ReadOnlyStore {
 
+	public abstract SymbolGenerator getFreeVarGen();
     
 }

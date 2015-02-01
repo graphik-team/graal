@@ -1,0 +1,111 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<groupId>fr.lirmm.graphik</groupId>
+		<artifactId>graal-apps</artifactId>
+		<version>0.6.5-SNAPSHOT</version>
+	</parent>
+	
+	<artifactId>owl2dlp</artifactId>
+	<name>owl2dlp</name>
+	<packaging>jar</packaging>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<jdk.version>1.6</jdk.version>
+	</properties>
+
+	<inceptionYear>2014</inceptionYear>
+
+	<organization>
+		<name>GraphIK (INRIA - LIRMM)</name>
+		<url>https://team.inria.fr/graphik/</url>
+	</organization>
+
+	<developers>
+		<developer>
+			<name>Clément SIPIETER</name>
+			<email>clement@6pi.fr</email>
+			<organization>INRIA</organization>
+		</developer>
+	</developers>
+
+	<dependencies>
+		<dependency>
+			<groupId>fr.lirmm.graphik</groupId>
+			<artifactId>graal-util</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>fr.lirmm.graphik</groupId>
+			<artifactId>graal-core</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>fr.lirmm.graphik</groupId>
+			<artifactId>graal-io</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.beust</groupId>
+			<artifactId>jcommander</artifactId>
+			<version>1.35</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+		<!-- TEST -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
+				</configuration>
+			</plugin>
+            <plugin>
+			  <artifactId>maven-release-plugin</artifactId>
+			  <version>2.1</version>
+			  <configuration>
+			    <preparationGoals>clean install</preparationGoals>
+			  </configuration>
+			</plugin>
+			<plugin>
+		      <artifactId>maven-assembly-plugin</artifactId>
+		      <version>2.5.3</version>
+		      <configuration>
+		        <preparationGoals>compile</preparationGoals>
+		      	<finalName>owl2dlp-${project.parent.version}</finalName>
+		        <archive>
+		          <manifestEntries>
+		            <Built-On>${maven.build.timestamp}</Built-On>
+		          </manifestEntries>
+		          <manifest>
+					<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+		            <mainClass>fr.lirmm.graphik.graal.apps.OWL2DLP</mainClass>
+		          </manifest>
+		        </archive>
+		        <descriptorRefs>
+		          <descriptorRef>jar-with-dependencies</descriptorRef>
+		        </descriptorRefs>
+		      </configuration>
+		    </plugin>
+		</plugins>
+	</build>
+
+</project>

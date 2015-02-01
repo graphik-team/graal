@@ -16,8 +16,8 @@ import fr.lirmm.graphik.graal.forward_chaining.StaticChase;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
-import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
-import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
+import fr.lirmm.graphik.graal.io.dlp.DlpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlpWriter;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -32,19 +32,19 @@ public class DefaultUseCaseExample {
 		AtomSet atomSet = new MemoryGraphAtomSet();
 
 		// add assertions into this atom set
-		atomSet.add(DlgpParser.parseAtom("p(a)."));
-		atomSet.add(DlgpParser.parseAtom("p(c)."));
-		atomSet.add(DlgpParser.parseAtom("q(b)."));
-		atomSet.add(DlgpParser.parseAtom("q(c)."));
-		atomSet.add(DlgpParser.parseAtom("s(z,z)."));
+		atomSet.add(DlpParser.parseAtom("p(a)."));
+		atomSet.add(DlpParser.parseAtom("p(c)."));
+		atomSet.add(DlpParser.parseAtom("q(b)."));
+		atomSet.add(DlpParser.parseAtom("q(c)."));
+		atomSet.add(DlpParser.parseAtom("s(z,z)."));
 		
 		// /////////////////////////////////////////////////////////////////////
 		// create a rule set
 		RuleSet ruleSet = new LinkedListRuleSet();
 		
 		// add a rule into this rule set
-		ruleSet.add(DlgpParser.parseRule("r(X) :- p(X), q(X)."));
-		ruleSet.add(DlgpParser.parseRule("s(X, Y) :- p(X), q(Y)."));
+		ruleSet.add(DlpParser.parseRule("r(X) :- p(X), q(X)."));
+		ruleSet.add(DlpParser.parseRule("s(X, Y) :- p(X), q(Y)."));
 		
 		// /////////////////////////////////////////////////////////////////////
 		// run saturation
@@ -55,7 +55,7 @@ public class DefaultUseCaseExample {
 		
 		// /////////////////////////////////////////////////////////////////////
 		// show result with Dlgp format
-		DlgpWriter writer = new DlgpWriter(System.out);
+		DlpWriter writer = new DlpWriter(System.out);
 		writer.write(atomSet);
 		// equivalent code:
 		// for(Atom a : atomSet) {
@@ -64,7 +64,7 @@ public class DefaultUseCaseExample {
 		
 		// /////////////////////////////////////////////////////////////////////
 		// execute query
-		Query query = DlgpParser.parseQuery("?(X,Y) :- s(X, Y), p(X), q(Y).");
+		Query query = DlpParser.parseQuery("?(X,Y) :- s(X, Y), p(X), q(Y).");
 		Iterable<Substitution> subReader = StaticHomomorphism.executeQuery(query, atomSet);
 		for(Substitution s : subReader) {
 			System.out.println(s);

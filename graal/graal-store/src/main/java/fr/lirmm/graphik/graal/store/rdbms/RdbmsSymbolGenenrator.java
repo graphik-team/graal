@@ -18,7 +18,7 @@ public class RdbmsSymbolGenenrator implements SymbolGenerator {
     private final String getCounterValueQuery;
     private final String updateCounterValueQuery;
 
-    private static final Logger logger = LoggerFactory
+    private static final Logger LOGGER = LoggerFactory
             .getLogger(RdbmsSymbolGenenrator.class);
 
     public RdbmsSymbolGenenrator(Connection connection, String counterName, String getCounterValueQuery,
@@ -46,14 +46,14 @@ public class RdbmsSymbolGenenrator implements SymbolGenerator {
             pstat.executeUpdate();
             pstat.close();
         } catch (SQLException e) {
-            logger.warn(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e);
             value = 0; // FIXME
         } finally {
             if( pstat != null ) {
                 try {
                     pstat.close();
                 } catch (SQLException e) {
-                    logger.warn(e.getMessage(), e);
+                    LOGGER.warn(e.getMessage(), e);
                 }
             }
         }

@@ -11,7 +11,7 @@ import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */
-public class AtomSetFactory {
+public final class AtomSetFactory {
 
 	private static AtomSetFactory instance = new AtomSetFactory();
 

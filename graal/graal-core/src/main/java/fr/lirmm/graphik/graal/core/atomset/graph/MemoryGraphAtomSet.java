@@ -14,6 +14,7 @@ import fr.lirmm.graphik.graal.core.atomset.AbstractReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.stream.IteratorAtomReader;
+import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.stream.ObjectReader;
 
 /**
@@ -70,7 +71,7 @@ public class MemoryGraphAtomSet extends AbstractReadOnlyAtomSet implements AtomS
     @Override
     public void remove(Iterable<Atom> atoms) {
         // TODO implement this method
-        throw new Error("This method isn't implemented");
+        throw new MethodNotImplementedError();
     }
 
     /*

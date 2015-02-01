@@ -33,7 +33,7 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements
 				new SqlUCQHomomorphismChecker());
 	}
 
-	private static final Logger logger = LoggerFactory
+	private static final Logger LOGGER = LoggerFactory
 			.getLogger(AbstractRdbmsStore.class);
 
 	private final RdbmsDriver driver;
@@ -88,13 +88,13 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements
 			this.add(this.unbatchedStatement, a);
 			++this.unbatchedAtoms;
 			if (this.unbatchedAtoms >= MAX_BATCH_SIZE) {
-				if (logger.isDebugEnabled()) {
-					logger.debug("batch commit, size=" + MAX_BATCH_SIZE);
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug("batch commit, size=" + MAX_BATCH_SIZE);
 				}
 				this.commitAtoms();
 			}
 		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 
@@ -108,7 +108,7 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements
 				this.unbatchedStatement = null;
 			}
 		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 
@@ -164,8 +164,8 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements
 			for (Atom a : stream) {
 				this.add(statement, a);
 				if ((++c % MAX_BATCH_SIZE) == 0) {
-					if (logger.isDebugEnabled()) {
-						logger.debug("batch commit, size=" + MAX_BATCH_SIZE);
+					if (LOGGER.isDebugEnabled()) {
+						LOGGER.debug("batch commit, size=" + MAX_BATCH_SIZE);
 					}
 					statement.executeBatch();
 					statement.close();
@@ -180,7 +180,7 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements
 
 			this.getConnection().commit();
 		} catch (SQLException e) {
-			logger.error(e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 
@@ -191,8 +191,8 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements
 			for (Atom a : stream) {
 				this.remove(statement, a);
 				if ((++c % MAX_BATCH_SIZE) == 0) {
-					if (logger.isDebugEnabled()) {
-						logger.debug("batch commit, size=" + MAX_BATCH_SIZE);
+					if (LOGGER.isDebugEnabled()) {
+						LOGGER.debug("batch commit, size=" + MAX_BATCH_SIZE);
 					}
 					statement.executeBatch();
 					statement.close();
@@ -206,7 +206,7 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements
 
 			this.getConnection().commit();
 		} catch (SQLException e) {
-			logger.error(e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 

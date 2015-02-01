@@ -30,7 +30,7 @@ import fr.lirmm.graphik.util.stream.ObjectReader;
  */
 class DefaultRdbmsIterator extends AbstractReader<Atom> {
 
-	private static final Logger logger = LoggerFactory
+	private static final Logger LOGGER = LoggerFactory
 			.getLogger(DefaultRdbmsIterator.class);
 	
 	private RdbmsStore store;
@@ -82,7 +82,7 @@ class DefaultRdbmsIterator extends AbstractReader<Atom> {
 				try {
 					this.atomReader = new SubstitutionReader2AtomReader(atom, solver.execute(query, this.store));
 				} catch (HomomorphismException e) {
-					logger.error(e.getMessage(), e);
+					LOGGER.error(e.getMessage(), e);
 					return false;
 				}
 			}

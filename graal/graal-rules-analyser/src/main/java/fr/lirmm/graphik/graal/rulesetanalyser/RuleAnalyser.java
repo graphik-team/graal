@@ -17,7 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import fr.lirmm.graphik.graal.core.LabelRuleComparator;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
-import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
+import fr.lirmm.graphik.graal.io.dlp.DlpWriter;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.AtomicBodyProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.BTSProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.DisconnectedProperty;
@@ -47,8 +47,8 @@ public class RuleAnalyser {
 	private static class ComponentCalculabilityValue {
 		static final int FES = 1;
 		static final int FUS = 2;
-		static final int BTS = 4;
-		static final int UNKNOWN = 0;
+		//static final int BTS = 4;
+		//static final int UNKNOWN = 0;
 	}
 
 	private RuleHierarchyGraph hierarchy;
@@ -310,7 +310,7 @@ public class RuleAnalyser {
 	 * 
 	 * @return
 	 */
-	public Collection<RuleProperty> getAllProperty() {
+	public final Collection<RuleProperty> getAllProperty() {
 		return this.propertiesList;
 	}
 
@@ -574,7 +574,7 @@ public class RuleAnalyser {
 	}
 
 	private void printRules(Iterable<Rule> rules, StringBuilder sb) {
-		DlgpWriter writer = new DlgpWriter(new StringBuilderWriter(sb));
+		DlpWriter writer = new DlpWriter(new StringBuilderWriter(sb));
 		sb.append("\n\nInput Rule Base\n");
 		sb.append("===============\n\n");
 

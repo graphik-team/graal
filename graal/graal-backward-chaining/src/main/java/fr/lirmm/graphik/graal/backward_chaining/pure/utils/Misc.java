@@ -24,7 +24,7 @@ import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */
-public class Misc {
+public final class Misc {
 
 	private static DefaultFreeVarGen varGen = new DefaultFreeVarGen("X"
 			+ Integer.toString(Misc.class.hashCode()));
@@ -118,7 +118,7 @@ public class Misc {
 
 		return false;
 	}
-
+	
 	/**
 	 * Remove the fact that are not the most general (taking account of compiled
 	 * rules) in the given facts

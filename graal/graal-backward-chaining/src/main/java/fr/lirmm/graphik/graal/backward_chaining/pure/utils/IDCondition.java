@@ -20,30 +20,30 @@ public class IDCondition {
 	private static DefaultFreeVarGen varGen = new DefaultFreeVarGen("X"
 			+ Integer.toString(IDCondition.class.hashCode()));
 
-	private int arity_body;
-	private Partition<Integer> cond_body;
-	private int[] cond_head;
+	private int arityBody;
+	private Partition<Integer> condBody;
+	private int[] condHead;
 
 	public IDCondition(List<Term> body, List<Term> head) {
 
-		arity_body = body.size();
+		arityBody = body.size();
 
 		// code the condition on the body terms
-		cond_body = new Partition<Integer>();
+		condBody = new Partition<Integer>();
 		for (int i = 0; i < body.size(); i++)
 			for (int j = i + 1; j < body.size(); j++)
 				if (body.get(i).equals(body.get(j)))
-					cond_body.add(i, j);
+					condBody.add(i, j);
 
 		// code the condition on the head terms
-		cond_head = new int[head.size()];
+		condHead = new int[head.size()];
 		for (int j = 0; j < head.size(); j++) {
 			boolean found = false;
 			int i = 0;
 			while (!found && i < body.size()) {
 				if (body.get(i).equals(head.get(j))) {
 					found = true;
-					cond_head[j] = i;
+					condHead[j] = i;
 				}
 				i++;
 			}
@@ -62,7 +62,7 @@ public class IDCondition {
 		;
 		// check the condition on the head terms
 		for (int k = 0; k < head.size(); k++) {
-			if (!head.get(k).equals(body.get(cond_head[k])))
+			if (!head.get(k).equals(body.get(condHead[k])))
 				return false;
 		}
 		return true;
@@ -73,9 +73,9 @@ public class IDCondition {
 	 * this
 	 */
 	public boolean checkHead(List<Term> head) {
-		for (int i = 0; i < cond_head.length; i++)
-			for (int j = i + 1; j < cond_head.length; j++)
-				if (cond_head[i] == cond_head[j])
+		for (int i = 0; i < condHead.length; i++)
+			for (int j = i + 1; j < condHead.length; j++)
+				if (condHead[i] == condHead[j])
 					if (!head.get(i).equals(head.get(j)))
 						return false;
 		return true;
@@ -86,10 +86,10 @@ public class IDCondition {
 	 * this
 	 */
 	public boolean checkBody(List<Term> body) {
-		if (body.size() != arity_body)
+		if (body.size() != arityBody)
 			return false;
 		// check the condition on the body terms
-		Iterator<ArrayList<Integer>> i = cond_body.getClasses().iterator();
+		Iterator<ArrayList<Integer>> i = condBody.getClasses().iterator();
 		while (i.hasNext()) {
 			ArrayList<Integer> cl = i.next();
 			Term t = body.get(cl.get(0));
@@ -105,13 +105,13 @@ public class IDCondition {
 	 * Return the term of the body according to the given term of the head
 	 */
 	public List<Term> getBody(List<Term> head) {
-		List<Term> body = new ArrayList<Term>(arity_body);
-		for (int i = 0; i < arity_body; i++)
+		List<Term> body = new ArrayList<Term>(arityBody);
+		for (int i = 0; i < arityBody; i++)
 			body.add(null);
 		for (int i = 0; i < head.size(); i++) {
-			body.set(cond_head[i], head.get(i));
+			body.set(condHead[i], head.get(i));
 		}
-		for (int i = 0; i < arity_body; i++)
+		for (int i = 0; i < arityBody; i++)
 			if (body.get(i) == null)
 				body.set(i, varGen.getFreeVar());
 		return body;
@@ -124,8 +124,8 @@ public class IDCondition {
 	 */
 	public Substitution getSubstitution(List<Term> body, List<Term> head) {
 		Substitution res = new TreeMapSubstitution();
-		for (int i = 0; i < cond_head.length; i++) {
-			res.put(head.get(i), body.get(cond_head[i]));
+		for (int i = 0; i < condHead.length; i++) {
+			res.put(head.get(i), body.get(condHead[i]));
 		}
 		return res;
 	}
@@ -137,7 +137,7 @@ public class IDCondition {
 	public TermPartition getUnification(List<Term> body, List<Term> head) {
 		TermPartition res = new TermPartition();
 		// put together term of body that must be unify according to this
-		for (ArrayList<Integer> cl : cond_body) {
+		for (ArrayList<Integer> cl : condBody) {
 			int rep = cl.get(0);
 			for (int i = 1; i < cl.size(); i++) {
 				res.add(body.get(rep), body.get(i));
@@ -145,8 +145,8 @@ public class IDCondition {
 		}
 		// put term of head into the class of the corresponding term of body
 		// according this
-		for (int i = 0; i < cond_head.length; i++) {
-			res.add(head.get(i), body.get(cond_head[i]));
+		for (int i = 0; i < condHead.length; i++) {
+			res.add(head.get(i), body.get(condHead[i]));
 		}
 		return res;
 	}
@@ -154,9 +154,9 @@ public class IDCondition {
 	@Override
 	public String toString() {
 		String s = "";
-		s += cond_body.toString() + "\n";
+		s += condBody.toString() + "\n";
 		s += "[";
-		for (Integer i : cond_head)
+		for (Integer i : condHead)
 			s += " " + i;
 		s += "]";
 		return s;

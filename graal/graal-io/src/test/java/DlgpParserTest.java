@@ -9,7 +9,7 @@ import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.NegativeConstraint;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlpParser;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -23,20 +23,20 @@ public class DlgpParserTest {
 
 	@Test
 	public void parseAtom() {
-		Atom a = DlgpParser.parseAtom("p(a,X).");
+		Atom a = DlpParser.parseAtom("p(a,X).");
 		Assert.assertEquals(Term.Type.VARIABLE, a.getTerm(1).getType());
 	}
 	
 	@Test
 	public void parseQuery() {
-		DefaultConjunctiveQuery q = DlgpParser.parseQuery("?(X) :- p(a,X).");
+		DefaultConjunctiveQuery q = DlpParser.parseQuery("?(X) :- p(a,X).");
 		Assert.assertEquals(Term.Type.VARIABLE, q.getAnswerVariables().iterator().next().getType());
 		Assert.assertEquals(Term.Type.VARIABLE, q.getAtomSet().iterator().next().getTerm(1).getType());
 	}
 	
 	@Test
 	public void parseRule() {
-		Rule r = DlgpParser.parseRule("p(X,Y) :- q(X,Z).");
+		Rule r = DlpParser.parseRule("p(X,Y) :- q(X,Z).");
 		
 		Atom body = r.getBody().iterator().next();
 		Assert.assertEquals(Term.Type.VARIABLE, body.getTerm(0).getType());
@@ -50,7 +50,7 @@ public class DlgpParserTest {
 	
 	@Test
 	public void parseNegativeConstraint() {
-		NegativeConstraint r = DlgpParser.parseNegativeConstraint("[N1]!:-p(X,Y), q(X,Y).");
+		NegativeConstraint r = DlpParser.parseNegativeConstraint("[N1]!:-p(X,Y), q(X,Y).");
 		
 		Iterator<Atom> it = r.getBody().iterator();
 		Atom body = it.next();
@@ -67,8 +67,8 @@ public class DlgpParserTest {
 	
 	@Test
 	public void parseWithQuotes() {
-		Atom a1 = DlgpParser.parseAtom("p(a).");
-		Atom a2 = DlgpParser.parseAtom("\"p\"(a).");
+		Atom a1 = DlpParser.parseAtom("p(a).");
+		Atom a2 = DlpParser.parseAtom("\"p\"(a).");
 		Assert.assertEquals(a1, a2);
 	}
 }

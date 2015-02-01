@@ -27,7 +27,7 @@ import fr.lirmm.graphik.util.stream.AbstractReader;
  */
 public class BasicParser extends AbstractReader<Atom> {
 	
-	private static final Logger logger = LoggerFactory.getLogger(BasicParser.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(BasicParser.class);
 	
 	private Reader reader;
 	private Atom atom;
@@ -56,10 +56,10 @@ public class BasicParser extends AbstractReader<Atom> {
 		 
 	 	try {
 			atom = readAtom(this.reader);
-			if(logger.isDebugEnabled())
-				logger.debug("Write : "+atom);
+			if(LOGGER.isDebugEnabled())
+				LOGGER.debug("Write : "+atom);
 		} catch (IOException e) {
-			logger.error("Error during atom parsing", e);
+			LOGGER.error("Error during atom parsing", e);
 		}
 		
 		return atom != null;

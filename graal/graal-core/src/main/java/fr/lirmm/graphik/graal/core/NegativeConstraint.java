@@ -17,10 +17,10 @@ import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
  */
 public class NegativeConstraint extends DefaultRule {
 
-	private static final AtomSet head;
+	private static final AtomSet HEAD;
 	static {
-		head = new LinkedListAtomSet();
-		head.add(Atom.BOTTOM);
+		HEAD = new LinkedListAtomSet();
+		HEAD.add(Atom.BOTTOM);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -28,15 +28,15 @@ public class NegativeConstraint extends DefaultRule {
 	// /////////////////////////////////////////////////////////////////////////
 
 	public NegativeConstraint() {
-		super("", new LinkedListAtomSet(), head);
+		super("", new LinkedListAtomSet(), HEAD);
 	}
 
 	public NegativeConstraint(Iterable<Atom> atomSet) {
-		super("", atomSet, head);
+		super("", atomSet, HEAD);
 	}
 
 	public NegativeConstraint(String label, Iterable<Atom> atomSet) {
-		super(label, atomSet, head);
+		super(label, atomSet, HEAD);
 	}
 
 };

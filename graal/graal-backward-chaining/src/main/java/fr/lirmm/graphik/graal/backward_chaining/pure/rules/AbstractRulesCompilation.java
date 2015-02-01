@@ -12,6 +12,7 @@ import fr.lirmm.graphik.graal.backward_chaining.pure.utils.Misc;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
+import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.util.Profiler;
@@ -117,17 +118,41 @@ public abstract class AbstractRulesCompilation implements RulesCompilation {
 			isSubsumed = false;
 			while (j.hasNext() && !isSubsumed) {
 				origin = j.next();
-				if (target != origin)
-					if (this.isImplied(target, origin)) {
-						isSubsumed = true;
-					}
-
+				if (target != origin && this.isImplied(target, origin)) {
+					isSubsumed = true;
+					i.remove();
+				}
 			}
-			if (isSubsumed)
-				i.remove();
 		}
 
 		return irr;
+	}
+
+	/**
+	 * Remove compilable rule from ruleset and return a List of compilable
+	 * rules.
+	 *
+	 * @param ruleset
+	 * @return
+	 */
+	protected final LinkedList<Rule> extractCompilable(Iterable<Rule> ruleset) {
+		LinkedList<Rule> compilable = new LinkedList<Rule>();
+		Rule r;
+
+		Iterator<Rule> it = ruleset.iterator();
+		while (it.hasNext()) {
+			r = it.next();
+			if (this.isCompilable(r)) {
+				compilable.add(r);
+				it.remove();
+			}
+		}
+
+		if (this.getProfiler() != null)
+			System.out.println("hierarchical rules number: "
+					+ compilable.size());
+
+		return compilable;
 	}
 
 }

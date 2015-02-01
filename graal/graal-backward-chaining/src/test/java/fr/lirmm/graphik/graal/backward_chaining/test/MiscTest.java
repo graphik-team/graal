@@ -124,7 +124,7 @@ public class MiscTest {
 		
 	}
 	
-	private static final int NB_PROFILER = 99999;
+	//private static final int NB_PROFILER = 99999;
 	private static final int NB_TIMER    = 999999;
 	/**
 	 * 6580 6830 6620 6550 6660

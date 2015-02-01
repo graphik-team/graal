@@ -9,7 +9,7 @@ import fr.lirmm.graphik.graal.core.Rule;
  * @author Swan Rocher
  * 
  */
-public class FrontierOneProperty extends AbstractRuleProperty {
+public final class FrontierOneProperty extends AbstractRuleProperty {
 
 	private static FrontierOneProperty instance = null;
 

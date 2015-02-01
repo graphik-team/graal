@@ -10,7 +10,7 @@ import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class BTSProperty implements RuleProperty {
+public final class BTSProperty implements RuleProperty {
 
 	private static BTSProperty instance;
 

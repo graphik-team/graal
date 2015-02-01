@@ -24,8 +24,8 @@ public class SubstitutionTest {
 	private static final Term Y = new Term("Y", Term.Type.VARIABLE);
 	private static final Term Z = new Term("Z", Term.Type.VARIABLE);
 	
-	private static final Term a = new Term("a", Term.Type.CONSTANT);
-	private static final Term b = new Term("b", Term.Type.CONSTANT);
+	private static final Term A = new Term("a", Term.Type.CONSTANT);
+	private static final Term B = new Term("b", Term.Type.CONSTANT);
 	
 	@DataPoints
 	public static Substitution[] substitution() {
@@ -34,8 +34,8 @@ public class SubstitutionTest {
 
 	@Theory
 	public void aggregateTest1(Substitution s1, Substitution s2) {
-		s1.put(Y,a);
-		s1.put(Z,a);
+		s1.put(Y,A);
+		s1.put(Z,A);
 		
 		s2.put(X,Y);
 		s2.put(Y,Z);
@@ -43,9 +43,9 @@ public class SubstitutionTest {
 		Substitution composition = s1.compose(s2);
 		Assert.assertNotNull(composition);
 
-		Assert.assertEquals(a, composition.getSubstitute(X));
-		Assert.assertEquals(a, composition.getSubstitute(Y));
-		Assert.assertEquals(a, composition.getSubstitute(Z));
+		Assert.assertEquals(A, composition.getSubstitute(X));
+		Assert.assertEquals(A, composition.getSubstitute(Y));
+		Assert.assertEquals(A, composition.getSubstitute(Z));
 	}
 	
 	@Theory
@@ -53,21 +53,21 @@ public class SubstitutionTest {
 		s1.put(X,Y);
 		s1.put(Y,Z);
 		
-		s2.put(Z,a);
-		s2.put(Y,a);
+		s2.put(Z,A);
+		s2.put(Y,A);
 		
 		Substitution composition = s1.compose(s2);
 		Assert.assertNotNull(composition);
 		
-		Assert.assertEquals(a, composition.getSubstitute(X));
-		Assert.assertEquals(a, composition.getSubstitute(Y));
-		Assert.assertEquals(a, composition.getSubstitute(Z));
+		Assert.assertEquals(A, composition.getSubstitute(X));
+		Assert.assertEquals(A, composition.getSubstitute(Y));
+		Assert.assertEquals(A, composition.getSubstitute(Z));
 	}
 
 	@Theory
 	public void aggregateTest2(Substitution s1, Substitution s2) {
-		s1.put(Y,a);
-		s1.put(Z,a);
+		s1.put(Y,A);
+		s1.put(Z,A);
 		
 		s2.put(Y,X);
 		s2.put(Z,X);
@@ -75,9 +75,9 @@ public class SubstitutionTest {
 		Substitution composition = s1.compose(s2);
 		Assert.assertNotNull(composition);
 		
-		Assert.assertEquals(a, composition.getSubstitute(X));
-		Assert.assertEquals(a, composition.getSubstitute(Y));
-		Assert.assertEquals(a, composition.getSubstitute(Z));
+		Assert.assertEquals(A, composition.getSubstitute(X));
+		Assert.assertEquals(A, composition.getSubstitute(Y));
+		Assert.assertEquals(A, composition.getSubstitute(Z));
 	}
 	
 	@Theory
@@ -85,32 +85,32 @@ public class SubstitutionTest {
 		s1.put(Y,X);
 		s1.put(Z,X);
 		
-		s2.put(Y,a);
-		s2.put(Z,a);
+		s2.put(Y,A);
+		s2.put(Z,A);
 		
 		Substitution composition = s1.compose(s2);
 		Assert.assertNotNull(composition);
 		
-		Assert.assertEquals(a, composition.getSubstitute(X));
-		Assert.assertEquals(a, composition.getSubstitute(Y));
-		Assert.assertEquals(a, composition.getSubstitute(Z));
+		Assert.assertEquals(A, composition.getSubstitute(X));
+		Assert.assertEquals(A, composition.getSubstitute(Y));
+		Assert.assertEquals(A, composition.getSubstitute(Z));
 	}
 	
 	@Theory
 	public void aggregateTest3(Substitution s1)  {
-		s1.put(X,a);
+		s1.put(X,A);
 		s1.compose(X,Y);
 		
 		Assert.assertNotNull(s1);
 		
-		Assert.assertEquals(a, s1.getSubstitute(X));
-		Assert.assertEquals(a, s1.getSubstitute(Y));
+		Assert.assertEquals(A, s1.getSubstitute(X));
+		Assert.assertEquals(A, s1.getSubstitute(Y));
 	}
 	
 	@Theory
 	public void aggregateImpossible(Substitution s1, Substitution s2)  {
-		s1.put(X,a);
-		s2.put(X,b);
+		s1.put(X,A);
+		s2.put(X,B);
 		
 		Substitution composition = s1.compose(s2);
 		Assert.assertNull(composition);

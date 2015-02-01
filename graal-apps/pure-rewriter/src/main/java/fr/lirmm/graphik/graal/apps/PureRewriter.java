@@ -14,14 +14,21 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.Parameters;
 
+import fr.lirmm.graphik.graal.backward_chaining.pure.AggregAllRulesOperator;
+import fr.lirmm.graphik.graal.backward_chaining.pure.AggregSingleRuleOperator;
+import fr.lirmm.graphik.graal.backward_chaining.pure.BasicAggregAllRulesOperator;
+import fr.lirmm.graphik.graal.backward_chaining.pure.RewritingOperator;
+import fr.lirmm.graphik.graal.backward_chaining.pure.rules.HierarchicalCompilation;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.IDCompilation;
+import fr.lirmm.graphik.graal.backward_chaining.pure.rules.NoCompilation;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
-import fr.lirmm.graphik.graal.io.dlgp.DlgpParser;
-import fr.lirmm.graphik.graal.io.dlgp.DlgpWriter;
+import fr.lirmm.graphik.graal.io.dlp.DlpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlpWriter;
+import fr.lirmm.graphik.util.Apps;
 import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.Filter;
 import fr.lirmm.graphik.util.stream.FilterReader;
@@ -33,10 +40,9 @@ import fr.lirmm.graphik.util.stream.FilterReader;
  */
 public class PureRewriter {
 
-	private static final String VERSION = "0.6.2-SNAPSHOT";
 	private static Profiler profiler;
 	private static PureRewriter options;
-	private static DlgpWriter writer = new DlgpWriter();
+	private static DlpWriter writer = new DlpWriter();
 
 	@Parameter(names = { "-h", "--help" }, description = "Print this message", help = true)
 	private boolean help;
@@ -50,135 +56,6 @@ public class PureRewriter {
 	@Parameter(names = { "-d", "--debug" }, description = "Enable debug mode", hidden = true)
 	private boolean debug = false;
 
-	@Parameters(separators = "=", commandDescription = "Compile an ontology")
-	private static class CommandCompile {
-		public static final String name = "compile";
-
-		@Parameter(names = { "-h", "--help" }, description = "Print this message", help = true)
-		private boolean help;
-
-		@Parameter(description = "<DLP ontology file>", required = true)
-		private List<String> ontologyFile = new LinkedList<String>();
-
-		@Parameter(names = { "-o", "--output" }, description = "Output file for this compilation")
-		private String outputFile = null;
-
-		/*
-		 * @Parameter(names = { "-t", "--type" }, description =
-		 * "Compilation type", required = false) private String compilationType
-		 * = "";
-		 */
-
-		/**
-		 * @param commander
-		 * @throws FileNotFoundException
-		 */
-		public void run(JCommander commander) throws FileNotFoundException {
-			if (this.help) {
-				commander.usage(name);
-				System.exit(0);
-			}
-
-			RuleSet rules = parseOntology(this.ontologyFile.get(0));
-			RulesCompilation compilation = new IDCompilation(rules);
-			compilation.setProfiler(profiler);
-			compilation.compile();
-
-			try {
-				DlgpWriter w = writer;
-				if (this.outputFile != null && !outputFile.isEmpty()) {
-					w = new DlgpWriter(new File(this.outputFile));
-				}
-				w.write(compilation.getSaturation());
-			} catch (IOException e) {
-			}
-		}
-	}
-
-	@Parameters(commandDescription = "Add file contents to the index")
-	public static class CommandRewrite {
-		public static final String name = "rewrite";
-
-		@Parameter(names = { "-h", "--help" }, description = "Print this message", help = true)
-		private boolean help;
-
-		@Parameter(names = { "-o", "--ontology" }, description = "DLP ontology file", required = true)
-		private String ontologyFile = "";
-
-		@Parameter(names = { "-q", "--query" }, description = "The queries to rewrite in DLP", required = true)
-		private String query = null;
-
-		@Parameter(names = { "-c", "--compilation" }, description = "The compilation file")
-		private String compilationFile = "";
-
-		/**
-		 * @param commander
-		 * @throws FileNotFoundException
-		 */
-		public void run(JCommander commander) throws FileNotFoundException {
-			if (this.help) {
-				commander.usage(name);
-				System.exit(0);
-			}
-
-			RuleSet rules = parseOntology(this.ontologyFile);
-			IDCompilation compilation;
-
-			if (this.compilationFile.isEmpty()) {
-				compilation = new IDCompilation(rules);
-				compilation.setProfiler(profiler);
-				compilation.compile();
-			} else {
-				compilation = new IDCompilation(rules);
-				compilation.load(new FilterReader<Rule, Object>(new DlgpParser(
-						new File(this.compilationFile)), new RulesFilter()));
-			}
-
-			this.processQuery(rules, compilation);
-		}
-
-		private void processQuery(RuleSet rules, RulesCompilation compilation)
-				throws FileNotFoundException {
-			List<ConjunctiveQuery> queries = new LinkedList<ConjunctiveQuery>();
-			File file = new File(this.query);
-			if (file.exists()) {
-				for (ConjunctiveQuery q : new FilterReader<ConjunctiveQuery, Object>(
-						new DlgpParser(file), new ConjunctiveQueryFilter())) {
-					queries.add(q);
-				}
-			} else {
-				queries.add(DlgpParser.parseQuery(this.query));
-			}
-
-			for (ConjunctiveQuery query : queries) {
-				if (options.verbose) {
-					profiler.clear();
-					profiler.add("Initial query", query);
-				}
-				fr.lirmm.graphik.graal.backward_chaining.PureRewriter bc = new fr.lirmm.graphik.graal.backward_chaining.PureRewriter(
-						query, rules, compilation);
-
-				if (options.verbose) {
-					bc.setProfiler(profiler);
-					bc.enableVerbose(true);
-				}
-
-				int i = 0;
-				while (bc.hasNext()) {
-					try {
-						writer.write(bc.next());
-					} catch (IOException e) {
-					}
-					++i;
-				}
-
-				if (options.verbose) {
-					profiler.add("Number of rewritings", i);
-				}
-			}
-		}
-	}
-
 	public static void main(String args[]) throws Exception {
 
 		options = new PureRewriter();
@@ -188,8 +65,8 @@ public class PureRewriter {
 		CommandCompile cmdCompile = new CommandCompile();
 		CommandRewrite cmdRewrite = new CommandRewrite();
 
-		commander.addCommand(CommandCompile.name, cmdCompile);
-		commander.addCommand(CommandRewrite.name, cmdRewrite);
+		commander.addCommand(CommandCompile.NAME, cmdCompile);
+		commander.addCommand(CommandRewrite.NAME, cmdRewrite);
 
 		try {
 			commander.parse(args);
@@ -209,7 +86,7 @@ public class PureRewriter {
 		}
 
 		if (options.version) {
-			printVersion();
+			Apps.printVersion("pure-rewiter");
 			System.exit(0);
 		}
 
@@ -226,9 +103,9 @@ public class PureRewriter {
 		// Main part
 		try {
 			String command = commander.getParsedCommand();
-			if (CommandCompile.name.equals(command)) {
+			if (CommandCompile.NAME.equals(command)) {
 				cmdCompile.run(commander);
-			} else if (CommandRewrite.name.equals(command)) {
+			} else if (CommandRewrite.NAME.equals(command)) {
 				cmdRewrite.run(commander);
 			}
 		} catch (FileNotFoundException e) {
@@ -237,23 +114,14 @@ public class PureRewriter {
 		}
 	}
 
-	/**
-	 * 
-	 */
-	private static void printVersion() {
-		try {
-			writer.write("Pure version ");
-			writer.write(VERSION);
-			writer.write("\n");
-			writer.flush();
-		} catch (IOException e) {
-		}
-	}
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
 	private static RuleSet parseOntology(String ontologyFile)
 			throws FileNotFoundException {
 		RuleSet rules = new LinkedListRuleSet();
-		DlgpParser parser = new DlgpParser(new File(ontologyFile));
+		DlpParser parser = new DlpParser(new File(ontologyFile));
 		for (Object o : parser) {
 			if (o instanceof Rule) {
 				rules.add((Rule) o);
@@ -261,6 +129,10 @@ public class PureRewriter {
 		}
 		return rules;
 	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE CLASSES
+	// /////////////////////////////////////////////////////////////////////////
 
 	private static class RulesFilter implements Filter {
 		@Override
@@ -273,6 +145,173 @@ public class PureRewriter {
 		@Override
 		public boolean filter(Object o) {
 			return o instanceof ConjunctiveQuery;
+		}
+	}
+
+	@Parameters(separators = "=", commandDescription = "Compile an ontology")
+	private static class CommandCompile {
+		public static final String NAME = "compile";
+
+		@Parameter(names = { "-h", "--help" }, description = "Print this message", help = true)
+		private boolean help;
+
+		@Parameter(description = "<DLP ontology file>", required = true)
+		private List<String> ontologyFile = new LinkedList<String>();
+
+		@Parameter(names = { "-o", "--output" }, description = "Output file for this compilation")
+		private String outputFile = null;
+
+		@Parameter(names = { "-t", "--type" }, description = "Compilation type H or ID", required = false)
+		private String compilationType = "ID";
+
+		/**
+		 * @param commander
+		 * @throws FileNotFoundException
+		 */
+		public void run(JCommander commander) throws FileNotFoundException {
+			if (this.help) {
+				commander.usage(NAME);
+				System.exit(0);
+			}
+
+			RuleSet rules = parseOntology(this.ontologyFile.get(0));
+			RulesCompilation compilation;
+			if ("H".equals(this.compilationType)) {
+				compilation = new HierarchicalCompilation();
+			} else {
+				compilation = new IDCompilation();
+			}
+
+			compilation.setProfiler(profiler);
+			compilation.compile(rules);
+
+			try {
+				DlpWriter w = writer;
+				if (this.outputFile != null && !outputFile.isEmpty()) {
+					w = new DlpWriter(new File(this.outputFile));
+				}
+				w.write(compilation.getSaturation());
+			} catch (IOException e) {
+			}
+		}
+	}
+
+	@Parameters(commandDescription = "Add file contents to the index")
+	public static class CommandRewrite {
+		public static final String NAME = "rewrite";
+
+		@Parameter(names = { "-h", "--help" }, description = "Print this message", help = true)
+		private boolean help;
+
+		@Parameter(names = { "-o", "--ontology" }, description = "DLP ontology file", required = true)
+		private String ontologyFile = "";
+
+		@Parameter(names = { "-q", "--query" }, description = "The queries to rewrite in DLP", required = true)
+		private String query = null;
+
+		@Parameter(names = { "-c", "--compilationFile" }, description = "The compilation file")
+		private String compilationFile = "";
+
+		@Parameter(names = { "-t", "--compilationType" }, description = "Compilation type H, ID, NONE", required = false)
+		private String compilationType = "NONE";
+
+		@Parameter(names = { "-p", "--operator" }, description = "Rewriting operator SRA, ARA, ARAM", required = false)
+		private String operator = "SRA";
+		
+		/**
+		 * @param commander
+		 * @throws FileNotFoundException
+		 */
+		public void run(JCommander commander) throws FileNotFoundException {
+			if (this.help) {
+				commander.usage(NAME);
+				System.exit(0);
+			}
+
+			RuleSet rules = parseOntology(this.ontologyFile);
+			RulesCompilation compilation = selectCompilationType();
+			RewritingOperator operator = selectOperator();
+
+			compilation.setProfiler(profiler);
+			operator.setProfiler(profiler);
+			
+			if (this.compilationFile.isEmpty()) {
+				compilation.compile(rules);
+			} else {
+				compilation.load(new FilterReader<Rule, Object>(new DlpParser(
+						new File(this.compilationFile)), new RulesFilter()));
+			}
+		
+			this.processQuery(rules, compilation, operator);
+		}
+		
+		private RulesCompilation selectCompilationType() {
+			RulesCompilation compilation = null;
+			if ("H".equals(this.compilationType)) {
+				compilation = new HierarchicalCompilation();
+			} else if ("ID".equals(this.compilationType)) {
+				compilation = new IDCompilation();
+			} else {
+				compilation = new NoCompilation();
+			}
+			return compilation;
+		}
+
+		private RewritingOperator selectOperator() {
+			RewritingOperator operator = null;	
+			if("SRA".equals(this.operator)) {
+				operator = new AggregSingleRuleOperator();
+			} else if ("ARAM".equals(this.operator)) {
+				operator = new AggregAllRulesOperator();
+			} else {
+				operator = new BasicAggregAllRulesOperator();
+			}
+			return operator;
+		}
+		
+		private void processQuery(RuleSet rules, RulesCompilation compilation, RewritingOperator operator)
+				throws FileNotFoundException {
+			List<ConjunctiveQuery> queries = new LinkedList<ConjunctiveQuery>();
+			File file = new File(this.query);
+			if (file.exists()) {
+				for (ConjunctiveQuery q : new FilterReader<ConjunctiveQuery, Object>(
+						new DlpParser(file), new ConjunctiveQueryFilter())) {
+					queries.add(q);
+				}
+			} else {
+				queries.add(DlpParser.parseQuery(this.query));
+			}
+
+			for (ConjunctiveQuery query : queries) {
+				if (options.verbose) {
+					profiler.clear();
+					profiler.add("Initial query", query);
+				}
+				fr.lirmm.graphik.graal.backward_chaining.PureRewriter bc = new fr.lirmm.graphik.graal.backward_chaining.PureRewriter(
+						query, rules, compilation, operator);
+
+				if (options.verbose) {
+					bc.setProfiler(profiler);
+					bc.enableVerbose(true);
+				}
+
+				int i = 0;
+
+				try {
+					writer.write("\n");
+					writer.write("% rewrite of: ");
+					writer.write(query);
+					while (bc.hasNext()) {
+						writer.write(bc.next());
+						++i;
+					}
+				} catch (IOException e) {
+				}
+
+				if (options.verbose) {
+					profiler.add("Number of rewritings", i);
+				}
+			}
 		}
 	}
 

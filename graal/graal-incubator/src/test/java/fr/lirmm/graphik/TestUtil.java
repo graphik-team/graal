@@ -4,14 +4,12 @@
 package fr.lirmm.graphik;
 
 import java.io.File;
+import java.io.IOError;
 import java.io.IOException;
 
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.graph.MemoryGraphAtomSet;
-import fr.lirmm.graphik.graal.store.StoreException;
-import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
-import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -35,16 +33,10 @@ public final class TestUtil {
 
 			}
 			return new AtomSet[] { new MemoryGraphAtomSet(),
-					new LinkedListAtomSet(),
-					new DefaultRdbmsStore(new SqliteDriver(file)) };
+					new LinkedListAtomSet()/*,
+					new DefaultRdbmsStore(new SqliteDriver(file))*/ };
 		} catch (IOException e) {
-			// TODO treat this exception
-			e.printStackTrace();
-			throw new Error("Untreated exception");
-		} catch (StoreException e) {
-			// TODO treat this exception
-			e.printStackTrace();
-			throw new Error("Untreated exception");
+			throw new IOError(e);
 		}
 	}
 }
