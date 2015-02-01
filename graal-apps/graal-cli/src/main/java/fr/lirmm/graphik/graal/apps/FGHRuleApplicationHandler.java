@@ -38,7 +38,7 @@ public class FGHRuleApplicationHandler implements RuleApplicationHandler {
 		return true;
 		}
 		catch (Exception e) {
-			System.err.println("Something went wrong????");
+			System.err.println("[BIG WARNING!!!!!!!!!!!] Something went wrong????");
 		}
 		return true;
 	}

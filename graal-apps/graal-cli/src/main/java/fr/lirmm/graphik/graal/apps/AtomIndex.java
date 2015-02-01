@@ -25,12 +25,13 @@ public class AtomIndex {
 	}
 
 	public void add(Atom a) {
-		add(a,new Integer(++_currentIndex));
+		add(a,new Integer(_currentIndex));
+		++_currentIndex;
 	}
 
 	public String toString() {
 		StringBuilder s = new StringBuilder();
-		int i = 1;
+		int i = 0;
 		Atom a = get(i);
 		while (a != null) {
 			s.append(i);
