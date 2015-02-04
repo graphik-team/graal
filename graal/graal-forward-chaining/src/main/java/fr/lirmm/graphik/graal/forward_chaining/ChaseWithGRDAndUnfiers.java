@@ -21,7 +21,6 @@ import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.SymbolGenerator;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependenciesWithUnifiers;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 
@@ -88,7 +87,7 @@ public class ChaseWithGRDAndUnfiers extends AbstractChase {
 					}
 
 					// the atom set producted by the rule application
-					ReadOnlyAtomSet deductedAtomSet = substitution.getSubstitut(unifiedRule.getHead());
+					AtomSet deductedAtomSet = substitution.getSubstitut(unifiedRule.getHead());
 	
 					if(stopCondition.canIAdd(deductedAtomSet, fixedTerm, this.atomSet)) {
 						this.atomSet.addAll(deductedAtomSet);

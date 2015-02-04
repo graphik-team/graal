@@ -15,7 +15,6 @@ import fr.lirmm.graphik.graal.core.SymbolGenerator;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
-import fr.lirmm.graphik.graal.store.StoreException;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.stream.ObjectReader;
@@ -28,72 +27,51 @@ public class NoConstraintRdbmsStore extends AbstractRdbmsStore {
 
 	/**
 	 * @param driver
-	 * @throws StoreException
+	 * @throws AtomSetException
 	 */
 	public NoConstraintRdbmsStore(RdbmsDriver driver)
-			throws StoreException {
+			throws AtomSetException {
 		super(driver);
 	}
 
-	/* (non-Javadoc)
-	 * @see fr.lirmm.graphik.alaska.store.IWriteableStore#remove(fr.lirmm.graphik.kb.core.IAtom)
-	 */
 	@Override
 	public boolean remove(Atom atom) {
 		// TODO implement this method
 		throw new MethodNotImplementedError("This method isn't implemented");
 	}
 
-	/* (non-Javadoc)
-	 * @see fr.lirmm.graphik.alaska.store.IStore#iterator()
-	 */
 	@Override
 	public ObjectReader<Atom> iterator() {
 		// TODO implement this method
 		throw new MethodNotImplementedError("This method isn't implemented");
 	}
 
-	/* (non-Javadoc)
-	 * @see fr.lirmm.graphik.alaska.store.IStore#getFreeVarGen()
-	 */
 	@Override
 	public SymbolGenerator getFreeVarGen() {
 		// TODO implement this method
 		throw new MethodNotImplementedError("This method isn't implemented");
 	}
 
-	/* (non-Javadoc)
-	 * @see fr.lirmm.graphik.alaska.store.IStore#contains(fr.lirmm.graphik.kb.core.IAtom)
-	 */
 	@Override
 	public boolean contains(Atom atom) {
 		// TODO implement this method
 		throw new MethodNotImplementedError("This method isn't implemented");
 	}
 
-	/* (non-Javadoc)
-	 * @see fr.lirmm.graphik.alaska.store.IStore#getTerms()
-	 */
 	@Override
 	public Set<Term> getTerms() {
 		// TODO implement this method
 		throw new MethodNotImplementedError("This method isn't implemented");
 	}
 
-	/* (non-Javadoc)
-	 * @see fr.lirmm.graphik.kb.core.IAtomSet#getTerms(fr.lirmm.graphik.kb.core.ITerm.Type)
-	 */
 	@Override
 	public Set<Term> getTerms(Type type) {
 		// TODO implement this method
 		throw new MethodNotImplementedError("This method isn't implemented");
 	}
 	
-	 /* (non-Javadoc)
-     * @see fr.lirmm.graphik.alaska.store.rdbms.representation.IRdbmsRepresentation#add(java.sql.Statement, fr.lirmm.graphik.kb.core.IAtom)
-     */
     @Override
-    public Statement add(Statement statement, Atom atom) throws StoreException {
+    public Statement add(Statement statement, Atom atom) throws AtomSetException {
         try {
             StringBuilder l = new StringBuilder("create table ");
             l.append(atom.getPredicate().getLabel());
@@ -114,7 +92,7 @@ public class NoConstraintRdbmsStore extends AbstractRdbmsStore {
         try {
 			statement.addBatch(supersqlcommand.toString());
 		} catch (SQLException e) {
-			throw new StoreException(e.getMessage(), e);
+			throw new AtomSetException(e.getMessage(), e);
 		}
         return statement;
     }
@@ -124,16 +102,16 @@ public class NoConstraintRdbmsStore extends AbstractRdbmsStore {
      */
     @Override
     protected void createDatabaseSchema()
-            throws StoreException {
+            throws AtomSetException {
         try {
             this.createStatement().execute("create table alaskavars (alaskavars1 varchar(128));");
             
         } catch (SQLException e) {
-        	throw new StoreException(e.getMessage(), e);
+        	throw new AtomSetException(e.getMessage(), e);
         }
     }
     
-    protected boolean testDatabaseSchema() throws StoreException {
+    protected boolean testDatabaseSchema() throws AtomSetException {
     	try {
 			ResultSet rs = this.createStatement().executeQuery("SELECT * FROM alaskavars limit 1;");
 			rs.close();
@@ -148,7 +126,7 @@ public class NoConstraintRdbmsStore extends AbstractRdbmsStore {
 	 * @see fr.lirmm.graphik.alaska.store.rdbms.IRdbmsStore#transformToSQL(fr.lirmm.graphik.kb.query.impl.ConjunctiveQuery)
 	 */
 	@Override
-	public String transformToSQL(ConjunctiveQuery cquery) throws StoreException {
+	public String transformToSQL(ConjunctiveQuery cquery) throws AtomSetException {
 		// TODO implement this method
 		throw new Error("This method isn't implemented");
 	}
@@ -157,7 +135,7 @@ public class NoConstraintRdbmsStore extends AbstractRdbmsStore {
 	 * @see fr.lirmm.graphik.kb.core.AtomSet#getAllPredicate()
 	 */
 	@Override
-	public ObjectReader<Predicate> getAllPredicates() throws AtomSetException {
+	public Iterable<Predicate> getAllPredicates() {
 		// TODO implement this method
 		throw new Error("This method isn't implemented");
 	}
@@ -166,7 +144,7 @@ public class NoConstraintRdbmsStore extends AbstractRdbmsStore {
 	 * @see fr.lirmm.graphik.alaska.store.rdbms.IRdbmsStore#getTerm(java.lang.String)
 	 */
 	@Override
-	public Term getTerm(String label) throws StoreException {
+	public Term getTerm(String label) throws AtomSetException {
 		// TODO implement this method
 		throw new Error("This method isn't implemented");
 	}
@@ -176,7 +154,7 @@ public class NoConstraintRdbmsStore extends AbstractRdbmsStore {
 	 */
 	@Override
 	protected Statement remove(Statement statement, Atom atom)
-			throws StoreException {
+			throws AtomSetException {
 		// TODO implement this method
 		throw new Error("This method isn't implemented");
 	}

@@ -11,19 +11,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.core.atomset.AbstractAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.homomorphism.DefaultHomomorphismFactory;
-import fr.lirmm.graphik.graal.store.AbstractStore;
-import fr.lirmm.graphik.graal.store.StoreException;
 import fr.lirmm.graphik.graal.store.homomorphism.SqlHomomorphismChecker;
 import fr.lirmm.graphik.graal.store.homomorphism.SqlUCQHomomorphismChecker;
+import fr.lirmm.graphik.graal.store.rdbms.driver.DriverException;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public abstract class AbstractRdbmsStore extends AbstractStore implements
+public abstract class AbstractRdbmsStore extends AbstractAtomSet implements
 		RdbmsStore {
 
 	static {
@@ -142,12 +142,12 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements
 	 * @param driver
 	 * @throws SQLException
 	 */
-	public AbstractRdbmsStore(RdbmsDriver driver) throws StoreException {
+	public AbstractRdbmsStore(RdbmsDriver driver) throws AtomSetException {
 		this.driver = driver;
 		try {
 			this.driver.getConnection().setAutoCommit(false);
 		} catch (SQLException e) {
-			throw new StoreException("ACID transaction required", e);
+			throw new AtomSetException("ACID transaction required", e);
 		}
 
 		if (!this.testDatabaseSchema())
@@ -156,7 +156,7 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements
 	}
 
 	@Override
-	public void addAll(Iterable<Atom> stream) throws AtomSetException {
+	public boolean addAll(Iterable<? extends Atom> stream) throws AtomSetException {
 		try {
 			int c = 0;
 			Statement statement = this.createStatement();
@@ -182,9 +182,11 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements
 		} catch (SQLException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
+		return true;
 	}
 
-	public void remove(Iterable<Atom> stream) throws AtomSetException {
+	@Override
+	public boolean removeAll(Iterable<? extends Atom> stream) throws AtomSetException {
 		try {
 			int c = 0;
 			Statement statement = this.createStatement();
@@ -208,6 +210,7 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements
 		} catch (SQLException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
+		return true;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -218,18 +221,22 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements
 		return this.driver.getConnection();
 	}
 
-	protected Statement createStatement() throws StoreException {
-		return this.driver.createStatement();
+	protected Statement createStatement() throws AtomSetException {
+		try {
+			return this.driver.createStatement();
+		} catch(DriverException e) {
+			throw new AtomSetException(e);
+		}
 	}
 
 	protected abstract Statement add(Statement statement, Atom atom)
-			throws StoreException;
+			throws AtomSetException;
 
 	protected abstract Statement remove(Statement statement, Atom atom)
-			throws StoreException;
+			throws AtomSetException;
 
-	protected abstract boolean testDatabaseSchema() throws StoreException;
+	protected abstract boolean testDatabaseSchema() throws AtomSetException;
 
-	protected abstract void createDatabaseSchema() throws StoreException;
+	protected abstract void createDatabaseSchema() throws AtomSetException;
 
 }

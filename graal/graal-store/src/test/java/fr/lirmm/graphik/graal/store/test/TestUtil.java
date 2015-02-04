@@ -8,8 +8,9 @@ import java.io.IOError;
 import java.io.IOException;
 
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.store.StoreException;
+import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
+import fr.lirmm.graphik.graal.store.rdbms.driver.DriverException;
 import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
 
 /**
@@ -38,7 +39,11 @@ public final class TestUtil {
 			// TODO treat this exception
 			e.printStackTrace();
 			throw new IOError(e);
-		} catch (StoreException e) {
+		} catch (DriverException e) {
+			// TODO treat this exception
+			e.printStackTrace();
+			throw new Error("Untreated exception", e);
+		} catch (AtomSetException e) {
 			// TODO treat this exception
 			e.printStackTrace();
 			throw new Error("Untreated exception", e);

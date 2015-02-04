@@ -5,7 +5,6 @@ import java.util.List;
 
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 
 public abstract class Util {
 
@@ -17,7 +16,7 @@ public abstract class Util {
 	 * @param id
 	 * @return
 	 */
-	public static ReadOnlyAtomSet reification(Atom a, SymbolGenerator freeVarGen) {
+	public static AtomSet reification(Atom a, SymbolGenerator freeVarGen) {
 		AtomSet atomSet = new LinkedListAtomSet();
 		
 		String predicatLabel = a.getPredicate().getLabel();

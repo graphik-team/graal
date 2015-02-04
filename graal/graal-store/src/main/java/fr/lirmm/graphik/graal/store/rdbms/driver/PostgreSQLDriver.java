@@ -12,8 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.io.dlp.DlpParser;
-import fr.lirmm.graphik.graal.store.StoreException;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 
 /**
@@ -36,23 +36,23 @@ public class PostgreSQLDriver extends AbstractRdbmsDriver {
 	 * @param dbName
 	 * @param user
 	 * @param password
-	 * @throws StoreException
+	 * @throws AtomSetException
 	 */
 	public PostgreSQLDriver(String host, String dbName, String user,
 			String password)
-			throws StoreException {
+			throws AtomSetException {
 		super(openConnection(host, dbName, user, password));
 	}
 
 	private static Connection openConnection(String host, String dbName, String user,
-			String password) throws StoreException {
+			String password) throws AtomSetException {
 		Connection connection;
 		try {
 			connection = DriverManager.getConnection("jdbc:postgresql://" + host
 					+ "/" + dbName + "?user=" + user + "&password=" + password);
 		} catch (SQLException e) {
 			LOGGER.error(e.getMessage(), e);
-			throw new StoreException(e.getMessage(), e);
+			throw new AtomSetException(e.getMessage(), e);
 		}
 		return connection;
 	}
@@ -94,18 +94,6 @@ public class PostgreSQLDriver extends AbstractRdbmsDriver {
 		query.append("); ");
 		
 		return query.toString();
-	}
-	
-	public static void main(String args[]) throws StoreException, SQLException {
-		RdbmsDriver driver = new PostgreSQLDriver("localhost", "test", "root", "root");
-		/*driver.getConnection().setAutoCommit(false);
-		driver.createStatement().executeUpdate("CREATE TABLE IF NOT EXISTS lulu (titi varchar(128));");
-		driver.getConnection().commit();*/
-		AtomSet atomset = new DefaultRdbmsStore(driver);
-		atomset.add(DlpParser.parseAtom("p(i,j)."));
-		for(Atom a : atomset) {
-			System.out.println("## -- " + a);
-		}
 	}
 
 }

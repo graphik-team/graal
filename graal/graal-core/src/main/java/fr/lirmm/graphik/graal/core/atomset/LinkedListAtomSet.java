@@ -2,6 +2,7 @@ package fr.lirmm.graphik.graal.core.atomset;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.TreeSet;
@@ -9,21 +10,22 @@ import java.util.TreeSet;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.AtomComparator;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
+import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.stream.IteratorAtomReader;
-import fr.lirmm.graphik.util.stream.ObjectReader;
 
 /**
  * 
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  */
-public class LinkedListAtomSet extends AbstractReadOnlyAtomSet implements AtomSet, Collection<Atom> {
+public class LinkedListAtomSet extends AbstractAtomSet implements
+		InMemoryAtomSet, Collection<Atom> {
 
-    private LinkedList<Atom> linkedList;
+	private LinkedList<Atom> linkedList;
 
-    // /////////////////////////////////////////////////////////////////////////
-    //	CONSTRUCTORS
-    // /////////////////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
 
 	public LinkedListAtomSet() {
 		this.linkedList = new LinkedList<Atom>();
@@ -52,10 +54,19 @@ public class LinkedListAtomSet extends AbstractReadOnlyAtomSet implements AtomSe
 			this.add(new DefaultAtom(atom));
 		}
 	}
-    
-    // /////////////////////////////////////////////////////////////////////////
-    //	PUBLIC METHODS
-    // /////////////////////////////////////////////////////////////////////////
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	@Override
+	public Iterable<Predicate> getAllPredicates() {
+		Set<Predicate> predicates = new TreeSet<Predicate>();
+		for (Atom a : this) {
+			predicates.add(a.getPredicate());
+		}
+		return predicates;
+	}
 
 	@Override
 	public boolean add(Atom atom) {
@@ -65,148 +76,115 @@ public class LinkedListAtomSet extends AbstractReadOnlyAtomSet implements AtomSe
 		return this.linkedList.add(atom);
 	}
 
-    @Override
-    public Set<Term> getTerms() {
-        Set<Term> terms = new TreeSet<Term>();
-        for (Atom a : this.linkedList) {
-            terms.addAll(a.getTerms());
-        }
-        return terms;
-    }
-    
-    @Override
-    public Set<Term> getTerms(Term.Type type) {
-        Set<Term> terms = new TreeSet<Term>();
-        for (Atom a : this.linkedList) {
-            terms.addAll(a.getTerms(type));
-        }
-        return terms;
-    }
+	@Override
+	public boolean addAll(Iterable<? extends Atom> atoms) {
+		boolean isChanged = false;
+		for (Atom a : atoms) {
+			isChanged = this.add(a) || isChanged;
+		}
+		return isChanged;
+	}
 
-    @Override
-    public void addAll(Iterable<Atom> atoms) {
-        for(Atom a : atoms)
-            this.add(a);
-    }
-
-    @Override
-    public void remove(Iterable<Atom> atoms) {
-        for(Atom a : atoms)
-            this.linkedList.remove(a);
-        
-    }
-
-    @Override
-    public boolean remove(Atom atom) {
-        return this.linkedList.remove(atom);
-    }
-
-    @Override
-    public boolean contains(Atom atom) {
-    	Comparator<Atom> cmp = new AtomComparator();
-    	for(Atom a : this.linkedList) {
-    		if(cmp.compare(atom, a) == 0)
-    			return true;
-    	}
-        return false;
-    }
-
-    /* (non-Javadoc)
-     * @see fr.lirmm.graphik.kb.IAtomSet#iterator()
-     */
-    @Override
-    public ObjectReader<Atom> iterator() {
-        return new IteratorAtomReader(this.linkedList.iterator());
-    }
-
-    @Override
-    public String toString() {        
-       return this.linkedList.toString();
-    }
-    
-    @Override
-    public boolean isEmpty() {
-        return this.linkedList.isEmpty();
-    }
-    
-    public int size() {
-        return this.linkedList.size();
-    }
-
-    /**
-     * @return
-     */
-    public Atom poll() {
-        return this.linkedList.poll();
-    }
-
-	/* (non-Javadoc)
-	 * @see java.util.Collection#addAll(java.util.Collection)
-	 */
 	@Override
 	public boolean addAll(Collection<? extends Atom> c) {
-		return this.linkedList.addAll(c);
+		return this.addAll((Iterable<? extends Atom>) c);
 	}
 
-	/* (non-Javadoc)
-	 * @see java.util.Collection#clear()
-	 */
+	@Override
+	public Set<Term> getTerms() {
+		Set<Term> terms = new TreeSet<Term>();
+		for (Atom a : this.linkedList) {
+			terms.addAll(a.getTerms());
+		}
+		return terms;
+	}
+
+	@Override
+	public Set<Term> getTerms(Term.Type type) {
+		Set<Term> terms = new TreeSet<Term>();
+		for (Atom a : this.linkedList) {
+			terms.addAll(a.getTerms(type));
+		}
+		return terms;
+	}
+
+	@Override
+	public boolean remove(Atom atom) {
+		return this.linkedList.remove(atom);
+	}
+
+	@Override
+	public boolean removeAll(Iterable<? extends Atom> atoms) {
+		boolean isChanged = false;
+		for (Atom a : atoms) {
+			isChanged = this.linkedList.remove(a) || isChanged;
+		}
+		return isChanged;
+	}
+
+	@Override
+	public Iterator<Atom> iterator() {
+		return new IteratorAtomReader(this.linkedList.iterator());
+	}
+
+	@Override
+	public String toString() {
+		return this.linkedList.toString();
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return this.linkedList.isEmpty();
+	}
+
+	@Override
+	public int size() {
+		return this.linkedList.size();
+	}
+
 	@Override
 	public void clear() {
-		this.linkedList = new LinkedList<Atom>();
+		this.linkedList.clear();
 	}
 
-	/* (non-Javadoc)
-	 * @see java.util.Collection#contains(java.lang.Object)
-	 */
 	@Override
 	public boolean contains(Object o) {
-		return this.linkedList.contains(o);
+		if (o instanceof Atom)
+			this.linkedList.contains((Atom) o);
+
+		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.util.Collection#containsAll(java.util.Collection)
-	 */
+	@Override
+	public boolean contains(Atom atom) {
+		return this.linkedList.contains(atom);
+	}
+
 	@Override
 	public boolean containsAll(Collection<?> c) {
 		return this.linkedList.containsAll(c);
 	}
 
-	/* (non-Javadoc)
-	 * @see java.util.Collection#remove(java.lang.Object)
-	 */
 	@Override
 	public boolean remove(Object o) {
 		return this.linkedList.remove(o);
 	}
 
-	/* (non-Javadoc)
-	 * @see java.util.Collection#removeAll(java.util.Collection)
-	 */
 	@Override
 	public boolean removeAll(Collection<?> c) {
 		return this.linkedList.removeAll(c);
 	}
 
-	/* (non-Javadoc)
-	 * @see java.util.Collection#retainAll(java.util.Collection)
-	 */
 	@Override
 	public boolean retainAll(Collection<?> c) {
 		return this.linkedList.retainAll(c);
 	}
 
-	/* (non-Javadoc)
-	 * @see java.util.Collection#toArray()
-	 */
 	@Override
 	public Object[] toArray() {
 		return this.linkedList.toArray();
 	}
 
-	/* (non-Javadoc)
-	 * @see java.util.Collection#toArray(T[])
-	 */
 	@Override
 	public <T> T[] toArray(T[] t) {
 		return this.linkedList.toArray(t);

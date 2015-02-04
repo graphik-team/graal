@@ -11,4 +11,8 @@ public class AtomSetException extends Exception {
 	public AtomSetException(String message) {
 		super(message);
 	}
+	
+	public AtomSetException(Throwable e) {
+		super(e);
+	}
 }

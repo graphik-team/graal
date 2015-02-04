@@ -1,9 +1,10 @@
 package fr.lirmm.graphik.graal.store.rdbms;
 
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.core.SymbolGenerator;
 import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.graal.store.Store;
-import fr.lirmm.graphik.graal.store.StoreException;
+import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
 
 /**
@@ -11,7 +12,7 @@ import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public interface RdbmsStore extends Store {
+public interface RdbmsStore extends AtomSet {
 
     /**
      * @return
@@ -24,13 +25,15 @@ public interface RdbmsStore extends Store {
 	 * @throws StoreException 
 	 * @throws Exception
 	 */
-	String transformToSQL(ConjunctiveQuery cquery) throws StoreException;
+	String transformToSQL(ConjunctiveQuery cquery) throws AtomSetException;
 
 	/**
 	 * @param label
 	 * @return
 	 * @throws StoreException
 	 */
-	Term getTerm(String label) throws StoreException;
+	Term getTerm(String label) throws AtomSetException;
+	
+	public SymbolGenerator getFreeVarGen();
     
 }

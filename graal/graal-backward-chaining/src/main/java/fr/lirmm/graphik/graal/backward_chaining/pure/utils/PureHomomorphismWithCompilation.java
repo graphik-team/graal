@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
 import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.homomorphism.PureHomomorphism;
 
@@ -42,7 +42,7 @@ public class PureHomomorphismWithCompilation extends PureHomomorphism {
 	 * return true iff exist an homomorphism from the query to the fact else
 	 * return false
 	 */
-	public boolean exist(ReadOnlyAtomSet source, ReadOnlyAtomSet target, RulesCompilation compilation)
+	public boolean exist(AtomSet source, AtomSet target, RulesCompilation compilation)
 			throws HomomorphismException {
 
 		Homomorphism homomorphism = new Homomorphism();

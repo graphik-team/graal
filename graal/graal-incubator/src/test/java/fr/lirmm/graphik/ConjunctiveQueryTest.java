@@ -16,7 +16,6 @@ import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
-import fr.lirmm.graphik.graal.io.basic.BasicParser;
 import fr.lirmm.graphik.graal.io.dlp.DlpParser;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 
@@ -63,7 +62,7 @@ public class ConjunctiveQueryTest {
 	@Theory
 	public void emptyQueryTest(AtomSet store) {
 		try {
-			store.addAll(BasicParser.parse("p(a,b).p(b,c).q(a,c,d)"));
+			store.addAll(DlpParser.parseAtomSet("p(a,b), p(b,c), q(a,c,d)."));
 
 			AtomSet queryAtomSet = new LinkedListAtomSet();
 			DefaultConjunctiveQuery query = new DefaultConjunctiveQuery(queryAtomSet);
@@ -90,7 +89,7 @@ public class ConjunctiveQueryTest {
 	@Theory
 	public void noAnswerQueryTest(AtomSet store) {
 		try {
-			store.addAll(BasicParser.parse("p(a,b).p(b,c).q(a,c,d)"));
+			store.addAll(DlpParser.parseAtomSet("p(a,b),p(b,c),q(a,c,d)."));
 
 			DefaultConjunctiveQuery query = DlpParser.parseQuery("?(X) :- p(c,X).");
 
@@ -199,7 +198,7 @@ public class ConjunctiveQueryTest {
 	
 	public void variableFusionTest(AtomSet store) {
 		try {
-			store.addAll(BasicParser.parse("p(a,b).q(b,b)"));
+			store.addAll(DlpParser.parseAtomSet("p(a,b),q(b,b)."));
 
 			DefaultConjunctiveQuery query = DlpParser.parseQuery("?(X,Y) :- p(a,X),q(X,Y),q(Y,X).");
 
@@ -232,7 +231,7 @@ public class ConjunctiveQueryTest {
 	@Theory
 	public void tttTrueQueryTest(AtomSet store) {
 		try {
-			store.addAll(BasicParser.parse("p(a,b).q(a,c,d).q(d,c,a)"));
+			store.addAll(DlpParser.parseAtomSet("p(a,b),q(a,c,d),q(d,c,a)."));
 
 			DefaultConjunctiveQuery query = DlpParser.parseQuery("?(X,Y) :- q(a,c,d),p(X,Y).");
 
@@ -263,7 +262,7 @@ public class ConjunctiveQueryTest {
 	@Theory
 	public void tttFalseQueryTest(AtomSet store) {
 		try {
-			store.addAll(BasicParser.parse("p(a,b).p(b,c).q(a,c,d).q(d,c,a)"));
+			store.addAll(DlpParser.parseAtomSet("p(a,b),p(b,c),q(a,c,d),q(d,c,a)."));
 
 			DefaultConjunctiveQuery query = DlpParser.parseQuery("?(X,Y) :- q(a,f,d),p(X,Y).");
 
@@ -281,7 +280,7 @@ public class ConjunctiveQueryTest {
 	@Theory
 	public void responseVariablesTest(AtomSet store) {
 		try {
-			store.addAll(BasicParser.parse("p(a,b)"));
+			store.addAll(DlpParser.parseAtomSet("p(a,b)."));
 
 			DefaultConjunctiveQuery query = DlpParser.parseQuery("?(X) :- p(X,Y).");
 
@@ -304,7 +303,7 @@ public class ConjunctiveQueryTest {
 	@Theory
 	public void nonexistingPredicateQuery(AtomSet store) {
 		try {
-			store.addAll(BasicParser.parse("p(a,b)"));
+			store.addAll(DlpParser.parseAtomSet("p(a,b)."));
 
 			DefaultConjunctiveQuery query = DlpParser.parseQuery("?(X,Y) :- q(X,Y).");
 

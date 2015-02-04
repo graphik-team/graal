@@ -18,7 +18,6 @@ import fr.lirmm.graphik.graal.core.SymbolGenerator;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
-import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
@@ -105,7 +104,7 @@ public class ChaseWithGRD extends AbstractChase {
 			}
 
 			// the atom set producted by the rule application
-			ReadOnlyAtomSet deductedAtomSet = substitution.getSubstitut(rule.getHead());
+			AtomSet deductedAtomSet = substitution.getSubstitut(rule.getHead());
 
 			if(stopCondition.canIAdd(deductedAtomSet, fixedTerm, this.atomSet)) {
 				this.atomSet.addAll(deductedAtomSet);

@@ -7,10 +7,10 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.core.Query;
-import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.homomorphism.checker.DefaultUnionConjunctiveQueriesChecker;
-import fr.lirmm.graphik.graal.homomorphism.checker.RecursiveBacktrackChecker;
 import fr.lirmm.graphik.graal.homomorphism.checker.HomomorphismChecker;
+import fr.lirmm.graphik.graal.homomorphism.checker.RecursiveBacktrackChecker;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -54,8 +54,8 @@ public final class DefaultHomomorphismFactory implements HomomorphismFactory {
 	}
  	
     @Override
-    public Homomorphism<? extends Query, ? extends ReadOnlyAtomSet> getSolver(Query query, ReadOnlyAtomSet atomset) {
-    	Homomorphism<? extends Query, ? extends ReadOnlyAtomSet> solver = null;
+    public Homomorphism<? extends Query, ? extends AtomSet> getSolver(Query query, AtomSet atomset) {
+    	Homomorphism<? extends Query, ? extends AtomSet> solver = null;
     	for(HomomorphismChecker e : elements) {
     		if(e.check(query, atomset)) {
     			solver = e.getSolver();

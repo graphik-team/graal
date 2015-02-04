@@ -5,11 +5,11 @@ package fr.lirmm.graphik.graal.homomorphism;
 
 import java.util.Iterator;
 
-import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.Substitution;
-import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
+import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
+import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 
 /**
@@ -18,7 +18,7 @@ import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
  */
 public class UnionConjunctiveQueriesSubstitutionReader implements SubstitutionReader {
 
-    private ReadOnlyAtomSet atomSet;
+    private AtomSet atomSet;
     private Iterator<ConjunctiveQuery> cqueryIterator;
     private SubstitutionReader tmpReader;
     private boolean hasNextCallDone = false;
@@ -28,7 +28,7 @@ public class UnionConjunctiveQueriesSubstitutionReader implements SubstitutionRe
      * @param atomSet
      */
     public UnionConjunctiveQueriesSubstitutionReader(UnionConjunctiveQueries queries,
-            ReadOnlyAtomSet atomSet) {
+            AtomSet atomSet) {
         this.cqueryIterator = queries.iterator();
         this.atomSet = atomSet;
         this.tmpReader = null;
@@ -69,24 +69,15 @@ public class UnionConjunctiveQueriesSubstitutionReader implements SubstitutionRe
     }
 
 
-    /* (non-Javadoc)
-     * @see fr.lirmm.graphik.kb.stream.ISubstitutionReader#iterator()
-     */
     @Override
     public Iterator<Substitution> iterator() {
         return this;
     }
 
-    /* (non-Javadoc)
-     * @see fr.lirmm.graphik.kb.stream.ISubstitutionReader#close()
-     */
     @Override
     public void close() {
     }
 
-    /* (non-Javadoc)
-     * @see java.util.Iterator#remove()
-     */
     @Override
     public void remove() {
         throw new UnsupportedOperationException();

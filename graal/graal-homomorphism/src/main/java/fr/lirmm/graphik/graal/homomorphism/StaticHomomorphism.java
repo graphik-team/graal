@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.core.Query;
-import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 
 /**
@@ -34,7 +34,7 @@ public class StaticHomomorphism {
 	 * @throws HomomorphismException
 	 */
 	public static SubstitutionReader executeQuery(Query query,
-			ReadOnlyAtomSet atomSet) throws HomomorphismFactoryException,
+			AtomSet atomSet) throws HomomorphismFactoryException,
 			HomomorphismException {
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Query : " + query);

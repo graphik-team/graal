@@ -29,8 +29,8 @@ import fr.lirmm.graphik.graal.io.dlp.DlpWriter;
 import fr.lirmm.graphik.graal.io.grd.GRDParser;
 import fr.lirmm.graphik.graal.io.oxford.OxfordQueryParser;
 import fr.lirmm.graphik.graal.parser.ParseException;
-import fr.lirmm.graphik.graal.store.StoreException;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
+import fr.lirmm.graphik.graal.store.rdbms.driver.DriverException;
 import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;
 import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
 import fr.lirmm.graphik.util.stream.FilterReader;
@@ -99,7 +99,7 @@ public class MelanieQueryTest {
 		atomset.addAll(new FilterReader<Atom, Object>(parser, new AtomFilter()));
 	}
 	
-	public static AtomSet getSqliteAtomSet(boolean deleteIfExist, String base ) throws IOException, StoreException {
+	public static AtomSet getSqliteAtomSet(boolean deleteIfExist, String base ) throws IOException, AtomSetException, DriverException {
 		File f = new File(base);
 		if(deleteIfExist) {
 			f.delete();
@@ -108,7 +108,7 @@ public class MelanieQueryTest {
 		return  new DefaultRdbmsStore(new SqliteDriver(f));
 	}
 	
-	public static AtomSet getMysqlAtomSet(boolean deleteIfExist, String base) throws IOException, StoreException {
+	public static AtomSet getMysqlAtomSet(boolean deleteIfExist, String base) throws IOException, AtomSetException {
 		
 		return  new DefaultRdbmsStore(new MysqlDriver("localhost", base, "root", "root"));
 	}

@@ -11,11 +11,10 @@ import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 
 
-public class ComplexHomomorphism<Q extends ConjunctiveQuery, F extends ReadOnlyAtomSet> implements Homomorphism<Q,F> {
+public class ComplexHomomorphism<Q extends ConjunctiveQuery, F extends AtomSet> implements Homomorphism<Q,F> {
 
 	private Homomorphism<ConjunctiveQuery,F> rawSolver;
 	private LinkedList<Atom> builtInAtoms;

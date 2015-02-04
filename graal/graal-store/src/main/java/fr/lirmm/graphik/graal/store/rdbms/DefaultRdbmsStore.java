@@ -24,9 +24,8 @@ import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.SymbolGenerator;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.Term.Type;
+import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
-import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
-import fr.lirmm.graphik.graal.store.StoreException;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.stream.ObjectReader;
@@ -100,9 +99,9 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	 * 
 	 * @param driver
 	 * @throws SQLException
-	 * @throws StoreException
+	 * @throws AtomSetException
 	 */
-	public DefaultRdbmsStore(RdbmsDriver driver) throws StoreException {
+	public DefaultRdbmsStore(RdbmsDriver driver) throws AtomSetException {
 		super(driver);
 
 		try {
@@ -119,13 +118,13 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			this.getTermStatement = this.getConnection().prepareStatement(
 					GET_TERM_QUERY);
 		} catch (SQLException e) {
-			throw new StoreException(e.getMessage(), e);
+			throw new AtomSetException(e.getMessage(), e);
 		}
 
 	}
 
 	@Override
-	protected boolean testDatabaseSchema() throws StoreException {
+	protected boolean testDatabaseSchema() throws AtomSetException {
 		Statement statement = null;
 		try {
 			statement = this.createStatement();
@@ -133,15 +132,15 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			rs.close();
 		} catch (SQLException e) {
 			return false;
-		} catch (StoreException e) {
-			throw new StoreException(e.getMessage(), e);
+		} catch (AtomSetException e) {
+			throw new AtomSetException(e.getMessage(), e);
 		} finally {
 			if(statement != null) {
 				try {
 					statement.close();
 					this.getConnection().rollback();
 				} catch (SQLException e) {
-					throw new StoreException(e);
+					throw new AtomSetException(e);
 				}
 			}
 		}
@@ -150,7 +149,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	}
 
 	@Override
-	protected void createDatabaseSchema() throws StoreException {
+	protected void createDatabaseSchema() throws AtomSetException {
 		final String createPredicateTableQuery = "CREATE TABLE IF NOT EXISTS "
 												 + PREDICATE_TABLE_NAME
 												 + "(predicate_label varchar("
@@ -214,13 +213,13 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 				LOGGER.debug(createCounterTableQuery);
 			statement.executeUpdate(createCounterTableQuery);
 		} catch (SQLException e) {
-			throw new StoreException(e.getMessage(), e);
+			throw new AtomSetException(e.getMessage(), e);
 		} finally {
 			if (statement != null) {
 				try {
 					statement.close();
 				} catch (SQLException e) {
-					throw new StoreException(e);
+					throw new AtomSetException(e);
 				}
 			}
 		}
@@ -240,13 +239,13 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			pstat.executeBatch();
 			this.getConnection().commit();
 		} catch (SQLException e) {
-			throw new StoreException(e.getMessage(), e);
+			throw new AtomSetException(e.getMessage(), e);
 		} finally {
 			if (pstat != null) {
 				try {
 					pstat.close();
 				} catch (SQLException e) {
-					throw new StoreException(e);
+					throw new AtomSetException(e);
 				}
 			}
 		}
@@ -287,7 +286,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	 * .IAtom)
 	 */
 	@Override
-	public boolean contains(Atom atom) throws StoreException {
+	public boolean contains(Atom atom) throws AtomSetException {
 		boolean res = false;
 		Term term;
 		Statement statement = null;
@@ -334,10 +333,10 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 					try {
 						statement.close();
 					} catch (SQLException sqlEx) {
-						throw new StoreException(sqlEx);
+						throw new AtomSetException(sqlEx);
 					}
 				}
-				throw new StoreException(e);
+				throw new AtomSetException(e);
 			}
 		}
 
@@ -350,7 +349,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	 * @see fr.lirmm.graphik.alaska.store.IStore#getTerms()
 	 */
 	@Override
-	public Set<Term> getTerms() throws StoreException {
+	public Set<Term> getTerms() throws AtomSetException {
 		Statement statement = this.createStatement();
 		ResultSet results = null;
 		Set<Term> terms;
@@ -366,13 +365,13 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			
 			results.close();
 		} catch (SQLException e) {
-			throw new StoreException(e);
+			throw new AtomSetException(e);
 		} finally {
 			if(statement != null) {
 				try {
 					statement.close();
 				} catch (SQLException e) {
-					throw new StoreException(e);
+					throw new AtomSetException(e);
 				}
 			}
 		}
@@ -400,10 +399,10 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	 * 
 	 * @param label
 	 * @return
-	 * @throws StoreException
+	 * @throws AtomSetException
 	 */
 	@Override
-	public Term getTerm(String label) throws StoreException {
+	public Term getTerm(String label) throws AtomSetException {
 		ResultSet results;
 		Term term = null;
 
@@ -416,7 +415,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			}
 			results.close();
 		} catch (SQLException e) {
-			throw new StoreException(e);
+			throw new AtomSetException(e);
 		}
 		return term;
 
@@ -426,9 +425,9 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	 * Transforms the fact into a SQL statement.
 	 */
 	@Override
-	public String transformToSQL(ConjunctiveQuery cquery) throws StoreException {
+	public String transformToSQL(ConjunctiveQuery cquery) throws AtomSetException {
 
-		ReadOnlyAtomSet atomSet = cquery.getAtomSet();
+		AtomSet atomSet = cquery.getAtomSet();
 
 		StringBuilder fields = new StringBuilder();
 		StringBuilder tables = new StringBuilder();
@@ -561,7 +560,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	 * @throws SQLException
 	 */
 	protected Statement add(Statement statement, Atom atom)
-														   throws StoreException {
+														   throws AtomSetException {
 		try {
 			for(Term t : atom.getTerms()) {
 				this.add(statement, t);
@@ -574,7 +573,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			}
 			statement.addBatch(query);
 		} catch (SQLException e) {
-			throw new StoreException(e.getMessage(), e);
+			throw new AtomSetException(e.getMessage(), e);
 		}
 		return statement;
 	}
@@ -584,7 +583,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	 * @param atom
 	 * @return
 	 */
-	protected Statement remove(Statement statement, Atom atom) throws StoreException {
+	protected Statement remove(Statement statement, Atom atom) throws AtomSetException {
 		try {
 			String tableName = this.predicateTableExist(atom.getPredicate());
 			if (tableName == null) 
@@ -608,7 +607,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			}
 			statement.addBatch(query.toString());
 		} catch (SQLException e) {
-			throw new StoreException(e.getMessage(), e);
+			throw new AtomSetException(e.getMessage(), e);
 		}
 		return statement;
 	}
@@ -625,7 +624,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	}
 
 	private String getPredicateTable(Predicate predicate) throws SQLException,
-														 StoreException {
+														 AtomSetException {
 		String tableName = this.predicateTableExist(predicate);
 		if (tableName == null)
 			tableName = this.createPredicateTable(predicate);
@@ -641,7 +640,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	 */
 	private String createPredicateTable(Predicate predicate)
 															throws SQLException,
-															StoreException {
+															AtomSetException {
 		String tableName = "pred" + this.getFreePredicateId();
 		if (predicate.getArity() >= 1) {
 			Statement stat = this.createStatement();
@@ -651,12 +650,12 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 				try {
 					stat.close();
 				} catch (SQLException e) {
-					throw new StoreException(e);
+					throw new AtomSetException(e);
 				}
 			}
 			insertPredicate(tableName, predicate);
 		} else {
-			throw new StoreException("Unsupported arity 0"); // TODO Why ?!
+			throw new AtomSetException("Unsupported arity 0"); // TODO Why ?!
 		}
 		return tableName;
 	}
@@ -707,7 +706,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	 * @throws SQLException
 	 */
 	private String predicateTableExist(Predicate predicate)
-														   throws StoreException {
+														   throws AtomSetException {
 		String predicateTableName = null;
 
 		try {
@@ -720,7 +719,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			
 			results.close();
 		} catch (SQLException e) {
-			throw new StoreException(e);
+			throw new AtomSetException(e);
 		}
 
 		return predicateTableName;
@@ -748,7 +747,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	}
 
 	@Override
-	public Iterable<Predicate> getAllPredicates() throws StoreException {
+	public Iterable<Predicate> getAllPredicates() throws AtomSetException {
 		return new DefaultRdbmsPredicateReader(this.getDriver());
 	}
 	

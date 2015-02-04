@@ -14,15 +14,16 @@ import fr.lirmm.graphik.graal.core.DefaultFreeVarGen;
 import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.UnionConjunctiveQueriesHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlpParser;
-import fr.lirmm.graphik.graal.store.StoreException;
 import fr.lirmm.graphik.graal.store.homomorphism.SqlHomomorphism;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
+import fr.lirmm.graphik.graal.store.rdbms.driver.DriverException;
 import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
 import fr.lirmm.graphik.graal.transformation.ToTripleTransformation;
 import fr.lirmm.graphik.graal.transformation.TransformAtomSet;
@@ -35,8 +36,8 @@ import fr.lirmm.graphik.graal.transformation.TransformatorSolver;
 public class SolverFactoryTest {
 
 	@Test
-	public void testSqlSolver() throws IOException, StoreException,
-			HomomorphismFactoryException {
+	public void testSqlSolver() throws IOException, AtomSetException,
+			HomomorphismFactoryException, DriverException {
 
 		File file = new File(TestUtil.DB_TEST);
 		file.delete();
@@ -50,8 +51,8 @@ public class SolverFactoryTest {
 	}
 
 	@Test
-	public void testUnionConjunctiveQuery() throws IOException, StoreException,
-			HomomorphismFactoryException {
+	public void testUnionConjunctiveQuery() throws IOException, AtomSetException,
+			HomomorphismFactoryException, DriverException {
 
 		File file = new File(TestUtil.DB_TEST);
 		file.delete();
@@ -69,7 +70,7 @@ public class SolverFactoryTest {
 	}
 	
 	@Test
-	public void testTransformAtomSet() throws IOException, StoreException,
+	public void testTransformAtomSet() throws IOException, AtomSetException,
 			HomomorphismFactoryException {
 
 		File file = new File(TestUtil.DB_TEST);

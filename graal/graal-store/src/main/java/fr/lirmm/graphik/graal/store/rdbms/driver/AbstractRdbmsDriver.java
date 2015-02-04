@@ -7,7 +7,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import fr.lirmm.graphik.graal.store.StoreException;
+import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -25,11 +25,11 @@ public abstract class AbstractRdbmsDriver implements RdbmsDriver {
 		return this.dbConnection;
 	}
 	
-	public Statement createStatement() throws StoreException {
+	public Statement createStatement() throws DriverException {
 		try {
 			return this.getConnection().createStatement();
 		} catch (SQLException e) {
-			throw new StoreException(e.getMessage(), e);
+			throw new DriverException(e.getMessage(), e);
 		}		
 	}
 	

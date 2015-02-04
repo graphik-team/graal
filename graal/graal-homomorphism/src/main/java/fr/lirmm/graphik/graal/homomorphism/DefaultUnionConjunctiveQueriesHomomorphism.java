@@ -4,14 +4,14 @@
 package fr.lirmm.graphik.graal.homomorphism;
 
 import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
-import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public final class DefaultUnionConjunctiveQueriesHomomorphism implements UnionConjunctiveQueriesHomomorphism<ReadOnlyAtomSet> {
+public final class DefaultUnionConjunctiveQueriesHomomorphism implements UnionConjunctiveQueriesHomomorphism<AtomSet> {
 
 	private static DefaultUnionConjunctiveQueriesHomomorphism instance;
     
@@ -31,7 +31,7 @@ public final class DefaultUnionConjunctiveQueriesHomomorphism implements UnionCo
 
 	@Override
 	public SubstitutionReader execute(UnionConjunctiveQueries queries,
-			ReadOnlyAtomSet atomset) throws HomomorphismException {
+			AtomSet atomset) throws HomomorphismException {
         return new UnionConjunctiveQueriesSubstitutionReader(queries, atomset);
 	}
 

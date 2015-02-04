@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.store.StoreException;
+import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -29,28 +29,28 @@ public class MysqlDriver extends AbstractRdbmsDriver {
 	 * @param dbName
 	 * @param user
 	 * @param password
-	 * @throws StoreException
+	 * @throws AtomSetException
 	 */
 	public MysqlDriver(String host, String dbName, String user,
 			String password)
-			throws StoreException {
+			throws AtomSetException {
 		super(openConnection(host, dbName, user, password));
 	}
 
 	private static Connection openConnection(String host, String dbName, String user,
-			String password) throws StoreException {
+			String password) throws AtomSetException {
 		Connection connection;
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 		} catch (InstantiationException e) {
 			LOGGER.error(e.getMessage(), e);
-			throw new StoreException(e.getMessage(), e);
+			throw new AtomSetException(e.getMessage(), e);
 		} catch (IllegalAccessException e) {
 			LOGGER.error(e.getMessage(), e);
-			throw new StoreException(e.getMessage(), e);
+			throw new AtomSetException(e.getMessage(), e);
 		} catch (ClassNotFoundException e) {
 			LOGGER.error(e.getMessage(), e);
-			throw new StoreException(e.getMessage(), e);
+			throw new AtomSetException(e.getMessage(), e);
 		}
 
 		try {
@@ -58,7 +58,7 @@ public class MysqlDriver extends AbstractRdbmsDriver {
 					+ "/" + dbName + "?user=" + user + "&password=" + password);
 		} catch (SQLException e) {
 			LOGGER.error(e.getMessage(), e);
-			throw new StoreException(e.getMessage(), e);
+			throw new AtomSetException(e.getMessage(), e);
 		}
 		return connection;
 	}

@@ -12,6 +12,7 @@ import com.beust.jcommander.Parameter;
 
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseWithGRDAndUnfiers;
@@ -19,7 +20,6 @@ import fr.lirmm.graphik.graal.grd.GraphOfRuleDependenciesWithUnifiers;
 import fr.lirmm.graphik.graal.io.dlp.DlpParser;
 import fr.lirmm.graphik.graal.io.grd.GRDParser;
 import fr.lirmm.graphik.graal.parser.ParseException;
-import fr.lirmm.graphik.graal.store.StoreException;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
@@ -58,7 +58,7 @@ public class ForwardChaining {
 
 	
 	
-	public static void main(String... args) throws StoreException, FileNotFoundException, ChaseException, ParseException {
+	public static void main(String... args) throws AtomSetException, FileNotFoundException, ChaseException, ParseException {
 		ForwardChaining options = new ForwardChaining();
 		JCommander commander = new JCommander(options, args);
 

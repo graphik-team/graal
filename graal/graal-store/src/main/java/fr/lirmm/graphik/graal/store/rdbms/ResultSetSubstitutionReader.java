@@ -15,8 +15,8 @@ import org.slf4j.LoggerFactory;
 import fr.lirmm.graphik.graal.core.HashMapSubstitution;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.Term;
+import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
-import fr.lirmm.graphik.graal.store.StoreException;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
 
 /**
@@ -46,7 +46,7 @@ public class ResultSetSubstitutionReader implements SubstitutionReader {
      * @throws SQLException
      * @throws StoreException 
      */
-    public ResultSetSubstitutionReader(RdbmsStore store, String sqlQuery) throws SQLException, StoreException {
+    public ResultSetSubstitutionReader(RdbmsStore store, String sqlQuery) throws SQLException, AtomSetException {
     	this.store = store;
 		this.statement = store.getDriver().getConnection().createStatement();
         this.results = statement.executeQuery(sqlQuery);
@@ -63,7 +63,7 @@ public class ResultSetSubstitutionReader implements SubstitutionReader {
      * @throws StoreException
      */
 	public ResultSetSubstitutionReader(RdbmsStore store, String sqlQuery,
-			boolean isBooleanQuery) throws SQLException, StoreException {
+			boolean isBooleanQuery) throws SQLException, AtomSetException {
 		this.store = store;
 		this.statement = store.getDriver().getConnection().createStatement();
         this.results = statement.executeQuery(sqlQuery);

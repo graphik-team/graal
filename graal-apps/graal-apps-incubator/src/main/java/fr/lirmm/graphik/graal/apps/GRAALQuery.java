@@ -13,13 +13,13 @@ import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.io.dlp.DlpParser;
 import fr.lirmm.graphik.graal.parser.ParseException;
-import fr.lirmm.graphik.graal.store.StoreException;
 import fr.lirmm.graphik.graal.store.homomorphism.SqlUCQHomomorphism;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;
@@ -58,7 +58,7 @@ public class GRAALQuery {
 
 	
 	
-	public static void main(String[] args) throws StoreException, FileNotFoundException, ChaseException, ParseException, HomomorphismException {
+	public static void main(String[] args) throws AtomSetException, FileNotFoundException, ChaseException, ParseException, HomomorphismException {
 		GRAALQuery options = new GRAALQuery();
 		JCommander commander = new JCommander(options, args);
 

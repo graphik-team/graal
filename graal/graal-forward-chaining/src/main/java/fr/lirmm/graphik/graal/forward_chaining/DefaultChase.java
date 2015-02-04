@@ -13,7 +13,6 @@ import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.SymbolGenerator;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 
@@ -79,7 +78,7 @@ public class DefaultChase extends AbstractChase {
 						}
 
 						// the atom set producted by the rule application
-						ReadOnlyAtomSet deductedAtomSet = s.getSubstitut(rule.getHead());
+						AtomSet deductedAtomSet = s.getSubstitut(rule.getHead());
 						
 						if(stopCondition.canIAdd(deductedAtomSet, fixedTerm, this.atomSet)) {
 							this.atomSet.addAll(deductedAtomSet);

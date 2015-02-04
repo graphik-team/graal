@@ -4,7 +4,7 @@
 package fr.lirmm.graphik.graal.transformation;
 
 import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.util.stream.ObjectReader;
 
 /**
@@ -19,7 +19,7 @@ public interface AtomTransformator {
      * @param atom
      * @return
      */
-    ReadOnlyAtomSet transform(Atom atom);
+    AtomSet transform(Atom atom);
     
     /**
      * Transform the specified atom stream
@@ -27,6 +27,6 @@ public interface AtomTransformator {
      * @param atoms
      * @return 
      */
-    ObjectReader<Atom> transform(Iterable<Atom> atoms);
+    Iterable<Atom> transform(Iterable<? extends Atom> atoms);
 
 }
