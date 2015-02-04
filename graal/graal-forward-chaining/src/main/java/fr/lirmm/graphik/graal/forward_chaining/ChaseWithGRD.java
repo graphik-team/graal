@@ -105,8 +105,9 @@ public class ChaseWithGRD extends AbstractChase {
 
 			// the atom set producted by the rule application
 			AtomSet deductedAtomSet = substitution.getSubstitut(rule.getHead());
+			AtomSet bodyAtomSet = substitution.getSubstitut(rule.getBody());
 
-			if(stopCondition.canIAdd(deductedAtomSet, fixedTerm, this.atomSet)) {
+			if(stopCondition.canIAdd(deductedAtomSet, fixedTerm, bodyAtomSet, this.atomSet)) {
 				this.atomSet.addAll(deductedAtomSet);
 				for(Rule triggeredRule : this.grd.getOutEdges(rule)) {
 					if(LOGGER.isDebugEnabled()) {

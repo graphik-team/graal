@@ -25,7 +25,7 @@ public class RestrictedChaseStopCondition implements ChaseStopCondition {
 			.getLogger(RestrictedChaseStopCondition.class);
 	
 	@Override
-	public boolean canIAdd(AtomSet atomSet, Set<Term> fixedTerms, AtomSet base) throws HomomorphismFactoryException, HomomorphismException {
+	public boolean canIAdd(AtomSet atomSet, Set<Term> fixedTerms, AtomSet from, AtomSet base) throws HomomorphismFactoryException, HomomorphismException {
 		
 		Query query = new ConjunctiveQueryWithFixedVariables(atomSet, fixedTerms);
 		if(LOGGER.isDebugEnabled()) {

@@ -55,9 +55,6 @@ public class ChaseWithGRDAndUnfiers extends AbstractChase {
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	/* (non-Javadoc)
-	 * @see fr.lirmm.graphik.alaska.saturator.Saturator#next()
-	 */
 	@Override
 	public void next() throws ChaseException {
 		Rule rule, unifiedRule;
@@ -88,8 +85,9 @@ public class ChaseWithGRDAndUnfiers extends AbstractChase {
 
 					// the atom set producted by the rule application
 					AtomSet deductedAtomSet = substitution.getSubstitut(unifiedRule.getHead());
+					AtomSet bodyAtomSet = substitution.getSubstitut(unifiedRule.getBody());
 	
-					if(stopCondition.canIAdd(deductedAtomSet, fixedTerm, this.atomSet)) {
+					if(stopCondition.canIAdd(deductedAtomSet, fixedTerm, bodyAtomSet, this.atomSet)) {
 						this.atomSet.addAll(deductedAtomSet);
 						for(Rule triggeredRule : this.grd.getOutEdges(rule)) {
 							for(Substitution u : this.grd.getUnifiers(rule, triggeredRule)) {
