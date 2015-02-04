@@ -14,7 +14,7 @@ import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public interface ChaseStopCondition {
+public interface ChaseHaltingCondition {
 
 
 	/**

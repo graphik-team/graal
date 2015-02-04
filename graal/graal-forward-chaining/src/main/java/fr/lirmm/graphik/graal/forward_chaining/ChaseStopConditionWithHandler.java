@@ -7,14 +7,14 @@ import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
 
-public class ChaseStopConditionWithHandler implements ChaseStopCondition {
+public class ChaseStopConditionWithHandler implements ChaseHaltingCondition {
 
-	public ChaseStopConditionWithHandler(ChaseStopCondition c, RuleApplicationHandler h) {
+	public ChaseStopConditionWithHandler(ChaseHaltingCondition c, RuleApplicationHandler h) {
 		this.realHaltingCondition = c;
 		this.handler = h;
 	}
 
-	public ChaseStopConditionWithHandler(ChaseStopCondition c) {
+	public ChaseStopConditionWithHandler(ChaseHaltingCondition c) {
 		this.realHaltingCondition = c;
 		this.handler = RuleApplicationHandler.DEFAULT;
 	}
@@ -39,11 +39,11 @@ public class ChaseStopConditionWithHandler implements ChaseStopCondition {
 	public void setHandler(RuleApplicationHandler h) {
 		this.handler = h;
 	}
-	public void setRealChaseHaltingCondition(ChaseStopCondition c) {
+	public void setRealChaseHaltingCondition(ChaseHaltingCondition c) {
 		this.realHaltingCondition = c;
 	}
 
-	private ChaseStopCondition      realHaltingCondition;
+	private ChaseHaltingCondition      realHaltingCondition;
 	private RuleApplicationHandler  handler;
 
 };

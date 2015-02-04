@@ -5,23 +5,23 @@ package fr.lirmm.graphik.graal.forward_chaining;
 
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.Set;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
+import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultFreeVarGen;
 import fr.lirmm.graphik.graal.core.HashMapSubstitution;
-import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.SymbolGenerator;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependenciesWithUnifiers;
+import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 
 /**
@@ -33,7 +33,7 @@ public class ChaseWithGRDAndUnfiers extends AbstractChase {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(ChaseWithGRDAndUnfiers.class);
 	
-	private ChaseStopCondition stopCondition = new RestrictedChaseStopCondition();
+	private ChaseHaltingCondition haltingCondition = new RestrictedChaseStopCondition();
 	private SymbolGenerator existentialGen = new DefaultFreeVarGen("E");
 	private GraphOfRuleDependenciesWithUnifiers grd;
 	private AtomSet atomSet;
@@ -59,45 +59,27 @@ public class ChaseWithGRDAndUnfiers extends AbstractChase {
 	public void next() throws ChaseException {
 		Rule rule, unifiedRule;
 		Substitution unificator;
-		Query query;
+
 		try {
 			Pair<Rule, Substitution> pair = queue.poll();
 			if(pair != null) {
 				unificator = pair.getRight();
 				rule = pair.getLeft();
 				unifiedRule = unificator.getSubstitut(pair.getLeft());
-				query = new DefaultConjunctiveQuery(unifiedRule.getBody(), unifiedRule.getFrontier());
+				
 				if(LOGGER.isDebugEnabled()) {
 					LOGGER.debug("Execute rule: " + rule + " with unificator " + unificator);
-					LOGGER.debug("-- Query: " + query);
 				}
 				
-				for (Substitution substitution : StaticHomomorphism.executeQuery(query, atomSet)) {
-					if(LOGGER.isDebugEnabled()) {
-						LOGGER.debug("-- Found homomorphism: " + substitution );
-					}
-					Set<Term> fixedTerm = substitution.getValues();
-					
-					// Generate new existential variables
-					for(Term t : unifiedRule.getExistentials()) {
-						substitution.put(t, existentialGen.getFreeVar());
-					}
-
-					// the atom set producted by the rule application
-					AtomSet deductedAtomSet = substitution.getSubstitut(unifiedRule.getHead());
-					AtomSet bodyAtomSet = substitution.getSubstitut(unifiedRule.getBody());
-	
-					if(stopCondition.canIAdd(deductedAtomSet, fixedTerm, bodyAtomSet, this.atomSet)) {
-						this.atomSet.addAll(deductedAtomSet);
-						for(Rule triggeredRule : this.grd.getOutEdges(rule)) {
-							for(Substitution u : this.grd.getUnifiers(rule, triggeredRule)) {
-								if(LOGGER.isDebugEnabled()) {
-									LOGGER.debug("-- -- Dependency: " + triggeredRule + " with " + u);
-									LOGGER.debug("-- -- Unificator: " + u);
-								}
-								if(u != null) {
-									this.queue.add(new ImmutablePair<Rule, Substitution>(triggeredRule, u));
-								}
+				if(this.apply(unifiedRule, this.atomSet)) {
+					for(Rule triggeredRule : this.grd.getOutEdges(rule)) {
+						for(Substitution u : this.grd.getUnifiers(rule, triggeredRule)) {
+							if(LOGGER.isDebugEnabled()) {
+								LOGGER.debug("-- -- Dependency: " + triggeredRule + " with " + u);
+								LOGGER.debug("-- -- Unificator: " + u);
+							}
+							if(u != null) {
+								this.queue.add(new ImmutablePair<Rule, Substitution>(triggeredRule, u));
 							}
 						}
 					}
@@ -111,6 +93,28 @@ public class ChaseWithGRDAndUnfiers extends AbstractChase {
 	@Override
 	public boolean hasNext() {
 		return !queue.isEmpty();
+	}
+
+	@Override
+	protected Iterable<Substitution> executeQuery(ConjunctiveQuery query,
+			AtomSet atomSet) throws HomomorphismFactoryException,
+			HomomorphismException {
+		return StaticHomomorphism.executeQuery(query, atomSet);
+	}
+
+	@Override
+	protected Term getFreeVar() {
+		return this.existentialGen.getFreeVar();
+	}
+
+	@Override
+	public ChaseHaltingCondition getHaltingCondition() {
+		return this.haltingCondition;
+	}
+
+	@Override
+	public void setHaltingCondition(ChaseHaltingCondition haltingCondition) {
+		this.haltingCondition = haltingCondition;
 	}
 
 }

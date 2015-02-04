@@ -3,17 +3,20 @@
  */
 package fr.lirmm.graphik.graal.forward_chaining;
 
-import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultFreeVarGen;
-import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.SymbolGenerator;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.homomorphism.Homomorphism;
+import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 
 /**
@@ -21,8 +24,11 @@ import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
  *
  */
 public class DefaultChase extends AbstractChase {
+	
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(DefaultChase.class);
 
-	private ChaseStopCondition stopCondition = new RestrictedChaseStopCondition();
+	private ChaseHaltingCondition haltingCondition = new RestrictedChaseStopCondition();
 	private SymbolGenerator existentialGen;
 	private Iterable<Rule> ruleSet;
 	private AtomSet atomSet;
@@ -61,35 +67,16 @@ public class DefaultChase extends AbstractChase {
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLICS METHODS
 	// /////////////////////////////////////////////////////////////////////////
-
-	public void setHaltingCondition(ChaseStopCondition c) {
-		this.stopCondition = c;
-	}
 	
+	@Override
 	public void next() throws ChaseException {
 		try {
     		if(this.hasNext) {
     			this.hasNext = false;
     			for (Rule rule : this.ruleSet) {
-    				Query query = new DefaultConjunctiveQuery(rule.getBody(),
-    						rule.getFrontier());
-					for (Substitution s : this.solver.execute(query, atomSet)) {
-						Set<Term> fixedTerm = s.getValues();
-						
-						// Generate new existential variables
-						for(Term t : rule.getExistentials()) {
-							s.put(t, existentialGen.getFreeVar());
-						}
-
-						// the atom set producted by the rule application
-						AtomSet deductedAtomSet = s.getSubstitut(rule.getHead());
-						AtomSet bodyAtomSet = s.getSubstitut(rule.getBody());
-						
-						if(stopCondition.canIAdd(deductedAtomSet, fixedTerm, bodyAtomSet, this.atomSet)) {
-							this.atomSet.addAll(deductedAtomSet);
-							this.hasNext = true;
-						}
-					}
+    				if(this.apply(rule, atomSet)) {
+    					this.hasNext = true;
+    				}
     			}
     		}
 		} catch (Exception e) {
@@ -97,8 +84,34 @@ public class DefaultChase extends AbstractChase {
 		}
 	}
 	
+	@Override
 	public boolean hasNext() {
 		return this.hasNext;
 	}
 
+	////////////////////////////////////////////////////////////////////////////
+	// ABSTRACT METHODS IMPLEMENTATION
+	////////////////////////////////////////////////////////////////////////////
+
+	@Override
+	protected Iterable<Substitution> executeQuery(ConjunctiveQuery query,
+			AtomSet atomSet) throws HomomorphismFactoryException,
+			HomomorphismException {
+		return this.solver.execute(query, atomSet);
+	}
+
+	@Override
+	protected Term getFreeVar() {
+		return this.existentialGen.getFreeVar();
+	}
+	
+	@Override
+	public void setHaltingCondition(ChaseHaltingCondition haltingCondition) {
+		this.haltingCondition = haltingCondition;
+	}
+
+	@Override
+	public ChaseHaltingCondition getHaltingCondition() {
+		return this.haltingCondition;
+	}
 }

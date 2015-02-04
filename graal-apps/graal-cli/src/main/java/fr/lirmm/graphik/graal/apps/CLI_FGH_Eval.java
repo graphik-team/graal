@@ -21,7 +21,7 @@ import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
-import fr.lirmm.graphik.graal.forward_chaining.ChaseStopCondition;
+import fr.lirmm.graphik.graal.forward_chaining.ChaseHaltingCondition;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseStopConditionWithHandler;
 import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
 import fr.lirmm.graphik.graal.forward_chaining.RestrictedChaseStopCondition;
@@ -96,7 +96,7 @@ public class CLI_FGH_Eval {
 
 		_onRule.setSolver(solver);
 
-		ChaseStopCondition haltCondition = new ChaseStopConditionWithHandler(new RestrictedChaseStopCondition(),_onRule);
+		ChaseHaltingCondition haltCondition = new ChaseStopConditionWithHandler(new RestrictedChaseStopCondition(),_onRule);
 		DefaultChase chase = new DefaultChase(rules,atomset,solver);
 		chase.setHaltingCondition(haltCondition);
 

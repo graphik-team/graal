@@ -19,7 +19,7 @@ import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class RestrictedChaseStopCondition implements ChaseStopCondition {
+public class RestrictedChaseStopCondition implements ChaseHaltingCondition {
 
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(RestrictedChaseStopCondition.class);
