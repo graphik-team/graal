@@ -94,15 +94,15 @@ public class CLI_FGH {
 		DlpWriter writer = new DlpWriter(System.out);
 		Homomorphism solver = new ComplexHomomorphism(SqlHomomorphism.getInstance());
 
-		_onRule.setSolver(solver);
+		this.onRule.setSolver(solver);
 
-		ChaseHaltingCondition haltCondition = new ChaseStopConditionWithHandler(new RestrictedChaseStopCondition(),_onRule);
+		ChaseHaltingCondition haltCondition = new ChaseStopConditionWithHandler(new RestrictedChaseStopCondition(),this.onRule);
 		DefaultChase chase = new DefaultChase(rules,atomset,solver);
 		chase.setHaltingCondition(haltCondition);
 
 		// TODO: first set up data
 		for (Atom a : atomset) {
-			_index.get(a);
+			this.index.get(a);
 		}
 
 		if (k != 0) {
@@ -163,9 +163,9 @@ public class CLI_FGH {
 		}
 
 		System.out.println("Index:");
-		System.out.println(_index);
+		System.out.println(this.index);
 		System.out.println("FGH:");
-		System.out.println(_fgh);
+		System.out.println(this.fgh);
 
 		return error;
 	}
@@ -397,9 +397,9 @@ public class CLI_FGH {
 	private LinkedList<Query> queries = new LinkedList<Query>();
 
 
-	private FGH _fgh = new FGH();
-	private AtomIndex _index = new AtomIndex();
-	private FGHRuleApplicationHandler _onRule = new FGHRuleApplicationHandler(_index,_fgh);
+	private FGH fgh = new FGH();
+	private AtomIndex index = new AtomIndex();
+	private FGHRuleApplicationHandler onRule = new FGHRuleApplicationHandler(this.index,this.fgh);
 
 };
 

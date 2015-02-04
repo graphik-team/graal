@@ -7,26 +7,26 @@ import fr.lirmm.graphik.graal.core.Atom;
 public class AtomIndex {
 
 	public int get(Atom a) {
-		Integer i = _atomToIndex.get(a);
+		Integer i = this.atomToIndex.get(a);
 		if (i == null) { 
 			add(a); 
 			return get(a);
 		}
-		return _atomToIndex.get(a).intValue();
+		return this.atomToIndex.get(a).intValue();
 	}
 
 	public Atom get(int i) {
-		return _indexToAtom.get(new Integer(i));
+		return this.indexToAtom.get(new Integer(i));
 	}
 
 	public void add(Atom a, Integer i) {
-		_atomToIndex.put(a,i);
-		_indexToAtom.put(i,a);
+		this.atomToIndex.put(a,i);
+		this.indexToAtom.put(i,a);
 	}
 
 	public void add(Atom a) {
-		add(a,new Integer(_currentIndex));
-		++_currentIndex;
+		add(a,new Integer(this.currentIndex));
+		++this.currentIndex;
 	}
 
 	public String toString() {
@@ -43,9 +43,9 @@ public class AtomIndex {
 		return s.toString();
 	}
 
-	private TreeMap<Atom,Integer> _atomToIndex = new TreeMap<Atom,Integer>();
-	private TreeMap<Integer,Atom> _indexToAtom = new TreeMap<Integer,Atom>();
+	private TreeMap<Atom,Integer> atomToIndex = new TreeMap<Atom,Integer>();
+	private TreeMap<Integer,Atom> indexToAtom = new TreeMap<Integer,Atom>();
 
-	private int _currentIndex = 0;
+	private int currentIndex = 0;
 };
 

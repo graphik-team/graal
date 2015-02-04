@@ -94,17 +94,17 @@ public class CLI_FGH_Eval {
 		DlpWriter writer = new DlpWriter(System.out);
 		Homomorphism solver = new ComplexHomomorphism(SqlHomomorphism.getInstance());
 
-		_onRule.setSolver(solver);
+		this.onRule.setSolver(solver);
 
-		ChaseHaltingCondition haltCondition = new ChaseStopConditionWithHandler(new RestrictedChaseStopCondition(),_onRule);
+		ChaseHaltingCondition haltCondition = new ChaseStopConditionWithHandler(new RestrictedChaseStopCondition(),this.onRule);
 		DefaultChase chase = new DefaultChase(rules,atomset,solver);
 		chase.setHaltingCondition(haltCondition);
 
 		// TODO: first set up data
-		int init_size = 0;
+		int initSize = 0;
 		for (Atom a : atomset) {
-			_index.get(a);
-			++init_size;
+			this.index.get(a);
+			++initSize;
 		}
 
 		try { chase.execute(); } 
@@ -122,8 +122,8 @@ public class CLI_FGH_Eval {
 		System.out.println(cpt);
 		
 		for (int current = 0 ; current < cpt ; ++current) {
-			Atom a = _index.get(current);
-			if (current < init_size) System.out.println("1.0 1.0");
+			Atom a = this.index.get(current);
+			if (current < initSize) System.out.println("1.0 1.0");
 			else {
 				if ((a.getPredicate().getLabel().charAt(0) == 'r')
 				 && (a.getPredicate().getLabel().charAt(1) == 'u')
@@ -137,10 +137,10 @@ public class CLI_FGH_Eval {
 		}
 
 		int m = 0;
-		for (FGH.Edge e : _fgh) { ++m; }
+		for (FGH.Edge e : this.fgh) { ++m; }
 
 		System.out.println(m);
-		for (FGH.Edge e : _fgh) {
+		for (FGH.Edge e : this.fgh) {
 			k = 0;
 			for (Integer cause : e) {
 				++k;
@@ -155,9 +155,9 @@ public class CLI_FGH_Eval {
 		}
 		
 		System.err.println("Index:");
-		System.err.println(_index);
+		System.err.println(this.index);
 		System.err.println("FGH:");
-		System.err.println(_fgh);
+		System.err.println(this.fgh);
 
 		return error;
 	}
@@ -389,9 +389,9 @@ public class CLI_FGH_Eval {
 	private LinkedList<Query> queries = new LinkedList<Query>();
 
 
-	private FGH _fgh = new FGH();
-	private AtomIndex _index = new AtomIndex();
-	private FGHRuleApplicationHandler _onRule = new FGHRuleApplicationHandler(_index,_fgh);
+	private FGH fgh = new FGH();
+	private AtomIndex index = new AtomIndex();
+	private FGHRuleApplicationHandler onRule = new FGHRuleApplicationHandler(this.index,this.fgh);
 
 };
 
