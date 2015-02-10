@@ -12,7 +12,6 @@ import fr.lirmm.graphik.graal.backward_chaining.pure.rules.NoCompilation;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByHeadPredicatesRuleSet;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.util.Verbosable;
@@ -23,12 +22,13 @@ import fr.lirmm.graphik.util.Verbosable;
  */
 public class PureRewriter extends AbstractBackwardChainer implements Verbosable {
 
-	PureQuery pquery;
-	LinkedListRuleSet ruleset;
-	RulesCompilation compilation;
-	UnionConjunctiveQueries ucqs = null;
-	Iterator<ConjunctiveQuery> rewrites = null;
+	private PureQuery pquery;
+	private LinkedListRuleSet ruleset;
+	private RulesCompilation compilation;
+	private Iterator<ConjunctiveQuery> rewrites = null;
+	
 	private boolean verbose;
+	private boolean isUnfoldingEnable = true;
 	private RewritingOperator operator;
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -75,15 +75,21 @@ public class PureRewriter extends AbstractBackwardChainer implements Verbosable 
 		if (this.rewrites == null) {
 			this.compute();
 		}
-		return this.rewrites.next();
+		ConjunctiveQuery query = this.rewrites.next();
+		PureQuery.removeAnswerPredicate(query);
+		return query;
 	}
-
-	@Override
-	public UnionConjunctiveQueries getUCQs() {
-		if (this.ucqs == null) {
-			this.compute();
-		}
-		return this.ucqs;
+	
+	/**
+	 * Enable or disable unfolding. The unfolding is enable by default.
+	 * @param isUnfoldingEnable
+	 */
+	public void enableUnfolding(boolean isUnfoldingEnable) {
+		this.isUnfoldingEnable = isUnfoldingEnable;
+	}
+	
+	public boolean isUnfoldingEnable() {
+		return this.isUnfoldingEnable;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -103,17 +109,19 @@ public class PureRewriter extends AbstractBackwardChainer implements Verbosable 
 		Iterable<ConjunctiveQuery> queries = algo.execute(pquery, indexedRuleSet, compilation);
 
 		// unfolding
-		if (this.getProfiler() != null) {
-			this.getProfiler().start("unfolding time");
+		if(this.isUnfoldingEnable) {
+			if (this.getProfiler() != null) {
+				this.getProfiler().start("unfolding time");
+			}
+	
+			queries = this.compilation.unfold(queries);
+	
+			if (this.getProfiler() != null) {
+				this.getProfiler().stop("unfolding time");
+			}
 		}
-
-		this.ucqs = new UnionConjunctiveQueries(
-				this.compilation.unfold(queries));
-		this.rewrites = this.ucqs.iterator();
-
-		if (this.getProfiler() != null) {
-			this.getProfiler().stop("unfolding time");
-		}
+		
+		this.rewrites = queries.iterator();
 
 	}
 

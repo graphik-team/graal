@@ -21,6 +21,4 @@ public interface BackwardChainer extends Iterator<ConjunctiveQuery>, Profilable 
 	@Override
 	ConjunctiveQuery next();
 
-	UnionConjunctiveQueries getUCQs();
-
 }
