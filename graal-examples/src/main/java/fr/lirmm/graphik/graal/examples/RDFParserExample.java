@@ -13,7 +13,7 @@ import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.io.dlp.DlpWriter;
-import fr.lirmm.graphik.graal.parser.semanticweb.RDFParser;
+import fr.lirmm.graphik.graal.io.rdf.RDFParser;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}

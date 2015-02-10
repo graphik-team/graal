@@ -1,16 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	
+
 	<modelVersion>4.0.0</modelVersion>
 	
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
-		<artifactId>graal-apps</artifactId>
-		<version>0.6.5-SNAPSHOT </version>
+		<artifactId>graal-io</artifactId>
+		<version>0.6.5-SNAPSHOT</version>
 	</parent>
 	
-	<artifactId>graal-cli</artifactId>
-	<name>Graal CLI</name>
+	<artifactId>graal-io-api</artifactId>
 	<packaging>jar</packaging>
+	<name>graal-io-api</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -25,33 +25,23 @@
 	</organization>
 
 	<developers>
-	        <developer>
-		        <name>Swan ROCHER</name>
-			<email>rocher@lirmm.fr</email>
+		<developer>
+			<name>Clément SIPIETER</name>
+			<email>clement@6pi.fr</email>
 			<organization>INRIA</organization>
 		</developer>
 	</developers>
 
 	<dependencies>
-		<dependency>
+	    <dependency>
 			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-core</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-io-api</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-store</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-forward-chaining</artifactId>
-			<version>${project.parent.version}</version>
+			<artifactId>dlgp-parser</artifactId>
+			<version>1.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -65,9 +55,9 @@
 			<version>1.1.1</version>
 		</dependency>
 		<dependency>
-			<groupId>com.google.code.findbugs</groupId>
-			<artifactId>annotations</artifactId>
-			<version>2.0.3</version>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.3.2</version>
 		</dependency>
 	</dependencies>
 
@@ -82,7 +72,7 @@
 					<target>${jdk.version}</target>
 				</configuration>
 			</plugin>
-            <plugin>
+			<plugin>
 			  <artifactId>maven-release-plugin</artifactId>
 			  <version>2.1</version>
 			  <configuration>

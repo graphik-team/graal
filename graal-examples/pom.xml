@@ -50,7 +50,17 @@
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-io</artifactId>
+			<artifactId>graal-io-api</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>fr.lirmm.graphik</groupId>
+			<artifactId>graal-io-owl</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>fr.lirmm.graphik</groupId>
+			<artifactId>graal-io-rdf</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
