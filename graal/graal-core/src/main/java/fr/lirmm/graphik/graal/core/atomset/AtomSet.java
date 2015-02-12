@@ -42,8 +42,9 @@ public interface AtomSet extends Iterable<Atom> {
 	 * 
 	 * @param type
 	 * @return a collection of all terms of the specified type in this atom set.
+	 * @throws AtomSetException 
 	 */
-	Set<Term> getTerms(Term.Type type);
+	Set<Term> getTerms(Term.Type type) throws AtomSetException;
 
 	/**
 	 * Check if all atoms of this AtomSet are also contained in the specified
