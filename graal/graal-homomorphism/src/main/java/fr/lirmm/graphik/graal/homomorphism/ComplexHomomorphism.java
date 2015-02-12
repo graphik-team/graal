@@ -10,6 +10,7 @@ import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 
@@ -24,7 +25,7 @@ public class ComplexHomomorphism<Q extends ConjunctiveQuery, F extends AtomSet> 
 	}
 
     public SubstitutionReader execute(Q q, F f) throws HomomorphismException {
-	    AtomSet rawAtoms = new LinkedListAtomSet();
+    	InMemoryAtomSet rawAtoms = new LinkedListAtomSet();
 		this.builtInAtoms = new LinkedList<Atom>();
 		for (Atom a : q) {
 			if (a.getPredicate() instanceof BuiltInPredicate) {

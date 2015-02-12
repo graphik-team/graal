@@ -13,7 +13,7 @@ import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
+import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
 import fr.lirmm.graphik.util.EquivalentRelation;
@@ -26,8 +26,8 @@ import fr.lirmm.graphik.util.TreeMapEquivalentRelation;
 public class DefaultRule implements Rule {
 
 	private String label;
-	private final AtomSet body;
-	private final AtomSet head;
+	private final InMemoryAtomSet body;
+	private final InMemoryAtomSet head;
 
 	private Set<Term> terms = null;
 	private Set<Term> frontier = null;
@@ -68,7 +68,7 @@ public class DefaultRule implements Rule {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public AtomSet getBody() {
+	public InMemoryAtomSet getBody() {
 		return this.body;
 	}
 
@@ -83,7 +83,7 @@ public class DefaultRule implements Rule {
 	}
 
 	@Override
-	public AtomSet getHead() {
+	public InMemoryAtomSet getHead() {
 		return this.head;
 	}
 
@@ -91,10 +91,8 @@ public class DefaultRule implements Rule {
 	public Set<Term> getTerms() {
 		if(this.terms == null) {
 			this.terms = new TreeSet<Term>();
-			try {
-				this.terms.addAll(this.getBody().getTerms());
-				this.terms.addAll(this.getHead().getTerms());
-			} catch (AtomSetException e) {}
+			this.terms.addAll(this.getBody().getTerms());
+			this.terms.addAll(this.getHead().getTerms());
 		}
 		return this.terms;
 	}

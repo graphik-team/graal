@@ -3,7 +3,7 @@ package fr.lirmm.graphik.graal.transformation;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.SymbolGenerator;
 import fr.lirmm.graphik.graal.core.Util;
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -22,7 +22,7 @@ public class ToTripleTransformation extends AAtomTransformator {
     }
 
     @Override
-    public AtomSet transform(Atom atom) {
+    public InMemoryAtomSet transform(Atom atom) {
         return Util.reification(atom, this.freeVarGen);
     }
 

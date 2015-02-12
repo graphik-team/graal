@@ -4,8 +4,7 @@
 package fr.lirmm.graphik.graal.transformation;
 
 import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.util.stream.ObjectReader;
+import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -19,7 +18,7 @@ public interface AtomTransformator {
      * @param atom
      * @return
      */
-    AtomSet transform(Atom atom);
+    InMemoryAtomSet transform(Atom atom);
     
     /**
      * Transform the specified atom stream

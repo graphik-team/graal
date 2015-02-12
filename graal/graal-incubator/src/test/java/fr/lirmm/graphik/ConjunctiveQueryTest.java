@@ -13,6 +13,7 @@ import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
@@ -37,7 +38,7 @@ public class ConjunctiveQueryTest {
 	@Theory
 	public void emptyQueryAndEmptyAtomSetTest(AtomSet store) {
 		try {
-			AtomSet queryAtomSet = new LinkedListAtomSet();
+			InMemoryAtomSet queryAtomSet = new LinkedListAtomSet();
 			DefaultConjunctiveQuery query = new DefaultConjunctiveQuery(queryAtomSet);
 
 			SubstitutionReader subReader;
@@ -64,7 +65,7 @@ public class ConjunctiveQueryTest {
 		try {
 			store.addAll(DlpParser.parseAtomSet("p(a,b), p(b,c), q(a,c,d)."));
 
-			AtomSet queryAtomSet = new LinkedListAtomSet();
+			InMemoryAtomSet queryAtomSet = new LinkedListAtomSet();
 			DefaultConjunctiveQuery query = new DefaultConjunctiveQuery(queryAtomSet);
 
 			SubstitutionReader subReader;
@@ -147,7 +148,7 @@ public class ConjunctiveQueryTest {
 		try {
 			store.addAll(DlpParser.parseAtomSet("p(a,b).p(b,c).q(a,c,d).q(d,c,a)."));
 
-			AtomSet queryAtomSet = new LinkedListAtomSet();
+			InMemoryAtomSet queryAtomSet = new LinkedListAtomSet();
 			queryAtomSet.add(DlpParser.parseAtom("q(a,c,d)."));
 			DefaultConjunctiveQuery query = new DefaultConjunctiveQuery(queryAtomSet);
 

@@ -18,6 +18,9 @@ public interface InMemoryAtomSet extends AtomSet {
 	Set<Term> getTerms();
 	
 	@Override
+	Set<Term> getTerms(Term.Type type);
+	
+	@Override
 	boolean addAll(Iterable<? extends Atom> atoms);
 	
 	@Override

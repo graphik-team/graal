@@ -64,21 +64,18 @@ public class TermPartition extends Partition<Term> {
 						}
 					}// the current representant is a variable
 					else if (representant.isVariable()) {
-						try {
-							// t is a variable from the answer
-							if (context != null
-									&& !context.getAnswerVariables().contains(
-											representant)
-									&& context.getAtomSet().getTerms()
-											.contains(t)) {
-								representant = t;
-							}
-						} catch (AtomSetException e) {
-
+						// t is a variable from the answer
+						if (context != null
+								&& !context.getAnswerVariables().contains(
+										representant)
+								&& context.getAtomSet().getTerms()
+										.contains(t)) {
+							representant = t;
 						}
 					}
-				} else
+				} else { 
 					i.remove();
+				}
 			}
 			// all the terms in the equivalence set have as image the
 			// representant of the equivalence set

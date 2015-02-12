@@ -13,6 +13,7 @@ import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.PredicatePosition;
 
 /**
@@ -64,7 +65,7 @@ public class AffectedPositionSet {
 		return this.affectedPosition.contains(pp);
 	}
 
-	public Set<Term> getAllAffectedVariables(AtomSet body) {
+	public Set<Term> getAllAffectedVariables(InMemoryAtomSet body) {
 		return this.getAllAffectedVariables(body.getTerms(Type.VARIABLE), body);
 	}
 

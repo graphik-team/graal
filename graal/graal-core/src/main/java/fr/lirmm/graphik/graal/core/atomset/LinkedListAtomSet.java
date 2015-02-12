@@ -1,14 +1,12 @@
 package fr.lirmm.graphik.graal.core.atomset;
 
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.AtomComparator;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Term;

@@ -5,6 +5,7 @@ package fr.lirmm.graphik.graal.core.factory;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 
 /**
@@ -22,12 +23,12 @@ public final class AtomSetFactory {
 		return instance;
 	}
 
-	public AtomSet createAtomSet() {
+	public InMemoryAtomSet createAtomSet() {
 		return new LinkedListAtomSet();
 	}
 
-	public AtomSet createAtomSet(AtomSet src) {
-		AtomSet atomset = this.createAtomSet();
+	public InMemoryAtomSet createAtomSet(AtomSet src) {
+		InMemoryAtomSet atomset = this.createAtomSet();
 		for (Atom a : src) {
 			atomset.add(a);
 		}

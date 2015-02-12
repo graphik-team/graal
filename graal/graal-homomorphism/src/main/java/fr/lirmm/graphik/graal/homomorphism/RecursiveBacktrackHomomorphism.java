@@ -87,9 +87,10 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
      */
 	public boolean exist(AtomSet atomSet1, AtomSet atomSet2)
 			throws HomomorphismException {
-		List<Term> orderedVars = order(atomSet1.getTerms(Term.Type.VARIABLE));
-		Collection<Atom>[] queryAtomRanked = getAtomRank(atomSet1, orderedVars);
 		try {
+			List<Term> orderedVars = order(atomSet1.getTerms(Term.Type.VARIABLE));
+			Collection<Atom>[] queryAtomRanked = getAtomRank(atomSet1, orderedVars);
+		
 			if (isHomomorphism(queryAtomRanked[0], atomSet2,
 					new HashMapSubstitution())) {
 				return existHomomorphism(atomSet1, queryAtomRanked, atomSet2,
