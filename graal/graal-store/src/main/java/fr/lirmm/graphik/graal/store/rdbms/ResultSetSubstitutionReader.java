@@ -71,8 +71,9 @@ public class ResultSetSubstitutionReader implements SubstitutionReader {
 		this.isBooleanQuery = isBooleanQuery;
 	}
 
-	protected void finalize() {
+	protected void finalize() throws Throwable {
         this.close();
+        super.finalize();
     }
 
     // /////////////////////////////////////////////////////////////////////////

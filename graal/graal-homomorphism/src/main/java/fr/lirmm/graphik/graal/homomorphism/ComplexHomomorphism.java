@@ -95,7 +95,6 @@ public class ComplexHomomorphism<Q extends ConjunctiveQuery, F extends AtomSet> 
     	public void close() { this.rawReader.close(); this.rawReader = null; }
 
 		private Substitution next;
-		private Substitution current;
 		private SubstitutionReader rawReader;
 
 	};

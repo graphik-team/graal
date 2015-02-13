@@ -77,6 +77,7 @@ public class JenaStore extends AbstractTripleStore {
 	@Override
 	protected void finalize() throws Throwable {
 		this.close();
+		super.finalize();
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -325,17 +326,22 @@ public class JenaStore extends AbstractTripleStore {
 		}
 
 		@Override
-		protected void finalize() {
-			if (this.qExec != null) {
-				this.qExec.close();
-			}
-			this.dataset.end();
+		protected void finalize() throws Throwable {
+			this.close();
+			super.finalize();
 		}
 
 		// /////////////////////////////////////////////////////////////////////////
 		// METHODS
 		// /////////////////////////////////////////////////////////////////////////
 
+		public void close() {
+			if (this.qExec != null) {
+				this.qExec.close();
+			}
+			this.dataset.end();
+		}
+		
 		@Override
 		public void remove() {
 			this.rs.remove();
@@ -346,7 +352,7 @@ public class JenaStore extends AbstractTripleStore {
 			if (this.rs.hasNext()) {
 				return true;
 			} else {
-				this.finalize();
+				this.close();
 				return false;
 			}
 		}

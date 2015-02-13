@@ -18,7 +18,7 @@ The Naming Ruleset contains rules regarding preferred usage of names and identif
     <description>
 Fields, local variables, or parameter names that are very short are not helpful to the reader.
     </description>
-    <priority>3</priority>
+    <priority>5</priority>
       <properties>
           <property name="xpath">
               <value>
@@ -354,7 +354,7 @@ public class Foo {
 It is somewhat confusing to have a field name matching the declaring class name.
 This probably means that type and/or field names should be chosen more carefully.
       </description>
-        <priority>3</priority>
+        <priority>5</priority>
       <example>
 <![CDATA[
 public class Foo extends Bar {
@@ -374,7 +374,7 @@ It can be confusing to have a field name with the same name as a method. While t
 having information (field) and actions (method) is not clear naming. Developers versed in 
 Smalltalk often prefer this approach as the methods denote accessor methods.
       </description>
-        <priority>3</priority>
+        <priority>4</priority>
       <example>
 <![CDATA[
 public class Foo {

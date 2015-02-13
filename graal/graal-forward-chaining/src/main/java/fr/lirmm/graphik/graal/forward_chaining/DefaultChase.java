@@ -25,8 +25,8 @@ import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
  */
 public class DefaultChase extends AbstractChase {
 	
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(DefaultChase.class);
+//	private static final Logger LOGGER = LoggerFactory
+//			.getLogger(DefaultChase.class);
 
 	private ChaseHaltingCondition haltingCondition = new RestrictedChaseStopCondition();
 	private SymbolGenerator existentialGen;

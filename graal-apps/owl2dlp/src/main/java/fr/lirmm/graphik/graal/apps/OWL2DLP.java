@@ -25,8 +25,8 @@ public class OWL2DLP {
 	@Parameter(names = { "-h", "--help" }, description = "Print this message", help = true)
 	private boolean help;
 
-	@Parameter(names = { "-v", "--verbose" }, description = "Enable verbose mode")
-	private boolean verbose = false;
+//	@Parameter(names = { "-v", "--verbose" }, description = "Enable verbose mode")
+//	private boolean verbose = false;
 
 	@Parameter(names = { "--version" }, description = "Print version information")
 	private boolean version = false;

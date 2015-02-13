@@ -1341,7 +1341,7 @@ contain statements, but there is no comment. By explicitly commenting empty
 constructors it is easier to distinguish between intentional (commented)
 and unintentional empty constructors.
       </description>
-      <priority>3</priority>
+      <priority>5</priority>
       <properties>
           <property name="xpath">
               <value>

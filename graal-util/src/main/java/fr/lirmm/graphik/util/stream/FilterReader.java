@@ -10,8 +10,8 @@ package fr.lirmm.graphik.util.stream;
  */
 public class FilterReader<T,U> extends AbstractReader<T> {
 	
-	private ObjectReader<U> reader;
-	private Filter filter;
+	private final ObjectReader<U> reader;
+	private final Filter filter;
 	private T next;
 
 	public FilterReader(ObjectReader<U> reader, Filter filter) {

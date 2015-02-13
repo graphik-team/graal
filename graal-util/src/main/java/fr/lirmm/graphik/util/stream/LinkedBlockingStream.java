@@ -17,7 +17,7 @@ public class LinkedBlockingStream<T> extends AbstractReader<T> implements Object
     final int MIN_QUEUE;
     
     private final Object lock;
-    private Queue<T> queue = new LinkedList<T>();
+    private final Queue<T> queue = new LinkedList<T>();
     private boolean isOpen = true;
 
     // /////////////////////////////////////////////////////////////////////////

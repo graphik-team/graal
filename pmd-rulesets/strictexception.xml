@@ -228,7 +228,7 @@ public void bar() {
 Errors are system exceptions. Do not extend them.
       ]]>
     </description>
-    <priority>3</priority>
+    <priority>5</priority>
     <properties>
       <property name="xpath">
         <value>
@@ -333,7 +333,7 @@ public void bar() {
     <description>
 Avoid catching generic exceptions such as NullPointerException, RuntimeException, Exception in try-catch block
     </description>
-    <priority>3</priority>
+    <priority>4</priority>
     <properties>
       <property name="xpath">
       <value>

@@ -30,8 +30,8 @@ public class Kiabora {
 	@Parameter(names = { "-h", "--help" }, help = true)
 	private boolean help;
 
-	@Parameter(names = { "--grd" })
-	private boolean grd = false;
+//	@Parameter(names = { "--grd" })
+//	private boolean grd = false;
 
 	public static void main(String[] args) throws IOException {
 

@@ -33,8 +33,8 @@ public class OneStepForwardChaining {
 	@Parameter(names = { "-f", "--dlp" }, description = "DLP file")
 	private String file = "";
 	
-	@Parameter(names = { "--driver"}, description = "mysql|sqlite")
-	private String driverName = "mysql";
+//	@Parameter(names = { "--driver"}, description = "mysql|sqlite")
+//	private String driverName = "mysql";
 	
 	@Parameter(names = { "--db"}, description = "database name")
 	private String database = "";

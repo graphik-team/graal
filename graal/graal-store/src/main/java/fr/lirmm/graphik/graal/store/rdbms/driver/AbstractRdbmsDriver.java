@@ -38,8 +38,9 @@ public abstract class AbstractRdbmsDriver implements RdbmsDriver {
 	}
 	
 	@Override
-	protected void finalize() {
+	protected void finalize() throws Throwable {
 		this.close();
+		super.finalize();
 	}
 	
 	@Override
