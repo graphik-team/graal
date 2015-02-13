@@ -32,6 +32,7 @@ import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
+import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.stream.AbstractReader;
 import fr.lirmm.graphik.util.stream.ObjectReader;
 
@@ -256,7 +257,7 @@ public class JenaStore extends AbstractTripleStore {
 		dataset.begin(ReadWrite.READ);
 		QueryExecution qExec = null;
 		try {
-			qExec = QueryExecutionFactory.create(SELECT_TERMS_QUERY, dataset);
+			qExec = QueryExecutionFactory.create(SELECT_PREDICATES_QUERY, dataset);
 			ResultSet rs = qExec.execSelect();
 			while (rs.hasNext()) {
 				predicates.add(new Predicate(rs.next().toString(), 2));
@@ -274,7 +275,7 @@ public class JenaStore extends AbstractTripleStore {
 	@Override
 	public boolean isSubSetOf(AtomSet atomset) {
 		// TODO implement this method
-		throw new Error("This method isn't implemented");
+		throw new MethodNotImplementedError();
 	}
 
 	@Override
@@ -304,7 +305,7 @@ public class JenaStore extends AbstractTripleStore {
 	private static class AtomIterator extends AbstractReader<Atom> {
 
 		Dataset dataset;
-		static String SELECT = "PREFIX graal: <http://team.inria.fr/graphik/graal/> "
+		static final String SELECT = "PREFIX graal: <http://team.inria.fr/graphik/graal/> "
 				+ "SELECT ?s ?p ?o WHERE { ?s ?p ?o } ";
 		ResultSet rs;
 		QueryExecution qExec;
