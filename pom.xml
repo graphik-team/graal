@@ -62,9 +62,9 @@
 					<minimumPriority>2</minimumPriority>
 					<failurePriority>2</failurePriority>
 					<rulesets>
-            			<ruleset>/rulesets/java/naming.xml</ruleset>
-            			<ruleset>/rulesets/java/design.xml</ruleset>
-            			<ruleset>/rulesets/java/strictexception.xml</ruleset>
+            			<ruleset>${project.basedir}/pmd-rulesets/naming.xml</ruleset>
+            			<ruleset>${project.basedir}/pmd-rulesets/design.xml</ruleset>
+            			<ruleset>${project.basedir}/pmd-rulesets/strictexception.xml</ruleset>
             		</rulesets>
 				</configuration>
 			</plugin>
