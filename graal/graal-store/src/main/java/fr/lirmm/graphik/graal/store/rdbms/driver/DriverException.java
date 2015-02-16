@@ -1,6 +1,5 @@
 package fr.lirmm.graphik.graal.store.rdbms.driver;
 
-import java.sql.SQLException;
 
 public class DriverException extends Exception {
 

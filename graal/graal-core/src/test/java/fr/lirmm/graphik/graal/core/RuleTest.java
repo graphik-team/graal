@@ -5,14 +5,9 @@ package fr.lirmm.graphik.graal.core;
 
 import java.util.Arrays;
 
-import org.junit.Test;
 import org.junit.Assert;
+import org.junit.Test;
 
-import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.DefaultAtom;
-import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.factory.RuleFactory;
 
 /**

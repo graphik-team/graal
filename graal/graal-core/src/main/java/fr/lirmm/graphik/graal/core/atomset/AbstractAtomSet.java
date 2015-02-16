@@ -4,11 +4,8 @@
 package fr.lirmm.graphik.graal.core.atomset;
 
 import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.Predicate;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
