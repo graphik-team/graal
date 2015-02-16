@@ -88,7 +88,13 @@ public class Predicate implements Comparable<Predicate>, Serializable {
 
 	@Override
 	public String toString() {
-		return this.getLabel();
+		StringBuilder sb = new StringBuilder();
+		sb.append("[predicate(")
+			.append(this.getLabel())
+			.append(',')
+			.append(this.getArity())
+			.append(")]");
+		return sb.toString();
 	}
 
 };

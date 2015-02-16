@@ -65,6 +65,11 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	private static final String GET_ALL_TERMS_QUERY = "SELECT * FROM "
 												   + TERM_TABLE_NAME
 												   + ";";
+	
+	private static final String GET_TERMS_BY_TYPE = "SELECT * FROM "
+			   + TERM_TABLE_NAME
+			   + " WHERE term_type = ?;";
+	
 	private static final String GET_TERM_QUERY = "SELECT * FROM "
 											   + TERM_TABLE_NAME
 											   + " WHERE term = ?;";
@@ -90,6 +95,8 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 
 	private PreparedStatement getCounterValueStatement;
 	private PreparedStatement updateCounterValueStatement;
+
+	private PreparedStatement getTermsByTypeStatement;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
@@ -117,6 +124,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 					this.getInsertTermQuery());
 			this.getTermStatement = this.getConnection().prepareStatement(
 					GET_TERM_QUERY);
+			this.getTermsByTypeStatement = this.getConnection().prepareStatement(GET_TERMS_BY_TYPE);
 		} catch (SQLException e) {
 			throw new AtomSetException(e.getMessage(), e);
 		}
@@ -343,11 +351,6 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		return res;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.lirmm.graphik.alaska.store.IStore#getTerms()
-	 */
 	@Override
 	public Set<Term> getTerms() throws AtomSetException {
 		Statement statement = this.createStatement();
@@ -381,17 +384,22 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		return terms;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.lirmm.graphik.kb.core.IAtomSet#getTerms(fr.lirmm.graphik.kb.core.ITerm
-	 * .Type)
-	 */
 	@Override
-	public Set<Term> getTerms(Type type) {
-		// TODO implement this method
-		throw new MethodNotImplementedError("This method isn't implemented");
+	public Set<Term> getTerms(Type type) throws AtomSetException {
+		ResultSet results = null;
+		Set<Term> terms = new TreeSet<Term>();
+
+		try {
+			this.getTermsByTypeStatement.setString(1, type.toString());
+			results = this.getTermsByTypeStatement.executeQuery();
+			while (results.next()) {
+				terms.add(new Term(results.getString(1), type));
+			}
+			results.close();
+		} catch (SQLException e) {
+			throw new AtomSetException(e);
+		}
+		return terms;
 	}
 
 	/**
