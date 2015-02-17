@@ -48,7 +48,7 @@ public class JenaStore extends AbstractTripleStore {
 	Dataset dataset;
 	String directory;
 
-	private static final String PREFIX = "PREFIX : ";
+	private static final String PREFIX = "";
 
 	private static final String INSERT_QUERY = PREFIX + " INSERT DATA { "
 			+ " %s %s %s " + " } ";
@@ -131,8 +131,8 @@ public class JenaStore extends AbstractTripleStore {
 	}
 
 	private static boolean add(UpdateRequest request, Atom atom) {
-		String insert = String.format(INSERT_QUERY, atom.getTerm(0),
-				atom.getPredicate(), atom.getTerm(1));
+		String insert = String.format(INSERT_QUERY, termToString(atom.getTerm(0)),
+				predicateToString(atom.getPredicate()), termToString(atom.getTerm(1)));
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(insert);
 		}
@@ -197,8 +197,8 @@ public class JenaStore extends AbstractTripleStore {
 	@Override
 	public boolean contains(Atom atom) throws AtomSetException {
 		boolean contains = false;
-		String select = String.format(SELECT_QUERY, atom.getTerm(0),
-				atom.getPredicate(), atom.getTerm(1));
+		String select = String.format(SELECT_QUERY, termToString(atom.getTerm(0)),
+				predicateToString(atom.getPredicate()), termToString(atom.getTerm(1)));
 
 		dataset.begin(ReadWrite.READ);
 		QueryExecution qExec = null;
@@ -383,6 +383,22 @@ public class JenaStore extends AbstractTripleStore {
 	// PRIVATE STATIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
+	private static String predicateToString(Predicate p) {
+		return "<" + p.getLabel() + ">";
+	}
+	
+	private static String termToString(Term t) {
+		if(Term.Type.CONSTANT.equals(t.getType())) {
+			return "<" + t.getValue().toString() + ">";
+		} else if (Term.Type.LITERAL.equals(t.getType())) {
+			return t.getValue().toString();
+		} else if (Term.Type.VARIABLE.equals(t.getType())) {
+			return "?" + t.getValue().toString();
+		} else {
+			return "";
+		}
+	}
+	
 	private static Term createTerm(RDFNode node) {
 		Term term = null;
 		if (node.isLiteral()) {

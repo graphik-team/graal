@@ -11,18 +11,15 @@ import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
-import fr.lirmm.graphik.graal.io.dlp.DlpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlpWriter;
-import fr.lirmm.graphik.graal.store.triplestore.JenaWithoutSparqlStore;
-import fr.lirmm.graphik.util.stream.Filter;
-import fr.lirmm.graphik.util.stream.FilterReader;
+import fr.lirmm.graphik.graal.store.triplestore.JenaStore;
 
 public class JenaTest {
 	static DlpWriter writer = new DlpWriter();
 	
 	public static void main(String[] args) throws AtomSetException, IOException {
 		File f = new File("/tmp/jena");
-		AtomSet atomset = new JenaWithoutSparqlStore(f.getAbsolutePath());
+		AtomSet atomset = new JenaStore(f.getAbsolutePath());
 		
 		Term t1 = new Term("http://to.to/b", Term.Type.CONSTANT);
 		Term t2 = new Term("http://to.to/a", Term.Type.CONSTANT);

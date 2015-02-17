@@ -27,7 +27,7 @@ public class StoreTest {
 
 	@DataPoints
 	public static Store[] writeableStore() {
-		return TestUtil.writeableStore();
+		return TestUtil.getStores();
 	}
 
 	@Theory
