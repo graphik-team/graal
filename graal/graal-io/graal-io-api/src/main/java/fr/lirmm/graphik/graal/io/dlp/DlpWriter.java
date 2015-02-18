@@ -251,6 +251,58 @@ public class DlpWriter extends Writer implements ObjectWriter<Object>, Conjuncti
 		}
 		this.writer.write(')');
 	}
+
+	public static String writePredicateToString(Predicate p) {
+		String s = p.getLabel();
+		if(s.charAt(0) != '"') {
+			s = '"' + s;
+		}
+
+		if(s.charAt(0) != '"') {
+			s = s + '"';
+		}
+
+		return s;
+	}
+
+	public static String writeTermToString(Term t) {
+		String term = t.toString();
+		if(Type.VARIABLE.equals(t.getType())) {
+			if (term.charAt(0) < 65 || term.charAt(0) > 90) {
+				term = "VAR_" + term;
+			}
+			return term;
+		} else if(Type.CONSTANT.equals(t.getType())) {
+			if (term.charAt(0) < 97 || term.charAt(0) > 122) {
+				term = "cst_" + term;
+			}
+			return term;
+		} else {
+			return '"' + term + '"';
+		}
+	}
+
+	public static String writeAtomToString(Atom atom) {
+		StringBuilder s = new StringBuilder();
+
+		s.append(writePredicateToString(atom.getPredicate()));
+		s.append('(');
+		
+		boolean isFirst = true;
+		for(Term t : atom.getTerms()) {
+			if(isFirst) {
+				isFirst = false;
+			} else {
+				s.append(", ");
+			}
+			
+			s.append(writeTermToString(t));
+			
+			
+		}
+		s.append(')');
+		return s.toString();
+	}
 	
 	protected void writeTerm(Term t) throws IOException {
 		String term = t.toString();

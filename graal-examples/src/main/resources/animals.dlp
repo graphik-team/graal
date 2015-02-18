@@ -3,40 +3,40 @@
 % Hierarchy
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-"animal"(X) :- "vertébré"(X).
-"vertébré"(X) :- "ostéichthyen"(X).
-"vertébré"(X) :- "chondrichthyen"(X).
+"animal"(X) :- "vertebrate"(X).
+"vertebrate"(X) :- "osteichthyen"(X).
+"vertebrate"(X) :- "chondrichthyen"(X).
 
-"ostéichthyen"(X) :- "oiseau"(X).
-"ostéichthyen"(X) :- "crocodilien"(X).
-"ostéichthyen"(X) :- "mammifère"(X).
-"ostéichthyen"(X) :- "chélonien"(X).
-"ostéichthyen"(X) :- "squamate"(X).
-"ostéichthyen"(X) :- "lissamphibien"(X).
-"ostéichthyen"(X) :- "actinoptérygien"(X).
+"osteichthyen"(X) :- "mammal"(X).
+"osteichthyen"(X) :- "bird"(X).
+"osteichthyen"(X) :- "crocodylinae"(X).
+"osteichthyen"(X) :- "chelydridae"(X).
+"osteichthyen"(X) :- "squamata"(X).
+"osteichthyen"(X) :- "lissamphibia"(X).
+"osteichthyen"(X) :- "actinopterygii"(X).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Rules
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-"vertébré"(X) :- "animal"(X), "a_pour_partie"(X,Y), "squelette"(Y).
-"a_pour_partie"(X,Y), "squelette"(Y) :- "vertébré"(X).
+"vertebrate"(X) :- "animal"(X), "has_part"(X,Y), "skeleton"(Y).
+"has_part"(X,Y), "skeleton"(Y) :- "vertebrate"(X).
 
-"ostéichthyen"(X) :- "animal"(X), "a_pour_partie"(X, squelette_osseux).
-"a_pour_partie"(X, squelette_osseux) :- "ostéichthyen"(X).
+"osteichthyen"(X) :- "animal"(X), "has_part"(X, bone_skeleton).
+"has_part"(X, bone_skeleton) :- "osteichthyen"(X).
 
-"chondrichthyen"(X) :- "animal"(X), "a_pour_partie"(X, squelette_cartilagineux).
-"a_pour_partie"(X, squelette_cartilagineux) :- "chondrichthyen"(X).
+"chondrichthyen"(X) :- "animal"(X), "has_part"(X, cartilage_skeleton).
+"has_part"(X, cartilage_skeleton) :- "chondrichthyen"(X).
 
-"mammifère"(X) :- "animal"(X), "a_pour_partie"(X, poils).
-"mammifère"(X) :- "animal"(X), "a_pour_partie"(X, mammelles).
-"a_pour_partie"(X, poils),"a_pour_partie"(X, mammelles) :- "mammifère"(X).
+"mammal"(X) :- "animal"(X), "has_part"(X, hairs).
+"mammal"(X) :- "animal"(X), "has_part"(X, mammals).
+"has_part"(X, hairs),"has_part"(X, mammals) :- "mammal"(X).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Facts
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-"squelette"(squelette_osseux), 
-"squelette"(squelette_cartilagineux).
+"skeleton"(bone_skeleton), 
+"skeleton"(cartilage_skeleton).
 
-"animal"(souris), "a_pour_partie"(souris, poils).
+"animal"(mice), "has_part"(mice, hairs).

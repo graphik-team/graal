@@ -1,9 +1,11 @@
-package fr.lirmm.graphik.graal.apps;
+package fr.lirmm.graphik.graal.cqa;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-// TODO external DB
-// ou plus simplement juste un fichier...
+
+import java.io.File;
+import java.io.FileWriter;
+
 public class FGH implements Iterable<FGH.Edge> {
 
 	public static class Edge implements Comparable<Edge>, Iterable<Integer> {
@@ -82,6 +84,38 @@ public class FGH implements Iterable<FGH.Edge> {
 			s.append("\n");
 		}
 		return s.toString();
+	}
+
+	public void writeToFile(String filepath) {
+		try {
+			File f = new File(filepath);
+			FileWriter out = new FileWriter(f);
+
+			// first count nb edges
+			int cpt = 0;
+			for (Edge e : this)
+				++cpt;
+
+			out.write(cpt);
+			out.write("\n");
+
+			for (Edge e : this) {
+				cpt = 0;
+				for (Integer i : e) // count edge size
+					++cpt;
+				out.write(cpt);
+				out.write(' ');
+				for (Integer i : e) { // print elements
+					out.write(i);
+					out.write(' ');
+				}
+				out.write("\n");
+			}
+		}
+		catch (Exception e) {
+			System.err.println(e);
+			e.printStackTrace();
+		}
 	}
 
 	private LinkedList<Edge> edges = new LinkedList<Edge>();

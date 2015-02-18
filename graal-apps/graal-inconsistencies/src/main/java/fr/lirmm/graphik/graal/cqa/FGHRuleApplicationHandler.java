@@ -1,4 +1,4 @@
-package fr.lirmm.graphik.graal.apps;
+package fr.lirmm.graphik.graal.cqa;
 
 import java.util.LinkedList;
 
@@ -39,7 +39,8 @@ public class FGHRuleApplicationHandler implements RuleApplicationHandler {
 		return true;
 		}
 		catch (Exception e) {
-			System.err.println("[BIG WARNING!!!!!!!!!!!] Something went wrong????");
+			System.err.println(e);
+			e.printStackTrace();
 		}
 		return true;
 	}
