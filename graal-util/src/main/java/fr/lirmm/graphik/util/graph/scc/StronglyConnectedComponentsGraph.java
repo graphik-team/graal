@@ -21,7 +21,7 @@ public class StronglyConnectedComponentsGraph<V> extends
 	private static final long serialVersionUID = -2816870306827502776L;
 
 	private int edgeMaxIndex = -1;
-	private Map<Integer, Set<V>> map = new TreeMap<Integer, Set<V>>();
+	private final Map<Integer, Set<V>> map = new TreeMap<Integer, Set<V>>();
 
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS

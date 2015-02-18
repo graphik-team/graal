@@ -9,7 +9,6 @@ import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
 
 public class TermPartition extends Partition<Term> {
@@ -64,21 +63,18 @@ public class TermPartition extends Partition<Term> {
 						}
 					}// the current representant is a variable
 					else if (representant.isVariable()) {
-						try {
-							// t is a variable from the answer
-							if (context != null
-									&& !context.getAnswerVariables().contains(
-											representant)
-									&& context.getAtomSet().getTerms()
-											.contains(t)) {
-								representant = t;
-							}
-						} catch (AtomSetException e) {
-
+						// t is a variable from the answer
+						if (context != null
+								&& !context.getAnswerVariables().contains(
+										representant)
+								&& context.getAtomSet().getTerms()
+										.contains(t)) {
+							representant = t;
 						}
 					}
-				} else
+				} else { 
 					i.remove();
+				}
 			}
 			// all the terms in the equivalence set have as image the
 			// representant of the equivalence set

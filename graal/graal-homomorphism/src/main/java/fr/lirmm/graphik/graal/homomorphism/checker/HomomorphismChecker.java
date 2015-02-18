@@ -4,7 +4,7 @@
 package fr.lirmm.graphik.graal.homomorphism.checker;
 
 import fr.lirmm.graphik.graal.core.Query;
-import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.homomorphism.Homomorphism;
 
 /**
@@ -19,7 +19,7 @@ public interface HomomorphismChecker extends Comparable<HomomorphismChecker> {
 	 * @param atomset
 	 * @return
 	 */
-	boolean check(Query query, ReadOnlyAtomSet atomset);
+	boolean check(Query query, AtomSet atomset);
 	
 	/**
 	 * 
@@ -27,7 +27,7 @@ public interface HomomorphismChecker extends Comparable<HomomorphismChecker> {
 	 * @param atomset
 	 * @return
 	 */
-	Homomorphism<? extends Query, ? extends ReadOnlyAtomSet> getSolver();
+	Homomorphism<? extends Query, ? extends AtomSet> getSolver();
 	
 	/**
 	 * 

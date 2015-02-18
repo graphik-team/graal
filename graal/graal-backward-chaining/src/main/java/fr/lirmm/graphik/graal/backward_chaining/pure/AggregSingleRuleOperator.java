@@ -11,7 +11,6 @@ import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
 import fr.lirmm.graphik.graal.backward_chaining.pure.utils.QueryUnifier;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByHeadPredicatesRuleSet;
 
 /**
@@ -42,12 +41,9 @@ public class AggregSingleRuleOperator extends AbstractRewritingOperator {
 	public Collection<ConjunctiveQuery> getRewritesFrom(ConjunctiveQuery q, IndexedByHeadPredicatesRuleSet ruleSet, RulesCompilation compilation) {
 		LinkedList<ConjunctiveQuery> rewriteSet = new LinkedList<ConjunctiveQuery>();
 		Collection<QueryUnifier> unifiers = new LinkedList<QueryUnifier>();
-		try {
-			for (Rule r : getUnifiableRules(q.getAtomSet().getAllPredicates(),
-					ruleSet, compilation)) {
-				unifiers.addAll(getSRUnifier(q, r, compilation));
-			}
-		} catch (AtomSetException e) {
+		for (Rule r : getUnifiableRules(q.getAtomSet().getAllPredicates(),
+				ruleSet, compilation)) {
+			unifiers.addAll(getSRUnifier(q, r, compilation));
 		}
 
 		/** compute the rewrite from the unifier **/

@@ -13,7 +13,6 @@ import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
 
 public class HierarchicalCompilation extends AbstractRulesCompilation {
@@ -257,18 +256,14 @@ public class HierarchicalCompilation extends AbstractRulesCompilation {
 		
 		for (Rule rule : ruleset) {
 			// count the number of new pred in r
-			try {
-				for (Predicate p : rule.getBody().getAllPredicates())
-					if (this.addPredicate(p))
-						nbPred++;
+			for (Predicate p : rule.getBody().getAllPredicates())
+				if (this.addPredicate(p))
+					nbPred++;
 
-				for (Predicate p : rule.getHead().getAllPredicates())
-					if (this.addPredicate(p))
-						nbPred++;
-				
-			} catch (AtomSetException e) {
+			for (Predicate p : rule.getHead().getAllPredicates())
+				if (this.addPredicate(p))
+					nbPred++;
 
-			}
 		}
 		
 		Atom father, son;

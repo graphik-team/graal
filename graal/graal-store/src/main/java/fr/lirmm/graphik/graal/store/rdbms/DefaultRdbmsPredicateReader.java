@@ -11,7 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.store.StoreException;
+import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
+import fr.lirmm.graphik.graal.store.rdbms.driver.DriverException;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
 import fr.lirmm.graphik.util.stream.AbstractReader;
 
@@ -36,13 +37,15 @@ class DefaultRdbmsPredicateReader extends AbstractReader<Predicate> {
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 
-	DefaultRdbmsPredicateReader(RdbmsDriver driver) throws StoreException {
+	DefaultRdbmsPredicateReader(RdbmsDriver driver) throws AtomSetException {
 		Statement stat;
 		try {
 			stat = driver.createStatement();
 			results = stat.executeQuery(GET_ALL_PREDICATES_QUERY);
 		} catch (SQLException e) {
-			throw new StoreException(e);
+			throw new AtomSetException(e);
+		} catch (DriverException e) {
+			throw new AtomSetException(e);
 		}
 		
 	}
@@ -51,11 +54,6 @@ class DefaultRdbmsPredicateReader extends AbstractReader<Predicate> {
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.lirmm.graphik.util.stream.ObjectReader#hasNext()
-	 */
 	@Override
 	public boolean hasNext() {
 		if (!this.hasNextCallDone) {
@@ -70,11 +68,6 @@ class DefaultRdbmsPredicateReader extends AbstractReader<Predicate> {
 		return this.hasNext;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.lirmm.graphik.util.stream.ObjectReader#next()
-	 */
 	@Override
 	public Predicate next() {
 		if (!this.hasNextCallDone)

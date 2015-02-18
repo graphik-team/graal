@@ -218,6 +218,9 @@ public class PureRewriter {
 		@Parameter(names = { "-p", "--operator" }, description = "Rewriting operator SRA, ARA, ARAM", required = false)
 		private String operator = "SRA";
 		
+		@Parameter(names = { "-u", "--unfolding" }, description = "Enable unfolding", required = false)
+		private boolean isUnfoldingEnable = false;
+		
 		/**
 		 * @param commander
 		 * @throws FileNotFoundException
@@ -294,9 +297,10 @@ public class PureRewriter {
 					bc.setProfiler(profiler);
 					bc.enableVerbose(true);
 				}
+				
+				bc.enableUnfolding(this.isUnfoldingEnable);
 
 				int i = 0;
-
 				try {
 					writer.write("\n");
 					writer.write("% rewrite of: ");

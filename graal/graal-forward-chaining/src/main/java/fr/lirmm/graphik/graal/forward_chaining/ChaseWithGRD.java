@@ -3,22 +3,18 @@
  */
 package fr.lirmm.graphik.graal.forward_chaining;
 
-import java.util.Set;
 import java.util.TreeSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultFreeVarGen;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.SymbolGenerator;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
-import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
@@ -36,7 +32,7 @@ public class ChaseWithGRD extends AbstractChase {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(ChaseWithGRD.class);
 	
-	private ChaseStopCondition stopCondition = new RestrictedChaseStopCondition();
+	private ChaseHaltingCondition stopCondition = new RestrictedChaseStopCondition();
 	private SymbolGenerator existentialGen = new DefaultFreeVarGen("E");
 	private GraphOfRuleDependencies grd;
 	private AtomSet atomSet;
@@ -64,7 +60,14 @@ public class ChaseWithGRD extends AbstractChase {
 		try {
 			rule = queue.pollFirst();
 			if(rule != null) {
-				this.apply(rule);
+				if(this.apply(rule, this.atomSet)) {
+					for(Rule triggeredRule : this.grd.getOutEdges(rule)) {
+						if(LOGGER.isDebugEnabled()) {
+							LOGGER.debug("-- -- Dependency: " + triggeredRule);
+						}
+						this.queue.add(triggeredRule);
+					}
+				}
 			}
 		} catch (Exception e) {
 			throw new ChaseException("An error occur pending saturation step.", e);
@@ -77,47 +80,27 @@ public class ChaseWithGRD extends AbstractChase {
 	}
 	
 	// /////////////////////////////////////////////////////////////////////////
-	// PRIVATE METHODS
+	// ABSTRACT METHODS IMPLEMENTATION
 	// /////////////////////////////////////////////////////////////////////////
 	
-	/**
-	 * @param rule
-	 * @throws AtomSetException 
-	 * @throws HomomorphismException 
-	 * @throws HomomorphismFactoryException 
-	 */
-	private void apply(Rule rule) throws HomomorphismFactoryException, HomomorphismException, AtomSetException {
-		ConjunctiveQuery query = new DefaultConjunctiveQuery(rule.getBody(), rule.getFrontier());
-		if(LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Rule to execute: " + rule);
-			LOGGER.debug("       -- Query: " + query);
-		}
-		
-		for (Substitution substitution : StaticHomomorphism.executeQuery(query, atomSet)) {
-			if(LOGGER.isDebugEnabled()) {
-				LOGGER.debug("-- Found homomorphism: " + substitution );
-			}
-			Set<Term> fixedTerm = substitution.getValues();
-			
-			// Generate new existential variables
-			for(Term t : rule.getExistentials()) {
-				substitution.put(t, existentialGen.getFreeVar());
-			}
+	@Override
+	protected Iterable<Substitution> executeQuery(ConjunctiveQuery query, AtomSet atomSet) throws HomomorphismFactoryException, HomomorphismException {
+		return StaticHomomorphism.executeQuery(query, atomSet);
+	}
 
-			// the atom set producted by the rule application
-			ReadOnlyAtomSet deductedAtomSet = substitution.getSubstitut(rule.getHead());
-			ReadOnlyAtomSet bodyAtomSet = substitution.getSubstitut(rule.getBody());
+	@Override
+	protected Term getFreeVar() {
+		return this.existentialGen.getFreeVar();
+	}
 
-			if(stopCondition.canIAdd(deductedAtomSet, fixedTerm, bodyAtomSet, this.atomSet)) {
-				this.atomSet.addAll(deductedAtomSet);
-				for(Rule triggeredRule : this.grd.getOutEdges(rule)) {
-					if(LOGGER.isDebugEnabled()) {
-						LOGGER.debug("-- -- Dependency: " + triggeredRule);
-					}
-					this.queue.add(triggeredRule);
-				}
-			}
-		}
+	@Override
+	public ChaseHaltingCondition getHaltingCondition() {
+		return this.stopCondition;
+	}
+
+	@Override
+	public void setHaltingCondition(ChaseHaltingCondition haltingCondition) {
+		this.stopCondition = haltingCondition;
 	}
 
 }

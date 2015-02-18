@@ -1,7 +1,6 @@
 package fr.lirmm.graphik.graal.transformation;
 
 import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.util.stream.ObjectReader;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -15,7 +14,7 @@ public abstract class AAtomTransformator implements AtomTransformator {
      * @param atoms
      * @return 
      */
-    public ObjectReader<Atom> transform(Iterable<Atom> atoms) {
+    public Iterable<Atom> transform(Iterable<? extends Atom> atoms) {
         return new TransformatorReader(atoms, this);
     }
 

@@ -8,27 +8,27 @@ import java.io.FileWriter;
 
 public class FGH implements Iterable<FGH.Edge> {
 
-	public class Edge implements Comparable<Edge>, Iterable<Integer> {
+	public static class Edge implements Comparable<Edge>, Iterable<Integer> {
 
 		public Edge(LinkedList<Integer> f, int t) {
 			for (Integer i : f) {
-				if (!_from.contains(i)) _from.add(i);
+				if (!this.from.contains(i)) this.from.add(i);
 			}
-			_to = t;
+			this.to = t;
 		}
 
 		public String toString() {
 			StringBuilder s = new StringBuilder();
 			s.append('{');
 			boolean first = true;
-			for (Integer i : _from) {
+			for (Integer i : this.from) {
 				if (first) first = false;
 				else s.append(',');
 				s.append(i.intValue());
 			}
 			s.append('}');
 			s.append(" --> ");
-			s.append(_to);
+			s.append(to);
 			return s.toString();
 		}
 
@@ -36,37 +36,37 @@ public class FGH implements Iterable<FGH.Edge> {
 			return 1;
 		}
 		public boolean isSubset(Edge e) {
-			if (e._to != _to)
+			if (e.to != this.to)
 				return false;
-			for (Integer i : _from)
-				if (!e._from.contains(i))
+			for (Integer i : this.from)
+				if (!e.from.contains(i))
 					return false;
 			return true;
 		}
 
-		public int to() { return _to; }
+		public int to() { return this.to; }
 
-		public Iterator iterator() { return _from.iterator(); }
+		public Iterator iterator() { return this.from.iterator(); }
 
-		private LinkedList<Integer> _from = new LinkedList<Integer>();
-		private int _to;
+		private LinkedList<Integer> from = new LinkedList<Integer>();
+		private int to;
 	};
 
 	public void add(LinkedList<Integer> causes, int consequence) {
 		if (!causes.contains(new Integer(consequence))) {
 			Edge e = new Edge(causes,consequence);
-			_edges.add(e);
+			this.edges.add(e);
 			// Perhaps too expensive and quite useless...
 			filterSupsets();
 		}
 	}
 
 	public void filterSupsets() {
-		for (Edge e : _edges) {
-			for (Edge e2 : _edges) {
+		for (Edge e : this.edges) {
+			for (Edge e2 : this.edges) {
 				if (e != e2) {
 					if (e.isSubset(e2))
-						_edges.remove(e2);
+						this.edges.remove(e2);
 				}
 			}
 		}
@@ -74,7 +74,7 @@ public class FGH implements Iterable<FGH.Edge> {
 
 	@Override
 	public Iterator iterator() {
-		return _edges.iterator();
+		return this.edges.iterator();
 	}
 
 	public String toString() {
@@ -118,7 +118,7 @@ public class FGH implements Iterable<FGH.Edge> {
 		}
 	}
 
-	private LinkedList<Edge> _edges = new LinkedList<Edge>();
+	private LinkedList<Edge> edges = new LinkedList<Edge>();
 
 };
 

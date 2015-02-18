@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 
 /**
@@ -29,7 +29,7 @@ import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
  * 
  */
 public class PureHomomorphism implements
-		Homomorphism<ReadOnlyAtomSet, ReadOnlyAtomSet> {
+		Homomorphism<AtomSet, AtomSet> {
 
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(PureHomomorphism.class);
@@ -51,8 +51,8 @@ public class PureHomomorphism implements
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public SubstitutionReader execute(ReadOnlyAtomSet source,
-			ReadOnlyAtomSet target) throws HomomorphismException {
+	public SubstitutionReader execute(AtomSet source,
+			AtomSet target) throws HomomorphismException {
 		return null;
 	}
 
@@ -60,7 +60,7 @@ public class PureHomomorphism implements
 	 * return true iff exist an homomorphism from the query to the fact else
 	 * return false
 	 */
-	public boolean exist(ReadOnlyAtomSet source, ReadOnlyAtomSet target)
+	public boolean exist(AtomSet source, AtomSet target)
 			throws HomomorphismException {
 
 		Homomorphism homomorphism = new Homomorphism();

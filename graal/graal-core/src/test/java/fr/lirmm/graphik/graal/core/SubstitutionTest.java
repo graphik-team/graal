@@ -9,10 +9,6 @@ import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
-import fr.lirmm.graphik.graal.core.HashMapSubstitution;
-import fr.lirmm.graphik.graal.core.Substitution;
-import fr.lirmm.graphik.graal.core.Term;
-
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *

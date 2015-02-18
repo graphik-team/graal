@@ -3,20 +3,20 @@ package fr.lirmm.graphik.graal.forward_chaining;
 import java.util.Set;
 
 import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
 
-public class ChaseStopConditionWithHandler implements ChaseStopCondition {
+public class ChaseStopConditionWithHandler implements ChaseHaltingCondition {
 
-	public ChaseStopConditionWithHandler(ChaseStopCondition c, RuleApplicationHandler h) {
-		_realHaltingCondition = c;
-		_handler = h;
+	public ChaseStopConditionWithHandler(ChaseHaltingCondition c, RuleApplicationHandler h) {
+		this.realHaltingCondition = c;
+		this.handler = h;
 	}
 
-	public ChaseStopConditionWithHandler(ChaseStopCondition c) {
-		_realHaltingCondition = c;
-		_handler = RuleApplicationHandler.DEFAULT;
+	public ChaseStopConditionWithHandler(ChaseHaltingCondition c) {
+		this.realHaltingCondition = c;
+		this.handler = RuleApplicationHandler.DEFAULT;
 	}
 
 	/**
@@ -27,24 +27,24 @@ public class ChaseStopConditionWithHandler implements ChaseStopCondition {
 	 * @throws HomomorphismFactoryException
 	 * @throws HomomorphismException
 	 */
-	public boolean canIAdd(ReadOnlyAtomSet atomSet, Set<Term> fixedTerm,
-	                       ReadOnlyAtomSet from, ReadOnlyAtomSet base) 
+	public boolean canIAdd(AtomSet atomSet, Set<Term> fixedTerm,
+	                       AtomSet from, AtomSet base) 
 		throws HomomorphismFactoryException, HomomorphismException {
-		if (_handler.onRuleApplication(from,atomSet,base)) {
-			return _realHaltingCondition.canIAdd(atomSet,fixedTerm,from,base);
+		if (this.handler.onRuleApplication(from,atomSet,base)) {
+			return this.realHaltingCondition.canIAdd(atomSet,fixedTerm,from,base);
 		}
 		return false;
 	}
 
 	public void setHandler(RuleApplicationHandler h) {
-		_handler = h;
+		this.handler = h;
 	}
-	public void setRealChaseHaltingCondition(ChaseStopCondition c) {
-		_realHaltingCondition = c;
+	public void setRealChaseHaltingCondition(ChaseHaltingCondition c) {
+		this.realHaltingCondition = c;
 	}
 
-	private ChaseStopCondition      _realHaltingCondition;
-	private RuleApplicationHandler  _handler;
+	private ChaseHaltingCondition      realHaltingCondition;
+	private RuleApplicationHandler  handler;
 
 };
 

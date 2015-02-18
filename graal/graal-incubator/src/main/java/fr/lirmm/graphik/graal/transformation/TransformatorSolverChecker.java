@@ -5,7 +5,7 @@ package fr.lirmm.graphik.graal.transformation;
 
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Query;
-import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.homomorphism.checker.AbstractChecker;
 
 /**
@@ -15,8 +15,8 @@ import fr.lirmm.graphik.graal.homomorphism.checker.AbstractChecker;
 public class TransformatorSolverChecker extends AbstractChecker {
 
 	@Override
-	public boolean check(Query query, ReadOnlyAtomSet atomset) {
-		return query instanceof ConjunctiveQuery && atomset instanceof ReadOnlyTransformStore;
+	public boolean check(Query query, AtomSet atomset) {
+		return query instanceof ConjunctiveQuery && atomset instanceof TransformAtomSet;
 	}
 
 	@Override

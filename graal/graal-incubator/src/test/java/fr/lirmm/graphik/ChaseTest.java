@@ -31,7 +31,6 @@ import fr.lirmm.graphik.graal.grd.GraphOfRuleDependenciesWithUnifiers;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
-import fr.lirmm.graphik.graal.io.basic.BasicParser;
 import fr.lirmm.graphik.graal.io.dlp.DlpParser;
 import fr.lirmm.graphik.graal.io.grd.GRDParser;
 import fr.lirmm.graphik.graal.parser.ParseException;
@@ -48,9 +47,9 @@ public class ChaseTest {
 		return TestUtil.writeableStore();
 	}
 	
-	@Theory
+	/*@Theory
 	public void test1(AtomSet atomSet) throws AtomSetException, HomomorphismFactoryException, HomomorphismException, ChaseException {
-		atomSet.addAll(BasicParser.parse("p(X,a).q(a,a)"));
+		atomSet.addAll(DlpParser.parseAtomSet("p(X,a),q(a,a)."));
 
 		LinkedList<Rule> ruleSet = new LinkedList<Rule>();
 		ruleSet.add(DlpParser.parseRule("q(X,Y) :- p(X,Y)."));
@@ -60,11 +59,11 @@ public class ChaseTest {
 		
 		Query query = DlpParser.parseQuery("? :- p(X,Y),q(X,Y).");
 		Assert.assertTrue(StaticHomomorphism.executeQuery(query, atomSet).hasNext());
-	}
+	}*/
 	
 	@Theory
 	public void restrictedChaseTest(AtomSet atomSet) throws AtomSetException, HomomorphismFactoryException, HomomorphismException, ChaseException {
-		atomSet.addAll(BasicParser.parse("p(a)"));
+		atomSet.addAll(DlpParser.parseAtomSet("p(a)."));
 		
 		LinkedList<Rule> ruleSet = new LinkedList<Rule>();
 		ruleSet.add(DlpParser.parseRule("q(X,Z) :- p(X)."));

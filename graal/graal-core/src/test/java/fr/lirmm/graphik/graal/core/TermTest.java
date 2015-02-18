@@ -3,8 +3,6 @@ package fr.lirmm.graphik.graal.core;
 import org.junit.Assert;
 import org.junit.Test;
 
-import fr.lirmm.graphik.graal.core.Term;
-
 
 /**
  * Unit test.

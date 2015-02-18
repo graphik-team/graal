@@ -13,10 +13,9 @@ import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
-import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
+import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
+import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
 
 
 /**
@@ -25,16 +24,11 @@ import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
  */
 public class ConjunctiveQueryWithFixedVariables implements ConjunctiveQuery {
 
-	private /*ReadOnly*/AtomSet atomSet;
+	private InMemoryAtomSet atomSet;
 	private Collection<Term> answerVariables;
 
-	public ConjunctiveQueryWithFixedVariables(/*ReadOnly*/AtomSet atomSet, Iterable<Term> fixedTerms) {
+	public ConjunctiveQueryWithFixedVariables(AtomSet atomSet, Iterable<Term> fixedTerms) {
 		this.atomSet = computeFixedQuery(atomSet, fixedTerms);
-        this.answerVariables = this.atomSet.getTerms(Term.Type.VARIABLE);
-    }
-
-	public ConjunctiveQueryWithFixedVariables(ReadOnlyAtomSet atomSet, Iterable<Term> fixedTerms) {
-		this.atomSet = computeFixedQuery(new LinkedListAtomSet(atomSet), fixedTerms);
         this.answerVariables = this.atomSet.getTerms(Term.Type.VARIABLE);
     }
 
@@ -55,25 +49,16 @@ public class ConjunctiveQueryWithFixedVariables implements ConjunctiveQuery {
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
 	
-	/* (non-Javadoc)
-	 * @see fr.lirmm.graphik.kb.core.Query#isBoolean()
-	 */
 	@Override
 	public boolean isBoolean() {
 		return this.answerVariables.isEmpty();
 	}
 
-	/* (non-Javadoc)
-	 * @see fr.lirmm.graphik.kb.core.ConjunctiveQuery#getAtomSet()
-	 */
 	@Override
-	public /*ReadOnly*/AtomSet getAtomSet() {
+	public InMemoryAtomSet getAtomSet() {
 		return this.atomSet;
 	}
 
-	/* (non-Javadoc)
-	 * @see fr.lirmm.graphik.kb.core.ConjunctiveQuery#getResponseVariables()
-	 */
 	@Override
 	public Collection<Term> getAnswerVariables() {
 		return this.answerVariables;
@@ -84,10 +69,10 @@ public class ConjunctiveQueryWithFixedVariables implements ConjunctiveQuery {
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
 	
-	private static AtomSet computeFixedQuery(/*ReadOnly*/AtomSet atomSet,
+	private static InMemoryAtomSet computeFixedQuery(/*ReadOnly*/AtomSet atomSet,
 			Iterable<Term> fixedTerms) {
 		// create a Substitution for fixed query
-		AtomSet fixedQuery = AtomSetFactory.getInstance().createAtomSet();
+		InMemoryAtomSet fixedQuery = AtomSetFactory.getInstance().createAtomSet();
 		Substitution fixSub = SubstitutionFactory.getInstance().createSubstitution();
 		for (Term t : fixedTerms) {
 			if (Type.VARIABLE.equals(t.getType()))

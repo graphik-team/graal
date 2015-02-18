@@ -10,12 +10,12 @@ import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 
 
-public class ComplexHomomorphism<Q extends ConjunctiveQuery, F extends ReadOnlyAtomSet> implements Homomorphism<Q,F> {
+public class ComplexHomomorphism<Q extends ConjunctiveQuery, F extends AtomSet> implements Homomorphism<Q,F> {
 
 	private Homomorphism<ConjunctiveQuery,F> rawSolver;
 	private LinkedList<Atom> builtInAtoms;
@@ -25,7 +25,7 @@ public class ComplexHomomorphism<Q extends ConjunctiveQuery, F extends ReadOnlyA
 	}
 
     public SubstitutionReader execute(Q q, F f) throws HomomorphismException {
-	    AtomSet rawAtoms = new LinkedListAtomSet();
+    	InMemoryAtomSet rawAtoms = new LinkedListAtomSet();
 		this.builtInAtoms = new LinkedList<Atom>();
 		for (Atom a : q) {
 			if (a.getPredicate() instanceof BuiltInPredicate) {
@@ -95,7 +95,6 @@ public class ComplexHomomorphism<Q extends ConjunctiveQuery, F extends ReadOnlyA
     	public void close() { this.rawReader.close(); this.rawReader = null; }
 
 		private Substitution next;
-		private Substitution current;
 		private SubstitutionReader rawReader;
 
 	};

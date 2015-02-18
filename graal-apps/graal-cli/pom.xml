@@ -1,13 +1,14 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
 		<artifactId>graal-apps</artifactId>
-		<version>0.6.5-SNAPSHOT </version>
+		<version>0.7.1-SNAPSHOT </version>
 	</parent>
-	
+
 	<artifactId>graal-cli</artifactId>
 	<name>Graal CLI</name>
 	<packaging>jar</packaging>
@@ -25,8 +26,8 @@
 	</organization>
 
 	<developers>
-	        <developer>
-		        <name>Swan ROCHER</name>
+		<developer>
+			<name>Swan ROCHER</name>
 			<email>rocher@lirmm.fr</email>
 			<organization>INRIA</organization>
 		</developer>
@@ -40,7 +41,7 @@
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-io</artifactId>
+			<artifactId>graal-io-api</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
@@ -82,12 +83,39 @@
 					<target>${jdk.version}</target>
 				</configuration>
 			</plugin>
-            <plugin>
-			  <artifactId>maven-release-plugin</artifactId>
-			  <version>2.1</version>
-			  <configuration>
-			    <preparationGoals>clean install</preparationGoals>
-			  </configuration>
+			<plugin>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.1</version>
+				<configuration>
+					<preparationGoals>clean install</preparationGoals>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>3.3</version>
+				<configuration>
+					<minimumPriority>2</minimumPriority>
+					<failurePriority>2</failurePriority>
+					<rulesets>
+						<ruleset>${project.basedir}/pmd-rulesets/basic.xml</ruleset>
+						<ruleset>${project.basedir}/pmd-rulesets/finalizers.xml</ruleset>
+						<ruleset>${project.basedir}/pmd-rulesets/imports.xml</ruleset>
+						<ruleset>${project.basedir}/pmd-rulesets/strings.xml</ruleset>
+						<ruleset>${project.basedir}/pmd-rulesets/naming.xml</ruleset>
+						<ruleset>${project.basedir}/pmd-rulesets/design.xml</ruleset>
+						<ruleset>${project.basedir}/pmd-rulesets/strictexception.xml</ruleset>
+					</rulesets>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

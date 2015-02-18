@@ -17,7 +17,6 @@ import fr.lirmm.graphik.graal.forward_chaining.StaticChase;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
-import fr.lirmm.graphik.graal.io.basic.BasicParser;
 import fr.lirmm.graphik.graal.io.dlp.DlpParser;
 
 
@@ -32,7 +31,7 @@ public class TestApplyRules {
 		
 		AtomSet atomSet = new LinkedListAtomSet();
 		
-		atomSet.addAll(BasicParser.parse("p(X,a).q(a,a)"));
+		atomSet.addAll(DlpParser.parseAtomSet("p(X,a),q(a,a)."));
 
 		RuleSet ruleSet = new LinkedListRuleSet();
 		ruleSet.add(DlpParser.parseRule("q(X,Y) :- p(X,Y)."));
@@ -79,7 +78,7 @@ public class TestApplyRules {
 	
 	public static void test() throws AtomSetException, HomomorphismFactoryException, HomomorphismException, ChaseException {
 		AtomSet atomSet = new LinkedListAtomSet();
-		atomSet.addAll(BasicParser.parse("p(X,a).q(a,a)"));
+		atomSet.addAll(DlpParser.parseAtomSet("p(X,a),q(a,a)."));
 
 		LinkedList<Rule> ruleSet = new LinkedList<Rule>();
 		ruleSet.add(DlpParser.parseRule("q(X,Y) :- p(X,Y)."));

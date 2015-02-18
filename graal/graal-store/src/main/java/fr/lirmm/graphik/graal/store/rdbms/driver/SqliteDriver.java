@@ -11,8 +11,6 @@ import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.store.StoreException;
-
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
@@ -30,24 +28,24 @@ public class SqliteDriver extends AbstractRdbmsDriver {
 	  * @throws StoreException
 	  */
 	public SqliteDriver(File file)
-			throws StoreException {
+			throws DriverException {
 		super(openConnection(file));
 	}
 	 
-	private static Connection openConnection(File file) throws StoreException {
+	private static Connection openConnection(File file) throws DriverException {
 		Connection connection;
 		try {
 			Class.forName("org.sqlite.JDBC");
 		} catch (ClassNotFoundException e) {
 			LOGGER.error(e.getMessage(), e);
-			throw new StoreException(e.getMessage(), e);
+			throw new DriverException(e.getMessage(), e);
 		}
 		
 		try {
 			connection = DriverManager.getConnection("jdbc:sqlite:" + file);
 		} catch (SQLException e) {
 			LOGGER.error(e.getMessage(), e);
-			throw new StoreException(e.getMessage(), e);
+			throw new DriverException(e.getMessage(), e);
 		}
 		
 		return connection;

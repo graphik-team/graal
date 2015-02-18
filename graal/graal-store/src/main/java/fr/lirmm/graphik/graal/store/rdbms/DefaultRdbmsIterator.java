@@ -15,8 +15,8 @@ import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
+import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader2AtomReader;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
@@ -72,7 +72,7 @@ class DefaultRdbmsIterator extends AbstractReader<Atom> {
 					terms.add(new Term("X"+i, Term.Type.VARIABLE));
 				}
 				
-				AtomSet atomSet = new LinkedListAtomSet();
+				InMemoryAtomSet atomSet = new LinkedListAtomSet();
 				Atom atom = new DefaultAtom(p, terms);
 				atomSet.add(atom);
 				

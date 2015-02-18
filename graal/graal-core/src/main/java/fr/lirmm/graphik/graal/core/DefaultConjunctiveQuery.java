@@ -5,9 +5,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
 
 
@@ -17,7 +16,7 @@ import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
  */
 public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 
-	private /*ReadOnly*/AtomSet atomSet;
+	private InMemoryAtomSet atomSet;
 	private Collection<Term> responseVariables;
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -29,17 +28,12 @@ public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 		this.responseVariables = new LinkedList<Term>();
 	}
 
-	public DefaultConjunctiveQuery(ReadOnlyAtomSet atomSet) {
-        this.atomSet = new LinkedListAtomSet(atomSet);
-        this.responseVariables = atomSet.getTerms(Term.Type.VARIABLE);
-	}
-
-	public DefaultConjunctiveQuery(AtomSet atomSet) {
+	public DefaultConjunctiveQuery(InMemoryAtomSet atomSet) {
         this.atomSet = atomSet;
         this.responseVariables = atomSet.getTerms(Term.Type.VARIABLE);
     }
 
-	public DefaultConjunctiveQuery(AtomSet atomSet, Collection<Term> answerVariables) {
+	public DefaultConjunctiveQuery(InMemoryAtomSet atomSet, Collection<Term> answerVariables) {
 		this.atomSet = atomSet;
 		this.responseVariables = answerVariables;
 		if(this.responseVariables == null) {
@@ -69,9 +63,11 @@ public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 	 * Returns the fact of the query.
 	 */
 	@Override
-	public /*ReadOnly*/AtomSet getAtomSet() { return this.atomSet; }
+	public InMemoryAtomSet getAtomSet() { 
+		return this.atomSet; 
+	}
 	
-	public void setAtomSet(/*ReadOnly*/AtomSet atomSet) {
+	public void setAtomSet(InMemoryAtomSet atomSet) {
 	    this.atomSet = atomSet;
 	}
 
@@ -79,17 +75,19 @@ public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 	 * Returns the answer variables of the query.
 	 */
 	@Override
-	public Collection<Term> getAnswerVariables() { return this.responseVariables; }
+	public Collection<Term> getAnswerVariables() { 
+		return this.responseVariables; 
+	}
 
-	public void setAnswerVariables(Collection<Term> v) { this.responseVariables = v; }
+	public void setAnswerVariables(Collection<Term> v) { 
+		this.responseVariables = v; 
+	}
 	
-	/* (non-Javadoc)
-	 * @see fr.lirmm.graphik.kb.query.Query#isBoolean()
-	 */
 	@Override
 	public boolean isBoolean() {
 		return responseVariables.isEmpty();
 	}
+	
 	// /////////////////////////////////////////////////////////////////////////
     //	OVERRIDE METHODS
     // /////////////////////////////////////////////////////////////////////////

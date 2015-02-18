@@ -6,8 +6,8 @@ import java.io.IOException;
 import org.openrdf.rio.RDFFormat;
 
 import fr.lirmm.graphik.graal.io.dlp.DlpWriter;
-import fr.lirmm.graphik.graal.parser.semanticweb.RDF2Atom;
-import fr.lirmm.graphik.graal.parser.semanticweb.RDFParser;
+import fr.lirmm.graphik.graal.io.rdf.RDF2Atom;
+import fr.lirmm.graphik.graal.io.rdf.RDFParser;
 
 /**
  * 

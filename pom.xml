@@ -1,9 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>fr.lirmm.graphik</groupId>
 	<artifactId>graal-main-project</artifactId>
-	<version>0.6.5-SNAPSHOT</version>
+	<version>0.7.1-SNAPSHOT</version>
 	<name>Generic Rule ApplicAtion Library</name>
 
 	<packaging>pom</packaging>
@@ -62,10 +63,15 @@
 					<minimumPriority>2</minimumPriority>
 					<failurePriority>2</failurePriority>
 					<rulesets>
-            			<ruleset>/rulesets/java/naming.xml</ruleset>
-            			<ruleset>/rulesets/java/design.xml</ruleset>
-            			<ruleset>/rulesets/java/strictexception.xml</ruleset>
-            		</rulesets>
+						<ruleset>${project.basedir}/pmd-rulesets/basic.xml</ruleset>
+						<ruleset>${project.basedir}/pmd-rulesets/finalizers.xml</ruleset>
+						<ruleset>${project.basedir}/pmd-rulesets/imports.xml</ruleset>
+						<ruleset>${project.basedir}/pmd-rulesets/strings.xml</ruleset>
+						<ruleset>${project.basedir}/pmd-rulesets/naming.xml</ruleset>
+						<ruleset>${project.basedir}/pmd-rulesets/design.xml</ruleset>
+						<ruleset>${project.basedir}/pmd-rulesets/strictexception.xml</ruleset>
+						<ruleset>${project.basedir}/pmd-rulesets/unusedcode.xml</ruleset>
+					</rulesets>
 				</configuration>
 			</plugin>
 			<plugin>

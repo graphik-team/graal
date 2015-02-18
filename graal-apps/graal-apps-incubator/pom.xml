@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
 		<artifactId>graal-apps</artifactId>
-		<version>0.6.5-SNAPSHOT </version>
+		<version>0.7.1-SNAPSHOT </version>
 	</parent>
 
 	<artifactId>graal-apps-incubator</artifactId>
@@ -50,7 +50,12 @@
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-io</artifactId>
+			<artifactId>graal-io-api</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>fr.lirmm.graphik</groupId>
+			<artifactId>graal-io-rdf</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>

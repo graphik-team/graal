@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 
 /**
  * A Rule is a pair (B,H) of atom set such as "B -> H".
@@ -29,14 +30,14 @@ public interface Rule extends Comparable<Rule> {
 	 * 
 	 * @return
 	 */
-	AtomSet getBody();
+	InMemoryAtomSet getBody();
 
 	/**
 	 * The head (the conclusion) of the rule.
 	 * 
 	 * @return
 	 */
-	AtomSet getHead();
+	InMemoryAtomSet getHead();
 
 	/**
 	 * Compute and return the set of frontier variables of the rule.

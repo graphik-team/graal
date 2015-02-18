@@ -12,12 +12,12 @@ import com.beust.jcommander.Parameter;
 
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
 import fr.lirmm.graphik.graal.io.dlp.DlpParser;
 import fr.lirmm.graphik.graal.parser.ParseException;
-import fr.lirmm.graphik.graal.store.StoreException;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
@@ -33,8 +33,8 @@ public class OneStepForwardChaining {
 	@Parameter(names = { "-f", "--dlp" }, description = "DLP file")
 	private String file = "";
 	
-	@Parameter(names = { "--driver"}, description = "mysql|sqlite")
-	private String driverName = "mysql";
+//	@Parameter(names = { "--driver"}, description = "mysql|sqlite")
+//	private String driverName = "mysql";
 	
 	@Parameter(names = { "--db"}, description = "database name")
 	private String database = "";
@@ -55,7 +55,7 @@ public class OneStepForwardChaining {
 
 	
 	
-	public static void main(String[] args) throws StoreException, FileNotFoundException, ChaseException, ParseException {
+	public static void main(String[] args) throws AtomSetException, FileNotFoundException, ChaseException, ParseException {
 		OneStepForwardChaining options = new OneStepForwardChaining();
 		JCommander commander = new JCommander(options, args);
 

@@ -5,11 +5,14 @@ package fr.lirmm.graphik.graal.store.test;
 
 import java.io.File;
 import java.io.IOError;
-import java.io.IOException;
 
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.store.StoreException;
+import com.tinkerpop.blueprints.impls.tg.TinkerGraph;
+
+import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
+import fr.lirmm.graphik.graal.store.Store;
+import fr.lirmm.graphik.graal.store.gdb.BlueprintsGraphDBStore;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
+import fr.lirmm.graphik.graal.store.rdbms.driver.DriverException;
 import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
 
 /**
@@ -17,28 +20,42 @@ import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
  *
  */
 public final class TestUtil {
-	
-	private TestUtil(){}
-	
-	public static final String DB_TEST = "/tmp/test.db";
-	
-	public static AtomSet[] writeableStore() {
-		File file = new File(DB_TEST);
-		try {
-			if (file.exists()) {
-				if (file.delete()) {
-					file.createNewFile();
-				} else {
-					throw new IOError(new Error("I can't delete the file " + DB_TEST));
-				}
 
+	private TestUtil() {
+	}
+
+	public static final String SQLITE_TEST = "/tmp/sqlite.db";
+	public static final String SPARKSEE_TEST = "/tmp/sparksee/";
+
+	public static DefaultRdbmsStore rdbmsStore = null;
+	public static BlueprintsGraphDBStore graphStore = null;
+
+	public static Store[] writeableStore() {
+		if (rdbmsStore != null) {
+			rdbmsStore.close();
+		}
+
+		if (graphStore != null) {
+			graphStore.close();
+		}
+		try {
+			File sqlite = new File(SQLITE_TEST);
+			if (sqlite.exists()) {
+				if (!sqlite.delete()) {
+					throw new IOError(new Error("I can't delete the file "
+							+ SQLITE_TEST));
+				}
 			}
-			return new AtomSet[] { new DefaultRdbmsStore(new SqliteDriver(file)) };
-		} catch (IOException e) {
+			rdbmsStore = new DefaultRdbmsStore(new SqliteDriver(sqlite));
+
+			graphStore = new BlueprintsGraphDBStore(new TinkerGraph());
+
+			return new Store[] { rdbmsStore, graphStore };
+		} catch (DriverException e) {
 			// TODO treat this exception
 			e.printStackTrace();
-			throw new IOError(e);
-		} catch (StoreException e) {
+			throw new Error("Untreated exception", e);
+		} catch (AtomSetException e) {
 			// TODO treat this exception
 			e.printStackTrace();
 			throw new Error("Untreated exception", e);

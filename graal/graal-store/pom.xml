@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
 		<artifactId>graal</artifactId>
-		<version>0.6.5-SNAPSHOT </version>
+		<version>0.7.1-SNAPSHOT </version>
 	</parent>
 	
 	<artifactId>graal-store</artifactId>
@@ -13,7 +13,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jdk.version>1.6</jdk.version>
+		<jdk.version>1.7</jdk.version>
 	</properties>
 
 	<inceptionYear>2014</inceptionYear>
@@ -34,6 +34,11 @@
 	<dependencies>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
+			<artifactId>graal-util</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-homomorphism</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
@@ -44,7 +49,7 @@
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-io</artifactId>
+			<artifactId>graal-io-api</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		
@@ -81,9 +86,19 @@
 			<version>9.1-901-1.jdbc4</version>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.jena</groupId>
+			<artifactId>jena-tdb</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+		<dependency>
 			<groupId>org.xerial</groupId>
 			<artifactId>sqlite-jdbc</artifactId>
 			<version>3.7.2</version>
+		</dependency>
+		<dependency>
+		   <groupId>com.tinkerpop.blueprints</groupId>
+		   <artifactId>blueprints-core</artifactId>
+		   <version>2.6.0</version>
 		</dependency>
 	</dependencies>
 

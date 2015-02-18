@@ -10,7 +10,6 @@ import fr.lirmm.graphik.graal.backward_chaining.pure.queries.PureQuery;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
 
 public class RewritingSet implements Iterable<ConjunctiveQuery>,
@@ -25,12 +24,10 @@ public class RewritingSet implements Iterable<ConjunctiveQuery>,
 
 	public boolean add(ConjunctiveQuery q) {
 		TreeSet<Predicate> set = new TreeSet<Predicate>();
-		try {
-			for (Predicate predicate : q.getAtomSet().getAllPredicates()) {
-				set.add(predicate);
-			}
-		} catch (AtomSetException e) {
+		for (Predicate predicate : q.getAtomSet().getAllPredicates()) {
+			set.add(predicate);
 		}
+
 		String key = set.toString();
 		if (queries.get(key) == null)
 			queries.put(key, new LinkedList<ConjunctiveQuery>());
@@ -47,11 +44,8 @@ public class RewritingSet implements Iterable<ConjunctiveQuery>,
 		TreeSet<Predicate> set = new TreeSet<Predicate>();
 		PureQuery cop = new PureQuery(q);
 		cop.removeAnswerPredicate();
-		try {
-			for (Predicate predicate : cop.getAtomSet().getAllPredicates()) {
-				set.add(predicate);
-			}
-		} catch (AtomSetException e) {
+		for (Predicate predicate : cop.getAtomSet().getAllPredicates()) {
+			set.add(predicate);
 		}
 		LinkedList<Predicate> preds = new LinkedList<Predicate>();
 		preds.addAll(set);

@@ -1,14 +1,14 @@
 package fr.lirmm.graphik.graal.forward_chaining;
 
-import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 
 public interface RuleApplicationHandler {
 
-	public boolean onRuleApplication(ReadOnlyAtomSet from, ReadOnlyAtomSet atomSet, ReadOnlyAtomSet base);
+	public boolean onRuleApplication(AtomSet from, AtomSet atomSet, AtomSet base);
 
 	public static RuleApplicationHandler DEFAULT = new RuleApplicationHandler() {
 		@Override
-		public boolean onRuleApplication(ReadOnlyAtomSet from, ReadOnlyAtomSet atomSet, ReadOnlyAtomSet base) { return true; }
+		public boolean onRuleApplication(AtomSet from, AtomSet atomSet, AtomSet base) { return true; }
 	};
 
 };

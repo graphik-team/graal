@@ -3,9 +3,8 @@ package fr.lirmm.graphik.graal.core;
 import java.util.LinkedList;
 import java.util.List;
 
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 
 public abstract class Util {
 
@@ -17,8 +16,8 @@ public abstract class Util {
 	 * @param id
 	 * @return
 	 */
-	public static ReadOnlyAtomSet reification(Atom a, SymbolGenerator freeVarGen) {
-		AtomSet atomSet = new LinkedListAtomSet();
+	public static InMemoryAtomSet reification(Atom a, SymbolGenerator freeVarGen) {
+		InMemoryAtomSet atomSet = new LinkedListAtomSet();
 		
 		String predicatLabel = a.getPredicate().getLabel();
 		Term termId = freeVarGen.getFreeVar();

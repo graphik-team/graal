@@ -17,7 +17,6 @@ import fr.lirmm.graphik.graal.core.SymbolGenerator;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
-import fr.lirmm.graphik.graal.store.StoreException;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.stream.ObjectReader;
@@ -40,9 +39,9 @@ public class PlainTableRDBMSStore extends AbstractRdbmsStore {
 	 * 
 	 * @param driver
 	 * @throws SQLException
-	 * @throws StoreException
+	 * @throws AtomSetException
 	 */
-	public PlainTableRDBMSStore(RdbmsDriver driver) throws StoreException {
+	public PlainTableRDBMSStore(RdbmsDriver driver) throws AtomSetException {
 		super(driver);
 	}
 	
@@ -51,13 +50,13 @@ public class PlainTableRDBMSStore extends AbstractRdbmsStore {
 	// /////////////////////////////////////////////////////////////////////////
 	
 	@Override
-	public String transformToSQL(ConjunctiveQuery cquery) throws StoreException {
+	public String transformToSQL(ConjunctiveQuery cquery) throws AtomSetException {
 		// TODO implement this method
 		throw new MethodNotImplementedError("This method isn't implemented");
 	}
 
 	@Override
-	public Term getTerm(String label) throws StoreException {
+	public Term getTerm(String label) throws AtomSetException {
 		// TODO implement this method
 		throw new MethodNotImplementedError("This method isn't implemented");
 	}
@@ -75,7 +74,7 @@ public class PlainTableRDBMSStore extends AbstractRdbmsStore {
 	}
 
 	@Override
-	public boolean contains(Atom atom) throws StoreException {
+	public boolean contains(Atom atom) throws AtomSetException {
 		Statement statement = this.createStatement();
 		try {
 			StringBuilder query = new StringBuilder("SELECT 1 FROM ");
@@ -98,13 +97,13 @@ public class PlainTableRDBMSStore extends AbstractRdbmsStore {
 	}
 
 	@Override
-	public Set<Term> getTerms() throws StoreException {
+	public Set<Term> getTerms() throws AtomSetException {
 		// TODO implement this method
 		throw new Error("This method isn't implemented");
 	}
 
 	@Override
-	public ObjectReader<Predicate> getAllPredicates() throws AtomSetException {
+	public Iterable<Predicate> getAllPredicates() {
 		// TODO implement this method
 		throw new Error("This method isn't implemented");
 	}
@@ -117,7 +116,7 @@ public class PlainTableRDBMSStore extends AbstractRdbmsStore {
 
 	@Override
 	protected Statement add(Statement statement, Atom atom)
-			throws StoreException {
+			throws AtomSetException {
 		try {
 			this.checkPredicateTable(atom.getPredicate());
 			String tableName = this.getPredicateTableName(atom.getPredicate());
@@ -128,16 +127,16 @@ public class PlainTableRDBMSStore extends AbstractRdbmsStore {
 			}
 			statement.addBatch(query);
 		} catch (SQLException e) {
-			throw new StoreException(e.getMessage(), e);
+			throw new AtomSetException(e.getMessage(), e);
 		}
 		return statement;
 	}
 
 	/**
 	 * @param predicate
-	 * @throws StoreException 
+	 * @throws AtomSetException 
 	 */
-	private void checkPredicateTable(Predicate predicate) throws StoreException {
+	private void checkPredicateTable(Predicate predicate) throws AtomSetException {
 		StringBuilder query = new StringBuilder("CREATE TABLE ");
 		query.append(this.getPredicateTableName(predicate));
 		query.append(" (");
@@ -166,18 +165,18 @@ public class PlainTableRDBMSStore extends AbstractRdbmsStore {
 
 	@Override
 	protected Statement remove(Statement statement, Atom atom)
-			throws StoreException {
+			throws AtomSetException {
 		// TODO implement this method
 		throw new Error("This method isn't implemented");
 	}
 
 	@Override
-	protected boolean testDatabaseSchema() throws StoreException {
+	protected boolean testDatabaseSchema() throws AtomSetException {
 		return true;
 	}
 
 	@Override
-	protected void createDatabaseSchema() throws StoreException {
+	protected void createDatabaseSchema() throws AtomSetException {
 		// TODO implement this method
 		throw new Error("This method isn't implemented");
 	}

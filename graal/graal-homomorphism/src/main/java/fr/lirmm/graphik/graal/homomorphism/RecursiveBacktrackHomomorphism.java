@@ -13,8 +13,8 @@ import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.HashMapSubstitution;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.Term;
+import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
-import fr.lirmm.graphik.graal.core.atomset.ReadOnlyAtomSet;
 import fr.lirmm.graphik.graal.core.stream.IteratorSubstitutionReader;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 
@@ -24,7 +24,7 @@ import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public final class RecursiveBacktrackHomomorphism implements Homomorphism<ConjunctiveQuery, ReadOnlyAtomSet> {
+public final class RecursiveBacktrackHomomorphism implements Homomorphism<ConjunctiveQuery, AtomSet> {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(RecursiveBacktrackHomomorphism.class);
@@ -54,7 +54,7 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
      * @throws AtomSetException
      */
     @Override
-    public SubstitutionReader execute(ConjunctiveQuery query, ReadOnlyAtomSet facts) throws HomomorphismException {
+    public SubstitutionReader execute(ConjunctiveQuery query, AtomSet facts) throws HomomorphismException {
         if(LOGGER.isTraceEnabled()) {
             LOGGER.trace(query.toString());
         }
@@ -85,11 +85,12 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
      * @return
      * @throws HomomorphismException
      */
-	public boolean exist(ReadOnlyAtomSet atomSet1, ReadOnlyAtomSet atomSet2)
+	public boolean exist(AtomSet atomSet1, AtomSet atomSet2)
 			throws HomomorphismException {
-		List<Term> orderedVars = order(atomSet1.getTerms(Term.Type.VARIABLE));
-		Collection<Atom>[] queryAtomRanked = getAtomRank(atomSet1, orderedVars);
 		try {
+			List<Term> orderedVars = order(atomSet1.getTerms(Term.Type.VARIABLE));
+			Collection<Atom>[] queryAtomRanked = getAtomRank(atomSet1, orderedVars);
+		
 			if (isHomomorphism(queryAtomRanked[0], atomSet2,
 					new HashMapSubstitution())) {
 				return existHomomorphism(atomSet1, queryAtomRanked, atomSet2,
@@ -117,7 +118,7 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
      * @throws Exception
      */
     private static Collection<Substitution> homomorphism(ConjunctiveQuery query,
-            Collection<Atom>[] queryAtomRanked, ReadOnlyAtomSet facts,
+            Collection<Atom>[] queryAtomRanked, AtomSet facts,
             Substitution substitution, List<Term> orderedVars, int rank)
             throws Exception {
         Collection<Substitution> substitutionList = new LinkedList<Substitution>();
@@ -158,8 +159,8 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
 	 * @return
 	 * @throws Exception
 	 */
-	private static boolean existHomomorphism(ReadOnlyAtomSet atomSet1,
-			Collection<Atom>[] queryAtomRanked, ReadOnlyAtomSet atomSet2,
+	private static boolean existHomomorphism(AtomSet atomSet1,
+			Collection<Atom>[] queryAtomRanked, AtomSet atomSet2,
 			Substitution substitution, List<Term> orderedVars, int rank)
 			throws Exception {
 		if (orderedVars.size() == 0) {
@@ -188,7 +189,7 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
 	}
 
     private static boolean isHomomorphism(Collection<Atom> atomsFrom,
-            ReadOnlyAtomSet atomsTo, Substitution substitution) throws Exception {
+            AtomSet atomsTo, Substitution substitution) throws Exception {
         for (Atom atom : atomsFrom) {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("contains? " + substitution.getSubstitut(atom));
