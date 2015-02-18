@@ -1,0 +1,22 @@
+AtomIndex => hard to read from file
+(since no way to build atom from string, and comparing string is not perfect)
+
+Another way would be:
+	just compute conflict on the fly (at same time as index is built, etc...)
+	then, index does not need to be read
+	(but break some modularity)
+
+Another would be:
+	use a DLP writer / reader
+
+=> Graal-fgh would generate four files:
+1) index (to read back in another program)
+2) fgh
+3) basic weights
+4) conflicts
+
+
+Pour faire incrémental, il faut de toutes façons pouvoir lire les données à partir de quelque
+chose.
+Puisqu'il ne faut pas réinit les poids, etc...
+
