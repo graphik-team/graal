@@ -5,11 +5,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.StringReader;
 import java.util.LinkedList;
-import java.util.Map;
-import java.util.TreeMap;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,33 +14,26 @@ import com.beust.jcommander.Parameter;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
-import fr.lirmm.graphik.graal.forward_chaining.ChaseStopCondition;
+import fr.lirmm.graphik.graal.cqa.AtomIndex;
+import fr.lirmm.graphik.graal.cqa.FGH;
+import fr.lirmm.graphik.graal.cqa.FGHRuleApplicationHandler;
+import fr.lirmm.graphik.graal.forward_chaining.ChaseHaltingCondition;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseStopConditionWithHandler;
 import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
 import fr.lirmm.graphik.graal.forward_chaining.RestrictedChaseStopCondition;
-import fr.lirmm.graphik.graal.forward_chaining.RuleApplicationHandler;
 import fr.lirmm.graphik.graal.homomorphism.ComplexHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.Homomorphism;
-import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlpParser;
-import fr.lirmm.graphik.graal.io.dlp.DlpWriter;
 import fr.lirmm.graphik.graal.store.homomorphism.SqlHomomorphism;
-import fr.lirmm.graphik.graal.store.rdbms.AbstractRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
-
-import fr.lirmm.graphik.graal.cqa.*;
 
 public class CLI_FGH {
 
@@ -79,7 +68,7 @@ public class CLI_FGH {
 			FGHRuleApplicationHandler onRule = new FGHRuleApplicationHandler(index,fgh);
 			onRule.setSolver(solver);
 
-			ChaseStopCondition haltCondition = new ChaseStopConditionWithHandler(new RestrictedChaseStopCondition(),onRule);
+			ChaseHaltingCondition haltCondition = new ChaseStopConditionWithHandler(new RestrictedChaseStopCondition(),onRule);
 			DefaultChase chase = new DefaultChase(rules,atomset,solver);
 			chase.setHaltingCondition(haltCondition);
 

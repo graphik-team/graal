@@ -36,6 +36,7 @@
 		<module>kiabora</module>
 		<module>pure-rewriter</module>
 		<module>owl2dlp</module>
+		<module>graal-cqa</module>
 	</modules>
 
 	<build>

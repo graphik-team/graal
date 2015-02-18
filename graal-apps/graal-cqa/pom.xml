@@ -9,8 +9,8 @@
 		<version>0.7.1-SNAPSHOT </version>
 	</parent>
 
-	<artifactId>graal-cli</artifactId>
-	<name>Graal CLI</name>
+	<artifactId>graal-cqa</artifactId>
+	<name>Graal CQA</name>
 	<packaging>jar</packaging>
 
 	<properties>
@@ -53,6 +53,11 @@
 			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-forward-chaining</artifactId>
 			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.beust</groupId>
+			<artifactId>jcommander</artifactId>
+			<version>1.35</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -104,16 +109,9 @@
 				<artifactId>maven-pmd-plugin</artifactId>
 				<version>3.3</version>
 				<configuration>
-					<minimumPriority>2</minimumPriority>
-					<failurePriority>2</failurePriority>
+					<minimumPriority>0</minimumPriority>
+					<failurePriority>0</failurePriority>
 					<rulesets>
-						<ruleset>${project.basedir}/pmd-rulesets/basic.xml</ruleset>
-						<ruleset>${project.basedir}/pmd-rulesets/finalizers.xml</ruleset>
-						<ruleset>${project.basedir}/pmd-rulesets/imports.xml</ruleset>
-						<ruleset>${project.basedir}/pmd-rulesets/strings.xml</ruleset>
-						<ruleset>${project.basedir}/pmd-rulesets/naming.xml</ruleset>
-						<ruleset>${project.basedir}/pmd-rulesets/design.xml</ruleset>
-						<ruleset>${project.basedir}/pmd-rulesets/strictexception.xml</ruleset>
 					</rulesets>
 				</configuration>
 			</plugin>
