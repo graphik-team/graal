@@ -14,7 +14,6 @@ import fr.lirmm.graphik.graal.core.Term;
  * 
  */
 public abstract class AbstractAtomSet implements AtomSet {
-
 	
 	@Override
 	public boolean addAll(Iterator<? extends Atom> atoms) throws AtomSetException {
@@ -29,6 +28,20 @@ public abstract class AbstractAtomSet implements AtomSet {
 	@Override
 	public boolean addAll(Iterable<? extends Atom> atoms) throws AtomSetException {
 		return this.addAll(atoms.iterator());
+	}
+	
+	@Override
+	public boolean removeAll(Iterator<? extends Atom> atoms) throws AtomSetException {
+		boolean isChanged = false;
+		while(atoms.hasNext()) {
+			isChanged = this.remove(atoms.next()) || isChanged;
+		}
+		return isChanged;
+	}
+	
+	@Override
+	public boolean removeAll(Iterable<? extends Atom> atoms) throws AtomSetException {
+		return this.removeAll(atoms.iterator());
 	}
 	
 	@Override

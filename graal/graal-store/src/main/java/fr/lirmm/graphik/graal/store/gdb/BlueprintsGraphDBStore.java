@@ -4,8 +4,6 @@
 package fr.lirmm.graphik.graal.store.gdb;
 
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -227,17 +225,17 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 	}
 
 	private static Atom vertexToAtom(Vertex vertex) {
-		List<Term> terms = new LinkedList<Term>();
-
-		for (Edge e : vertex.getEdges(Direction.OUT, "term")) {
-			Vertex t = e.getVertex(Direction.IN);
-			terms.add(vertexToTerm(t));
-		}
-
 		Iterator<Edge> it = vertex.getEdges(Direction.OUT, "predicate")
 				.iterator();
 		Vertex predicateVertex = it.next().getVertex(Direction.IN);
 		Predicate p = vertexToPredicate(predicateVertex);
+
+		Term[] terms = new Term[p.getArity()];
+
+		for (Edge e : vertex.getEdges(Direction.OUT, "term")) {
+			Vertex t = e.getVertex(Direction.IN);
+			terms[(int) e.getProperty("index")] = vertexToTerm(t);
+		}
 
 		return new DefaultAtom(p, terms);
 	}

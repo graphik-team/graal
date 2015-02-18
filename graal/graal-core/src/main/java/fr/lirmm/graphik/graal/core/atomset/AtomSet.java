@@ -140,6 +140,16 @@ public interface AtomSet extends Iterable<Atom> {
 	 * @throws AtomSetException
 	 */
 	boolean removeAll(Iterable<? extends Atom> atoms) throws AtomSetException;
+	
+	/**
+	 * Remove the specified atom stream from this atom set.
+	 * 
+	 * @param stream
+	 *            - the atom stream to be removed.
+	 * @return true if this atomset changed as a result of the call
+	 * @throws AtomSetException
+	 */
+	boolean removeAll(Iterator<? extends Atom> atoms) throws AtomSetException;
 
 	/**
 	 * 

@@ -3,6 +3,7 @@
  */
 package fr.lirmm.graphik.graal.store.triplestore;
 
+import java.io.File;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
@@ -30,7 +31,6 @@ import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.Term.Type;
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 
 /**
@@ -69,6 +69,10 @@ public class JenaStore extends AbstractTripleStore {
 	public JenaStore(String directory) {
 		this.directory = directory;
 		this.dataset = TDBFactory.createDataset(directory);
+	}
+	
+	public JenaStore(File jenaDirectory) {
+		this(jenaDirectory.getAbsolutePath());
 	}
 
 	@Override

@@ -61,7 +61,7 @@ public class StoreTest {
 	}
 
 	@Theory
-	public void add(Store store) throws AtomSetException {
+	public void addAndContains(Store store) throws AtomSetException {
 		store.add(DlpParser.parseAtom("p(a,b)."));
 		store.add(DlpParser.parseAtom("q(b,c)."));
 
@@ -118,6 +118,19 @@ public class StoreTest {
 		store.add(DlpParser.parseAtom("p(a,b)."));
 		Assert.assertFalse("Store is not empty but isEmpty return true",
 				store.isEmpty());
+	}
+	
+	@Theory
+	public void termsOrder(Store store) throws AtomSetException {
+		Atom a1 = DlpParser.parseAtom("p(a,b,c,d,e,f).");
+		Atom a2 = DlpParser.parseAtom("p(f,e,d,c,b,a).");
+		
+		store.add(a1);
+		store.add(a2);
+		
+		for(Atom a : store) {
+			Assert.assertTrue(a.equals(a1) || a.equals(a2));
+		}
 	}
 
 }

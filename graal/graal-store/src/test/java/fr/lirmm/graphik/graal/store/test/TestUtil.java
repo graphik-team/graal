@@ -14,6 +14,7 @@ import com.tinkerpop.blueprints.impls.tg.TinkerGraph;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.store.Store;
 import fr.lirmm.graphik.graal.store.gdb.BlueprintsGraphDBStore;
+import fr.lirmm.graphik.graal.store.gdb.Neo4jStore;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.DriverException;
 import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
@@ -29,12 +30,14 @@ public final class TestUtil {
 	private TestUtil() {
 	}
 
-	public static final String SQLITE_TEST = "/tmp/sqlite-test.db";
-	public static final String JENA_TEST = "/tmp/jena-test";
+	public static final File SQLITE_TEST = new File("/tmp/sqlite-test.db");
+	public static final File JENA_TEST = new File("/tmp/jena-test");
+	public static final File NEO4J_TEST = new File("/tmp/neo4j-test");
 
 	public static DefaultRdbmsStore rdbmsStore = null;
 	public static BlueprintsGraphDBStore graphStore = null;
 	public static JenaStore jenaStore = null;
+	public static Neo4jStore neo4jStore = null;
 
 	public static Store[] getStores() {
 		if (rdbmsStore != null) {
@@ -44,19 +47,19 @@ public final class TestUtil {
 		if (graphStore != null) {
 			graphStore.close();
 		}
+		
+		if (neo4jStore != null) {
+			neo4jStore.close();
+		}
+		
 		try {
-			File sqlite = new File(SQLITE_TEST);
-			if (sqlite.exists()) {
-				if (!sqlite.delete()) {
-					throw new IOError(new Error("I can't delete the file "
-							+ SQLITE_TEST));
-				}
-			}
-			rdbmsStore = new DefaultRdbmsStore(new SqliteDriver(sqlite));
-
+			rm(SQLITE_TEST);
+			rdbmsStore = new DefaultRdbmsStore(new SqliteDriver(SQLITE_TEST));
 			graphStore = new BlueprintsGraphDBStore(new TinkerGraph());
+			rm(NEO4J_TEST);
+			neo4jStore = new Neo4jStore(NEO4J_TEST);
 
-			return new Store[] { rdbmsStore, graphStore };
+			return new Store[] { rdbmsStore, graphStore, neo4jStore };
 		} catch (DriverException e) {
 			// TODO treat this exception
 			e.printStackTrace();
@@ -72,17 +75,27 @@ public final class TestUtil {
 		if (jenaStore != null) {
 			jenaStore.close();
 		}
-		File jena = new File(JENA_TEST);
-		if (jena.exists()) {
-			try {
-				FileUtils.deleteDirectory(jena);
-			} catch (IOException e) {
-				throw new IOError(new Error("I can't delete this directory "
-						+ JENA_TEST));
-			}
-		}
-		jenaStore = new JenaStore(JENA_TEST);
+		rm(JENA_TEST);
+		jenaStore = new JenaStore(JENA_TEST.getAbsolutePath());
 		
 		return new TripleStore[] { jenaStore };
+	}
+	
+	private static void rm(File file) {
+		if (file.exists()) {
+			if(file.isDirectory()) {
+				try {
+					FileUtils.deleteDirectory(file);
+				} catch (IOException e) {
+					throw new IOError(new Error("I can't delete the file "
+							+ file.getAbsolutePath(), e));
+				}
+			} else {
+				if (!file.delete()) {
+					throw new IOError(new Error("I can't delete the file "
+							+ file.getAbsolutePath()));
+				}
+			}
+		}
 	}
 }

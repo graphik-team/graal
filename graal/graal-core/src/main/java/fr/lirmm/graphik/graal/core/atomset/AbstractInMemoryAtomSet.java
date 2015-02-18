@@ -30,6 +30,20 @@ public abstract class AbstractInMemoryAtomSet extends AbstractAtomSet implements
 	}
 	
 	@Override
+	public boolean removeAll(Iterator<? extends Atom> atoms) {
+		boolean isChanged = false;
+		while(atoms.hasNext()) {
+			isChanged = this.remove(atoms.next()) || isChanged;
+		}
+		return isChanged;
+	}
+	
+	@Override
+	public boolean removeAll(Iterable<? extends Atom> atoms) {
+		return this.removeAll(atoms.iterator());
+	}
+	
+	@Override
 	public Iterator<Predicate> predicatesIterator() {
 		return this.getPredicates().iterator();
 	}
