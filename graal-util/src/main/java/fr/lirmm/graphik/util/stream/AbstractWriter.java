@@ -10,6 +10,7 @@ import java.io.IOException;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
+@Deprecated
 public abstract class AbstractWriter<T> implements ObjectWriter<T> {
 
     /* (non-Javadoc)

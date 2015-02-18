@@ -10,6 +10,7 @@ import java.util.Iterator;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
+@Deprecated
 public abstract class AbstractReader<T> implements ObjectReader<T> {
 
     /* (non-Javadoc)

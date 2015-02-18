@@ -3,6 +3,7 @@ package fr.lirmm.graphik.util.stream;
 import java.io.IOException;
 import java.util.Iterator;
 
+@Deprecated
 public interface ObjectReader<T> extends Iterator<T>, Iterable<T> {
 
 	boolean hasNext();
