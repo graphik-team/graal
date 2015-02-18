@@ -28,7 +28,6 @@ import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
-import fr.lirmm.graphik.util.stream.ObjectReader;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -265,20 +264,17 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public ObjectReader<Atom> iterator() {
+	public Iterator<Atom> iterator() {
 		try {
 			return new DefaultRdbmsIterator(this);
 		} catch (AtomSetException e) {
-			LOGGER.error(e.getMessage(), e);
+			if(LOGGER.isErrorEnabled()) {
+				LOGGER.error(e.getMessage(), e);
+			}
 			return null;
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.lirmm.graphik.alaska.store.IStore#getFreeVarGen()
-	 */
 	@Override
 	public SymbolGenerator getFreeVarGen() {
 		return new RdbmsSymbolGenenrator(this.getConnection(),
@@ -286,13 +282,6 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 				UPDATE_COUNTER_VALUE_QUERY);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.lirmm.graphik.alaska.store.IStore#contains(fr.lirmm.graphik.kb.core
-	 * .IAtom)
-	 */
 	@Override
 	public boolean contains(Atom atom) throws AtomSetException {
 		boolean res = false;
@@ -755,8 +744,18 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	}
 
 	@Override
-	public Iterable<Predicate> getAllPredicates() throws AtomSetException {
+	public Iterator<Predicate> predicatesIterator() throws AtomSetException {
 		return new DefaultRdbmsPredicateReader(this.getDriver());
+	}
+	
+	@Override
+	public Set<Predicate> getPredicates() throws AtomSetException {
+		TreeSet<Predicate> set = new TreeSet<Predicate>();
+		Iterator<Predicate> it = this.predicatesIterator();
+		while(it.hasNext()) {
+			set.add(it.next());
+		}
+		return set;
 	}
 	
 	/**

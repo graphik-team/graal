@@ -41,7 +41,7 @@ public class AggregAllRulesOperator extends BasicAggregAllRulesOperator {
 	public Collection<ConjunctiveQuery> getRewritesFrom(ConjunctiveQuery q, IndexedByHeadPredicatesRuleSet ruleSet, RulesCompilation compilation) {	
 		LinkedList<ConjunctiveQuery> rewriteSet = new LinkedList<ConjunctiveQuery>();
 		LinkedList<QueryUnifier> unifiers;
-		for (Rule r : getUnifiableRules(q.getAtomSet().getAllPredicates(),
+		for (Rule r : getUnifiableRules(q.getAtomSet().predicatesIterator(),
 				ruleSet, compilation)) {
 			unifiers = getSinglePieceUnifiers(q, r, compilation);
 			for (QueryUnifier u : unifiers) {

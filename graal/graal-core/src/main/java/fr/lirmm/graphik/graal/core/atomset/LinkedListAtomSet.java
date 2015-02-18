@@ -16,7 +16,7 @@ import fr.lirmm.graphik.graal.core.stream.IteratorAtomReader;
  * 
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  */
-public class LinkedListAtomSet extends AbstractAtomSet implements
+public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements
 		InMemoryAtomSet, Collection<Atom> {
 
 	private LinkedList<Atom> linkedList;
@@ -45,7 +45,9 @@ public class LinkedListAtomSet extends AbstractAtomSet implements
 			this.linkedList.add(a);
 	}
 
-	// copy constructor
+	/**
+	 *  copy constructor
+	 */
 	public LinkedListAtomSet(AtomSet atomset) {
 		this();
 		for (Atom atom : atomset) {
@@ -56,9 +58,9 @@ public class LinkedListAtomSet extends AbstractAtomSet implements
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
-
+	 
 	@Override
-	public Iterable<Predicate> getAllPredicates() {
+	public Set<Predicate> getPredicates() {
 		Set<Predicate> predicates = new TreeSet<Predicate>();
 		for (Atom a : this) {
 			predicates.add(a.getPredicate());
@@ -72,15 +74,6 @@ public class LinkedListAtomSet extends AbstractAtomSet implements
 			return false;
 
 		return this.linkedList.add(atom);
-	}
-
-	@Override
-	public boolean addAll(Iterable<? extends Atom> atoms) {
-		boolean isChanged = false;
-		for (Atom a : atoms) {
-			isChanged = this.add(a) || isChanged;
-		}
-		return isChanged;
 	}
 
 	@Override

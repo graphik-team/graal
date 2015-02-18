@@ -6,6 +6,7 @@ package fr.lirmm.graphik.graal.apps;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -31,7 +32,7 @@ import fr.lirmm.graphik.graal.io.dlp.DlpWriter;
 import fr.lirmm.graphik.util.Apps;
 import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.Filter;
-import fr.lirmm.graphik.util.stream.FilterReader;
+import fr.lirmm.graphik.util.stream.FilterIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -183,7 +184,7 @@ public class PureRewriter {
 			}
 
 			compilation.setProfiler(profiler);
-			compilation.compile(rules);
+			compilation.compile(rules.iterator());
 
 			try {
 				DlpWriter w = writer;
@@ -239,9 +240,9 @@ public class PureRewriter {
 			operator.setProfiler(profiler);
 			
 			if (this.compilationFile.isEmpty()) {
-				compilation.compile(rules);
+				compilation.compile(rules.iterator());
 			} else {
-				compilation.load(new FilterReader<Rule, Object>(new DlpParser(
+				compilation.load(new FilterIterator<Object, Rule>(new DlpParser(
 						new File(this.compilationFile)), new RulesFilter()));
 			}
 		
@@ -277,9 +278,10 @@ public class PureRewriter {
 			List<ConjunctiveQuery> queries = new LinkedList<ConjunctiveQuery>();
 			File file = new File(this.query);
 			if (file.exists()) {
-				for (ConjunctiveQuery q : new FilterReader<ConjunctiveQuery, Object>(
-						new DlpParser(file), new ConjunctiveQueryFilter())) {
-					queries.add(q);
+				Iterator<ConjunctiveQuery> it = new FilterIterator<Object, ConjunctiveQuery>(
+						new DlpParser(file), new ConjunctiveQueryFilter());
+				while (it.hasNext()) {
+					queries.add(it.next());
 				}
 			} else {
 				queries.add(DlpParser.parseQuery(this.query));

@@ -43,7 +43,7 @@ public class PureRewriter extends AbstractBackwardChainer implements Verbosable 
 		this.pquery = new PureQuery(query);
 		this.ruleset = new LinkedListRuleSet(rules);
 		this.compilation = new NoCompilation();
-		this.compilation.compile(rules);
+		this.compilation.compile(rules.iterator());
 	}
 
 	/**

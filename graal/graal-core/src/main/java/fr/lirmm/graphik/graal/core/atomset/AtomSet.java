@@ -23,14 +23,24 @@ public interface AtomSet extends Iterable<Atom> {
 	boolean contains(Atom atom) throws AtomSetException;
 
 	/**
+	 * Returns a Set of all predicates in this atom set.
 	 * 
 	 * @return
 	 * @throws AtomSetException
 	 */
-	Iterable<Predicate> getAllPredicates() throws AtomSetException;
+	Set<Predicate> getPredicates() throws AtomSetException;
 
 	/**
-	 * Returns a collection of all terms in this atom set.
+	 * Returns an iterator of all predicates in this atom set. Each predicate is
+	 * iterated only once time.
+	 * 
+	 * @return
+	 * @throws AtomSetException
+	 */
+	Iterator<Predicate> predicatesIterator() throws AtomSetException;
+
+	/**
+	 * Returns a Set of all terms in this atom set.
 	 * 
 	 * @return
 	 * @throws IAtomSetException
@@ -38,24 +48,51 @@ public interface AtomSet extends Iterable<Atom> {
 	Set<Term> getTerms() throws AtomSetException;
 
 	/**
-	 * Returns a collection of all terms of the specified type in this atom set.
+	 * Returns an iterator of all terms in this atom set. Each term is iterated
+	 * only once time.
+	 * 
+	 * @return
+	 * @throws AtomSetException
+	 */
+	Iterator<Term> termsIterator() throws AtomSetException;
+	
+	/**
+	 * Returns a Set of all terms of the specified type in this atom set.
 	 * 
 	 * @param type
 	 * @return a collection of all terms of the specified type in this atom set.
-	 * @throws AtomSetException 
+	 * @throws AtomSetException
 	 */
 	Set<Term> getTerms(Term.Type type) throws AtomSetException;
 
+
 	/**
+	 * Retuns on iterator of all terms of the specified type in this atom set.
+	 * Each term is iterated only once time.
+	 * 
+	 * @param type
+	 * @return
+	 * @throws AtomSetException
+	 */
+	Iterator<Term> termsIterator(Term.Type type) throws AtomSetException;
+
+	/**
+	 * Use AtomSets.contains instead.
+	 * 
 	 * Check if all atoms of this AtomSet are also contained in the specified
 	 * AtomSet.
 	 * 
 	 * @param atomset
 	 * @return
 	 */
-	boolean isSubSetOf(AtomSet atomset);
+	@Deprecated 
+	boolean isSubSetOf(AtomSet atomset) throws AtomSetException;
 
-	boolean isEmpty();
+	/**
+	 * 
+	 * @return true if this atom set is empty, false otherwise.
+	 */
+	boolean isEmpty() throws AtomSetException;
 
 	/**
 	 * Add the specified atom to this atom set if is not already present.
@@ -64,17 +101,26 @@ public interface AtomSet extends Iterable<Atom> {
 	 *            - atom to be added to this atom set
 	 * @return true if this atom set did not already contain the specified atom
 	 */
-	boolean add(Atom atom);
+	boolean add(Atom atom) throws AtomSetException;
 
 	/**
 	 * Add the specified atom stream to this atom set.
 	 * 
-	 * @param stream
-	 *            - the atom stream to be added
+	 * @param atoms
 	 * @return true if this atomset changed as a result of the call
 	 * @throws
 	 */
 	boolean addAll(Iterable<? extends Atom> atoms) throws AtomSetException;
+	
+	/**
+	 * Add the specified atom stream to this atom set.
+	 * 
+	 * @param atoms
+	 *            - the atom iterator to be added
+	 * @return true if this atomset changed as a result of the call
+	 * @throws
+	 */
+	boolean addAll(Iterator<? extends Atom> atoms) throws AtomSetException;
 
 	/**
 	 * Remove the specified atom from this this atom set.
@@ -83,7 +129,7 @@ public interface AtomSet extends Iterable<Atom> {
 	 *            - the atom to be removed
 	 * @return true if this atom set contained the specified atom.
 	 */
-	boolean remove(Atom atom);
+	boolean remove(Atom atom) throws AtomSetException;
 
 	/**
 	 * Remove the specified atom stream from this atom set.
@@ -98,14 +144,14 @@ public interface AtomSet extends Iterable<Atom> {
 	/**
 	 * 
 	 */
-	void clear();
-	
+	void clear() throws AtomSetException;
+
 	/**
 	 * Returns an iterator over the atoms in this atom set.
 	 * 
 	 * @return an iterator over the atoms in this atom set.
 	 */
 	@Override
-	Iterator<Atom> iterator();	
+	Iterator<Atom> iterator();
 
 }

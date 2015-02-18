@@ -5,7 +5,9 @@ package fr.lirmm.graphik.graal.store.rdbms;
 
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +21,6 @@ import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
-import fr.lirmm.graphik.util.stream.ObjectReader;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -62,7 +63,7 @@ public class PlainTableRDBMSStore extends AbstractRdbmsStore {
 	}
 
 	@Override
-	public ObjectReader<Atom> iterator() {
+	public Iterator<Atom> iterator() {
 		// TODO implement this method
 		throw new MethodNotImplementedError("This method isn't implemented");
 	}
@@ -103,9 +104,19 @@ public class PlainTableRDBMSStore extends AbstractRdbmsStore {
 	}
 
 	@Override
-	public Iterable<Predicate> getAllPredicates() {
+	public Iterator<Predicate> predicatesIterator() {
 		// TODO implement this method
 		throw new Error("This method isn't implemented");
+	}
+	
+	@Override
+	public Set<Predicate> getPredicates() throws AtomSetException {
+		TreeSet<Predicate> set = new TreeSet<Predicate>();
+		Iterator<Predicate> it = this.predicatesIterator();
+		while(it.hasNext()) {
+			set.add(it.next());
+		}
+		return set;
 	}
 
 	@Override

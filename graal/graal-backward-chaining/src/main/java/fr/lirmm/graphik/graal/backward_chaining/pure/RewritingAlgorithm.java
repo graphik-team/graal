@@ -12,7 +12,7 @@ import fr.lirmm.graphik.graal.backward_chaining.pure.queries.PureQuery;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
 import fr.lirmm.graphik.graal.backward_chaining.pure.utils.Misc;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByHeadPredicatesRuleSet;
 import fr.lirmm.graphik.util.Profilable;
 import fr.lirmm.graphik.util.Profiler;
@@ -136,7 +136,7 @@ public class RewritingAlgorithm implements Verbosable, Profilable {
 			Collection<ConjunctiveQuery> rewritingSet, RulesCompilation compilation) {
 		Iterator<? extends ConjunctiveQuery> i = toSelect.iterator();
 		while (i.hasNext()) {
-			AtomSet f = i.next().getAtomSet();
+			InMemoryAtomSet f = i.next().getAtomSet();
 			if (containMoreGeneral(f, rewritingSet, compilation))
 				i.remove();
 		}
@@ -151,10 +151,10 @@ public class RewritingAlgorithm implements Verbosable, Profilable {
 	 * @param comp
 	 * @return
 	 */
-	public boolean containMoreGeneral(AtomSet f,
+	public boolean containMoreGeneral(InMemoryAtomSet f,
 			Collection<ConjunctiveQuery> rewriteSet, RulesCompilation compilation) {
 		for(ConjunctiveQuery q : rewriteSet) {
-			AtomSet a = q.getAtomSet();
+			InMemoryAtomSet a = q.getAtomSet();
 			if (Misc.isMoreGeneralThan(a, f, compilation))
 				return true;
 		}

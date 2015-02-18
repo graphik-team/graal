@@ -1,6 +1,7 @@
 package fr.lirmm.graphik.graal.backward_chaining.pure.rules;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 import fr.lirmm.graphik.graal.backward_chaining.pure.utils.TermPartition;
 import fr.lirmm.graphik.graal.core.Atom;
@@ -17,13 +18,13 @@ public interface RulesCompilation extends Profilable {
 	 * Extract compilable rules from the specified ruleset and compile them.
 	 * @param ruleset
 	 */
-	public void compile(Iterable<Rule> ruleset);
+	public void compile(Iterator<Rule> ruleset);
 	
 	/**
 	 * Load compilation from a preprocessed ruleset
 	 * @param ruleset
 	 */
-	public void load(Iterable<Rule> ruleset);
+	public void load(Iterator<Rule> ruleset);
 
 	public Iterable<Rule> getSaturation();
 

@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
 import fr.lirmm.graphik.graal.core.factory.RuleFactory;
 
@@ -66,14 +66,14 @@ public abstract class AbstractSubstitution implements Substitution {
 	}
 
 	@Override
-	public AtomSet getSubstitut(AtomSet src) {
-		AtomSet dest = AtomSetFactory.getInstance().createAtomSet();
+	public InMemoryAtomSet getSubstitut(InMemoryAtomSet src) {
+		InMemoryAtomSet dest = AtomSetFactory.getInstance().createAtomSet();
 		this.substitut(src, dest);
 		return dest;
 	}
 
 	@Override
-	public void substitut(AtomSet src, AtomSet dest) {
+	public void substitut(InMemoryAtomSet src, InMemoryAtomSet dest) {
 		for (Atom a : src) {
 			dest.add(this.getSubstitut(a));
 		}

@@ -54,14 +54,14 @@ public class HierarchicalCompilation extends AbstractRulesCompilation {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public void compile(Iterable<Rule> ruleset) {
+	public void compile(Iterator<Rule> ruleset) {
 		this.rules = extractCompilable(ruleset);
 		this.computeIndex(this.rules);
 	}
 
-	public void load(Iterable<Rule> ruleset) {
-		for(Rule r : ruleset) {
-			this.rules.add(r);
+	public void load(Iterator<Rule> ruleset) {
+		while (ruleset.hasNext()) {
+			this.rules.add(ruleset.next());
 		}
 		this.computeIndex(this.rules);
 	}
@@ -256,14 +256,17 @@ public class HierarchicalCompilation extends AbstractRulesCompilation {
 		
 		for (Rule rule : ruleset) {
 			// count the number of new pred in r
-			for (Predicate p : rule.getBody().getAllPredicates())
-				if (this.addPredicate(p))
+			Iterator<Predicate> it = rule.getBody().predicatesIterator();
+			while (it.hasNext()) {
+				if (this.addPredicate(it.next()))
 					nbPred++;
+			}
 
-			for (Predicate p : rule.getHead().getAllPredicates())
-				if (this.addPredicate(p))
+			it = rule.getHead().predicatesIterator();
+			while (it.hasNext()) {
+				if (this.addPredicate(it.next()))
 					nbPred++;
-
+			}
 		}
 		
 		Atom father, son;

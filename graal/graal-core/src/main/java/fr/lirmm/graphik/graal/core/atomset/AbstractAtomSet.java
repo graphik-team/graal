@@ -6,6 +6,8 @@ package fr.lirmm.graphik.graal.core.atomset;
 import java.util.Iterator;
 
 import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.core.Predicate;
+import fr.lirmm.graphik.graal.core.Term;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -13,6 +15,22 @@ import fr.lirmm.graphik.graal.core.Atom;
  */
 public abstract class AbstractAtomSet implements AtomSet {
 
+	
+	@Override
+	public boolean addAll(Iterator<? extends Atom> atoms) throws AtomSetException {
+		boolean isChanged = false;
+		while(atoms.hasNext()) {
+			isChanged = this.add(atoms.next()) || isChanged;
+		}
+		return isChanged;
+	}
+	
+
+	@Override
+	public boolean addAll(Iterable<? extends Atom> atoms) throws AtomSetException {
+		return this.addAll(atoms.iterator());
+	}
+	
 	@Override
 	public boolean isSubSetOf(AtomSet atomset) {
 		for (Atom a : this) {
@@ -81,5 +99,21 @@ public abstract class AbstractAtomSet implements AtomSet {
 
 		return s.toString();
 	}
+	
+	@Override
+	public Iterator<Predicate> predicatesIterator() throws AtomSetException {
+		return this.getPredicates().iterator();
+	}
+	
+	@Override
+	public Iterator<Term> termsIterator() throws AtomSetException {
+		return this.getTerms().iterator();
+	}
+	
+	@Override
+	public Iterator<Term> termsIterator(Term.Type type) throws AtomSetException {
+		return this.getTerms(type).iterator();
+	}
+	
 
 }

@@ -24,8 +24,9 @@ public class RewritingSet implements Iterable<ConjunctiveQuery>,
 
 	public boolean add(ConjunctiveQuery q) {
 		TreeSet<Predicate> set = new TreeSet<Predicate>();
-		for (Predicate predicate : q.getAtomSet().getAllPredicates()) {
-			set.add(predicate);
+		Iterator<Predicate> it = q.getAtomSet().predicatesIterator();
+		while (it.hasNext()) {
+			set.add(it.next());
 		}
 
 		String key = set.toString();
@@ -44,8 +45,9 @@ public class RewritingSet implements Iterable<ConjunctiveQuery>,
 		TreeSet<Predicate> set = new TreeSet<Predicate>();
 		PureQuery cop = new PureQuery(q);
 		cop.removeAnswerPredicate();
-		for (Predicate predicate : cop.getAtomSet().getAllPredicates()) {
-			set.add(predicate);
+		Iterator<Predicate> it = cop.getAtomSet().predicatesIterator();
+		while (it.hasNext()) {
+			set.add(it.next());
 		}
 		LinkedList<Predicate> preds = new LinkedList<Predicate>();
 		preds.addAll(set);

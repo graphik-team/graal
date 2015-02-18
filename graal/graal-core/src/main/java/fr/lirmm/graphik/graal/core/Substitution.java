@@ -2,7 +2,7 @@ package fr.lirmm.graphik.graal.core;
 
 import java.util.Set;
 
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 
 /**
  * A substitution represents a set of transformation of a variable into a term.
@@ -59,7 +59,7 @@ public interface Substitution {
 	 * @param src (const)
 	 * @return
 	 */
-	AtomSet getSubstitut(AtomSet src);
+	InMemoryAtomSet getSubstitut(InMemoryAtomSet src);
 	
 	/**
 	 * Apply this substitution on the given rule.
@@ -75,7 +75,7 @@ public interface Substitution {
 	 * @param src (const)
 	 * @param dest
 	 */
-	void substitut(AtomSet src, AtomSet target);
+	void substitut(InMemoryAtomSet src, InMemoryAtomSet target);
 
 	/**
 	 * The composition of a substitution is more complex that just put an other

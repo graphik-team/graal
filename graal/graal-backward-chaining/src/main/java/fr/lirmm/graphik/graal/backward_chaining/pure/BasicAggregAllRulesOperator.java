@@ -38,7 +38,7 @@ public class BasicAggregAllRulesOperator extends AbstractRewritingOperator {
 		LinkedList<ConjunctiveQuery> currentRewrites = new LinkedList<ConjunctiveQuery>();
 		LinkedList<QueryUnifier> srUnifiers = new LinkedList<QueryUnifier>();
 		LinkedList<QueryUnifier> unifiers = new LinkedList<QueryUnifier>();
-		for (Rule r : getUnifiableRules(q.getAtomSet().getAllPredicates(),
+		for (Rule r : getUnifiableRules(q.getAtomSet().predicatesIterator(),
 				ruleSet, compilation)) {
 
 			/** compute the single rule unifiers **/

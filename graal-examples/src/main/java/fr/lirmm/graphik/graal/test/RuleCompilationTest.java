@@ -14,7 +14,7 @@ import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.forward_chaining.StaticChase;
@@ -33,8 +33,8 @@ public class RuleCompilationTest {
 	static Predicate d = new Predicate("d", 1);
 
 	public static void main(String args[]) throws ChaseException {
-		AtomSet atomset1 = new LinkedListAtomSet();
-		AtomSet atomset2 = new LinkedListAtomSet();
+		InMemoryAtomSet atomset1 = new LinkedListAtomSet();
+		InMemoryAtomSet atomset2 = new LinkedListAtomSet();
 		LinkedList<Rule> rules = new LinkedList<Rule>();
 		
 		for(int i=0; i<9; ++i) {

@@ -8,6 +8,7 @@ import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
+import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
@@ -67,8 +68,8 @@ public class TestApplyRules {
 		}
 	}
 	
-	public static AtomSet substitute(Substitution s, AtomSet atomSet) {
-		AtomSet newAtomSet = new LinkedListAtomSet();
+	public static InMemoryAtomSet substitute(Substitution s, InMemoryAtomSet atomSet) {
+		InMemoryAtomSet newAtomSet = new LinkedListAtomSet();
 		for(Atom a : atomSet) {
 			newAtomSet.add(s.getSubstitut(a));
 		}

@@ -6,7 +6,9 @@ package fr.lirmm.graphik.graal.store.rdbms;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
@@ -17,7 +19,6 @@ import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
-import fr.lirmm.graphik.util.stream.ObjectReader;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -41,7 +42,7 @@ public class NoConstraintRdbmsStore extends AbstractRdbmsStore {
 	}
 
 	@Override
-	public ObjectReader<Atom> iterator() {
+	public Iterator<Atom> iterator() {
 		// TODO implement this method
 		throw new MethodNotImplementedError("This method isn't implemented");
 	}
@@ -97,9 +98,6 @@ public class NoConstraintRdbmsStore extends AbstractRdbmsStore {
         return statement;
     }
     
-    /* (non-Javadoc)
-     * @see fr.lirmm.graphik.alaska.store.rdbms.representation.IRdbmsRepresentation#checkDatabaseStructure(java.sql.Connection)
-     */
     @Override
     protected void createDatabaseSchema()
             throws AtomSetException {
@@ -122,36 +120,34 @@ public class NoConstraintRdbmsStore extends AbstractRdbmsStore {
     	return true;
     }
 
-	/* (non-Javadoc)
-	 * @see fr.lirmm.graphik.alaska.store.rdbms.IRdbmsStore#transformToSQL(fr.lirmm.graphik.kb.query.impl.ConjunctiveQuery)
-	 */
 	@Override
 	public String transformToSQL(ConjunctiveQuery cquery) throws AtomSetException {
 		// TODO implement this method
 		throw new Error("This method isn't implemented");
 	}
 
-	/* (non-Javadoc)
-	 * @see fr.lirmm.graphik.kb.core.AtomSet#getAllPredicate()
-	 */
 	@Override
-	public Iterable<Predicate> getAllPredicates() {
+	public Iterator<Predicate> predicatesIterator() {
 		// TODO implement this method
 		throw new Error("This method isn't implemented");
 	}
+	
+	@Override
+	public Set<Predicate> getPredicates() throws AtomSetException {
+		TreeSet<Predicate> set = new TreeSet<Predicate>();
+		Iterator<Predicate> it = this.predicatesIterator();
+		while(it.hasNext()) {
+			set.add(it.next());
+		}
+		return set;
+	}
 
-	/* (non-Javadoc)
-	 * @see fr.lirmm.graphik.alaska.store.rdbms.IRdbmsStore#getTerm(java.lang.String)
-	 */
 	@Override
 	public Term getTerm(String label) throws AtomSetException {
 		// TODO implement this method
 		throw new Error("This method isn't implemented");
 	}
 
-	/* (non-Javadoc)
-	 * @see fr.lirmm.graphik.graal.store.rdbms.AbstractRdbmsStore#remove(java.sql.Statement, fr.lirmm.graphik.graal.core.Atom)
-	 */
 	@Override
 	protected Statement remove(Statement statement, Atom atom)
 			throws AtomSetException {

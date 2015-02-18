@@ -143,7 +143,7 @@ public class DefaultRule implements Rule {
 		}
 
 		// init pieces for equivalent classes
-		Map<Integer, AtomSet> tmpPieces = new TreeMap<Integer, AtomSet>();
+		Map<Integer, InMemoryAtomSet> tmpPieces = new TreeMap<Integer, InMemoryAtomSet>();
 		for (Term e : existentials) {
 			if (tmpPieces.get(classes.getIdClass(e)) == null) {
 				tmpPieces.put(classes.getIdClass(e), AtomSetFactory
@@ -153,7 +153,7 @@ public class DefaultRule implements Rule {
 
 		// Affect atoms to one pieces
 		boolean isAffected;
-		AtomSet atomset;
+		InMemoryAtomSet atomset;
 		Term e;
 		for (Atom a : this.getHead()) {
 			isAffected = false;

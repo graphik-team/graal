@@ -2,7 +2,7 @@ package fr.lirmm.graphik.graal.examples;
 import java.io.File;
 import java.io.IOException;
 
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.graph.MemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
@@ -22,7 +22,7 @@ public class GrdChaseExample {
 		
 		GraphOfRuleDependenciesWithUnifiers grd = GRDParser.getInstance().parse(new File("./src/main/resources/test-grd.grd"));
 		
-		AtomSet facts = new MemoryGraphAtomSet();
+		InMemoryAtomSet facts = new MemoryGraphAtomSet();
 		facts.add(DlpParser.parseAtom("r(a)."));
 
 		Chase chase = new ChaseWithGRDAndUnfiers(grd, facts);

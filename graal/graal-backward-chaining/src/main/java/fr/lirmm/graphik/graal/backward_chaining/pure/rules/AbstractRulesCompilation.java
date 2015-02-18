@@ -14,6 +14,7 @@ import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.util.Profiler;
 
@@ -64,7 +65,7 @@ public abstract class AbstractRulesCompilation implements RulesCompilation {
 		LinkedList<AtomSet> newQueriesAfter = new LinkedList<AtomSet>();
 		LinkedList<AtomSet> newQueriesTmp;
 		Iterable<Atom> atomsRewritings;
-		AtomSet copy;
+		InMemoryAtomSet copy;
 
 		// ConjunctiveQuery q;
 
@@ -135,16 +136,15 @@ public abstract class AbstractRulesCompilation implements RulesCompilation {
 	 * @param ruleset
 	 * @return
 	 */
-	protected final LinkedList<Rule> extractCompilable(Iterable<Rule> ruleset) {
+	protected final LinkedList<Rule> extractCompilable(Iterator<Rule> ruleSet) {
 		LinkedList<Rule> compilable = new LinkedList<Rule>();
 		Rule r;
 
-		Iterator<Rule> it = ruleset.iterator();
-		while (it.hasNext()) {
-			r = it.next();
+		while (ruleSet.hasNext()) {
+			r = ruleSet.next();
 			if (this.isCompilable(r)) {
 				compilable.add(r);
-				it.remove();
+				ruleSet.remove();
 			}
 		}
 

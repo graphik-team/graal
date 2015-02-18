@@ -20,6 +20,7 @@ import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
+import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
 import fr.lirmm.graphik.graal.forward_chaining.Chase;
@@ -82,7 +83,7 @@ public class ChaseTest {
 	}
 	
 	@Theory
-	public void restrictedChaseTestWithGrd(AtomSet atomSet) throws IOException, ChaseException, ParseException {
+	public void restrictedChaseTestWithGrd(InMemoryAtomSet atomSet) throws IOException, ChaseException, ParseException {
 		GraphOfRuleDependenciesWithUnifiers grd = GRDParser.getInstance().parse(new File("./src/test/resources/test1.grd"));
 		DlpParser parser = new DlpParser(new File("./src/test/resources/test1.dlp"));
 
@@ -106,7 +107,7 @@ public class ChaseTest {
 	}
 	
 	@Theory
-	public void test2(AtomSet atomSet) throws ChaseException, HomomorphismFactoryException, HomomorphismException {
+	public void test2(InMemoryAtomSet atomSet) throws ChaseException, HomomorphismFactoryException, HomomorphismException {
 
 		// add assertions into this atom set
 		atomSet.add(DlpParser.parseAtom("p(a)."));

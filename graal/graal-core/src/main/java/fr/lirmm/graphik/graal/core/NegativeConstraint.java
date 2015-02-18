@@ -3,7 +3,7 @@
  */
 package fr.lirmm.graphik.graal.core;
 
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 
 /**
@@ -17,7 +17,7 @@ import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
  */
 public class NegativeConstraint extends DefaultRule {
 
-	private static final AtomSet HEAD;
+	private static final InMemoryAtomSet HEAD;
 	static {
 		HEAD = new LinkedListAtomSet();
 		HEAD.add(Atom.BOTTOM);

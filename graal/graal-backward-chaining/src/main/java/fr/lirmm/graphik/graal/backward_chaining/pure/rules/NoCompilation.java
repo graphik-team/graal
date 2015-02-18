@@ -5,6 +5,7 @@ package fr.lirmm.graphik.graal.backward_chaining.pure.rules;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import fr.lirmm.graphik.graal.backward_chaining.pure.utils.TermPartition;
@@ -20,11 +21,11 @@ import fr.lirmm.graphik.graal.core.Substitution;
 public class NoCompilation extends AbstractRulesCompilation {
 
 	@Override
-	public void compile(Iterable<Rule> ruleset) {
+	public void compile(Iterator<Rule> ruleset) {
 	}
 
 	@Override
-	public void load(Iterable<Rule> ruleset) {
+	public void load(Iterator<Rule> ruleset) {
 	}
 
 	@Override

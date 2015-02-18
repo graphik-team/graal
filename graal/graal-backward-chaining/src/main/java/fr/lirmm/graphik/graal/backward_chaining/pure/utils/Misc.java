@@ -17,6 +17,8 @@ import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.AtomSets;
+import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
 
@@ -38,11 +40,11 @@ public final class Misc {
 			substitution.put(t, varGen.getFreeVar());
 		}
 
-		AtomSet body = rule.getBody();
-		AtomSet head = rule.getHead();
+		InMemoryAtomSet body = rule.getBody();
+		InMemoryAtomSet head = rule.getHead();
 
-		AtomSet safeBody = new LinkedListAtomSet();
-		AtomSet safeHead = new LinkedListAtomSet();
+		InMemoryAtomSet safeBody = new LinkedListAtomSet();
+		InMemoryAtomSet safeHead = new LinkedListAtomSet();
 
 		substitution.substitut(body, safeBody);
 		substitution.substitut(head, safeHead);
@@ -58,11 +60,11 @@ public final class Misc {
 	 */
 	public static boolean testInclu = true;
 
-	public static boolean isMoreGeneralThan(AtomSet h, AtomSet f,
+	public static boolean isMoreGeneralThan(InMemoryAtomSet h, InMemoryAtomSet f,
 			RulesCompilation compilation) {
 
 		boolean moreGen = false;
-		if (testInclu && h.isSubSetOf(f)) {
+		if (testInclu && AtomSets.contains(f, h)) {
 			moreGen = true;
 		} else {
 			try {
@@ -75,7 +77,7 @@ public final class Misc {
 		return moreGen;
 	}
 
-	public static boolean isMoreGeneralThan(AtomSet h, AtomSet f) {
+	public static boolean isMoreGeneralThan(InMemoryAtomSet h, InMemoryAtomSet f) {
 
 		return isMoreGeneralThan(h, f, null);
 	}
@@ -130,8 +132,8 @@ public final class Misc {
 			RulesCompilation comp) {
 		Iterator<ConjunctiveQuery> beg = set.iterator();
 		Iterator<ConjunctiveQuery> end;
-		AtomSet q;
-		AtomSet o;
+		InMemoryAtomSet q;
+		InMemoryAtomSet o;
 		boolean finished;
 		while (beg.hasNext()) {
 			q = beg.next().getAtomSet();
@@ -165,12 +167,12 @@ public final class Misc {
 	 * @param comp
 	 * @throws Exception
 	 */
-	public static void computeCoverAtomSet(Iterable<AtomSet> set) {
+	public static void computeCoverAtomSet(Iterable<InMemoryAtomSet> set) {
 
-		Iterator<AtomSet> beg = set.iterator();
-		Iterator<AtomSet> end;
-		AtomSet q;
-		AtomSet o;
+		Iterator<InMemoryAtomSet> beg = set.iterator();
+		Iterator<InMemoryAtomSet> end;
+		InMemoryAtomSet q;
+		InMemoryAtomSet o;
 		boolean finished;
 		while (beg.hasNext()) {
 			q = beg.next();

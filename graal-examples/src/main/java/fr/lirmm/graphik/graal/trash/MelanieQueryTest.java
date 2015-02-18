@@ -33,7 +33,7 @@ import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.DriverException;
 import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;
 import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
-import fr.lirmm.graphik.util.stream.FilterReader;
+import fr.lirmm.graphik.util.stream.FilterIterator;
 
 /**
  * 
@@ -96,7 +96,7 @@ public class MelanieQueryTest {
 		DlpParser parser = new DlpParser(new FileReader(FACT_FILE));
 		
 		//atomSet.add(new RDFPrefixFilter(new RDF2Atom(rdfParser),"http://swat.cse.lehigh.edu/onto/univ-bench.owl#"));
-		atomset.addAll(new FilterReader<Atom, Object>(parser, new AtomFilter()));
+		atomset.addAll(new FilterIterator<Object, Atom>(parser, new AtomFilter()));
 	}
 	
 	public static AtomSet getSqliteAtomSet(boolean deleteIfExist, String base ) throws IOException, AtomSetException, DriverException {

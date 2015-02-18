@@ -45,7 +45,7 @@ public class BackwardChainingTest {
 
 		ConjunctiveQuery query = DlpParser.parseQuery("?(X,Y,Z) :- p(X, Y), q(Y,Z).");
 
-		compilation.compile(rules);
+		compilation.compile(rules.iterator());
 		BackwardChainer bc = new PureRewriter(query, rules, compilation, new AggregSingleRuleOperator());
 		
 		int i = 0;

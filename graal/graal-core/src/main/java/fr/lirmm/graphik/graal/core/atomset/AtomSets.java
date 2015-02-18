@@ -18,15 +18,29 @@ public final class AtomSets {
 
 	private AtomSets() {
 	}
+	
+	/**
+	 * 
+	 * @param a1
+	 * @param a2
+	 * @return true if a1 contains a2, false otherwise.
+	 */
+	public static boolean contains(InMemoryAtomSet a1, InMemoryAtomSet a2) {
+		for (Atom atom : a2) {
+			if (!a1.contains(atom)) {
+				return false;
+			}
+		}
+		return true;
+	}
 
-	public static AtomSet minus(AtomSet a1, AtomSet a2) {
-		AtomSet atomset = AtomSetFactory.getInstance().createAtomSet();
+
+	public static InMemoryAtomSet minus(InMemoryAtomSet a1, InMemoryAtomSet a2) {
+		InMemoryAtomSet atomset = AtomSetFactory.getInstance().createAtomSet();
 		for (Atom a : a1) {
-			try {
-				if (!a2.contains(a)) {
-					atomset.add(a);
-				}
-			} catch (AtomSetException e) {}
+			if (!a2.contains(a)) {
+				atomset.add(a);
+			}
 		}
 		return atomset;
 	}
@@ -34,31 +48,26 @@ public final class AtomSets {
 	/**
 	 * Return the terms occuring both in Q\P and P
 	 */
-	public static LinkedList<Term> sep(AtomSet p, AtomSet q) {
-		AtomSet pBar = minus(q, p);
+	public static LinkedList<Term> sep(InMemoryAtomSet a1, InMemoryAtomSet a2) {
+		InMemoryAtomSet pBar = minus(a2, a1);
 		LinkedList<Term> sep = new LinkedList<Term>();
-		try {
-			for (Term t : pBar.getTerms()) {
-				for (Term x : q.getTerms())
-					if (x.equals(t))
-						sep.add(t);
-			}
-		} catch (AtomSetException e) {}
+		for (Term t : pBar.getTerms()) {
+			for (Term x : a2.getTerms())
+				if (x.equals(t))
+					sep.add(t);
+		}
 		return sep;
 	}
 	
-	public static AtomSet union(AtomSet a1, AtomSet a2) {
-		AtomSet atomset = AtomSetFactory.getInstance().createAtomSet();
+	public static InMemoryAtomSet union(AtomSet a1, AtomSet a2) {
+		InMemoryAtomSet atomset = AtomSetFactory.getInstance().createAtomSet();
 		for (Atom a : a1) {
 			atomset.add(new DefaultAtom(a));
 		}
 		for (Atom a : a2) {
-			try {
 			if (!atomset.contains(a)) {
 				atomset.add(new DefaultAtom(a));
-			}
-			} catch (AtomSetException e) {}
-				
+			}				
 		}
 		return atomset;
 	}

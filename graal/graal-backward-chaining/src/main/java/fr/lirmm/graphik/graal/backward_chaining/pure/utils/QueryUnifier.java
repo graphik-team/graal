@@ -6,7 +6,7 @@ import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
+import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 
 /**
@@ -28,7 +28,7 @@ public class QueryUnifier {
 	/**
 	 * the part of the query that are unified
 	 */
-	private AtomSet piece;
+	private InMemoryAtomSet piece;
 	/**
 	 * the partition that unify the piece and a part of the head rule
 	 */
@@ -36,7 +36,7 @@ public class QueryUnifier {
 
 	private Substitution associatedSubstitution;
 
-	public QueryUnifier(AtomSet piece, TermPartition partition, Rule rule,
+	public QueryUnifier(InMemoryAtomSet piece, TermPartition partition, Rule rule,
 			ConjunctiveQuery query) {
 		super();
 		this.rule = rule;
@@ -62,7 +62,7 @@ public class QueryUnifier {
 	/**
 	 * Change the piece of the fact that are unified by this unificateur
 	 */
-	public void setPiece(AtomSet piece) {
+	public void setPiece(InMemoryAtomSet piece) {
 		this.piece = piece;
 	}
 
@@ -76,7 +76,7 @@ public class QueryUnifier {
 	/**
 	 * Return the piece of the fact that are unified by this unificateur
 	 */
-	public AtomSet getPiece() {
+	public InMemoryAtomSet getPiece() {
 		return piece;
 	}
 
@@ -99,8 +99,8 @@ public class QueryUnifier {
 	 * 
 	 * @return the image of a given fact,
 	 */
-	public AtomSet getImageOf(AtomSet f) {
-		AtomSet atomset = null;
+	public AtomSet getImageOf(InMemoryAtomSet f) {
+		InMemoryAtomSet atomset = null;
 
 		if (associatedSubstitution == null) {
 			associatedSubstitution = partition.getAssociatedSubstitution(query);
@@ -133,16 +133,14 @@ public class QueryUnifier {
 	 */
 	public QueryUnifier aggregate(QueryUnifier u) {
 		// we create a piece that is the union of the two pieces
-		AtomSet pieces = new LinkedListAtomSet();
-		try {
-			pieces.addAll(getPiece());
-			pieces.addAll(u.getPiece());
-		} catch (AtomSetException e) {
-		}
+		InMemoryAtomSet pieces = new LinkedListAtomSet();
+		pieces.addAll(getPiece());
+		pieces.addAll(u.getPiece());
+
 
 		// we create a rule that is the aggregation of the two rules
-		AtomSet b = new LinkedListAtomSet();
-		AtomSet h = new LinkedListAtomSet();
+		InMemoryAtomSet b = new LinkedListAtomSet();
+		InMemoryAtomSet h = new LinkedListAtomSet();
 		for (Atom a : getRule().getBody())
 			b.add(a);
 		for (Atom a : getRule().getHead())

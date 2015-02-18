@@ -10,6 +10,7 @@ import java.util.Queue;
 import java.util.Set;
 
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
 import fr.lirmm.graphik.util.LinkedSet;
 
@@ -61,9 +62,9 @@ public class Unifier {
 		return unifiers;
 	}
 
-	public boolean existPieceUnifier(Rule rule, AtomSet atomset) {
+	public boolean existPieceUnifier(Rule rule, InMemoryAtomSet atomset) {
 		FreeVarSubstitution substitution = new FreeVarSubstitution();
-		AtomSet atomsetSubstitut = substitution.getSubstitut(atomset);
+		InMemoryAtomSet atomsetSubstitut = substitution.getSubstitut(atomset);
 
 		Queue<Atom> atomQueue = new LinkedList<Atom>();
 		for (Atom a : atomsetSubstitut) {

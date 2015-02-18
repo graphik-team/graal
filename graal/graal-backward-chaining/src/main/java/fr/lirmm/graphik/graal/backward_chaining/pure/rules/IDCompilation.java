@@ -56,7 +56,7 @@ public class IDCompilation extends AbstractRulesCompilation {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public void compile(Iterable<Rule> ruleset) {
+	public void compile(Iterator<Rule> ruleset) {
 		this.saturation = this.extractCompilable(ruleset);
 		if (this.getProfiler() != null) {
 			this.getProfiler().start("Compilation total time");
@@ -69,10 +69,10 @@ public class IDCompilation extends AbstractRulesCompilation {
 	}
 
 	@Override
-	public void load(Iterable<Rule> saturation) {
+	public void load(Iterator<Rule> saturation) {
 		this.saturation = new LinkedList<Rule>();
-		for (Rule r : saturation) {
-			this.saturation.add(r);
+		while (saturation.hasNext()) {
+			this.saturation.add(saturation.next());
 		}
 		this.createIDCondition();
 	}

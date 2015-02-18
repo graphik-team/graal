@@ -15,6 +15,7 @@ import fr.lirmm.graphik.graal.core.DefaultKnowledgeBase;
 import fr.lirmm.graphik.graal.core.KnowledgeBase;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
+import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
@@ -36,7 +37,7 @@ public class AnimalsExample {
 	private static DlpWriter writer = new DlpWriter();
 
 	public static void main(String args[]) throws ChaseException, IOException,
-			HomomorphismFactoryException, HomomorphismException {
+			HomomorphismFactoryException, HomomorphismException, AtomSetException {
 		KnowledgeBase kb = new DefaultKnowledgeBase();
 
 		Reader reader = new FileReader(filePath);

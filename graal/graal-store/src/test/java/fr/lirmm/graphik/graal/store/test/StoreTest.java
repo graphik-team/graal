@@ -37,7 +37,7 @@ public class StoreTest {
 		store.add(DlpParser.parseAtom("s(a,c)."));
 
 		int i = 0;
-		for (Iterator<Predicate> it = store.getAllPredicates().iterator(); it
+		for (Iterator<Predicate> it = store.predicatesIterator(); it
 				.hasNext(); it.next()) {
 			++i;
 		}
@@ -52,7 +52,7 @@ public class StoreTest {
 		store.add(DlpParser.parseAtom("p(a,c)."));
 
 		int i = 0;
-		for (Iterator<Predicate> it = store.getAllPredicates().iterator(); it
+		for (Iterator<Predicate> it = store.predicatesIterator(); it
 				.hasNext(); it.next()) {
 			++i;
 		}
@@ -112,7 +112,7 @@ public class StoreTest {
 	}
 
 	@Theory
-	public void isEmpty(Store store) {
+	public void isEmpty(Store store) throws AtomSetException {
 		Assert.assertTrue("Store is empty but isEmpty return false",
 				store.isEmpty());
 		store.add(DlpParser.parseAtom("p(a,b)."));

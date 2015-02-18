@@ -23,6 +23,7 @@ import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSets;
+import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByHeadPredicatesRuleSet;
 import fr.lirmm.graphik.util.Profilable;
@@ -84,7 +85,7 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 
 		Iterator<Atom> i = unifiableAtoms.iterator();
 		while (i.hasNext()) {
-			AtomSet p = new LinkedListAtomSet();
+			InMemoryAtomSet p = new LinkedListAtomSet();
 			Rule tmpRule = Misc.getSafeCopy(r);
 			AtomicHeadRule copy = new AtomicHeadRule(tmpRule.getBody(), tmpRule
 					.getHead().iterator().next());
@@ -179,7 +180,7 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 				Iterator<TermPartition> i = partitionList.iterator();
 				while (i.hasNext()) {
 					TermPartition unif = i.next();
-					AtomSet p = new LinkedListAtomSet();
+					InMemoryAtomSet p = new LinkedListAtomSet();
 					p.add(a);
 					u.addAll(extend(p, unif, possibleUnification, q, ruleCopy));
 					i.remove();
@@ -190,12 +191,13 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 		return u;
 	}
 
-	protected Collection<Rule> getUnifiableRules(Iterable<Predicate> preds,
+	protected Collection<Rule> getUnifiableRules(Iterator<Predicate> preds,
 			IndexedByHeadPredicatesRuleSet ruleSet, RulesCompilation compilation) {
 		TreeSet<Rule> res = new TreeSet<Rule>(RuleOrder.getInstance());
 		TreeSet<Predicate> unifiablePreds = new TreeSet<Predicate>();
-		for (Predicate pred : preds) {
-			unifiablePreds.addAll(compilation.getUnifiablePredicate(pred));
+		
+		while (preds.hasNext()) {
+			unifiablePreds.addAll(compilation.getUnifiablePredicate(preds.next()));
 		}
 		for (Predicate pred : unifiablePreds) {
 			for (Rule r : ruleSet.getRulesByHeadPredicate(pred)) {
@@ -304,7 +306,7 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 	// 
 	// /////////////////////////////////////////////////////////////////////////
 
-	private Collection<? extends QueryUnifier> extend(AtomSet p,
+	private Collection<? extends QueryUnifier> extend(InMemoryAtomSet p,
 			TermPartition unif,
 			HashMap<Atom, LinkedList<TermPartition>> possibleUnification,
 			ConjunctiveQuery q, Rule r) {
@@ -319,8 +321,8 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 		} else {
 			// compute Pext the atoms of Pbar linked to P by the sticky
 			// variables
-			AtomSet pBar = AtomSets.minus(q.getAtomSet(), p);
-			AtomSet pExt = new LinkedListAtomSet();
+			InMemoryAtomSet pBar = AtomSets.minus(q.getAtomSet(), p);
+			InMemoryAtomSet pExt = new LinkedListAtomSet();
 			for (Term t : sticky) {
 				Iterator<Atom> ib = pBar.iterator();
 				while (ib.hasNext()) {
@@ -345,15 +347,15 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 		return u;
 	}
 
-	private LinkedList<TermPartition> preUnifier(AtomSet p, Rule r,
+	private LinkedList<TermPartition> preUnifier(InMemoryAtomSet p, Rule r,
 			HashMap<Atom, LinkedList<TermPartition>> possibleUnification) {
 		LinkedList<TermPartition> res = new LinkedList<TermPartition>();
 		for (Atom a : p) {
 			if (possibleUnification.get(a) != null)
 				for (TermPartition ua : possibleUnification.get(a)) {
-					AtomSet fa = new LinkedListAtomSet();
+					InMemoryAtomSet fa = new LinkedListAtomSet();
 					fa.add(a);
-					AtomSet aBar = null;
+					InMemoryAtomSet aBar = null;
 					aBar = AtomSets.minus(p, fa);
 
 					if (!aBar.iterator().hasNext())

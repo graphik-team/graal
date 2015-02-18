@@ -32,9 +32,6 @@ import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
-import fr.lirmm.graphik.util.MethodNotImplementedError;
-import fr.lirmm.graphik.util.stream.AbstractReader;
-import fr.lirmm.graphik.util.stream.ObjectReader;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -190,7 +187,7 @@ public class JenaStore extends AbstractTripleStore {
 	}
 
 	@Override
-	public ObjectReader<Atom> iterator() {
+	public Iterator<Atom> iterator() {
 		return new AtomIterator(this.directory);
 	}
 
@@ -253,7 +250,7 @@ public class JenaStore extends AbstractTripleStore {
 	}
 
 	@Override
-	public Iterable<Predicate> getAllPredicates() {
+	public Set<Predicate> getPredicates() {
 		Set<Predicate> predicates = new TreeSet<Predicate>();
 		dataset.begin(ReadWrite.READ);
 		QueryExecution qExec = null;
@@ -271,17 +268,6 @@ public class JenaStore extends AbstractTripleStore {
 		}
 
 		return predicates;
-	}
-
-	@Override
-	public boolean isSubSetOf(AtomSet atomset) {
-		// TODO implement this method
-		throw new MethodNotImplementedError();
-	}
-
-	@Override
-	public boolean isEmpty() {
-		return !this.iterator().hasNext();
 	}
 
 	@Override
@@ -303,7 +289,7 @@ public class JenaStore extends AbstractTripleStore {
 	// PRIVATE CLASS
 	// /////////////////////////////////////////////////////////////////////////
 
-	private static class AtomIterator extends AbstractReader<Atom> {
+	private static class AtomIterator implements Iterator<Atom> {
 
 		Dataset dataset;
 		static final String SELECT = "PREFIX graal: <http://team.inria.fr/graphik/graal/> "
@@ -370,11 +356,6 @@ public class JenaStore extends AbstractTripleStore {
 
 			Atom atom = new DefaultAtom(predicate, subject, object);
 			return atom;
-		}
-
-		@Override
-		public Iterator<Atom> iterator() {
-			return this;
 		}
 
 	}

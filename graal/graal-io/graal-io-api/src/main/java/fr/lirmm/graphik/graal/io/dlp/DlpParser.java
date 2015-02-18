@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.Iterator;
 
 import parser.DatalogGrammar;
 import parser.ParseException;
@@ -25,10 +26,11 @@ import fr.lirmm.graphik.graal.core.KnowledgeBase;
 import fr.lirmm.graphik.graal.core.NegativeConstraint;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Term;
+import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.filter.AtomFilter;
 import fr.lirmm.graphik.graal.io.Parser;
 import fr.lirmm.graphik.util.stream.ArrayBlockingStream;
-import fr.lirmm.graphik.util.stream.FilterReader;
+import fr.lirmm.graphik.util.stream.FilterIterator;
 
 /**
  * 
@@ -200,8 +202,8 @@ public final class DlpParser extends Parser {
 		return (Atom) new DlpParser(s).next();
 	}
 	
-	public static Iterable<Atom> parseAtomSet(String s) {
-		return new FilterReader<Atom, Object>(new DlpParser(s), new AtomFilter());
+	public static Iterator<Atom> parseAtomSet(String s) {
+		return new FilterIterator<Object, Atom>(new DlpParser(s), new AtomFilter());
 	}
 	
 	public static Rule parseRule(String s) {
@@ -217,8 +219,9 @@ public final class DlpParser extends Parser {
 	 * 
 	 * @param src
 	 * @param target
+	 * @throws AtomSetException 
 	 */
-	public static void parseKnowledgeBase(Reader src, KnowledgeBase target) {
+	public static void parseKnowledgeBase(Reader src, KnowledgeBase target) throws AtomSetException {
 		DlpParser parser = new DlpParser(src);
 
 		for (Object o : parser) {

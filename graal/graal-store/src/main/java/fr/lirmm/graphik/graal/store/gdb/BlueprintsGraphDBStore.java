@@ -20,14 +20,13 @@ import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.Term.Type;
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
 
 /**
- * BlueprintsGraphDBStore wrap Blueprints API {@link http://blueprints.tinkerpop.com} into
- * an AtomSet. Blueprints API allows you to use many Graph Database like Neo4j,
- * Sparksee, OrientDB, Titan...
+ * BlueprintsGraphDBStore wrap Blueprints API {@link http
+ * ://blueprints.tinkerpop.com} into an AtomSet. Blueprints API allows you to
+ * use many Graph Database like Neo4j, Sparksee, OrientDB, Titan...
  * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
@@ -79,8 +78,19 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 	}
 
 	@Override
-	public Iterable<Predicate> getAllPredicates() {
-		return new PredicateIterable(graph.getVertices("class", "predicate"));
+	public Iterator<Predicate> predicatesIterator() {
+		return new PredicateIterable(graph.getVertices("class", "predicate"))
+				.iterator();
+	}
+
+	@Override
+	public Set<Predicate> getPredicates() {
+		TreeSet<Predicate> set = new TreeSet<Predicate>();
+		Iterator<Predicate> it = this.predicatesIterator();
+		while (it.hasNext()) {
+			set.add(it.next());
+		}
+		return set;
 	}
 
 	@Override
@@ -103,17 +113,6 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 			terms.add(vertexToTerm(v));
 		}
 		return terms;
-	}
-
-	@Override
-	public boolean isSubSetOf(AtomSet atomset) {
-		// TODO implement this method
-		throw new MethodNotImplementedError();
-	}
-
-	@Override
-	public boolean isEmpty() {
-		return !this.iterator().hasNext();
 	}
 
 	@Override

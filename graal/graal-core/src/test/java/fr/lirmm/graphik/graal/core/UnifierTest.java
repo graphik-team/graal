@@ -9,7 +9,7 @@ import java.util.Collection;
 import org.junit.Assert;
 import org.junit.Test;
 
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
 import fr.lirmm.graphik.graal.core.factory.RuleFactory;
 
@@ -81,7 +81,7 @@ public class UnifierTest {
 		rule.getHead().add(pXY);
 		rule.getHead().add(pYZ);
 		
-		AtomSet atomset = AtomSetFactory.getInstance().createAtomSet();
+		InMemoryAtomSet atomset = AtomSetFactory.getInstance().createAtomSet();
 		atomset.add(pUV);
 		atomset.add(pVW);
 		
@@ -95,7 +95,7 @@ public class UnifierTest {
 		rule.getBody().add(qX);
 		rule.getHead().add(pXB);
 		
-		AtomSet atomset = AtomSetFactory.getInstance().createAtomSet();
+		InMemoryAtomSet atomset = AtomSetFactory.getInstance().createAtomSet();
 		atomset.add(pAU);
 		
 		Collection<Substitution> unifiers = Unifier.getInstance().computePieceUnifier(rule, atomset);
@@ -108,7 +108,7 @@ public class UnifierTest {
 		rule.getBody().add(qX);
 		rule.getHead().add(pXB);
 
-		AtomSet atomset = AtomSetFactory.getInstance().createAtomSet();
+		InMemoryAtomSet atomset = AtomSetFactory.getInstance().createAtomSet();
 		atomset.add(pXA);
 
 		Collection<Substitution> unifiers = Unifier.getInstance().computePieceUnifier(rule,

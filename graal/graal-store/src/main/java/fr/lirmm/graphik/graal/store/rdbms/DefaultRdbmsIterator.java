@@ -21,14 +21,12 @@ import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader2AtomReader;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.store.homomorphism.SqlHomomorphism;
-import fr.lirmm.graphik.util.stream.AbstractReader;
-import fr.lirmm.graphik.util.stream.ObjectReader;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-class DefaultRdbmsIterator extends AbstractReader<Atom> {
+class DefaultRdbmsIterator implements Iterator<Atom> {
 
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(DefaultRdbmsIterator.class);
@@ -36,7 +34,7 @@ class DefaultRdbmsIterator extends AbstractReader<Atom> {
 	private RdbmsStore store;
 	private boolean hasNextCallDone = false;
 	private Iterator<Predicate> predicateStream;
-	private ObjectReader<Atom> atomReader;
+	private Iterator<Atom> atomReader;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
@@ -48,18 +46,13 @@ class DefaultRdbmsIterator extends AbstractReader<Atom> {
 	}
 
 	private void init() throws AtomSetException {
-		this.predicateStream = store.getAllPredicates().iterator();
+		this.predicateStream = store.predicatesIterator();
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.lirmm.graphik.util.stream.ObjectReader#hasNext()
-	 */
 	@Override
 	public boolean hasNext() {
 		if (!this.hasNextCallDone) {
@@ -90,11 +83,6 @@ class DefaultRdbmsIterator extends AbstractReader<Atom> {
 		return this.atomReader != null && this.atomReader.hasNext();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.lirmm.graphik.util.stream.ObjectReader#next()
-	 */
 	@Override
 	public Atom next() {
 		if (!this.hasNextCallDone)
@@ -102,6 +90,11 @@ class DefaultRdbmsIterator extends AbstractReader<Atom> {
 		this.hasNextCallDone = false;
 
 		return this.atomReader.next();
+	}
+
+	@Override
+	public void remove() {
+		throw new UnsupportedOperationException();
 	}
 
 }
