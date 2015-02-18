@@ -53,7 +53,7 @@ public class AnimalsExample {
 
 		writer.write("\n= Query =\n");
 		ConjunctiveQuery query = DlpParser
-				.parseQuery("?(X) :- \"mammifère\"(X).");
+				.parseQuery("?(X) :- \"mammal\"(X).");
 		writer.write(query);
 		waitEntry();
 
