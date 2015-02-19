@@ -26,7 +26,6 @@ import fr.lirmm.graphik.graal.io.dlp.DlpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlpWriter;
 import fr.lirmm.graphik.graal.rulesetanalyser.RuleAnalyser;
 
-
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 

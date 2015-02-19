@@ -67,7 +67,7 @@ public class SparqlConjunctiveQueryWriter implements ConjunctiveQueryWriter {
 	 */
 	private void write(Predicate predicate) {
 		System.out.print(':');
-		System.out.print(predicate.getLabel());
+		System.out.print(predicate.getIdentifier());
 	}
 
 	/**

@@ -14,8 +14,8 @@ import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.graal.io.Prefix;
 import fr.lirmm.graphik.graal.io.owl.OWLParser;
+import fr.lirmm.graphik.util.Prefix;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}

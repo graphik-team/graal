@@ -45,8 +45,6 @@ public class JenaStore extends AbstractTripleStore {
 	Dataset dataset;
 	String directory;
 
-	private static final String PREFIX = "";
-
 	private static final String INSERT_QUERY = PREFIX + " INSERT DATA { "
 			+ " %s %s %s " + " } ";
 
@@ -56,11 +54,7 @@ public class JenaStore extends AbstractTripleStore {
 	private static final String SELECT_QUERY = PREFIX + "SELECT ?x "
 			+ " WHERE { %s %s %s } ";
 
-	private static final String SELECT_TERMS_QUERY = PREFIX + "SELECT ?term "
-			+ " WHERE { { ?term  ?p  ?o } " + " UNION { ?s ?p ?term } } ";
-
-	private static final String SELECT_PREDICATES_QUERY = PREFIX + "SELECT ?p "
-			+ " WHERE { ?s ?p ?o }";
+	
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -262,7 +256,7 @@ public class JenaStore extends AbstractTripleStore {
 			qExec = QueryExecutionFactory.create(SELECT_PREDICATES_QUERY, dataset);
 			ResultSet rs = qExec.execSelect();
 			while (rs.hasNext()) {
-				predicates.add(new Predicate(rs.next().toString(), 2));
+				predicates.add(new Predicate(rs.next().get("?p").toString(), 2));
 			}
 		} finally {
 			if (qExec != null) {
@@ -369,16 +363,16 @@ public class JenaStore extends AbstractTripleStore {
 	// /////////////////////////////////////////////////////////////////////////
 
 	private static String predicateToString(Predicate p) {
-		return "<" + p.getLabel() + ">";
+		return "<" + p.getIdentifier() + ">";
 	}
 	
 	private static String termToString(Term t) {
 		if(Term.Type.CONSTANT.equals(t.getType())) {
-			return "<" + t.getValue().toString() + ">";
+			return "<" + t.getIdentifier().toString() + ">";
 		} else if (Term.Type.LITERAL.equals(t.getType())) {
-			return t.getValue().toString();
+			return t.getIdentifier().toString();
 		} else if (Term.Type.VARIABLE.equals(t.getType())) {
-			return "?" + t.getValue().toString();
+			return "?" + t.getIdentifier().toString();
 		} else {
 			return "";
 		}

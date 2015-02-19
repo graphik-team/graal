@@ -29,7 +29,7 @@ public class DlgpWriterTest {
 		writer.write(new DefaultAtom(predicat, a));
 		String s = new String(os.toByteArray(),"UTF-8");
 		writer.close();
-		Assert.assertTrue("Constant label does not begin with lower case.", Character.isLowerCase(s.charAt(4)));
+		Assert.assertTrue("Constant label does not begin with lower case.", Character.isLowerCase(s.charAt(s.indexOf("(") + 1)));
 	}
 	
 	@Test
@@ -42,7 +42,7 @@ public class DlgpWriterTest {
 		writer.write(new DefaultAtom(predicat, x));
 		String s = new String(os.toByteArray(),"UTF-8");
 		writer.close();
-		Assert.assertTrue("Variable label does not begin with upper case.", Character.isUpperCase(s.charAt(4)));
+		Assert.assertTrue("Variable label does not begin with upper case.", Character.isUpperCase(s.charAt(s.indexOf("(") + 1)));
 	}
 	
 	@Test

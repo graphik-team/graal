@@ -140,7 +140,7 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 
 		GraphQuery query = this.graph.query();
 		query.has("class", "predicate");
-		query.has("value", predicate.getLabel());
+		query.has("value", predicate.getIdentifier());
 		query.has("arity", predicate.getArity());
 		Iterator<Vertex> it = query.vertices().iterator();
 
@@ -149,7 +149,7 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 		} else {
 			v = graph.addVertex(null);
 			v.setProperty("class", "predicate");
-			v.setProperty("value", predicate.getLabel());
+			v.setProperty("value", predicate.getIdentifier());
 			v.setProperty("arity", predicate.getArity());
 		}
 		return v;
@@ -160,7 +160,7 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 
 		GraphQuery query = this.graph.query();
 		query.has("class", "term");
-		query.has("value", term.getValue().toString());
+		query.has("value", term.getIdentifier().toString());
 		query.has("type", term.getType().toString());
 		Iterator<Vertex> it = query.vertices().iterator();
 
@@ -169,7 +169,7 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 		} else {
 			v = this.graph.addVertex(null);
 			v.setProperty("class", "term");
-			v.setProperty("value", term.getValue().toString());
+			v.setProperty("value", term.getIdentifier().toString());
 			v.setProperty("type", term.getType().toString());
 		}
 		return v;
@@ -241,11 +241,11 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 	}
 
 	private static String predicateToString(Predicate p) {
-		return p.getLabel() + "@" + p.getArity();
+		return p.getIdentifier() + "@" + p.getArity();
 	}
 
 	private static String termToString(Term t) {
-		return t.getValue().toString() + "@" + t.getType().toString();
+		return t.getIdentifier().toString() + "@" + t.getType().toString();
 	}
 
 	// //////////////////////////////////////////////////////////////////////////

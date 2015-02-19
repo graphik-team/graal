@@ -61,7 +61,7 @@ public class PredicatePosition  implements Comparable<PredicatePosition> {
 	@Override
 	public String toString() {
 		StringBuilder s = new StringBuilder();
-		s.append(this.predicate.getLabel());
+		s.append(this.predicate.getIdentifier());
 		s.append('[');
 		s.append(this.position);
 		s.append(']');

@@ -431,20 +431,15 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		StringBuilder where = new StringBuilder();
 
 		HashMap<Atom, String> tableNames = new HashMap<Atom, String>();
-		HashMap<Predicate, Integer> predicateCount = new HashMap<Predicate, Integer>();
 		HashMap<String, String> lastOccurrence = new HashMap<String, String>();
 
 		ArrayList<String> constants = new ArrayList<String>();
 		ArrayList<String> equivalences = new ArrayList<String>();
 		TreeMap<Term, String> columns = new TreeMap<Term, String>();
 
+		int count = -1;
 		for (Atom atom : atomSet) {
-			int count = 1;
-			if (predicateCount.containsKey(atom.getPredicate())) {
-				count = predicateCount.get(atom.getPredicate()) + 1;
-			}
-			predicateCount.put(atom.getPredicate(), count);
-			String tableName = atom.getPredicate().getLabel() + count;
+			String tableName = "atom" + ++count;
 			tableNames.put(atom, tableName);
 		}
 		
@@ -688,7 +683,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	 */
 	private void insertPredicate(String tableName, Predicate predicate)
 																	   throws SQLException {
-		this.insertPredicateStatement.setString(1, predicate.getLabel());
+		this.insertPredicateStatement.setString(1, predicate.getIdentifier());
 		this.insertPredicateStatement.setInt(2, predicate.getArity());
 		this.insertPredicateStatement.setString(3, tableName);
 		this.insertPredicateStatement.execute();
@@ -707,7 +702,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		String predicateTableName = null;
 
 		try {
-			this.getPredicateTableStatement.setString(1, predicate.getLabel());
+			this.getPredicateTableStatement.setString(1, predicate.getIdentifier());
 			this.getPredicateTableStatement.setInt(2, predicate.getArity());
 			ResultSet results = this.getPredicateTableStatement.executeQuery();
 

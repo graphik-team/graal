@@ -19,7 +19,7 @@ public abstract class Util {
 	public static InMemoryAtomSet reification(Atom a, SymbolGenerator freeVarGen) {
 		InMemoryAtomSet atomSet = new LinkedListAtomSet();
 		
-		String predicatLabel = a.getPredicate().getLabel();
+		String predicatLabel = a.getPredicate().getIdentifier();
 		Term termId = freeVarGen.getFreeVar();
 		List<Term> terms; 
 		

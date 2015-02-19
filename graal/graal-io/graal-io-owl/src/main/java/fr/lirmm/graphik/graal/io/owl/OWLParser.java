@@ -27,8 +27,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.io.Parser;
-import fr.lirmm.graphik.graal.io.Prefix;
+import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.stream.ArrayBlockingStream;
+
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}

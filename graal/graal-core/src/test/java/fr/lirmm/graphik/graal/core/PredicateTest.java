@@ -3,6 +3,8 @@ package fr.lirmm.graphik.graal.core;
 import org.junit.Assert;
 import org.junit.Test;
 
+import fr.lirmm.graphik.util.Prefix;
+
 public class PredicateTest {
 
     @Test
@@ -11,7 +13,7 @@ public class PredicateTest {
         int arity = 5;
         Predicate predicate = new Predicate(label, arity);
 
-        Assert.assertTrue(predicate.getLabel().equals(label));
+        Assert.assertTrue(predicate.getIdentifier().equals(Prefix.DEFAULT.getPrefix() + label));
         Assert.assertTrue(predicate.getArity() == arity);
     }
 

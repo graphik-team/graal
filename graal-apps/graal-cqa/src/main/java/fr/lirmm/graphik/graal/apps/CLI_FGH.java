@@ -129,11 +129,11 @@ public class CLI_FGH {
 					if (i < init_size) 
 						out.write("1.0 1.0\n"); // 1");
 					else {
-						Matcher m = p.matcher(a.getPredicate().getLabel());
+						Matcher m = p.matcher(a.getPredicate().getIdentifier());
 						if (m.find()) // this is a "rule" predicate => last term is used to represent confidence value
 							// TODO perhaps GRAAL computes type in a good way:
 							// (Double)getValue() instead
-							out.write(((LinkedList<Term>)a.getTerms()).getLast().getValue().toString());
+							out.write(((LinkedList<Term>)a.getTerms()).getLast().getIdentifier().toString());
 						else
 							out.write("1.0");
 						out.write(" 0.0\n"); // 0");

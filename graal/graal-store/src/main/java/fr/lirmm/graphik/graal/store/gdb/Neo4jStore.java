@@ -296,7 +296,7 @@ public class Neo4jStore extends GraphDBStore {
 	private Node getTerm(Term term) {
 		Node node = null;
 		ResourceIterator<Node> it = this.graph.findNodesByLabelAndProperty(
-				NodeType.TERM, "value", term.getValue()).iterator();
+				NodeType.TERM, "value", term.getIdentifier()).iterator();
 		if (it.hasNext()) {
 			node = it.next();
 		}
@@ -308,7 +308,7 @@ public class Neo4jStore extends GraphDBStore {
 		Node node = this.getTerm(term);
 		if (node == null) {
 			node = this.graph.createNode(NodeType.TERM);
-			node.setProperty("value", term.getValue().toString());
+			node.setProperty("value", term.getIdentifier().toString());
 			node.setProperty("type", term.getType().toString());
 		}
 		return node;
@@ -322,7 +322,7 @@ public class Neo4jStore extends GraphDBStore {
 	private Node getPredicate(Predicate predicate) {
 		Node node = null;
 		ResourceIterator<Node> it = this.graph.findNodesByLabelAndProperty(
-				NodeType.PREDICATE, "value", predicate.getLabel()).iterator();
+				NodeType.PREDICATE, "value", predicate.getIdentifier()).iterator();
 		while (node == null && it.hasNext()) {
 			Node tmp = it.next();
 			if (tmp.getProperty("arity").equals(predicate.getArity())) {
@@ -341,7 +341,7 @@ public class Neo4jStore extends GraphDBStore {
 		Node node = this.getPredicate(predicate);
 		if (node == null) {
 			node = this.graph.createNode(NodeType.PREDICATE);
-			node.setProperty("value", predicate.getLabel());
+			node.setProperty("value", predicate.getIdentifier());
 			node.setProperty("arity", predicate.getArity());
 		}
 		return node;
@@ -389,7 +389,7 @@ public class Neo4jStore extends GraphDBStore {
 	private static void atomToCypher(StringBuilder sb, Atom a) {
 		Predicate p = a.getPredicate();
 		sb.append("(atom:ATOM), (predicate:PREDICATE { value: '")
-				.append(p.getLabel()).append("', arity: ").append(p.getArity())
+				.append(p.getIdentifier()).append("', arity: ").append(p.getArity())
 				.append(" }), ");
 
 		int i = -1;
@@ -398,7 +398,7 @@ public class Neo4jStore extends GraphDBStore {
 			// (atom)-[:TERM { index: ? }->(term?)
 			++i;
 			sb.append("(term").append(i).append(":TERM {value: '")
-					.append(t.getValue().toString()).append("', type: '")
+					.append(t.getIdentifier().toString()).append("', type: '")
 					.append(t.getType().toString())
 					.append("' }), (atom)-[rel_term").append(i)
 					.append(":TERM { index: ").append(i).append(" }]->(term")

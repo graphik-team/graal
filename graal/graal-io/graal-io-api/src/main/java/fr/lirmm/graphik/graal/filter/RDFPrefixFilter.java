@@ -51,7 +51,7 @@ public class RDFPrefixFilter extends AbstractReader<Atom>{
 	public Atom next() {
 		Atom a= this.reader.next();
 		Predicate p = a.getPredicate();
-		p = new Predicate(this.filter(p.getLabel()), p.getArity());
+		p = new Predicate(this.filter(p.getIdentifier()), p.getArity());
 		a = new DefaultAtom(p, a.getTerms());
 		return a;
 	}

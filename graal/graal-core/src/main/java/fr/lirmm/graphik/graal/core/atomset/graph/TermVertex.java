@@ -21,7 +21,7 @@ class TermVertex extends Term implements Vertex {
 	 * @param t
 	 */
 	public TermVertex(Term t) {
-		super(t.getValue(), t.getType());
+		super(t.getIdentifier(), t.getType());
 	}
 
 	/**

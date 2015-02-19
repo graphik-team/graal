@@ -2,6 +2,10 @@ package fr.lirmm.graphik.graal.core;
 
 import java.io.Serializable;
 
+import fr.lirmm.graphik.util.Prefix;
+import fr.lirmm.graphik.util.URI;
+import fr.lirmm.graphik.util.URIUtils;
+
 /**
  * Represents a Predicate of an Atom.
  * 
@@ -10,15 +14,33 @@ public class Predicate implements Comparable<Predicate>, Serializable {
 
 	private static final long serialVersionUID = 3098419922942769704L;
 
-	private final String label;
+	private final URI uri;
 	private final int arity;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 
-	public Predicate(String label, int arity) {
-		this.label = label;
+	/**
+	 * Construct a prefix with a specified prefix and a local name.
+	 * 
+	 * @param prefix
+	 * @param name
+	 * @param arity
+	 */
+	public Predicate(URI uri, int arity) {
+		this.uri = uri;
+		this.arity = arity;
+	}
+
+	/**
+	 * Construct a predicate
+	 * 
+	 * @param string
+	 * @param arity
+	 */
+	public Predicate(String string, int arity) {
+		this.uri = URIUtils.createURI(string, Prefix.DEFAULT);;
 		this.arity = arity;
 	}
 
@@ -27,12 +49,12 @@ public class Predicate implements Comparable<Predicate>, Serializable {
 	// /////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * Get the label (the name) of this predicate.
+	 * Get the URI representation of this predicate.
 	 * 
 	 * @return a string representing predicate label.
 	 */
-	public String getLabel() {
-		return label;
+	public String getIdentifier() {
+		return this.uri.toString();
 	}
 
 	/**
@@ -54,7 +76,7 @@ public class Predicate implements Comparable<Predicate>, Serializable {
 		int result = 1;
 		result = prime * result + this.getArity();
 		result = prime * result
-				+ ((this.getLabel() == null) ? 0 : this.getLabel().hashCode());
+				+ ((this.getIdentifier() == null) ? 0 : this.getIdentifier().hashCode());
 		return result;
 	}
 
@@ -73,7 +95,7 @@ public class Predicate implements Comparable<Predicate>, Serializable {
 		if (this.getArity() != other.getArity()) {
 			return false;
 		}
-		return this.getLabel().equals(other.getLabel());
+		return this.getIdentifier().equals(other.getIdentifier());
 	}
 
 	@Override
@@ -81,7 +103,7 @@ public class Predicate implements Comparable<Predicate>, Serializable {
 		int cmpVal = (this.getArity() < other.getArity()) ? -1 : ((this
 				.getArity() == other.getArity()) ? 0 : 1);
 		if (cmpVal == 0) {
-			cmpVal = this.getLabel().compareTo(other.getLabel());
+			cmpVal = this.getIdentifier().compareTo(other.getIdentifier());
 		}
 		return cmpVal;
 	}
@@ -89,11 +111,8 @@ public class Predicate implements Comparable<Predicate>, Serializable {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[predicate(")
-			.append(this.getLabel())
-			.append(',')
-			.append(this.getArity())
-			.append(")]");
+		sb.append("[predicate(").append(this.getIdentifier()).append(',')
+				.append(this.getArity()).append(")]");
 		return sb.toString();
 	}
 

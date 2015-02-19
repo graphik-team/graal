@@ -22,7 +22,7 @@ class PredicateVertex extends Predicate implements Vertex {
      * @param predicate
      */
     public PredicateVertex(Predicate predicate) {
-       super(predicate.getLabel(), predicate.getArity());
+       super(predicate.getIdentifier(), predicate.getArity());
     }
 
     // /////////////////////////////////////////////////////////////////////////

@@ -8,6 +8,7 @@ import java.io.IOError;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.Assert;
 
 import com.tinkerpop.blueprints.impls.tg.TinkerGraph;
 
@@ -19,6 +20,7 @@ import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.DriverException;
 import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
 import fr.lirmm.graphik.graal.store.triplestore.JenaStore;
+import fr.lirmm.graphik.graal.store.triplestore.SailStore;
 import fr.lirmm.graphik.graal.store.triplestore.TripleStore;
 
 /**
@@ -38,6 +40,7 @@ public final class TestUtil {
 	public static BlueprintsGraphDBStore graphStore = null;
 	public static JenaStore jenaStore = null;
 	public static Neo4jStore neo4jStore = null;
+	public static SailStore sailStore = null;
 
 	public static Store[] getStores() {
 		if (rdbmsStore != null) {
@@ -50,6 +53,10 @@ public final class TestUtil {
 		
 		if (neo4jStore != null) {
 			neo4jStore.close();
+		}
+		
+		if (sailStore != null) {
+			sailStore.close();
 		}
 		
 		try {
@@ -73,12 +80,24 @@ public final class TestUtil {
 
 	public static TripleStore[] getTripleStores() {
 		if (jenaStore != null) {
+			jenaStore.clear();
 			jenaStore.close();
 		}
+		
+		if (sailStore != null) {
+			sailStore.close();
+		}
+		
 		rm(JENA_TEST);
 		jenaStore = new JenaStore(JENA_TEST.getAbsolutePath());
 		
-		return new TripleStore[] { jenaStore };
+		try {
+			sailStore = new SailStore();
+		} catch (AtomSetException e) {
+			Assert.assertTrue("Error while creating SailStore", false);
+		}
+		
+		return new TripleStore[] { jenaStore, sailStore };
 	}
 	
 	private static void rm(File file) {

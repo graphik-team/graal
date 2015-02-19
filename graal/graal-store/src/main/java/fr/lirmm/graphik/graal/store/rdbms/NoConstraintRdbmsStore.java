@@ -75,7 +75,7 @@ public class NoConstraintRdbmsStore extends AbstractRdbmsStore {
     public Statement add(Statement statement, Atom atom) throws AtomSetException {
         try {
             StringBuilder l = new StringBuilder("create table ");
-            l.append(atom.getPredicate().getLabel());
+            l.append(atom.getPredicate().getIdentifier());
             l.append("(term0 varchar(128), term1 varchar(128));");
             statement.execute(l.toString());
         }
@@ -83,7 +83,7 @@ public class NoConstraintRdbmsStore extends AbstractRdbmsStore {
         
         StringBuilder supersqlcommand = new StringBuilder("insert into ");
 
-        supersqlcommand.append(atom.getPredicate().getLabel());
+        supersqlcommand.append(atom.getPredicate().getIdentifier());
         supersqlcommand.append(" values ('");
         supersqlcommand.append(atom.getTerm(0));
         supersqlcommand.append("','");

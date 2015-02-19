@@ -351,7 +351,7 @@ public class CLI {
 	}
 
 	public Term prepareConjunctiveQueryAtomTerm(Term t) {
-		String value = (String)(t.getValue());
+		String value = (String)(t.getIdentifier());
 		if ((value.length() >= 4)
 		 && (value.charAt(0) == 'C')
 		 && (value.charAt(1) == 'S')

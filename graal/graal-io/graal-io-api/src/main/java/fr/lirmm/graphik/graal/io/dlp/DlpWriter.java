@@ -21,8 +21,8 @@ import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
-import fr.lirmm.graphik.graal.io.Prefix;
 import fr.lirmm.graphik.graal.writer.ConjunctiveQueryWriter;
+import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.stream.ObjectWriter;
 
 /**
@@ -256,7 +256,7 @@ public class DlpWriter extends Writer implements ObjectWriter<Object>, Conjuncti
 	}
 
 	public static String writePredicateToString(Predicate p) {
-		String s = p.getLabel();
+		String s = p.getIdentifier();
 		if(s.charAt(0) != '"') {
 			s = '"' + s;
 		}
@@ -327,7 +327,7 @@ public class DlpWriter extends Writer implements ObjectWriter<Object>, Conjuncti
 	}
 	
 	protected void writePredicate(Predicate p) throws IOException {
-		String s = p.getLabel();
+		String s = p.getIdentifier();
 		if(s.charAt(0) != '"') {
 			this.writer.write('"');
 		}

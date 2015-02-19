@@ -10,7 +10,6 @@
 	<artifactId>graal-examples</artifactId>
 	<packaging>jar</packaging>
 	<name>graal-examples</name>
-
 	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -83,7 +82,6 @@
 			<artifactId>logback-classic</artifactId>
 			<version>1.1.1</version>
 		</dependency>
-		
 	</dependencies>
 
 	<build>

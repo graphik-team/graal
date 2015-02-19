@@ -2,6 +2,11 @@ package fr.lirmm.graphik.graal.core;
 
 import java.io.Serializable;
 
+import fr.lirmm.graphik.util.DefaultURI;
+import fr.lirmm.graphik.util.Prefix;
+import fr.lirmm.graphik.util.URI;
+import fr.lirmm.graphik.util.URIUtils;
+
 /**
  * (Immutable object)
  * 
@@ -19,6 +24,7 @@ public class Term implements Comparable<Term>, Serializable {
 
 	private static final long serialVersionUID = -8596306338753616109L;
 
+	private final URI uri;
 	private final Object value;
 	private final Type type;
 
@@ -26,20 +32,37 @@ public class Term implements Comparable<Term>, Serializable {
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
+	public Term(URI uri) {
+		this.type = Term.Type.CONSTANT;
+		this.value = null;
+		this.uri = uri;
+	}
+
 	/**
 	 * 
 	 * @param value
-	 *            if the type is VARIABLE, this parameter will be interpreted as
-	 *            a string.
+	 *            if the type is VARIABLE or CONSTANT, this parameter will be
+	 *            interpreted as a string.
 	 * @param type
 	 */
 	public Term(Object value, Type type) {
-		if (Type.VARIABLE.equals(type)) {
-			this.value = value.toString();
-		} else {
-			this.value = value;
-		}
 		this.type = type;
+
+		switch (type) {
+		case LITERAL:
+			this.value = value;
+			this.uri = URIUtils.createURI(value.toString(), Prefix.LITERAL);
+			break;
+		case CONSTANT:
+			this.value = null;
+			this.uri = URIUtils.createURI(value.toString(), Prefix.DEFAULT);
+			break;
+		case VARIABLE:
+		default:
+			this.value = null;
+			this.uri = new DefaultURI(value.toString());
+			break;
+		}
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -51,8 +74,8 @@ public class Term implements Comparable<Term>, Serializable {
 	 * 
 	 * @return
 	 */
-	public Object getValue() {
-		return this.value;
+	public String getIdentifier() {
+		return this.uri.toString();
 	}
 
 	/**
@@ -103,7 +126,7 @@ public class Term implements Comparable<Term>, Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + this.getType().toString().hashCode();
-		result = prime * result + this.getValue().hashCode();
+		result = prime * result + this.getIdentifier().hashCode();
 		return result;
 	}
 
@@ -123,7 +146,7 @@ public class Term implements Comparable<Term>, Serializable {
 		if (!this.getType().equals(other.getType())) {
 			return false;
 		}
-		return this.getValue().equals(other.getValue());
+		return this.getIdentifier().equals(other.getIdentifier());
 	}
 
 	@Override
@@ -137,7 +160,7 @@ public class Term implements Comparable<Term>, Serializable {
 
 	@Override
 	public String toString() {
-		return this.value.toString();
+		return this.getIdentifier();
 	}
 
 };

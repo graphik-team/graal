@@ -23,7 +23,7 @@ public class TermValueComparator implements Comparator<Term>, Serializable {
 	 */
 	@Override
 	public int compare(Term term0, Term term1) {
-		return term0.getValue().toString().compareTo(term1.getValue().toString());
+		return term0.getIdentifier().toString().compareTo(term1.getIdentifier().toString());
 		
 	}
 }
