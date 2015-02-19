@@ -11,7 +11,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.neo4j.cypher.javacompat.ExecutionEngine;
-import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
@@ -101,40 +100,85 @@ public class Neo4jStore extends GraphDBStore {
 		boolean isAdded = false;
 		Transaction tx = graph.beginTx();
 		try {
-			if (!this.contains(atom, tx)) {
-				Node atomNode = this.graph.createNode(NodeType.ATOM);
-
-				Node predicateNode = createPredicateIfNotExist(atom
-						.getPredicate());
-				atomNode.createRelationshipTo(predicateNode,
-						RelationshipType.PREDICATE);
-
-				int i = 0;
-				for (Term term : atom) {
-					Relationship r = atomNode.createRelationshipTo(
-							createTermIfNotExist(term), RelationshipType.TERM);
-					r.setProperty("index", i++);
-				}
-				isAdded = true;
-			}
+			isAdded = add(atom,tx);
 			tx.success();
 		} finally {
 			tx.close();
 		}
 		return isAdded;
 	}
+	
+	@Override
+	public boolean addAll(Iterator<? extends Atom> it) {
+		boolean isChanged = false;
+		Transaction tx = graph.beginTx();
+		try {
+			while(it.hasNext()) {
+				isChanged = this.add(it.next(), tx) || isChanged;
+			}
+			tx.success();
+		} finally {
+			tx.close();
+		}
+		return isChanged;
+	}
+	
+	private boolean add(Atom atom, Transaction transaction) {
+		if (!this.contains(atom, transaction)) {
+			Node atomNode = this.graph.createNode(NodeType.ATOM);
+
+			Node predicateNode = createPredicateIfNotExist(atom
+					.getPredicate());
+			atomNode.createRelationshipTo(predicateNode,
+					RelationshipType.PREDICATE);
+
+			int i = 0;
+			for (Term term : atom) {
+				Relationship r = atomNode.createRelationshipTo(
+						createTermIfNotExist(term), RelationshipType.TERM);
+				r.setProperty("index", i++);
+			}
+			return true;
+		}
+		return false;
+	}
 
 	@Override
 	public boolean remove(Atom atom) {
-		Transaction transaction = graph.beginTx();
+		boolean isRemoved = false;
+		Transaction tx = graph.beginTx();
+		try {
+			isRemoved = remove(atom,tx);
+			tx.success();
+		} finally {
+			tx.close();
+		}
+		return isRemoved;
+	}
+	
+	@Override
+	public boolean removeAll(Iterator<? extends Atom> it) {
+		boolean isChanged = false;
+		Transaction tx = graph.beginTx();
+		try {
+			while(it.hasNext()) {
+				isChanged = this.remove(it.next(), tx) || isChanged;
+			}
+			tx.success();
+		} finally {
+			tx.close();
+		}
+		return isChanged;
+	}
+	
+	private boolean remove(Atom atom, Transaction transaction) {
 		String query = deleteAtomIntoCypherQuery(atom);
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(query);
 		}
-		ExecutionResult result = this.cypherEngine.execute(query);
-		boolean contains = result.columnAs("atom").hasNext();
-		transaction.success();
-		transaction.close();
+		ResourceIterator<Node> result = this.cypherEngine.execute(query).columnAs("atom");
+		boolean contains = result.hasNext();
+		result.close();
 		return contains;
 	}
 
@@ -227,8 +271,10 @@ public class Neo4jStore extends GraphDBStore {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(query);
 		}
-		ExecutionResult result = this.cypherEngine.execute(query);
-		return result.columnAs("atom").hasNext();
+		ResourceIterator<Node> result = this.cypherEngine.execute(query).columnAs("atom");
+		boolean res = result.hasNext();
+		result.close();
+		return res;
 	}
 
 	@Override
