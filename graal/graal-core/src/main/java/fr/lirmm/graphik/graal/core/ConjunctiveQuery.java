@@ -18,6 +18,13 @@ import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 public interface ConjunctiveQuery extends Query, Iterable<Atom> {
 
 	/**
+	 * The label (the name) for this query.
+	 * 
+	 * @return
+	 */
+	String getLabel();
+	
+	/**
 	 * Get the atom conjunction representing the query.
 	 * @return an atom set representing the atom conjunction of the query.
 	 */

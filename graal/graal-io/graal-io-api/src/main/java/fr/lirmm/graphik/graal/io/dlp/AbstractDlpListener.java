@@ -123,7 +123,7 @@ abstract class AbstractDlpListener implements ParserListener {
 	public void endsConjunction(OBJECT_TYPE objectType) {
 		switch (objectType) {
 		case QUERY:
-			this.createQuery(new DefaultConjunctiveQuery(this.atomSet, this.answerVars));
+			this.createQuery(new DefaultConjunctiveQuery(this.label, this.atomSet, this.answerVars));
 			break;
 		case NEG_CONSTRAINT:
 			this.createNegConstraint(new NegativeConstraint(this.label, this.atomSet));

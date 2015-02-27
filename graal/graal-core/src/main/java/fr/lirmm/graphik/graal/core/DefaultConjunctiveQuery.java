@@ -16,6 +16,7 @@ import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
  */
 public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 
+	private String label;
 	private InMemoryAtomSet atomSet;
 	private Collection<Term> responseVariables;
 
@@ -24,33 +25,45 @@ public class DefaultConjunctiveQuery implements ConjunctiveQuery {
     // /////////////////////////////////////////////////////////////////////////
 
 	public DefaultConjunctiveQuery() {
+		this.label = "";
 		this.atomSet = AtomSetFactory.getInstance().createAtomSet();
 		this.responseVariables = new LinkedList<Term>();
 	}
 
 	public DefaultConjunctiveQuery(InMemoryAtomSet atomSet) {
+		this.label = "";
         this.atomSet = atomSet;
         this.responseVariables = atomSet.getTerms(Term.Type.VARIABLE);
     }
 
-	public DefaultConjunctiveQuery(InMemoryAtomSet atomSet, Collection<Term> answerVariables) {
-		this.atomSet = atomSet;
-		this.responseVariables = answerVariables;
-		if(this.responseVariables == null) {
-			this.responseVariables = Collections.<Term>emptyList();
-		}
+	public DefaultConjunctiveQuery(InMemoryAtomSet atomSet, Collection<Term> ans) {
+		this("", atomSet, ans);
 	}
 
 	public DefaultConjunctiveQuery(Iterable<Atom> atomSet, Iterable<Term> answerVariables) {
+		this.label = "";
 		this.atomSet = new LinkedListAtomSet(atomSet);
 		this.responseVariables = new LinkedList<Term>();
 		for(Term t : answerVariables) {
 			this.responseVariables.add(t);
 		}
 	}
+	
+	/**
+	 * 
+	 * @param label the name of this query
+	 * @param atomSet the conjunction of atom representing the query
+	 * @param ans the list of answer variables
+	 */
+	public DefaultConjunctiveQuery(String label, InMemoryAtomSet atomSet, Collection<Term> ans) {
+		this.label = label;
+		this.atomSet = atomSet;
+		this.responseVariables = ans;
+	}
 
 	// copy constructor
 	public DefaultConjunctiveQuery(ConjunctiveQuery query) {
+		this.label = query.getLabel();
 		this.atomSet = new LinkedListAtomSet(query.getAtomSet());
 		this.responseVariables = new LinkedList<Term>(query.getAnswerVariables());
 	}
@@ -58,6 +71,11 @@ public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 	// /////////////////////////////////////////////////////////////////////////
     //	PUBLIC METHODS
     // /////////////////////////////////////////////////////////////////////////
+	
+	@Override
+	public String getLabel() {
+		return this.label;
+	}
 	
 	/**
 	 * Returns the fact of the query.

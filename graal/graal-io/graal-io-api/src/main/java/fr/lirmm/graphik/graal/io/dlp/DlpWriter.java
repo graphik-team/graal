@@ -147,7 +147,10 @@ public class DlpWriter extends Writer implements ObjectWriter<Object>, Conjuncti
 	}
 	
 	@Override
-	public void write(ConjunctiveQuery query) throws IOException {	
+	public void write(ConjunctiveQuery query) throws IOException {
+		if(!query.getLabel().isEmpty()) {
+			this.writeLabel(query.getLabel());
+		}
 		this.writer.write('?');
 		Collection<Term> avars = query.getAnswerVariables();
 		if(!avars.isEmpty()) {

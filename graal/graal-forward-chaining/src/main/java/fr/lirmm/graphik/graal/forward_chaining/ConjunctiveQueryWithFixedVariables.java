@@ -64,6 +64,11 @@ public class ConjunctiveQueryWithFixedVariables implements ConjunctiveQuery {
 		return this.answerVariables;
 	}
 	
+
+	@Override
+	public String getLabel() {
+		return "";
+	}
 	
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
