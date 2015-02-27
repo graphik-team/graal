@@ -776,9 +776,8 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	}
 
 	@Override
-	public void clear() {
-		// TODO implement this method
-		throw new MethodNotImplementedError("This method isn't implemented");
+	public void clear() throws AtomSetException {
+		this.removeAll(this.iterator());
 	}
 
 }
