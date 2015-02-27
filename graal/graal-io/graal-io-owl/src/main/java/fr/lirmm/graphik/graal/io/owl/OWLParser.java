@@ -23,17 +23,22 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.util.DefaultPrefixManager;
 import org.semanticweb.owlapi.util.ShortFormProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import fr.lirmm.graphik.graal.io.Parser;
 import fr.lirmm.graphik.graal.io.Prefix;
-import fr.lirmm.graphik.util.stream.AbstractReader;
 import fr.lirmm.graphik.util.stream.ArrayBlockingStream;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class OWLParser extends AbstractReader<Object> {
+public class OWLParser extends Parser {
 
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(OWLParser.class);
+	
 	private ArrayBlockingStream<Object> buffer = new ArrayBlockingStream<Object>(
 			512);
 	
@@ -134,9 +139,13 @@ public class OWLParser extends AbstractReader<Object> {
 	 * 
 	 * @throws IOException
 	 */
-	public void close() throws IOException {
+	public void close() {
 		if(this.inputStream != null) {
-			this.inputStream.close();
+			try {
+				this.inputStream.close();
+			} catch (IOException e) {
+				LOGGER.error("Error during closing inputStream");
+			}
 			this.inputStream = null;
 		}
 	}

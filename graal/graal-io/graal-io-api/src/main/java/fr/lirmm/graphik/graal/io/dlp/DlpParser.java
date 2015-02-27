@@ -13,6 +13,9 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.Iterator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import parser.DatalogGrammar;
 import parser.ParseException;
 import parser.TERM_TYPE;
@@ -38,6 +41,9 @@ import fr.lirmm.graphik.util.stream.FilterIterator;
  * 
  */
 public final class DlpParser extends Parser {
+	
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(DlpParser.class);
 
 	private ArrayBlockingStream<Object> buffer = new ArrayBlockingStream<Object>(
 			512);
@@ -164,6 +170,11 @@ public final class DlpParser extends Parser {
 	public DlpParser(InputStream in) {
 		this(new InputStreamReader(in));
 	}
+	
+	protected void finalize() throws Throwable {
+		this.close();
+		super.finalize();
+	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// METHODS
@@ -183,9 +194,13 @@ public final class DlpParser extends Parser {
 	 * 
 	 * @throws IOException
 	 */
-	public void close() throws IOException {
+	public void close() {
 		if(this.reader != null) {
-			this.reader.close();
+			try {
+				this.reader.close();
+			} catch (IOException e) {
+				LOGGER.error("Error during closing reader", e);
+			}
 			this.reader = null;
 		}
 	}
