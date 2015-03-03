@@ -26,7 +26,7 @@ import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.io.Parser;
+import fr.lirmm.graphik.graal.io.AbstractParser;
 import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.stream.ArrayBlockingStream;
 
@@ -35,7 +35,7 @@ import fr.lirmm.graphik.util.stream.ArrayBlockingStream;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class OWLParser extends Parser {
+public class OWLParser extends AbstractParser {
 
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(OWLParser.class);

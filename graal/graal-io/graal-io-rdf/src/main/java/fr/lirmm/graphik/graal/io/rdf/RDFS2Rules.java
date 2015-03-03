@@ -12,13 +12,13 @@ import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.Term.Type;
-import fr.lirmm.graphik.util.stream.AbstractReader;
+import fr.lirmm.graphik.graal.io.AbstractParser;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public class RDFS2Rules extends AbstractReader<Object> {
+public class RDFS2Rules extends AbstractParser<Object> {
 
 	public static final String RDFS_PREFIX = "http://www.w3.org/2000/01/rdf-schema#";
 
@@ -59,9 +59,6 @@ public class RDFS2Rules extends AbstractReader<Object> {
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	/* (non-Javadoc)
-	 * @see fr.lirmm.graphik.util.stream.ObjectReader#next()
-	 */
 	@Override
 	public Object next() {
 		Object o = null;
@@ -107,13 +104,14 @@ public class RDFS2Rules extends AbstractReader<Object> {
 		return o;
 	}
 
-	/* (non-Javadoc)
-	 * @see fr.lirmm.graphik.util.stream.ObjectReader#hasNext()
-	 */
 	@Override
 	public boolean hasNext() {
 		return this.reader.hasNext();
 	}
-
+	
+	@Override
+	public void close() {
+		
+	}
 	
 }

@@ -18,14 +18,14 @@ import org.openrdf.rio.Rio;
 import fr.lirmm.graphik.graal.ParseError;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
-import fr.lirmm.graphik.util.stream.AbstractReader;
+import fr.lirmm.graphik.graal.io.AbstractAtomParser;
 import fr.lirmm.graphik.util.stream.ArrayBlockingStream;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public final class RDFParser extends AbstractReader<Atom> {
+public final class RDFParser extends AbstractAtomParser {
 
 	private ArrayBlockingStream<Atom> buffer = new ArrayBlockingStream<Atom>(
 			512);
@@ -108,6 +108,11 @@ public final class RDFParser extends AbstractReader<Atom> {
 
 	public Atom next() {
 		return buffer.next();
+	}
+
+	@Override
+	public void close() {
+		this.buffer.close();
 	}
 
 };

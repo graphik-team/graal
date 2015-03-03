@@ -10,13 +10,13 @@ import java.util.Iterator;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public abstract class Parser implements Iterator<Object>, Iterable<Object> {
+public abstract class AbstractParser<T> implements Parser<T> {
 
 	public void remove() {
 		throw new UnsupportedOperationException();
 	}
 	
-	public Iterator<Object> iterator() {
+	public Iterator<T> iterator() {
 		return this;
 	}
 	

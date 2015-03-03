@@ -17,13 +17,13 @@ import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.Term.Type;
-import fr.lirmm.graphik.util.stream.AbstractReader;
+import fr.lirmm.graphik.graal.io.AbstractAtomParser;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public class RDF2Atom extends AbstractReader<Atom> {
+public class RDF2Atom extends AbstractAtomParser {
 
 	
 	private static final Logger LOGGER = LoggerFactory
@@ -141,6 +141,9 @@ public class RDF2Atom extends AbstractReader<Atom> {
 		Atom a = this.atom;
 		this.atom = null;
 		return a;
+	}
+	
+	public void close() {
 	}
 	
 	
