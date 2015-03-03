@@ -15,7 +15,7 @@ import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
-import fr.lirmm.graphik.graal.core.filter.AtomFilter;
+import fr.lirmm.graphik.graal.core.filter.AtomFilterIterator;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 import fr.lirmm.graphik.graal.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
@@ -33,7 +33,6 @@ import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.DriverException;
 import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;
 import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
-import fr.lirmm.graphik.util.stream.FilterIterator;
 
 /**
  * 
@@ -96,7 +95,7 @@ public class MelanieQueryTest {
 		DlpParser parser = new DlpParser(new FileReader(FACT_FILE));
 		
 		//atomSet.add(new RDFPrefixFilter(new RDF2Atom(rdfParser),"http://swat.cse.lehigh.edu/onto/univ-bench.owl#"));
-		atomset.addAll(new FilterIterator<Object, Atom>(parser, new AtomFilter()));
+		atomset.addAll(new AtomFilterIterator(parser));
 	}
 	
 	public static AtomSet getSqliteAtomSet(boolean deleteIfExist, String base ) throws IOException, AtomSetException, DriverException {

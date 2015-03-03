@@ -30,17 +30,16 @@ import fr.lirmm.graphik.graal.core.NegativeConstraint;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
-import fr.lirmm.graphik.graal.core.filter.AtomFilter;
-import fr.lirmm.graphik.graal.io.Parser;
+import fr.lirmm.graphik.graal.core.filter.AtomFilterIterator;
+import fr.lirmm.graphik.graal.io.AbstractParser;
 import fr.lirmm.graphik.util.stream.ArrayBlockingStream;
-import fr.lirmm.graphik.util.stream.FilterIterator;
 
 /**
  * 
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public final class DlpParser extends Parser {
+public final class DlpParser extends AbstractParser<Object> {
 	
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(DlpParser.class);
@@ -218,7 +217,7 @@ public final class DlpParser extends Parser {
 	}
 	
 	public static Iterator<Atom> parseAtomSet(String s) {
-		return new FilterIterator<Object, Atom>(new DlpParser(s), new AtomFilter());
+		return new AtomFilterIterator(new DlpParser(s));
 	}
 	
 	public static Rule parseRule(String s) {

@@ -11,9 +11,22 @@ import fr.lirmm.graphik.util.stream.Filter;
  *
  */
 public class AtomFilter implements Filter {
-		
-		@Override
-		public boolean filter(Object o) {
-			return o instanceof Atom;
-		}
+	
+	private static AtomFilter instance;
+
+	protected AtomFilter() {
+		super();
+	}
+
+	public static synchronized AtomFilter getInstance() {
+		if (instance == null)
+			instance = new AtomFilter();
+
+		return instance;
+	}
+
+	@Override
+	public boolean filter(Object o) {
+		return o instanceof Atom;
+	}
 };
