@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Collection;
 
@@ -30,7 +31,7 @@ import fr.lirmm.graphik.util.stream.ObjectWriter;
  *
  */
 public class DlpWriter extends Writer implements ObjectWriter<Object>, ConjunctiveQueryWriter {
-
+	
 	protected Writer writer;
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -185,25 +186,16 @@ public class DlpWriter extends Writer implements ObjectWriter<Object>, Conjuncti
 	// OVERRIDE METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	/* (non-Javadoc)
-	 * @see java.io.Writer#close()
-	 */
 	@Override
 	public void close() throws IOException {
 		this.writer.close();
 	}
 
-	/* (non-Javadoc)
-	 * @see java.io.Writer#flush()
-	 */
 	@Override
 	public void flush() throws IOException {
 		this.writer.flush();
 	}
 
-	/* (non-Javadoc)
-	 * @see java.io.Writer#write(char[], int, int)
-	 */
 	@Override
 	public void write(char[] cbuf, int off, int len) throws IOException {
 		this.writer.write(cbuf, off, len);
@@ -255,87 +247,43 @@ public class DlpWriter extends Writer implements ObjectWriter<Object>, Conjuncti
 		this.writer.write(')');
 	}
 
-	public static String writePredicateToString(Predicate p) {
-		String s = p.getIdentifier();
-		if(s.charAt(0) != '"') {
-			s = '"' + s;
-		}
-
-		if(s.charAt(0) != '"') {
-			s = s + '"';
-		}
-
-		return s;
-	}
-
-	public static String writeTermToString(Term t) {
-		String term = t.toString();
-		if(Type.VARIABLE.equals(t.getType())) {
-			if (term.charAt(0) < 65 || term.charAt(0) > 90) {
-				term = "VAR_" + term;
-			}
-			return term;
-		} else if(Type.CONSTANT.equals(t.getType())) {
-			if (term.charAt(0) < 97 || term.charAt(0) > 122) {
-				term = "cst_" + term;
-			}
-			return term;
-		} else {
-			return '"' + term + '"';
-		}
-	}
-
-	public static String writeAtomToString(Atom atom) {
-		StringBuilder s = new StringBuilder();
-
-		s.append(writePredicateToString(atom.getPredicate()));
-		s.append('(');
-		
-		boolean isFirst = true;
-		for(Term t : atom.getTerms()) {
-			if(isFirst) {
-				isFirst = false;
-			} else {
-				s.append(", ");
-			}
-			
-			s.append(writeTermToString(t));
-			
-			
-		}
-		s.append(')');
-		return s.toString();
-	}
-	
 	protected void writeTerm(Term t) throws IOException {
-		String term = t.toString();
 		if(Type.VARIABLE.equals(t.getType())) {
-			if (term.charAt(0) < 65 || term.charAt(0) > 90) {
+			if(!Character.isUpperCase(t.getIdentifier().charAt(0))) {
 				this.writer.write("VAR_");
 			}
-			this.writer.write(term);
+			this.writer.write(t.getIdentifier());
 		} else if(Type.CONSTANT.equals(t.getType())) {
-			if (term.charAt(0) < 97 || term.charAt(0) > 122) {
-				this.writer.write("cst_");
-			}
-			this.writer.write(term);
-		} else {
+			this.writer.write('<');
+			this.writer.write(t.getIdentifier());
+			this.writer.write('>');
+		} else { // LITERAL
 			this.writer.write('"');
-			this.writer.write(t.toString());
+			this.writer.write(t.getIdentifier());
 			this.writer.write('"');
 		}
 	}
 	
 	protected void writePredicate(Predicate p) throws IOException {
-		String s = p.getIdentifier();
-		if(s.charAt(0) != '"') {
-			this.writer.write('"');
-		}
+		this.writer.write('<');
+		this.writer.write(p.getIdentifier());
+		this.writer.write('>');
+	}
+	
+	////////////////////////////////////////////////////////////////////////////
+	// STATIC METHODS
+	////////////////////////////////////////////////////////////////////////////
 
-		this.writer.write(s);
-		if(s.charAt(0) != '"') {
-			this.writer.write('"');
+	public static String writeAtomToString(Atom atom) {
+		StringWriter s = new StringWriter();
+		DlpWriter w = new DlpWriter(s);
+		try {
+			w.write(atom);
+			w.close();
+		} catch (IOException e) {
+			
 		}
+		return s.toString();
 	}
 	
 };

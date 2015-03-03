@@ -29,7 +29,9 @@ public class DlgpWriterTest {
 		writer.write(new DefaultAtom(predicat, a));
 		String s = new String(os.toByteArray(),"UTF-8");
 		writer.close();
-		Assert.assertTrue("Constant label does not begin with lower case.", Character.isLowerCase(s.charAt(s.indexOf("(") + 1)));
+		
+		char c = s.charAt(s.indexOf("(") + 1);
+		Assert.assertTrue("Constant label does not begin with lower case.", Character.isLowerCase(c) || c == '<');
 	}
 	
 	@Test
@@ -57,7 +59,7 @@ public class DlgpWriterTest {
 		writer.close();
 		
 		Character c = s.charAt(0);
-		Assert.assertTrue("Predicate label does not begin with lower case or double quote.", Character.isLowerCase(c) || c == '"');
+		Assert.assertTrue("Predicate label does not begin with lower case or double quote.", Character.isLowerCase(c) || c == '<');
 	}
 
 }
