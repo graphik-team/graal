@@ -65,10 +65,11 @@ public class Neo4jStore extends GraphDBStore {
 			if (!graph.schema().getConstraints().iterator().hasNext()) {
 				graph.schema().indexFor(NodeType.TERM);
 				graph.schema().indexFor(NodeType.PREDICATE);
-				graph.schema().constraintFor(NodeType.TERM)
+				// TODO manage constraints
+				/*graph.schema().constraintFor(NodeType.TERM)
 						.assertPropertyIsUnique("value").create();
 				graph.schema().constraintFor(NodeType.PREDICATE)
-						.assertPropertyIsUnique("value").create();
+						.assertPropertyIsUnique("value").create();*/
 			}
 
 			cypherEngine = new ExecutionEngine(graph);
