@@ -5,6 +5,7 @@ package fr.lirmm.graphik.graal.backward_chaining;
 
 import java.util.Iterator;
 
+import fr.lirmm.graphik.graal.backward_chaining.pure.AggregSingleRuleOperator;
 import fr.lirmm.graphik.graal.backward_chaining.pure.RewritingAlgorithm;
 import fr.lirmm.graphik.graal.backward_chaining.pure.RewritingOperator;
 import fr.lirmm.graphik.graal.backward_chaining.pure.queries.PureQuery;
@@ -44,6 +45,12 @@ public class PureRewriter extends AbstractBackwardChainer implements Verbosable 
 		this.ruleset = new LinkedListRuleSet(rules);
 		this.compilation = new NoCompilation();
 		this.compilation.compile(rules.iterator());
+		this.operator = new AggregSingleRuleOperator();
+	}
+	
+	public PureRewriter(ConjunctiveQuery query, Iterable<Rule> rules,
+			RulesCompilation compilation) {
+		this(query, rules, compilation, new AggregSingleRuleOperator());
 	}
 
 	/**
