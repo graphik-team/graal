@@ -36,6 +36,7 @@ import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLInverseFunctionalObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLInverseObjectPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLIrreflexiveObjectPropertyAxiom;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLNegativeDataPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLNegativeObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
@@ -488,7 +489,7 @@ class OWLAxiomParser implements
 	@Override
 	public Iterable<? extends Object> visit(OWLClassAssertionAxiom arg) {
 		freeVarGen.setIndex(0);
-		Term i = new Term(this.prefixManager.getShortForm(arg.getIndividual().asOWLNamedIndividual()), Type.CONSTANT);
+		Term i = createConstant(arg.getIndividual().asOWLNamedIndividual());
 		LogicalFormula f = arg.getClassExpression().accept(
 				new OWLClassExpressionVisitorImpl(this.prefixManager,
 						freeVarGen, i));
@@ -498,8 +499,8 @@ class OWLAxiomParser implements
 	@Override
 	public Iterable<? extends Object> visit(OWLObjectPropertyAssertionAxiom arg) {
 		freeVarGen.setIndex(0);
-		Term a = new Term(this.prefixManager.getShortForm(arg.getSubject().asOWLNamedIndividual()), Type.CONSTANT);
-		Term b = new Term(this.prefixManager.getShortForm(arg.getObject().asOWLNamedIndividual()), Type.CONSTANT);
+		Term a = createConstant(arg.getSubject().asOWLNamedIndividual());
+		Term b = createConstant(arg.getObject().asOWLNamedIndividual());
 		LogicalFormula f = arg.getProperty().accept(
 				new OWLPropertyExpressionVisitorImpl(this.prefixManager, a, b));
 		return Collections.singleton(f.iterator().next().iterator().next());
@@ -518,7 +519,7 @@ class OWLAxiomParser implements
 	@Override
 	public Iterable<? extends Object> visit(OWLDataPropertyAssertionAxiom arg) {
 		freeVarGen.setIndex(0);
-		Term a = new Term(this.prefixManager.getShortForm(arg.getSubject().asOWLNamedIndividual()), Type.CONSTANT);
+		Term a = createConstant(arg.getSubject().asOWLNamedIndividual());
 		Term b = new Term(arg.getObject().getLiteral(), Type.LITERAL);
 		LogicalFormula f = arg.getProperty().accept(
 				new OWLPropertyExpressionVisitorImpl(this.prefixManager, a, b));
@@ -546,15 +547,14 @@ class OWLAxiomParser implements
 		while (it1.hasNext()) {
 			OWLIndividual individu1 = it1.next();
 			it1.remove();
-			Term t1 = new Term(individu1.asOWLNamedIndividual().getIRI()
-					.toString(), Term.Type.CONSTANT);
-
+			
+			Term t1 = createConstant(individu1.asOWLNamedIndividual());
+			
 			it2 = list.iterator();
 			while (it2.hasNext()) {
 				OWLIndividual individu2 = it2.next();
 
-				Term t2 = new Term(individu2.asOWLNamedIndividual().getIRI()
-						.toString(), Term.Type.CONSTANT);
+				Term t2 = createConstant(individu2.asOWLNamedIndividual());
 				Atom a = new DefaultAtom(equalityPredicate, t1, t2);
 				c.add(a);
 			}
@@ -622,6 +622,14 @@ class OWLAxiomParser implements
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
+	
+	private Term createConstant(OWLNamedIndividual individu) {
+		String uri = this.prefixManager.getShortForm(individu);
+		if(uri.charAt(0) == '<') {
+			uri = uri.substring(1, uri.length()-1);
+		}
+		return new Term(uri, Term.Type.CONSTANT);
+	}
 
 	private Iterable<? extends Object> propertyDomainAxiom(
 			OWLPropertyExpression property, OWLClassExpression domain) {
