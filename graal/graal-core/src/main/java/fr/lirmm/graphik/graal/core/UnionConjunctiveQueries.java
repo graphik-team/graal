@@ -28,6 +28,13 @@ public class UnionConjunctiveQueries implements Query, Collection<ConjunctiveQue
         this.queries = queries;
     }
     
+    public UnionConjunctiveQueries(Iterator<ConjunctiveQuery> queries) {
+        this.queries = new LinkedList<ConjunctiveQuery>();
+        while(queries.hasNext()) {
+            this.queries.add(queries.next());
+        }
+    }
+    
     public UnionConjunctiveQueries(ConjunctiveQuery... queries) {
         this.queries = new LinkedList<ConjunctiveQuery>();
         for(ConjunctiveQuery cq : queries)
