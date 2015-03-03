@@ -21,8 +21,8 @@ import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependenciesWithUnifiers;
+import fr.lirmm.graphik.graal.io.ParseException;
 import fr.lirmm.graphik.graal.io.dlp.DlpParser;
-import fr.lirmm.graphik.graal.parser.ParseException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}

@@ -137,38 +137,4 @@ public class LogicalFormula implements Iterable<Collection<Literal>> {
 		return sb.toString();
 	}
 	
-	// /////////////////////////////////////////////////////////////////////////
-	// TEST METHODS - TODO move into unit test
-	// /////////////////////////////////////////////////////////////////////////
-	
-	public static void main(String[] args) {
-		LogicalFormula f = new LogicalFormula();
-		LogicalFormula f1 = new LogicalFormula();
-		LogicalFormula f2 = new LogicalFormula();
-		LogicalFormula f3 = new LogicalFormula();
-		
-		f1.or(new Literal(DlpParser.parseAtom("a1(X)."), true));
-		f1.or(new Literal(DlpParser.parseAtom("a2(X)."), false));
-		f1.or(new Literal(DlpParser.parseAtom("a3(X)."), true));
-		
-		f2.or(new Literal(DlpParser.parseAtom("b1(X)."), true));
-		f2.or(new Literal(DlpParser.parseAtom("b2(X)."), false));
-		f2.or(new Literal(DlpParser.parseAtom("b3(X)."), true));
-		
-		f3.or(new Literal(DlpParser.parseAtom("c1(X)."), true));
-		f3.or(new Literal(DlpParser.parseAtom("c2(X)."), false));
-		f3.or(new Literal(DlpParser.parseAtom("c3(X)."), true));
-		System.out.println(f3);
-		
-		System.out.println("=================");
-		f.and(f1);
-		System.out.println(f);
-		f.and(f2);
-		System.out.println(f);
-		f.and(f3);
-		System.out.println(f);
-		f.not();
-		System.out.println("===================");
-		System.out.println(f);
-	}
 }

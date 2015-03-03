@@ -32,9 +32,9 @@ import fr.lirmm.graphik.graal.grd.GraphOfRuleDependenciesWithUnifiers;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
+import fr.lirmm.graphik.graal.io.ParseException;
 import fr.lirmm.graphik.graal.io.dlp.DlpParser;
 import fr.lirmm.graphik.graal.io.grd.GRDParser;
-import fr.lirmm.graphik.graal.parser.ParseException;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>

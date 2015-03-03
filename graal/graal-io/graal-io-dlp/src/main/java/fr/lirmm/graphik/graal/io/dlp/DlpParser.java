@@ -20,7 +20,6 @@ import parser.DatalogGrammar;
 import parser.ParseException;
 import parser.TERM_TYPE;
 import parser.TermFactory;
-import fr.lirmm.graphik.graal.ParseError;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
@@ -32,6 +31,7 @@ import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.filter.AtomFilterIterator;
 import fr.lirmm.graphik.graal.io.AbstractParser;
+import fr.lirmm.graphik.graal.io.ParseError;
 import fr.lirmm.graphik.util.stream.ArrayBlockingStream;
 
 /**

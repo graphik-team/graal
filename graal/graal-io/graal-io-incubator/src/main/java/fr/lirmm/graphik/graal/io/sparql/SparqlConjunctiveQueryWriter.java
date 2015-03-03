@@ -1,13 +1,14 @@
 /**
  * 
  */
-package fr.lirmm.graphik.graal.writer;
+package fr.lirmm.graphik.graal.io.sparql;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.util.ForEachSeparator;
+import fr.lirmm.graphik.graal.io.ConjunctiveQueryWriter;
+import fr.lirmm.graphik.graal.io.WriterException;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -24,9 +25,13 @@ public class SparqlConjunctiveQueryWriter implements ConjunctiveQueryWriter {
 			this.write(t);
 
 		System.out.print("\nWHERE\n{\n");
-		ForEachSeparator separator = new ForEachSeparator(" .\n");
+		boolean isFirst = true;
 		for(Atom a : query.getAtomSet()) {
-			System.out.print(separator.get());
+			if(!isFirst) {
+				System.out.print(" .\n");
+			} else {
+				isFirst = false;
+			}
 			this.write(a, rdfPrefix);
 		}
 		

@@ -8,9 +8,9 @@ import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.NegativeConstraint;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
+import fr.lirmm.graphik.graal.io.ParseException;
 import fr.lirmm.graphik.graal.io.dlp.DlpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlpWriter;
-import fr.lirmm.graphik.graal.parser.ParseException;
 
 /**
  * 

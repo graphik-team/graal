@@ -6,10 +6,10 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.io.ParseException;
+import fr.lirmm.graphik.graal.io.WriterException;
 import fr.lirmm.graphik.graal.io.oxford.OxfordQueryParser;
-import fr.lirmm.graphik.graal.parser.ParseException;
-import fr.lirmm.graphik.graal.writer.SparqlConjunctiveQueryWriter;
-import fr.lirmm.graphik.graal.writer.WriterException;
+import fr.lirmm.graphik.graal.io.sparql.SparqlConjunctiveQueryWriter;
 
 
 /**

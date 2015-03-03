@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.lirmm.graphik.graal.parser;
+package fr.lirmm.graphik.graal.io;
 
 import java.io.IOException;
 

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.lirmm.graphik.graal.writer;
+package fr.lirmm.graphik.graal.io;
 
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import java.io.IOException;

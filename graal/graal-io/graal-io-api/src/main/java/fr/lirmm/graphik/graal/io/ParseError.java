@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.lirmm.graphik.graal;
+package fr.lirmm.graphik.graal.io;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>

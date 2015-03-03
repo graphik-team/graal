@@ -8,7 +8,7 @@ import java.io.Reader;
 import java.io.StringReader;
 
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.parser.ParseException;
+import fr.lirmm.graphik.graal.io.ParseException;
 
 /**
  * 

@@ -39,11 +39,6 @@
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>dlgp-parser</artifactId>
-			<version>1.1.0</version>
-		</dependency>
-		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.11</version>
