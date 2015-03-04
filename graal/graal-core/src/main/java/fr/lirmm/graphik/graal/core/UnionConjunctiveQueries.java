@@ -14,6 +14,7 @@ import java.util.LinkedList;
  */
 public class UnionConjunctiveQueries implements Query, Collection<ConjunctiveQuery> {
 
+	private String label = "";
     private Collection<ConjunctiveQuery> queries;
     
     // /////////////////////////////////////////////////////////////////////////
@@ -65,84 +66,62 @@ public class UnionConjunctiveQueries implements Query, Collection<ConjunctiveQue
         return this.queries.iterator();
     }
 
-    /* (non-Javadoc)
-     * @see java.util.Collection#isEmpty()
-     */
     @Override
     public boolean isEmpty() {
         return this.queries.isEmpty();
     }
 
-    /* (non-Javadoc)
-     * @see java.util.Collection#remove(java.lang.Object)
-     */
     @Override
     public boolean remove(Object o) {
         return this.queries.remove(o);
     }
 
-    /* (non-Javadoc)
-     * @see java.util.Collection#removeAll(java.util.Collection)
-     */
     @Override
     public boolean removeAll(Collection<?> c) {
         return this.queries.removeAll(c);
     }
 
-    /* (non-Javadoc)
-     * @see java.util.Collection#retainAll(java.util.Collection)
-     */
     @Override
     public boolean retainAll(Collection<?> c) {
         return this.queries.retainAll(c);
     }
 
-    /* (non-Javadoc)
-     * @see java.util.Collection#size()
-     */
     @Override
     public int size() {
         return this.queries.size();
     }
 
-    /* (non-Javadoc)
-     * @see java.util.Collection#toArray()
-     */
     @Override
     public Object[] toArray() {
         return this.queries.toArray();
     }
 
-    /* (non-Javadoc)
-     * @see java.util.Collection#toArray(T[])
-     */
     @Override
     public <T> T[] toArray(T[] a) {
         return this.queries.toArray(a);
     }
 
-    /* (non-Javadoc)
-     * @see java.util.Collection#contains(java.lang.Object)
-     */
     @Override
     public boolean contains(Object o) {
         return this.queries.contains(o);
     }
 
-    /* (non-Javadoc)
-     * @see java.util.Collection#containsAll(java.util.Collection)
-     */
     @Override
     public boolean containsAll(Collection<?> c) {
         return this.queries.containsAll(c);
     }
 
-	/* (non-Javadoc)
-	 * @see fr.lirmm.graphik.kb.query.IQuery#isBoolean()
-	 */
 	@Override
 	public boolean isBoolean() {
 		return this.queries.isEmpty() || this.queries.iterator().next().isBoolean();
+	}
+	
+	public void setLabel(String label) {
+		this.label = label;
+	}
+	
+	public String getLabel() {
+		return this.label;
 	}
 	
 	// /////////////////////////////////////////////////////////////////////////
