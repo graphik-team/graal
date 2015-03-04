@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -7,7 +8,7 @@
 		<artifactId>graal-main-project</artifactId>
 		<version>0.7.1-SNAPSHOT</version>
 	</parent>
-	
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>1.6</jdk.version>
@@ -24,6 +25,11 @@
 		</dependency>
 		<dependency>
 			<artifactId>graal-io-api</artifactId>
+			<groupId>fr.lirmm.graphik</groupId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<artifactId>graal-io-dlp</artifactId>
 			<groupId>fr.lirmm.graphik</groupId>
 			<version>${project.parent.version}</version>
 		</dependency>
