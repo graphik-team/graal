@@ -7,8 +7,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import fr.lirmm.graphik.graal.io.dlp.DlpParser;
-
 /**
  * @author clement
  *
@@ -128,38 +126,4 @@ public class LogicalFormulaDisjunctiveForm implements Iterable<Collection<Litera
 		return sb.toString();
 	}
 	
-	// /////////////////////////////////////////////////////////////////////////
-	// TEST METHODS - TODO move into unit test
-	// /////////////////////////////////////////////////////////////////////////
-	
-	public static void main(String[] args) {
-		LogicalFormulaDisjunctiveForm f = new LogicalFormulaDisjunctiveForm();
-		LogicalFormulaDisjunctiveForm f1 = new LogicalFormulaDisjunctiveForm();
-		LogicalFormulaDisjunctiveForm f2 = new LogicalFormulaDisjunctiveForm();
-		LogicalFormulaDisjunctiveForm f3 = new LogicalFormulaDisjunctiveForm();
-		
-		f1.and(new Literal(DlpParser.parseAtom("a1(X)."), true));
-		f1.and(new Literal(DlpParser.parseAtom("a2(X)."), false));
-		f1.and(new Literal(DlpParser.parseAtom("a3(X)."), true));
-		
-		f2.and(new Literal(DlpParser.parseAtom("b1(X)."), true));
-		f2.and(new Literal(DlpParser.parseAtom("b2(X)."), false));
-		f2.and(new Literal(DlpParser.parseAtom("b3(X)."), true));
-		
-		f3.and(new Literal(DlpParser.parseAtom("c1(X)."), true));
-		f3.and(new Literal(DlpParser.parseAtom("c2(X)."), false));
-		f3.and(new Literal(DlpParser.parseAtom("c3(X)."), true));
-		System.out.println(f3);
-		
-		System.out.println("=================");
-		f.or(f1);
-		System.out.println(f);
-		f.or(f2);
-		System.out.println(f);
-		f.or(f3);
-		System.out.println(f);
-		f.not();
-		System.out.println("===================");
-		System.out.println(f);
-	}
 }
