@@ -22,6 +22,32 @@ public final class RuleUtils {
 
 	/**
 	 * 
+	 * @param rule
+	 * @return true if and only if the body of the specified rule contains only
+	 *         one atom.
+	 */
+	public static boolean hasAtomicBody(Rule rule) {
+		Iterator<Atom> it = rule.getBody().iterator();
+		boolean res = it.hasNext();
+		it.next();
+		return res && !it.hasNext();
+	}
+
+	/**
+	 * 
+	 * @param rule
+	 * @return true if and only if the head of the specified rule contains only
+	 *         one atom.
+	 */
+	public static boolean hasAtomicHead(Rule rule) {
+		Iterator<Atom> it = rule.getHead().iterator();
+		boolean res = it.hasNext();
+		it.next();
+		return res && !it.hasNext();
+	}
+
+	/**
+	 * 
 	 * @param rules
 	 *            a set of rules
 	 * @return The equivalent set of mono-piece rules.

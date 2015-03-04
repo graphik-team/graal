@@ -19,6 +19,7 @@ import fr.lirmm.graphik.graal.core.DefaultFreeVarGen;
 import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.core.RuleUtils;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
@@ -80,10 +81,8 @@ public class IDCompilation extends AbstractRulesCompilation {
 	// /////////////////////////////////////////////////////////////////////////
 	// CONST METHODS
 	// /////////////////////////////////////////////////////////////////////////
-	
-	
-	public List<IDCondition> getConditions(Predicate predB,
-			Predicate predH) {
+
+	public List<IDCondition> getConditions(Predicate predB, Predicate predH) {
 		LinkedList<IDCondition> res = null;
 		if (predB.equals(predH)) {
 			res = new LinkedList<IDCondition>();
@@ -105,33 +104,15 @@ public class IDCompilation extends AbstractRulesCompilation {
 		else
 			return Collections.emptyList();
 	}
-	
+
 	/**
 	 * Return true if the specified rule is compilable.
 	 */
 	@Override
 	public boolean isCompilable(Rule r) {
-		Iterator<Atom> bodyIt = r.getBody().iterator();
-		Iterator<Atom> headIt = r.getHead().iterator();
-
-		if (bodyIt.hasNext() && headIt.hasNext()) {
-			bodyIt.next();
-			headIt.next();
-
-			if (!bodyIt.hasNext() && !headIt.hasNext()) {
-				// atomic head and body
-
-				if(!r.getExistentials().isEmpty()) {
-					return false;
-				} 
-				if(!r.getTerms(Term.Type.CONSTANT).isEmpty()) {
-					return false;
-				}
-				
-				return true;
-			}
-		}
-		return false;
+		return RuleUtils.hasAtomicBody(r) && RuleUtils.hasAtomicHead(r)
+				&& r.getExistentials().isEmpty()
+				&& r.getTerms(Term.Type.CONSTANT).isEmpty();
 	}
 
 	/**
@@ -237,7 +218,7 @@ public class IDCompilation extends AbstractRulesCompilation {
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
-	
+
 	private void createIDCondition() {
 		if (this.getProfiler() != null) {
 			this.getProfiler().start("Compilation create IDCondition time");
@@ -273,12 +254,12 @@ public class IDCompilation extends AbstractRulesCompilation {
 			lastCompute = computeSaturationPart(lastCompute, rules);
 			saturation.addAll(lastCompute);
 		}
-		
+
 		this.saturation = this.compactSaturation(this.saturation.iterator());
 		if (this.getProfiler() != null) {
 			this.getProfiler().stop("Compilation saturation time");
 		}
-		
+
 	}
 
 	private Collection<Rule> computeSaturationPart(Iterable<Rule> lastCompute,
@@ -328,16 +309,16 @@ public class IDCompilation extends AbstractRulesCompilation {
 		}
 		return !isImplied;
 	}
-	
+
 	private Collection<Rule> compactSaturation(Iterator<Rule> rules) {
 		TreeMap<Atom, Rule> map = new TreeMap<Atom, Rule>();
 		Rule rule, tmp;
 		Atom atomicBody;
-		while(rules.hasNext()) {
+		while (rules.hasNext()) {
 			rule = rules.next();
 			atomicBody = rule.getBody().iterator().next();
 			tmp = map.get(atomicBody);
-			if(tmp == null) {
+			if (tmp == null) {
 				map.put(atomicBody, rule);
 			} else {
 				tmp.getHead().addAll(rule.getHead());
@@ -371,16 +352,16 @@ public class IDCompilation extends AbstractRulesCompilation {
 	// /////////////////////////////////////////////////////////////////////////
 	// OBJECT METHODS OVERRIDING
 	// /////////////////////////////////////////////////////////////////////////
-	
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		this.appendTo(sb);
 		return sb.toString();
 	}
-	
+
 	public void appendTo(StringBuilder sb) {
-		for(Rule r : this.saturation) {
+		for (Rule r : this.saturation) {
 			r.appendTo(sb);
 		}
 	}
