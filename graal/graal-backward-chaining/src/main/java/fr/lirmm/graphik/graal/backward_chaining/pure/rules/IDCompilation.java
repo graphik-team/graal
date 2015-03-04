@@ -32,7 +32,7 @@ public class IDCompilation extends AbstractRulesCompilation {
 	// a matrix for store conditions ( p -> q : [q][p] )
 	private Map<Predicate, TreeMap<Predicate, LinkedList<IDCondition>>> conditions;
 
-	private LinkedList<Rule> saturation;
+	private Collection<Rule> saturation;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -273,9 +273,12 @@ public class IDCompilation extends AbstractRulesCompilation {
 			lastCompute = computeSaturationPart(lastCompute, rules);
 			saturation.addAll(lastCompute);
 		}
+		
+		this.saturation = this.compactSaturation(this.saturation.iterator());
 		if (this.getProfiler() != null) {
 			this.getProfiler().stop("Compilation saturation time");
 		}
+		
 	}
 
 	private Collection<Rule> computeSaturationPart(Iterable<Rule> lastCompute,
@@ -324,6 +327,23 @@ public class IDCompilation extends AbstractRulesCompilation {
 				isImplied = true;
 		}
 		return !isImplied;
+	}
+	
+	private Collection<Rule> compactSaturation(Iterator<Rule> rules) {
+		TreeMap<Atom, Rule> map = new TreeMap<Atom, Rule>();
+		Rule rule, tmp;
+		Atom atomicBody;
+		while(rules.hasNext()) {
+			rule = rules.next();
+			atomicBody = rule.getBody().iterator().next();
+			tmp = map.get(atomicBody);
+			if(tmp == null) {
+				map.put(atomicBody, rule);
+			} else {
+				tmp.getHead().addAll(rule.getHead());
+			}
+		}
+		return map.values();
 	}
 
 	private void addCondition(Predicate predB, Predicate predH, List<Term> b,
