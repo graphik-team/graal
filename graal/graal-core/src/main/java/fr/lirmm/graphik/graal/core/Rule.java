@@ -73,7 +73,7 @@ public interface Rule extends Comparable<Rule> {
 	 * 
 	 * @return
 	 */
-	Collection<AtomSet> getPieces();
+	Collection<InMemoryAtomSet> getPieces();
 	
 	void appendTo(StringBuilder sb);
 

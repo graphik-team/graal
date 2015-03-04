@@ -13,6 +13,7 @@ import fr.lirmm.graphik.graal.backward_chaining.pure.rules.NoCompilation;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.core.RuleUtils;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByHeadPredicatesRuleSet;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.util.Verbosable;
@@ -41,11 +42,7 @@ public class PureRewriter extends AbstractBackwardChainer implements Verbosable 
 	 * 
 	 */
 	public PureRewriter(ConjunctiveQuery query, Iterable<Rule> rules) {
-		this.pquery = new PureQuery(query);
-		this.ruleset = new LinkedListRuleSet(rules);
-		this.compilation = new NoCompilation();
-		this.compilation.compile(rules.iterator());
-		this.operator = new AggregSingleRuleOperator();
+		this(query, rules, new NoCompilation());
 	}
 	
 	public PureRewriter(ConjunctiveQuery query, Iterable<Rule> rules,
@@ -60,7 +57,7 @@ public class PureRewriter extends AbstractBackwardChainer implements Verbosable 
 	public PureRewriter(ConjunctiveQuery query, Iterable<Rule> rules,
 			RulesCompilation compilation, RewritingOperator operator) {
 		this.pquery = new PureQuery(query);
-		this.ruleset = new LinkedListRuleSet(rules);
+		this.ruleset = new LinkedListRuleSet(RuleUtils.computeMonoPiece(rules.iterator()));
 		this.compilation = compilation;
 		this.operator = operator;
 	}
@@ -86,7 +83,7 @@ public class PureRewriter extends AbstractBackwardChainer implements Verbosable 
 		PureQuery.removeAnswerPredicate(query);
 		return query;
 	}
-	
+		
 	/**
 	 * Enable or disable unfolding. The unfolding is enable by default.
 	 * @param isUnfoldingEnable
@@ -98,12 +95,17 @@ public class PureRewriter extends AbstractBackwardChainer implements Verbosable 
 	public boolean isUnfoldingEnable() {
 		return this.isUnfoldingEnable;
 	}
+	
+	public void enableVerbose(boolean enable) {
+		this.verbose = enable;
+	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
 	private void compute() {
+		
 		IndexedByHeadPredicatesRuleSet indexedRuleSet = new IndexedByHeadPredicatesRuleSet(this.ruleset);
 		
 		// rewriting
@@ -129,12 +131,6 @@ public class PureRewriter extends AbstractBackwardChainer implements Verbosable 
 		}
 		
 		this.rewrites = queries.iterator();
-
-	}
-
-	@Override
-	public void enableVerbose(boolean enable) {
-		this.verbose = enable;
 	}
 
 }

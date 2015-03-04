@@ -12,7 +12,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.core.Term.Type;
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
@@ -124,9 +123,9 @@ public class DefaultRule implements Rule {
 	}
 
 	@Override
-	public Collection<AtomSet> getPieces() {
+	public Collection<InMemoryAtomSet> getPieces() {
 		Set<Term> existentials = getExistentials();
-		Collection<AtomSet> pieces = new LinkedList<AtomSet>();
+		Collection<InMemoryAtomSet> pieces = new LinkedList<InMemoryAtomSet>();
 
 		// compute equivalent classes
 		EquivalentRelation<Term> classes = new TreeMapEquivalentRelation<Term>();
