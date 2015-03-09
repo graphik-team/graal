@@ -77,6 +77,10 @@ public class Term implements Comparable<Term>, Serializable {
 	public String getIdentifier() {
 		return this.uri.toString();
 	}
+	
+	public Object getValue() {
+		return this.value;
+	}
 
 	/**
 	 * Returns true if this Term is a constant (Type.LITERAL is considered as a
@@ -114,7 +118,7 @@ public class Term implements Comparable<Term>, Serializable {
 	 * @return
 	 */
 	public Term transtypage(Type newType) {
-		return new Term(this.value, newType);
+		return new Term(this.getIdentifier(), newType);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

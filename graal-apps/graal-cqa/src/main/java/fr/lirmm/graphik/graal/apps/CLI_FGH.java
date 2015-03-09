@@ -153,7 +153,7 @@ public class CLI_FGH {
 				FileWriter out = new FileWriter(f2);
 				for (ConjunctiveQuery constraint : constraints) {
 					DefaultConjunctiveQuery q = new DefaultConjunctiveQuery(constraint);
-					q.setAnswerVariables(q.getAtomSet().getTerms());
+					q.setAnswerVariables(new LinkedList<Term>(q.getAtomSet().getTerms()));
 					//constraint.setAns(constraint.getTerms());
 					for (Substitution s : solver.execute(q,atomset)) {
 						AtomSet conflict = s.getSubstitut(q.getAtomSet());

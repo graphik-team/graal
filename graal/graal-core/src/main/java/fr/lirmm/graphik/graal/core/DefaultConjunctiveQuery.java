@@ -1,9 +1,9 @@
 package fr.lirmm.graphik.graal.core;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
@@ -18,7 +18,7 @@ public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 
 	private String label;
 	private InMemoryAtomSet atomSet;
-	private Collection<Term> responseVariables;
+	private List<Term> responseVariables;
 
 	// /////////////////////////////////////////////////////////////////////////
     //	CONSTRUCTOR
@@ -33,10 +33,10 @@ public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 	public DefaultConjunctiveQuery(InMemoryAtomSet atomSet) {
 		this.label = "";
         this.atomSet = atomSet;
-        this.responseVariables = atomSet.getTerms(Term.Type.VARIABLE);
+        this.responseVariables = new LinkedList<Term>(atomSet.getTerms(Term.Type.VARIABLE));
     }
 
-	public DefaultConjunctiveQuery(InMemoryAtomSet atomSet, Collection<Term> ans) {
+	public DefaultConjunctiveQuery(InMemoryAtomSet atomSet, List<Term> ans) {
 		this("", atomSet, ans);
 	}
 
@@ -55,7 +55,7 @@ public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 	 * @param atomSet the conjunction of atom representing the query
 	 * @param ans the list of answer variables
 	 */
-	public DefaultConjunctiveQuery(String label, InMemoryAtomSet atomSet, Collection<Term> ans) {
+	public DefaultConjunctiveQuery(String label, InMemoryAtomSet atomSet, List<Term> ans) {
 		this.label = label;
 		this.atomSet = atomSet;
 		this.responseVariables = ans;
@@ -93,11 +93,11 @@ public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 	 * Returns the answer variables of the query.
 	 */
 	@Override
-	public Collection<Term> getAnswerVariables() { 
+	public List<Term> getAnswerVariables() { 
 		return this.responseVariables; 
 	}
 
-	public void setAnswerVariables(Collection<Term> v) { 
+	public void setAnswerVariables(List<Term> v) { 
 		this.responseVariables = v; 
 	}
 	

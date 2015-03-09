@@ -4,6 +4,7 @@
 package fr.lirmm.graphik.graal.backward_chaining.pure.queries;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -67,12 +68,16 @@ public class PureQuery extends DefaultConjunctiveQuery {
 	}
 	
 	public static void removeAnswerPredicate(ConjunctiveQuery query) {
+		Term[] ans = new Term[query.getAnswerVariables().size()];
 		Iterator<Atom> ita = query.getAtomSet().iterator();
 		while (ita.hasNext()) {
-			if (ita.next().getPredicate().equals(ansPredicate)) {
+			Atom a = ita.next();
+			if (a.getPredicate().equals(ansPredicate)) {
+				ans[(Integer)a.getTerm(0).getValue()] = a.getTerm(1);
 				ita.remove();
 			}
 		}
+		query.setAnswerVariables(Arrays.asList(ans));
 	}
 
 	public void addAnswerPredicate() {

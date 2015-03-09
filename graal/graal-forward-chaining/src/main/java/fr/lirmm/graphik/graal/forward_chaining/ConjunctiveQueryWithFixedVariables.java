@@ -3,9 +3,9 @@
  */
 package fr.lirmm.graphik.graal.forward_chaining;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
@@ -25,15 +25,15 @@ import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
 public class ConjunctiveQueryWithFixedVariables implements ConjunctiveQuery {
 
 	private InMemoryAtomSet atomSet;
-	private Collection<Term> answerVariables;
+	private List<Term> answerVariables;
 
 	public ConjunctiveQueryWithFixedVariables(AtomSet atomSet, Iterable<Term> fixedTerms) {
 		this.atomSet = computeFixedQuery(atomSet, fixedTerms);
-        this.answerVariables = this.atomSet.getTerms(Term.Type.VARIABLE);
+        this.answerVariables = new LinkedList(this.atomSet.getTerms(Term.Type.VARIABLE));
     }
 
 	public ConjunctiveQueryWithFixedVariables(/*ReadOnly*/AtomSet atomSet,
-			Collection<Term> responseVariables, Iterable<Term> fixedTerms) {
+			List<Term> responseVariables, Iterable<Term> fixedTerms) {
 
 		this.atomSet = computeFixedQuery(atomSet, fixedTerms);
 		this.answerVariables = responseVariables;
@@ -60,8 +60,13 @@ public class ConjunctiveQueryWithFixedVariables implements ConjunctiveQuery {
 	}
 
 	@Override
-	public Collection<Term> getAnswerVariables() {
+	public List<Term> getAnswerVariables() {
 		return this.answerVariables;
+	}
+	
+	@Override
+	public void setAnswerVariables(List<Term> ans) {
+		this.answerVariables = ans;
 	}
 	
 

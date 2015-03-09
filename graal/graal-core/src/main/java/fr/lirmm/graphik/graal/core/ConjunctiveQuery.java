@@ -3,8 +3,8 @@
  */
 package fr.lirmm.graphik.graal.core;
 
-import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 
@@ -34,8 +34,9 @@ public interface ConjunctiveQuery extends Query, Iterable<Atom> {
 	 * Get the answer variables
 	 * @return an Collection of Term representing the answer variables.
 	 */
-	Collection<Term> getAnswerVariables();
+	List<Term> getAnswerVariables();
 
+	void setAnswerVariables(List<Term> ans);
 	/**
 	 * Iterator of the atom query conjunction.
 	 */
