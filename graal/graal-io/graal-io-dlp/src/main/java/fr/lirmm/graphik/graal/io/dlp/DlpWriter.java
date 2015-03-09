@@ -63,6 +63,18 @@ public class DlpWriter extends Writer implements ObjectWriter<Object>, Conjuncti
 	// /////////////////////////////////////////////////////////////////////////
 	
 	@Override
+	public void write(String str) throws IOException {
+		super.write(str);
+		this.flush();
+	}
+	
+	public void writeln(String str) throws IOException {
+		super.write(str);
+		super.write('\n');
+		this.flush();
+	}
+	
+	@Override
 	public void write(Iterable<Object> it) throws IOException {
 		for(Object o: it)
 			this.write(o);
