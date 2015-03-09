@@ -14,10 +14,10 @@ import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.atomset.AbstractAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.homomorphism.DefaultHomomorphismFactory;
-import fr.lirmm.graphik.graal.store.homomorphism.SqlHomomorphismChecker;
-import fr.lirmm.graphik.graal.store.homomorphism.SqlUCQHomomorphismChecker;
 import fr.lirmm.graphik.graal.store.rdbms.driver.DriverException;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
+import fr.lirmm.graphik.graal.store.rdbms.homomorphism.SqlHomomorphismChecker;
+import fr.lirmm.graphik.graal.store.rdbms.homomorphism.SqlUCQHomomorphismChecker;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
