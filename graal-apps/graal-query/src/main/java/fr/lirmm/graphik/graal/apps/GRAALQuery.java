@@ -4,7 +4,7 @@
 package fr.lirmm.graphik.graal.apps;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -12,18 +12,18 @@ import com.beust.jcommander.Parameter;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
-import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
-import fr.lirmm.graphik.graal.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.io.ParseException;
 import fr.lirmm.graphik.graal.io.dlp.DlpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlpWriter;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
+import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
 import fr.lirmm.graphik.graal.store.rdbms.homomorphism.SqlUCQHomomorphism;
+import fr.lirmm.graphik.util.Apps;
+import fr.lirmm.graphik.util.Profiler;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -51,14 +51,17 @@ public class GRAALQuery {
 	@Parameter(names = { "--password"}, description = "database password")
 	private String databasePassword = "root";
 	
+	@Parameter(names = { "--version" }, description = "Print version information")
+	private boolean version = false;
 	
 
 	@Parameter(names = { "-h", "--help" }, help = true)
 	private boolean help;
 
+	private static final Profiler profiler = new Profiler(System.out);
+	private static final DlpWriter writer = new DlpWriter();
 	
-	
-	public static void main(String[] args) throws AtomSetException, FileNotFoundException, ChaseException, ParseException, HomomorphismException {
+	public static void main(String[] args) throws AtomSetException, HomomorphismException, IOException {
 		GRAALQuery options = new GRAALQuery();
 		JCommander commander = new JCommander(options, args);
 
@@ -67,10 +70,14 @@ public class GRAALQuery {
 			System.exit(0);
 		}
 		
-		// Driver
-		RdbmsDriver driver;
-		driver = new MysqlDriver(options.databaseHost, options.database, options.databaseUser, options.databasePassword);
-		AtomSet atomSet = new DefaultRdbmsStore(driver);
+		if (options.version) {
+			Apps.printVersion("graal-query");
+			System.exit(0);
+		}
+		
+		// Connection to the store
+		RdbmsDriver driver = new MysqlDriver(options.databaseHost, options.database, options.databaseUser, options.databasePassword);
+		RdbmsStore store = new DefaultRdbmsStore(driver);
 
 		DlpParser parser = new DlpParser(new File(options.file));
 		UnionConjunctiveQueries ucq = new UnionConjunctiveQueries();
@@ -79,21 +86,22 @@ public class GRAALQuery {
 				ucq.add((ConjunctiveQuery)o);
 			}
 		}		
+		writer.write("# query union");
+		writer.write(ucq);
 			
-		Homomorphism solver = SqlUCQHomomorphism.getInstance();
-		System.out.println("querying");
-		long time = System.currentTimeMillis();
-		SubstitutionReader subr = solver.execute(ucq, atomSet);
-		long time2 = System.currentTimeMillis();
-		System.out.println("answering time: " + (time2 - time) );
+		SqlUCQHomomorphism solver = SqlUCQHomomorphism.getInstance();
+		profiler.start("answering time");
+		SubstitutionReader subr = solver.execute(ucq, store);
+		profiler.stop("answering time");
 		
+		writer.writeln("# answers");
 		int i = 0;
 		for(Substitution sub : subr) {
 			++i;
-			System.out.println(sub);
+			writer.writeln(sub.toString());
 		}
+		profiler.add("number of answer", i);
+
 		
-		System.out.println("answering time: " + (time2 - time) );
-		System.out.println(i + "answers");
 	}
 };
