@@ -27,7 +27,6 @@ import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
-import fr.lirmm.graphik.util.MethodNotImplementedError;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -96,6 +95,8 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	private PreparedStatement updateCounterValueStatement;
 
 	private PreparedStatement getTermsByTypeStatement;
+	
+	private TreeMap<Predicate, String> predicateMap = new TreeMap<Predicate, String>();
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
@@ -422,7 +423,8 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	 * Transforms the fact into a SQL statement.
 	 */
 	@Override
-	public String transformToSQL(ConjunctiveQuery cquery) throws AtomSetException {
+	public String transformToSQL(ConjunctiveQuery cquery)
+			throws AtomSetException {
 
 		AtomSet atomSet = cquery.getAtomSet();
 
@@ -442,7 +444,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			String tableName = "atom" + ++count;
 			tableNames.put(atom, tableName);
 		}
-		
+
 		// Create WHERE clause
 		for (Atom atom : atomSet) {
 			String currentAtom = tableNames.get(atom) + ".";
@@ -455,8 +457,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 				} else {
 					if (lastOccurrence.containsKey(term.toString())) {
 						equivalences.add(lastOccurrence.get(term.toString())
-										 + " = "
-										 + thisTerm);
+								+ " = " + thisTerm);
 					}
 					lastOccurrence.put(term.toString(), thisTerm);
 					if (cquery.getAnswerVariables().contains(term))
@@ -489,7 +490,8 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			tableName = this.predicateTableExist(entries.getKey()
 					.getPredicate());
 			if (tableName == null)
-				return this.createEmptyQuery(columns.size());
+				return this
+						.createEmptyQuery(cquery.getAnswerVariables().size());
 			else
 				tables.append(tableName);
 
@@ -498,13 +500,11 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		}
 
 		// Create SELECT clause
-		while (!columns.isEmpty()) {
-			Term term = columns.firstKey();
-			String column = columns.remove(term);
+		for (Term t : cquery.getAnswerVariables()) {
 			if (fields.length() != 0)
 				fields.append(", ");
 
-			fields.append(column);
+			fields.append(columns.get(t));
 		}
 
 		StringBuilder query = new StringBuilder("SELECT DISTINCT ");
@@ -522,10 +522,8 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		query.append(';');
 
 		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("Generated SQL query :"
-						 + cquery
-						 + " --> "
-						 + query.toString());
+			LOGGER.debug("Generated SQL query :" + cquery + " --> "
+					+ query.toString());
 
 		return query.toString();
 	}
@@ -616,10 +614,21 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	}
 
 	private String getPredicateTable(Predicate predicate) throws SQLException,
-														 AtomSetException {
-		String tableName = this.predicateTableExist(predicate);
-		if (tableName == null)
-			tableName = this.createPredicateTable(predicate);
+			AtomSetException {
+		// look in the local map
+		String tableName = this.predicateMap.get(predicate);
+
+		if (tableName == null) {
+			// look in the database
+			tableName = this.predicateTableExist(predicate);
+			if (tableName == null) {
+				tableName = this.createPredicateTable(predicate);
+			}
+
+			// add to the local map
+			this.predicateMap.put(predicate, tableName);
+		}
+
 		return tableName;
 	}
 
