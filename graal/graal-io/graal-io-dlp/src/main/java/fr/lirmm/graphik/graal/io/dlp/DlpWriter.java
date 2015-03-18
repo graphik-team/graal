@@ -11,6 +11,7 @@ import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Collection;
+import java.util.Iterator;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
@@ -85,6 +86,16 @@ public class DlpWriter extends Writer implements ObjectWriter<Object>, Conjuncti
 			this.write(o);
 	}
 	
+	public void write(Iterator<Object> it) throws IOException {
+		while(it.hasNext())
+			this.write(it.next());
+	}
+	
+	public void writeIterator(Iterator<?> it) throws IOException {
+		while(it.hasNext())
+			this.write(it.next());
+	}
+		
 	@Override
 	public void write(Object o) throws IOException {
 		if(o instanceof Atom) {
@@ -99,6 +110,8 @@ public class DlpWriter extends Writer implements ObjectWriter<Object>, Conjuncti
 			this.write((Prefix)o);
 		} else if(o instanceof Iterable<?>) {
 			this.writeIterable((Iterable<?>)o);
+		} else if(o instanceof Iterator<?>) {
+			this.writeIterator((Iterator<?>)o);
 		}
 	}
 
@@ -286,16 +299,17 @@ public class DlpWriter extends Writer implements ObjectWriter<Object>, Conjuncti
 	// STATIC METHODS
 	////////////////////////////////////////////////////////////////////////////
 
-	public static String writeAtomToString(Atom atom) {
+	public static String writeToString(Object o) {
 		StringWriter s = new StringWriter();
 		DlpWriter w = new DlpWriter(s);
 		try {
-			w.write(atom);
+			w.write(o);
 			w.close();
 		} catch (IOException e) {
 			
 		}
 		return s.toString();
 	}
+	
 	
 };

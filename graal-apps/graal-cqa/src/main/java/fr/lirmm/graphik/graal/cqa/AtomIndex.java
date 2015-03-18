@@ -56,7 +56,7 @@ public class AtomIndex {
 			for (Integer i : keys) {
 				out.write(i);
 				out.write(' ');
-				out.write(DlpWriter.writeAtomToString(_indexToAtom.get(i)));
+				out.write(DlpWriter.writeToString(_indexToAtom.get(i)));
 				out.write("\n");
 			}
 		}
