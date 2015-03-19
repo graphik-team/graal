@@ -14,7 +14,7 @@ import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
-import fr.lirmm.graphik.graal.io.dlp.DlpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.store.Store;
 import fr.lirmm.graphik.graal.store.triplestore.SailStore;
 
@@ -65,7 +65,7 @@ public class SailStoreTest {
 		store.add(atom2);
 		store.add(atom3);
 		
-		Atom atom4 = DlpParser.parseAtom("p(a,b).");
+		Atom atom4 = DlgpParser.parseAtom("p(a,b).");
 		System.out.println("atom4: " + atom4);
 		System.out.println("==================");
 		store.add(atom4);

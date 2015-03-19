@@ -22,7 +22,7 @@ import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependenciesWithUnifiers;
 import fr.lirmm.graphik.graal.io.ParseException;
-import fr.lirmm.graphik.graal.io.dlp.DlpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -108,7 +108,7 @@ public class GRDParser {
 
 	private static void parseRule(String line, GRD grd,
 			Map<String, Rule> rules) {
-		Rule r = DlpParser.parseRule(line);
+		Rule r = DlgpParser.parseRule(line);
 		rules.put(r.getLabel(), r);
 		grd.addRule(r);
 	}

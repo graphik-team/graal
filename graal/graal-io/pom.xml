@@ -32,7 +32,8 @@
 
 	<modules>
 		<module>graal-io-api</module>
-                <module>graal-io-dlp</module>
+                <module>graal-io-dlgp</module>
+                <module>graal-io-dlgp1</module>
                 <module>graal-io-incubator</module>
 		<module>graal-io-owl</module>
 		<module>graal-io-rdf</module>

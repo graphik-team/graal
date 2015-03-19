@@ -20,7 +20,7 @@ import fr.lirmm.graphik.graal.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.UnionConjunctiveQueriesHomomorphism;
-import fr.lirmm.graphik.graal.io.dlp.DlpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.DriverException;
 import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
@@ -45,7 +45,7 @@ public class SolverFactoryTest {
 
 		AtomSet atomSet = new DefaultRdbmsStore(new SqliteDriver(file));
 
-		Query query = DlpParser.parseQuery("?(X) :- p(X).");
+		Query query = DlgpParser.parseQuery("?(X) :- p(X).");
 		Homomorphism solver = StaticHomomorphism.getSolverFactory().getSolver(query, atomSet);
 		Assert.assertTrue(solver instanceof SqlHomomorphism);
 	}
@@ -60,8 +60,8 @@ public class SolverFactoryTest {
 
 		AtomSet atomSet = new DefaultRdbmsStore(new SqliteDriver(file));
 
-		ConjunctiveQuery query1 = DlpParser.parseQuery("?(X) :- p(X).");
-		ConjunctiveQuery query2 = DlpParser.parseQuery("?(Y) :- q(Y).");
+		ConjunctiveQuery query1 = DlgpParser.parseQuery("?(X) :- p(X).");
+		ConjunctiveQuery query2 = DlgpParser.parseQuery("?(Y) :- q(Y).");
 		UnionConjunctiveQueries ucq = new UnionConjunctiveQueries(query1,
 				query2);
 
@@ -79,7 +79,7 @@ public class SolverFactoryTest {
 
 		AtomSet atomSet = new TransformAtomSet(new LinkedListAtomSet(), new ToTripleTransformation(new DefaultFreeVarGen("gen_")));
 
-		ConjunctiveQuery query = DlpParser.parseQuery("?(X) :- p(X).");
+		ConjunctiveQuery query = DlgpParser.parseQuery("?(X) :- p(X).");
 
 
 		Homomorphism solver = StaticHomomorphism.getSolverFactory().getSolver(query, atomSet);

@@ -18,7 +18,7 @@ import fr.lirmm.graphik.graal.forward_chaining.StaticChase;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
-import fr.lirmm.graphik.graal.io.dlp.DlpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 
 
 
@@ -32,10 +32,10 @@ public class TestApplyRules {
 		
 		AtomSet atomSet = new LinkedListAtomSet();
 		
-		atomSet.addAll(DlpParser.parseAtomSet("p(X,a),q(a,a)."));
+		atomSet.addAll(DlgpParser.parseAtomSet("p(X,a),q(a,a)."));
 
 		RuleSet ruleSet = new LinkedListRuleSet();
-		ruleSet.add(DlpParser.parseRule("q(X,Y) :- p(X,Y)."));
+		ruleSet.add(DlgpParser.parseRule("q(X,Y) :- p(X,Y)."));
 
 		StaticChase.executeChase(atomSet, ruleSet);
 	
@@ -45,7 +45,7 @@ public class TestApplyRules {
 			System.out.println(a);
 		}
 
-		Query query = DlpParser.parseQuery("?(X) :- p(X,Y),q(X,Y).");
+		Query query = DlgpParser.parseQuery("?(X) :- p(X,Y),q(X,Y).");
 		
 		SubstitutionReader sub = StaticHomomorphism.executeQuery(query, atomSet);
 		if(sub.hasNext()) {
@@ -79,10 +79,10 @@ public class TestApplyRules {
 	
 	public static void test() throws AtomSetException, HomomorphismFactoryException, HomomorphismException, ChaseException {
 		AtomSet atomSet = new LinkedListAtomSet();
-		atomSet.addAll(DlpParser.parseAtomSet("p(X,a),q(a,a)."));
+		atomSet.addAll(DlgpParser.parseAtomSet("p(X,a),q(a,a)."));
 
 		LinkedList<Rule> ruleSet = new LinkedList<Rule>();
-		ruleSet.add(DlpParser.parseRule("q(X,Y) :- p(X,Y)."));
+		ruleSet.add(DlgpParser.parseRule("q(X,Y) :- p(X,Y)."));
 
 		StaticChase.executeChase(atomSet, ruleSet);
 
@@ -92,7 +92,7 @@ public class TestApplyRules {
 			System.out.println(a);
 		}
 		
-		Query query = DlpParser.parseQuery("?(X,Y) :- p(X,Y).q(X,Y).");
+		Query query = DlgpParser.parseQuery("?(X,Y) :- p(X,Y).q(X,Y).");
 		if(StaticHomomorphism.executeQuery(query, atomSet).hasNext()) {
 			System.out.println("ok");
 		} else {

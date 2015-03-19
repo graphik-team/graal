@@ -9,8 +9,8 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.io.dlp.DlpParser;
-import fr.lirmm.graphik.graal.io.dlp.DlpWriter;
+import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 
 public class AtomIndex {
 
@@ -36,7 +36,7 @@ public class AtomIndex {
 				m = p.matcher(line);
 				if (m.find()) {
 					int i = Integer.parseInt(m.group(1));
-					Atom a = DlpParser.parseAtom(m.group(2));
+					Atom a = DlgpParser.parseAtom(m.group(2));
 					add(a,new Integer(i));
 					_currentIndex = (i > _currentIndex) ? i : _currentIndex;
 				}
@@ -56,7 +56,7 @@ public class AtomIndex {
 			for (Integer i : keys) {
 				out.write(i);
 				out.write(' ');
-				out.write(DlpWriter.writeToString(_indexToAtom.get(i)));
+				out.write(DlgpWriter.writeToString(_indexToAtom.get(i)));
 				out.write("\n");
 			}
 		}

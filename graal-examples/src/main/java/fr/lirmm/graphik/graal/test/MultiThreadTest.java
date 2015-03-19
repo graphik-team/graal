@@ -14,7 +14,7 @@ import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
-import fr.lirmm.graphik.graal.io.dlp.DlpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;
 
@@ -26,13 +26,13 @@ public class MultiThreadTest {
 	public static void main(String[] args) throws FileNotFoundException, AtomSetException, ChaseException {
 		ArrayList<AtomSet> atomsets = new ArrayList<AtomSet>();
 		atomsets.add(new DefaultRdbmsStore(new MysqlDriver("localhost", "thread", "root", "root")));
-		atomsets.get(0).add(DlpParser.parseAtom("child(a)."));
+		atomsets.get(0).add(DlgpParser.parseAtom("child(a)."));
 		
 		LinkedList<Rule> rules = new LinkedList<Rule>();
-		rules.add(DlpParser.parseRule("father(X,Y) :- child(X)."));
-		rules.add(DlpParser.parseRule("mother(X,Y) :- child(X)."));
-		rules.add(DlpParser.parseRule("parent(Y) :- father(X,Y)."));
-		rules.add(DlpParser.parseRule("parent(Y) :- mother(X,Y)."));
+		rules.add(DlgpParser.parseRule("father(X,Y) :- child(X)."));
+		rules.add(DlgpParser.parseRule("mother(X,Y) :- child(X)."));
+		rules.add(DlgpParser.parseRule("parent(Y) :- father(X,Y)."));
+		rules.add(DlgpParser.parseRule("parent(Y) :- mother(X,Y)."));
 		
 		/*DlgpParser parser = new DlgpParser(new File("./src/test/resources/lubm-ex-10.dlp"));
 		for(Object o : parser) {

@@ -30,7 +30,7 @@ import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
 import fr.lirmm.graphik.graal.forward_chaining.RestrictedChaseStopCondition;
 import fr.lirmm.graphik.graal.homomorphism.ComplexHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.Homomorphism;
-import fr.lirmm.graphik.graal.io.dlp.DlpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
 import fr.lirmm.graphik.graal.store.rdbms.homomorphism.SqlHomomorphism;
@@ -78,7 +78,7 @@ public class CLI_FGH {
 				if (options.input_file.equals("-")) reader = new InputStreamReader(System.in);
 				else reader = new FileReader(options.input_file);
 
-				DlpParser parser = new DlpParser(reader);
+				DlgpParser parser = new DlgpParser(reader);
 				for (Object o : parser) {
 					if (o instanceof Atom)
 						//atomset.addUnbatched((Atom)o); TODO

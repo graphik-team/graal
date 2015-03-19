@@ -7,7 +7,7 @@ import org.junit.Test;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.graal.io.dlp.DlpWriter;
+import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 
 
 /**
@@ -24,7 +24,7 @@ public class DlgpWriterTest {
 		Term a = new Term("A", Term.Type.CONSTANT);
 		
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		DlpWriter writer = new DlpWriter(os);
+		DlgpWriter writer = new DlgpWriter(os);
 		
 		writer.write(new DefaultAtom(predicat, a));
 		String s = new String(os.toByteArray(),"UTF-8");
@@ -39,7 +39,7 @@ public class DlgpWriterTest {
 		Term x = new Term("x", Term.Type.VARIABLE);
 		
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		DlpWriter writer = new DlpWriter(os);
+		DlgpWriter writer = new DlgpWriter(os);
 		
 		writer.write(new DefaultAtom(predicat, x));
 		String s = new String(os.toByteArray(),"UTF-8");
@@ -52,7 +52,7 @@ public class DlgpWriterTest {
 		Predicate p = new Predicate("P", 1);
 		
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		DlpWriter writer = new DlpWriter(os);
+		DlgpWriter writer = new DlgpWriter(os);
 		
 		writer.write(new DefaultAtom(p, cst));
 		String s = new String(os.toByteArray(),"UTF-8");

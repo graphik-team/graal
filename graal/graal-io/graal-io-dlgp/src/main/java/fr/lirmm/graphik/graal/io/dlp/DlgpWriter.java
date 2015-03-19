@@ -31,7 +31,7 @@ import fr.lirmm.graphik.util.stream.ObjectWriter;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class DlpWriter extends Writer implements ObjectWriter<Object>, ConjunctiveQueryWriter {
+public class DlgpWriter extends Writer implements ObjectWriter<Object>, ConjunctiveQueryWriter {
 	
 	protected Writer writer;
 
@@ -39,23 +39,23 @@ public class DlpWriter extends Writer implements ObjectWriter<Object>, Conjuncti
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 
-	public DlpWriter() {
+	public DlgpWriter() {
 		this.writer = new OutputStreamWriter(System.out);
 	}
 	
-	public DlpWriter(OutputStream out) {
+	public DlgpWriter(OutputStream out) {
 		this.writer = new OutputStreamWriter(out);
 	}
 	
-	public DlpWriter(Writer out) {
+	public DlgpWriter(Writer out) {
 		this.writer = out;
 	}
 	
-	public DlpWriter(File file) throws IOException {
+	public DlgpWriter(File file) throws IOException {
 		this(new FileWriter(file));
 	}
 	
-	public DlpWriter(String path) throws IOException {
+	public DlgpWriter(String path) throws IOException {
 		 this(new FileWriter(path));
 	}
 	
@@ -301,7 +301,7 @@ public class DlpWriter extends Writer implements ObjectWriter<Object>, Conjuncti
 
 	public static String writeToString(Object o) {
 		StringWriter s = new StringWriter();
-		DlpWriter w = new DlpWriter(s);
+		DlgpWriter w = new DlgpWriter(s);
 		try {
 			w.write(o);
 			w.close();

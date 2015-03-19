@@ -18,7 +18,7 @@ import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseWithGRDAndUnfiers;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependenciesWithUnifiers;
 import fr.lirmm.graphik.graal.io.ParseException;
-import fr.lirmm.graphik.graal.io.dlp.DlpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.grd.GRDParser;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;
@@ -77,7 +77,7 @@ public class ForwardChaining {
 		if(!options.grd.isEmpty()) {
 			grd = GRDParser.getInstance().parse(new File(options.grd));
 		} else {
-			DlpParser parser = new DlpParser(new File(options.file));
+			DlgpParser parser = new DlgpParser(new File(options.file));
 			LinkedList<Rule> rules = new LinkedList<Rule>();
 			for(Object o : parser) {
 				if(o instanceof Rule) {

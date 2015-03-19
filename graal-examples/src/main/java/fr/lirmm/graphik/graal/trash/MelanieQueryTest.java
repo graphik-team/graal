@@ -25,8 +25,8 @@ import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.ParseException;
-import fr.lirmm.graphik.graal.io.dlp.DlpParser;
-import fr.lirmm.graphik.graal.io.dlp.DlpWriter;
+import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 import fr.lirmm.graphik.graal.io.grd.GRDParser;
 import fr.lirmm.graphik.graal.io.oxford.OxfordQueryParser;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
@@ -92,7 +92,7 @@ public class MelanieQueryTest {
 	
 	public static void addFacts(AtomSet atomset) throws FileNotFoundException, AtomSetException {
 		//RDFParser rdfParser = new RDFParser(new FileReader("./src/test/resources/u/University0_0.owl"));
-		DlpParser parser = new DlpParser(new FileReader(FACT_FILE));
+		DlgpParser parser = new DlgpParser(new FileReader(FACT_FILE));
 		
 		//atomSet.add(new RDFPrefixFilter(new RDF2Atom(rdfParser),"http://swat.cse.lehigh.edu/onto/univ-bench.owl#"));
 		atomset.addAll(new AtomFilterIterator(parser));
@@ -120,12 +120,12 @@ public class MelanieQueryTest {
 		queries.add(OxfordQueryParser.parseQuery("Q(?0,?1) <- Person(?0), worksFor(?0,?1), Organization(?1)"));
 		queries.add(OxfordQueryParser.parseQuery("Q(?0) <- Person(?0), worksFor(?0,?1), University(?1), hasAlumnus(?1,?0)"));
 
-		queries.add(DlpParser.parseQuery("?(X) :- \"Student\"(X)."));
-		queries.add(DlpParser.parseQuery("?(X) :- \"Course\"(X)."));
-		queries.add(DlpParser.parseQuery("?(X,Y) :- \"advisor\"(X,Y)."));
-		queries.add(DlpParser.parseQuery("?(X) :- \"FacultyStaff\"(X)."));
-		queries.add(DlpParser.parseQuery("?(X,Y) :- \"takesCourse\"(X,Y)."));
-		queries.add(DlpParser.parseQuery("?(X,Y) :- \"teacherOf\"(X,Y)."));
+		queries.add(DlgpParser.parseQuery("?(X) :- \"Student\"(X)."));
+		queries.add(DlgpParser.parseQuery("?(X) :- \"Course\"(X)."));
+		queries.add(DlgpParser.parseQuery("?(X,Y) :- \"advisor\"(X,Y)."));
+		queries.add(DlgpParser.parseQuery("?(X) :- \"FacultyStaff\"(X)."));
+		queries.add(DlgpParser.parseQuery("?(X,Y) :- \"takesCourse\"(X,Y)."));
+		queries.add(DlgpParser.parseQuery("?(X,Y) :- \"teacherOf\"(X,Y)."));
 
 	}
 	
@@ -144,37 +144,37 @@ public class MelanieQueryTest {
 	public static void parseUnionQuery() throws ParseException {
 
 		UnionConjunctiveQueries ucq = new UnionConjunctiveQueries();
-		ucq.add(DlpParser.parseQuery("?(A,B) :- affiliatedOrganizationOf(B,C), headOf(A,B)."));
-		ucq.add(DlpParser.parseQuery("?(A,B) :- affiliatedOrganizationOf(B,C), worksFor(A,B)."));
+		ucq.add(DlgpParser.parseQuery("?(A,B) :- affiliatedOrganizationOf(B,C), headOf(A,B)."));
+		ucq.add(DlgpParser.parseQuery("?(A,B) :- affiliatedOrganizationOf(B,C), worksFor(A,B)."));
 		queries.add(ucq);
 
 		ucq = new UnionConjunctiveQueries();
-		ucq.add(DlpParser.parseQuery("?(A,B) :- teacherOf(A,B)."));
+		ucq.add(DlgpParser.parseQuery("?(A,B) :- teacherOf(A,B)."));
 		queries.add(ucq);
 		
 		ucq = new UnionConjunctiveQueries();
-		ucq.add(DlpParser.parseQuery("?(A,B,C) :- hasExamrecord(A,D), takesCourse(A,C), teacherOf(B,C)." ));
-		ucq.add(DlpParser.parseQuery("?(A,B,C) :- advisor(A,B), \"ResearchAssistant\"(A), takesCourse(A,C), teacherOf(B,C)." ));
-		ucq.add(DlpParser.parseQuery("?(A,B,C) :- advisor(A,B), \"Student\"(A), takesCourse(A,C), teacherOf(B,C)." ));
-		ucq.add(DlpParser.parseQuery("?(A,B,C) :- takesCourse(A,C), teacherOf(B,C), \"UndergraduateStudent\"(A)." ));
+		ucq.add(DlgpParser.parseQuery("?(A,B,C) :- hasExamrecord(A,D), takesCourse(A,C), teacherOf(B,C)." ));
+		ucq.add(DlgpParser.parseQuery("?(A,B,C) :- advisor(A,B), \"ResearchAssistant\"(A), takesCourse(A,C), teacherOf(B,C)." ));
+		ucq.add(DlgpParser.parseQuery("?(A,B,C) :- advisor(A,B), \"Student\"(A), takesCourse(A,C), teacherOf(B,C)." ));
+		ucq.add(DlgpParser.parseQuery("?(A,B,C) :- takesCourse(A,C), teacherOf(B,C), \"UndergraduateStudent\"(A)." ));
 		queries.add(ucq);
 
 		ucq = new UnionConjunctiveQueries();
-		ucq.add(DlpParser.parseQuery("?(A,B) :- headOf(A,B)." ));
-		ucq.add(DlpParser.parseQuery("?(A,B) :- worksFor(A,B)." ));
+		ucq.add(DlgpParser.parseQuery("?(A,B) :- headOf(A,B)." ));
+		ucq.add(DlgpParser.parseQuery("?(A,B) :- worksFor(A,B)." ));
 		queries.add(ucq);
 
 		ucq = new UnionConjunctiveQueries();
-		ucq.add(DlpParser.parseQuery("?(A,B) :- degreeFrom(A,B), headof(A,B)."));
-		ucq.add(DlpParser.parseQuery("?(A,B) :- degreeFrom(A,B), worksfor(A,B)."));
-		ucq.add(DlpParser.parseQuery("?(A,B) :- doctoralDegreeFrom(A,B), headOf(A,B)."));
-		ucq.add(DlpParser.parseQuery("?(A,B) :- doctoralDegreeFrom(A,B), worksFor(A,B)."));
-		ucq.add(DlpParser.parseQuery("?(A,B) :- hasAlumnus(B,A), headOf(A,B)."));
-		ucq.add(DlpParser.parseQuery("?(A,B) :- hasAlumnus(B,A), worksFor(A,B)."));
-		ucq.add(DlpParser.parseQuery("?(A,B) :- headOf(A,B), mastersDegreeFrom(A,B)."));
-		ucq.add(DlpParser.parseQuery("?(A,B) :- mastersDegreeFrom(A,B), worksfor(A,B)."));
-		ucq.add(DlpParser.parseQuery("?(A,B) :- headOf(A,B), undergraduateDegreefrom(A,B)."));
-		ucq.add(DlpParser.parseQuery("?(A,B) :- undergraduateDegreeFrom(A,B), worksFor(A,B)."));
+		ucq.add(DlgpParser.parseQuery("?(A,B) :- degreeFrom(A,B), headof(A,B)."));
+		ucq.add(DlgpParser.parseQuery("?(A,B) :- degreeFrom(A,B), worksfor(A,B)."));
+		ucq.add(DlgpParser.parseQuery("?(A,B) :- doctoralDegreeFrom(A,B), headOf(A,B)."));
+		ucq.add(DlgpParser.parseQuery("?(A,B) :- doctoralDegreeFrom(A,B), worksFor(A,B)."));
+		ucq.add(DlgpParser.parseQuery("?(A,B) :- hasAlumnus(B,A), headOf(A,B)."));
+		ucq.add(DlgpParser.parseQuery("?(A,B) :- hasAlumnus(B,A), worksFor(A,B)."));
+		ucq.add(DlgpParser.parseQuery("?(A,B) :- headOf(A,B), mastersDegreeFrom(A,B)."));
+		ucq.add(DlgpParser.parseQuery("?(A,B) :- mastersDegreeFrom(A,B), worksfor(A,B)."));
+		ucq.add(DlgpParser.parseQuery("?(A,B) :- headOf(A,B), undergraduateDegreefrom(A,B)."));
+		ucq.add(DlgpParser.parseQuery("?(A,B) :- undergraduateDegreeFrom(A,B), worksFor(A,B)."));
 		queries.add(ucq);
 
 	}
@@ -182,8 +182,8 @@ public class MelanieQueryTest {
 	
 	
 	public static void lowerCaseFact() throws AtomSetException, IOException {
-		DlpParser parser = new DlpParser(new FileReader("./src/test/resources/u/University0_0.dlp"));
-		DlpWriter writer = new DlpWriter(new File("./src/test/resources/u/University0_0_lowercase.dlp"));
+		DlgpParser parser = new DlgpParser(new FileReader("./src/test/resources/u/University0_0.dlp"));
+		DlgpWriter writer = new DlgpWriter(new File("./src/test/resources/u/University0_0_lowercase.dlp"));
 		for(Object o: parser) {
 			if(o instanceof Atom) {
 				Atom atom = (Atom)o;

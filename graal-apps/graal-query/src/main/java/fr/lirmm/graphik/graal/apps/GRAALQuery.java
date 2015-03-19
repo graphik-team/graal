@@ -15,8 +15,8 @@ import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.io.dlp.DlpParser;
-import fr.lirmm.graphik.graal.io.dlp.DlpWriter;
+import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;
@@ -59,7 +59,7 @@ public class GRAALQuery {
 	private boolean help;
 
 	private static final Profiler profiler = new Profiler(System.out);
-	private static final DlpWriter writer = new DlpWriter();
+	private static final DlgpWriter writer = new DlgpWriter();
 	
 	public static void main(String[] args) throws AtomSetException, HomomorphismException, IOException {
 		GRAALQuery options = new GRAALQuery();
@@ -79,7 +79,7 @@ public class GRAALQuery {
 		RdbmsDriver driver = new MysqlDriver(options.databaseHost, options.database, options.databaseUser, options.databasePassword);
 		RdbmsStore store = new DefaultRdbmsStore(driver);
 
-		DlpParser parser = new DlpParser(new File(options.file));
+		DlgpParser parser = new DlgpParser(new File(options.file));
 		UnionConjunctiveQueries ucq = new UnionConjunctiveQueries();
 		for(Object o : parser) {
 			if(o instanceof ConjunctiveQuery) {

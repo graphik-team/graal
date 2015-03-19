@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import org.openrdf.rio.RDFFormat;
 
-import fr.lirmm.graphik.graal.io.dlp.DlpWriter;
+import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 import fr.lirmm.graphik.graal.io.rdf.RDF2Atom;
 import fr.lirmm.graphik.graal.io.rdf.RDFParser;
 
@@ -26,7 +26,7 @@ public final class RDF2DLP {
 			System.out.println("give me a RDF file path.");
 		
 		RDFParser parser = new RDFParser(new FileReader(args[0]), RDFFormat.RDFXML);
-		DlpWriter writer = new DlpWriter();
+		DlgpWriter writer = new DlgpWriter();
 		
 		writer.write(new RDF2Atom(parser));
 		writer.close();

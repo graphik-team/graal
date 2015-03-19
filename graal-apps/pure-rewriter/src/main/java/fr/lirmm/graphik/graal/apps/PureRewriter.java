@@ -27,8 +27,8 @@ import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
-import fr.lirmm.graphik.graal.io.dlp.DlpParser;
-import fr.lirmm.graphik.graal.io.dlp.DlpWriter;
+import fr.lirmm.graphik.graal.io.dlp.Dlgp1Parser;
+import fr.lirmm.graphik.graal.io.dlp.Dlgp1Writer;
 import fr.lirmm.graphik.util.Apps;
 import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.Filter;
@@ -43,7 +43,7 @@ public class PureRewriter {
 
 	private static Profiler profiler;
 	private static PureRewriter options;
-	private static DlpWriter writer = new DlpWriter();
+	private static Dlgp1Writer writer = new Dlgp1Writer();
 
 	@Parameter(names = { "-h", "--help" }, description = "Print this message", help = true)
 	private boolean help;
@@ -87,7 +87,7 @@ public class PureRewriter {
 		}
 
 		if (options.version) {
-			Apps.printVersion("pure-rewiter");
+			Apps.printVersion("pure-rewriter");
 			System.exit(0);
 		}
 
@@ -122,7 +122,7 @@ public class PureRewriter {
 	private static RuleSet parseOntology(String ontologyFile)
 			throws FileNotFoundException {
 		RuleSet rules = new LinkedListRuleSet();
-		DlpParser parser = new DlpParser(new File(ontologyFile));
+		Dlgp1Parser parser = new Dlgp1Parser(new File(ontologyFile));
 		for (Object o : parser) {
 			if (o instanceof Rule) {
 				rules.add((Rule) o);
@@ -187,9 +187,9 @@ public class PureRewriter {
 			compilation.compile(rules.iterator());
 
 			try {
-				DlpWriter w = writer;
+				Dlgp1Writer w = writer;
 				if (this.outputFile != null && !outputFile.isEmpty()) {
-					w = new DlpWriter(new File(this.outputFile));
+					w = new Dlgp1Writer(new File(this.outputFile));
 				}
 				w.write(compilation.getSaturation());
 			} catch (IOException e) {
@@ -242,7 +242,7 @@ public class PureRewriter {
 			if (this.compilationFile.isEmpty()) {
 				compilation.compile(rules.iterator());
 			} else {
-				compilation.load(rules.iterator(), new FilterIterator<Object, Rule>(new DlpParser(
+				compilation.load(rules.iterator(), new FilterIterator<Object, Rule>(new Dlgp1Parser(
 						new File(this.compilationFile)), new RulesFilter()));
 			}
 		
@@ -279,12 +279,12 @@ public class PureRewriter {
 			File file = new File(this.query);
 			if (file.exists()) {
 				Iterator<ConjunctiveQuery> it = new FilterIterator<Object, ConjunctiveQuery>(
-						new DlpParser(file), new ConjunctiveQueryFilter());
+						new Dlgp1Parser(file), new ConjunctiveQueryFilter());
 				while (it.hasNext()) {
 					queries.add(it.next());
 				}
 			} else {
-				queries.add(DlpParser.parseQuery(this.query));
+				queries.add(Dlgp1Parser.parseQuery(this.query));
 			}
 
 			for (ConjunctiveQuery query : queries) {

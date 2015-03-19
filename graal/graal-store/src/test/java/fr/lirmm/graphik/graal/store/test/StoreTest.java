@@ -15,7 +15,7 @@ import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
-import fr.lirmm.graphik.graal.io.dlp.DlpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.store.Store;
 
 /**
@@ -32,9 +32,9 @@ public class StoreTest {
 
 	@Theory
 	public void getPredicates(Store store) throws AtomSetException {
-		store.add(DlpParser.parseAtom("r(a,b)."));
-		store.add(DlpParser.parseAtom("s(a,b)."));
-		store.add(DlpParser.parseAtom("s(a,c)."));
+		store.add(DlgpParser.parseAtom("r(a,b)."));
+		store.add(DlgpParser.parseAtom("s(a,b)."));
+		store.add(DlgpParser.parseAtom("s(a,c)."));
 
 		int i = 0;
 		for (Iterator<Predicate> it = store.predicatesIterator(); it
@@ -47,9 +47,9 @@ public class StoreTest {
 
 	@Theory
 	public void predicateArityTest(Store store) throws AtomSetException {
-		store.add(DlpParser.parseAtom("p(a)."));
-		store.add(DlpParser.parseAtom("p(a,b)."));
-		store.add(DlpParser.parseAtom("p(a,c)."));
+		store.add(DlgpParser.parseAtom("p(a)."));
+		store.add(DlgpParser.parseAtom("p(a,b)."));
+		store.add(DlgpParser.parseAtom("p(a,c)."));
 
 		int i = 0;
 		for (Iterator<Predicate> it = store.predicatesIterator(); it
@@ -62,8 +62,8 @@ public class StoreTest {
 
 	@Theory
 	public void addAndContains(Store store) throws AtomSetException {
-		store.add(DlpParser.parseAtom("p(a,b)."));
-		store.add(DlpParser.parseAtom("q(b,c)."));
+		store.add(DlgpParser.parseAtom("p(a,b)."));
+		store.add(DlgpParser.parseAtom("q(b,c)."));
 
 		int i = 0;
 		for (Iterator<Atom> it = store.iterator(); it.hasNext(); it.next()) {
@@ -73,19 +73,19 @@ public class StoreTest {
 		Assert.assertEquals("Store does not contains exactly 2 atoms", 2, i);
 
 		Assert.assertTrue("Store does not contains p(a,b)",
-				store.contains(DlpParser.parseAtom("p(a,b).")));
+				store.contains(DlgpParser.parseAtom("p(a,b).")));
 		Assert.assertTrue("Store does not contains q(b,c)",
-				store.contains(DlpParser.parseAtom("q(b,c).")));
+				store.contains(DlgpParser.parseAtom("q(b,c).")));
 
 		Assert.assertFalse("Store contains q(c, b)",
-				store.contains(DlpParser.parseAtom("q(c,b).")));
+				store.contains(DlgpParser.parseAtom("q(c,b).")));
 	}
 
 	@Theory
 	public void getTerms(Store store) throws AtomSetException {
-		store.add(DlpParser.parseAtom("p(a,b)."));
-		store.add(DlpParser.parseAtom("p(b,c)."));
-		store.add(DlpParser.parseAtom("p(b,c,X,Y)."));
+		store.add(DlgpParser.parseAtom("p(a,b)."));
+		store.add(DlgpParser.parseAtom("p(b,c)."));
+		store.add(DlgpParser.parseAtom("p(b,c,X,Y)."));
 
 		int i = 0;
 		for (Iterator<Term> it = store.getTerms().iterator(); it.hasNext(); it
@@ -115,15 +115,15 @@ public class StoreTest {
 	public void isEmpty(Store store) throws AtomSetException {
 		Assert.assertTrue("Store is empty but isEmpty return false",
 				store.isEmpty());
-		store.add(DlpParser.parseAtom("p(a,b)."));
+		store.add(DlgpParser.parseAtom("p(a,b)."));
 		Assert.assertFalse("Store is not empty but isEmpty return true",
 				store.isEmpty());
 	}
 	
 	@Theory
 	public void termsOrder(Store store) throws AtomSetException {
-		Atom a1 = DlpParser.parseAtom("p(a,b,c,d,e,f).");
-		Atom a2 = DlpParser.parseAtom("p(f,e,d,c,b,a).");
+		Atom a1 = DlgpParser.parseAtom("p(a,b,c,d,e,f).");
+		Atom a2 = DlgpParser.parseAtom("p(f,e,d,c,b,a).");
 		
 		store.add(a1);
 		store.add(a2);

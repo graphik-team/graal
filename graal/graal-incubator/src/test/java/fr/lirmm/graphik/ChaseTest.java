@@ -33,7 +33,7 @@ import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.ParseException;
-import fr.lirmm.graphik.graal.io.dlp.DlpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.grd.GRDParser;
 
 /**
@@ -64,12 +64,12 @@ public class ChaseTest {
 	
 	@Theory
 	public void restrictedChaseTest(AtomSet atomSet) throws AtomSetException, HomomorphismFactoryException, HomomorphismException, ChaseException {
-		atomSet.addAll(DlpParser.parseAtomSet("p(a)."));
+		atomSet.addAll(DlgpParser.parseAtomSet("p(a)."));
 		
 		LinkedList<Rule> ruleSet = new LinkedList<Rule>();
-		ruleSet.add(DlpParser.parseRule("q(X,Z) :- p(X)."));
-		ruleSet.add(DlpParser.parseRule("r(X,Z) :- q(X,Y)."));
-		ruleSet.add(DlpParser.parseRule("q(X,Z) :- r(X,Y)."));
+		ruleSet.add(DlgpParser.parseRule("q(X,Z) :- p(X)."));
+		ruleSet.add(DlgpParser.parseRule("r(X,Z) :- q(X,Y)."));
+		ruleSet.add(DlgpParser.parseRule("q(X,Z) :- r(X,Y)."));
 
 		Chase chase = new DefaultChase(ruleSet, atomSet);
 		chase.execute();
@@ -85,7 +85,7 @@ public class ChaseTest {
 	@Theory
 	public void restrictedChaseTestWithGrd(InMemoryAtomSet atomSet) throws IOException, ChaseException, ParseException {
 		GraphOfRuleDependenciesWithUnifiers grd = GRDParser.getInstance().parse(new File("./src/test/resources/test1.grd"));
-		DlpParser parser = new DlpParser(new File("./src/test/resources/test1.dlp"));
+		DlgpParser parser = new DlgpParser(new File("./src/test/resources/test1.dlp"));
 
 		for(Object o : parser) {
 			if (o instanceof Atom) {
@@ -110,19 +110,19 @@ public class ChaseTest {
 	public void test2(InMemoryAtomSet atomSet) throws ChaseException, HomomorphismFactoryException, HomomorphismException {
 
 		// add assertions into this atom set
-		atomSet.add(DlpParser.parseAtom("p(a)."));
-		atomSet.add(DlpParser.parseAtom("p(c)."));
-		atomSet.add(DlpParser.parseAtom("q(b)."));
-		atomSet.add(DlpParser.parseAtom("q(c)."));
-		atomSet.add(DlpParser.parseAtom("s(z,z)."));
+		atomSet.add(DlgpParser.parseAtom("p(a)."));
+		atomSet.add(DlgpParser.parseAtom("p(c)."));
+		atomSet.add(DlgpParser.parseAtom("q(b)."));
+		atomSet.add(DlgpParser.parseAtom("q(c)."));
+		atomSet.add(DlgpParser.parseAtom("s(z,z)."));
 		
 		// /////////////////////////////////////////////////////////////////////
 		// create a rule set
 		RuleSet ruleSet = new LinkedListRuleSet();
 		
 		// add a rule into this rule set
-		ruleSet.add(DlpParser.parseRule("r(X) :- p(X), q(X)."));
-		ruleSet.add(DlpParser.parseRule("s(X, Y) :- p(X), q(Y)."));
+		ruleSet.add(DlgpParser.parseRule("r(X) :- p(X), q(X)."));
+		ruleSet.add(DlgpParser.parseRule("s(X, Y) :- p(X), q(Y)."));
 		
 		// /////////////////////////////////////////////////////////////////////
 		// run saturation
@@ -130,7 +130,7 @@ public class ChaseTest {
 		
 		// /////////////////////////////////////////////////////////////////////
 		// execute query
-		Query query = DlpParser.parseQuery("?(X,Y) :- s(X, Y), p(X), q(Y).");
+		Query query = DlgpParser.parseQuery("?(X,Y) :- s(X, Y), p(X), q(Y).");
 		Iterable<Substitution> subReader = StaticHomomorphism.executeQuery(query, atomSet);
 		Assert.assertTrue(subReader.iterator().hasNext());
 	}

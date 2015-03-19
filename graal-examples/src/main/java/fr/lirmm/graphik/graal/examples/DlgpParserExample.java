@@ -9,8 +9,8 @@ import fr.lirmm.graphik.graal.core.NegativeConstraint;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.io.ParseException;
-import fr.lirmm.graphik.graal.io.dlp.DlpParser;
-import fr.lirmm.graphik.graal.io.dlp.DlpWriter;
+import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 
 /**
  * 
@@ -24,9 +24,9 @@ public class DlgpParserExample {
     
     public static void main(String[] args ) throws ParseException, AtomSetException, InterruptedException, IOException{
       
-    	DlpParser parser = new DlpParser(new BufferedReader(new FileReader("./src/main/resources/example.dlp")));
+    	DlgpParser parser = new DlgpParser(new BufferedReader(new FileReader("./src/main/resources/example.dlp")));
         
-    	DlpWriter writer = new DlpWriter();
+    	DlgpWriter writer = new DlgpWriter();
         for(Object o : parser) {
         	if(o instanceof NegativeConstraint)
         		writer.write((NegativeConstraint) o);

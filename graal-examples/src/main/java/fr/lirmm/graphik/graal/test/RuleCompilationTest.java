@@ -19,7 +19,7 @@ import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.forward_chaining.StaticChase;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependenciesWithUnifiers;
-import fr.lirmm.graphik.graal.io.dlp.DlpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -58,19 +58,19 @@ public class RuleCompilationTest {
 			atomset2.add(atom);
 		}
 		
-		rules.add(DlpParser.parseRule("b(X0) :- a(X0)."));
-		rules.add(DlpParser.parseRule("c(X1) :- b(X1)."));
-		rules.add(DlpParser.parseRule("d(X2) :- c(X2)."));
-		rules.add(DlpParser.parseRule("e(X3) :- d(X3)."));
+		rules.add(DlgpParser.parseRule("b(X0) :- a(X0)."));
+		rules.add(DlgpParser.parseRule("c(X1) :- b(X1)."));
+		rules.add(DlgpParser.parseRule("d(X2) :- c(X2)."));
+		rules.add(DlgpParser.parseRule("e(X3) :- d(X3)."));
 		
-		rules.add(DlpParser.parseRule("c(X4) :- a(X4)."));
-		rules.add(DlpParser.parseRule("d(X5) :- a(X5)."));
-		rules.add(DlpParser.parseRule("e(X6) :- a(X6)."));
+		rules.add(DlgpParser.parseRule("c(X4) :- a(X4)."));
+		rules.add(DlgpParser.parseRule("d(X5) :- a(X5)."));
+		rules.add(DlgpParser.parseRule("e(X6) :- a(X6)."));
 		
-		rules.add(DlpParser.parseRule("d(X7) :- b(X7)."));
-		rules.add(DlpParser.parseRule("e(X8) :- b(X8)."));
+		rules.add(DlgpParser.parseRule("d(X7) :- b(X7)."));
+		rules.add(DlgpParser.parseRule("e(X8) :- b(X8)."));
 		
-		rules.add(DlpParser.parseRule("e(X9) :- c(X9)."));
+		rules.add(DlgpParser.parseRule("e(X9) :- c(X9)."));
 		
 		GraphOfRuleDependenciesWithUnifiers grd = new GraphOfRuleDependenciesWithUnifiers(rules);
 		for(Rule r : rules) {

@@ -16,8 +16,8 @@ import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.io.dlp.DlpParser;
-import fr.lirmm.graphik.graal.io.dlp.DlpWriter;
+import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 
 /**
  * @author clement
@@ -30,18 +30,18 @@ public class RuleVariableRenamer {
 			.getLogger(RuleVariableRenamer.class);
 	
 	public static void main(String[] args) throws IOException {
-		DlpParser parser;
-		DlpWriter writer;
+		DlgpParser parser;
+		DlgpWriter writer;
 		if(args.length >= 1) {
-			parser = new DlpParser(new File(args[0]));
+			parser = new DlgpParser(new File(args[0]));
 			if(args.length >= 2) {
-				writer = new DlpWriter(new File(args[1]));
+				writer = new DlgpWriter(new File(args[1]));
 			} else {
-				writer = new DlpWriter(System.out);
+				writer = new DlgpWriter(System.out);
 			}
 		} else {
-			parser = new DlpParser(System.in);
-			writer = new DlpWriter(System.out);
+			parser = new DlgpParser(System.in);
+			writer = new DlgpWriter(System.out);
 		}
 		
 		Substitution substitution;

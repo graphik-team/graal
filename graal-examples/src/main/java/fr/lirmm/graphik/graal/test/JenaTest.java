@@ -11,11 +11,11 @@ import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
-import fr.lirmm.graphik.graal.io.dlp.DlpWriter;
+import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 import fr.lirmm.graphik.graal.store.triplestore.JenaStore;
 
 public class JenaTest {
-	static DlpWriter writer = new DlpWriter();
+	static DlgpWriter writer = new DlgpWriter();
 	
 	public static void main(String[] args) throws AtomSetException, IOException {
 		File f = new File("/tmp/jena");
