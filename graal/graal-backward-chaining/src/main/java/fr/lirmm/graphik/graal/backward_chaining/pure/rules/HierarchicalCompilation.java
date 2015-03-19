@@ -59,9 +59,10 @@ public class HierarchicalCompilation extends AbstractRulesCompilation {
 		this.computeIndex(this.rules);
 	}
 
-	public void load(Iterator<Rule> ruleset) {
-		while (ruleset.hasNext()) {
-			this.rules.add(ruleset.next());
+	public void load(Iterator<Rule> ruleset, Iterator<Rule> compilation) {
+		extractCompilable(ruleset); // compilable rules are removed
+		while (compilation.hasNext()) {
+			this.rules.add(compilation.next());
 		}
 		this.computeIndex(this.rules);
 	}
