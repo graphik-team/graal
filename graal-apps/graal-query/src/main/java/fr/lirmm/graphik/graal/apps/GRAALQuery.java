@@ -58,8 +58,8 @@ public class GRAALQuery {
 	@Parameter(names = { "-h", "--help" }, help = true)
 	private boolean help;
 
-	private static final Profiler profiler = new Profiler(System.out);
-	private static final DlgpWriter writer = new DlgpWriter();
+	private static final Profiler PROFILER = new Profiler(System.out);
+	private static final DlgpWriter WRITER = new DlgpWriter();
 	
 	public static void main(String[] args) throws AtomSetException, HomomorphismException, IOException {
 		GRAALQuery options = new GRAALQuery();
@@ -86,21 +86,21 @@ public class GRAALQuery {
 				ucq.add((ConjunctiveQuery)o);
 			}
 		}		
-		writer.write("# query union");
-		writer.write(ucq);
+		WRITER.write("# query union");
+		WRITER.write(ucq);
 			
 		SqlUCQHomomorphism solver = SqlUCQHomomorphism.getInstance();
-		profiler.start("answering time");
+		PROFILER.start("answering time");
 		SubstitutionReader subr = solver.execute(ucq, store);
-		profiler.stop("answering time");
+		PROFILER.stop("answering time");
 		
-		writer.writeln("# answers");
+		WRITER.writeln("# answers");
 		int i = 0;
 		for(Substitution sub : subr) {
 			++i;
-			writer.writeln(sub.toString());
+			WRITER.writeln(sub.toString());
 		}
-		profiler.add("number of answer", i);
+		PROFILER.add("number of answer", i);
 
 		
 	}
