@@ -35,7 +35,7 @@ public interface RulesCompilation extends Profilable {
 	 * @param pivotRewritingSet
 	 * @return
 	 */
-	Collection<ConjunctiveQuery> unfold(
+	Iterable<ConjunctiveQuery> unfold(
 			Iterable<ConjunctiveQuery> pivotRewritingSet);
 
 	/**

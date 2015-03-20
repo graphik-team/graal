@@ -10,6 +10,7 @@ import java.util.LinkedList;
 
 import fr.lirmm.graphik.graal.backward_chaining.pure.utils.TermPartition;
 import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
@@ -20,6 +21,12 @@ import fr.lirmm.graphik.graal.core.Substitution;
  */
 public class NoCompilation extends AbstractRulesCompilation {
 
+	@Override
+	public Iterable<ConjunctiveQuery> unfold(
+			Iterable<ConjunctiveQuery> pivotRewritingSet) {
+		return pivotRewritingSet;
+	}
+	
 	@Override
 	public void compile(Iterator<Rule> ruleset) {
 	}

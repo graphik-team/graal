@@ -34,7 +34,7 @@ public abstract class AbstractRulesCompilation implements RulesCompilation {
 		return this.profiler;
 	}
 
-	public Collection<ConjunctiveQuery> unfold(
+	public Iterable<ConjunctiveQuery> unfold(
 			Iterable<ConjunctiveQuery> pivotRewritingSet) {
 		Collection<ConjunctiveQuery> unfoldingRewritingSet = this
 				.developpRewriting(pivotRewritingSet);
