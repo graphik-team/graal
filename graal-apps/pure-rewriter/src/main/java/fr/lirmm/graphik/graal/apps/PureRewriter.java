@@ -214,7 +214,7 @@ public class PureRewriter {
 		private String compilationFile = "";
 
 		@Parameter(names = { "-t", "--compilationType" }, description = "Compilation type H, ID, NONE", required = false)
-		private String compilationType = "NONE";
+		private String compilationType = "ID";
 
 		@Parameter(names = { "-p", "--operator" }, description = "Rewriting operator SRA, ARA, ARAM", required = false)
 		private String operator = "SRA";
