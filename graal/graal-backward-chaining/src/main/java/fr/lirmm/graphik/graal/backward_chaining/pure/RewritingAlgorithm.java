@@ -114,11 +114,14 @@ public class RewritingAlgorithm implements Verbosable, Profilable {
 
 		}
 
+		/* clean the rewrites to return */
+		Misc.computeCover(finalRewritingSet);
+
 		if(this.verbose) {
+			this.profiler.stop("rewriting time");
 			this.profiler.add("Generated rewritings", generatedRewrites);
 			this.profiler.add("Explored rewritings", exploredRewrites);
 			this.profiler.add("Pivots rewritings", finalRewritingSet.size());
-			this.profiler.stop("rewriting time");
 		}
 
 		return finalRewritingSet;
