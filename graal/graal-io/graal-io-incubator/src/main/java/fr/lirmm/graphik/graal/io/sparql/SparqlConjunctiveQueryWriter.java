@@ -16,6 +16,10 @@ import fr.lirmm.graphik.graal.io.WriterException;
  */
 public class SparqlConjunctiveQueryWriter implements ConjunctiveQueryWriter {
 
+	public void write(String s) {
+		System.out.println(s);
+	}
+	
 	public void write(ConjunctiveQuery query, String rdfPrefix) throws WriterException {
 		System.out.println("PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>");
 		System.out.println("PREFIX : <" + rdfPrefix + '>');
