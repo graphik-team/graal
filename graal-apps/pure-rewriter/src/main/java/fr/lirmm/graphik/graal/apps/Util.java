@@ -27,7 +27,7 @@ import fr.lirmm.graphik.util.stream.FilterIterator;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-class Util {
+final class Util {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(Util.class);
 	

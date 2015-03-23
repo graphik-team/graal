@@ -54,7 +54,7 @@ public class OneStepForwardChaining {
 	@Parameter(names = { "-h", "--help" }, help = true)
 	private boolean help;
 
-	private static final Profiler profiler = new Profiler(System.out);
+	private static final Profiler PROFILER = new Profiler(System.out);
 	
 	public static void main(String[] args) throws AtomSetException, FileNotFoundException, ChaseException, ParseException {
 		OneStepForwardChaining options = new OneStepForwardChaining();
@@ -82,8 +82,8 @@ public class OneStepForwardChaining {
 			
 		chase = new DefaultChase(rules, atomSet);
 		chase.enableVerbose(true);
-		profiler.start("forward chaining time");
+		PROFILER.start("forward chaining time");
 		chase.next();
-		profiler.stop("forward chaining time");
+		PROFILER.stop("forward chaining time");
 	}
 };
