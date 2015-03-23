@@ -16,7 +16,9 @@ import com.beust.jcommander.Parameters;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.HierarchicalCompilation;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.IDCompilation;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
+import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
+import fr.lirmm.graphik.graal.io.RuleWriter;
 import fr.lirmm.graphik.graal.io.dlp.Dlgp1Writer;
 import fr.lirmm.graphik.util.Profiler;
 
@@ -24,12 +26,15 @@ import fr.lirmm.graphik.util.Profiler;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-@Parameters(separators = "=", commandDescription = "Compile an ontology")
+@Parameters(commandDescription = "Compile an ontology")
 class CompileCommand {
 	
 	public static final String NAME = "compile";
 	
-	private Dlgp1Writer writer;
+	public static final String ID_COMPILATION_NAME = "ID";
+	public static final String HIERACHICAL_COMPILATION_NAME = "H";
+	
+	private RuleWriter writer;
 	private Profiler profiler; 
 
 	@Parameter(names = { "-h", "--help" }, description = "Print this message", help = true)
@@ -41,14 +46,14 @@ class CompileCommand {
 	@Parameter(names = { "-f", "--file" }, description = "Output file for this compilation")
 	private String outputFile = null;
 
-	@Parameter(names = { "-t", "--type" }, description = "Compilation type H or ID", required = false)
+	@Parameter(names = { "-t", "--type" }, description = "Compilation type " + ID_COMPILATION_NAME + " or " + HIERACHICAL_COMPILATION_NAME, required = false)
 	private String compilationType = "ID";
 	
 	////////////////////////////////////////////////////////////////////////////
 	// 
 	////////////////////////////////////////////////////////////////////////////
 	
-	public CompileCommand(Profiler profiler, Dlgp1Writer writer) {
+	public CompileCommand(Profiler profiler, RuleWriter writer) {
 		this.profiler = profiler;
 		this.writer = writer;
 	}
@@ -79,11 +84,13 @@ class CompileCommand {
 		compilation.compile(rules.iterator());
 
 		try {
-			Dlgp1Writer w = writer;
+			RuleWriter w = writer;
 			if (this.outputFile != null && !outputFile.isEmpty()) {
 				w = new Dlgp1Writer(new File(this.outputFile));
 			}
-			w.write(compilation.getSaturation());
+			for(Rule r : compilation.getSaturation()) {
+				w.write(r);
+			}
 		} catch (IOException e) {
 		}
 	}

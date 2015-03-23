@@ -24,6 +24,7 @@ import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
 import fr.lirmm.graphik.graal.io.ConjunctiveQueryWriter;
+import fr.lirmm.graphik.graal.io.RuleWriter;
 import fr.lirmm.graphik.util.DefaultURI;
 import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.URI;
@@ -33,7 +34,7 @@ import fr.lirmm.graphik.util.stream.ObjectWriter;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class Dlgp1Writer extends Writer implements ObjectWriter<Object>, ConjunctiveQueryWriter {
+public class Dlgp1Writer extends Writer implements ObjectWriter<Object>, ConjunctiveQueryWriter, RuleWriter {
 	
 	protected Writer writer;
 
@@ -298,8 +299,11 @@ public class Dlgp1Writer extends Writer implements ObjectWriter<Object>, Conjunc
 	}
 	
 	protected void writePredicate(Predicate p) throws IOException {
+		String s = p.getIdentifier();
 		URI uri = new DefaultURI(p.getIdentifier());
-		String s = uri.getLocalname();
+		if(uri.getPrefix().equals(Prefix.DEFAULT)) {
+			s = uri.getLocalname();
+		}
 		
 		char first = s.charAt(0);
 		if(onlyValidChar(s) && first > 'a' && first < 'z' ) {

@@ -24,6 +24,7 @@ import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
 import fr.lirmm.graphik.graal.io.ConjunctiveQueryWriter;
+import fr.lirmm.graphik.graal.io.RuleWriter;
 import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.stream.ObjectWriter;
 
@@ -31,7 +32,7 @@ import fr.lirmm.graphik.util.stream.ObjectWriter;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class DlgpWriter extends Writer implements ObjectWriter<Object>, ConjunctiveQueryWriter {
+public class DlgpWriter extends Writer implements ObjectWriter<Object>, ConjunctiveQueryWriter, RuleWriter {
 	
 	protected Writer writer;
 

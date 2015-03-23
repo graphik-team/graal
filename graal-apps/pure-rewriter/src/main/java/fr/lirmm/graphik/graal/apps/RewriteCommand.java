@@ -18,15 +18,12 @@ import fr.lirmm.graphik.graal.backward_chaining.pure.AggregAllRulesOperator;
 import fr.lirmm.graphik.graal.backward_chaining.pure.AggregSingleRuleOperator;
 import fr.lirmm.graphik.graal.backward_chaining.pure.BasicAggregAllRulesOperator;
 import fr.lirmm.graphik.graal.backward_chaining.pure.RewritingOperator;
-import fr.lirmm.graphik.graal.backward_chaining.pure.rules.HierarchicalCompilation;
-import fr.lirmm.graphik.graal.backward_chaining.pure.rules.IDCompilation;
-import fr.lirmm.graphik.graal.backward_chaining.pure.rules.NoCompilation;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
+import fr.lirmm.graphik.graal.io.ConjunctiveQueryWriter;
 import fr.lirmm.graphik.graal.io.dlp.Dlgp1Parser;
-import fr.lirmm.graphik.graal.io.dlp.Dlgp1Writer;
 import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.FilterIterator;
 
@@ -39,7 +36,7 @@ class RewriteCommand {
 	
 	public static final String NAME = "rewrite";
 	
-	private Dlgp1Writer writer;
+	private ConjunctiveQueryWriter writer;
 	private Profiler profiler;
 	private boolean isVerbose;
 
@@ -68,7 +65,7 @@ class RewriteCommand {
 	// 
 	////////////////////////////////////////////////////////////////////////////
 	
-	public RewriteCommand(Profiler profiler, Dlgp1Writer writer, boolean isVerbose) {
+	public RewriteCommand(Profiler profiler, ConjunctiveQueryWriter writer, boolean isVerbose) {
 		this.profiler = profiler;
 		this.writer = writer;
 		this.isVerbose = isVerbose;
@@ -89,7 +86,7 @@ class RewriteCommand {
 		}
 
 		RuleSet rules = Util.parseOntology(this.ontologyFile.get(0));
-		RulesCompilation compilation = selectCompilationType();
+		RulesCompilation compilation = Util.selectCompilationType(this.compilationType);
 		RewritingOperator operator = selectOperator();
 
 		compilation.setProfiler(profiler);
@@ -103,18 +100,6 @@ class RewriteCommand {
 		}
 	
 		this.processQuery(rules, compilation, operator);
-	}
-	
-	private RulesCompilation selectCompilationType() {
-		RulesCompilation compilation = null;
-		if ("H".equals(this.compilationType)) {
-			compilation = new HierarchicalCompilation();
-		} else if ("ID".equals(this.compilationType)) {
-			compilation = new IDCompilation();
-		} else {
-			compilation = new NoCompilation();
-		}
-		return compilation;
 	}
 
 	private RewritingOperator selectOperator() {

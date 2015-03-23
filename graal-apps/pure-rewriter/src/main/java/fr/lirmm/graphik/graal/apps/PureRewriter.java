@@ -44,9 +44,11 @@ public class PureRewriter {
 
 		CompileCommand cmdCompile = new CompileCommand(profiler, writer);
 		RewriteCommand cmdRewrite = new RewriteCommand(profiler, writer, options.verbose);
+		UnfoldCommand cmdUnfold = new UnfoldCommand(profiler, writer);
 
 		commander.addCommand(CompileCommand.NAME, cmdCompile);
 		commander.addCommand(RewriteCommand.NAME, cmdRewrite);
+		commander.addCommand(UnfoldCommand.NAME, cmdUnfold);
 
 		try {
 			commander.parse(args);
@@ -87,6 +89,8 @@ public class PureRewriter {
 				cmdCompile.run(commander);
 			} else if (RewriteCommand.NAME.equals(command)) {
 				cmdRewrite.run(commander);
+			} else if (UnfoldCommand.NAME.equals(command)) {
+				cmdUnfold.run(commander);
 			}
 		} catch (FileNotFoundException e) {
 			System.err.println(e.getMessage());
