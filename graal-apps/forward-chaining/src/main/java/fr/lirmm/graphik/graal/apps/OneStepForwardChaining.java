@@ -21,6 +21,7 @@ import fr.lirmm.graphik.graal.io.dlp.DlpParser;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
+import fr.lirmm.graphik.util.Profiler;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -53,7 +54,7 @@ public class OneStepForwardChaining {
 	@Parameter(names = { "-h", "--help" }, help = true)
 	private boolean help;
 
-	
+	private static final Profiler profiler = new Profiler(System.out);
 	
 	public static void main(String[] args) throws AtomSetException, FileNotFoundException, ChaseException, ParseException {
 		OneStepForwardChaining options = new OneStepForwardChaining();
@@ -69,7 +70,7 @@ public class OneStepForwardChaining {
 		driver = new MysqlDriver(options.databaseHost, options.database, options.databaseUser, options.databasePassword);
 		AtomSet atomSet = new DefaultRdbmsStore(driver);
 		
-		Chase chase = null;
+		DefaultChase chase = null;
 		
 		DlpParser parser = new DlpParser(new File(options.file));
 		LinkedList<Rule> rules = new LinkedList<Rule>();
@@ -80,10 +81,9 @@ public class OneStepForwardChaining {
 		}
 			
 		chase = new DefaultChase(rules, atomSet);
-		System.out.println("forward chaining");
-		long time = System.currentTimeMillis();
+		chase.enableVerbose(true);
+		profiler.start("forward chaining time");
 		chase.next();
-		long time2 = System.currentTimeMillis();
-		System.out.println("Forward chaining time: " + (time2 - time) );
+		profiler.stop("forward chaining time");
 	}
 };

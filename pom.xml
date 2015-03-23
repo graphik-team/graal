@@ -42,6 +42,7 @@
 		<module>graal-apps</module>
 		<module>graal-examples</module>
 		<module>graal-distro</module>
+                <module>graal-bench</module>
 	</modules>
 
 	<build>

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.lirmm.graphik.graal.store.homomorphism;
+package fr.lirmm.graphik.graal.store.rdbms.homomorphism;
 
 import java.util.Iterator;
 

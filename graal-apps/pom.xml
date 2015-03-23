@@ -37,6 +37,8 @@
 		<module>pure-rewriter</module>
 		<module>owl2dlp</module>
 		<module>graal-cqa</module>
+		<module>graal-query</module>
+		<module>forward-chaining</module>
 	</modules>
 
 	<build>

@@ -23,8 +23,9 @@ public interface RulesCompilation extends Profilable {
 	/**
 	 * Load compilation from a preprocessed ruleset
 	 * @param ruleset
+	 * @param compilation 
 	 */
-	public void load(Iterator<Rule> ruleset);
+	public void load(Iterator<Rule> ruleset, Iterator<Rule> compilation);
 
 	public Iterable<Rule> getSaturation();
 

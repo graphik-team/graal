@@ -25,7 +25,7 @@ public class NoCompilation extends AbstractRulesCompilation {
 	}
 
 	@Override
-	public void load(Iterator<Rule> ruleset) {
+	public void load(Iterator<Rule> ruleset, Iterator<Rule> compilation) {
 	}
 
 	@Override

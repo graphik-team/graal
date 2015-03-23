@@ -31,9 +31,9 @@ import fr.lirmm.graphik.graal.forward_chaining.RestrictedChaseStopCondition;
 import fr.lirmm.graphik.graal.homomorphism.ComplexHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlpParser;
-import fr.lirmm.graphik.graal.store.homomorphism.SqlHomomorphism;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
+import fr.lirmm.graphik.graal.store.rdbms.homomorphism.SqlHomomorphism;
 
 public class CLI_FGH {
 
@@ -211,7 +211,7 @@ public class CLI_FGH {
 				FileWriter out = new FileWriter(f2);
 				for (ConjunctiveQuery constraint : constraints) {
 					DefaultConjunctiveQuery q = new DefaultConjunctiveQuery(constraint);
-					q.setAnswerVariables(q.getAtomSet().getTerms());
+					q.setAnswerVariables(new LinkedList<Term>(q.getAtomSet().getTerms()));
 					//constraint.setAns(constraint.getTerms());
 					for (Substitution s : solver.execute(q,atomset)) {
 						AtomSet conflict = s.getSubstitut(q.getAtomSet());

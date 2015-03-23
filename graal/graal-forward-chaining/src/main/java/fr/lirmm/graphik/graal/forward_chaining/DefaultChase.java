@@ -15,12 +15,13 @@ import fr.lirmm.graphik.graal.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
+import fr.lirmm.graphik.util.Verbosable;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class DefaultChase extends AbstractChase {
+public class DefaultChase extends AbstractChase implements Verbosable {
 	
 //	private static final Logger LOGGER = LoggerFactory
 //			.getLogger(DefaultChase.class);
@@ -31,6 +32,7 @@ public class DefaultChase extends AbstractChase {
 	private AtomSet atomSet;
 	private Homomorphism solver;
 	boolean hasNext = true;
+	private boolean isVerbose = false;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -71,6 +73,9 @@ public class DefaultChase extends AbstractChase {
     		if(this.hasNext) {
     			this.hasNext = false;
     			for (Rule rule : this.ruleSet) {
+    				if(this.isVerbose) {
+    					System.out.println("Rule: " + rule);
+    				}
     				if(this.apply(rule, atomSet)) {
     					this.hasNext = true;
     				}
@@ -110,5 +115,10 @@ public class DefaultChase extends AbstractChase {
 	@Override
 	public ChaseHaltingCondition getHaltingCondition() {
 		return this.haltingCondition;
+	}
+
+	@Override
+	public void enableVerbose(boolean enable) {
+		this.isVerbose = enable;
 	}
 }

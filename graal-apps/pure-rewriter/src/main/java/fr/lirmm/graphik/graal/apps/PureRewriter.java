@@ -242,7 +242,7 @@ public class PureRewriter {
 			if (this.compilationFile.isEmpty()) {
 				compilation.compile(rules.iterator());
 			} else {
-				compilation.load(new FilterIterator<Object, Rule>(new DlpParser(
+				compilation.load(rules.iterator(), new FilterIterator<Object, Rule>(new DlpParser(
 						new File(this.compilationFile)), new RulesFilter()));
 			}
 		

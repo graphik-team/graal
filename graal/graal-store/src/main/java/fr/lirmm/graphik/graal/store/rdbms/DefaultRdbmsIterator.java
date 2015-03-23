@@ -20,7 +20,7 @@ import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader2AtomReader;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.store.homomorphism.SqlHomomorphism;
+import fr.lirmm.graphik.graal.store.rdbms.homomorphism.SqlHomomorphism;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>

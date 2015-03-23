@@ -36,9 +36,18 @@ public class MysqlDriver extends AbstractRdbmsDriver {
 			throws AtomSetException {
 		super(openConnection(host, dbName, user, password));
 	}
+	
+	public MysqlDriver(String uri) throws AtomSetException {
+		super(openConnection(uri));
+	}
 
 	private static Connection openConnection(String host, String dbName, String user,
 			String password) throws AtomSetException {
+		return openConnection("jdbc:mysql://" + host
+					+ "/" + dbName + "?user=" + user + "&password=" + password);
+	}
+	
+	private static Connection openConnection(String uri) throws AtomSetException {
 		Connection connection;
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -52,10 +61,9 @@ public class MysqlDriver extends AbstractRdbmsDriver {
 			LOGGER.error(e.getMessage(), e);
 			throw new AtomSetException(e.getMessage(), e);
 		}
-
+		
 		try {
-			connection = DriverManager.getConnection("jdbc:mysql://" + host
-					+ "/" + dbName + "?user=" + user + "&password=" + password);
+			connection = DriverManager.getConnection(uri);
 		} catch (SQLException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new AtomSetException(e.getMessage(), e);
