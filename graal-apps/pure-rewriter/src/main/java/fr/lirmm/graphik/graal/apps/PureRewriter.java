@@ -30,7 +30,7 @@ public class PureRewriter {
 	@Parameter(names = { "-v", "--verbose" }, description = "Enable verbose mode")
 	private boolean verbose = false;
 
-	@Parameter(names = { "--version" }, description = "Print version information")
+	@Parameter(names = { "-V", "--version" }, description = "Print version information")
 	private boolean version = false;
 
 	@Parameter(names = { "-d", "--debug" }, description = "Enable debug mode", hidden = true)

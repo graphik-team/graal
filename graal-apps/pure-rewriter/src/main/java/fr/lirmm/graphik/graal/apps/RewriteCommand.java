@@ -34,7 +34,7 @@ import fr.lirmm.graphik.util.stream.FilterIterator;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-@Parameters(commandDescription = "Rewrite queries")
+@Parameters(commandDescription = "Rewrite given queries")
 class RewriteCommand {
 	
 	public static final String NAME = "rewrite";
@@ -46,22 +46,22 @@ class RewriteCommand {
 	@Parameter(names = { "-h", "--help" }, description = "Print this message", help = true)
 	private boolean help;
 
-	@Parameter(names = { "-o", "--ontology" }, description = "DLP ontology file", required = true)
-	private String ontologyFile = "";
+	@Parameter(description = "<DLGP ontology file>", required = true)
+	private List<String> ontologyFile = new LinkedList<String>();
 
-	@Parameter(names = { "-q", "--query" }, description = "The queries to rewrite in DLP", required = true)
+	@Parameter(names = { "-q", "--queries" }, description = "The queries to rewrite in DLGP", required = true)
 	private String query = null;
 
-	@Parameter(names = { "-c", "--compilationFile" }, description = "The compilation file")
+	@Parameter(names = { "-c", "--compilation-file" }, description = "The compilation file")
 	private String compilationFile = "";
 
-	@Parameter(names = { "-t", "--compilationType" }, description = "Compilation type H, ID, NONE", required = false)
+	@Parameter(names = { "-t", "--compilation-type" }, description = "Compilation type H, ID, NONE")
 	private String compilationType = "ID";
 
-	@Parameter(names = { "-p", "--operator" }, description = "Rewriting operator SRA, ARA, ARAM", required = false)
+	@Parameter(names = { "-o", "--operator" }, description = "Rewriting operator SRA, ARA, ARAM")
 	private String operator = "SRA";
 	
-	@Parameter(names = { "-u", "--unfolding" }, description = "Enable unfolding", required = false)
+	@Parameter(names = { "-u", "--unfold" }, description = "Enable unfolding")
 	private boolean isUnfoldingEnable = false;
 
 	////////////////////////////////////////////////////////////////////////////
@@ -88,7 +88,7 @@ class RewriteCommand {
 			System.exit(0);
 		}
 
-		RuleSet rules = Util.parseOntology(this.ontologyFile);
+		RuleSet rules = Util.parseOntology(this.ontologyFile.get(0));
 		RulesCompilation compilation = selectCompilationType();
 		RewritingOperator operator = selectOperator();
 

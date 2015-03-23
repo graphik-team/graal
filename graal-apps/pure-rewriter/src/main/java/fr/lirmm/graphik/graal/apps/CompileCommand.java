@@ -35,10 +35,10 @@ class CompileCommand {
 	@Parameter(names = { "-h", "--help" }, description = "Print this message", help = true)
 	private boolean help;
 
-	@Parameter(description = "<DLP ontology file>", required = true)
+	@Parameter(description = "<DLGP ontology file>", required = true)
 	private List<String> ontologyFile = new LinkedList<String>();
 
-	@Parameter(names = { "-o", "--output" }, description = "Output file for this compilation")
+	@Parameter(names = { "-f", "--file" }, description = "Output file for this compilation")
 	private String outputFile = null;
 
 	@Parameter(names = { "-t", "--type" }, description = "Compilation type H or ID", required = false)
