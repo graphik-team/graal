@@ -19,8 +19,10 @@ import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
+import fr.lirmm.graphik.graal.store.rdbms.driver.DriverException;
 import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
+import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
 import fr.lirmm.graphik.graal.store.rdbms.homomorphism.SqlUCQHomomorphism;
 import fr.lirmm.graphik.util.Apps;
 import fr.lirmm.graphik.util.Profiler;
@@ -31,15 +33,15 @@ import fr.lirmm.graphik.util.Profiler;
  * Allow to perform a conjunctive query over a MySQL Atomset.
  *
  */
-public class GRAALQuery {
+public class GraalQuery {
 
-	@Parameter(names = { "-d", "--dlp" }, description = "DLP file")
+	@Parameter(names = { "-q", "--query" }, description = "DLP filepath to queries")
 	private String file = "";
 	
-//	@Parameter(names = { "--driver"}, description = "mysql|sqlite")
-//	private String driverName = "mysql";
+	@Parameter(names = { "-d", "--driver"}, description = DRIVER_MYSQL + "|" + DRIVER_SQLITE)
+	private String driver = "mysql";
 	
-	@Parameter(names = { "--db"}, description = "database name")
+	@Parameter(names = { "--db"}, description = "database name (mysql), database file path (sqlite)")
 	private String database = "";
 	
 	@Parameter(names = { "--host"}, description = "database host")
@@ -51,32 +53,60 @@ public class GRAALQuery {
 	@Parameter(names = { "--password"}, description = "database password")
 	private String databasePassword = "root";
 	
-	@Parameter(names = { "--version" }, description = "Print version information")
+	@Parameter(names = { "-V", "--version" }, description = "Print version information")
 	private boolean version = false;
-	
 
+	@Parameter(names = { "-v", "--verbose" }, description = "Enable verbose mode (profiler and such)")
+	private boolean verbose = false;
+	
 	@Parameter(names = { "-h", "--help" }, help = true)
-	private boolean help;
+	private boolean help = false;
 
 	private static final Profiler PROFILER = new Profiler(System.out);
 	private static final DlgpWriter WRITER = new DlgpWriter();
+
+	private static final String DRIVER_SQLITE = "sqlite";
+
+	private static final String DRIVER_MYSQL = "mysql";
+
+	////////////////////////////////////////////////////////////////////////////
+	// 
+	////////////////////////////////////////////////////////////////////////////
 	
-	public static void main(String[] args) throws AtomSetException, HomomorphismException, IOException {
-		GRAALQuery options = new GRAALQuery();
+	private GraalQuery() { }
+
+	////////////////////////////////////////////////////////////////////////////
+	// 
+	////////////////////////////////////////////////////////////////////////////
+	
+	public static void main(String[] args) throws AtomSetException, HomomorphismException, IOException, DriverException {
+		GraalQuery options = new GraalQuery();
 		JCommander commander = new JCommander(options, args);
 
 		if (options.help) {
 			commander.usage();
 			System.exit(0);
-		}
 		
+		}
+
 		if (options.version) {
 			Apps.printVersion("graal-query");
 			System.exit(0);
 		}
-		
+
 		// Connection to the store
-		RdbmsDriver driver = new MysqlDriver(options.databaseHost, options.database, options.databaseUser, options.databasePassword);
+		RdbmsDriver driver = null;
+		switch (options.driver) {
+			case DRIVER_SQLITE:
+				driver = new SqliteDriver(new File(options.database));
+				break;
+			case DRIVER_MYSQL:
+				driver = new MysqlDriver(options.databaseHost, options.database, options.databaseUser, options.databasePassword);
+				break;
+			default:
+				System.err.println("Unrecognized database driver: " + options.driver);
+				System.exit(1);
+		}
 		RdbmsStore store = new DefaultRdbmsStore(driver);
 
 		DlgpParser parser = new DlgpParser(new File(options.file));
@@ -85,23 +115,34 @@ public class GRAALQuery {
 			if(o instanceof ConjunctiveQuery) {
 				ucq.add((ConjunctiveQuery)o);
 			}
-		}		
-		WRITER.write("# query union");
-		WRITER.write(ucq);
+		}	
+		
+		if (options.verbose) {
+			WRITER.write("# query union");
+			WRITER.write(ucq);
+		}
 			
 		SqlUCQHomomorphism solver = SqlUCQHomomorphism.getInstance();
-		PROFILER.start("answering time");
+		if (options.verbose) {
+			PROFILER.start("answering time");
+		}
 		SubstitutionReader subr = solver.execute(ucq, store);
-		PROFILER.stop("answering time");
-		
-		WRITER.writeln("# answers");
+		if (options.verbose) {
+			PROFILER.stop("answering time");
+			WRITER.writeln("# answers");
+		}
+
 		int i = 0;
 		for(Substitution sub : subr) {
 			++i;
 			WRITER.writeln(sub.toString());
 		}
-		PROFILER.add("number of answer", i);
-
 		
+		if (options.verbose) {
+			PROFILER.add("number of answer", i);
+		}
+
 	}
+	
 };
+

@@ -102,7 +102,7 @@
 		          </manifestEntries>
 		          <manifest>
 					<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-		            <mainClass>fr.lirmm.graphik.graal.apps.GRAALQuery</mainClass>
+		            <mainClass>fr.lirmm.graphik.graal.apps.GraalQuery</mainClass>
 		          </manifest>
 		        </archive>
 		        <descriptorRefs>
