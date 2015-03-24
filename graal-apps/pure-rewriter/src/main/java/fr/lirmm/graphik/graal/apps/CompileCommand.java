@@ -20,14 +20,13 @@ import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
 import fr.lirmm.graphik.graal.io.RuleWriter;
 import fr.lirmm.graphik.graal.io.dlp.Dlgp1Writer;
-import fr.lirmm.graphik.util.Profiler;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
 @Parameters(commandDescription = "Compile an ontology")
-class CompileCommand {
+class CompileCommand extends PureCommand {
 	
 	public static final String NAME = "compile";
 	
@@ -35,7 +34,6 @@ class CompileCommand {
 	public static final String HIERACHICAL_COMPILATION_NAME = "H";
 	
 	private RuleWriter writer;
-	private Profiler profiler; 
 
 	@Parameter(names = { "-h", "--help" }, description = "Print this message", help = true)
 	private boolean help;
@@ -53,8 +51,7 @@ class CompileCommand {
 	// 
 	////////////////////////////////////////////////////////////////////////////
 	
-	public CompileCommand(Profiler profiler, RuleWriter writer) {
-		this.profiler = profiler;
+	public CompileCommand(RuleWriter writer) {
 		this.writer = writer;
 	}
 	
@@ -80,7 +77,7 @@ class CompileCommand {
 			compilation = new IDCompilation();
 		}
 
-		compilation.setProfiler(profiler);
+		compilation.setProfiler(this.getProfiler());
 		compilation.compile(rules.iterator());
 
 		try {

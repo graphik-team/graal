@@ -42,9 +42,9 @@ public class PureRewriter {
 		JCommander commander = new JCommander(options);
 		commander.setProgramName("java -jar PureRewriter.jar");
 
-		CompileCommand cmdCompile = new CompileCommand(profiler, writer);
-		RewriteCommand cmdRewrite = new RewriteCommand(profiler, writer, options.verbose);
-		UnfoldCommand cmdUnfold = new UnfoldCommand(profiler, writer);
+		CompileCommand cmdCompile = new CompileCommand(writer);
+		RewriteCommand cmdRewrite = new RewriteCommand(writer);
+		UnfoldCommand cmdUnfold = new UnfoldCommand(writer);
 
 		commander.addCommand(CompileCommand.NAME, cmdCompile);
 		commander.addCommand(RewriteCommand.NAME, cmdRewrite);
@@ -74,6 +74,12 @@ public class PureRewriter {
 
 		if (options.verbose) {
 			profiler = new Profiler(System.err);
+			cmdCompile.enableVerbose(true);
+			cmdRewrite.enableVerbose(true);
+			cmdUnfold.enableVerbose(true);
+			cmdCompile.setProfiler(profiler);
+			cmdRewrite.setProfiler(profiler);
+			cmdUnfold.setProfiler(profiler);
 		}
 
 		if (commander.getParsedCommand() == null) {

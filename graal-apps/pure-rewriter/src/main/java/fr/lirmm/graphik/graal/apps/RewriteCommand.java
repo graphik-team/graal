@@ -24,7 +24,6 @@ import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
 import fr.lirmm.graphik.graal.io.ConjunctiveQueryWriter;
 import fr.lirmm.graphik.graal.io.dlp.Dlgp1Parser;
-import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.FilterIterator;
 
 /**
@@ -32,13 +31,11 @@ import fr.lirmm.graphik.util.stream.FilterIterator;
  *
  */
 @Parameters(commandDescription = "Rewrite given queries")
-class RewriteCommand {
+class RewriteCommand extends PureCommand {
 	
 	public static final String NAME = "rewrite";
 	
 	private ConjunctiveQueryWriter writer;
-	private Profiler profiler;
-	private boolean isVerbose;
 
 	@Parameter(names = { "-h", "--help" }, description = "Print this message", help = true)
 	private boolean help;
@@ -65,10 +62,8 @@ class RewriteCommand {
 	// 
 	////////////////////////////////////////////////////////////////////////////
 	
-	public RewriteCommand(Profiler profiler, ConjunctiveQueryWriter writer, boolean isVerbose) {
-		this.profiler = profiler;
+	public RewriteCommand(ConjunctiveQueryWriter writer) {
 		this.writer = writer;
-		this.isVerbose = isVerbose;
 	}
 	
 	////////////////////////////////////////////////////////////////////////////
@@ -89,8 +84,8 @@ class RewriteCommand {
 		RulesCompilation compilation = Util.selectCompilationType(this.compilationType);
 		RewritingOperator operator = selectOperator();
 
-		compilation.setProfiler(profiler);
-		operator.setProfiler(profiler);
+		compilation.setProfiler(this.getProfiler());
+		operator.setProfiler(this.getProfiler());
 		
 		if (this.compilationFile.isEmpty()) {
 			compilation.compile(rules.iterator());
@@ -129,15 +124,15 @@ class RewriteCommand {
 		}
 
 		for (ConjunctiveQuery query : queries) {
-			if (isVerbose) {
-				profiler.clear();
-				profiler.add("Initial query", query);
+			if (this.isVerbose()) {
+				this.getProfiler().clear();
+				this.getProfiler().add("Initial query", query);
 			}
 			fr.lirmm.graphik.graal.backward_chaining.PureRewriter bc = new fr.lirmm.graphik.graal.backward_chaining.PureRewriter(
 					query, rules, compilation, operator);
 
-			if (isVerbose) {
-				bc.setProfiler(profiler);
+			if (this.isVerbose()) {
+				bc.setProfiler(this.getProfiler());
 				bc.enableVerbose(true);
 			}
 			
@@ -155,9 +150,11 @@ class RewriteCommand {
 			} catch (IOException e) {
 			}
 
-			if (isVerbose) {
-				profiler.add("Number of rewritings", i);
+			if (this.isVerbose()) {
+				this.getProfiler().add("Number of rewritings", i);
 			}
 		}
 	}
+
+
 }

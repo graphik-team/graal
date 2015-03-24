@@ -17,8 +17,6 @@ import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.io.ConjunctiveQueryWriter;
 import fr.lirmm.graphik.graal.io.dlp.Dlgp1Parser;
-import fr.lirmm.graphik.util.Profilable;
-import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.FilterIterator;
 
 /**
@@ -26,7 +24,7 @@ import fr.lirmm.graphik.util.stream.FilterIterator;
  *
  */
 @Parameters(commandDescription = "Unfold a pivotal UCQ")
-public class UnfoldCommand implements Profilable {
+public class UnfoldCommand extends PureCommand {
 	
 	public static final String NAME = "unfold";
 		
@@ -42,16 +40,14 @@ public class UnfoldCommand implements Profilable {
 	@Parameter(names = { "-q", "--queries" }, description = "The queries to rewrite in DLGP", required = true)
 	private String queriesString = null;
 
-	private Profiler profiler;
 	private ConjunctiveQueryWriter writer;
 
 	////////////////////////////////////////////////////////////////////////////
 	// 
 	////////////////////////////////////////////////////////////////////////////
 	
-	public UnfoldCommand(Profiler profiler, ConjunctiveQueryWriter writer) {
+	public UnfoldCommand(ConjunctiveQueryWriter writer) {
 		this.writer = writer;
-		this.profiler = profiler;
 	}
 	
 	////////////////////////////////////////////////////////////////////////////
@@ -86,16 +82,6 @@ public class UnfoldCommand implements Profilable {
 			writer.write(q);
 		}
 		
-	}
-
-	@Override
-	public void setProfiler(Profiler profiler) {
-		this.profiler = profiler;
-	}
-
-	@Override
-	public Profiler getProfiler() {
-		return this.profiler;
 	}
 
 }
