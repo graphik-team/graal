@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import fr.lirmm.graphik.graal.backward_chaining.pure.queries.PureQuery;
 import fr.lirmm.graphik.graal.backward_chaining.pure.utils.Misc;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
@@ -36,11 +35,26 @@ public abstract class AbstractRulesCompilation implements RulesCompilation {
 
 	public Iterable<ConjunctiveQuery> unfold(
 			Iterable<ConjunctiveQuery> pivotRewritingSet) {
+		if (this.getProfiler() != null) {
+			this.getProfiler().start("Unfolding time");
+		}
+
 		Collection<ConjunctiveQuery> unfoldingRewritingSet = this
 				.developpRewriting(pivotRewritingSet);
 
 		/** clean the rewrites to return **/
 		Misc.computeCover(unfoldingRewritingSet);
+		
+		if (this.getProfiler() != null) {
+			this.getProfiler().stop("Unfolding time");
+			Iterator<?> it = unfoldingRewritingSet.iterator();
+			int i = 0;
+			while (it.hasNext()) {
+				it.next();
+				++i;
+			}
+			this.getProfiler().add("Unfolded rewritings", i);
+		}
 
 		return unfoldingRewritingSet;
 
@@ -143,9 +157,9 @@ public abstract class AbstractRulesCompilation implements RulesCompilation {
 			}
 		}
 
-		if (this.getProfiler() != null)
-			System.out.println("hierarchical rules number: "
-					+ compilable.size());
+		if (this.getProfiler() != null) {
+			this.getProfiler().add("Compiled rules", compilable.size());
+		}
 
 		return compilable;
 	}

@@ -117,17 +117,8 @@ public class PureRewriter extends AbstractBackwardChainer implements Verbosable 
 		
 		Iterable<ConjunctiveQuery> queries = algo.execute(pquery, indexedRuleSet, compilation);
 
-		// unfolding
 		if(this.isUnfoldingEnable) {
-			if (this.getProfiler() != null) {
-				this.getProfiler().start("unfolding time");
-			}
-	
 			queries = this.compilation.unfold(queries);
-	
-			if (this.getProfiler() != null) {
-				this.getProfiler().stop("unfolding time");
-			}
 		}
 		
 		this.rewrites = queries.iterator();

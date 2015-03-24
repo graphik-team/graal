@@ -62,22 +62,19 @@ public class UnfoldCommand extends PureCommand {
 		}
 
 		RulesCompilation compilation = Util.selectCompilationType(this.compilationType);
-		compilation.load(Collections.EMPTY_LIST.iterator(), new FilterIterator<Object, Rule>(new Dlgp1Parser(
+		
+		if(this.isVerbose()) {
+			compilation.setProfiler(this.getProfiler());
+		}
+		
+		compilation.load(Collections.<Rule>emptyList().iterator(), new FilterIterator<Object, Rule>(new Dlgp1Parser(
 				new File(this.compilationFile)), new RulesFilter()));
 		
 		List<ConjunctiveQuery> queries = Util.parseQueries(this.queriesString); 
 		
-		// unfolding
-		if (this.getProfiler() != null) {
-			this.getProfiler().start("unfolding time");
-		}
-
 		Iterable<ConjunctiveQuery> unfold = compilation.unfold(queries);
-
-		if (this.getProfiler() != null) {
-			this.getProfiler().stop("unfolding time");
-		}
 		
+		// display
 		for(ConjunctiveQuery q : unfold) {
 			writer.write(q);
 		}

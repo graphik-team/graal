@@ -138,21 +138,16 @@ class RewriteCommand extends PureCommand {
 			
 			bc.enableUnfolding(this.isUnfoldingEnable);
 
-			int i = 0;
 			try {
 				writer.write("\n");
 				writer.write("% rewrite of: ");
 				writer.write(query);
 				while (bc.hasNext()) {
 					writer.write(bc.next());
-					++i;
 				}
 			} catch (IOException e) {
 			}
 
-			if (this.isVerbose()) {
-				this.getProfiler().add("Number of rewritings", i);
-			}
 		}
 	}
 

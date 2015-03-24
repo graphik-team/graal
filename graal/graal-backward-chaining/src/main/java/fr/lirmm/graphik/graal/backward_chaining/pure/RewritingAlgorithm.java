@@ -52,7 +52,7 @@ public class RewritingAlgorithm implements Verbosable, Profilable {
 	 */
 	public Collection<ConjunctiveQuery> execute(ConjunctiveQuery query, IndexedByHeadPredicatesRuleSet ruleSet, RulesCompilation compilation) {
 		if(this.verbose) {
-			this.profiler.add("CONFIG", operator.toString());
+			this.profiler.add("CONFIG", operator.getClass().getSimpleName());
 		}
 		LinkedList<ConjunctiveQuery> finalRewritingSet = new LinkedList<ConjunctiveQuery>();
 		Queue<ConjunctiveQuery> rewriteSetToExplore = new LinkedList<ConjunctiveQuery>();
@@ -62,7 +62,7 @@ public class RewritingAlgorithm implements Verbosable, Profilable {
 		int generatedRewrites = 0;
 
 		if(this.verbose) {
-			this.profiler.start("rewriting time");
+			this.profiler.start("Rewriting time");
 		}
 
 		// remove some basic redundancy
@@ -118,10 +118,10 @@ public class RewritingAlgorithm implements Verbosable, Profilable {
 		Misc.computeCover(finalRewritingSet);
 
 		if(this.verbose) {
-			this.profiler.stop("rewriting time");
+			this.profiler.stop("Rewriting time");
 			this.profiler.add("Generated rewritings", generatedRewrites);
 			this.profiler.add("Explored rewritings", exploredRewrites);
-			this.profiler.add("Pivots rewritings", finalRewritingSet.size());
+			this.profiler.add("Pivotal rewritings", finalRewritingSet.size());
 		}
 
 		return finalRewritingSet;
