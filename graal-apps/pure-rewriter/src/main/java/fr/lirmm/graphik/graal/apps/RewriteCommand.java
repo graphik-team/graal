@@ -20,7 +20,6 @@ import fr.lirmm.graphik.graal.backward_chaining.pure.BasicAggregAllRulesOperator
 import fr.lirmm.graphik.graal.backward_chaining.pure.RewritingOperator;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
 import fr.lirmm.graphik.graal.io.ConjunctiveQueryWriter;
 import fr.lirmm.graphik.graal.io.dlp.Dlgp1Parser;
@@ -46,11 +45,8 @@ class RewriteCommand extends PureCommand {
 	@Parameter(names = { "-q", "--queries" }, description = "The queries to rewrite in DLGP", required = true)
 	private String query = null;
 
-	@Parameter(names = { "-c", "--compilation-file" }, description = "The compilation file")
-	private String compilationFile = "";
-
-	@Parameter(names = { "-t", "--compilation-type" }, description = "Compilation type H, ID, NONE")
-	private String compilationType = "ID";
+	@Parameter(names = { "-c", "--compilation" }, description = "The compilation file or the compilation type H, ID, NONE")
+	private String compilationString = "ID";
 
 	@Parameter(names = { "-o", "--operator" }, description = "Rewriting operator SRA, ARA, ARAM")
 	private String operator = "SRA";
@@ -72,28 +68,31 @@ class RewriteCommand extends PureCommand {
 	
 	/**
 	 * @param commander
+	 * @throws PureException
 	 * @throws FileNotFoundException
 	 */
-	public void run(JCommander commander) throws FileNotFoundException {
+	public void run(JCommander commander) throws PureException, FileNotFoundException {
 		if (this.help) {
 			commander.usage(NAME);
 			System.exit(0);
 		}
 
 		RuleSet rules = Util.parseOntology(this.ontologyFile.get(0));
-		RulesCompilation compilation = Util.selectCompilationType(this.compilationType);
-		RewritingOperator operator = selectOperator();
 
-		compilation.setProfiler(this.getProfiler());
+		RewritingOperator operator = selectOperator();
 		operator.setProfiler(this.getProfiler());
-		
-		if (this.compilationFile.isEmpty()) {
-			compilation.compile(rules.iterator());
+
+		RulesCompilation compilation = null;
+		File compilationFile = new File(this.compilationString);
+		if (compilationFile.exists()) {
+			compilation = Util.loadCompilation(compilationFile);
+			compilation.setProfiler(this.getProfiler());
 		} else {
-			compilation.load(rules.iterator(), new FilterIterator<Object, Rule>(new Dlgp1Parser(
-					new File(this.compilationFile)), new RulesFilter()));
+			compilation = Util.selectCompilationType(this.compilationString);
+			compilation.setProfiler(this.getProfiler());
+			compilation.compile(rules.iterator());
 		}
-	
+
 		this.processQuery(rules, compilation, operator);
 	}
 

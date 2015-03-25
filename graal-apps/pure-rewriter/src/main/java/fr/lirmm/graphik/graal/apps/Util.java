@@ -5,12 +5,12 @@ package fr.lirmm.graphik.graal.apps;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Scanner;
 
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.HierarchicalCompilation;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.IDCompilation;
@@ -20,6 +20,7 @@ import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
+import fr.lirmm.graphik.graal.io.RuleWriter;
 import fr.lirmm.graphik.graal.io.dlp.Dlgp1Parser;
 import fr.lirmm.graphik.util.stream.FilterIterator;
 
@@ -28,14 +29,13 @@ import fr.lirmm.graphik.util.stream.FilterIterator;
  *
  */
 final class Util {
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(Util.class);
-	
-	private Util(){};
-	
-	////////////////////////////////////////////////////////////////////////////
-	// 
-	////////////////////////////////////////////////////////////////////////////
+
+	private Util() {
+	};
+
+	// //////////////////////////////////////////////////////////////////////////
+	//
+	// //////////////////////////////////////////////////////////////////////////
 
 	static RuleSet parseOntology(String ontologyFile)
 			throws FileNotFoundException {
@@ -48,20 +48,25 @@ final class Util {
 		}
 		return rules;
 	}
-	
-	static RulesCompilation selectCompilationType(String compilationName) {
+
+	static RulesCompilation selectCompilationType(String compilationName)
+			throws PureException {
 		RulesCompilation compilation = null;
 		if (CompileCommand.HIERACHICAL_COMPILATION_NAME.equals(compilationName)) {
 			compilation = new HierarchicalCompilation();
 		} else if (CompileCommand.ID_COMPILATION_NAME.equals(compilationName)) {
 			compilation = new IDCompilation();
-		} else {
+		} else if (CompileCommand.NO_COMPILATION_NAME.equals(compilationName)) {
 			compilation = new NoCompilation();
+		} else {
+			throw new PureException("Unknown compilation type: "
+					+ compilationName);
 		}
 		return compilation;
 	}
-	
-	static List<ConjunctiveQuery> parseQueries(String queryOrQueriesFileName) {
+
+	static List<ConjunctiveQuery> parseQueries(String queryOrQueriesFileName)
+			throws PureException {
 		List<ConjunctiveQuery> queries = new LinkedList<ConjunctiveQuery>();
 		File file = new File(queryOrQueriesFileName);
 		if (file.exists()) {
@@ -72,13 +77,65 @@ final class Util {
 					queries.add(it.next());
 				}
 			} catch (FileNotFoundException e) {
-				LOGGER.error("File exists but not found !", e);
+				throw new PureException("Query file exists but not found !", e);
 			}
 		} else {
 			queries.add(Dlgp1Parser.parseQuery(queryOrQueriesFileName));
 		}
 		return queries;
 	}
-	
+
+	private static final String COMPILATION_TYPE_PREFIX = "%compilation-type: ";
+	private static final int COMPILATION_TYPE_PREFIX_LEN = COMPILATION_TYPE_PREFIX
+			.length();
+
+	static void writeCompilation(RulesCompilation compilation, RuleWriter writer)
+			throws IOException {
+		String compilationName = "UNKNOWN";
+		if (compilation instanceof IDCompilation) {
+			compilationName = CompileCommand.ID_COMPILATION_NAME;
+		} else if (compilation instanceof HierarchicalCompilation) {
+			compilationName = CompileCommand.HIERACHICAL_COMPILATION_NAME;
+		}
+
+		writer.write(COMPILATION_TYPE_PREFIX + compilationName + "\n");
+
+		for (Rule r : compilation.getSaturation()) {
+			writer.write(r);
+		}
+	}
+
+	static RulesCompilation loadCompilation(File file) throws PureException,
+			FileNotFoundException {
+		Scanner scanner = new Scanner(file);
+		String compilationType = "";
+		while (scanner.hasNextLine() && compilationType.isEmpty()) {
+			String line = scanner.nextLine();
+			if (line.startsWith(COMPILATION_TYPE_PREFIX)) {
+				compilationType = line.substring(COMPILATION_TYPE_PREFIX_LEN);
+			}
+		}
+
+		RulesCompilation compilation = null;
+		if (compilationType.startsWith(CompileCommand.ID_COMPILATION_NAME)) {
+			compilation = new IDCompilation();
+		} else if (compilationType
+				.startsWith(CompileCommand.HIERACHICAL_COMPILATION_NAME)) {
+			compilation = new HierarchicalCompilation();
+		} else {
+			throw new PureException("compilation type inference failed");
+		}
+
+		loadCompilation(compilation, file);
+
+		return compilation;
+	}
+
+	static void loadCompilation(RulesCompilation compilation, File file)
+			throws FileNotFoundException {
+		compilation.load(Collections.<Rule> emptyList().iterator(),
+				new FilterIterator<Object, Rule>(new Dlgp1Parser(file),
+						new RulesFilter()));
+	}
 
 }

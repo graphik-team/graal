@@ -3,8 +3,6 @@
  */
 package fr.lirmm.graphik.graal.apps;
 
-import java.io.FileNotFoundException;
-
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
@@ -33,10 +31,7 @@ public class PureRewriter {
 	@Parameter(names = { "-V", "--version" }, description = "Print version information")
 	private boolean version = false;
 
-	@Parameter(names = { "-d", "--debug" }, description = "Enable debug mode", hidden = true)
-	private boolean debug = false;
-
-	public static void main(String args[]) throws Exception {
+	public static void main(String args[]) {
 
 		options = new PureRewriter();
 		JCommander commander = new JCommander(options);
@@ -56,10 +51,6 @@ public class PureRewriter {
 			System.err.println("\nError: " + e.getMessage() + "\n");
 			commander.usage();
 			System.exit(1);
-		}
-
-		if (options.debug) {
-			Thread.sleep(20000);
 		}
 
 		if (options.help) {
@@ -98,10 +89,11 @@ public class PureRewriter {
 			} else if (UnfoldCommand.NAME.equals(command)) {
 				cmdUnfold.run(commander);
 			}
-		} catch (FileNotFoundException e) {
-			System.err.println(e.getMessage());
+		} catch (Exception e) {
+			System.err.println("An error occured: " + e.getMessage());
 			System.exit(1);
 		}
+
 	}
-	
+
 }

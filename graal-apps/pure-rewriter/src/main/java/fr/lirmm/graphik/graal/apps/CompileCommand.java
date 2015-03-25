@@ -4,7 +4,6 @@
 package fr.lirmm.graphik.graal.apps;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,7 +15,6 @@ import com.beust.jcommander.Parameters;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.HierarchicalCompilation;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.IDCompilation;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
-import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
 import fr.lirmm.graphik.graal.io.RuleWriter;
 import fr.lirmm.graphik.graal.io.dlp.Dlgp1Writer;
@@ -27,12 +25,13 @@ import fr.lirmm.graphik.graal.io.dlp.Dlgp1Writer;
  */
 @Parameters(commandDescription = "Compile an ontology")
 class CompileCommand extends PureCommand {
-	
+
 	public static final String NAME = "compile";
-	
+
 	public static final String ID_COMPILATION_NAME = "ID";
 	public static final String HIERACHICAL_COMPILATION_NAME = "H";
-	
+	public static final String NO_COMPILATION_NAME = "NONE";
+
 	private RuleWriter writer;
 
 	@Parameter(names = { "-h", "--help" }, description = "Print this message", help = true)
@@ -44,26 +43,27 @@ class CompileCommand extends PureCommand {
 	@Parameter(names = { "-f", "--file" }, description = "Output file for this compilation")
 	private String outputFile = null;
 
-	@Parameter(names = { "-t", "--type" }, description = "Compilation type " + ID_COMPILATION_NAME + " or " + HIERACHICAL_COMPILATION_NAME, required = false)
+	@Parameter(names = { "-t", "--type" }, description = "Compilation type "
+			+ ID_COMPILATION_NAME + " or " + HIERACHICAL_COMPILATION_NAME, required = false)
 	private String compilationType = "ID";
-	
-	////////////////////////////////////////////////////////////////////////////
-	// 
-	////////////////////////////////////////////////////////////////////////////
-	
+
+	// //////////////////////////////////////////////////////////////////////////
+	//
+	// //////////////////////////////////////////////////////////////////////////
+
 	public CompileCommand(RuleWriter writer) {
 		this.writer = writer;
 	}
-	
-	////////////////////////////////////////////////////////////////////////////
-	// 
-	////////////////////////////////////////////////////////////////////////////
-	
+
+	// //////////////////////////////////////////////////////////////////////////
+	//
+	// //////////////////////////////////////////////////////////////////////////
+
 	/**
 	 * @param commander
-	 * @throws FileNotFoundException
+	 * @throws IOException
 	 */
-	public void run(JCommander commander) throws FileNotFoundException {
+	public void run(JCommander commander) throws IOException {
 		if (this.help) {
 			commander.usage(NAME);
 			System.exit(0);
@@ -80,15 +80,11 @@ class CompileCommand extends PureCommand {
 		compilation.setProfiler(this.getProfiler());
 		compilation.compile(rules.iterator());
 
-		try {
-			RuleWriter w = writer;
-			if (this.outputFile != null && !outputFile.isEmpty()) {
-				w = new Dlgp1Writer(new File(this.outputFile));
-			}
-			for(Rule r : compilation.getSaturation()) {
-				w.write(r);
-			}
-		} catch (IOException e) {
+		RuleWriter w = writer;
+		if (this.outputFile != null && !outputFile.isEmpty()) {
+			w = new Dlgp1Writer(new File(this.outputFile));
 		}
+		Util.writeCompilation(compilation, w);
+
 	}
 }
