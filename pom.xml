@@ -17,7 +17,7 @@
 	</distributionManagement>
 
 	<scm>
-		<developerConnection>scm:git:https://info-depot.lirmm.fr/repos/GraphIK/GRAAL</developerConnection>
+		<developerConnection>scm:git:git@gite.lirmm.fr:graphik/graal.git</developerConnection>
 	</scm>
 
 	<inceptionYear>2014</inceptionYear>
