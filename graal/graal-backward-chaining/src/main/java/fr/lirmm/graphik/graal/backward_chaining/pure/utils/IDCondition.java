@@ -69,7 +69,7 @@ public class IDCondition {
 	}
 
 	/**
-	 * Return true iff the given term fulfil the condition on the head term of
+	 * Return true iff the given term fulfills the condition on the head term of
 	 * this
 	 */
 	public boolean checkHead(List<Term> head) {
@@ -82,7 +82,7 @@ public class IDCondition {
 	}
 
 	/**
-	 * Return true iff the given term fulfil the condition on the body term of
+	 * Return true iff the given term fulfills the condition on the body term of
 	 * this
 	 */
 	public boolean checkBody(List<Term> body) {
@@ -106,14 +106,27 @@ public class IDCondition {
 	 */
 	public List<Term> getBody(List<Term> head) {
 		List<Term> body = new ArrayList<Term>(arityBody);
+
+		// initialize with fresh variable
 		for (int i = 0; i < arityBody; i++)
-			body.add(null);
+			body.add(varGen.getFreeVar());
+
+		// pick frontier variables from the head
 		for (int i = 0; i < head.size(); i++) {
 			body.set(condHead[i], head.get(i));
 		}
-		for (int i = 0; i < arityBody; i++)
-			if (body.get(i) == null)
-				body.set(i, varGen.getFreeVar());
+
+		// ensure equality in body
+		for (List<Integer> eq : this.condBody) {
+			Iterator<Integer> it = eq.iterator();
+			if (it.hasNext()) {
+				Term rep = body.get(it.next());
+				while (it.hasNext()) {
+					body.set(it.next(), rep);
+				}
+			}
+		}
+
 		return body;
 	}
 
@@ -153,13 +166,21 @@ public class IDCondition {
 
 	@Override
 	public String toString() {
-		String s = "";
-		s += condBody.toString() + "\n";
+		String s = "(";
+		s += condBody.toString() + "";
 		s += "[";
-		for (Integer i : condHead)
-			s += " " + i;
-		s += "]";
+		boolean isFirst = true;
+		for (Integer i : condHead) {
+			if (isFirst) {
+				isFirst = false;
+			} else {
+				s += " ";
+			}
+			s += i;
+		}
+		s += "])";
 		return s;
 	}
 
 }
+
