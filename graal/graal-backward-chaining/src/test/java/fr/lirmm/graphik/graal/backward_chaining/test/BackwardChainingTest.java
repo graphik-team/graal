@@ -151,4 +151,26 @@ public class BackwardChainingTest {
 
 	}
 
+	/**
+	 * c(X) :- p(X,Y,X). p(X,Y,X) :- a(X).
+	 *
+	 * ?(X) :- c(X).
+	 */
+	@Theory
+	public void getUnification(RulesCompilation compilation,
+			RewritingOperator operator) {
+		RuleSet rules = new LinkedListRuleSet();
+		rules.add(DlgpParser.parseRule("p(X) :- q(X,Y,X)."));
+		rules.add(DlgpParser.parseRule("q(X,Y,X) :- s(X)."));
+
+		ConjunctiveQuery query = DlgpParser.parseQuery("?(X) :- p(X).");
+
+		compilation.compile(rules.iterator());
+		PureRewriter bc = new PureRewriter(query, rules, compilation, operator);
+		bc.enableUnfolding(true);
+
+		int i = Iterators.count(bc);
+		Assert.assertEquals(3, i);
+	}
+
 }
