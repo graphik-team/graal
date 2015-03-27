@@ -152,9 +152,11 @@ public class IDCondition {
 		// put together term of body that must be unify according to this
 		for (ArrayList<Integer> cl : condBody) {
 			int rep = cl.get(0);
+
 			for (int i = 1; i < cl.size(); i++) {
-				res.add(body.get(rep), body.get(i));
+				res.add(body.get(rep), body.get(cl.get(i)));
 			}
+
 		}
 		// put term of head into the class of the corresponding term of body
 		// according this
