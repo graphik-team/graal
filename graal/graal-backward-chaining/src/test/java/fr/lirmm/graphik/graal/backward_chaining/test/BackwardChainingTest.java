@@ -4,6 +4,9 @@ package fr.lirmm.graphik.graal.backward_chaining.test;
  * 
  */
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
@@ -19,7 +22,10 @@ import fr.lirmm.graphik.graal.backward_chaining.pure.rules.HierarchicalCompilati
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.IDCompilation;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.NoCompilation;
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
+import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.core.Predicate;
+import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
@@ -75,4 +81,74 @@ public class BackwardChainingTest {
 		int i = Iterators.count(bc);
 		Assert.assertEquals(1, i);
 	}
+
+	/**
+	 * c(X) :- b(X,Y,Y).
+	 *
+	 * getBody([X]) => b(X, Y, Y).
+	 */
+	@Theory
+	public void getBody1(RulesCompilation compilation,
+			RewritingOperator operator) {
+		RuleSet rules = new LinkedListRuleSet();
+		rules.add(DlgpParser.parseRule("p(X) :- q(X,Y,Y)."));
+
+		ConjunctiveQuery query = DlgpParser.parseQuery("?(X) :- p(X).");
+
+		compilation.compile(rules.iterator());
+		PureRewriter bc = new PureRewriter(query, rules, compilation, operator);
+		bc.enableUnfolding(true);
+
+		boolean isFound = false;
+		while(bc.hasNext()) {
+			ConjunctiveQuery rew = bc.next();
+			Iterator<Atom> it = rew.getAtomSet().iterator();
+			if(it.hasNext()) {
+				Atom a = it.next();
+				if(a.getPredicate().equals(new Predicate("q", 3))) {
+					isFound = true;
+					List<Term> terms = a.getTerms();
+					Assert.assertEquals(terms.get(1), terms.get(2));
+				}
+			}
+		}
+
+		Assert.assertTrue("Rewrite not found", isFound);
+	}
+
+	/**
+	 * c(X) :- b(X,X).
+	 *
+	 * getBody([X]) => b(X, X).
+	 */
+	@Theory
+	public void getBody2(RulesCompilation compilation,
+			RewritingOperator operator) {
+		RuleSet rules = new LinkedListRuleSet();
+		rules.add(DlgpParser.parseRule("p(X) :- q(X,X)."));
+
+		ConjunctiveQuery query = DlgpParser.parseQuery("?(X) :- p(X).");
+
+		compilation.compile(rules.iterator());
+		PureRewriter bc = new PureRewriter(query, rules, compilation, operator);
+		bc.enableUnfolding(true);
+
+		boolean isFound = false;
+		while (bc.hasNext()) {
+			ConjunctiveQuery rew = bc.next();
+			Iterator<Atom> it = rew.getAtomSet().iterator();
+			if (it.hasNext()) {
+				Atom a = it.next();
+				if (a.getPredicate().equals(new Predicate("q", 2))) {
+					isFound = true;
+					List<Term> terms = a.getTerms();
+					Assert.assertEquals(terms.get(0), terms.get(1));
+				}
+			}
+		}
+
+		Assert.assertTrue("Rewrite not found", isFound);
+
+	}
+
 }
