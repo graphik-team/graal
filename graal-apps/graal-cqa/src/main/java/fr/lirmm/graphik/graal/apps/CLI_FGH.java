@@ -227,7 +227,28 @@ public class CLI_FGH {
 						out.write("\n");
 					}
 				}
-
+			}
+			else if (options.computingUCQ) {
+				File f2 = new File(options.ucq_file);
+				FileWriter out = new FileWriter(f2);
+				for (ConjunctiveQuery constraint : constraints) {
+					DefaultConjunctiveQuery q = new DefaultConjunctiveQuery(constraint);
+					q.setAnswerVariables(new LinkedList<Term>(q.getAtomSet().getTerms()));
+					//constraint.setAns(constraint.getTerms());
+					for (Substitution s : solver.execute(q,atomset)) {
+						AtomSet conflict = s.getSubstitut(q.getAtomSet());
+						int conflict_size = 0;
+						for (Atom a : conflict)
+							++conflict_size;
+						out.write(conflict_size);
+						out.write(' ');
+						for (Atom a : conflict) {
+							out.write(index.get(a));
+							out.write(' ');
+						}
+						out.write("\n");
+					}
+				}
 			}
 
 		}
@@ -252,6 +273,9 @@ public class CLI_FGH {
 	@Parameter(names = { "-G", "--compute-fgh" }, description = "Compute fact generation hypergraph")
 	private boolean computingFGH = false;
 
+	@Parameter(names = { "-U", "--compute-ucq" }, description = "Compute ucq (incompatible with compute conflicts)");
+	private boolean computingUCQ = false;
+
 	@Parameter(names= { "-h", "--help" }, description = "Print this message")
 	private boolean help = false;
 
@@ -272,6 +296,10 @@ public class CLI_FGH {
 
 	@Parameter(names = { "-c", "--conflicts-file", "--naive-conflicts-file" }, description = "Naive conflicts file")
 	private String conflict_file = "_default.naive-conflicts";
+
+	@Parameter(names = { "-u", "--ucq-file" }, description = "UCQ output file")
+	private String conflict_file = "_default.ucq_answers";
+
 
 };
 
