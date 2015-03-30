@@ -10,7 +10,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-import fr.lirmm.graphik.graal.backward_chaining.pure.utils.IDCondition;
+import fr.lirmm.graphik.graal.backward_chaining.pure.utils.IDConditionImpl;
 import fr.lirmm.graphik.graal.backward_chaining.pure.utils.TermPartition;
 import fr.lirmm.graphik.graal.core.Term;
 
@@ -34,10 +34,10 @@ public class IDConditionTest {
 		Term[] head = { x };
 		List<Term> headList = Arrays.asList(head);
 
-		IDCondition cond = new IDCondition(Arrays.asList(body),
+		IDConditionImpl cond = new IDConditionImpl(Arrays.asList(body),
 				Arrays.asList(head));
 
-		List<Term> newBody = cond.getBody(headList);
+		List<Term> newBody = cond.generateBody(headList);
 		Assert.assertTrue(newBody.get(1).equals(newBody.get(2)));
 	}
 
@@ -54,10 +54,10 @@ public class IDConditionTest {
 		Term[] head = { x };
 		List<Term> headList = Arrays.asList(head);
 
-		IDCondition cond = new IDCondition(Arrays.asList(body),
+		IDConditionImpl cond = new IDConditionImpl(Arrays.asList(body),
 				Arrays.asList(head));
 
-		List<Term> newBody = cond.getBody(headList);
+		List<Term> newBody = cond.generateBody(headList);
 		Assert.assertTrue(newBody.get(0).equals(newBody.get(1)));
 	}
 
@@ -82,13 +82,13 @@ public class IDConditionTest {
 		Term[] head = { x };
 		Term[] newHead = { a };
 
-		IDCondition cond = new IDCondition(Arrays.asList(body),
+		IDConditionImpl cond = new IDConditionImpl(Arrays.asList(body),
 				Arrays.asList(head));
 
 		List<Term> newHeadList = Arrays.asList(newHead);
 		List<Term> newBodyList = Arrays.asList(newBody);
 
-		TermPartition partition = cond.getUnification(newBodyList,
+		TermPartition partition = cond.generateUnification(newBodyList,
 				newHeadList);
 		System.out.println(partition);
 		boolean isFound = false;

@@ -11,9 +11,6 @@ import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.Substitution;
-import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
 
 public class HierarchicalCompilation extends AbstractRulesCompilation {
 
@@ -59,6 +56,7 @@ public class HierarchicalCompilation extends AbstractRulesCompilation {
 		this.computeIndex(this.rules);
 	}
 
+	@Override
 	public void load(Iterator<Rule> ruleset, Iterator<Rule> compilation) {
 		extractCompilable(ruleset); // compilable rules are removed
 		while (compilation.hasNext()) {
@@ -116,28 +114,28 @@ public class HierarchicalCompilation extends AbstractRulesCompilation {
 		return false;
 	}
 
-	@Override
-	public Collection<Substitution> getMapping(Atom father, Atom son) {
-		LinkedList<Substitution> res = new LinkedList<Substitution>();
-		if (isMappable(father, son)) {
-			Substitution sub = SubstitutionFactory.getInstance()
-					.createSubstitution();
-			Iterator<Term> fatherTermsIt = father.getTerms().iterator();
-			Iterator<Term> sonTermsIt = son.getTerms().iterator();
-
-			Term fatherTerm, sonTerm;
-			while (fatherTermsIt.hasNext() && sonTermsIt.hasNext()) {
-				fatherTerm = fatherTermsIt.next();
-				sonTerm = sonTermsIt.next();
-				if (sub.getSubstitute(fatherTerm).equals(fatherTerm))
-					sub.put(fatherTerm, sonTerm);
-				else if (!sub.getSubstitute(fatherTerm).equals(sonTerm))
-					return res;
-			}
-			res.add(sub);
-		}
-		return res;
-	}
+	// @Override
+	// public Collection<Substitution> getMapping(Atom father, Atom son) {
+	// LinkedList<Substitution> res = new LinkedList<Substitution>();
+	// if (isMappable(father, son)) {
+	// Substitution sub = SubstitutionFactory.getInstance()
+	// .createSubstitution();
+	// Iterator<Term> fatherTermsIt = father.getTerms().iterator();
+	// Iterator<Term> sonTermsIt = son.getTerms().iterator();
+	//
+	// Term fatherTerm, sonTerm;
+	// while (fatherTermsIt.hasNext() && sonTermsIt.hasNext()) {
+	// fatherTerm = fatherTermsIt.next();
+	// sonTerm = sonTermsIt.next();
+	// if (sub.getSubstitute(fatherTerm).equals(fatherTerm))
+	// sub.put(fatherTerm, sonTerm);
+	// else if (!sub.getSubstitute(fatherTerm).equals(sonTerm))
+	// return res;
+	// }
+	// res.add(sub);
+	// }
+	// return res;
+	// }
 
 	// can answer true if there is no unifier
 	@Override

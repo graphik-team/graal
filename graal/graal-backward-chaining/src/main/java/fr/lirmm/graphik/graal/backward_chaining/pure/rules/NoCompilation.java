@@ -13,7 +13,6 @@ import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.Substitution;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -50,10 +49,10 @@ public class NoCompilation extends AbstractRulesCompilation {
 		return false;
 	}
 
-	@Override
-	public Collection<Substitution> getMapping(Atom father, Atom son) {
-		return Collections.emptyList();
-	}
+	// @Override
+	// public Collection<Substitution> getMapping(Atom father, Atom son) {
+	// return Collections.emptyList();
+	// }
 
 	@Override
 	public boolean isUnifiable(Atom father, Atom son) {

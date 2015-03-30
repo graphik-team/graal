@@ -11,6 +11,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.backward_chaining.pure.utils.IDCondition;
+import fr.lirmm.graphik.graal.backward_chaining.pure.utils.IDConditionImpl;
 import fr.lirmm.graphik.graal.backward_chaining.pure.utils.Misc;
 import fr.lirmm.graphik.graal.backward_chaining.pure.utils.TermPartition;
 import fr.lirmm.graphik.graal.core.Atom;
@@ -20,7 +21,6 @@ import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.RuleUtils;
-import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByBodyPredicatesRuleSet;
@@ -48,6 +48,7 @@ public class IDCompilation extends AbstractRulesCompilation {
 	// GETTERS / SETTERS
 	// /////////////////////////////////////////////////////////////////////////
 
+	@Override
 	public Iterable<Rule> getSaturation() {
 		return this.saturation;
 	}
@@ -92,7 +93,7 @@ public class IDCompilation extends AbstractRulesCompilation {
 			for (int i = 0; i < predH.getArity(); i++) {
 				terms.add(varGen.getFreeVar());
 			}
-			res.add(new IDCondition(terms, terms));
+			res.add(new IDConditionImpl(terms, terms));
 		} else {
 			Map<Predicate, LinkedList<IDCondition>> condH = conditions
 					.get(predH);
@@ -131,18 +132,16 @@ public class IDCompilation extends AbstractRulesCompilation {
 			return !getConditions(predB, predH).isEmpty();
 	}
 
-	@Override
-	public LinkedList<Substitution> getMapping(Atom father, Atom son) {
-		LinkedList<Substitution> res = new LinkedList<Substitution>();
-		Predicate predB = son.getPredicate();
-		Predicate predH = father.getPredicate();
-		List<IDCondition> conds = getConditions(predB, predH);
-		for (IDCondition cond : conds) {
-			if (cond.checkBody(son.getTerms()))
-				res.add(cond.getSubstitution(son.getTerms(), father.getTerms()));
-		}
-		return res;
-	}
+	/*
+	 * @Override public LinkedList<Substitution> getMapping(Atom father, Atom
+	 * son) { LinkedList<Substitution> res = new LinkedList<Substitution>();
+	 * Predicate predB = son.getPredicate(); Predicate predH =
+	 * father.getPredicate(); List<DCondition2> conds = getConditions(predB,
+	 * predH); for (DCondition2 cond : conds) { if
+	 * (cond.checkBody(son.getTerms()))
+	 * res.add(cond.getSubstitution(son.getTerms(), father.getTerms())); }
+	 * return res; }
+	 */
 
 	/**
 	 * can return true if there are not unifiable
@@ -159,7 +158,7 @@ public class IDCompilation extends AbstractRulesCompilation {
 		Predicate predH = father.getPredicate();
 		List<IDCondition> conds = getConditions(predB, predH);
 		for (IDCondition cond : conds) {
-			res.add(cond.getUnification(son.getTerms(), father.getTerms()));
+			res.add(cond.generateUnification(son.getTerms(), father.getTerms()));
 		}
 		return res;
 	}
@@ -170,7 +169,7 @@ public class IDCompilation extends AbstractRulesCompilation {
 		Predicate predH = father.getPredicate();
 		List<IDCondition> conds = getConditions(predB, predH);
 		for (IDCondition cond : conds) {
-			if (cond.check(son.getTerms(), father.getTerms())) {
+			if (cond.imply(son.getTerms(), father.getTerms())) {
 				return true;
 			}
 		}
@@ -209,7 +208,7 @@ public class IDCompilation extends AbstractRulesCompilation {
 				conds = entry.getValue();
 				for (IDCondition cond : conds) {
 					if (cond.checkHead(atom.getTerms()))
-						res.add(new DefaultAtom(predB, cond.getBody(atom
+						res.add(new DefaultAtom(predB, cond.generateBody(atom
 								.getTerms())));
 				}
 			}
@@ -223,7 +222,7 @@ public class IDCompilation extends AbstractRulesCompilation {
 
 	private void createIDCondition() {
 		if (this.getProfiler() != null) {
-			this.getProfiler().start("Compilation create IDCondition time");
+			this.getProfiler().start("Compilation create DCondition2 time");
 		}
 		Atom b;
 		Atom h;
@@ -234,7 +233,7 @@ public class IDCompilation extends AbstractRulesCompilation {
 					h.getTerms());
 		}
 		if (this.getProfiler() != null) {
-			this.getProfiler().stop("Compilation create IDCondition time");
+			this.getProfiler().stop("Compilation create DCondition2 time");
 		}
 	}
 
@@ -348,7 +347,7 @@ public class IDCompilation extends AbstractRulesCompilation {
 			condH.put(predB, new LinkedList<IDCondition>());
 			conds = condH.get(predB);
 		}
-		conds.add(new IDCondition(b, h));
+		conds.add(new IDConditionImpl(b, h));
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

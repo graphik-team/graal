@@ -8,7 +8,6 @@ import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.util.Profilable;
 
@@ -57,7 +56,7 @@ public interface RulesCompilation extends Profilable {
 	 * e. return all the homomorphisms that map father with a fact implied from
 	 * the atom son with compiled rules
 	 */
-	public Collection<Substitution> getMapping(Atom father, Atom son);
+	// public Collection<Substitution> getMapping(Atom father, Atom son);
 
 	/**
 	 * Return true iff there is a c-unifier from the atom father to the atom son
