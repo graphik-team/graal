@@ -273,7 +273,7 @@ public class CLI_FGH {
 	@Parameter(names = { "-G", "--compute-fgh" }, description = "Compute fact generation hypergraph")
 	private boolean computingFGH = false;
 
-	@Parameter(names = { "-U", "--compute-ucq" }, description = "Compute ucq (incompatible with compute conflicts)");
+	@Parameter(names = { "-U", "--compute-ucq" }, description = "Compute ucq (incompatible with compute conflicts)")
 	private boolean computingUCQ = false;
 
 	@Parameter(names= { "-h", "--help" }, description = "Print this message")
