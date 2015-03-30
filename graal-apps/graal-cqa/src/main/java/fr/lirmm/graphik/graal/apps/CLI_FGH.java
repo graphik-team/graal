@@ -295,7 +295,7 @@ public class CLI_FGH {
 	private String fgh_file = "_default.fgh";
 
 	@Parameter(names = { "-c", "--conflicts-file", "--naive-conflicts-file" }, description = "Naive conflicts file")
-	private String conflict_file = "_default.naive-conflicts";
+	private String ucq_file = "_default.naive-conflicts";
 
 	@Parameter(names = { "-u", "--ucq-file" }, description = "UCQ output file")
 	private String conflict_file = "_default.ucq_answers";
