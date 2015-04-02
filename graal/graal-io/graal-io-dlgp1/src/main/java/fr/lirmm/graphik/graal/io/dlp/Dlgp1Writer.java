@@ -143,6 +143,7 @@ public class Dlgp1Writer extends Writer implements ObjectWriter<Object>, Conjunc
 		this.writer.flush();
 	}*/
 	
+	@Override
 	public void write(Rule rule) throws IOException {
 		this.writeLabel(rule.getLabel());
 
@@ -306,7 +307,7 @@ public class Dlgp1Writer extends Writer implements ObjectWriter<Object>, Conjunc
 		}
 		
 		char first = s.charAt(0);
-		if(onlyValidChar(s) && first > 'a' && first < 'z' ) {
+		if (onlyValidChar(s) && first >= 'a' && first <= 'z') {
 			this.writer.write(s);
 		} else {
 			this.writer.write('"');
