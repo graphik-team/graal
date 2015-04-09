@@ -1,15 +1,11 @@
 package fr.lirmm.graphik.graal.backward_chaining.pure.utils;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import fr.lirmm.graphik.graal.core.DefaultAtom;
-import fr.lirmm.graphik.graal.core.DefaultFreeVarGen;
 import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
@@ -24,28 +20,34 @@ import fr.lirmm.graphik.util.Partition;
  */
 public class IDConditionImpl implements IDCondition {
 
-
-	private static DefaultFreeVarGen varGen = new DefaultFreeVarGen("X"
-			+ Integer.toString(IDConditionImpl.class.hashCode()));
-
-	private int arityBody;
-	private Partition<Integer> condBody;
+	private int[] condBody;
 	private int[] condHead;
 
 	// //////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// //////////////////////////////////////////////////////////////////////////
 
+	public IDConditionImpl(int[] condBody, int[] condHead) {
+		this.condBody = condBody;
+		this.condHead = condHead;
+	}
+
 	public IDConditionImpl(List<Term> body, List<Term> head) {
 
-		arityBody = body.size();
-
 		// code the condition on the body terms
-		condBody = new Partition<Integer>();
-		for (int i = 0; i < body.size(); i++)
-			for (int j = i + 1; j < body.size(); j++)
-				if (body.get(i).equals(body.get(j)))
-					condBody.add(i, j);
+		condBody = new int[body.size()];
+		int var = -1;
+		for (int i = 0; i < body.size(); ++i) {
+			condBody[i] = -1;
+			for (int j = 0; j < i; ++j) {
+				if (body.get(i).equals(body.get(j))) {
+					condBody[i] = condBody[j];
+				}
+			}
+			if (condBody[i] == -1) {
+				condBody[i] = ++var;
+			}
+		}
 
 		// code the condition on the head terms
 		condHead = new int[head.size()];
@@ -55,43 +57,60 @@ public class IDConditionImpl implements IDCondition {
 			while (!found && i < body.size()) {
 				if (body.get(i).equals(head.get(j))) {
 					found = true;
-					condHead[j] = i;
+					condHead[j] = condBody[i];
 				}
 				i++;
 			}
 		}
-	}
-	
-	public IDConditionImpl(Partition<Integer> condBody, int arityBody, int[] condHead) {
-		this.condBody = new Partition<Integer>(condBody);
-		this.arityBody = arityBody;
-		this.condHead = condHead;
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
 	// METHODS
 	// //////////////////////////////////////////////////////////////////////////
 
+	@Override
+	public List<Integer> getBody() {
+		List<Integer> list = new ArrayList(condBody.length);
+		for (int i = 0; i < condBody.length; ++i) {
+			list.add(condBody[i]);
+		}
+		return list;
+	}
+
 	/**
-	 * array must have the good lenght i. e. condition on predicate arity have
+	 * array must have the good length i. e. condition on predicate arity have
 	 * already been check
 	 */
 	@Override
 	public boolean imply(List<Term> body, List<Term> head) {
 
 		// check the condition on the body terms
-		if (!checkBody(body))
+		if (body.size() != condBody.length)
 			return false;
-		;
+
+		Term[] check = new Term[body.size()];
+		for (int i = 0; i < condBody.length; i++) {
+			if (check[condBody[i]] == null) {
+				check[condBody[i]] = body.get(i);
+			} else if (!body.get(i).equals(check[condBody[i]])) {
+				return false;
+			}
+		}
+
 		// check the condition on the head terms
 		if (head.size() != condHead.length)
 			return false;
 
-		for (int k = 0; k < head.size(); k++) {
-			if (!head.get(k).equals(body.get(condHead[k])))
+		for (int i = 0; i < head.size(); i++) {
+			if (!head.get(i).equals(check[condHead[i]]))
 				return false;
 		}
 		return true;
+	}
+
+	@Override
+	public boolean isIdentity() {
+		return Arrays.equals(condBody, condHead);
 	}
 
 	/**
@@ -100,11 +119,18 @@ public class IDConditionImpl implements IDCondition {
 	 */
 	@Override
 	public boolean checkHead(List<Term> head) {
-		for (int i = 0; i < condHead.length; i++)
-			for (int j = i + 1; j < condHead.length; j++)
-				if (condHead[i] == condHead[j])
-					if (!head.get(i).equals(head.get(j)))
-						return false;
+		if (head.size() != condHead.length)
+			return false;
+
+		Term[] check = new Term[head.size()];
+		for (int i = 0; i < condHead.length; i++) {
+			if (check[condHead[i]] == null) {
+				check[condHead[i]] = head.get(i);
+			} else if (!check[condHead[i]].equals(head.get(i))) {
+				return false;
+			}
+		}
+
 		return true;
 	}
 
@@ -114,18 +140,18 @@ public class IDConditionImpl implements IDCondition {
 	 */
 	@Override
 	public boolean checkBody(List<Term> body) {
-		if (body.size() != arityBody)
+		if (body.size() != condBody.length)
 			return false;
-		// check the condition on the body terms
-		Iterator<ArrayList<Integer>> i = condBody.iterator();
-		while (i.hasNext()) {
-			List<Integer> cl = i.next();
-			Term t = body.get(cl.get(0));
-			for (Integer j : cl) {
-				if (!t.equals(body.get(j)))
-					return false;
+
+		Term[] check = new Term[body.size()];
+		for (int i = 0; i < condBody.length; i++) {
+			if (check[condBody[i]] == null) {
+				check[condBody[i]] = body.get(i);
+			} else if (!check[condBody[i]].equals(body.get(i))) {
+				return false;
 			}
 		}
+
 		return true;
 	}
 
@@ -134,29 +160,18 @@ public class IDConditionImpl implements IDCondition {
 	 */
 	@Override
 	public List<Term> generateBody(List<Term> head) {
-		List<Term> body = new ArrayList<Term>(arityBody);
+		List<Term> body = new ArrayList<Term>(condBody.length);
 
-		// initialize with fresh variable
-		for (int i = 0; i < arityBody; i++)
-			body.add(varGen.getFreeVar());
-
-		// ensure equality in body
-		for (Collection<Integer> eq : this.condBody) {
-			Iterator<Integer> it = eq.iterator();
-			if (it.hasNext()) {
-				Term rep = body.get(it.next());
-				while (it.hasNext()) {
-					body.set(it.next(), rep);
-				}
-			}
+		// initialize
+		for (int i = 0; i < condBody.length; i++) {
+			body.add(new Term("X" + condBody[i], Term.Type.VARIABLE));
 		}
 
 		// pick frontier variables from the head
 		for (int i = 0; i < head.size(); i++) {
-			Term t = body.get(condHead[i]);
 			Term rep = head.get(i);
-			for (int j = 0; j < this.arityBody; ++j) {
-				if (t.equals(body.get(j))) {
+			for (int j = 0; j < condBody.length; ++j) {
+				if (condBody[j] == condHead[i]) {
 					body.set(j, rep);
 				}
 			}
@@ -166,6 +181,15 @@ public class IDConditionImpl implements IDCondition {
 		return body;
 	}
 
+	@Override
+	public List<Term> generateHead() {
+		List<Term> head = new LinkedList<Term>();
+		for (int i = 0; i < this.condHead.length; ++i) {
+			head.add(new Term("X" + this.condHead[i], Term.Type.VARIABLE));
+		}
+		return head;
+	}
+
 	/**
 	 * Return the partition that unify the term of head with the term of body
 	 * according to this
@@ -173,20 +197,21 @@ public class IDConditionImpl implements IDCondition {
 	@Override
 	public TermPartition generateUnification(List<Term> body, List<Term> head) {
 		TermPartition res = new TermPartition();
+		Term[] map = new Term[body.size()];
+
 		// put together term of body that must be unify according to this
-		for (Collection<Integer> cl : condBody) {
-			Iterator<Integer> it = cl.iterator();
-			int rep = it.next();
-
-			while (it.hasNext()) {
-				res.add(body.get(rep), body.get(it.next()));
+		for (int i = 0; i < condBody.length; ++i) {
+			if (map[condBody[i]] == null) {
+				map[condBody[i]] = body.get(i);
+			} else {
+				res.add(map[condBody[i]], body.get(i));
 			}
-
 		}
+
 		// put term of head into the class of the corresponding term of body
 		// according this
 		for (int i = 0; i < condHead.length; i++) {
-			res.add(head.get(i), body.get(condHead[i]));
+			res.add(head.get(i), map[condHead[i]]);
 		}
 		return res;
 	}
@@ -200,22 +225,43 @@ public class IDConditionImpl implements IDCondition {
 	}
 
 	public IDCondition composeWith(IDConditionImpl condition) {
-		Partition<Integer> condBody = new Partition<Integer>(this.condBody);
+		int[] newCondBody = new int[this.condBody.length];
+		int[] newCondHead = new int[condition.condHead.length];
 		
-		for (Collection<Integer> cl : condition.condBody) {
-			Iterator<Integer> it = cl.iterator();
-			int rep = this.condHead[it.next()];
-			while (it.hasNext()) {
-				condBody.add(rep, this.condHead[it.next()]);
-			}
+		// generate a partition representing variables to unify
+		Partition<Integer> partition = new Partition<Integer>();
+		for (int i = 0; i < this.condHead.length; ++i) {
+			partition.add(this.condHead[i] * 2, condition.condBody[i] * 2 + 1);
 		}
 
-		int[] condHead = new int[condition.condHead.length];
-		for(int i=0; i<condHead.length; ++i) {
-			condHead[i] = this.condHead[condition.condHead[i]];
+		// generate new body
+		for (int i = 0; i < newCondBody.length; ++i) {
+			newCondBody[i] = partition.getRepresentant(this.condBody[i] * 2);
+		}
+
+		// generate new head
+		for (int i = 0; i < newCondHead.length; ++i) {
+			newCondHead[i] = partition
+					.getRepresentant(condition.condHead[i] * 2 + 1);
+		}
+
+		// normalize index
+		int var = -1;
+		int[] map = new int[newCondBody.length * 2 + 1];
+		for (int i = 0; i < map.length; ++i) {
+			map[i] = -1;
+		}
+		for (int i = 0; i < newCondBody.length; ++i) {
+			if (map[newCondBody[i]] == -1) {
+				map[newCondBody[i]] = ++var;
+			}
+			newCondBody[i] = map[newCondBody[i]];
+		}
+		for (int i = 0; i < newCondHead.length; ++i) {
+			newCondHead[i] = map[newCondHead[i]];
 		}
 		
-		return new IDConditionImpl(condBody, this.arityBody, condHead);
+		return new IDConditionImpl(newCondBody, newCondHead);
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -224,10 +270,18 @@ public class IDConditionImpl implements IDCondition {
 
 	@Override
 	public String toString() {
-		String s = "(";
-		s += condBody.toString() + "";
-		s += "[";
 		boolean isFirst = true;
+		String s = "([";
+		for (int i = 0; i < condBody.length; i++) {
+			if (isFirst) {
+				isFirst = false;
+			} else {
+				s += " ";
+			}
+			s += condBody[i];
+		}
+		s += "] -> [";
+		isFirst = true;
 		for (Integer i : condHead) {
 			if (isFirst) {
 				isFirst = false;
@@ -246,23 +300,12 @@ public class IDConditionImpl implements IDCondition {
 		List<Term> head = new LinkedList<Term>();
 
 		// initialize body with fresh variable
-		for (int i = 0; i < arityBody; i++)
-			body.add(new Term("X" + i, Term.Type.VARIABLE));
-
-		// ensure equality in body
-		for (Collection<Integer> eq : this.condBody) {
-			Iterator<Integer> it = eq.iterator();
-			if (it.hasNext()) {
-				Term rep = body.get(it.next());
-				while (it.hasNext()) {
-					body.set(it.next(), rep);
-				}
-			}
-		}
+		for (int i = 0; i < condBody.length; i++)
+			body.add(new Term("X" + condBody[i], Term.Type.VARIABLE));
 
 		// pick frontier variables from the head
 		for (int i = 0; i < this.condHead.length; i++) {
-			head.add(body.get(this.condHead[i]));
+			head.add(new Term("X" + condHead[i], Term.Type.VARIABLE));
 		}
 
 		Rule r = new DefaultRule();
@@ -282,55 +325,8 @@ public class IDConditionImpl implements IDCondition {
 		}
 		IDConditionImpl other = (IDConditionImpl) obj;
 
-		// test head condition
-		if (this.condHead.length != other.condHead.length) {
-			return false;
-		}
-		LinkedList<Term> head = new LinkedList<Term>();
-		for (int i = 0; i < this.condHead.length; ++i) {
-			Collection<Integer> classs = this.condBody
-					.getClass(this.condHead[i]);
-			if (classs != null) {
-				if (!classs.contains(other.condHead[i])) {
-					return false;
-				}
-			} else if (other.condBody.getClass(other.condHead[i]) != null) {
-				return false;
-			}
-
-		}
-
-		// test body condition
-		if (this.arityBody != other.arityBody) {
-			return false;
-		}
-
-		for (int i = 0; i < this.condHead.length; ++i) {
-			head.add(new Term("X" + this.condHead[i], Term.Type.VARIABLE));
-		}
-
-		List<Term> body1 = this.generateBody(head);
-		List<Term> body2 = other.generateBody(head);
-
-		Map<Term, Term> map = new TreeMap<Term, Term>();
-		for (int i = 0; i < body1.size(); ++i) {
-			Term x1 = body1.get(i);
-			Term x2 = body2.get(i);
-			if (!x1.equals(x2)) {
-				if (head.contains(x1)) {
-					return false;
-				} else {
-					// x1 is an generated variable
-					Term xcheck = map.get(x1);
-					if (xcheck == null) {
-						map.put(x1, x2);
-					} else if (!xcheck.equals(x2)) {
-						return false;
-					}
-				}
-			}
-		}
-		return true;
+		return Arrays.equals(this.condBody, other.condBody) &&
+ Arrays.equals(this.condHead, other.condHead);
 	}
 
 }

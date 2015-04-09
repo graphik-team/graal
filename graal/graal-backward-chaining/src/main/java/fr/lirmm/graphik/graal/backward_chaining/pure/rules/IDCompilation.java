@@ -16,11 +16,15 @@ import fr.lirmm.graphik.graal.backward_chaining.pure.utils.TermPartition;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultFreeVarGen;
+import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.RuleUtils;
 import fr.lirmm.graphik.graal.core.Term;
+import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
+import fr.lirmm.graphik.util.collections.ListComparator;
 
 public class IDCompilation extends AbstractRulesCompilation {
 
@@ -29,6 +33,8 @@ public class IDCompilation extends AbstractRulesCompilation {
 
 	// a matrix for store conditions ( p -> q : [q][p] )
 	private Map<Predicate, TreeMap<Predicate, LinkedList<IDCondition>>> conditions;
+
+
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -46,6 +52,7 @@ public class IDCompilation extends AbstractRulesCompilation {
 	@Override
 	public Iterable<Rule> getSaturation() {
 		LinkedListRuleSet saturation = new LinkedListRuleSet();
+		Map<Predicate, TreeMap<List<Integer>, InMemoryAtomSet>> newMap = new TreeMap<Predicate, TreeMap<List<Integer>, InMemoryAtomSet>>();
 		// p -> q
 		Predicate p, q;
 		for (Map.Entry<Predicate, TreeMap<Predicate, LinkedList<IDCondition>>> e : this.conditions
@@ -54,9 +61,35 @@ public class IDCompilation extends AbstractRulesCompilation {
 			for (Map.Entry<Predicate, LinkedList<IDCondition>> map : e
 					.getValue().entrySet()) {
 				p = map.getKey();
-				for (IDCondition conditionPQ : map.getValue()) {
-					saturation.add(conditionPQ.generateRule(p, q));
+				TreeMap<List<Integer>, InMemoryAtomSet> head = newMap
+						.get(p);
+				if (head == null) {
+					head = new TreeMap<List<Integer>, InMemoryAtomSet>(
+							new ListComparator<Integer>());
+					newMap.put(p, head);
 				}
+				for (IDCondition conditionPQ : map.getValue()) {
+					InMemoryAtomSet atomSet = head.get(conditionPQ.getBody());
+					if (atomSet == null) {
+						atomSet = new LinkedListAtomSet();
+						head.put(conditionPQ.getBody(), atomSet);
+					}
+					atomSet.add(new DefaultAtom(q, conditionPQ.generateHead()));
+				}
+			}
+		}
+		
+		for(Map.Entry<Predicate, TreeMap<List<Integer>, InMemoryAtomSet>> e1 : newMap.entrySet()) {
+			p = e1.getKey();
+			for (Map.Entry<List<Integer>, InMemoryAtomSet> e2 : e1.getValue()
+					.entrySet()) {
+				List<Term> terms = new LinkedList<Term>();
+				for (Integer i : e2.getKey()) {
+					terms.add(new Term("X" + i, Term.Type.VARIABLE));
+				}
+				InMemoryAtomSet body = new LinkedListAtomSet();
+				body.add(new DefaultAtom(p, terms));
+				saturation.add(new DefaultRule(body, e2.getValue()));
 			}
 		}
 		return saturation;
@@ -84,6 +117,7 @@ public class IDCompilation extends AbstractRulesCompilation {
 		}
 
 		this.extractCompilable(ruleSet); // compilable rules are removed
+		saturation = RuleUtils.computeMonoPiece(saturation);
 		this.createIDCondition(saturation);
 
 		if (this.getProfiler() != null) {
@@ -302,46 +336,18 @@ public class IDCompilation extends AbstractRulesCompilation {
 					IDCondition conditionRQ = conditionRP
 							.composeWith(conditionPQ);
 					if (conditionRQ != null) {
-						if(r.equals(q)) {
-							// filter trivial implication - p(x,y,z) -> p(x,y,z)
-							Rule rule = conditionRQ.generateRule(r, q);
-							List<Term> a = rule.getBody().iterator().next()
-									.getTerms();
-							List<Term> b = rule.getHead().iterator().next()
-									.getTerms();
-							if (!a.equals(b)) {
-								if (addCondition(r, q, conditionRQ,
-										this.conditions)) {
-									this.computeSaturation(conditionsTmp, r, q,
-											conditionRQ);
-								}
-							}
-						} else if (addCondition(r, q, conditionRQ,
+						// filter trivial implication - p(x,y,z) -> p(x,y,z)
+						if (!(r.equals(q) && conditionRQ.isIdentity())) {
+							if (addCondition(r, q, conditionRQ,
 								this.conditions)) {
-							this.computeSaturation(conditionsTmp, r, q,
+								this.computeSaturation(conditionsTmp, r, q,
 									conditionRQ);
+							}
 						}
 					}
 				}
 			}
 		}
-	}
-
-	private Collection<Rule> compactSaturation(Iterator<Rule> rules) {
-		TreeMap<Atom, Rule> map = new TreeMap<Atom, Rule>();
-		Rule rule, tmp;
-		Atom atomicBody;
-		while (rules.hasNext()) {
-			rule = rules.next();
-			atomicBody = rule.getBody().iterator().next();
-			tmp = map.get(atomicBody);
-			if (tmp == null) {
-				map.put(atomicBody, rule);
-			} else {
-				tmp.getHead().addAll(rule.getHead());
-			}
-		}
-		return map.values();
 	}
 
 	private static boolean addCondition(

@@ -11,7 +11,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import fr.lirmm.graphik.graal.backward_chaining.pure.utils.IDCondition;
-import fr.lirmm.graphik.graal.backward_chaining.pure.utils.IDConditionImpl3;
+import fr.lirmm.graphik.graal.backward_chaining.pure.utils.IDConditionImpl;
 import fr.lirmm.graphik.graal.backward_chaining.pure.utils.TermPartition;
 import fr.lirmm.graphik.graal.core.Term;
 
@@ -22,7 +22,7 @@ import fr.lirmm.graphik.graal.core.Term;
 public class IDConditionTest {
 
 	private static IDCondition createCondition(Term[] body, Term[] head) {
-		return new IDConditionImpl3(Arrays.asList(body),
+		return new IDConditionImpl(Arrays.asList(body),
 				Arrays.asList(head));
 	}
 

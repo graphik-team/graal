@@ -15,6 +15,7 @@ import fr.lirmm.graphik.graal.core.Term;
  */
 public interface IDCondition {
 
+	List<Integer> getBody();
 	/**
 	 * @param body
 	 * @param head
@@ -44,6 +45,14 @@ public interface IDCondition {
 	List<Term> generateBody(List<Term> head);
 
 	/**
+	 * Generate head
+	 * 
+	 * @param body
+	 * @return
+	 */
+	List<Term> generateHead();
+
+	/**
 	 * Generate the needed unification between the head and the body.
 	 * 
 	 * @param body
@@ -67,5 +76,10 @@ public interface IDCondition {
 	 * @param q
 	 */
 	Rule generateRule(Predicate bodyPredicate, Predicate headPredicate);
+
+	/**
+	 * @return
+	 */
+	boolean isIdentity();
 
 }
