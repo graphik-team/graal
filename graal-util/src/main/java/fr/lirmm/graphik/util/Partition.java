@@ -40,7 +40,7 @@ public class Partition<E> implements Iterable<ArrayList<E>> {
 				return classs.get(0);
 			}
 		}
-		return null;
+		return e;
 	}
 
 	public ArrayList<E> getClass(E e) {
@@ -151,6 +151,43 @@ public class Partition<E> implements Iterable<ArrayList<E>> {
 	@Override
 	public String toString() {
 		return partition.toString();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null || !(obj instanceof Partition)) {
+			return false;
+		}
+		return this.equals((Partition<E>) obj);
+	}
+
+	public boolean equals(Partition<E> other) {
+		for (ArrayList<E> list : this) {
+			for(E e1 : list) {
+				for(E e2 : list) {
+					ArrayList<E> l1 = other.getClass(e1);
+					ArrayList<E> l2 = other.getClass(e2);
+					if (l1 != l2 || l1 == null) {
+						return false;
+					}
+				}
+			}
+		}
+		for (ArrayList<E> list : other) {
+			for (E e1 : list) {
+				for (E e2 : list) {
+					ArrayList<E> l1 = this.getClass(e1);
+					ArrayList<E> l2 = this.getClass(e2);
+					if (l1 != l2 || l1 == null) {
+						return false;
+					}
+				}
+			}
+		}
+		return true;
 	}
 
 }
