@@ -6,7 +6,6 @@ package fr.lirmm.graphik.graal.apps;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -105,7 +104,8 @@ final class Util {
 		}
 	}
 
-	static RulesCompilation loadCompilation(File file) throws PureException,
+	static RulesCompilation loadCompilation(File file, Iterator<Rule> rules)
+			throws PureException,
 			FileNotFoundException {
 		Scanner scanner = new Scanner(file);
 		String compilationType = "";
@@ -126,14 +126,15 @@ final class Util {
 			throw new PureException("compilation type inference failed");
 		}
 
-		loadCompilation(compilation, file);
+		loadCompilation(compilation, file, rules);
 
 		return compilation;
 	}
 
-	static void loadCompilation(RulesCompilation compilation, File file)
+	static void loadCompilation(RulesCompilation compilation, File file,
+			Iterator<Rule> rules)
 			throws FileNotFoundException {
-		compilation.load(Collections.<Rule> emptyList().iterator(),
+		compilation.load(rules,
 				new FilterIterator<Object, Rule>(new Dlgp1Parser(file),
 						new RulesFilter()));
 	}

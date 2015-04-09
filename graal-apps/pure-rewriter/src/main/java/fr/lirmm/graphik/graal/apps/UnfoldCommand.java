@@ -4,6 +4,7 @@
 package fr.lirmm.graphik.graal.apps;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 
 import com.beust.jcommander.JCommander;
@@ -12,6 +13,7 @@ import com.beust.jcommander.Parameters;
 
 import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.io.ConjunctiveQueryWriter;
 
 /**
@@ -54,7 +56,8 @@ public class UnfoldCommand extends PureCommand {
 		}
 
 		RulesCompilation compilation = Util.loadCompilation(new File(
-				this.compilationFile));
+				this.compilationFile), Collections.<Rule> emptyList()
+				.iterator());
 
 		if (this.isVerbose()) {
 			compilation.setProfiler(this.getProfiler());

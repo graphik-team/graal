@@ -85,7 +85,8 @@ class RewriteCommand extends PureCommand {
 		RulesCompilation compilation = null;
 		File compilationFile = new File(this.compilationString);
 		if (compilationFile.exists()) {
-			compilation = Util.loadCompilation(compilationFile);
+			compilation = Util.loadCompilation(compilationFile,
+					rules.iterator());
 			compilation.setProfiler(this.getProfiler());
 		} else {
 			compilation = Util.selectCompilationType(this.compilationString);
