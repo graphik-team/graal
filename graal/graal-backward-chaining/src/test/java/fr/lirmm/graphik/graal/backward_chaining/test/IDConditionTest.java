@@ -3,13 +3,14 @@
  */
 package fr.lirmm.graphik.graal.backward_chaining.test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
 
+import fr.lirmm.graphik.graal.backward_chaining.pure.utils.IDCondition;
 import fr.lirmm.graphik.graal.backward_chaining.pure.utils.IDConditionImpl;
 import fr.lirmm.graphik.graal.backward_chaining.pure.utils.TermPartition;
 import fr.lirmm.graphik.graal.core.Term;
@@ -20,24 +21,29 @@ import fr.lirmm.graphik.graal.core.Term;
  */
 public class IDConditionTest {
 
+	private static IDCondition createCondition(Term[] body, Term[] head) {
+		return new IDConditionImpl(Arrays.asList(body),
+				Arrays.asList(head));
+	}
+
 	/**
 	 * c(X) :- b(X,Y,Y).
 	 *
 	 * getBody([X]) => b(X, Y, Y).
 	 */
 	@Test
-	public void getBody1() {
+	public void getBodyTest1() {
 		Term x = new Term("X", Term.Type.VARIABLE);
 		Term y = new Term("Y", Term.Type.VARIABLE);
 
 		Term[] body = { x, y, y };
 		Term[] head = { x };
+
+		IDCondition cond = createCondition(body, head);
+
 		List<Term> headList = Arrays.asList(head);
-
-		IDConditionImpl cond = new IDConditionImpl(Arrays.asList(body),
-				Arrays.asList(head));
-
 		List<Term> newBody = cond.generateBody(headList);
+
 		Assert.assertTrue(newBody.get(1).equals(newBody.get(2)));
 	}
 
@@ -47,16 +53,15 @@ public class IDConditionTest {
 	 * getBody([X]) => b(X, X).
 	 */
 	@Test
-	public void getBody2() {
+	public void getBodyTest2() {
 		Term x = new Term("X", Term.Type.VARIABLE);
 
 		Term[] body = { x, x };
 		Term[] head = { x };
+
+		IDCondition cond = createCondition(body, head);
+
 		List<Term> headList = Arrays.asList(head);
-
-		IDConditionImpl cond = new IDConditionImpl(Arrays.asList(body),
-				Arrays.asList(head));
-
 		List<Term> newBody = cond.generateBody(headList);
 		Assert.assertTrue(newBody.get(0).equals(newBody.get(1)));
 	}
@@ -67,7 +72,7 @@ public class IDConditionTest {
 	 * getBody([X]) => b(X, X).
 	 */
 	@Test
-	public void getUnification() {
+	public void getUnificationTest() {
 		Term x = new Term("X", Term.Type.VARIABLE);
 		Term y = new Term("Y", Term.Type.VARIABLE);
 
@@ -82,8 +87,7 @@ public class IDConditionTest {
 		Term[] head = { x };
 		Term[] newHead = { a };
 
-		IDConditionImpl cond = new IDConditionImpl(Arrays.asList(body),
-				Arrays.asList(head));
+		IDCondition cond = createCondition(body, head);
 
 		List<Term> newHeadList = Arrays.asList(newHead);
 		List<Term> newBodyList = Arrays.asList(newBody);
@@ -92,7 +96,7 @@ public class IDConditionTest {
 				newHeadList);
 		System.out.println(partition);
 		boolean isFound = false;
-		for (ArrayList<Term> cl : partition) {
+		for (Collection<Term> cl : partition) {
 			if (cl.contains(a) && cl.contains(b) && cl.contains(d)) {
 				isFound = true;
 			}
@@ -100,5 +104,57 @@ public class IDConditionTest {
 
 		Assert.assertTrue("Good partition not found", isFound);
 	}
+
+	/**
+	 * Given [(x,y,x) -> (y,x) composeWith (x,y) -> (y)]
+	 * then return [(x,y,x) -> (y)]
+	 */
+	@Test
+	public void composeWithTest1() {
+		Term x = new Term("X", Term.Type.VARIABLE);
+		Term y = new Term("Y", Term.Type.VARIABLE);
+
+		Term[] body1 = { x, y, x };
+		Term[] head1 = { y, x };
+		IDCondition cond = createCondition(body1, head1);
+		
+		Term[] body2 = { x, y };
+		Term[] head2 = { x };
+		IDCondition cond2 = createCondition(body2, head2);
+		
+		Term[] bodyRes = { x, y, x };
+		Term[] headRes = { y };
+		IDCondition expected = createCondition(bodyRes, headRes);
+		
+		IDCondition computed = cond.composeWith(cond2);
+		Assert.assertEquals(expected, computed);
+	}
+
+	/**
+	 * Given [(x,y,x) -> (y,x) composeWith (x,x) -> (x)] 
+	 * then return [(x,x,x) -> (x)]
+	 */
+	@Test
+	public void composeWithTest2() {
+		Term x = new Term("X", Term.Type.VARIABLE);
+		Term y = new Term("Y", Term.Type.VARIABLE);
+
+		Term[] body1 = { x, y, x };
+		Term[] head1 = { y, x };
+		IDCondition cond = createCondition(body1, head1);
+
+		Term[] body2 = { x, x };
+		Term[] head2 = { x };
+		IDCondition cond2 = createCondition(body2, head2);
+
+		Term[] bodyRes = { x, x, x };
+		Term[] headRes = { x };
+		IDCondition expected = createCondition(bodyRes, headRes);
+
+		IDCondition computed = cond.composeWith(cond2);
+		Assert.assertEquals(expected, computed);
+
+	}
+
 
 }

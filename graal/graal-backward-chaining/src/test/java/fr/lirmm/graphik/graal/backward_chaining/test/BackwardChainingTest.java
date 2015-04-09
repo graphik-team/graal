@@ -40,12 +40,55 @@ public class BackwardChainingTest {
 
 	@DataPoints
 	public static RulesCompilation[] compilations() {
-		return new RulesCompilation[] {new NoCompilation(), new HierarchicalCompilation(), new IDCompilation()};
+		return new RulesCompilation[] { new NoCompilation(),
+				new HierarchicalCompilation(), new IDCompilation() };
 	}
 	
 	@DataPoints
 	public static RewritingOperator[] operators() {
-		return new RewritingOperator[] {new AggregAllRulesOperator(), new AggregSingleRuleOperator(), new BasicAggregAllRulesOperator()};
+		return new RewritingOperator[] { new AggregAllRulesOperator(),
+				new AggregSingleRuleOperator(),
+				new BasicAggregAllRulesOperator() };
+	}
+	
+	/**
+	 * Test 1
+	 */
+	@Theory
+	public void Test1(RulesCompilation compilation, RewritingOperator operator) {
+		RuleSet rules = new LinkedListRuleSet();
+		rules.add(DlgpParser.parseRule("q(X1,X2), ppp(X2) :- r(X1)."));
+		rules.add(DlgpParser.parseRule("pp(X) :- ppp(X)."));
+		rules.add(DlgpParser.parseRule("p(X) :- pp(X)."));
+
+		ConjunctiveQuery query = DlgpParser
+				.parseQuery("?(X) :- q(X, Y), p(Y).");
+
+		compilation.compile(rules.iterator());
+		PureRewriter bc = new PureRewriter(query, rules, compilation, operator);
+		bc.enableUnfolding(true);
+		
+		int i = Iterators.count(bc);
+		Assert.assertEquals(4, i);
+	}
+	
+	/**
+	 * Test 2
+	 */
+	@Theory
+	public void Test2(RulesCompilation compilation, RewritingOperator operator) {
+		RuleSet rules = new LinkedListRuleSet();
+		rules.add(DlgpParser.parseRule("p(X,Y) :- q(X,Y)."));
+		rules.add(DlgpParser.parseRule("q(X,Y) :- p(Y,X)."));
+
+		ConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y) :- p(X,Y).");
+
+		compilation.compile(rules.iterator());
+		PureRewriter bc = new PureRewriter(query, rules, compilation, operator);
+		bc.enableUnfolding(true);
+
+		int i = Iterators.count(bc);
+		Assert.assertEquals(4, i);
 	}
 
 	/**
