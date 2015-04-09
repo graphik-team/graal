@@ -1,6 +1,7 @@
 package fr.lirmm.graphik.graal.backward_chaining.pure.utils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -10,6 +11,7 @@ import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
+import fr.lirmm.graphik.util.Partition;
 
 public class TermPartition extends Partition<Term> {
 
@@ -23,7 +25,7 @@ public class TermPartition extends Partition<Term> {
 	public LinkedList<Term> getStickyVariable(LinkedList<Term> sep, Rule rule) {
 		// TODO faire mieux niveau optimisation
 		LinkedList<Term> res = new LinkedList<Term>();
-		for (ArrayList<Term> c : partition) {
+		for (Collection<Term> c : partition) {
 			for (Term t : c)
 				if (rule.getExistentials().contains(t))
 					for (Term x : c)
@@ -45,7 +47,7 @@ public class TermPartition extends Partition<Term> {
 				.createSubstitution();
 		// we will choose a representant for all the equivalence set of the
 		// partition
-		for (ArrayList<Term> set : partition) {
+		for (Collection<Term> set : partition) {
 
 			Iterator<Term> i = set.iterator();
 			Term representant = i.next();
@@ -96,7 +98,7 @@ public class TermPartition extends Partition<Term> {
 		Term cst = null;
 		Term exist = null;
 		Term fr = null;
-		for (ArrayList<Term> cl : partition) {
+		for (Collection<Term> cl : partition) {
 			cst = null;
 			exist = null;
 			fr = null;

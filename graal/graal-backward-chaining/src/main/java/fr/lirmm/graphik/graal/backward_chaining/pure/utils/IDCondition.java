@@ -5,6 +5,8 @@ package fr.lirmm.graphik.graal.backward_chaining.pure.utils;
 
 import java.util.List;
 
+import fr.lirmm.graphik.graal.core.Predicate;
+import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Term;
 
 /**
@@ -49,5 +51,21 @@ public interface IDCondition {
 	 * @return a partition that represents the unification.
 	 */
 	TermPartition generateUnification(List<Term> body, List<Term> head);
+
+	/**
+	 * Compose the current IDCondition with another IDCondition. (x,y,x) ->
+	 * (x,y) with (x,x) -> (x) produce (x,x,x) -> (x) (x,y,x) -> (y,x) with
+	 * (x,y) -> (y) produce (x,y,x) -> (y)
+	 * 
+	 * @param condition2
+	 * @return a new IDCondition representing the composition.
+	 */
+	IDCondition composeWith(IDCondition condition2);
+
+	/**
+	 * @param p
+	 * @param q
+	 */
+	Rule generateRule(Predicate bodyPredicate, Predicate headPredicate);
 
 }

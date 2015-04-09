@@ -12,18 +12,15 @@ import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.backward_chaining.pure.utils.IDCondition;
 import fr.lirmm.graphik.graal.backward_chaining.pure.utils.IDConditionImpl;
-import fr.lirmm.graphik.graal.backward_chaining.pure.utils.Misc;
 import fr.lirmm.graphik.graal.backward_chaining.pure.utils.TermPartition;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultFreeVarGen;
-import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.RuleUtils;
 import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.core.ruleset.IndexedByBodyPredicatesRuleSet;
+import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 
 public class IDCompilation extends AbstractRulesCompilation {
 
@@ -32,8 +29,6 @@ public class IDCompilation extends AbstractRulesCompilation {
 
 	// a matrix for store conditions ( p -> q : [q][p] )
 	private Map<Predicate, TreeMap<Predicate, LinkedList<IDCondition>>> conditions;
-
-	private Collection<Rule> saturation;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -45,27 +40,38 @@ public class IDCompilation extends AbstractRulesCompilation {
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
-	// GETTERS / SETTERS
-	// /////////////////////////////////////////////////////////////////////////
-
-	@Override
-	public Iterable<Rule> getSaturation() {
-		return this.saturation;
-	}
-
-	// /////////////////////////////////////////////////////////////////////////
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
+	public Iterable<Rule> getSaturation() {
+		LinkedListRuleSet saturation = new LinkedListRuleSet();
+		// p -> q
+		Predicate p, q;
+		for (Map.Entry<Predicate, TreeMap<Predicate, LinkedList<IDCondition>>> e : this.conditions
+				.entrySet()) {
+			q = e.getKey();
+			for (Map.Entry<Predicate, LinkedList<IDCondition>> map : e
+					.getValue().entrySet()) {
+				p = map.getKey();
+				for (IDCondition conditionPQ : map.getValue()) {
+					saturation.add(conditionPQ.generateRule(p, q));
+				}
+			}
+		}
+		return saturation;
+	}
+
+	@Override
 	public void compile(Iterator<Rule> ruleset) {
-		this.saturation = this.extractCompilable(ruleset);
+		LinkedList<Rule> compilable = this.extractCompilable(ruleset);
 		if (this.getProfiler() != null) {
 			this.getProfiler().start("Compilation total time");
 		}
-		
+
+		this.createIDCondition(compilable.iterator());
 		this.computeSaturation();
-		this.createIDCondition();
+
 		if (this.getProfiler() != null) {
 			this.getProfiler().stop("Compilation total time");
 		}
@@ -73,12 +79,16 @@ public class IDCompilation extends AbstractRulesCompilation {
 
 	@Override
 	public void load(Iterator<Rule> ruleSet, Iterator<Rule> saturation) {
-		this.extractCompilable(ruleSet); // compilable rules are removed
-		this.saturation = new LinkedList<Rule>();
-		while (saturation.hasNext()) {
-			this.saturation.add(saturation.next());
+		if (this.getProfiler() != null) {
+			this.getProfiler().start("Compilation load time");
 		}
-		this.createIDCondition();
+
+		this.extractCompilable(ruleSet); // compilable rules are removed
+		this.createIDCondition(saturation);
+
+		if (this.getProfiler() != null) {
+			this.getProfiler().stop("Compilation load time");
+		}
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -95,7 +105,7 @@ public class IDCompilation extends AbstractRulesCompilation {
 			}
 			res.add(new IDConditionImpl(terms, terms));
 		} else {
-			Map<Predicate, LinkedList<IDCondition>> condH = conditions
+			Map<Predicate, LinkedList<IDCondition>> condH = this.conditions
 					.get(predH);
 
 			if (condH != null) {
@@ -180,7 +190,8 @@ public class IDCompilation extends AbstractRulesCompilation {
 	@Override
 	public Collection<Predicate> getUnifiablePredicate(Predicate p) {
 		Collection<Predicate> res = new LinkedList<Predicate>();
-		Map<Predicate, LinkedList<IDCondition>> condH = conditions.get(p);
+		Map<Predicate, LinkedList<IDCondition>> condH = this.conditions
+				.get(p);
 		res.add(p);
 		if (condH != null)
 			res.addAll(condH.keySet());
@@ -220,95 +231,100 @@ public class IDCompilation extends AbstractRulesCompilation {
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	private void createIDCondition() {
+	private void createIDCondition(Iterator<Rule> compilable) {
 		if (this.getProfiler() != null) {
-			this.getProfiler().start("Compilation create DCondition2 time");
+			this.getProfiler().start("Compilation create IDCondition time");
 		}
 		Atom b;
 		Atom h;
-		for (Rule ru : this.saturation) {
-			h = ru.getHead().iterator().next();
+		while (compilable.hasNext()) {
+			Rule ru = compilable.next();
 			b = ru.getBody().iterator().next();
-			this.addCondition(b.getPredicate(), h.getPredicate(), b.getTerms(),
-					h.getTerms());
+			h = ru.getHead().iterator().next();
+			IDCondition cond = new IDConditionImpl(b.getTerms(), h.getTerms());
+			addCondition(b.getPredicate(), h.getPredicate(), cond,
+					this.conditions);
+
 		}
 		if (this.getProfiler() != null) {
-			this.getProfiler().stop("Compilation create DCondition2 time");
+			this.getProfiler().stop("Compilation create IDCondition time");
 		}
+	}
+
+	private static TreeMap<Predicate, TreeMap<Predicate, LinkedList<IDCondition>>> deepCopyMapMapList(
+			Map<Predicate, TreeMap<Predicate, LinkedList<IDCondition>>> map) {
+		TreeMap<Predicate, TreeMap<Predicate, LinkedList<IDCondition>>> tmp = new TreeMap<Predicate, TreeMap<Predicate, LinkedList<IDCondition>>>();
+		for (Map.Entry<Predicate, TreeMap<Predicate, LinkedList<IDCondition>>> e : map
+				.entrySet()) {
+			tmp.put(e.getKey(), deepCopyMapList(e.getValue()));
+		}
+		return tmp;
+	}
+
+	private static TreeMap<Predicate, LinkedList<IDCondition>> deepCopyMapList(
+			Map<Predicate, LinkedList<IDCondition>> map) {
+		TreeMap<Predicate, LinkedList<IDCondition>> tmp = new TreeMap<Predicate, LinkedList<IDCondition>>();
+		for (Map.Entry<Predicate, LinkedList<IDCondition>> e : map.entrySet()) {
+			tmp.put(e.getKey(), new LinkedList<IDCondition>(e.getValue()));
+		}
+		return tmp;
 	}
 
 	private void computeSaturation() {
-		// FIXME pb à résoudre avec unification trop importante
-
-		if (this.getProfiler() != null) {
-			this.getProfiler().start("Compilation saturation time");
+		// deep copy of conditions
+		Map<Predicate, TreeMap<Predicate, LinkedList<IDCondition>>> conditionsTmp = deepCopyMapMapList(this.conditions);
+		// p -> q
+		Predicate p, q;
+		for (Map.Entry<Predicate, TreeMap<Predicate, LinkedList<IDCondition>>> e : conditionsTmp
+				.entrySet()) {
+			q = e.getKey();
+			for (Map.Entry<Predicate, LinkedList<IDCondition>> map : e
+					.getValue().entrySet()) {
+				p = map.getKey();
+				for (IDCondition conditionPQ : map.getValue()) {
+					computeSaturation(conditionsTmp, p, q, conditionPQ);
+				}
+			}
 		}
-		IndexedByBodyPredicatesRuleSet rules = new IndexedByBodyPredicatesRuleSet();
-		for (Rule r : saturation) {
-			rules.add(Misc.getSafeCopy(r));
-		}
-
-		Collection<Rule> lastCompute = new LinkedList<Rule>();
-		lastCompute.addAll(saturation);
-
-		while (!lastCompute.isEmpty()) {
-			lastCompute = computeSaturationPart(lastCompute, rules);
-			saturation.addAll(lastCompute);
-		}
-
-		//this.saturation = this.compactSaturation(this.saturation.iterator());
-		if (this.getProfiler() != null) {
-			this.getProfiler().stop("Compilation saturation time");
-		}
-
 	}
 
-	private Collection<Rule> computeSaturationPart(Iterable<Rule> lastCompute,
-			IndexedByBodyPredicatesRuleSet rules) {
-		Atom head1, body2;
-		TermPartition part;
-		AtomSet impliedHead, impliedBody;
-		Rule impliedRule;
-
-		LinkedList<Rule> tmp = new LinkedList<Rule>();
-
-		for (Rule r1 : lastCompute) {
-			head1 = r1.getHead().iterator().next();
-			for (Rule r2 : rules.getRulesByBodyPredicate(head1.getPredicate())) {
-				body2 = r2.getBody().iterator().next();
-				if (head1.getPredicate().equals(body2.getPredicate())) {
-					part = TermPartition.getPartitionByPosition(head1, body2);
-					impliedBody = part.getAssociatedSubstitution(null)
-							.getSubstitut(r1.getBody());
-					impliedHead = part.getAssociatedSubstitution(null)
-							.getSubstitut(r2.getHead());
-					if (!impliedHead.equals(impliedBody)) {
-						impliedRule = new DefaultRule(impliedBody, impliedHead);
-						if (mustBeKeeped(impliedRule)) {
-							tmp.add(impliedRule);
+	private void computeSaturation(
+			Map<Predicate, TreeMap<Predicate, LinkedList<IDCondition>>> conditionsTmp,
+			Predicate p, Predicate q,
+			IDCondition conditionPQ) {
+		TreeMap<Predicate, LinkedList<IDCondition>> map = conditionsTmp
+				.get(p);
+		if (map != null) {
+			for (Map.Entry<Predicate, LinkedList<IDCondition>> e : map
+					.entrySet()) {
+				Predicate r = e.getKey();
+				for (IDCondition conditionRP : e.getValue()) {
+					IDCondition conditionRQ = conditionRP
+							.composeWith(conditionPQ);
+					if (conditionRQ != null) {
+						if(r.equals(q)) {
+							// filter trivial implication - p(x,y,z) -> p(x,y,z)
+							Rule rule = conditionRQ.generateRule(r, q);
+							List<Term> a = rule.getBody().iterator().next()
+									.getTerms();
+							List<Term> b = rule.getHead().iterator().next()
+									.getTerms();
+							if (!a.equals(b)) {
+								if (addCondition(r, q, conditionRQ,
+										this.conditions)) {
+									this.computeSaturation(conditionsTmp, r, q,
+											conditionRQ);
+								}
+							}
+						} else if (addCondition(r, q, conditionRQ,
+								this.conditions)) {
+							this.computeSaturation(conditionsTmp, r, q,
+									conditionRQ);
 						}
 					}
 				}
 			}
 		}
-
-		return tmp;
-	}
-
-	/**
-	 * return true if saturation does not already contain a rule that implied
-	 * the given one
-	 */
-	private boolean mustBeKeeped(Rule rule) {
-		Iterator<Rule> it = saturation.iterator();
-		Rule o;
-		boolean isImplied = false;
-		while (!isImplied && it.hasNext()) {
-			o = it.next();
-			if (Misc.imply(o, rule))
-				isImplied = true;
-		}
-		return !isImplied;
 	}
 
 	private Collection<Rule> compactSaturation(Iterator<Rule> rules) {
@@ -328,26 +344,32 @@ public class IDCompilation extends AbstractRulesCompilation {
 		return map.values();
 	}
 
-	private void addCondition(Predicate predB, Predicate predH, List<Term> b,
-			List<Term> h) {
-
-		Map<Predicate, LinkedList<IDCondition>> condH = this.conditions
-				.get(predH);
+	private static boolean addCondition(
+			Predicate predBody,
+			Predicate predHead,
+			IDCondition cond,
+			Map<Predicate, TreeMap<Predicate, LinkedList<IDCondition>>> conditionMatrix) {
 		LinkedList<IDCondition> conds;
-		if (condH != null) {
-			conds = condH.get(predB);
-			if (conds == null) {
-				condH.put(predB, new LinkedList<IDCondition>());
-				conds = condH.get(predB);
-			}
-		} else {
-			conditions.put(predH,
-					new TreeMap<Predicate, LinkedList<IDCondition>>());
-			condH = conditions.get(predH);
-			condH.put(predB, new LinkedList<IDCondition>());
-			conds = condH.get(predB);
+		TreeMap<Predicate, LinkedList<IDCondition>> condH = conditionMatrix
+				.get(predHead);
+		
+		if (condH == null) {
+			condH = new TreeMap<Predicate, LinkedList<IDCondition>>();
+			conditionMatrix.put(predHead, condH);
 		}
-		conds.add(new IDConditionImpl(b, h));
+
+		conds = condH.get(predBody);
+		if (conds == null) {
+			conds = new LinkedList<IDCondition>();
+			condH.put(predBody, conds);
+		}
+
+		if (!conds.contains(cond)) {
+			conds.add(cond);
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -362,8 +384,11 @@ public class IDCompilation extends AbstractRulesCompilation {
 	}
 
 	public void appendTo(StringBuilder sb) {
-		for (Rule r : this.saturation) {
+		for (Rule r : this.getSaturation()) {
 			r.appendTo(sb);
+			sb.append('\n');
 		}
 	}
+
+
 }
