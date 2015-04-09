@@ -251,23 +251,23 @@ public class HierarchicalCompilation extends AbstractRulesCompilation {
 	}
 	
 	private void computeIndex(Iterable<Rule> ruleset) {
-		int nbPred = 0;
 		
+
 		for (Rule rule : ruleset) {
 			// count the number of new pred in r
 			Iterator<Predicate> it = rule.getBody().predicatesIterator();
 			while (it.hasNext()) {
-				if (this.addPredicate(it.next()))
-					nbPred++;
+				this.addPredicate(it.next());
 			}
 
 			it = rule.getHead().predicatesIterator();
 			while (it.hasNext()) {
-				if (this.addPredicate(it.next()))
-					nbPred++;
+				this.addPredicate(it.next());
 			}
 		}
 		
+		int nbPred = this.indexPredicate.size();
+
 		Atom father, son;
 		this.order = new byte[nbPred][nbPred];
 		for (Rule ru : ruleset) {
