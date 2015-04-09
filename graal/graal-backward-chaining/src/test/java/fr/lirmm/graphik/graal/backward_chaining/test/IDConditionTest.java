@@ -11,7 +11,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import fr.lirmm.graphik.graal.backward_chaining.pure.utils.IDCondition;
-import fr.lirmm.graphik.graal.backward_chaining.pure.utils.IDConditionImpl;
+import fr.lirmm.graphik.graal.backward_chaining.pure.utils.IDConditionImpl3;
 import fr.lirmm.graphik.graal.backward_chaining.pure.utils.TermPartition;
 import fr.lirmm.graphik.graal.core.Term;
 
@@ -22,7 +22,7 @@ import fr.lirmm.graphik.graal.core.Term;
 public class IDConditionTest {
 
 	private static IDCondition createCondition(Term[] body, Term[] head) {
-		return new IDConditionImpl(Arrays.asList(body),
+		return new IDConditionImpl3(Arrays.asList(body),
 				Arrays.asList(head));
 	}
 
@@ -156,5 +156,103 @@ public class IDConditionTest {
 
 	}
 
+	/**
+	 * Given [(x,y) -> (y,x,x) composeWith (x,x,y) -> (x,y)] 
+	 * then return [(x,x) -> (x,x)]
+	 */
+	@Test
+	public void composeWithTest3() {
+		Term x = new Term("X", Term.Type.VARIABLE);
+		Term y = new Term("Y", Term.Type.VARIABLE);
+
+		Term[] body1 = { x, y };
+		Term[] head1 = { y, x, x };
+		IDCondition cond = createCondition(body1, head1);
+
+		Term[] body2 = { x, x, y };
+		Term[] head2 = { x, y };
+		IDCondition cond2 = createCondition(body2, head2);
+
+		Term[] bodyRes = { x, x };
+		Term[] headRes = { x, x };
+		IDCondition expected = createCondition(bodyRes, headRes);
+
+		IDCondition computed = cond.composeWith(cond2);
+		Assert.assertEquals(expected, computed);
+
+	}
+
+	/**
+	 * Given [(x,y) -> (y,x) composeWith (x,y) -> (x,y)] 
+	 * then return [(x,y) -> (y,x)]
+	 */
+	@Test
+	public void composeWithTest4() {
+		Term x = new Term("X", Term.Type.VARIABLE);
+		Term y = new Term("Y", Term.Type.VARIABLE);
+
+		Term[] body1 = { x, y };
+		Term[] head1 = { y, x };
+		IDCondition cond = createCondition(body1, head1);
+
+		Term[] body2 = { x, y };
+		Term[] head2 = { x, y };
+		IDCondition cond2 = createCondition(body2, head2);
+
+		Term[] bodyRes = { x, y };
+		Term[] headRes = { y, x };
+		IDCondition expected = createCondition(bodyRes, headRes);
+
+		IDCondition computed = cond.composeWith(cond2);
+		Assert.assertEquals(expected, computed);
+
+	}
+	
+	/**
+	 * Given [(x,y) -> (y,x) composeWith (x,y) -> (y,x)] 
+	 * then return [(x,y) -> (x,y)]
+	 */
+	@Test
+	public void composeWithTest5() {
+		Term x = new Term("X", Term.Type.VARIABLE);
+		Term y = new Term("Y", Term.Type.VARIABLE);
+
+		Term[] body1 = { x, y };
+		Term[] head1 = { y, x };
+		IDCondition cond = createCondition(body1, head1);
+
+		Term[] bodyRes = { x, y };
+		Term[] headRes = { x, y };
+		IDCondition expected = createCondition(bodyRes, headRes);
+
+		IDCondition computed = cond.composeWith(cond);
+		Assert.assertEquals(expected, computed);
+
+	}
+
+	/**
+	 * Given [(x,y) -> (y) composeWith (x) -> (x)] then return [(x,y) -> (y)]
+	 */
+	@Test
+	public void composeWithTest6() {
+		Term x = new Term("X", Term.Type.VARIABLE);
+		Term y = new Term("Y", Term.Type.VARIABLE);
+
+		Term[] body1 = { x, y };
+		Term[] head1 = { y };
+		IDCondition cond = createCondition(body1, head1);
+
+		Term[] body2 = { x };
+		Term[] head2 = { x };
+		IDCondition cond2 = createCondition(body2, head2);
+
+		Term[] bodyRes = { x, y };
+		Term[] headRes = { y };
+		IDCondition expected = createCondition(bodyRes, headRes);
+
+		IDCondition computed = cond.composeWith(cond2);
+		Assert.assertEquals(expected, computed);
+
+	}
 
 }
