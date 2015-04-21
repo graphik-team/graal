@@ -164,7 +164,7 @@ public class Partition<E> implements Iterable<ArrayList<E>> {
 		return this.equals((Partition<E>) obj);
 	}
 
-	public boolean equals(Partition<E> other) {
+	public boolean equals(Partition<E> other) { // NOPMD
 		for (ArrayList<E> list : this) {
 			for(E e1 : list) {
 				for(E e2 : list) {

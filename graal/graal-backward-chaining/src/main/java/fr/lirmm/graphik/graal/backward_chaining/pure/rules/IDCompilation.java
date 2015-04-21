@@ -117,8 +117,9 @@ public class IDCompilation extends AbstractRulesCompilation {
 		}
 
 		this.extractCompilable(ruleSet); // compilable rules are removed
-		saturation = RuleUtils.computeMonoPiece(saturation);
-		this.createIDCondition(saturation);
+		Iterator<Rule> monoPiecesaturation = RuleUtils
+				.computeMonoPiece(saturation);
+		this.createIDCondition(monoPiecesaturation);
 
 		if (this.getProfiler() != null) {
 			this.getProfiler().stop("Compilation load time");
