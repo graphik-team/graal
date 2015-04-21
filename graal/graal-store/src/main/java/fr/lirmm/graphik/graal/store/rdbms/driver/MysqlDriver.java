@@ -21,8 +21,8 @@ public class MysqlDriver extends AbstractRdbmsDriver {
 	private static final Logger LOGGER = LoggerFactory
             .getLogger(MysqlDriver.class);
 	
-	private static final String INSERT_IGNORE = "INSERT IGNORE INTO ";
-	
+	private static final String INSERT_OR_IGNORE_STATEMENT = "INSERT IGNORE INTO";
+
 	/**
 	 * 
 	 * @param host
@@ -34,11 +34,12 @@ public class MysqlDriver extends AbstractRdbmsDriver {
 	public MysqlDriver(String host, String dbName, String user,
 			String password)
 			throws AtomSetException {
-		super(openConnection(host, dbName, user, password));
+		super(openConnection(host, dbName, user, password),
+				INSERT_OR_IGNORE_STATEMENT);
 	}
 	
 	public MysqlDriver(String uri) throws AtomSetException {
-		super(openConnection(uri));
+		super(openConnection(uri), INSERT_OR_IGNORE_STATEMENT);
 	}
 
 	private static Connection openConnection(String host, String dbName, String user,
@@ -71,28 +72,4 @@ public class MysqlDriver extends AbstractRdbmsDriver {
 		return connection;
 	}
 	
-	// /////////////////////////////////////////////////////////////////////////
-	//	
-	// /////////////////////////////////////////////////////////////////////////
-
-	@Override
-	public String getInsertOrIgnoreStatement(String tableName, Iterable<?> values) {
-		StringBuilder sb = new StringBuilder();
-		sb.append(INSERT_IGNORE);
-		sb.append(" ").append(tableName);
-		sb.append(" VALUES (");
-		boolean first = true;
-		for(Object o : values) {
-			if(!first) {
-				sb.append(", ");
-			} else {
-				first = false;
-			}
-			sb.append('\'');
-			sb.append(o.toString());
-			sb.append('\'');
-		}
-		sb.append(");");
-		return sb.toString();
-	}
 }

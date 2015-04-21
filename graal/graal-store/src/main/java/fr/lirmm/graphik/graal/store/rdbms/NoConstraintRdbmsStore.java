@@ -13,6 +13,7 @@ import java.util.TreeSet;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Predicate;
+import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.SymbolGenerator;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.Term.Type;
@@ -109,7 +110,8 @@ public class NoConstraintRdbmsStore extends AbstractRdbmsStore {
         }
     }
     
-    protected boolean testDatabaseSchema() throws AtomSetException {
+    @Override
+	protected boolean testDatabaseSchema() throws AtomSetException {
     	try {
 			ResultSet rs = this.createStatement().executeQuery("SELECT * FROM alaskavars limit 1;");
 			rs.close();
@@ -159,6 +161,13 @@ public class NoConstraintRdbmsStore extends AbstractRdbmsStore {
 	public void clear() {
 		// TODO implement this method
 		throw new Error("This method isn't implemented");
+	}
+
+	@Override
+	public Iterator<String> transformToSQL(Rule rangeRestrictedRule)
+			throws AtomSetException {
+		// TODO implement this method
+		throw new MethodNotImplementedError();
 	}
 
 }

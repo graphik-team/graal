@@ -6,6 +6,8 @@ package fr.lirmm.graphik.graal.homomorphism;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.homomorphism.checker.DefaultUnionConjunctiveQueriesChecker;
@@ -21,7 +23,7 @@ public final class DefaultHomomorphismFactory implements HomomorphismFactory {
 	private SortedSet<HomomorphismChecker> elements;
 	
 	private static DefaultHomomorphismFactory instance = null;
-
+	private static ConjunctiveQuery emptyConjunctiveQuery = new DefaultConjunctiveQuery();
 	
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
@@ -51,6 +53,19 @@ public final class DefaultHomomorphismFactory implements HomomorphismFactory {
 	 */
 	public boolean addChecker(HomomorphismChecker checker) {
 		return this.elements.add(checker);
+	}
+
+	@Override
+	public Homomorphism<? extends Query, ? extends AtomSet> getConjunctiveQuerySolver(
+			AtomSet atomset) {
+		Homomorphism<? extends Query, ? extends AtomSet> solver = null;
+		for (HomomorphismChecker e : elements) {
+			if (e.check(emptyConjunctiveQuery, atomset)) {
+				solver = e.getSolver();
+				break;
+			}
+		}
+		return solver;
 	}
  	
     @Override

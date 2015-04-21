@@ -11,17 +11,13 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.DefaultFreeVarGen;
+import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.HashMapSubstitution;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
-import fr.lirmm.graphik.graal.core.SymbolGenerator;
-import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependenciesWithUnifiers;
-import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 
 /**
@@ -33,8 +29,6 @@ public class ChaseWithGRDAndUnfiers extends AbstractChase {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(ChaseWithGRDAndUnfiers.class);
 	
-	private ChaseHaltingCondition haltingCondition = new RestrictedChaseStopCondition();
-	private SymbolGenerator existentialGen = new DefaultFreeVarGen("E");
 	private GraphOfRuleDependenciesWithUnifiers grd;
 	private AtomSet atomSet;
 	private Queue<Pair<Rule, Substitution>> queue = new LinkedList<Pair<Rule, Substitution>>();
@@ -44,6 +38,8 @@ public class ChaseWithGRDAndUnfiers extends AbstractChase {
 	// /////////////////////////////////////////////////////////////////////////
 	
 	public ChaseWithGRDAndUnfiers(GraphOfRuleDependenciesWithUnifiers grd, AtomSet atomSet) {
+		super(new DefaultRuleApplier(StaticHomomorphism.getSolverFactory()
+				.getSolver(new DefaultConjunctiveQuery(), atomSet)));
 		this.grd = grd;
 		this.atomSet = atomSet;
 		for(Rule r : grd.getRules()) {			
@@ -71,7 +67,7 @@ public class ChaseWithGRDAndUnfiers extends AbstractChase {
 					LOGGER.debug("Execute rule: " + rule + " with unificator " + unificator);
 				}
 				
-				if(this.apply(unifiedRule, this.atomSet)) {
+				if (this.getRuleApplier().apply(unifiedRule, this.atomSet)) {
 					for(Rule triggeredRule : this.grd.getOutEdges(rule)) {
 						for(Substitution u : this.grd.getUnifiers(rule, triggeredRule)) {
 							if(LOGGER.isDebugEnabled()) {
@@ -93,28 +89,6 @@ public class ChaseWithGRDAndUnfiers extends AbstractChase {
 	@Override
 	public boolean hasNext() {
 		return !queue.isEmpty();
-	}
-
-	@Override
-	protected Iterable<Substitution> executeQuery(ConjunctiveQuery query,
-			AtomSet atomSet) throws HomomorphismFactoryException,
-			HomomorphismException {
-		return StaticHomomorphism.executeQuery(query, atomSet);
-	}
-
-	@Override
-	protected Term getFreeVar() {
-		return this.existentialGen.getFreeVar();
-	}
-
-	@Override
-	public ChaseHaltingCondition getHaltingCondition() {
-		return this.haltingCondition;
-	}
-
-	@Override
-	public void setHaltingCondition(ChaseHaltingCondition haltingCondition) {
-		this.haltingCondition = haltingCondition;
 	}
 
 }

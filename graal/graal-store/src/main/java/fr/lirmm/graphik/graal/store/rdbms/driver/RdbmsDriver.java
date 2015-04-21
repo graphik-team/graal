@@ -16,5 +16,21 @@ public interface RdbmsDriver {
 	Statement createStatement() throws DriverException;
 	void close();
 	
+	/**
+	 * Generate an INSERT OR IGNORE SQL statement.
+	 * 
+	 * @param tableName
+	 * @param values
+	 * @return
+	 */
 	String getInsertOrIgnoreStatement(String tableName, Iterable<?> values);
+
+	/**
+	 * Generate an INSERT OR IGNORE SQL statement.
+	 * 
+	 * @param tableName
+	 * @param selectQuery
+	 * @return
+	 */
+	String getInsertOrIgnoreStatement(String tableName, String selectQuery);
 }

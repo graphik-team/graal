@@ -11,16 +11,18 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
 import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
-import fr.lirmm.graphik.graal.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
+import fr.lirmm.graphik.graal.forward_chaining.rule_applier.RuleApplier;
 import fr.lirmm.graphik.graal.io.ParseException;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
+import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
+import fr.lirmm.graphik.graal.store.rdbms.homomorphism.SqlHomomorphism;
+import fr.lirmm.graphik.graal.store.rdbms.rule_applier.SQLRuleApplier;
 import fr.lirmm.graphik.util.Profiler;
 
 /**
@@ -68,7 +70,7 @@ public class OneStepForwardChaining {
 		// Driver
 		RdbmsDriver driver;
 		driver = new MysqlDriver(options.databaseHost, options.database, options.databaseUser, options.databasePassword);
-		AtomSet atomSet = new DefaultRdbmsStore(driver);
+		RdbmsStore atomSet = new DefaultRdbmsStore(driver);
 		
 		DefaultChase chase = null;
 		
@@ -80,7 +82,10 @@ public class OneStepForwardChaining {
 			}
 		}
 			
-		chase = new DefaultChase(rules, atomSet);
+		RuleApplier<Rule, RdbmsStore> applier = new SQLRuleApplier<RdbmsStore>(
+				SqlHomomorphism.getInstance());
+		chase = new DefaultChase(rules, atomSet, applier);
+
 		chase.enableVerbose(true);
 		PROFILER.start("forward chaining time");
 		chase.next();

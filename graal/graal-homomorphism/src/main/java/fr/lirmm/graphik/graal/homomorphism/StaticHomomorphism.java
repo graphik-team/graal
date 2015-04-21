@@ -39,7 +39,9 @@ public class StaticHomomorphism {
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Query : " + query);
 
-		Homomorphism solver = DefaultHomomorphismFactory.getInstance().getSolver(query,
+		Homomorphism solver = DefaultHomomorphismFactory
+				.getInstance()
+				.getSolver(query,
 				atomSet);
 		return solver.execute(query, atomSet);
 

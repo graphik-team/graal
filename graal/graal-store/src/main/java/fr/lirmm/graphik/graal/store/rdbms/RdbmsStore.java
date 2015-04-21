@@ -1,6 +1,9 @@
 package fr.lirmm.graphik.graal.store.rdbms;
 
+import java.util.Iterator;
+
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.SymbolGenerator;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
@@ -20,12 +23,28 @@ public interface RdbmsStore extends Store {
     RdbmsDriver getDriver();
 
 	/**
+	 * Transform the conjunctive query into a SQL query
+	 * 
 	 * @param cquery
-	 * @return
-	 * @throws StoreException 
+	 * @return a string representing the generated SQL query
+	 * @throws StoreException
 	 * @throws Exception
 	 */
 	String transformToSQL(ConjunctiveQuery cquery) throws AtomSetException;
+
+	/**
+	 * Transform a rule into an "INSERT ... SELECT ..." SQL statement.
+	 * 
+	 * @param rangeRestrictedRule
+	 *            a range restricted rule (i.e. all variables that appear in the
+	 *            head also occur in the body).
+	 * @return a string representing the generated SQL statement. If the rule
+	 *         does not fulfill the range restricted condition the behavior is
+	 *         undefined.
+	 * @throws AtomSetException
+	 */
+	Iterator<String> transformToSQL(Rule rangeRestrictedRule)
+			throws AtomSetException;
 
 	/**
 	 * @param label
@@ -34,6 +53,6 @@ public interface RdbmsStore extends Store {
 	 */
 	Term getTerm(String label) throws AtomSetException;
 	
-	public SymbolGenerator getFreeVarGen();
+	SymbolGenerator getFreeVarGen();
     
 }

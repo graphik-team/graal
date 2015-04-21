@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.lirmm.graphik.graal.forward_chaining;
+package fr.lirmm.graphik.graal.forward_chaining.halting_condition;
 
 import java.util.Set;
 

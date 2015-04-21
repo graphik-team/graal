@@ -8,8 +8,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -20,12 +22,15 @@ import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Predicate;
+import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.SymbolGenerator;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
+import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
 
 /**
@@ -528,6 +533,21 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		return query.toString();
 	}
 
+	@Override
+	public Iterator<String> transformToSQL(Rule rangeRestrictedRule)
+			throws AtomSetException {
+		Collection<String> queries = new LinkedList<String>();
+		InMemoryAtomSet body = rangeRestrictedRule.getBody();
+		for (Atom headAtom : rangeRestrictedRule.getHead()) {
+			String tableName = this.getPredicateTable(headAtom.getPredicate()); 
+			ConjunctiveQuery query = new DefaultConjunctiveQuery(body, headAtom.getTerms());
+			String selectQuery = this.transformToSQL(query);
+			queries.add(this.getDriver().getInsertOrIgnoreStatement(tableName,
+					selectQuery));
+		}
+		return queries.iterator();
+	}
+
 	// /////////////////////////////////////////////////////////////////////////
 	// PROTECTED METHODS
 	// /////////////////////////////////////////////////////////////////////////
@@ -549,6 +569,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	 * @throws AtomSetException
 	 * @throws SQLException
 	 */
+	@Override
 	protected Statement add(Statement statement, Atom atom)
 														   throws AtomSetException {
 		try {
@@ -573,6 +594,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	 * @param atom
 	 * @return
 	 */
+	@Override
 	protected Statement remove(Statement statement, Atom atom) throws AtomSetException {
 		try {
 			String tableName = this.predicateTableExist(atom.getPredicate());
@@ -613,8 +635,17 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		this.insertTermStatement.execute();
 	}
 
-	private String getPredicateTable(Predicate predicate) throws SQLException,
-			AtomSetException {
+	/**
+	 * Get the table name of this predicate. If there is no table for this, a
+	 * new table is created.
+	 * 
+	 * @param predicate
+	 * @return
+	 * @throws SQLException
+	 * @throws AtomSetException
+	 */
+	private String getPredicateTable(Predicate predicate)
+			throws AtomSetException {
 		// look in the local map
 		String tableName = this.predicateMap.get(predicate);
 
@@ -622,7 +653,13 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			// look in the database
 			tableName = this.predicateTableExist(predicate);
 			if (tableName == null) {
-				tableName = this.createPredicateTable(predicate);
+				try {
+					tableName = this.createPredicateTable(predicate);
+				} catch (SQLException e) {
+					throw new AtomSetException(
+							"Error during the creation of a table for a predicate",
+							e);
+				}
 			}
 
 			// add to the local map

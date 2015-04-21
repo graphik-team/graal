@@ -24,7 +24,9 @@ public class ComplexHomomorphism<Q extends ConjunctiveQuery, F extends AtomSet> 
 		this.rawSolver = rawSolver;
 	}
 
-    public SubstitutionReader execute(Q q, F f) throws HomomorphismException {
+	@Override
+	public <U1 extends Q, U2 extends F> SubstitutionReader execute(U1 q, U2 f)
+			throws HomomorphismException {
     	InMemoryAtomSet rawAtoms = new LinkedListAtomSet();
 		this.builtInAtoms = new LinkedList<Atom>();
 		for (Atom a : q) {
@@ -79,7 +81,7 @@ public class ComplexHomomorphism<Q extends ConjunctiveQuery, F extends AtomSet> 
 		protected boolean check(Substitution s) {
 			for (Atom a : builtInAtoms) {
 				Atom a2 = s.getSubstitut(a);
-				if (!((BuiltInPredicate)(a2.getPredicate())).evaluate(a2.getTerms().toArray(new Term[a2.getTerms().size()]))) {
+				if (!((BuiltInPredicate)a2.getPredicate()).evaluate(a2.getTerms().toArray(new Term[a2.getTerms().size()]))) {
 					return false;
 				}
 			}
@@ -92,7 +94,8 @@ public class ComplexHomomorphism<Q extends ConjunctiveQuery, F extends AtomSet> 
 		@Override
     	public Iterator<Substitution> iterator() { return this; }
 
-    	public void close() { this.rawReader.close(); this.rawReader = null; }
+		@Override
+		public void close() { this.rawReader.close(); this.rawReader = null; }
 
 		private Substitution next;
 		private SubstitutionReader rawReader;

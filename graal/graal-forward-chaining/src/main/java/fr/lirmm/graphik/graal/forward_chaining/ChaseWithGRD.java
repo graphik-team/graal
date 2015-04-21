@@ -8,16 +8,11 @@ import java.util.TreeSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.DefaultFreeVarGen;
+import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.Substitution;
-import fr.lirmm.graphik.graal.core.SymbolGenerator;
-import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
-import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 
 /**
@@ -32,8 +27,6 @@ public class ChaseWithGRD extends AbstractChase {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(ChaseWithGRD.class);
 	
-	private ChaseHaltingCondition stopCondition = new RestrictedChaseStopCondition();
-	private SymbolGenerator existentialGen = new DefaultFreeVarGen("E");
 	private GraphOfRuleDependencies grd;
 	private AtomSet atomSet;
 	private TreeSet<Rule> queue = new TreeSet<Rule>();
@@ -43,6 +36,8 @@ public class ChaseWithGRD extends AbstractChase {
 	// /////////////////////////////////////////////////////////////////////////
 	
 	public ChaseWithGRD(GraphOfRuleDependencies grd, AtomSet atomSet) {
+		super(new DefaultRuleApplier(StaticHomomorphism.getSolverFactory()
+				.getSolver(new DefaultConjunctiveQuery(), atomSet)));
 		this.grd = grd;
 		this.atomSet = atomSet;
 		for(Rule r : grd.getRules()) {			
@@ -60,7 +55,7 @@ public class ChaseWithGRD extends AbstractChase {
 		try {
 			rule = queue.pollFirst();
 			if(rule != null) {
-				if(this.apply(rule, this.atomSet)) {
+				if (this.getRuleApplier().apply(rule, this.atomSet)) {
 					for(Rule triggeredRule : this.grd.getOutEdges(rule)) {
 						if(LOGGER.isDebugEnabled()) {
 							LOGGER.debug("-- -- Dependency: " + triggeredRule);
@@ -77,30 +72,6 @@ public class ChaseWithGRD extends AbstractChase {
 	@Override
 	public boolean hasNext() {
 		return !queue.isEmpty();
-	}
-	
-	// /////////////////////////////////////////////////////////////////////////
-	// ABSTRACT METHODS IMPLEMENTATION
-	// /////////////////////////////////////////////////////////////////////////
-	
-	@Override
-	protected Iterable<Substitution> executeQuery(ConjunctiveQuery query, AtomSet atomSet) throws HomomorphismFactoryException, HomomorphismException {
-		return StaticHomomorphism.executeQuery(query, atomSet);
-	}
-
-	@Override
-	protected Term getFreeVar() {
-		return this.existentialGen.getFreeVar();
-	}
-
-	@Override
-	public ChaseHaltingCondition getHaltingCondition() {
-		return this.stopCondition;
-	}
-
-	@Override
-	public void setHaltingCondition(ChaseHaltingCondition haltingCondition) {
-		this.stopCondition = haltingCondition;
 	}
 
 }

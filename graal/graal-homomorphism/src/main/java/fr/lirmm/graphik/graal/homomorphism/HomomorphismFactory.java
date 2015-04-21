@@ -12,6 +12,8 @@ import fr.lirmm.graphik.graal.core.atomset.AtomSet;
  */
 public interface HomomorphismFactory {
     
+	public abstract Homomorphism getConjunctiveQuerySolver(AtomSet atomSet);
+
     public abstract Homomorphism getSolver(Query query, AtomSet atomSet);
 
 }

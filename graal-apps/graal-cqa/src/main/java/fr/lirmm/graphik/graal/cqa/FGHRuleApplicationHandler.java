@@ -8,7 +8,7 @@ import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.forward_chaining.RuleApplicationHandler;
+import fr.lirmm.graphik.graal.forward_chaining.rule_applier.RuleApplicationHandler;
 import fr.lirmm.graphik.graal.homomorphism.Homomorphism;
 
 public class FGHRuleApplicationHandler implements RuleApplicationHandler {

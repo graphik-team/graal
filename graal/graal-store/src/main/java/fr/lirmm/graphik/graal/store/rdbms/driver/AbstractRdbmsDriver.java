@@ -19,16 +19,20 @@ public abstract class AbstractRdbmsDriver implements RdbmsDriver {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(AbstractRdbmsDriver.class);
 	
-	private Connection dbConnection;
+	private final Connection DB_CONNECTION;
+	protected final String INSERT_IGNORE;
 	
-	public AbstractRdbmsDriver(Connection connection) {
-		this.dbConnection = connection;
+	public AbstractRdbmsDriver(Connection connection, String insertORignore) {
+		this.INSERT_IGNORE = insertORignore;
+		this.DB_CONNECTION = connection;
 	}
 	
+	@Override
 	public Connection getConnection() {
-		return this.dbConnection;
+		return this.DB_CONNECTION;
 	}
 	
+	@Override
 	public Statement createStatement() throws DriverException {
 		try {
 			return this.getConnection().createStatement();
@@ -45,10 +49,10 @@ public abstract class AbstractRdbmsDriver implements RdbmsDriver {
 	
 	@Override
 	public void close() {
-		if (this.dbConnection != null) {
+		if (this.DB_CONNECTION != null) {
 			try {
-				this.dbConnection.rollback();
-				this.dbConnection.close();
+				this.DB_CONNECTION.rollback();
+				this.DB_CONNECTION.close();
 			} catch (SQLException e) {
 				if(LOGGER.isWarnEnabled()) {
 					LOGGER.warn("Error during closing DB connection", e);
@@ -56,5 +60,37 @@ public abstract class AbstractRdbmsDriver implements RdbmsDriver {
 			}
 			
 		}
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	//
+	// /////////////////////////////////////////////////////////////////////////
+
+	@Override
+	public String getInsertOrIgnoreStatement(String tableName,
+			Iterable<?> values) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(INSERT_IGNORE).append(" ").append(tableName)
+				.append(" VALUES (");
+		boolean first = true;
+		for (Object o : values) {
+			if (!first) {
+				sb.append(", ");
+			} else {
+				first = false;
+			}
+			sb.append('\'').append(o.toString()).append('\'');
+		}
+		sb.append(");");
+		return sb.toString();
+	}
+
+	@Override
+	public String getInsertOrIgnoreStatement(String tableName,
+			String selectQuery) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(INSERT_IGNORE).append(' ').append(tableName).append(' ')
+				.append(selectQuery);
+		return sb.toString();
 	}
 }

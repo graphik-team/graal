@@ -1,9 +1,10 @@
-package fr.lirmm.graphik.graal.forward_chaining;
+package fr.lirmm.graphik.graal.forward_chaining.halting_condition;
 
 import java.util.Set;
 
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.forward_chaining.rule_applier.RuleApplicationHandler;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
 
@@ -27,6 +28,7 @@ public class ChaseStopConditionWithHandler implements ChaseHaltingCondition {
 	 * @throws HomomorphismFactoryException
 	 * @throws HomomorphismException
 	 */
+	@Override
 	public boolean canIAdd(AtomSet atomSet, Set<Term> fixedTerm,
 	                       AtomSet from, AtomSet base) 
 		throws HomomorphismFactoryException, HomomorphismException {
@@ -43,8 +45,8 @@ public class ChaseStopConditionWithHandler implements ChaseHaltingCondition {
 		this.realHaltingCondition = c;
 	}
 
-	private ChaseHaltingCondition      realHaltingCondition;
-	private RuleApplicationHandler  handler;
+	private ChaseHaltingCondition realHaltingCondition;
+	private RuleApplicationHandler handler;
 
 };
 

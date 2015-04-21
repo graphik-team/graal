@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
+import fr.lirmm.graphik.util.MethodNotImplementedError;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -37,7 +38,7 @@ public class PostgreSQLDriver extends AbstractRdbmsDriver {
 	public PostgreSQLDriver(String host, String dbName, String user,
 			String password)
 			throws AtomSetException {
-		super(openConnection(host, dbName, user, password));
+		super(openConnection(host, dbName, user, password), "");
 	}
 
 	private static Connection openConnection(String host, String dbName, String user,
@@ -90,6 +91,12 @@ public class PostgreSQLDriver extends AbstractRdbmsDriver {
 		query.append("); ");
 		
 		return query.toString();
+	}
+
+	@Override
+	public String getInsertOrIgnoreStatement(String tableName,
+			String selectQuery) {
+		throw new MethodNotImplementedError();
 	}
 
 }

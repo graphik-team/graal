@@ -12,7 +12,8 @@ import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
  */
 public interface Homomorphism<T1 extends Object, T2 extends AtomSet> {
 
-	 SubstitutionReader execute(T1 q, T2 a) throws HomomorphismException;
+	<U1 extends T1, U2 extends T2> SubstitutionReader execute(U1 q, U2 a)
+			throws HomomorphismException;
 
 };
 

@@ -4,16 +4,14 @@
 package fr.lirmm.graphik.graal.forward_chaining;
 
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultFreeVarGen;
 import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.SymbolGenerator;
-import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.forward_chaining.halting_condition.ChaseHaltingCondition;
+import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
+import fr.lirmm.graphik.graal.forward_chaining.rule_applier.RuleApplier;
 import fr.lirmm.graphik.graal.homomorphism.Homomorphism;
-import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.util.Verbosable;
 
@@ -26,11 +24,8 @@ public class DefaultChase extends AbstractChase implements Verbosable {
 //	private static final Logger LOGGER = LoggerFactory
 //			.getLogger(DefaultChase.class);
 
-	private ChaseHaltingCondition haltingCondition = new RestrictedChaseStopCondition();
-	private SymbolGenerator existentialGen;
 	private Iterable<Rule> ruleSet;
 	private AtomSet atomSet;
-	private Homomorphism solver;
 	boolean hasNext = true;
 	private boolean isVerbose = false;
 
@@ -38,31 +33,48 @@ public class DefaultChase extends AbstractChase implements Verbosable {
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 	
-	public DefaultChase(Iterable<Rule> ruleSet, AtomSet atomSet, SymbolGenerator existentialGen, Homomorphism solver) {
-		this.ruleSet = ruleSet;
-		this.atomSet = atomSet;
-		this.existentialGen = existentialGen;
-		this.solver = solver;
-	}
-	
-	public DefaultChase(Iterable<Rule> ruleSet, AtomSet atomSet, Homomorphism solver) {
-		this.ruleSet = ruleSet;
-		this.atomSet = atomSet;
-		this.existentialGen = new DefaultFreeVarGen("E");
-		this.solver = solver;
-	}
-	
-	public DefaultChase(Iterable<Rule> ruleSet, AtomSet atomSet, SymbolGenerator existentialGen) {
-		this.ruleSet = ruleSet;
-		this.atomSet = atomSet;
-		this.existentialGen = existentialGen;
-		this.solver = StaticHomomorphism.getSolverFactory().getSolver(new DefaultConjunctiveQuery(), atomSet);
+	public DefaultChase(Iterable<Rule> ruleSet, AtomSet atomSet) {
+		this(ruleSet, atomSet, new DefaultFreeVarGen("E"));
 	}
 
-	public DefaultChase(Iterable<Rule> ruleSet, AtomSet atomSet) {
-		this(ruleSet,atomSet,new DefaultFreeVarGen("E"));
+	public DefaultChase(Iterable<Rule> ruleSet, AtomSet atomSet,
+			SymbolGenerator existentialGen) {
+		super(new DefaultRuleApplier<AtomSet>(StaticHomomorphism
+				.getSolverFactory().getConjunctiveQuerySolver(atomSet)));
+		this.ruleSet = ruleSet;
+		this.atomSet = atomSet;
+	}
+
+	public DefaultChase(Iterable<Rule> ruleSet, AtomSet atomSet,
+			RuleApplier ruleApplier) {
+		super(ruleApplier);
+		this.ruleSet = ruleSet;
+		this.atomSet = atomSet;
+	}
+
+	public DefaultChase(Iterable<Rule> ruleSet, AtomSet atomSet,
+			SymbolGenerator existentialGen,
+			Homomorphism<ConjunctiveQuery, AtomSet> solver) {
+		super(new DefaultRuleApplier<AtomSet>(solver));
+		this.ruleSet = ruleSet;
+		this.atomSet = atomSet;
 	}
 	
+	public DefaultChase(Iterable<Rule> ruleSet, AtomSet atomSet,
+			Homomorphism<ConjunctiveQuery, AtomSet> solver) {
+		super(new DefaultRuleApplier<AtomSet>(solver));
+		this.ruleSet = ruleSet;
+		this.atomSet = atomSet;
+	}
+
+	public DefaultChase(Iterable<Rule> ruleSet, AtomSet atomSet,
+			Homomorphism<ConjunctiveQuery, AtomSet> solver,
+			ChaseHaltingCondition haltingCondition) {
+		super(new DefaultRuleApplier<AtomSet>(solver, haltingCondition));
+		this.ruleSet = ruleSet;
+		this.atomSet = atomSet;
+	}
+
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLICS METHODS
 	// /////////////////////////////////////////////////////////////////////////
@@ -76,7 +88,7 @@ public class DefaultChase extends AbstractChase implements Verbosable {
     				if(this.isVerbose) {
     					System.out.println("Rule: " + rule);
     				}
-    				if(this.apply(rule, atomSet)) {
+					if (this.getRuleApplier().apply(rule, atomSet)) {
     					this.hasNext = true;
     				}
     			}
@@ -94,28 +106,6 @@ public class DefaultChase extends AbstractChase implements Verbosable {
 	////////////////////////////////////////////////////////////////////////////
 	// ABSTRACT METHODS IMPLEMENTATION
 	////////////////////////////////////////////////////////////////////////////
-
-	@Override
-	protected Iterable<Substitution> executeQuery(ConjunctiveQuery query,
-			AtomSet atomSet) throws HomomorphismFactoryException,
-			HomomorphismException {
-		return this.solver.execute(query, atomSet);
-	}
-
-	@Override
-	protected Term getFreeVar() {
-		return this.existentialGen.getFreeVar();
-	}
-	
-	@Override
-	public void setHaltingCondition(ChaseHaltingCondition haltingCondition) {
-		this.haltingCondition = haltingCondition;
-	}
-
-	@Override
-	public ChaseHaltingCondition getHaltingCondition() {
-		return this.haltingCondition;
-	}
 
 	@Override
 	public void enableVerbose(boolean enable) {

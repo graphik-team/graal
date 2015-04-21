@@ -1,4 +1,4 @@
-package fr.lirmm.graphik.graal.forward_chaining;
+package fr.lirmm.graphik.graal.forward_chaining.rule_applier;
 
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 
