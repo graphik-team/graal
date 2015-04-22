@@ -56,7 +56,8 @@ public class ChaseWithGRD extends AbstractChase {
 			rule = queue.pollFirst();
 			if(rule != null) {
 				if (this.getRuleApplier().apply(rule, this.atomSet)) {
-					for(Rule triggeredRule : this.grd.getOutEdges(rule)) {
+					for (Integer e : this.grd.getOutgoingEdgesOf(rule)) {
+						Rule triggeredRule = this.grd.getEdgeTarget(e);
 						if(LOGGER.isDebugEnabled()) {
 							LOGGER.debug("-- -- Dependency: " + triggeredRule);
 						}

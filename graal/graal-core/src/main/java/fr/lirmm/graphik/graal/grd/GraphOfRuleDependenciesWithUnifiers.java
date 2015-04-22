@@ -57,21 +57,15 @@ public class GraphOfRuleDependenciesWithUnifiers extends GraphOfRuleDependencies
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public Set<Substitution> getUnifiers(Rule src, Rule dest) {
-		Integer index = this.graph.getEdge(src, dest);
-		Set<Substitution> res;
-		if (index != null) {
-			res = Collections.unmodifiableSet(this.edgesValue.get(index));
-		} else {
-			res = Collections.emptySet();
-		}
-		return res;
+	public Set<Substitution> getUnifiers(Integer e) {
+		return Collections.unmodifiableSet(this.edgesValue.get(e));
 	}
 
 	/**
 	 * @param ruleset
 	 * @return
 	 */
+	@Override
 	public GraphOfRuleDependenciesWithUnifiers getSubGraph(Iterable<Rule> ruleSet) {
 		GraphOfRuleDependenciesWithUnifiers subGRD = new GraphOfRuleDependenciesWithUnifiers();
 		subGRD.addRuleSet(ruleSet);
@@ -95,11 +89,12 @@ public class GraphOfRuleDependenciesWithUnifiers extends GraphOfRuleDependencies
 	public String toString() {
 		StringBuilder s = new StringBuilder();
 		TreeSet<Rule> rules = new TreeSet<Rule>(new LabelRuleComparator());
-		for (Rule r : this.graph.getVertices()) {
+		for (Rule r : this.graph.vertexSet()) {
 			rules.add(r);
 		}
 		for (Rule src : rules) {
-			for (Rule dest : this.graph.getOutbound(src)) {
+			for (Integer e : this.graph.outgoingEdgesOf(src)) {
+				Rule dest = this.graph.getEdgeTarget(e);
 
 				s.append(src.getLabel());
 				s.append("--");
@@ -129,7 +124,7 @@ public class GraphOfRuleDependenciesWithUnifiers extends GraphOfRuleDependencies
 			edgeIndex = this.edgesValue.size();
 			edge = new LinkedSet<Substitution>();
 			this.edgesValue.add(edgeIndex, edge);
-			this.graph.addEdge(src, edgeIndex, dest);
+			this.graph.addEdge(src, dest, edgeIndex);
 		}
 		edge.add(sub);
 	}
@@ -139,7 +134,7 @@ public class GraphOfRuleDependenciesWithUnifiers extends GraphOfRuleDependencies
 		if (edgeIndex == null) {
 			edgeIndex = this.edgesValue.size();
 			this.edgesValue.add(edgeIndex, subs);
-			this.graph.addEdge(src, edgeIndex, dest);
+			this.graph.addEdge(src, dest, edgeIndex);
 		} else {
 			this.edgesValue.set(edgeIndex, subs);
 		}

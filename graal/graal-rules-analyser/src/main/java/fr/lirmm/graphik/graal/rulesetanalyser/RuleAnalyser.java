@@ -151,7 +151,7 @@ public class RuleAnalyser {
 			ruleAnalyserArray = new RuleAnalyser[nbrScc];
 			componentCalculability = new int[nbrScc];
 
-			for (int c : scc.getVertices()) {
+			for (int c : scc.vertexSet()) {
 				RuleAnalyser subRA = this.getSubRuleAnalyser(scc
 						.getComponent(c));
 				ruleAnalyserArray[c] = subRA;
@@ -353,7 +353,7 @@ public class RuleAnalyser {
 
 		sb.append("\n\nStrongly Connected Components in the GRD\n");
 		sb.append("========================================\n");
-		for (int v : scc.getVertices()) {
+		for (int v : scc.vertexSet()) {
 			sb.append("C" + v + " = {");
 			boolean isFirst = true;
 			for (Rule r : scc.getComponent(v)) {
@@ -369,7 +369,7 @@ public class RuleAnalyser {
 		sb.append("\n\nGraph of Strongly Connected Components\n");
 		sb.append("======================================\n");
 		for (int src = 0; src < scc.getNbrComponents(); ++src) {
-			for (int target : scc.getOutbound(src)) {
+			for (int target : scc.outgoingEdgesOf(src)) {
 				sb.append("C" + src + " ---> C" + target);
 				sb.append('\n');
 			}
@@ -390,7 +390,7 @@ public class RuleAnalyser {
 				* (this.getAllProperty().size() + 1), '-'));
 		sb.append('\n');
 
-		for (int c : scc.getVertices()) {
+		for (int c : scc.vertexSet()) {
 			RuleAnalyser subRA = this.getSubRuleAnalyser(scc.getComponent(c));
 			subRA.checkAll();
 
@@ -498,7 +498,7 @@ public class RuleAnalyser {
 		while (!queue.isEmpty()) {
 			int c = queue.poll();
 			boolean predFES = true;
-			for (int pred : scc.getInbound(c)) {
+			for (int pred : scc.incomingEdgesOf(c)) {
 				if ((componentCalculability[pred] & ComponentCalculabilityValue.FES) == 0) {
 					predFES = false;
 				}
@@ -507,7 +507,7 @@ public class RuleAnalyser {
 					.check(FESProperty.getInstance());
 			if (bool != null && bool && predFES) {
 				componentCalculability[c] += ComponentCalculabilityValue.FES;
-				for (int succ : scc.getOutbound(c)) {
+				for (int succ : scc.outgoingEdgesOf(c)) {
 					if (!mark[succ] && layers[c] + 1 == layers[succ]) {
 						mark[succ] = true;
 						queue.add(succ);
@@ -539,7 +539,7 @@ public class RuleAnalyser {
 		while (!queue.isEmpty()) {
 			int c = queue.poll();
 			boolean succFUS = true;
-			for (int succ : scc.getOutbound(c)) {
+			for (int succ : scc.outgoingEdgesOf(c)) {
 				if ((componentCalculability[succ] & ComponentCalculabilityValue.FUS) == 0) {
 					succFUS = false;
 				}
@@ -548,7 +548,7 @@ public class RuleAnalyser {
 					.check(FUSProperty.getInstance());
 			if (bool != null && bool && succFUS) {
 				componentCalculability[c] += ComponentCalculabilityValue.FUS;
-				for (int pred : scc.getInbound(c)) {
+				for (int pred : scc.incomingEdgesOf(c)) {
 					if (!mark[pred] && layers[c] + 1 == layers[pred]) {
 						mark[pred] = true;
 						queue.add(pred);

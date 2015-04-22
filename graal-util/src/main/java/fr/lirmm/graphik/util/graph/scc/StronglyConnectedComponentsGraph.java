@@ -4,31 +4,77 @@
 package fr.lirmm.graphik.util.graph.scc;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.apache.commons.graph.model.DirectedMutableGraph;
+import org.jgrapht.DirectedGraph;
+import org.jgrapht.alg.StrongConnectivityInspector;
+import org.jgrapht.graph.DefaultDirectedGraph;
 
 /**
+ * The StronglyConnectedComponentsGraph represents a graph of strongly connected
+ * components of an other graph.
+ * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */
 public class StronglyConnectedComponentsGraph<V> extends
-		DirectedMutableGraph<Integer, Integer> {
+		DefaultDirectedGraph<Integer, Integer> {
 
 	private static final long serialVersionUID = -2816870306827502776L;
 
 	private int edgeMaxIndex = -1;
 	private final Map<Integer, Set<V>> map = new TreeMap<Integer, Set<V>>();
+	
+	public StronglyConnectedComponentsGraph() {
+		super(Integer.class);
+	}
+
+	/**
+	 * Construct the StronglyConnectedComponentsGraph of the specified graph
+	 * 
+	 * @param graph
+	 */
+	public <E> StronglyConnectedComponentsGraph(DirectedGraph<V, E> graph) {
+		this();
+		List<Set<V>> stronglyConnectedSets = new StrongConnectivityInspector<V, E>(
+				graph).stronglyConnectedSets();
+
+		// add components
+		int componentIndex = -1;
+		for (Set<V> component : stronglyConnectedSets) {
+			++componentIndex;
+			this.addComponent(componentIndex, component);
+		}
+
+		// construct the graph
+		for (int src : this.vertexSet()) {
+			for (int target : this.vertexSet()) {
+				if (src != target) {
+					for (V s : this.getComponent(src)) {
+						for (V t : this.getComponent(target)) {
+							if (graph.getEdge(s, t) != null) {
+								this.addEdge(src, target);
+								break;
+							}
+						}
+						if (this.getEdge(src, target) != null)
+							break;
+					}
+				}
+			}
+		}
+	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
 	public void addEdge(int tail, int head) {
-		this.addEdge(tail, ++edgeMaxIndex, head);
+		this.addEdge(tail, head, ++edgeMaxIndex);
 	}
 
 	public void addToComponent(int vertex, V v) {
@@ -40,14 +86,18 @@ public class StronglyConnectedComponentsGraph<V> extends
 		set.add(v);
 	}
 
+	public void addComponent(int vertex, Set<V> vertices) {
+		this.map.put(vertex, vertices);
+	}
+
 	public Set<V> getComponent(int vertex) {
 		return this.map.get(vertex);
 	}
 
 	public Set<Integer> getSources() {
 		Set<Integer> sources = new TreeSet<Integer>();
-		for (Integer i : this.getVertices()) {
-			Iterator<Integer> it = this.getInbound(i).iterator();
+		for (Integer i : this.vertexSet()) {
+			Iterator<Integer> it = this.incomingEdgesOf(i).iterator();
 			if (!it.hasNext()) {
 				sources.add(i);
 			}
@@ -57,8 +107,8 @@ public class StronglyConnectedComponentsGraph<V> extends
 
 	public Set<Integer> getSinks() {
 		Set<Integer> sinks = new TreeSet<Integer>();
-		for (Integer i : this.getVertices()) {
-			Iterator<Integer> it = this.getOutbound(i).iterator();
+		for (Integer i : this.vertexSet()) {
+			Iterator<Integer> it = this.outgoingEdgesOf(i).iterator();
 			if (!it.hasNext()) {
 				sinks.add(i);
 			}
@@ -67,7 +117,7 @@ public class StronglyConnectedComponentsGraph<V> extends
 	}
 
 	public int getNbrComponents() {
-		return this.getAdjacencyList().size();
+		return this.vertexSet().size();
 	}
 
 	/**
@@ -81,7 +131,7 @@ public class StronglyConnectedComponentsGraph<V> extends
 			boolean direction) {
 		Iterable<Integer> firstLayer = sources;
 		int size = 0;
-		Iterator<Integer> it = this.getVertices().iterator();
+		Iterator<Integer> it = this.vertexSet().iterator();
 		while (it.hasNext()) {
 			it.next();
 			++size;
@@ -102,9 +152,9 @@ public class StronglyConnectedComponentsGraph<V> extends
 	private void computeLayersRec(int v, int[] layers, int actualLayer, boolean direction) {
 		Iterable<Integer> it = null;
 		if(direction)
-			it = this.getOutbound(v);
+			it = this.outgoingEdgesOf(v);
 		else
-			it = this.getInbound(v);
+			it = this.incomingEdgesOf(v);
 		
 		for (int succ : it) {
 			if (layers[succ] < actualLayer && v != succ) {

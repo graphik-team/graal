@@ -64,21 +64,6 @@
 				<version>2.5.1</version>
 				<executions>
 					<execution>
-						<id>install-jar-graph-for-graal</id>
-						<goals>
-							<goal>install-file</goal>
-						</goals>
-						<phase>validate</phase>
-						<configuration>
-							<groupId>org.apache.commons</groupId>
-							<artifactId>graph-for-graal</artifactId>
-							<version>0.1</version>
-							<packaging>jar</packaging>
-							<file>${project.basedir}/lib/commons-graph-for-graal.jar</file>
-							<generatePom>true</generatePom>
-						</configuration>
-					</execution>
-					<execution>
 						<id>install-jar-dlgp-parser</id>
 						<goals>
 							<goal>install-file</goal>

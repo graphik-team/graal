@@ -68,8 +68,9 @@ public class ChaseWithGRDAndUnfiers extends AbstractChase {
 				}
 				
 				if (this.getRuleApplier().apply(unifiedRule, this.atomSet)) {
-					for(Rule triggeredRule : this.grd.getOutEdges(rule)) {
-						for(Substitution u : this.grd.getUnifiers(rule, triggeredRule)) {
+					for (Integer e : this.grd.getOutgoingEdgesOf(rule)) {
+						Rule triggeredRule = this.grd.getEdgeTarget(e);
+						for (Substitution u : this.grd.getUnifiers(e)) {
 							if(LOGGER.isDebugEnabled()) {
 								LOGGER.debug("-- -- Dependency: " + triggeredRule + " with " + u);
 								LOGGER.debug("-- -- Unificator: " + u);

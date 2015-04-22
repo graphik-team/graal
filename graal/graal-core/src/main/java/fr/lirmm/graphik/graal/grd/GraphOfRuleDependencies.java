@@ -5,12 +5,12 @@ package fr.lirmm.graphik.graal.grd;
 
 import java.util.Date;
 
-import org.apache.commons.graph.model.DirectedMutableGraph;
+import org.jgrapht.DirectedGraph;
+import org.jgrapht.graph.DefaultDirectedGraph;
 
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Unifier;
 import fr.lirmm.graphik.util.graph.scc.StronglyConnectedComponentsGraph;
-import fr.lirmm.graphik.util.graph.scc.TarjanAlgorithm2;
 
 /**
  * The graph of rule dependencies (GRD) is a directed graph built from a rule
@@ -24,14 +24,14 @@ import fr.lirmm.graphik.util.graph.scc.TarjanAlgorithm2;
  */
 public class GraphOfRuleDependencies {
 
-	protected DirectedMutableGraph<Rule, Integer> graph;
+	protected DirectedGraph<Rule, Integer> graph;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
 	protected GraphOfRuleDependencies() {
-		this.graph = new DirectedMutableGraph<Rule, Integer>();
+		this.graph = new DefaultDirectedGraph<Rule, Integer>(Integer.class);
 	}
 
 	public GraphOfRuleDependencies(Iterable<Rule> rules) {
@@ -54,11 +54,15 @@ public class GraphOfRuleDependencies {
 	// /////////////////////////////////////////////////////////////////////////
 
 	public Iterable<Rule> getRules() {
-		return this.graph.getVertices();
+		return this.graph.vertexSet();
 	}
 
-	public Iterable<Rule> getOutEdges(Rule src) {
-		return this.graph.getOutbound(src);
+	public Iterable<Integer> getOutgoingEdgesOf(Rule src) {
+		return this.graph.outgoingEdgesOf(src);
+	}
+
+	public Rule getEdgeTarget(Integer i) {
+		return this.graph.getEdgeTarget(i);
 	}
 
 	public boolean existUnifier(Rule src, Rule dest) {
@@ -70,9 +74,7 @@ public class GraphOfRuleDependencies {
 	}
 
 	public StronglyConnectedComponentsGraph<Rule> getStronglyConnectedComponentsGraph() {
-		StronglyConnectedComponentsGraph<Rule> scc = new TarjanAlgorithm2<Rule>(
-				this.graph).perform();
-		return scc;
+		return new<Integer> StronglyConnectedComponentsGraph<Rule>(this.graph);
 	}
 
 	/**
@@ -99,12 +101,12 @@ public class GraphOfRuleDependencies {
 	@Override
 	public String toString() {
 		StringBuilder s = new StringBuilder();
-		for (Rule src : this.graph.getVertices()) {
-			for (Rule dest : this.graph.getOutbound(src)) {
+		for (Rule src : this.graph.vertexSet()) {
+			for (Integer e : this.graph.outgoingEdgesOf(src)) {
 
-				s.append(src.getLabel());
+				s.append(this.graph.getEdgeSource(e).getLabel());
 				s.append("-->");
-				s.append(dest.getLabel());
+				s.append(this.graph.getEdgeTarget(e).getLabel());
 				s.append('\n');
 			}
 
@@ -116,7 +118,7 @@ public class GraphOfRuleDependencies {
 	// PROTECTED METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	private static final String PREFIX = "R" + (new Date()).hashCode() + "-";
+	private static final String PREFIX = "R" + new Date().hashCode() + "-";
 	private static int ruleIndex = -1;
 	protected void addRule(Rule r) {
 		if(r.getLabel().isEmpty()) {
@@ -135,7 +137,7 @@ public class GraphOfRuleDependencies {
 	protected void addDependency(Rule src, Rule dest) {
 		Integer edge = this.graph.getEdge(src, dest);
 		if (edge == null) {
-			this.graph.addEdge(src, ++edgeIndex, dest);
+			this.graph.addEdge(src, dest, ++edgeIndex);
 		}
 	}
 }
