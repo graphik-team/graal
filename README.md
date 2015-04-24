@@ -27,3 +27,12 @@ mvn findbugs:check
 mvn compile assembly:single
 
 
+
+## How to build graal when you don't want to get all stuff maven brings?
+
+* cd inside the graal directory
+
+* ./prepare_ant.sh
+
+* ant
+
