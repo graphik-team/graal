@@ -10,7 +10,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -18,29 +17,23 @@ import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.NegativeConstraint;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
-import fr.lirmm.graphik.graal.io.ConjunctiveQueryWriter;
-import fr.lirmm.graphik.graal.io.RuleWriter;
+import fr.lirmm.graphik.graal.io.GraalWriter;
 import fr.lirmm.graphik.util.Prefix;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class RuleMLWriter extends Writer implements ConjunctiveQueryWriter,
-		RuleWriter {
+public class RuleMLWriter extends GraalWriter {
 	
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(RuleMLWriter.class);
-
-	protected Writer writer;
 
 	private final String indentStyle;
 	private transient int currentIndentSize = 0;
@@ -50,7 +43,7 @@ public class RuleMLWriter extends Writer implements ConjunctiveQueryWriter,
 	// /////////////////////////////////////////////////////////////////////////
 
 	public RuleMLWriter(Writer out) {
-		this.writer = out;
+		super(out);
 		indentStyle = "  ";
 		init();
 	}
@@ -71,7 +64,7 @@ public class RuleMLWriter extends Writer implements ConjunctiveQueryWriter,
 		 this(new FileWriter(path));
 	}
 	
-	public void init() {
+	private void init() {
 		try {
 			this.writeln("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			this.writeln("<?xml-model href=\"http://deliberation.ruleml.org/1.01/relaxng/datalogplus_min_relaxed.rnc\"?>");
@@ -87,65 +80,17 @@ public class RuleMLWriter extends Writer implements ConjunctiveQueryWriter,
 	// /////////////////////////////////////////////////////////////////////////
 	
 	@Override
-	public void write(String str) throws IOException {
-		super.write(str);
-	}
-	
-	public void writeln(String str) throws IOException {
-		super.write(str);
-		super.write('\n');
-	}
-	
 	public void writeComment(String str) throws IOException {
 		this.write("\n\n<!-- ");
 		this.write(str);
 		this.writeln(" -->");
 	}
 
-	public void writeIterable(Iterable<?> it) throws IOException {
-		for(Object o: it)
-			this.write(o);
-	}
-	
-	public void writeIterator(Iterator<?> it) throws IOException {
-		while(it.hasNext())
-			this.write(it.next());
-	}
-		
-	public void write(Object o) throws IOException {
-		if(o instanceof Atom) {
-			this.write((Atom)o);
-		} else if(o instanceof NegativeConstraint) {
-			this.write((NegativeConstraint)o);
-		} else if(o instanceof Rule) {
-			this.write((Rule)o);
-		} else if(o instanceof ConjunctiveQuery) {
-			this.write((ConjunctiveQuery)o);
-		} else if(o instanceof Prefix) {
-			this.write((Prefix)o);
-		} else if (o instanceof String) {
-			this.write((String) o);
-		} else if(o instanceof Iterable<?>) {
-			this.writeIterable((Iterable<?>)o);
-		} else if(o instanceof Iterator<?>) {
-			this.writeIterator((Iterator<?>)o);
-		}
-	}
-
+	@Override
 	public void write(AtomSet atomset) throws IOException {
 		this.openBalise("Assert");
 		this.writeAtomSet(atomset);
 		this.closeBaliseWithReturnLine("Assert");
-	}
-
-	public void write(RuleSet ruleset) throws IOException {
-		for (Rule r : ruleset) {
-			this.write(r);
-		}
-	}
-
-	public void write(Atom atom) throws IOException{
-		this.writeAtom(atom);
 	}
 	
 	@Override
@@ -235,17 +180,7 @@ public class RuleMLWriter extends Writer implements ConjunctiveQueryWriter,
 	@Override
 	public void close() throws IOException {
 		this.closeBaliseWithReturnLine("RuleML");
-		this.writer.close();
-	}
-
-	@Override
-	public void flush() throws IOException {
-		this.writer.flush();
-	}
-
-	@Override
-	public void write(char[] cbuf, int off, int len) throws IOException {
-		this.writer.write(cbuf, off, len);
+		super.close();
 	}
 	
 	// /////////////////////////////////////////////////////////////////////////
@@ -262,23 +197,33 @@ public class RuleMLWriter extends Writer implements ConjunctiveQueryWriter,
 	
 	protected void writeAtomSet(Iterable<Atom> atomSet) throws IOException {
 		for(Atom a : atomSet) {
-			this.writeAtom(a);
+			this.write(a);
 		}
 	}
 	
+	@Override
 	protected void writeAtom(Atom atom) throws IOException {
-		if (atom.equals(Atom.BOTTOM)) {
-			this.writeIndent();
-			this.write("<Or/>");
-		} else {
-			this.openBalise("Atom");
-			this.writePredicate(atom.getPredicate());
+		this.openBalise("Atom");
+		this.writePredicate(atom.getPredicate());
 
-			for (Term t : atom.getTerms()) {
-				this.writeTerm(t);
-			}
-			this.closeBaliseWithReturnLine("Atom");
+		for (Term t : atom.getTerms()) {
+			this.writeTerm(t);
 		}
+		this.closeBaliseWithReturnLine("Atom");
+	}
+
+	@Override
+	protected void writeEquality(Term term, Term term2) throws IOException {
+		this.openBalise("Equal");
+		this.writeTerm(term);
+		this.writeTerm(term2);
+		this.closeBaliseWithReturnLine("Equal");
+	}
+
+	@Override
+	protected void writeBottom() throws IOException {
+		this.writeIndent();
+		this.write("<Or/>");
 	}
 
 	protected void writeTerm(Term t) throws IOException {
@@ -334,7 +279,7 @@ public class RuleMLWriter extends Writer implements ConjunctiveQueryWriter,
 		this.decrIndent();
 		this.write("</");
 		this.write(baliseName);
-		this.write(">");
+		this.write('>');
 	}
 
 	private void closeBaliseWithReturnLine(String baliseName)

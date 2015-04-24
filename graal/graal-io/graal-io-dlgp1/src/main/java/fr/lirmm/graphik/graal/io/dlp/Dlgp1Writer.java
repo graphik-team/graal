@@ -11,7 +11,6 @@ import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Collection;
-import java.util.Iterator;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
@@ -23,41 +22,48 @@ import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
-import fr.lirmm.graphik.graal.io.ConjunctiveQueryWriter;
-import fr.lirmm.graphik.graal.io.RuleWriter;
+import fr.lirmm.graphik.graal.io.GraalWriter;
 import fr.lirmm.graphik.util.DefaultURI;
 import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.URI;
-import fr.lirmm.graphik.util.stream.ObjectWriter;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class Dlgp1Writer extends Writer implements ObjectWriter<Object>, ConjunctiveQueryWriter, RuleWriter {
+public class Dlgp1Writer extends GraalWriter {
 	
-	protected Writer writer;
-
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 
+	/**
+	 * Write into the standard output. Warning, if you close this object, you
+	 * will close the standard output.
+	 */
 	public Dlgp1Writer() {
-		this.writer = new OutputStreamWriter(System.out);
+		this(new OutputStreamWriter(System.out));
 	}
 	
 	public Dlgp1Writer(OutputStream out) {
-		this.writer = new OutputStreamWriter(out);
+		this(new OutputStreamWriter(out));
 	}
 	
 	public Dlgp1Writer(Writer out) {
-		this.writer = out;
+		super(out);
 	}
 	
 	public Dlgp1Writer(File file) throws IOException {
 		this(new FileWriter(file));
 	}
 	
+	/**
+	 * Write into a file specified by the path file.
+	 * 
+	 * @param path
+	 *            the file path
+	 * @throws IOException
+	 */
 	public Dlgp1Writer(String path) throws IOException {
 		 this(new FileWriter(path));
 	}
@@ -65,76 +71,23 @@ public class Dlgp1Writer extends Writer implements ObjectWriter<Object>, Conjunc
 	// /////////////////////////////////////////////////////////////////////////
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
-	
+
 	@Override
-	public void write(String str) throws IOException {
-		super.write(str);
-		this.flush();
-	}
-	
-	public void writeln(String str) throws IOException {
-		super.write(str);
-		super.write('\n');
-		this.flush();
-	}
-	
-	@Override
-	public void write(Iterable<Object> it) throws IOException {
-		for(Object o: it)
-			this.write(o);
-	}
-	
-	public void writeIterable(Iterable<?> it) throws IOException {
-		for(Object o: it)
-			this.write(o);
-	}
-	
-	public void write(Iterator<Object> it) throws IOException {
-		while(it.hasNext())
-			this.write(it.next());
-	}
-	
-	public void writeIterator(Iterator<?> it) throws IOException {
-		while(it.hasNext())
-			this.write(it.next());
-	}
-		
-	@Override
-	public void write(Object o) throws IOException {
-		if(o instanceof Atom) {
-			this.write((Atom)o);
-		} else if(o instanceof NegativeConstraint) {
-			this.write((NegativeConstraint)o);
-		} else if(o instanceof Rule) {
-			this.write((Rule)o);
-		} else if(o instanceof ConjunctiveQuery) {
-			this.write((ConjunctiveQuery)o);
-		} else if(o instanceof Prefix) {
-			this.write((Prefix)o);
-		} else if(o instanceof Iterable<?>) {
-			this.writeIterable((Iterable<?>)o);
-		} else if(o instanceof Iterator<?>) {
-			this.writeIterator((Iterator<?>)o);
-		}
+	public void writeComment(String comment) throws IOException {
+		this.write("% ");
+		this.writeln(comment);
 	}
 
+	@Override
 	public void write(AtomSet atomset) throws IOException {
 		this.writeAtomSet(atomset, true);
-		this.write(".");
-		this.writer.flush();
+		this.writeln(".");
 	}
 
 	public void write(RuleSet ruleset) throws IOException {
 		for (Rule r : ruleset) {
 			this.write(r);
 		}
-		this.writer.flush();
-	}
-
-	public void write(Atom atom) throws IOException{
-		this.writeAtom(atom);
-		this.writer.write(".\n");
-		this.writer.flush();
 	}
 	
 	/*public void write(Iterable<Atom> atoms) throws IOException {
@@ -148,19 +101,17 @@ public class Dlgp1Writer extends Writer implements ObjectWriter<Object>, Conjunc
 		this.writeLabel(rule.getLabel());
 
 		this.writeAtomSet(rule.getHead(), false);
-		this.writer.write(" :- ");
+		this.write(" :- ");
 		this.writeAtomSet(rule.getBody(), false);
-		this.writer.write(".\n");
-		this.writer.flush();
+		this.write(".\n");
 	}
 	
 	public void write(NegativeConstraint constraint) throws IOException {
 		this.writeLabel(constraint.getLabel());
 		
-		this.writer.write(" ! :- ");
+		this.write(" ! :- ");
 		this.writeAtomSet(constraint.getBody(), false);
-		this.writer.write(".\n");
-		this.writer.flush();
+		this.write(".\n");
 	}
 
 	public void write(Query query) throws IOException {
@@ -181,53 +132,35 @@ public class Dlgp1Writer extends Writer implements ObjectWriter<Object>, Conjunc
 		if(!query.getLabel().isEmpty()) {
 			this.writeLabel(query.getLabel());
 		}
-		this.writer.write('?');
+		this.write('?');
 		Collection<Term> avars = query.getAnswerVariables();
 		if(!avars.isEmpty()) {
 			boolean isFirst = true;
-			this.writer.write('(');
+			this.write('(');
 			for(Term t: avars) {
 				if(isFirst) {
 					isFirst = false;
 				} else {
-					this.writer.write(',');
+					this.write(',');
 				} 
 				
 				this.writeTerm(t);
 			}
-			this.writer.write(')');
+			this.write(')');
 		}
-		this.writer.write(" :- ");
+		this.write(" :- ");
 		this.writeAtomSet(query.getAtomSet(), false);
-		this.writer.write(".\n");
-		this.writer.flush();
+		this.write(".\n");
+		this.flush();
 	}
 	
+	@Override
 	public void write(Prefix prefix) throws IOException {
-		this.writer.write("%prefix ");
-		this.writer.write(prefix.getPrefixName());
-		this.writer.write(" <");
-		this.writer.write(prefix.getPrefix());
-		this.writer.write(">\n");
-	}
-
-	// /////////////////////////////////////////////////////////////////////////
-	// OVERRIDE METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	@Override
-	public void close() throws IOException {
-		this.writer.close();
-	}
-
-	@Override
-	public void flush() throws IOException {
-		this.writer.flush();
-	}
-
-	@Override
-	public void write(char[] cbuf, int off, int len) throws IOException {
-		this.writer.write(cbuf, off, len);
+		this.write("%prefix ");
+		this.write(prefix.getPrefixName());
+		this.write(" <");
+		this.write(prefix.getPrefix());
+		this.write(">\n");
 	}
 	
 	// /////////////////////////////////////////////////////////////////////////
@@ -248,32 +181,45 @@ public class Dlgp1Writer extends Writer implements ObjectWriter<Object>, Conjunc
 			if(isFirst) {
 				isFirst = false;
 			} else {
-				this.writer.write(", ");
+				this.write(", ");
 				if(addCarriageReturn)
-					this.writer.write('\n');
+					this.write('\n');
 			}
 			
-			this.writeAtom(a);
+			this.write(a);
 		}
 	}
 	
+	@Override
 	protected void writeAtom(Atom atom) throws IOException {
 		this.writePredicate(atom.getPredicate());
-		this.writer.write('(');
+		this.write('(');
 		
 		boolean isFirst = true;
 		for(Term t : atom.getTerms()) {
 			if(isFirst) {
 				isFirst = false;
 			} else {
-				this.writer.write(", ");
+				this.write(", ");
 			}
 			
 			this.writeTerm(t);
 			
 			
 		}
-		this.writer.write(')');
+		this.write(')');
+	}
+
+	@Override
+	protected void writeEquality(Term term, Term term2) throws IOException {
+		this.writeTerm(term);
+		this.write(" = ");
+		this.writeTerm(term2);
+	}
+
+	@Override
+	protected void writeBottom() throws IOException {
+		this.write("!");
 	}
 
 	protected void writeTerm(Term t) throws IOException {
@@ -283,18 +229,18 @@ public class Dlgp1Writer extends Writer implements ObjectWriter<Object>, Conjunc
 		
 		if(Type.VARIABLE.equals(t.getType())) {
 			if(first < 'A' || first > 'Z') {
-				this.writer.write("VAR_");
+				this.write("VAR_");
 			}
-			this.writer.write(s);
+			this.write(s);
 		} else if(Type.CONSTANT.equals(t.getType())) {
 			if(first < 'a' || first > 'z') {
-				this.writer.write("cst_");
+				this.write("cst_");
 			}
-			this.writer.write(s);
+			this.write(s);
 		} else {
-			this.writer.write('"');
-			this.writer.write(uri.toString());
-			this.writer.write('"');
+			this.write('"');
+			this.write(uri.toString());
+			this.write('"');
 		}
 		
 	}
@@ -308,11 +254,11 @@ public class Dlgp1Writer extends Writer implements ObjectWriter<Object>, Conjunc
 		
 		char first = s.charAt(0);
 		if (onlyValidChar(s) && first >= 'a' && first <= 'z') {
-			this.writer.write(s);
+			this.write(s);
 		} else {
-			this.writer.write('"');
-			this.writer.write(s);
-			this.writer.write('"');
+			this.write('"');
+			this.write(s);
+			this.write('"');
 		}
 	}
 	

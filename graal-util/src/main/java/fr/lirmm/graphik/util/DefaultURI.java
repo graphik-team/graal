@@ -19,7 +19,8 @@ public class DefaultURI implements URI {
 	}
 	
 	public DefaultURI(String uri) {
-		this.prefix = Prefix.getPrefix(URIUtils.getPrefix(uri));
+		this.prefix = PrefixManager.getInstance().getPrefix(
+				URIUtils.getPrefix(uri));
 		this.localname = URIUtils.getLocalName(uri);
 	}
 	

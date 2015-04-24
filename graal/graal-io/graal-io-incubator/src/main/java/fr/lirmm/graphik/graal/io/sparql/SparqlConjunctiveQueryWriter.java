@@ -3,68 +3,102 @@
  */
 package fr.lirmm.graphik.graal.io.sparql;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Term;
+import fr.lirmm.graphik.graal.io.AbstractWriter;
 import fr.lirmm.graphik.graal.io.ConjunctiveQueryWriter;
 import fr.lirmm.graphik.graal.io.WriterException;
+import fr.lirmm.graphik.util.Prefix;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class SparqlConjunctiveQueryWriter implements ConjunctiveQueryWriter {
+public class SparqlConjunctiveQueryWriter extends AbstractWriter implements
+		ConjunctiveQueryWriter {
 
-	public void write(String s) {
-		System.out.println(s);
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTOR
+	// /////////////////////////////////////////////////////////////////////////
+
+	public SparqlConjunctiveQueryWriter(Writer out) {
+		super(out);
+	}
+
+	public SparqlConjunctiveQueryWriter() {
+		this(new OutputStreamWriter(System.out));
+	}
+
+	public SparqlConjunctiveQueryWriter(OutputStream out) {
+		this(new OutputStreamWriter(out));
+	}
+
+	public SparqlConjunctiveQueryWriter(File file) throws IOException {
+		this(new FileWriter(file));
+	}
+
+	public SparqlConjunctiveQueryWriter(String path) throws IOException {
+		this(new FileWriter(path));
+	}
+
+	// //////////////////////////////////////////////////////////////////////////
+	//
+	// //////////////////////////////////////////////////////////////////////////
+	@Override
+	public void write(Prefix prefix) throws IOException {
+		this.write("PREFIX ");
+		this.write(prefix.getPrefixName());
+		this.write(": <");
+		this.write(prefix.getPrefix());
+		this.writeln('>');
 	}
 	
-	public void write(ConjunctiveQuery query, String rdfPrefix) throws WriterException {
-		System.out.println("PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>");
-		System.out.println("PREFIX : <" + rdfPrefix + '>');
+	@Override
+	public void write(ConjunctiveQuery query)
+			throws IOException {
 
-		System.out.print("SELECT DISTINCT ");
+		this.write("SELECT DISTINCT ");
 		for(Term t : query.getAnswerVariables())
 			this.write(t);
 
-		System.out.print("\nWHERE\n{\n");
+		this.write("\nWHERE\n{\n");
 		boolean isFirst = true;
 		for(Atom a : query.getAtomSet()) {
 			if(!isFirst) {
-				System.out.print(" .\n");
+				this.write(" .\n");
 			} else {
 				isFirst = false;
 			}
-			this.write(a, rdfPrefix);
+			this.writeAtom(a);
 		}
 		
-		System.out.print("\n}\n");
-	}
-	
-	/* (non-Javadoc)
-	 * @see fr.lirmm.graphik.obda.writer.ConjunctiveQueryWriter#write(fr.lirmm.graphik.kb.core.impl.ConjunctiveQuery)
-	 */
-	@Override
-	public void write(ConjunctiveQuery query) throws WriterException {
-		this.write(query, "");
+		this.write("\n}\n");
 	}
 
 	/**
 	 * @param a
-	 * @throws WriterException 
+	 * @throws IOException 
 	 */
-	private void write(Atom a, String rdfPrefix) throws WriterException {
-		System.out.print("\t");
+	private void writeAtom(Atom a) throws IOException {
+		this.write("\t");
 		this.write(a.getTerm(0));
-		System.out.print(' ');
+		this.write(' ');
 		
 		if(a.getPredicate().getArity() == 1) {
-			System.out.print("rdf:type ");
+			this.write("rdf:type ");
 			this.write(a.getPredicate());
 		} else if (a.getPredicate().getArity() == 2) {
 			this.write(a.getPredicate());
-			System.out.print(' ');
+			this.write(' ');
 			this.write(a.getTerm(1));
 		} else {
 			throw new WriterException("Unsupported predicate arity");
@@ -73,24 +107,23 @@ public class SparqlConjunctiveQueryWriter implements ConjunctiveQueryWriter {
 
 	/**
 	 * @param predicate
+	 * @throws IOException 
 	 */
-	private void write(Predicate predicate) {
-		System.out.print(':');
-		System.out.print(predicate.getIdentifier());
+	private void write(Predicate predicate) throws IOException {
+		this.write(predicate.getIdentifier());
 	}
 
 	/**
 	 * @param t
+	 * @throws IOException 
 	 */
-	private void write(Term t) {
-		if(Term.Type.VARIABLE.equals(t.getType()))
-			System.out.print('?');
-		else
-			System.out.print(':');
+	private void write(Term t) throws IOException {
+		if (Term.Type.VARIABLE.equals(t.getType())) {
+			this.write('?');
+		}
 		
-		System.out.print(t);
-		System.out.print(' ');
+		this.write(t.getIdentifier());
+		this.write(' ');
 	}
-	
 
 }

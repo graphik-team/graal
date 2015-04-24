@@ -91,7 +91,8 @@ public final class URIUtils {
 	 * @return
 	 */
 	public static URI createURI(String string, Prefix defaultPrefix) {
-		Prefix prefix = Prefix.getPrefix(URIUtils.getPrefix(string));
+		Prefix prefix = PrefixManager.getInstance().getPrefix(
+				URIUtils.getPrefix(string));
 		if(prefix.getPrefix().equals("")) {
 			prefix = defaultPrefix;
 		}
