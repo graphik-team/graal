@@ -37,6 +37,7 @@
                 <module>graal-io-incubator</module>
 		<module>graal-io-owl</module>
 		<module>graal-io-rdf</module>
+                <module>graal-io-ruleml</module>
 	</modules>
 
 	<build>
