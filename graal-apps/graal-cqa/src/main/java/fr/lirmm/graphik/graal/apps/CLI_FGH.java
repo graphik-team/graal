@@ -192,6 +192,11 @@ public class CLI_FGH {
 				}
 			}
 
+			// because finalize() may not be called........
+			if (options.computingIndex) {
+				index.writeToFile();
+			}
+
 		}
 		catch (Exception e) {
 			System.err.println(e);
