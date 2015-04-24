@@ -20,7 +20,7 @@ public class AtomIndex {
 		_hasBeenModified = false;
 	}
 
-	protected void onFinalise() {
+	protected void finalize() {
 		if (_hasBeenModified)
 			writeToFile();
 	}
@@ -54,11 +54,12 @@ public class AtomIndex {
 			FileWriter out = new FileWriter(f);
 			Set<Integer> keys = _indexToAtom.keySet();
 			for (Integer i : keys) {
-				out.write(i);
+				out.write(""+i);
 				out.write(' ');
 				out.write(DlgpWriter.writeToString(_indexToAtom.get(i)));
 				out.write("\n");
 			}
+			_hasBeenModified = false;
 		}
 		catch (Exception e) {
 			System.err.println("AtomIndex::writeToFilepath: " + e);

@@ -96,17 +96,17 @@ public class FGH implements Iterable<FGH.Edge> {
 			for (Edge e : this)
 				++cpt;
 
-			out.write(cpt);
+			out.write(""+cpt);
 			out.write("\n");
 
 			for (Edge e : this) {
 				cpt = 0;
 				for (Integer i : e) // count edge size
 					++cpt;
-				out.write(cpt);
+				out.write(""+cpt);
 				out.write(' ');
 				for (Integer i : e) { // print elements
-					out.write(i);
+					out.write(""+i);
 					out.write(' ');
 				}
 				out.write("\n");

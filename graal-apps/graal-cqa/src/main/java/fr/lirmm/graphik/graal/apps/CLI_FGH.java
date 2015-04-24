@@ -80,63 +80,6 @@ public class CLI_FGH {
 
 				DlgpParser parser = new DlgpParser(reader);
 
-		//		/* Better way of doing it ! */
-		//		Actually not so good.
-		//		Since we need *all* conflicts to know if brave entailed
-		//		So, there are two ways of doing it:
-		//		1) bash + classical main:
-		//		    graal_get_answer "queries" | filterNonBrave | toCNFClause | checkCQA
-		//		    Where toCNFClause + checkCQA is:
-		//		        input: CQ
-		//		2) in GRAAL:
-		//		    graal_get_brave_ans "queries" "conflict_file" | toCNF | cqa_graph
-		//		3) 
-		//		    graal_get_answer "queries" | filterNonBrave > answers
-		//		    cat answers | enumerateCNFClause | checkCQA
-		//		    with checkCQA := 
-		//		        while (<>) {
-		//		            system ("echo '$_' > colors"); # WARNING: not the input format! Since it should be "number of vertices, and for each vertex either 0 or 1"
-		//		            my $foundCounterExample = system("cat colors conflicts | cqa_graph --options");
-		//		            //// OR
-		//		            open(F,"cat colors conflicts | cqa_graph --options |");
-		//		            my $foundCounterExample = 0;
-		//		            while (<F>) {
-		//		                if (/<RESULT:(.*)>/) {
-		//		                    $foundCounterExample = $1;
-		//		                    break;
-		//		                }
-		//		            }
-		//		            if ($foundCounterExample) {
-		//		                print "No CQA entailed!"
-		//		                exit(0);
-		//		            }
-		//		        }
-		//		        print "CQA Entailed!"
-		//		        exit(0);
-		//		        
-		//		We could link filterNonBrave to enumerateCNFClause directly
-		//		but anyway, enumerateCNFClause needs all answers to give the first clause.
-		//		So... Totally useless to do this.
-		//		
-		//		for (Object o : parser) {
-		//			if (o instanceof Atom)
-		//				//atomset.addUnbatched((Atom)o); TODO
-		//				atomset.add((Atom)o);
-		//			else if (o instanceof Rule) {
-		//				if (((Rule)o).getHead().iterator().next() == Predicate.ABSURD) {
-		//					ConjunctiveQuery q = new DefaultConjunctiveQuery(((Rule)o).getBody());
-		//					q.setAns(null);
-		//					constraints.add(q);
-		//				}
-		//				else
-		//					rules.add((Rule)o);
-		//			}
-		//			else if (o instanceof ConjunctiveQuery)
-		//				queries.add((ConjunctiveQuery)o);
-		//			else
-		//				System.out.println("Ignoring non recognized object: " + o);
-		//		}
-
 				for (Object o : parser) {
 					if (o instanceof Atom)
 						//atomset.addUnbatched((Atom)o); TODO
@@ -212,7 +155,6 @@ public class CLI_FGH {
 				for (ConjunctiveQuery constraint : constraints) {
 					DefaultConjunctiveQuery q = new DefaultConjunctiveQuery(constraint);
 					q.setAnswerVariables(new LinkedList<Term>(q.getAtomSet().getTerms()));
-					//constraint.setAns(constraint.getTerms());
 					for (Substitution s : solver.execute(q,atomset)) {
 						AtomSet conflict = s.getSubstitut(q.getAtomSet());
 						int conflict_size = 0;
@@ -234,7 +176,6 @@ public class CLI_FGH {
 				for (ConjunctiveQuery constraint : constraints) {
 					DefaultConjunctiveQuery q = new DefaultConjunctiveQuery(constraint);
 					q.setAnswerVariables(new LinkedList<Term>(q.getAtomSet().getTerms()));
-					//constraint.setAns(constraint.getTerms());
 					for (Substitution s : solver.execute(q,atomset)) {
 						AtomSet conflict = s.getSubstitut(q.getAtomSet());
 						int conflict_size = 0;
@@ -295,10 +236,10 @@ public class CLI_FGH {
 	private String fgh_file = "_default.fgh";
 
 	@Parameter(names = { "-c", "--conflicts-file", "--naive-conflicts-file" }, description = "Naive conflicts file")
-	private String ucq_file = "_default.naive-conflicts";
+	private String conflict_file = "_default.naive-conflicts";
 
 	@Parameter(names = { "-u", "--ucq-file" }, description = "UCQ output file")
-	private String conflict_file = "_default.ucq_answers";
+	private String ucq_file = "_default.ucq_answers";
 
 
 };
