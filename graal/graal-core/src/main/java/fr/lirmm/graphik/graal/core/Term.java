@@ -15,12 +15,39 @@ import fr.lirmm.graphik.util.URIUtils;
  */
 public class Term implements Comparable<Term>, Serializable {
 
+	private interface TermType {
+		boolean isConstant();
+	}
+
 	/**
 	 * The enumeration of term types.
 	 */
-	public static enum Type {
-		CONSTANT, VARIABLE, LITERAL
+	public static enum Type implements TermType {
+		CONSTANT {
+			@Override
+			public boolean isConstant() {
+				return true;
+			}
+		},
+
+		VARIABLE {
+			@Override
+			public boolean isConstant() {
+				return false;
+			}
+		},
+
+		LITERAL {
+			@Override
+			public boolean isConstant() {
+				return true;
+			}
+		}
 	}
+
+	// //////////////////////////////////////////////////////////////////////////
+	//
+	// //////////////////////////////////////////////////////////////////////////
 
 	private static final long serialVersionUID = -8596306338753616109L;
 
@@ -89,8 +116,7 @@ public class Term implements Comparable<Term>, Serializable {
 	 * @return
 	 */
 	public boolean isConstant() {
-		return Type.CONSTANT.equals(this.type)
-				|| Type.LITERAL.equals(this.type);
+		return this.type.isConstant();
 	}
 
 	/**
