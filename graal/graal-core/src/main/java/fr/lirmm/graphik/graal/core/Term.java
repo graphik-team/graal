@@ -2,7 +2,6 @@ package fr.lirmm.graphik.graal.core;
 
 import java.io.Serializable;
 
-import fr.lirmm.graphik.util.DefaultURI;
 import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.URI;
 import fr.lirmm.graphik.util.URIUtils;
@@ -82,12 +81,12 @@ public class Term implements Comparable<Term>, Serializable {
 			break;
 		case CONSTANT:
 			this.value = null;
-			this.uri = URIUtils.createURI(value.toString(), Prefix.DEFAULT);
+			this.uri = URIUtils.createURI(value.toString(), Prefix.CONSTANT);
 			break;
 		case VARIABLE:
 		default:
 			this.value = null;
-			this.uri = new DefaultURI(value.toString());
+			this.uri = URIUtils.createURI(value.toString(), Prefix.VARIABLE);
 			break;
 		}
 	}

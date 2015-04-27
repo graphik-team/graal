@@ -13,7 +13,8 @@ public class PredicateTest {
         int arity = 5;
         Predicate predicate = new Predicate(label, arity);
 
-        Assert.assertTrue(predicate.getIdentifier().equals(Prefix.DEFAULT.getPrefix() + label));
+		Assert.assertTrue(predicate.getIdentifier().equals(
+				Prefix.PREDICATE.getPrefix() + label));
         Assert.assertTrue(predicate.getArity() == arity);
     }
 

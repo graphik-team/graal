@@ -466,7 +466,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 					}
 					lastOccurrence.put(term.toString(), thisTerm);
 					if (cquery.getAnswerVariables().contains(term))
-						columns.put(term, thisTerm + " as " + term);
+						columns.put(term, thisTerm + " as '" + term + "'");
 				}
 				++position;
 			}

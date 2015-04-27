@@ -71,6 +71,7 @@ public class ResultSetSubstitutionReader implements SubstitutionReader {
 		this.isBooleanQuery = isBooleanQuery;
 	}
 
+	@Override
 	protected void finalize() throws Throwable {
         this.close();
         super.finalize();
@@ -80,22 +81,12 @@ public class ResultSetSubstitutionReader implements SubstitutionReader {
     //  METHODS
     // /////////////////////////////////////////////////////////////////////////
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.Iterator#remove()
-     */
     @Override
     public void remove() {
         // TODO implement this method
         throw new MethodNotImplementedError();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see fr.lirmm.graphik.kb.stream.ISubstitutionReader#hasNext()
-     */
     @Override
     public boolean hasNext() {
         if (!this.hasNextCallDone) {
@@ -112,11 +103,6 @@ public class ResultSetSubstitutionReader implements SubstitutionReader {
         return this.hasNext;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see fr.lirmm.graphik.kb.stream.ISubstitutionReader#next()
-     */
     @Override
     public Substitution next() {
         if (!this.hasNextCallDone)
@@ -128,7 +114,7 @@ public class ResultSetSubstitutionReader implements SubstitutionReader {
             Substitution substitution = new HashMapSubstitution();
             if(!isBooleanQuery) {
 	            for (int i = 1; i <= this.metaData.getColumnCount(); ++i) {
-	                Term term = new Term(this.metaData.getColumnLabel(i).toUpperCase(),
+					Term term = new Term(this.metaData.getColumnLabel(i),
 	                        Term.Type.VARIABLE);
 	                Term substitut = this.store.getTerm(this.results.getString(i));
 	                substitution.put(term, substitut);
@@ -141,19 +127,11 @@ public class ResultSetSubstitutionReader implements SubstitutionReader {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see fr.lirmm.graphik.kb.stream.ISubstitutionReader#iterator()
-     */
     @Override
     public Iterator<Substitution> iterator() {
         return this;
     }
 
-    /* (non-Javadoc)
-     * @see fr.lirmm.graphik.kb.stream.ISubstitutionReader#close()
-     */
     @Override
     public void close() {
         try {
@@ -164,6 +142,4 @@ public class ResultSetSubstitutionReader implements SubstitutionReader {
         }
     }
     
-    
-
 }

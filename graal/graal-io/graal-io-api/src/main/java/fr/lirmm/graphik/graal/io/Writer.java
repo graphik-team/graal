@@ -19,4 +19,6 @@ public interface Writer {
 	
 	void write(Prefix prefix) throws IOException;
 
+	void writeComment(String string) throws IOException;
+
 }

@@ -201,7 +201,7 @@ public class RuleML2015Bench {
 					writer.write(ucqPivot.getLabel() + ": " + e.getMessage() + "\n");
 				}
 			}
-			writer.writeln("---------------------------------------------------");
+			writer.writeComment("---------------------------------------------------");
 		}
 			
 	}

@@ -248,7 +248,7 @@ public class Dlgp1Writer extends GraalWriter {
 	protected void writePredicate(Predicate p) throws IOException {
 		String s = p.getIdentifier();
 		URI uri = new DefaultURI(p.getIdentifier());
-		if(uri.getPrefix().equals(Prefix.DEFAULT)) {
+		if (uri.getPrefix().equals(Prefix.PREDICATE)) {
 			s = uri.getLocalname();
 		}
 		

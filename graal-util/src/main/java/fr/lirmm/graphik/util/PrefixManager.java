@@ -20,10 +20,11 @@ public final class PrefixManager implements Iterable<Prefix> {
 	private static int prefixIndex = 0;
 	
 	static {
-		instance.putPrefix(Prefix.DEFAULT);
 		instance.putPrefix(Prefix.EMPTY);
 		instance.putPrefix(Prefix.LITERAL);
 		instance.putPrefix(Prefix.VARIABLE);
+		instance.putPrefix(Prefix.CONSTANT);
+		instance.putPrefix(Prefix.PREDICATE);
 	}
 
 	// //////////////////////////////////////////////////////////////////////////

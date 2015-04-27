@@ -129,13 +129,13 @@ public class GraalQuery {
 		SubstitutionReader subr = solver.execute(ucq, store);
 		if (options.verbose) {
 			PROFILER.stop("answering time");
-			WRITER.writeln("# answers");
+			WRITER.writeComment("answers");
 		}
 
 		int i = 0;
 		for(Substitution sub : subr) {
 			++i;
-			WRITER.writeln(sub.toString());
+			WRITER.writeComment(sub.toString());
 		}
 		
 		if (options.verbose) {

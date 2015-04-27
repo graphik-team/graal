@@ -61,7 +61,8 @@ public class Predicate implements Comparable<Predicate>, Serializable {
 	 * @param arity
 	 */
 	public Predicate(String string, int arity) {
-		this.uri = URIUtils.createURI(string, Prefix.DEFAULT);;
+		this.uri = URIUtils.createURI(string, Prefix.PREDICATE);
+		;
 		this.arity = arity;
 	}
 

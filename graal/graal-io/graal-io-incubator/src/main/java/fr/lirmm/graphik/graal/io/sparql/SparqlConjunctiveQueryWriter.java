@@ -126,4 +126,10 @@ public class SparqlConjunctiveQueryWriter extends AbstractWriter implements
 		this.write(' ');
 	}
 
+	@Override
+	public void writeComment(String comment) throws IOException {
+		this.write("# ");
+		this.writeln(comment);
+	}
+
 }
