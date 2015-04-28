@@ -31,6 +31,7 @@ public abstract class AbstractGraalWriter extends AbstractWriter implements
 	//
 	// //////////////////////////////////////////////////////////////////////////
 
+	@Override
 	public abstract void writeComment(String comment) throws IOException;
 
 	public void write(Object o) throws IOException {
@@ -71,6 +72,7 @@ public abstract class AbstractGraalWriter extends AbstractWriter implements
 		} else {
 			this.writeAtom(atom);
 		}
+		this.write('\n');
 	}
 
 	/**

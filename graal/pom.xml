@@ -39,6 +39,7 @@
 		<module>graal-backward-chaining</module>
 		<module>graal-rules-analyser</module>
 		<module>graal-incubator</module>
+                <module>graal-util</module>
 	</modules>
 
 	<build>

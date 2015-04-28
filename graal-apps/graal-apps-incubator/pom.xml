@@ -40,7 +40,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-store</artifactId>
+			<artifactId>graal-store-rdbms</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>

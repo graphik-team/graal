@@ -24,14 +24,18 @@ public class RDFParserExample {
 	public static void main(String args[]) throws HomomorphismFactoryException,
 			HomomorphismException, URISyntaxException, IOException {
 
-		URL url = new URL("http://dbpedia.org/data/Montpellier.ntriples");
+		URL url = new URL(
+"file:///tmp/Levenshtein.xml");
 		DlgpWriter writer = new DlgpWriter(System.out);
 		
-		RDFParser parser = new RDFParser(url, RDFFormat.NTRIPLES);
+		RDFParser parser = new RDFParser(url, RDFFormat.RDFXML);
 		
+		int i = 0;
 		for(Atom a : parser) {
+			System.out.println(++i);
 			writer.write(a);
 		}
+		writer.flush();
 		
 	}
 	
