@@ -42,7 +42,7 @@ public class TermTest
 
 		Assert.assertTrue(Term.Type.VARIABLE.equals(term.getType()));
 		Assert.assertTrue(term.getIdentifier().equals(
-				Prefix.VARIABLE.getPrefix() + label));
+				Prefix.EMPTY.getPrefix() + label));
 	}
 	
 	@Test

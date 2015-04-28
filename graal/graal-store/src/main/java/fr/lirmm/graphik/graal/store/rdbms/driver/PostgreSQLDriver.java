@@ -6,6 +6,7 @@ package fr.lirmm.graphik.graal.store.rdbms.driver;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,34 +60,42 @@ public class PostgreSQLDriver extends AbstractRdbmsDriver {
 	// /////////////////////////////////////////////////////////////////////////
 	
 	@Override
-	public String getInsertOrIgnoreStatement(String tableName, Iterable<?> values) {
+	public String getInsertOrIgnoreStatement(String tableName,
+			Map<String, Object> data) {
+		StringBuilder fields = new StringBuilder("(");
+		StringBuilder values = new StringBuilder("");
+
+		boolean first = true;
+		for (Map.Entry<String, Object> e : data.entrySet()) {
+			if (!first) {
+				fields.append(", ");
+				values.append(", ");
+			}
+			fields.append(e.getKey());
+			values.append('\'').append(e.getValue()).append('\'');
+			first = false;
+		}
+		fields.append(") ");
+
 		StringBuilder query = new StringBuilder();
 		query.append("INSERT INTO ");
 		query.append(tableName);
+		query.append(fields);
 		query.append(" SELECT ");
-
-		boolean first = true;
-		for(Object value : values) {
-			if(!first) {
-				query.append(", ");
-			}
-			query.append('\'').append(value).append('\'');
-			first = false;
-		}
-		query.append(" ");
+		query.append(values);
 		
 		// Where not exist
-		query.append("FROM (SELECT 0) AS t WHERE NOT EXISTS (SELECT 1 FROM ");
+		query.append(" FROM (SELECT 0) AS t WHERE NOT EXISTS (SELECT 1 FROM ");
 		query.append(tableName);
 		query.append(" WHERE ");
 		
 		int i = 0;
-		for(Object value : values) {
+		for (Map.Entry<String, Object> e : data.entrySet()) {
 			if(i > 0) {
 				query.append(" and ");
 			}
-			query.append("term").append(i++).append(" = ");
-			query.append('\'').append(value).append('\'');
+			query.append(e.getKey()).append(" = ");
+			query.append('\'').append(e.getValue()).append('\'');
 		}
 		query.append("); ");
 		

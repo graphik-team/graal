@@ -93,7 +93,6 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	private PreparedStatement getPredicateTableStatement;
 	private PreparedStatement insertPredicateStatement;
 
-	private PreparedStatement insertTermStatement;
 	private PreparedStatement getTermStatement;
 
 	private PreparedStatement getCounterValueStatement;
@@ -125,8 +124,6 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 					.prepareStatement(GET_COUNTER_VALUE_QUERY);
 			this.updateCounterValueStatement = this.getConnection()
 					.prepareStatement(UPDATE_COUNTER_VALUE_QUERY);
-			this.insertTermStatement = this.getConnection().prepareStatement(
-					this.getInsertTermQuery());
 			this.getTermStatement = this.getConnection().prepareStatement(
 					GET_TERM_QUERY);
 			this.getTermsByTypeStatement = this.getConnection().prepareStatement(GET_TERMS_BY_TYPE);
@@ -163,7 +160,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 
 	@Override
 	protected void createDatabaseSchema() throws AtomSetException {
-		final String createPredicateTableQuery = "CREATE TABLE IF NOT EXISTS "
+		final String createPredicateTableQuery = "CREATE TABLE "
 												 + PREDICATE_TABLE_NAME
 												 + "(predicate_label varchar("
 												 + VARCHAR_SIZE
@@ -172,7 +169,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 												 + VARCHAR_SIZE
 												 + "), PRIMARY KEY (predicate_label, predicate_arity));";
 
-		final String createTermTableQuery = "CREATE TABLE IF NOT EXISTS "
+		final String createTermTableQuery = "CREATE TABLE "
 											+ TERM_TABLE_NAME
 											+ " (term varchar("
 											+ VARCHAR_SIZE
@@ -181,7 +178,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 											+ "), PRIMARY KEY (term));";
 
 		final String termTypeTableName = "term_type";
-		final String createTermTypeTableQuery = "CREATE TABLE IF NOT EXISTS "
+		final String createTermTypeTableQuery = "CREATE TABLE "
 												+ termTypeTableName
 												+ " (term_type varchar("
 												+ VARCHAR_SIZE
@@ -197,6 +194,8 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug("Create database schema");
 
+			statement.executeUpdate("create table test (i int)");
+			statement.executeUpdate("insert into test values (1)");
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug(createPredicateTableQuery);
 			statement.executeUpdate(createPredicateTableQuery);
@@ -218,7 +217,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 				LOGGER.debug(createTermTableQuery);
 			statement.executeUpdate(createTermTableQuery);
 
-			final String createCounterTableQuery = "CREATE TABLE IF NOT EXISTS "
+			final String createCounterTableQuery = "CREATE TABLE "
 												   + COUNTER_TABLE_NAME
 												   + " (counter_name varchar(64), value BIGINT, PRIMARY KEY (counter_name));";
 
@@ -466,7 +465,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 					}
 					lastOccurrence.put(term.toString(), thisTerm);
 					if (cquery.getAnswerVariables().contains(term))
-						columns.put(term, thisTerm + " as '" + term + "'");
+						columns.put(term, thisTerm + " as " + term);
 				}
 				++position;
 			}
@@ -552,17 +551,6 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	// PROTECTED METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	private final String getInsertTermQuery() {
-		return "INSERT INTO "
-			   + TERM_TABLE_NAME
-			   + " (term, term_type) "
-			   + "SELECT ?, ? FROM (SELECT 0) AS t "
-			   + "WHERE "
-			   + "  NOT EXISTS ("
-			   + "       SELECT 1 FROM " + TERM_TABLE_NAME + " WHERE term = ?"
-			   + "  );";
-	}
-
 	/**
 	 * @param statement
 	 * @param atom
@@ -577,7 +565,14 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 				this.add(statement, t);
 			}
 			String tableName = this.getPredicateTable(atom.getPredicate());
-			String query = this.getDriver().getInsertOrIgnoreStatement(tableName, atom.getTerms());
+			Map<String, Object> data = new TreeMap<String, Object>();
+			int i = -1;
+			for(Term t : atom.getTerms()) {
+				++i;
+				data.put("term" + i, t);
+			}
+			String query = this.getDriver().getInsertOrIgnoreStatement(
+					tableName, data);
 
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug(atom.toString() + " : " + query.toString());
@@ -628,11 +623,18 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	private void add(Statement statement, Term term) throws SQLException {
-		this.insertTermStatement.setString(1, term.toString());
-		this.insertTermStatement.setString(2, term.getType().toString());
-		this.insertTermStatement.setString(3, term.toString());
-		this.insertTermStatement.execute();
+	private void add(Statement statement, Term term) throws AtomSetException {
+		try {
+			Map<String, Object> data = new TreeMap<String, Object>();
+			data.put("term", term.getIdentifier());
+			data.put("term_type", term.getType());
+			String query = this.getDriver()
+					.getInsertOrIgnoreStatement(
+					TERM_TABLE_NAME, data);
+			statement.executeUpdate(query);
+		} catch (SQLException e) {
+			throw new AtomSetException("Error during insertion of a term", e);
+		}
 	}
 
 	/**
@@ -702,7 +704,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 															String tableName,
 															Predicate predicate) {
 		StringBuilder primaryKey = new StringBuilder("PRIMARY KEY (");
-		StringBuilder query = new StringBuilder("CREATE TABLE IF NOT EXISTS ");
+		StringBuilder query = new StringBuilder("CREATE TABLE ");
 		query.append(tableName);
 
 		query.append('(').append(PREFIX_TERM_FIELD).append('0');

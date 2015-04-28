@@ -5,6 +5,7 @@ package fr.lirmm.graphik.graal.store.rdbms.driver;
 
 import java.sql.Connection;
 import java.sql.Statement;
+import java.util.Map;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -23,7 +24,7 @@ public interface RdbmsDriver {
 	 * @param values
 	 * @return
 	 */
-	String getInsertOrIgnoreStatement(String tableName, Iterable<?> values);
+	String getInsertOrIgnoreStatement(String tableName, Map<String, Object> data);
 
 	/**
 	 * Generate an INSERT OR IGNORE SQL statement.
@@ -33,4 +34,5 @@ public interface RdbmsDriver {
 	 * @return
 	 */
 	String getInsertOrIgnoreStatement(String tableName, String selectQuery);
+
 }

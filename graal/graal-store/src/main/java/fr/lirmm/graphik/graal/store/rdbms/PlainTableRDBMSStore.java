@@ -6,7 +6,9 @@ package fr.lirmm.graphik.graal.store.rdbms;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.slf4j.Logger;
@@ -132,7 +134,14 @@ public class PlainTableRDBMSStore extends AbstractRdbmsStore {
 		try {
 			this.checkPredicateTable(atom.getPredicate());
 			String tableName = this.getPredicateTableName(atom.getPredicate());
-			String query = this.getDriver().getInsertOrIgnoreStatement(tableName, atom.getTerms());
+			Map<String, Object> data = new TreeMap<String, Object>();
+			int i = -1;
+			for (Term t : atom.getTerms()) {
+				++i;
+				data.put("term" + i, t);
+			}
+			String query = this.getDriver().getInsertOrIgnoreStatement(
+					tableName, data);
 
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug(atom.toString() + " : " + query);

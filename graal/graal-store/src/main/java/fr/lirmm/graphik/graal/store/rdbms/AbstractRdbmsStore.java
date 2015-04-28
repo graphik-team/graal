@@ -47,6 +47,7 @@ public abstract class AbstractRdbmsStore extends AbstractAtomSet implements
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
+	@Override
 	public RdbmsDriver getDriver() {
 		return this.driver;
 	}
@@ -64,24 +65,28 @@ public abstract class AbstractRdbmsStore extends AbstractAtomSet implements
 	}
 	
 	@Override
-	public boolean add(Atom atom) {
-		boolean res = true;
+	public boolean add(Atom atom) throws AtomSetException {
+		boolean res = false;
 		Statement statement = null;
 		try {
 			statement = this.createStatement();
 			this.add(statement, atom);
-			statement.executeBatch();
+			int[] ret = statement.executeBatch();
+			for(int i : ret) {
+				if(i>0) {
+					res = true;
+					break;
+				}
+			}
 		} catch (SQLException e) {
-			res = false;
-		} catch (AtomSetException e) {
-			res = false;
+			throw new AtomSetException("Error while adding an atom", e);
 		} finally {
 			if (statement != null) {
 				try {
 					this.getConnection().commit();
 					statement.close();
 				} catch (SQLException e) {
-					res = false;
+					throw new AtomSetException("Error while adding an atom", e);
 				}
 			}
 		}
@@ -171,7 +176,7 @@ public abstract class AbstractRdbmsStore extends AbstractAtomSet implements
 
 			for (Atom a : stream) {
 				this.add(statement, a);
-				if ((++c % MAX_BATCH_SIZE) == 0) {
+				if (++c % MAX_BATCH_SIZE == 0) {
 					if (LOGGER.isDebugEnabled()) {
 						LOGGER.debug("batch commit, size=" + MAX_BATCH_SIZE);
 					}
@@ -200,7 +205,7 @@ public abstract class AbstractRdbmsStore extends AbstractAtomSet implements
 			Statement statement = this.createStatement();
 			for (Atom a : stream) {
 				this.remove(statement, a);
-				if ((++c % MAX_BATCH_SIZE) == 0) {
+				if (++c % MAX_BATCH_SIZE == 0) {
 					if (LOGGER.isDebugEnabled()) {
 						LOGGER.debug("batch commit, size=" + MAX_BATCH_SIZE);
 					}

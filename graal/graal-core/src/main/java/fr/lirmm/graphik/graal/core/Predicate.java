@@ -133,8 +133,8 @@ public class Predicate implements Comparable<Predicate>, Serializable {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[predicate(").append(this.getIdentifier()).append(',')
-				.append(this.getArity()).append(")]");
+		sb.append(this.getIdentifier()).append('[').append(this.getArity())
+				.append("]");
 		return sb.toString();
 	}
 

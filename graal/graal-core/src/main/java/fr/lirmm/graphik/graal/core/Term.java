@@ -86,7 +86,7 @@ public class Term implements Comparable<Term>, Serializable {
 		case VARIABLE:
 		default:
 			this.value = null;
-			this.uri = URIUtils.createURI(value.toString(), Prefix.VARIABLE);
+			this.uri = URIUtils.createURI(value.toString(), Prefix.EMPTY);
 			break;
 		}
 	}

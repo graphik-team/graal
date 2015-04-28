@@ -10,7 +10,7 @@ package fr.lirmm.graphik.util;
  */
 public class Prefix {
 
-	public static final Prefix EMPTY = new Prefix("", "graal:empty#");
+	public static final Prefix EMPTY = new Prefix("", "");
 	public static final Prefix CONSTANT = new Prefix("literal",
 			"graal:constant#");
 	public static final Prefix LITERAL = new Prefix("literal", "graal:literal#");

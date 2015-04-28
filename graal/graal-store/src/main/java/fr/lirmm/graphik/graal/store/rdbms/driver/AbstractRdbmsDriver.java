@@ -6,6 +6,7 @@ package fr.lirmm.graphik.graal.store.rdbms.driver;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,20 +69,25 @@ public abstract class AbstractRdbmsDriver implements RdbmsDriver {
 
 	@Override
 	public String getInsertOrIgnoreStatement(String tableName,
-			Iterable<?> values) {
-		StringBuilder sb = new StringBuilder();
-		sb.append(INSERT_IGNORE).append(" ").append(tableName)
-				.append(" VALUES (");
+			Map<String, Object> data) {
+		StringBuilder fields = new StringBuilder(" (");
+		StringBuilder values = new StringBuilder("");
+
 		boolean first = true;
-		for (Object o : values) {
+		for (Map.Entry<String, Object> e : data.entrySet()) {
 			if (!first) {
-				sb.append(", ");
-			} else {
-				first = false;
+				fields.append(", ");
+				values.append(", ");
 			}
-			sb.append('\'').append(o.toString()).append('\'');
+			fields.append(e.getKey());
+			values.append('\'').append(e.getValue()).append('\'');
+			first = false;
 		}
-		sb.append(");");
+		fields.append(") ");
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(INSERT_IGNORE).append(" ").append(tableName).append(fields)
+				.append(" VALUES (").append(values).append(");");
 		return sb.toString();
 	}
 
