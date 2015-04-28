@@ -3,7 +3,6 @@
  */
 package fr.lirmm.graphik.graal.rulesetanalyser;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
@@ -11,13 +10,11 @@ import java.util.Queue;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.apache.commons.io.output.StringBuilderWriter;
 import org.apache.commons.lang3.StringUtils;
 
 import fr.lirmm.graphik.graal.core.LabelRuleComparator;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
-import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.AtomicBodyProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.BTSProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.DisconnectedProperty;
@@ -574,15 +571,11 @@ public class RuleAnalyser {
 	}
 
 	private void printRules(Iterable<Rule> rules, StringBuilder sb) {
-		DlgpWriter writer = new DlgpWriter(new StringBuilderWriter(sb));
 		sb.append("\n\nInput Rule Base\n");
 		sb.append("===============\n\n");
 
 		for (Rule r : rules) {
-			try {
-				writer.write(r);
-			} catch (IOException e) {
-			}
+			r.appendTo(sb);
 		}
 	}
 
