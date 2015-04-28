@@ -22,14 +22,14 @@ import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
-import fr.lirmm.graphik.graal.io.GraalWriter;
+import fr.lirmm.graphik.graal.io.AbstractGraalWriter;
 import fr.lirmm.graphik.util.Prefix;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class DlgpWriter extends GraalWriter {
+public class DlgpWriter extends AbstractGraalWriter {
 	
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR

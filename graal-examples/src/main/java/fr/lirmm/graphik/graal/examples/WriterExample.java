@@ -13,7 +13,7 @@ import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
 import fr.lirmm.graphik.graal.io.ConjunctiveQueryWriter;
-import fr.lirmm.graphik.graal.io.GraalWriter;
+import fr.lirmm.graphik.graal.io.AbstractGraalWriter;
 import fr.lirmm.graphik.graal.io.dlp.Dlgp1Writer;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
@@ -47,7 +47,7 @@ public class WriterExample {
 				.parseQuery("? :- father(nana, X), father(tomtom, X)."));
 		queries.add(DlgpParser.parseQuery("?(X) :- father(X,Y)."));
 
-		GraalWriter w;
+		AbstractGraalWriter w;
 		// w = new RuleMLWriter(new File("/tmp/test.ruleml"));
 		w = new DlgpWriter();
 

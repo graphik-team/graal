@@ -23,14 +23,14 @@ import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.io.GraalWriter;
+import fr.lirmm.graphik.graal.io.AbstractGraalWriter;
 import fr.lirmm.graphik.util.Prefix;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class RuleMLWriter extends GraalWriter {
+public class RuleMLWriter extends AbstractGraalWriter {
 	
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(RuleMLWriter.class);

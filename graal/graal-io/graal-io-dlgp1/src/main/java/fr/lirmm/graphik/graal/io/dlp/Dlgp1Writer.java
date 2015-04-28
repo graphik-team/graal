@@ -22,7 +22,7 @@ import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
-import fr.lirmm.graphik.graal.io.GraalWriter;
+import fr.lirmm.graphik.graal.io.AbstractGraalWriter;
 import fr.lirmm.graphik.util.DefaultURI;
 import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.URI;
@@ -31,7 +31,7 @@ import fr.lirmm.graphik.util.URI;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class Dlgp1Writer extends GraalWriter {
+public class Dlgp1Writer extends AbstractGraalWriter {
 	
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
