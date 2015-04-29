@@ -13,8 +13,10 @@ import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.core.term.Literal;
+import fr.lirmm.graphik.graal.core.term.Term;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -73,7 +75,8 @@ public class PureQuery extends DefaultConjunctiveQuery {
 		while (ita.hasNext()) {
 			Atom a = ita.next();
 			if (a.getPredicate().equals(ansPredicate)) {
-				ans[(Integer)a.getTerm(0).getValue()] = a.getTerm(1);
+				ans[(Integer) ((Literal) a.getTerm(0)).getValue()] = a
+						.getTerm(1);
 				ita.remove();
 			}
 		}
@@ -83,7 +86,9 @@ public class PureQuery extends DefaultConjunctiveQuery {
 	public void addAnswerPredicate() {
 		int i = -1;
 		for(Term t: getAnswerVariables()) {
-			this.getAtomSet().add(new DefaultAtom(ansPredicate, new Term(++i, Term.Type.LITERAL), t));
+			this.getAtomSet().add(
+					new DefaultAtom(ansPredicate, DefaultTermFactory.instance()
+							.createLiteral(++i), t));
 		}
 	}
 }

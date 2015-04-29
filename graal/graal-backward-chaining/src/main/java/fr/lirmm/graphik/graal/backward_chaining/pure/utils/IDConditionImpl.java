@@ -9,7 +9,8 @@ import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.Term;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.util.Partition;
 
 /**
@@ -164,7 +165,8 @@ public class IDConditionImpl implements IDCondition {
 
 		// initialize
 		for (int i = 0; i < condBody.length; i++) {
-			body.add(new Term("X" + condBody[i], Term.Type.VARIABLE));
+			body.add(DefaultTermFactory.instance().createVariable(
+					"X" + condBody[i]));
 		}
 
 		// pick frontier variables from the head
@@ -185,7 +187,8 @@ public class IDConditionImpl implements IDCondition {
 	public List<Term> generateHead() {
 		List<Term> head = new LinkedList<Term>();
 		for (int i = 0; i < this.condHead.length; ++i) {
-			head.add(new Term("X" + this.condHead[i], Term.Type.VARIABLE));
+			head.add(DefaultTermFactory.instance().createVariable(
+					"X" + this.condHead[i]));
 		}
 		return head;
 	}
@@ -301,11 +304,13 @@ public class IDConditionImpl implements IDCondition {
 
 		// initialize body with fresh variable
 		for (int i = 0; i < condBody.length; i++)
-			body.add(new Term("X" + condBody[i], Term.Type.VARIABLE));
+			body.add(DefaultTermFactory.instance().createVariable(
+					"X" + condBody[i]));
 
 		// pick frontier variables from the head
 		for (int i = 0; i < this.condHead.length; i++) {
-			head.add(new Term("X" + condHead[i], Term.Type.VARIABLE));
+			head.add(DefaultTermFactory.instance().createVariable(
+					"X" + condHead[i]));
 		}
 
 		Rule r = new DefaultRule();

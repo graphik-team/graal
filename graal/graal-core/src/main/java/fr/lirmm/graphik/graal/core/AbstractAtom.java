@@ -6,6 +6,8 @@ package fr.lirmm.graphik.graal.core;
 import java.util.List;
 import java.util.Iterator;
 
+import fr.lirmm.graphik.graal.core.term.Term;
+
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>

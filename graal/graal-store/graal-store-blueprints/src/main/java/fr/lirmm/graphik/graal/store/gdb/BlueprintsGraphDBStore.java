@@ -16,9 +16,10 @@ import com.tinkerpop.blueprints.Vertex;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.core.term.Term;
+import fr.lirmm.graphik.graal.core.term.Term.Type;
 import fr.lirmm.graphik.graal.store.GraphDBStore;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
 
@@ -222,7 +223,9 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 	}
 
 	private static Term vertexToTerm(Vertex vertex) {
-		return new Term(vertex.getProperty("value"), Term.Type.valueOf(vertex
+		return DefaultTermFactory.instance().createTerm(
+				vertex.getProperty("value"),
+				Term.Type.valueOf(vertex
 				.getProperty("type").toString()));
 	}
 

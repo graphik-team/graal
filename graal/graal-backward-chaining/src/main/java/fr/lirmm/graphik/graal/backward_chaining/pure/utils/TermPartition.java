@@ -9,8 +9,8 @@ import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
-import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
+import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.util.Partition;
 
 public class TermPartition extends Partition<Term> {
@@ -55,16 +55,15 @@ public class TermPartition extends Partition<Term> {
 				Term t = i.next();
 				// t and the current representant are different
 				if (!representant.equals(t)) {
-					// t is a constant
-					if (!t.isVariable()) {
+					if (t.isConstant()) {
 						// representant is a different constant
-						if (!representant.isVariable()) {
+						if (representant.isConstant()) {
 							return null;
 						} else {
 							representant = t;
 						}
 					}// the current representant is a variable
-					else if (representant.isVariable()) {
+					else if (!representant.isConstant()) {
 						// t is a variable from the answer
 						if (context != null
 								&& !context.getAnswerVariables().contains(

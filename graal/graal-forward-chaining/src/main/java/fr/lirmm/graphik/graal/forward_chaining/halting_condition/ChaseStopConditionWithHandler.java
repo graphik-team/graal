@@ -2,8 +2,8 @@ package fr.lirmm.graphik.graal.forward_chaining.halting_condition;
 
 import java.util.Set;
 
-import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.RuleApplicationHandler;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;

@@ -1,5 +1,7 @@
 package fr.lirmm.graphik.graal.core;
 
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.core.term.Term;
 
 public class DefaultFreeVarGen implements SymbolGenerator {
 
@@ -34,7 +36,8 @@ public class DefaultFreeVarGen implements SymbolGenerator {
 
 	@Override
 	public Term getFreeVar() {
-		return new Term(this.prefix + getFreeIndex(), Term.Type.VARIABLE);
+		return DefaultTermFactory.instance()
+				.createVariable(this.prefix + getFreeIndex());
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

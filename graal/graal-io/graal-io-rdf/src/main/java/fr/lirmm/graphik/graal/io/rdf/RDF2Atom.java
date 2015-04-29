@@ -15,8 +15,8 @@ import org.slf4j.LoggerFactory;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.graal.core.Term.Type;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.io.AbstractAtomParser;
 
 /**
@@ -143,6 +143,7 @@ public class RDF2Atom extends AbstractAtomParser {
 		return a;
 	}
 	
+	@Override
 	public void close() {
 	}
 	
@@ -165,7 +166,7 @@ public class RDF2Atom extends AbstractAtomParser {
     			collection.removeLast();
     			List<Term> terms = new LinkedList<Term>();
     			for(String s : collection) {
-    				terms.add(new Term(s, Type.CONSTANT));
+					terms.add(DefaultTermFactory.instance().createConstant(s));
     			}
     			this.atom = new DefaultAtom(PREDICATE_RDF_LIST, terms);
     		}

@@ -9,11 +9,11 @@ import java.util.TreeSet;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.AtomComparator;
 import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.TermValueComparator;
 import fr.lirmm.graphik.graal.core.atomset.AbstractInMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.stream.IteratorAtomReader;
+import fr.lirmm.graphik.graal.core.term.Term;
+import fr.lirmm.graphik.graal.core.term.Term.Type;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
 
 /**
@@ -108,7 +108,8 @@ public class MemoryGraphAtomSet extends AbstractInMemoryAtomSet {
         PredicateVertex atomPredicate;
 
         for (Term t : atom.getTerms())
-            atomTerms.add(this.addTermVertex(new TermVertex(t)));
+			atomTerms.add(this.addTermVertex(TermVertexFactory.instance()
+					.createTerm(t)));
 
         atomPredicate = this.addPredicateVertex(new PredicateVertex(atom
                 .getPredicate()));
@@ -121,7 +122,9 @@ public class MemoryGraphAtomSet extends AbstractInMemoryAtomSet {
     // /////////////////////////////////////////////////////////////////////////
 
     TermVertex getTermVertex(Term term) {
-        TermVertex t = this.terms.tailSet(new TermVertex(term)).first();
+		TermVertex t = this.terms.tailSet(
+				TermVertexFactory.instance().createTerm(term))
+				.first();
         return (term.equals(t)) ? t : null;
     }
 

@@ -4,7 +4,7 @@ import java.util.Set;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.Term;
+import fr.lirmm.graphik.graal.core.term.Term;
 
 /**
  * At least one atom in the body (called a frontier-guard) contains all the

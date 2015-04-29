@@ -14,9 +14,10 @@ import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.core.HashMapSubstitution;
 import fr.lirmm.graphik.graal.core.Substitution;
-import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
 
 /**
@@ -114,8 +115,8 @@ public class ResultSetSubstitutionReader implements SubstitutionReader {
             Substitution substitution = new HashMapSubstitution();
             if(!isBooleanQuery) {
 	            for (int i = 1; i <= this.metaData.getColumnCount(); ++i) {
-					Term term = new Term(this.metaData.getColumnLabel(i),
-	                        Term.Type.VARIABLE);
+					Term term = DefaultTermFactory.instance().createVariable(
+							this.metaData.getColumnLabel(i));
 	                Term substitut = this.store.getTerm(this.results.getString(i));
 	                substitution.put(term, substitut);
 	            }

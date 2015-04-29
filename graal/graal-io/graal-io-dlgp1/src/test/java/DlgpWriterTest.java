@@ -6,7 +6,8 @@ import org.junit.Test;
 
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.core.Term;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.io.dlp.Dlgp1Writer;
 
 
@@ -17,11 +18,11 @@ import fr.lirmm.graphik.graal.io.dlp.Dlgp1Writer;
 public class DlgpWriterTest {
 	
 	private static Predicate predicat = new Predicate("p", 1);
-	private static Term cst = new Term("A", Term.Type.CONSTANT);
+	private static Term cst = DefaultTermFactory.instance().createConstant("A");
 	
 	@Test
 	public void writeConstant() throws IOException {
-		Term a = new Term("A", Term.Type.CONSTANT);
+		Term a = DefaultTermFactory.instance().createConstant("A");
 		
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		Dlgp1Writer writer = new Dlgp1Writer(os);
@@ -38,7 +39,7 @@ public class DlgpWriterTest {
 	
 	@Test
 	public void writeVariable() throws IOException {
-		Term x = new Term("x", Term.Type.VARIABLE);
+		Term x = DefaultTermFactory.instance().createVariable("x");
 		
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		Dlgp1Writer writer = new Dlgp1Writer(os);

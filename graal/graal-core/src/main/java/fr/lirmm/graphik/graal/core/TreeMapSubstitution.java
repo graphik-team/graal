@@ -3,6 +3,8 @@ package fr.lirmm.graphik.graal.core;
 import java.util.Map;
 import java.util.TreeMap;
 
+import fr.lirmm.graphik.graal.core.term.Term;
+
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 

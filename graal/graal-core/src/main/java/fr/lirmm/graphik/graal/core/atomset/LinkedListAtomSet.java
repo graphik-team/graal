@@ -9,8 +9,8 @@ import java.util.TreeSet;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.stream.IteratorAtomReader;
+import fr.lirmm.graphik.graal.core.term.Term;
 
 /**
  * 

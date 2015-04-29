@@ -5,7 +5,7 @@ import java.util.Set;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.core.Term;
+import fr.lirmm.graphik.graal.core.term.Term;
 
 public interface InMemoryAtomSet extends AtomSet {
 	

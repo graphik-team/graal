@@ -14,8 +14,9 @@ import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.HashMapSubstitution;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
-import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 
@@ -55,7 +56,10 @@ public class RuleVariableRenamer {
 					vars.addAll(rule.getHead().getTerms(Term.Type.VARIABLE));
 					substitution = new HashMapSubstitution();
 					for(Term var : vars) {
-						substitution.put(var, new Term(var.toString() + "_" + objectNumber, Term.Type.VARIABLE));
+						substitution.put(
+								var,
+								DefaultTermFactory.instance().createVariable(
+										var.toString() + "_" + objectNumber));
 					}
 					AtomSet body = substitution.getSubstitut(rule.getBody());
 					AtomSet head = substitution.getSubstitut(rule.getHead());

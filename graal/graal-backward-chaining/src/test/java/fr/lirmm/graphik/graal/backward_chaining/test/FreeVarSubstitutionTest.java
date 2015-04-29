@@ -8,7 +8,8 @@ import org.junit.Test;
 
 import fr.lirmm.graphik.graal.core.FreeVarSubstitution;
 import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.Term;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 
 /**
@@ -19,9 +20,9 @@ public class FreeVarSubstitutionTest {
 	
 	@Test
 	public void test() {
-		final Term X = new Term("X", Term.Type.VARIABLE);
-		final Term Y = new Term("Y", Term.Type.VARIABLE);
-		final Term Z = new Term("Z", Term.Type.VARIABLE);
+		final Term X = DefaultTermFactory.instance().createVariable("X");
+		final Term Y = DefaultTermFactory.instance().createVariable("Y");
+		final Term Z = DefaultTermFactory.instance().createVariable("Z");
 		
 		Rule rule = DlgpParser.parseRule("p(X,Y,Z) :- q(X,Y), q(Y,Z).");
 		

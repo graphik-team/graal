@@ -5,6 +5,7 @@ import java.util.Set;
 
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.core.term.Term;
 
 /**
  * A Rule is a pair (B,H) of atom set such as "B -> H".

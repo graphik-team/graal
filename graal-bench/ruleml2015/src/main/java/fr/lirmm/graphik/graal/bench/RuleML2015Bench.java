@@ -20,11 +20,12 @@ import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
-import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.filter.AtomFilterIterator;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
@@ -238,7 +239,12 @@ public class RuleML2015Bench {
 						Term t = terms.get(i);
 						String s = t.getIdentifier();
 						if(s.charAt(0) == '<') {
-							a.setTerm(i, new Term(s.substring(1, s.length() - 1), Term.Type.CONSTANT));
+							a.setTerm(
+									i,
+									DefaultTermFactory.instance()
+											.createConstant(
+													s.substring(1,
+															s.length() - 1)));
 						}
 					}
 					

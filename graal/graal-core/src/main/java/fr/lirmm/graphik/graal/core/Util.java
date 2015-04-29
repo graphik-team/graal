@@ -5,6 +5,7 @@ import java.util.List;
 
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.core.term.Term;
 
 public abstract class Util {
 

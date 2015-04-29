@@ -11,11 +11,11 @@ import org.junit.runner.RunWith;
 
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Substitution;
-import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 
@@ -183,11 +183,13 @@ public class ConjunctiveQueryTest {
 			sub = subReader.next();
 			Assert.assertEquals(2, sub.getTerms().size());
 			Assert.assertEquals(
-					sub.getSubstitute(new Term("X", Term.Type.VARIABLE)),
-					new Term("a", Term.Type.CONSTANT));
+sub.getSubstitute(DefaultTermFactory.instance()
+					.createVariable("X")), DefaultTermFactory.instance()
+					.createConstant("a"));
 			Assert.assertEquals(
-					sub.getSubstitute(new Term("Y", Term.Type.VARIABLE)),
-					new Term("b", Term.Type.CONSTANT));
+sub.getSubstitute(DefaultTermFactory.instance()
+					.createVariable("Y")), DefaultTermFactory.instance()
+					.createConstant("b"));
 
 			Assert.assertFalse(subReader.hasNext());
 
@@ -211,11 +213,13 @@ public class ConjunctiveQueryTest {
 			sub = subReader.next();
 			Assert.assertEquals(2, sub.getTerms().size());
 			Assert.assertEquals(
-					sub.getSubstitute(new Term("X", Term.Type.VARIABLE)),
-					new Term("b", Term.Type.CONSTANT));
+sub.getSubstitute(DefaultTermFactory.instance()
+					.createVariable("X")), DefaultTermFactory.instance()
+					.createConstant("b"));
 			Assert.assertEquals(
-					sub.getSubstitute(new Term("Y", Term.Type.VARIABLE)),
-					new Term("b", Term.Type.CONSTANT));
+sub.getSubstitute(DefaultTermFactory.instance()
+					.createVariable("Y")), DefaultTermFactory.instance()
+					.createConstant("b"));
 
 			Assert.assertFalse(subReader.hasNext());
 
@@ -244,11 +248,13 @@ public class ConjunctiveQueryTest {
 			sub = subReader.next();
 			Assert.assertEquals(2, sub.getTerms().size());
 			Assert.assertEquals(
-					sub.getSubstitute(new Term("X", Term.Type.VARIABLE)),
-					new Term("a", Term.Type.CONSTANT));
+sub.getSubstitute(DefaultTermFactory.instance()
+					.createVariable("X")), DefaultTermFactory.instance()
+					.createConstant("a"));
 			Assert.assertEquals(
-					sub.getSubstitute(new Term("Y", Term.Type.VARIABLE)),
-					new Term("b", Term.Type.CONSTANT));
+sub.getSubstitute(DefaultTermFactory.instance()
+					.createVariable("Y")), DefaultTermFactory.instance()
+					.createConstant("b"));
 
 			Assert.assertFalse(subReader.hasNext());
 		} catch (Exception e) {
@@ -293,8 +299,9 @@ public class ConjunctiveQueryTest {
 			sub = subReader.next();
 			Assert.assertEquals(1, sub.getTerms().size());
 			Assert.assertEquals(
-					sub.getSubstitute(new Term("X", Term.Type.VARIABLE)),
-					new Term("a", Term.Type.CONSTANT));
+					DefaultTermFactory.instance().createConstant("a"), sub
+							.getSubstitute(DefaultTermFactory.instance()
+									.createVariable("X")));
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);
 		}

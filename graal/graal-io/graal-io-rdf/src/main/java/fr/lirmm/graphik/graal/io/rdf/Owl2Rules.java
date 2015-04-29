@@ -20,8 +20,8 @@ import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.graal.core.Term.Type;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.util.stream.AbstractReader;
 
 /**
@@ -56,9 +56,12 @@ public class Owl2Rules extends AbstractReader<Object> {
 
 	private Iterator<Object> reader;
 
-	protected static final Term X = new Term("X", Type.VARIABLE);
-	protected static final Term Y = new Term("Y", Type.VARIABLE);
-	protected static final Term Z = new Term("Z", Type.VARIABLE);
+	protected static final Term X = DefaultTermFactory.instance()
+			.createVariable("X");
+	protected static final Term Y = DefaultTermFactory.instance()
+			.createVariable("Y");
+	protected static final Term Z = DefaultTermFactory.instance()
+			.createVariable("Z");
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR

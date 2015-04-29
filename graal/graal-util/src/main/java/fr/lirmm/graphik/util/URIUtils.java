@@ -12,6 +12,9 @@ import java.net.URISyntaxException;
  */
 public final class URIUtils {
 	
+	public static URI XSD_STRING = URIUtils.createURI(Prefix.XSD, "string");
+
+	
 	private URIUtils() {}
 
 	public static boolean isValidURI(String uriRef) {
@@ -101,6 +104,14 @@ public final class URIUtils {
 		}
 		String localname = URIUtils.getLocalName(string);
 		return new DefaultURI(prefix, localname);
+	}
+	
+	public static URI createURI(Prefix prefix, String localname) {
+		return new DefaultURI(prefix, localname);
+	}
+	
+	public static URI createURI(String uri) {
+		return new DefaultURI(uri);
 	}
 
 	public static int getLocalNameIndex(String uri) {

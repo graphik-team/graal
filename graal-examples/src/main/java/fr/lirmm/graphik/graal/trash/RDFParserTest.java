@@ -11,8 +11,7 @@ import org.openrdf.rio.helpers.RDFHandlerBase;
 
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.graal.core.Term.Type;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
@@ -56,9 +55,11 @@ public class RDFParserTest {
 		 
 		  @Override
 		  public void handleStatement(Statement st) {
-			  DefaultAtom a = new DefaultAtom(new Predicate(st.getPredicate().toString(), 2), new Term(
-						st.getSubject(), Type.CONSTANT), new Term(st.getObject(),
-						Type.CONSTANT));
+			DefaultAtom a = new DefaultAtom(new Predicate(st.getPredicate()
+					.toString(), 2), DefaultTermFactory.instance()
+					.createConstant(st.getSubject().toString()),
+					DefaultTermFactory.instance().createConstant(
+							st.getObject().toString()));
 		     System.out.println(a);
 		     
 		     
