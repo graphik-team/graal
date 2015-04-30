@@ -9,6 +9,8 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
 
+import fr.lirmm.graphik.util.stream.Filter; // stream?????? TODO
+
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
@@ -47,6 +49,10 @@ public class Unifier {
 	 * @return
 	 */
 	public Set<Substitution> computePieceUnifier(Rule rule, AtomSet atomset) {
+		return computePieceUnifier(rule,atomset,new Filter<Substitution>() { public boolean filter(Substitution s) { return true; } } );
+	}
+
+	public Set<Substitution> computePieceUnifier(Rule rule, AtomSet atomset, Filter<Substitution> filter) {
 		// FIXME
 
 		Set<Substitution> unifiers = new LinkedSet<Substitution>();
@@ -57,13 +63,16 @@ public class Unifier {
 
 		for (Atom a : atomset) {
 			Queue<Atom> tmp = new LinkedList<Atom>(atomQueue);
-			unifiers.addAll(extendUnifier(rule, tmp, a,
-					new TreeMapSubstitution()));
+			unifiers.addAll(extendUnifier(rule, tmp, a, new TreeMapSubstitution(), filter));
 		}
 		return unifiers;
 	}
 
 	public boolean existPieceUnifier(Rule rule, InMemoryAtomSet atomset) {
+		return existPieceUnifier(rule,atomset,new Filter<Substitution>() { public boolean filter(Substitution s) { return true; } } );
+	}
+
+	public boolean existPieceUnifier(Rule rule, InMemoryAtomSet atomset, Filter<Substitution> filter) {
 		FreeVarSubstitution substitution = new FreeVarSubstitution();
 		InMemoryAtomSet atomsetSubstitut = substitution.getSubstitut(atomset);
 
@@ -74,7 +83,7 @@ public class Unifier {
 
 		for (Atom a : atomsetSubstitut) {
 			Queue<Atom> tmp = new LinkedList<Atom>(atomQueue);
-			if (existExtendedUnifier(rule, tmp, a, new TreeMapSubstitution())) {
+			if (existExtendedUnifier(rule, tmp, a, new TreeMapSubstitution(), filter)) {
 				return true;
 			}
 		}
@@ -86,7 +95,7 @@ public class Unifier {
 	// /////////////////////////////////////////////////////////////////////////
 
 	private static Collection<Substitution> extendUnifier(Rule rule,
-			Queue<Atom> atomset, Atom pieceElement, Substitution unifier) {
+			Queue<Atom> atomset, Atom pieceElement, Substitution unifier, Filter<Substitution> filter) {
 		atomset.remove(pieceElement);
 		Collection<Substitution> unifierCollection = new LinkedList<Substitution>();
 		Set<Term> frontierVars = rule.getFrontier();
@@ -111,10 +120,11 @@ public class Unifier {
 				}
 
 				if (newPieceElement == null) {
-					unifierCollection.add(u);
+					if (filter.filter(u)) {
+						unifierCollection.add(u);
+					}
 				} else {
-					unifierCollection.addAll(extendUnifier(rule, atomset,
-							newPieceElement, u));
+					unifierCollection.addAll(extendUnifier(rule, atomset, newPieceElement, u, filter));
 				}
 			}
 		}
@@ -195,7 +205,7 @@ public class Unifier {
 	}
 
 	private static boolean existExtendedUnifier(Rule rule, Queue<Atom> atomset,
-			Atom pieceElement, Substitution unifier) {
+			Atom pieceElement, Substitution unifier, Filter<Substitution> filter) {
 		atomset.remove(pieceElement);
 		Set<Term> frontierVars = rule.getFrontier();
 		Set<Term> existentialVars = rule.getExistentials();
@@ -219,9 +229,11 @@ public class Unifier {
 				}
 
 				if (newPieceElement == null) {
-					return true;
+					if (filter.filter(u)) {
+						return true;
+					}
 				} else {
-					if (existExtendedUnifier(rule, atomset, newPieceElement, u)) {
+					if (existExtendedUnifier(rule, atomset, newPieceElement, u, filter)) {
 						return true;
 					}
 				}

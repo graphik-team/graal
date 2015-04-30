@@ -24,8 +24,8 @@ public class TermValueComparator implements Comparator<Term>, Serializable {
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public int compare(Term term0, Term term1) {
+	public int compare(Term term0, Term term1) { // TODO are you sure?
 		return term0.getIdentifier().toString().compareTo(term1.getIdentifier().toString());
-		
 	}
-}
+};
+

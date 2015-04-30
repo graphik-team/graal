@@ -69,8 +69,7 @@ public class CLI_FGH {
 			onRule.setSolver(solver);
 
 			ChaseHaltingCondition haltCondition = new ChaseStopConditionWithHandler(new RestrictedChaseStopCondition(),onRule);
-			DefaultChase chase = new DefaultChase(rules, atomset, solver,
-					haltCondition);
+			DefaultChase chase = new DefaultChase(rules, atomset, solver, haltCondition);
 
 			if (options.input_file != "") {
 				System.out.println("Reading data from dlp file: " + options.input_file);

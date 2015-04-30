@@ -7,7 +7,7 @@ package fr.lirmm.graphik.util.stream;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public interface Filter {
+public interface Filter<E> {
 
-	boolean filter(Object o);
+	boolean filter(E e);
 }

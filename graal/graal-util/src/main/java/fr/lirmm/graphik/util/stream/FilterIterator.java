@@ -12,6 +12,8 @@ import java.util.Iterator;
  */
 public class FilterIterator<U,T> implements Iterator<T> {
 	
+	// Es-tu sûr que tu étais en forme le jour où tu as écris cette classe ?
+	
 	private final Iterator<U> it;
 	private final Filter filter;
 	private T next;
