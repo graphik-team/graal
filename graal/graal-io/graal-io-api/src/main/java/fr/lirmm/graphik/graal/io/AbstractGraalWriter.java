@@ -38,15 +38,15 @@ public abstract class AbstractGraalWriter extends AbstractWriter implements
 		if (o instanceof Atom) {
 			this.write((Atom) o);
 		} else if (o instanceof NegativeConstraint) {
-			this.write(o);
+			this.write((NegativeConstraint) o);
 		} else if (o instanceof Rule) {
-			this.write(o);
+			this.write((Rule) o);
 		} else if (o instanceof ConjunctiveQuery) {
-			this.write(o);
+			this.write((ConjunctiveQuery) o);
 		} else if (o instanceof Prefix) {
-			this.write(o);
+			this.write((Prefix) o);
 		} else if (o instanceof String) {
-			this.write(o);
+			this.write((String) o);
 		} else if (o instanceof Iterable<?>) {
 			this.writeIterable((Iterable<?>) o);
 		} else if (o instanceof Iterator<?>) {
