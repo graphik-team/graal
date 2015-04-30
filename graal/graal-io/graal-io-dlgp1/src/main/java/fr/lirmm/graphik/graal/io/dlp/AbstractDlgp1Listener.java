@@ -45,7 +45,7 @@ abstract class AbstractDlgp1Listener implements ParserListener {
 
 	@Override
 	public void startsObject(OBJECT_TYPE objectType, String name) {
-		this.label = (name == null)? "" : name;
+		this.label = name == null? "" : name;
 		
 		atomSet = atomSet2 = null;
 		this.objectType = objectType;
@@ -110,7 +110,7 @@ abstract class AbstractDlgp1Listener implements ParserListener {
 
 	@Override
 	public void createsEquality(Object term1, Object term2) {
-		LOGGER.warn("Unsupported equality predicate !");
+		atom = new DefaultAtom(Predicate.EQUALITY, (Term) term1, (Term) term2);
 	}
 
 	@Override

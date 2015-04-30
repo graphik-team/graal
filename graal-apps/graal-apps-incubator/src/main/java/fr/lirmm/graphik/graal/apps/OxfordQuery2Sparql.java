@@ -1,4 +1,6 @@
 package fr.lirmm.graphik.graal.apps;
+
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -6,8 +8,6 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.io.ParseException;
-import fr.lirmm.graphik.graal.io.WriterException;
 import fr.lirmm.graphik.graal.io.oxford.OxfordQueryParser;
 import fr.lirmm.graphik.graal.io.sparql.SparqlConjunctiveQueryWriter;
 
@@ -28,7 +28,7 @@ public class OxfordQuery2Sparql {
 	private List<String> queries = new LinkedList<String>();
 	
 	
-	public static void main(String[] args) throws ParseException, WriterException {
+	public static void main(String[] args) throws IOException {
 
 		OxfordQuery2Sparql options = new OxfordQuery2Sparql();
 		JCommander commander = new JCommander(options, args);
@@ -43,7 +43,7 @@ public class OxfordQuery2Sparql {
 			
 			
 			SparqlConjunctiveQueryWriter writer = new SparqlConjunctiveQueryWriter();
-			writer.write(q, options.rdfPrefix);
+			writer.write(q);
 		}
 	}
 

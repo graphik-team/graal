@@ -12,6 +12,27 @@ import fr.lirmm.graphik.util.URIUtils;
  */
 public class Predicate implements Comparable<Predicate>, Serializable {
 
+	public static final Predicate EQUALITY = new Predicate("=", 2) {
+
+		private static final long serialVersionUID = -8961695871557858255L;
+
+		@Override
+		public int compareTo(Predicate predicate) {
+			if (predicate == this) {
+				return 0;
+			}
+			return -1;
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (o == null || !(o instanceof Predicate))
+				return false;
+			return this.compareTo((Predicate) o) == 0;
+		}
+
+	};
+
 	private static final long serialVersionUID = 3098419922942769704L;
 
 	private final URI uri;
@@ -40,7 +61,8 @@ public class Predicate implements Comparable<Predicate>, Serializable {
 	 * @param arity
 	 */
 	public Predicate(String string, int arity) {
-		this.uri = URIUtils.createURI(string, Prefix.DEFAULT);;
+		this.uri = URIUtils.createURI(string, Prefix.PREDICATE);
+		;
 		this.arity = arity;
 	}
 
@@ -76,7 +98,7 @@ public class Predicate implements Comparable<Predicate>, Serializable {
 		int result = 1;
 		result = prime * result + this.getArity();
 		result = prime * result
-				+ ((this.getIdentifier() == null) ? 0 : this.getIdentifier().hashCode());
+				+ (this.getIdentifier() == null ? 0 : this.getIdentifier().hashCode());
 		return result;
 	}
 
@@ -100,8 +122,8 @@ public class Predicate implements Comparable<Predicate>, Serializable {
 
 	@Override
 	public int compareTo(Predicate other) {
-		int cmpVal = (this.getArity() < other.getArity()) ? -1 : ((this
-				.getArity() == other.getArity()) ? 0 : 1);
+		int cmpVal = this.getArity() < other.getArity() ? -1 : this
+				.getArity() == other.getArity() ? 0 : 1;
 		if (cmpVal == 0) {
 			cmpVal = this.getIdentifier().compareTo(other.getIdentifier());
 		}
@@ -111,8 +133,8 @@ public class Predicate implements Comparable<Predicate>, Serializable {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[predicate(").append(this.getIdentifier()).append(',')
-				.append(this.getArity()).append(")]");
+		sb.append(this.getIdentifier()).append('[').append(this.getArity())
+				.append("]");
 		return sb.toString();
 	}
 

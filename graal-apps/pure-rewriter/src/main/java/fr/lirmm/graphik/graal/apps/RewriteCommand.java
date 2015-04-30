@@ -139,8 +139,8 @@ class RewriteCommand extends PureCommand {
 			bc.enableUnfolding(this.isUnfoldingEnable);
 
 			try {
-				writer.write("\n");
-				writer.write("% rewrite of: ");
+				writer.writeComment("\n");
+				writer.writeComment("rewrite of: ");
 				writer.write(query);
 				while (bc.hasNext()) {
 					writer.write(bc.next());

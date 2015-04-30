@@ -1,6 +1,6 @@
-#########
-# GRAAL #
-#########
+=========
+= GRAAL =
+=========
 
 ## How to build graal? ##
 
@@ -35,4 +35,3 @@ mvn compile assembly:single
 * ./prepare_ant.sh
 
 * ant
-

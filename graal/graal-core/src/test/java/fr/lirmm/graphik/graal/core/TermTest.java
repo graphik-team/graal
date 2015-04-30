@@ -13,15 +13,37 @@ public class TermTest
 {
 
 	@Test
-	public void constructorTest() {
+	public void constantConstructorTest() {
 		String label = "label";
 		Term.Type type = Term.Type.CONSTANT;
 		Term term = new Term(label, type);
 		
 		Assert.assertTrue(Term.Type.CONSTANT.equals(term.getType()));
-		Assert.assertTrue(term.getIdentifier().equals(Prefix.DEFAULT.getPrefix() + label));
+		Assert.assertTrue(term.getIdentifier().equals(
+				Prefix.CONSTANT.getPrefix() + label));
 	}
 	
+	@Test
+	public void literalConstructorTest() {
+		int value = 1;
+		Term.Type type = Term.Type.LITERAL;
+		Term term = new Term(1, type);
+
+		Assert.assertTrue(Term.Type.LITERAL.equals(term.getType()));
+		Assert.assertTrue(term.getIdentifier().equals(
+				Prefix.LITERAL.getPrefix() + value));
+	}
+
+	@Test
+	public void variableConstructorTest() {
+		String label = "label";
+		Term.Type type = Term.Type.VARIABLE;
+		Term term = new Term(label, type);
+
+		Assert.assertTrue(Term.Type.VARIABLE.equals(term.getType()));
+		Assert.assertTrue(term.getIdentifier().equals(
+				Prefix.EMPTY.getPrefix() + label));
+	}
 	
 	@Test
 	public void equalsTest() {

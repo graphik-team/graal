@@ -27,6 +27,8 @@ public class DlgpWriterTest {
 		Dlgp1Writer writer = new Dlgp1Writer(os);
 		
 		writer.write(new DefaultAtom(predicat, a));
+		writer.flush();
+
 		String s = new String(os.toByteArray(),"UTF-8");
 		writer.close();
 		
@@ -42,6 +44,8 @@ public class DlgpWriterTest {
 		Dlgp1Writer writer = new Dlgp1Writer(os);
 		
 		writer.write(new DefaultAtom(predicat, x));
+		writer.flush();
+
 		String s = new String(os.toByteArray(),"UTF-8");
 		writer.close();
 		Assert.assertTrue("Variable label does not begin with upper case.", Character.isUpperCase(s.charAt(s.indexOf("(") + 1)));
@@ -55,6 +59,8 @@ public class DlgpWriterTest {
 		Dlgp1Writer writer = new Dlgp1Writer(os);
 		
 		writer.write(new DefaultAtom(p, cst));
+		writer.flush();
+
 		String s = new String(os.toByteArray(),"UTF-8");
 		writer.close();
 		

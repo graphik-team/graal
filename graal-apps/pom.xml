@@ -36,6 +36,7 @@
 		<module>kiabora</module>
 		<module>pure-rewriter</module>
 		<module>owl2dlp</module>
+                <module>dlgp2ruleml</module>
 		<module>graal-cqa</module>
 		<module>graal-query</module>
 		<module>forward-chaining</module>

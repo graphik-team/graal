@@ -84,7 +84,7 @@ final class Util {
 		return queries;
 	}
 
-	private static final String COMPILATION_TYPE_PREFIX = "%compilation-type: ";
+	private static final String COMPILATION_TYPE_PREFIX = "compilation-type: ";
 	private static final int COMPILATION_TYPE_PREFIX_LEN = COMPILATION_TYPE_PREFIX
 			.length();
 
@@ -97,7 +97,7 @@ final class Util {
 			compilationName = CompileCommand.HIERACHICAL_COMPILATION_NAME;
 		}
 
-		writer.write(COMPILATION_TYPE_PREFIX + compilationName + "\n");
+		writer.writeComment(COMPILATION_TYPE_PREFIX + compilationName + "\n");
 
 		for (Rule r : compilation.getSaturation()) {
 			writer.write(r);
@@ -111,8 +111,9 @@ final class Util {
 		String compilationType = "";
 		while (scanner.hasNextLine() && compilationType.isEmpty()) {
 			String line = scanner.nextLine();
-			if (line.startsWith(COMPILATION_TYPE_PREFIX)) {
-				compilationType = line.substring(COMPILATION_TYPE_PREFIX_LEN);
+			if (line.startsWith("% " + COMPILATION_TYPE_PREFIX)) {
+				compilationType = line
+						.substring(COMPILATION_TYPE_PREFIX_LEN + 2);
 			}
 		}
 

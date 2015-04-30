@@ -2,7 +2,6 @@ package fr.lirmm.graphik.graal.core;
 
 import java.io.Serializable;
 
-import fr.lirmm.graphik.util.DefaultURI;
 import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.URI;
 import fr.lirmm.graphik.util.URIUtils;
@@ -15,12 +14,39 @@ import fr.lirmm.graphik.util.URIUtils;
  */
 public class Term implements Comparable<Term>, Serializable {
 
+	private interface TermType {
+		boolean isConstant();
+	}
+
 	/**
 	 * The enumeration of term types.
 	 */
-	public static enum Type {
-		CONSTANT, VARIABLE, LITERAL
+	public static enum Type implements TermType {
+		CONSTANT {
+			@Override
+			public boolean isConstant() {
+				return true;
+			}
+		},
+
+		VARIABLE {
+			@Override
+			public boolean isConstant() {
+				return false;
+			}
+		},
+
+		LITERAL {
+			@Override
+			public boolean isConstant() {
+				return true;
+			}
+		}
 	}
+
+	// //////////////////////////////////////////////////////////////////////////
+	//
+	// //////////////////////////////////////////////////////////////////////////
 
 	private static final long serialVersionUID = -8596306338753616109L;
 
@@ -55,12 +81,12 @@ public class Term implements Comparable<Term>, Serializable {
 			break;
 		case CONSTANT:
 			this.value = null;
-			this.uri = URIUtils.createURI(value.toString(), Prefix.DEFAULT);
+			this.uri = URIUtils.createURI(value.toString(), Prefix.CONSTANT);
 			break;
 		case VARIABLE:
 		default:
 			this.value = null;
-			this.uri = new DefaultURI(value.toString());
+			this.uri = URIUtils.createURI(value.toString(), Prefix.EMPTY);
 			break;
 		}
 	}
@@ -89,8 +115,7 @@ public class Term implements Comparable<Term>, Serializable {
 	 * @return
 	 */
 	public boolean isConstant() {
-		return Type.CONSTANT.equals(this.type)
-				|| Type.LITERAL.equals(this.type);
+		return this.type.isConstant();
 	}
 
 	/**
