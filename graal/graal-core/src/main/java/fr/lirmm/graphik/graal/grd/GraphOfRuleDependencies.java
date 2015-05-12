@@ -80,6 +80,10 @@ public class GraphOfRuleDependencies {
 		this(rules,wu,DependencyChecker.DEFAULT);
 	}
 
+	public GraphOfRuleDependencies(Iterable<Rule> rules, DependencyChecker checker) {
+		this(rules,false,checker);
+	}
+
 	public GraphOfRuleDependencies(Iterable<Rule> rules) {
 		this(rules,false);
 	}
