@@ -56,34 +56,24 @@ public class RuleAnalyser {
 	private RuleAnalyser[] ruleAnalyserArray;
 	private int[] componentCalculability;
 
-	protected static final AtomicBodyProperty ATOMIC_BODY = AtomicBodyProperty
-			.getInstance();
-	protected static final BTSProperty BTS = BTSProperty.getInstance();
-	protected static final DisconnectedProperty DISCONNECTED = DisconnectedProperty
-			.getInstance();
-	protected static final DomainRestrictedProperty DOMAIN_RESTRICTED = DomainRestrictedProperty
-			.getInstance();
-	protected static final FESProperty FES = FESProperty.getInstance();
-	protected static final FrontierGuardedProperty FRONTIER_GUARDED = FrontierGuardedProperty
-			.getInstance();
-	protected static final FrontierOneProperty FRONTIER_ONE = FrontierOneProperty
-			.getInstance();
-	protected static final FUSProperty FUS = FUSProperty.getInstance();
-	protected static final GBTSProperty GBTS = GBTSProperty.getInstance();
-	protected static final GuardedProperty GUARDED = GuardedProperty
-			.getInstance();
-	protected static final RangeRestrictedProperty RANGE_RESTRICTED = RangeRestrictedProperty
-			.getInstance();
-	protected static final StickyProperty STICKY = StickyProperty.getInstance();
-	protected static final WeaklyAcyclicProperty WEAKLY_ACYCLIC = WeaklyAcyclicProperty
-			.getInstance();
-	protected static final WeaklyFrontierGuardedSetProperty WEAKLY_FRONTIER_GUARDED_SET = WeaklyFrontierGuardedSetProperty
-			.getInstance();
-	protected static final WeaklyGuardedSetProperty WEAKLY_GUARDED_SET = WeaklyGuardedSetProperty
-			.getInstance();
-	protected static final WeaklyStickyProperty WEAKLY_STICKY = WeaklyStickyProperty
-			.getInstance();
+	protected static final AtomicBodyProperty               ATOMIC_BODY                 = AtomicBodyProperty.getInstance();
+	protected static final BTSProperty                      BTS                         = BTSProperty.getInstance();
+	protected static final DisconnectedProperty             DISCONNECTED                = DisconnectedProperty.getInstance();
+	protected static final DomainRestrictedProperty         DOMAIN_RESTRICTED           = DomainRestrictedProperty.getInstance();
+	protected static final FESProperty                      FES                         = FESProperty.getInstance();
+	protected static final FrontierGuardedProperty          FRONTIER_GUARDED            = FrontierGuardedProperty.getInstance();
+	protected static final FrontierOneProperty              FRONTIER_ONE                = FrontierOneProperty.getInstance();
+	protected static final FUSProperty                      FUS                         = FUSProperty.getInstance();
+	protected static final GBTSProperty                     GBTS                        = GBTSProperty.getInstance();
+	protected static final GuardedProperty                  GUARDED                     = GuardedProperty.getInstance();
+	protected static final RangeRestrictedProperty          RANGE_RESTRICTED            = RangeRestrictedProperty.getInstance();
+	protected static final StickyProperty                   STICKY                      = StickyProperty.getInstance();
+	protected static final WeaklyAcyclicProperty            WEAKLY_ACYCLIC              = WeaklyAcyclicProperty.getInstance();
+	protected static final WeaklyFrontierGuardedSetProperty WEAKLY_FRONTIER_GUARDED_SET = WeaklyFrontierGuardedSetProperty.getInstance();
+	protected static final WeaklyGuardedSetProperty         WEAKLY_GUARDED_SET          = WeaklyGuardedSetProperty.getInstance();
+	protected static final WeaklyStickyProperty             WEAKLY_STICKY               = WeaklyStickyProperty.getInstance();
 
+	// FIXME protected seems like a bad idea (since constructor needs it, and never used again)
 	protected Collection<RuleProperty> propertiesList;
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -104,6 +94,23 @@ public class RuleAnalyser {
 					.getLabel())) {
 				this.hierarchy.addParent(property.getLabel(),
 						parentProperty.getLabel());
+			}
+		}
+	}
+
+	public RuleAnalyser(Iterable<Rule> rules, Collection<RuleProperty> propertiesList) {
+		this.rules = new AnalyserRuleSet(rules);
+		this.properties = new TreeMap<String, Boolean>();
+		this.hierarchy = new RuleHierarchyGraph();
+
+		this.propertiesList = propertiesList;
+
+		for (RuleProperty property : this.getAllProperty()) {
+			this.hierarchy.add(property);
+		}
+		for (RuleProperty property : this.getAllProperty()) {
+			for (RuleProperty parentProperty : this.getParentsLabels(property.getLabel())) {
+				this.hierarchy.addParent(property.getLabel(),parentProperty.getLabel());
 			}
 		}
 	}
