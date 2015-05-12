@@ -18,10 +18,10 @@ import fr.lirmm.graphik.graal.core.NegativeConstraint;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
+import fr.lirmm.graphik.graal.core.term.Literal;
+import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.io.AbstractGraalWriter;
 import fr.lirmm.graphik.util.DefaultURI;
 import fr.lirmm.graphik.util.Prefix;
@@ -71,7 +71,7 @@ public class Dlgp1Writer extends AbstractGraalWriter {
 	// /////////////////////////////////////////////////////////////////////////
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
-
+	
 	@Override
 	public void writeComment(String comment) throws IOException {
 		this.write("% ");
@@ -227,20 +227,25 @@ public class Dlgp1Writer extends AbstractGraalWriter {
 		String s = uri.getLocalname();
 		char first = s.charAt(0);
 		
-		if(Type.VARIABLE.equals(t.getType())) {
+		if (Term.Type.VARIABLE.equals(t.getType())) {
 			if(first < 'A' || first > 'Z') {
 				this.write("VAR_");
 			}
 			this.write(s);
-		} else if(Type.CONSTANT.equals(t.getType())) {
+		} else if (Term.Type.CONSTANT.equals(t.getType())) {
 			if(first < 'a' || first > 'z') {
 				this.write("cst_");
 			}
 			this.write(s);
-		} else {
-			this.write('"');
-			this.write(uri.toString());
-			this.write('"');
+		} else { // literal
+			Literal l = (Literal) t;
+			if (l.getValue() instanceof String) {
+				this.write("\"");
+				this.write(l.getValue().toString());
+				this.write("\"");
+			} else {
+				this.write(l.getValue().toString());
+			}
 		}
 		
 	}

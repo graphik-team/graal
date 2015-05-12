@@ -15,7 +15,7 @@ import org.jgrapht.graph.DefaultEdge;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.Term;
+import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.PredicatePosition;
 
 

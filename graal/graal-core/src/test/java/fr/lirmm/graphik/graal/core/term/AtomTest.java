@@ -1,9 +1,13 @@
-package fr.lirmm.graphik.graal.core;
+package fr.lirmm.graphik.graal.core.term;
 
 import java.util.Arrays;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.core.DefaultAtom;
+import fr.lirmm.graphik.graal.core.Predicate;
 
 public class AtomTest {
 
@@ -11,9 +15,9 @@ public class AtomTest {
     public void constructorTest() {
         Predicate predicate = new Predicate("pred", 3);
         Term[] terms = new Term[3];
-        terms[0] = new Term("X", Term.Type.VARIABLE);
-        terms[1] = new Term("a", Term.Type.CONSTANT);
-        terms[2] = new Term("b", Term.Type.CONSTANT);
+		terms[0] = new DefaultVariable("X");
+		terms[1] = new DefaultConstant("a");
+		terms[2] = new DefaultConstant("b");
 
         Atom atom = new DefaultAtom(predicate, Arrays.asList(terms));
 
@@ -30,12 +34,12 @@ public class AtomTest {
     public void setterTest() {
         Predicate predicate = new Predicate("pred", 3);
         Term[] terms = new Term[3];
-        terms[0] = new Term("X", Term.Type.VARIABLE);
-        terms[1] = new Term("a", Term.Type.CONSTANT);
-        terms[2] = new Term("b", Term.Type.CONSTANT);
+		terms[0] = new DefaultVariable("X");
+		terms[1] = new DefaultConstant("a");
+		terms[2] = new DefaultConstant("b");
         Atom atom = new DefaultAtom(predicate, Arrays.asList(terms));
 
-        Term newTerm = new Term("new", Term.Type.CONSTANT);
+		Term newTerm = new DefaultConstant("new");
         Predicate newPredicate = new Predicate("newPred", 3);
 
         atom.setPredicate(newPredicate);
@@ -49,9 +53,9 @@ public class AtomTest {
     public void equalsTest() {
         Predicate predicate = new Predicate("pred", 3);
         Term[] terms = new Term[3];
-        terms[0] = new Term("X", Term.Type.VARIABLE);
-        terms[1] = new Term("a", Term.Type.CONSTANT);
-        terms[2] = new Term("b", Term.Type.CONSTANT);
+		terms[0] = new DefaultVariable("X");
+		terms[1] = new DefaultConstant("a");
+		terms[2] = new DefaultConstant("b");
         Atom atom = new DefaultAtom(predicate, Arrays.asList(terms));
 
         Assert.assertTrue("Atom not equals itself", atom.equals(atom));
@@ -60,9 +64,9 @@ public class AtomTest {
 
         Predicate otherPred = new Predicate("otherPred", 3);
         Term[] otherTerms = new Term[3];
-        otherTerms[0] = new Term("Y", Term.Type.VARIABLE);
-        otherTerms[1] = new Term("b", Term.Type.CONSTANT);
-        otherTerms[2] = new Term("b", Term.Type.CONSTANT);
+		otherTerms[0] = new DefaultVariable("Y");
+		otherTerms[1] = new DefaultConstant("b");
+		otherTerms[2] = new DefaultConstant("b");
 
         Atom other = new DefaultAtom(otherPred, Arrays.asList(terms));
         Assert.assertFalse("Atom equals an other atom with other predicate",

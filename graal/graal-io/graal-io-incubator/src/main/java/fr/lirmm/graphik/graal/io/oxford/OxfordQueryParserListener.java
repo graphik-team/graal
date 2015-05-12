@@ -9,8 +9,9 @@ import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.core.term.Term;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -67,7 +68,7 @@ class OxfordQueryParserListener {
 
 
 	public void constant(String label) {
-		Term term = new Term(label, Term.Type.CONSTANT);
+		Term term = DefaultTermFactory.instance().createConstant(label);
 		switch(state) {
 		case HEAD:
 			this.awsweredVariables.add(term);
@@ -79,7 +80,7 @@ class OxfordQueryParserListener {
 
 
 	public void variable(String label) {
-		Term term = new Term(label, Term.Type.VARIABLE);
+		Term term = DefaultTermFactory.instance().createVariable(label);
 		switch(state) {
 		case HEAD:
 			this.awsweredVariables.add(term);

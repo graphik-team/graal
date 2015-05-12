@@ -13,7 +13,8 @@ import org.junit.Test;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.Term;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.io.owl.OWLParser;
 import fr.lirmm.graphik.util.Prefix;
 
@@ -41,8 +42,10 @@ public class OWLParserTest {
 					Atom a = (Atom) o;
 					Assert.assertEquals(new Predicate("test:property", 2), a.getPredicate());
 					Iterator<Term> it = a.iterator();
-					Assert.assertEquals(new Term("test:a", Term.Type.CONSTANT), it.next());
-					Assert.assertEquals(new Term("test:b", Term.Type.CONSTANT), it.next());
+					Assert.assertEquals(DefaultTermFactory.instance()
+							.createConstant("test:a"), it.next());
+					Assert.assertEquals(DefaultTermFactory.instance()
+							.createConstant("test:b"), it.next());
 					found = true;
 				}
 			}
@@ -70,8 +73,10 @@ public class OWLParserTest {
 					Atom a = (Atom) o;
 					Assert.assertEquals(new Predicate("test:property", 2), a.getPredicate());
 					Iterator<Term> it = a.iterator();
-					Assert.assertEquals(new Term("test:a", Term.Type.CONSTANT), it.next());
-					Assert.assertEquals(new Term("test" , Term.Type.LITERAL), it.next());
+					Assert.assertEquals(DefaultTermFactory.instance()
+							.createConstant("test:a"), it.next());
+					Assert.assertEquals(DefaultTermFactory.instance()
+							.createLiteral("test"), it.next());
 					found = true;
 				}
 			}

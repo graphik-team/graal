@@ -26,11 +26,12 @@ import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.SymbolGenerator;
-import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.core.term.Term;
+import fr.lirmm.graphik.graal.core.term.Term.Type;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
 
 /**
@@ -356,7 +357,9 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			terms = new TreeSet<Term>();
 
 			while (results.next()) {
-				terms.add(new Term(results.getString(1), Term.Type
+				terms.add(DefaultTermFactory.instance().createTerm(
+						results.getString(1),
+						Term.Type
 						.valueOf(results.getString(2))));
 			}
 			
@@ -387,7 +390,8 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			this.getTermsByTypeStatement.setString(1, type.toString());
 			results = this.getTermsByTypeStatement.executeQuery();
 			while (results.next()) {
-				terms.add(new Term(results.getString(1), type));
+				terms.add(DefaultTermFactory.instance().createTerm(
+						results.getString(1), type));
 			}
 			results.close();
 		} catch (SQLException e) {
@@ -412,7 +416,9 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			this.getTermStatement.setString(1, label);
 			results = this.getTermStatement.executeQuery();
 			if (results.next()) {
-				term = new Term(results.getString(1), Term.Type.valueOf(results
+				term = DefaultTermFactory.instance().createTerm(
+						results.getString(1),
+						Term.Type.valueOf(results
 						.getString(2)));
 			}
 			results.close();

@@ -12,8 +12,9 @@ import org.junit.experimental.theories.Theory;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.store.TripleStore;
 
@@ -31,8 +32,10 @@ public class TripleStoreTest {
 
 	@Theory
 	public void simpleTest(TripleStore store) throws AtomSetException {
-		Term t1 = new Term("http://to.to/b", Term.Type.CONSTANT);
-		Term t2 = new Term("http://to.to/a", Term.Type.CONSTANT);
+		Term t1 = DefaultTermFactory.instance()
+				.createConstant("http://to.to/b");
+		Term t2 = DefaultTermFactory.instance()
+				.createConstant("http://to.to/a");
 		Predicate p = new Predicate("http://to.to/p", 2);
 		Atom atom1 = new DefaultAtom(p, t1, t2);
 

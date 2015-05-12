@@ -32,7 +32,8 @@ import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.SymbolGenerator;
-import fr.lirmm.graphik.graal.core.Term;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.io.owl.logic.Literal;
 import fr.lirmm.graphik.graal.io.owl.logic.LogicalFormula;
 
@@ -45,12 +46,13 @@ class OWLClassExpressionVisitorImpl implements
 
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(OWLClassExpressionVisitorImpl.class);
-	
+
 	private Term glueVariable;
 	private SymbolGenerator varGen;
 	private ShortFormProvider prefixManager;
 
-	public OWLClassExpressionVisitorImpl(ShortFormProvider prefixManager, SymbolGenerator varGen, Term glueVariable) {
+	public OWLClassExpressionVisitorImpl(ShortFormProvider prefixManager,
+			SymbolGenerator varGen, Term glueVariable) {
 		this.prefixManager = prefixManager;
 		this.glueVariable = glueVariable;
 		this.varGen = varGen;
@@ -66,7 +68,7 @@ class OWLClassExpressionVisitorImpl implements
 		Atom a = this.createAtom(p, glueVariable);
 		return this.createLogicalFormula(a);
 	}
-	
+
 	// /////////////////////////////////////////////////////////////////////////
 	// OBJECT CLASS EXPRESSION
 	// /////////////////////////////////////////////////////////////////////////
@@ -109,44 +111,52 @@ class OWLClassExpressionVisitorImpl implements
 	@Override
 	public LogicalFormula visit(OWLObjectSomeValuesFrom arg) {
 		Term newGlueVariable = varGen.getFreeVar();
-		
-		LogicalFormula f = arg.getProperty().accept(new OWLPropertyExpressionVisitorImpl(
-				this.prefixManager, glueVariable, newGlueVariable));
-		
+
+		LogicalFormula f = arg.getProperty().accept(
+				new OWLPropertyExpressionVisitorImpl(this.prefixManager,
+						glueVariable, newGlueVariable));
+
 		f.and(arg.getFiller().accept(
-				new OWLClassExpressionVisitorImpl(this.prefixManager, varGen, newGlueVariable)));
-		
+				new OWLClassExpressionVisitorImpl(this.prefixManager, varGen,
+						newGlueVariable)));
+
 		return f;
 	}
 
 	@Override
 	public LogicalFormula visit(OWLObjectAllValuesFrom arg) {
 		Term var = this.varGen.getFreeVar();
-		LogicalFormula f = arg.getProperty().accept(new OWLPropertyExpressionVisitorImpl(
-				this.prefixManager, glueVariable, var));
+		LogicalFormula f = arg.getProperty().accept(
+				new OWLPropertyExpressionVisitorImpl(this.prefixManager,
+						glueVariable, var));
 		f.not();
-		f.or(arg.getFiller().accept(new OWLClassExpressionVisitorImpl(this.prefixManager, varGen, var)));
-		
+		f.or(arg.getFiller().accept(
+				new OWLClassExpressionVisitorImpl(this.prefixManager, varGen,
+						var)));
+
 		return f;
 	}
 
 	@Override
 	public LogicalFormula visit(OWLObjectHasValue arg) {
-		LogicalFormula f = arg.getProperty().accept(new OWLPropertyExpressionVisitorImpl(
-				this.prefixManager, glueVariable, createTerm(arg.getFiller())));
+		LogicalFormula f = arg.getProperty().accept(
+				new OWLPropertyExpressionVisitorImpl(this.prefixManager,
+						glueVariable, createTerm(arg.getFiller())));
 		return f;
 	}
 
 	@Override
 	public LogicalFormula visit(OWLObjectMinCardinality arg) {
-		if(arg.getCardinality() == 1) {
+		if (arg.getCardinality() == 1) {
 			Term newGlueVariable = varGen.getFreeVar();
-			
-			LogicalFormula f = arg.getProperty().accept(new OWLPropertyExpressionVisitorImpl(
-					this.prefixManager, glueVariable, newGlueVariable));
-			
+
+			LogicalFormula f = arg.getProperty().accept(
+					new OWLPropertyExpressionVisitorImpl(this.prefixManager,
+							glueVariable, newGlueVariable));
+
 			f.and(arg.getFiller().accept(
-					new OWLClassExpressionVisitorImpl(this.prefixManager, varGen, newGlueVariable)));
+					new OWLClassExpressionVisitorImpl(this.prefixManager,
+							varGen, newGlueVariable)));
 			return f;
 		} else {
 			if (LOGGER.isWarnEnabled()) {
@@ -177,8 +187,9 @@ class OWLClassExpressionVisitorImpl implements
 
 	@Override
 	public LogicalFormula visit(OWLObjectHasSelf arg) {
-		LogicalFormula f = arg.getProperty().accept(new OWLPropertyExpressionVisitorImpl(
-				this.prefixManager, glueVariable, glueVariable));
+		LogicalFormula f = arg.getProperty().accept(
+				new OWLPropertyExpressionVisitorImpl(this.prefixManager,
+						glueVariable, glueVariable));
 		return f;
 	}
 
@@ -194,47 +205,50 @@ class OWLClassExpressionVisitorImpl implements
 	// /////////////////////////////////////////////////////////////////////////
 	// DATA CLASS EXPRESSION
 	// /////////////////////////////////////////////////////////////////////////
-	
+
 	@Override
 	public LogicalFormula visit(OWLDataSomeValuesFrom arg) {
 		Term newGlueVariable = varGen.getFreeVar();
-		
-		LogicalFormula f = arg.getProperty().accept(new OWLPropertyExpressionVisitorImpl(
-				this.prefixManager, glueVariable, newGlueVariable));
-		
-		f.and(arg.getFiller().accept(
-				new OWLDataRangeVisitorImpl()));
+
+		LogicalFormula f = arg.getProperty().accept(
+				new OWLPropertyExpressionVisitorImpl(this.prefixManager,
+						glueVariable, newGlueVariable));
+
+		f.and(arg.getFiller().accept(new OWLDataRangeVisitorImpl()));
 		return f;
 	}
 
 	@Override
 	public LogicalFormula visit(OWLDataAllValuesFrom arg) {
 		Term var = this.varGen.getFreeVar();
-		LogicalFormula f = arg.getProperty().accept(new OWLPropertyExpressionVisitorImpl(
-				this.prefixManager, glueVariable, var));
+		LogicalFormula f = arg.getProperty().accept(
+				new OWLPropertyExpressionVisitorImpl(this.prefixManager,
+						glueVariable, var));
 		f.not();
 		f.or(arg.getFiller().accept(new OWLDataRangeVisitorImpl()));
-		
+
 		return f;
 	}
 
 	@Override
 	public LogicalFormula visit(OWLDataHasValue arg) {
-		LogicalFormula f = arg.getProperty().accept(new OWLPropertyExpressionVisitorImpl(
-				this.prefixManager, glueVariable, new Term(arg.getFiller().toString(), Term.Type.LITERAL)));
+		LogicalFormula f = arg.getProperty().accept(
+				new OWLPropertyExpressionVisitorImpl(this.prefixManager,
+						glueVariable, DefaultTermFactory.instance()
+								.createLiteral(arg.getFiller().toString())));
 		return f;
 	}
 
 	@Override
 	public LogicalFormula visit(OWLDataMinCardinality arg) {
-		if(arg.getCardinality() == 1) {
+		if (arg.getCardinality() == 1) {
 			Term newGlueVariable = varGen.getFreeVar();
-			
-			LogicalFormula f = arg.getProperty().accept(new OWLPropertyExpressionVisitorImpl(
-					this.prefixManager, glueVariable, newGlueVariable));
-			
-			f.and(arg.getFiller().accept(
-					new OWLDataRangeVisitorImpl()));
+
+			LogicalFormula f = arg.getProperty().accept(
+					new OWLPropertyExpressionVisitorImpl(this.prefixManager,
+							glueVariable, newGlueVariable));
+
+			f.and(arg.getFiller().accept(new OWLDataRangeVisitorImpl()));
 			return f;
 		} else {
 			if (LOGGER.isWarnEnabled()) {
@@ -262,15 +276,15 @@ class OWLClassExpressionVisitorImpl implements
 		}
 		return new LogicalFormula();
 	}
-	
+
 	// /////////////////////////////////////////////////////////////////////////
-	// 
+	//
 	// /////////////////////////////////////////////////////////////////////////
-	
+
 	private LogicalFormula createLogicalFormula() {
 		return new LogicalFormula();
 	}
-	
+
 	private LogicalFormula createLogicalFormula(Atom a) {
 		return new LogicalFormula(new Literal(a, true));
 	}
@@ -283,8 +297,8 @@ class OWLClassExpressionVisitorImpl implements
 	private Predicate createPredicate(OWLClassExpression owlClass) {
 		Predicate predicate = null;
 		if (!owlClass.isAnonymous()) {
-			predicate = new Predicate(
-					this.prefixManager.getShortForm(owlClass.asOWLClass()), 1);
+			predicate = new Predicate(this.prefixManager.getShortForm(owlClass
+					.asOWLClass()), 1);
 		} else {
 			System.out.println("###" + owlClass);
 			// this.tmpManageOWLClass(owlClass);
@@ -295,13 +309,13 @@ class OWLClassExpressionVisitorImpl implements
 	private Atom createAtom(Predicate p, Term... terms) {
 		return new DefaultAtom(p, terms);
 	}
-	
+
 	/**
 	 * @param value
 	 * @return
 	 */
 	private Term createTerm(OWLIndividual value) {
-		return new Term(value.toString(), Term.Type.CONSTANT);
+		return DefaultTermFactory.instance().createConstant(value.toString());
 	}
 
 }

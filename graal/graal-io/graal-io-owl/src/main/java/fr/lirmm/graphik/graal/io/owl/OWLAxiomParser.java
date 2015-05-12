@@ -63,8 +63,8 @@ import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.SymbolGenerator;
-import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.graal.core.Term.Type;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.io.owl.logic.Literal;
 import fr.lirmm.graphik.graal.io.owl.logic.LogicalFormula;
 import fr.lirmm.graphik.graal.io.owl.logic.LogicalFormulaRuleTranslator;
@@ -520,7 +520,8 @@ class OWLAxiomParser implements
 	public Iterable<? extends Object> visit(OWLDataPropertyAssertionAxiom arg) {
 		freeVarGen.setIndex(0);
 		Term a = createConstant(arg.getSubject().asOWLNamedIndividual());
-		Term b = new Term(arg.getObject().getLiteral(), Type.LITERAL);
+		Term b = DefaultTermFactory.instance().createLiteral(
+				arg.getObject().getLiteral());
 		LogicalFormula f = arg.getProperty().accept(
 				new OWLPropertyExpressionVisitorImpl(this.prefixManager, a, b));
 		return Collections.singleton(f.iterator().next().iterator().next());
@@ -628,7 +629,7 @@ class OWLAxiomParser implements
 		if(uri.charAt(0) == '<') {
 			uri = uri.substring(1, uri.length()-1);
 		}
-		return new Term(uri, Term.Type.CONSTANT);
+		return DefaultTermFactory.instance().createConstant(uri);
 	}
 
 	private Iterable<? extends Object> propertyDomainAxiom(
@@ -744,7 +745,7 @@ class OWLAxiomParser implements
 
 		@Override
 		public Term getFreeVar() {
-			return new Term("X" + index++, Term.Type.VARIABLE);
+			return DefaultTermFactory.instance().createVariable("X" + index++);
 		}
 
 		public void setIndex(int index) {

@@ -5,8 +5,8 @@ import java.util.Iterator;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.SymbolGenerator;
-import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
+import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.store.Store;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
 

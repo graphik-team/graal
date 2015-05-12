@@ -6,8 +6,8 @@ package fr.lirmm.graphik.graal.rulesetanalyser.util;
 import java.util.Collection;
 
 import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.graal.core.Term.Type;
+import fr.lirmm.graphik.graal.core.term.Term;
+import fr.lirmm.graphik.graal.core.term.Term.Type;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>

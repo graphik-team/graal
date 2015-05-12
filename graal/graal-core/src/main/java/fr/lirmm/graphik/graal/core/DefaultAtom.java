@@ -7,6 +7,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ArrayList;
 
+import fr.lirmm.graphik.graal.core.term.Term;
+
 /**
  * Class that implements atoms.
  */

@@ -10,8 +10,8 @@ import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.graal.core.Term.Type;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.io.AbstractParser;
 
 /**
@@ -42,9 +42,12 @@ public class RDFS2Rules extends AbstractParser<Object> {
 	/** */
 	public static final String RDFS_COMMENT = RDFS_PREFIX + "comment";
 
-	protected static final Term X = new Term("X", Type.VARIABLE);
-	protected static final Term Y = new Term("Y", Type.VARIABLE);
-	protected static final Term Z = new Term("Z", Type.VARIABLE);
+	protected static final Term X = DefaultTermFactory.instance()
+			.createVariable("X");
+	protected static final Term Y = DefaultTermFactory.instance()
+			.createVariable("Y");
+	protected static final Term Z = DefaultTermFactory.instance()
+			.createVariable("Z");
 
 	private Iterator<Atom> reader;
 	

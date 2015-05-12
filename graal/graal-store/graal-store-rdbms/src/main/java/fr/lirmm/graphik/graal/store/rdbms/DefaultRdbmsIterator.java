@@ -14,11 +14,12 @@ import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader2AtomReader;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.store.rdbms.homomorphism.SqlHomomorphism;
 
@@ -62,7 +63,8 @@ class DefaultRdbmsIterator implements Iterator<Atom> {
 				Predicate p = predicateStream.next();
 				List<Term> terms = new LinkedList<Term>();
 				for(int i=0; i<p.getArity(); ++i) {
-					terms.add(new Term("X"+i, Term.Type.VARIABLE));
+					terms.add(DefaultTermFactory.instance().createVariable(
+							"X" + i));
 				}
 				
 				InMemoryAtomSet atomSet = new LinkedListAtomSet();

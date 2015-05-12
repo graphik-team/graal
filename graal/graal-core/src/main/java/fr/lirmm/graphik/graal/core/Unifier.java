@@ -14,6 +14,7 @@ import fr.lirmm.graphik.util.stream.Filter; // stream?????? TODO
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
+import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.util.LinkedSet;
 
 /**

@@ -11,11 +11,6 @@ package fr.lirmm.graphik.util;
 public interface URI {
 	
 	/**
-	 * @return the string representation of this URI.
-	 */
-	String toString();
-	
-	/**
 	 * Get the prefix of this URI.
 	 * 
 	 * {@literal (.*)[:/#]([^:/#]*)}

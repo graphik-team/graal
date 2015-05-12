@@ -30,9 +30,10 @@ import org.slf4j.LoggerFactory;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.core.term.Term;
+import fr.lirmm.graphik.graal.core.term.Term.Type;
 import fr.lirmm.graphik.graal.store.AbstractTripleStore;
 
 /**
@@ -63,6 +64,7 @@ public class SailStore extends AbstractTripleStore {
 		
 	}
 
+	@Override
 	protected void finalize() throws Throwable {
 		this.close();
 		super.finalize();
@@ -274,8 +276,10 @@ public class SailStore extends AbstractTripleStore {
 
 	private static Atom statementToAtom(Statement stat) {
 		Predicate predicate = valueToPredicate(stat.getPredicate());
-		Term term0 = new Term(stat.getSubject().toString(), Term.Type.CONSTANT);
-		Term term1 = new Term(stat.getObject().toString(), Term.Type.CONSTANT);
+		Term term0 = DefaultTermFactory.instance().createConstant(
+				stat.getSubject().toString());
+		Term term1 = DefaultTermFactory.instance().createConstant(
+				stat.getObject().toString());
 		return new DefaultAtom(predicate, term0, term1);
 	}
 
@@ -284,7 +288,7 @@ public class SailStore extends AbstractTripleStore {
 	}
 	
 	private static Term valueToTerm(Value value) {
-		return new Term(value.toString(), Term.Type.CONSTANT);
+		return DefaultTermFactory.instance().createConstant(value.toString());
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -324,6 +328,7 @@ public class SailStore extends AbstractTripleStore {
 			this.it = it;
 		}
 
+		@Override
 		protected void finalize() throws Throwable {
 			this.close();
 			super.finalize();
@@ -379,6 +384,7 @@ public class SailStore extends AbstractTripleStore {
 
 		protected TupleQueryResult it;
 
+		@Override
 		protected void finalize() throws Throwable {
 			this.close();
 			super.finalize();

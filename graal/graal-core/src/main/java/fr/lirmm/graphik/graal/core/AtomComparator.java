@@ -7,6 +7,8 @@ import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
 
+import fr.lirmm.graphik.graal.core.term.Term;
+
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *

@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.core.Term;
+import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.io.owl.logic.Literal;
 import fr.lirmm.graphik.graal.io.owl.logic.LogicalFormula;
 

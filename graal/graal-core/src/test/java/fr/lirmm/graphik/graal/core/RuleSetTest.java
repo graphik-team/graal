@@ -12,6 +12,8 @@ import org.junit.Test;
 import fr.lirmm.graphik.graal.core.factory.RuleFactory;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.core.term.Term;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -26,12 +28,12 @@ public class RuleSetTest {
 		Atom atom1, atom2;
 
 		Term[] terms = new Term[2];
-		terms[0] = new Term("X", Term.Type.VARIABLE);
-		terms[1] = new Term("a", Term.Type.CONSTANT);
+		terms[0] = DefaultTermFactory.instance().createVariable("X");
+		terms[1] = DefaultTermFactory.instance().createConstant("a");
 		atom1 = new DefaultAtom(predicate, Arrays.asList(terms));
 		terms = new Term[2];
-		terms[0] = new Term("X", Term.Type.VARIABLE);
-		terms[1] = new Term("Y", Term.Type.VARIABLE);
+		terms[0] = DefaultTermFactory.instance().createVariable("X");
+		terms[1] = DefaultTermFactory.instance().createVariable("Y");
 		atom2 = new DefaultAtom(predicate, Arrays.asList(terms));
 
 		

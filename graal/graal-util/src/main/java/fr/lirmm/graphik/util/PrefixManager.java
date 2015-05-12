@@ -25,6 +25,7 @@ public final class PrefixManager implements Iterable<Prefix> {
 		instance.putPrefix(Prefix.VARIABLE);
 		instance.putPrefix(Prefix.CONSTANT);
 		instance.putPrefix(Prefix.PREDICATE);
+		instance.putPrefix(Prefix.XSD);
 	}
 
 	// //////////////////////////////////////////////////////////////////////////

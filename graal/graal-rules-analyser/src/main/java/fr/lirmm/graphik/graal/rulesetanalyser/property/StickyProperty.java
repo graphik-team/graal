@@ -7,7 +7,7 @@ import java.util.LinkedList;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.Term;
+import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.MarkedVariableSet;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.MarkedVariableSet.MarkedRule;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;

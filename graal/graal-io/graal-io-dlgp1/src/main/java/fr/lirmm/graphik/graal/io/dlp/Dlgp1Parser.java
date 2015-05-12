@@ -27,9 +27,10 @@ import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.KnowledgeBase;
 import fr.lirmm.graphik.graal.core.NegativeConstraint;
 import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.filter.AtomFilterIterator;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.io.AbstractParser;
 import fr.lirmm.graphik.graal.io.ParseError;
 import fr.lirmm.graphik.util.stream.ArrayBlockingStream;
@@ -80,22 +81,20 @@ public final class Dlgp1Parser extends AbstractParser<Object> {
 
 		@Override
 		public Term createTerm(TERM_TYPE termType, Object term) {
-			Term.Type type = null;
 			switch(termType) {
 			case ANSWER_VARIABLE:
 			case VARIABLE:
-				type = Term.Type.VARIABLE;
-				break;
+				return DefaultTermFactory.instance().createVariable(
+						(String) term);
 			case CONSTANT: 
-				type = Term.Type.CONSTANT;
-				break;
+				return DefaultTermFactory.instance().createConstant(
+						(String) term);
 			case FLOAT:
 			case INTEGER:
 			case STRING:
-				type = Term.Type.LITERAL;
-				break;
+				return DefaultTermFactory.instance().createLiteral(term);
 			}
-			return new Term(term, type);
+			return null;
 		}
 	}
 
@@ -109,6 +108,7 @@ public final class Dlgp1Parser extends AbstractParser<Object> {
 			this.buffer = buffer;
 		}
 
+		@Override
 		public void run() {
 			DatalogGrammar dlpGrammar = new DatalogGrammar(
 					new InternalTermFactory(), reader);
@@ -170,6 +170,7 @@ public final class Dlgp1Parser extends AbstractParser<Object> {
 		this(new InputStreamReader(in));
 	}
 	
+	@Override
 	protected void finalize() throws Throwable {
 		this.close();
 		super.finalize();
@@ -179,10 +180,12 @@ public final class Dlgp1Parser extends AbstractParser<Object> {
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
+	@Override
 	public boolean hasNext() {
 		return buffer.hasNext();
 	}
 
+	@Override
 	public Object next() {
 		return buffer.next();
 	}
@@ -193,6 +196,7 @@ public final class Dlgp1Parser extends AbstractParser<Object> {
 	 * 
 	 * @throws IOException
 	 */
+	@Override
 	public void close() {
 		if(this.reader != null) {
 			try {

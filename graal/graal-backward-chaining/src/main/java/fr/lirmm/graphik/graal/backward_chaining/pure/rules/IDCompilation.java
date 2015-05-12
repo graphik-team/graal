@@ -20,10 +20,11 @@ import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.RuleUtils;
-import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.util.collections.ListComparator;
 
 public class IDCompilation extends AbstractRulesCompilation {
@@ -85,7 +86,8 @@ public class IDCompilation extends AbstractRulesCompilation {
 					.entrySet()) {
 				List<Term> terms = new LinkedList<Term>();
 				for (Integer i : e2.getKey()) {
-					terms.add(new Term("X" + i, Term.Type.VARIABLE));
+					terms.add(DefaultTermFactory.instance().createVariable(
+							"X" + i));
 				}
 				InMemoryAtomSet body = new LinkedListAtomSet();
 				body.add(new DefaultAtom(p, terms));

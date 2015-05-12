@@ -4,7 +4,7 @@ import java.util.Set;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.Term;
+import fr.lirmm.graphik.graal.core.term.Term;
 
 /**
  * All atoms in the head contain either all or none variables from the body.

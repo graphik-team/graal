@@ -3,6 +3,7 @@ package fr.lirmm.graphik.graal.core;
 import java.util.Set;
 
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.core.term.Term;
 
 /**
  * A substitution represents a set of transformation of a variable into a term.

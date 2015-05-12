@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.core.term.Term;
 
 /**
  * Class representing a conjunctive query.

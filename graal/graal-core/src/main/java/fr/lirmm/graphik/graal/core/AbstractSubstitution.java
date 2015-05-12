@@ -12,6 +12,7 @@ import java.util.TreeSet;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
 import fr.lirmm.graphik.graal.core.factory.RuleFactory;
+import fr.lirmm.graphik.graal.core.term.Term;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -39,11 +40,9 @@ public abstract class AbstractSubstitution implements Substitution {
 
 	@Override
 	public boolean put(Term term, Term substitut) {
-		if (Term.Type.CONSTANT.equals(term.getType())
-				&& Term.Type.CONSTANT.equals(substitut.getType())) {
-			if (!term.equals(substitut)) {
-				return false;
-			}
+		if (term.isConstant() && substitut.isConstant()
+				&& !term.equals(substitut)) {
+			return false;
 		}
 		this.getMap().put(term, substitut);
 		return true;

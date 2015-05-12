@@ -9,6 +9,9 @@ import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.core.term.Term;
+
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
@@ -16,12 +19,17 @@ import org.junit.runner.RunWith;
 @RunWith(Theories.class)
 public class SubstitutionTest {
 	
-	private static final Term X = new Term("X", Term.Type.VARIABLE);
-	private static final Term Y = new Term("Y", Term.Type.VARIABLE);
-	private static final Term Z = new Term("Z", Term.Type.VARIABLE);
+	private static final Term X = DefaultTermFactory.instance().createVariable(
+			"X");
+	private static final Term Y = DefaultTermFactory.instance().createVariable(
+			"Y");
+	private static final Term Z = DefaultTermFactory.instance().createVariable(
+			"Z");
 	
-	private static final Term A = new Term("a", Term.Type.CONSTANT);
-	private static final Term B = new Term("b", Term.Type.CONSTANT);
+	private static final Term A = DefaultTermFactory.instance().createConstant(
+			"a");
+	private static final Term B = DefaultTermFactory.instance().createConstant(
+			"b");
 	
 	@DataPoints
 	public static Substitution[] substitution() {

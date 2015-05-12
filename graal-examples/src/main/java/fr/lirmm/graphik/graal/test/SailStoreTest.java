@@ -12,8 +12,9 @@ import parser.TERM_TYPE;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.store.Store;
 import fr.lirmm.graphik.graal.store.triplestore.SailStore;
@@ -40,24 +41,26 @@ public class SailStoreTest {
 			type = Term.Type.LITERAL;
 			break;
 		}
-		return new Term(term, type);
+		return DefaultTermFactory.instance().createTerm(term, type);
 	}
 	
 	public static void main(String args[]) throws RepositoryException, MalformedQueryException, AtomSetException {
 				
 		Store store = new SailStore();
 		
-		Term t1 = new Term("http://to.to/b", Term.Type.CONSTANT);
-		Term t2 = new Term("http://to.to/a", Term.Type.CONSTANT);
+		Term t1 = DefaultTermFactory.instance()
+				.createConstant("http://to.to/b");
+		Term t2 = DefaultTermFactory.instance()
+				.createConstant("http://to.to/a");
 		Predicate p = new Predicate("http://to.to/p", 2);
 		Atom atom1 = new DefaultAtom(p, t1, t2);
 		
-		 t1 = new Term("http://to.to/a", Term.Type.CONSTANT);
-		 t2 = new Term("http://to.to/a", Term.Type.CONSTANT);
+		t1 = DefaultTermFactory.instance().createConstant("http://to.to/a");
+		t2 = DefaultTermFactory.instance().createConstant("http://to.to/a");
 		Atom atom2 = new DefaultAtom(p, t1, t2);
 		
-		 t1 = new Term("http://to.to/c", Term.Type.CONSTANT);
-		 t2 = new Term("http://to.to/a", Term.Type.CONSTANT);
+		t1 = DefaultTermFactory.instance().createConstant("http://to.to/c");
+		t2 = DefaultTermFactory.instance().createConstant("http://to.to/a");
 		Atom atom3 = new DefaultAtom(p, t1, t2);
 		System.out.println("atom3: " + atom3);
 		

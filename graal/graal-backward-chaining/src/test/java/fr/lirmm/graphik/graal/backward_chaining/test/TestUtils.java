@@ -6,7 +6,8 @@ package fr.lirmm.graphik.graal.backward_chaining.test;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.core.Term;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.core.term.Term;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -17,14 +18,21 @@ public final class TestUtils {
 	private TestUtils() {
 	}
 
-	public static final Term W = new Term("W", Term.Type.VARIABLE);
-	public static final Term X = new Term("X", Term.Type.VARIABLE);
-	public static final Term Y = new Term("Y", Term.Type.VARIABLE);
-	public static final Term Z = new Term("Z", Term.Type.VARIABLE);
+	public static final Term W = DefaultTermFactory.instance().createVariable(
+			"W");
+	public static final Term X = DefaultTermFactory.instance().createVariable(
+			"X");
+	public static final Term Y = DefaultTermFactory.instance().createVariable(
+			"Y");
+	public static final Term Z = DefaultTermFactory.instance().createVariable(
+			"Z");
  
-	public static final Term A = new Term("A", Term.Type.CONSTANT);
-	public static final Term B = new Term("B", Term.Type.CONSTANT);
-	public static final Term C = new Term("C", Term.Type.CONSTANT);
+	public static final Term A = DefaultTermFactory.instance().createConstant(
+			"A");
+	public static final Term B = DefaultTermFactory.instance().createConstant(
+			"B");
+	public static final Term C = DefaultTermFactory.instance().createConstant(
+			"C");
  
 	public static final Predicate P1 = new Predicate("p", 1);
 	public static final Predicate P2 = new Predicate("p", 2);

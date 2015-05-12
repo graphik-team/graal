@@ -29,9 +29,10 @@ import com.hp.hpl.jena.update.UpdateRequest;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.core.Term;
-import fr.lirmm.graphik.graal.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.core.term.Term;
+import fr.lirmm.graphik.graal.core.term.Term.Type;
 import fr.lirmm.graphik.graal.store.AbstractTripleStore;
 
 /**
@@ -347,8 +348,9 @@ public class JenaStore extends AbstractTripleStore {
 			QuerySolution next = this.rs.next();
 
 			Predicate predicate = new Predicate(next.get("?p").toString(), 2);
-			Term subject = new Term(next.get("?s").toString(),
-					Term.Type.CONSTANT);
+			Term subject = DefaultTermFactory.instance().createConstant(
+					next.get("?s")
+					.toString());
 
 			RDFNode o = next.get("?o");
 			Term object = createTerm(o);
@@ -382,9 +384,11 @@ public class JenaStore extends AbstractTripleStore {
 	private static Term createTerm(RDFNode node) {
 		Term term = null;
 		if (node.isLiteral()) {
-			term = new Term(node.toString(), Term.Type.LITERAL);
+			term = DefaultTermFactory.instance().createLiteral(
+					node.asLiteral().getValue());
 		} else {
-			term = new Term(node.toString(), Term.Type.CONSTANT);
+			term = DefaultTermFactory.instance()
+					.createConstant(node.toString());
 		}
 		return term;
 	}

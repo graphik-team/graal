@@ -18,8 +18,9 @@ import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
-import fr.lirmm.graphik.graal.core.Term;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependenciesWithUnifiers;
 import fr.lirmm.graphik.graal.io.ParseException;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
@@ -36,10 +37,12 @@ public class GRDParser {
 			super();
 		}
 
+		@Override
 		protected void addRule(Rule r) {
 			super.addRule(r);
 		}
 
+		@Override
 		protected void addDependency(Rule src, Substitution sub, Rule dest) {
 			super.addDependency(src, sub, dest);
 		}
@@ -48,16 +51,17 @@ public class GRDParser {
 
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(GRDParser.class);
-	
+
 	private static GRDParser instance;
 
 	private GRDParser() {
 	}
 
-	public GraphOfRuleDependenciesWithUnifiers parse(File file) throws FileNotFoundException, ParseException {
+	public GraphOfRuleDependenciesWithUnifiers parse(File file)
+			throws FileNotFoundException, ParseException {
 		return this.parse(new BufferedReader(new FileReader(file)));
 	}
-	
+
 	public GraphOfRuleDependenciesWithUnifiers parse(BufferedReader reader)
 			throws ParseException {
 		GRD grd = new GRD();
@@ -75,7 +79,7 @@ public class GRDParser {
 		}
 		return grd;
 	}
-	
+
 	// /////////////////////////////////////////////////////////////////////////
 	// STATIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
@@ -95,8 +99,7 @@ public class GRDParser {
 	 * @param g
 	 * @param line
 	 */
-	private static void parseLine(String line, GRD grd,
-			Map<String, Rule> rules) {
+	private static void parseLine(String line, GRD grd, Map<String, Rule> rules) {
 		if (line.length() > 0) {
 			if (line.charAt(0) == '[') {
 				parseRule(line, grd, rules);
@@ -106,15 +109,14 @@ public class GRDParser {
 		}
 	}
 
-	private static void parseRule(String line, GRD grd,
-			Map<String, Rule> rules) {
+	private static void parseRule(String line, GRD grd, Map<String, Rule> rules) {
 		Rule r = DlgpParser.parseRule(line);
 		rules.put(r.getLabel(), r);
 		grd.addRule(r);
 	}
 
-	private static void parseDependency(String line,
-			GRD grd, Map<String, Rule> rules) {
+	private static void parseDependency(String line, GRD grd,
+			Map<String, Rule> rules) {
 		Pattern pattern = Pattern
 				.compile("(\\S+)\\s*-->\\s*(\\S+)\\s*\\{(.*)\\}");
 		Matcher matcher = pattern.matcher(line);
@@ -149,14 +151,18 @@ public class GRDParser {
 			if (matcher.find()) {
 				src = matcher.group(1);
 				dest = matcher.group(2);
-				termSrc = new Term(
-						src,
-						(Character.isUpperCase(src.charAt(0))) ? Term.Type.VARIABLE
-								: Term.Type.CONSTANT);
-				termDest = new Term(
-						dest,
-						(Character.isUpperCase(src.charAt(0))) ? Term.Type.VARIABLE
-								: Term.Type.CONSTANT);
+				if (Character.isUpperCase(src.charAt(0))) {
+					termSrc = DefaultTermFactory.instance().createVariable(src);
+				} else {
+					termSrc = DefaultTermFactory.instance().createConstant(src);
+				}
+				if (Character.isUpperCase(dest.charAt(0))) {
+					termDest = DefaultTermFactory.instance().createVariable(
+							dest);
+				} else {
+					termDest = DefaultTermFactory.instance().createConstant(
+							dest);
+				}
 				unificator.put(termSrc, termDest);
 			}
 		}

@@ -12,6 +12,8 @@ import org.junit.Test;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
 import fr.lirmm.graphik.graal.core.factory.RuleFactory;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.core.term.Term;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -22,15 +24,23 @@ public class UnifierTest {
 	private static Predicate p = new Predicate("p", 2);
 	private static Predicate q = new Predicate("q", 1);
 	
-	private static final Term X = new Term("X", Term.Type.VARIABLE);
-	private static final Term Y = new Term("Y", Term.Type.VARIABLE);
-	private static final Term Z = new Term("Z", Term.Type.VARIABLE);
-	private static final Term U = new Term("U", Term.Type.VARIABLE);
-	private static final Term V = new Term("V", Term.Type.VARIABLE);
-	private static final Term W = new Term("w", Term.Type.VARIABLE);
+	private static final Term X = DefaultTermFactory.instance().createVariable(
+			"X");
+	private static final Term Y = DefaultTermFactory.instance().createVariable(
+			"Y");
+	private static final Term Z = DefaultTermFactory.instance().createVariable(
+			"Z");
+	private static final Term U = DefaultTermFactory.instance().createVariable(
+			"U");
+	private static final Term V = DefaultTermFactory.instance().createVariable(
+			"V");
+	private static final Term W = DefaultTermFactory.instance().createVariable(
+			"w");
 	
-	private static final Term A = new Term("a", Term.Type.CONSTANT);
-	private static final Term B = new Term("b", Term.Type.CONSTANT);
+	private static final Term A = DefaultTermFactory.instance().createConstant(
+			"a");
+	private static final Term B = DefaultTermFactory.instance().createConstant(
+			"b");
 	
 	private static Atom pXY, pYZ, pUV, pVW, pAU, pXA, pXB, qX;
 	static {

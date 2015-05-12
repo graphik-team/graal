@@ -5,16 +5,23 @@ package fr.lirmm.graphik.util;
 
 
 /**
+ * Immutable
+ * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class DefaultURI implements URI {
+public final class DefaultURI implements URI {
 
 	private Prefix prefix;
 	private String localname;
 
 	public DefaultURI(Prefix prefix, String localname) {
 		this.prefix = prefix;
+		this.localname = localname;
+	}
+	
+	public DefaultURI(String prefix, String localname) {
+		this.prefix = PrefixManager.getInstance().getPrefix(prefix);
 		this.localname = localname;
 	}
 	

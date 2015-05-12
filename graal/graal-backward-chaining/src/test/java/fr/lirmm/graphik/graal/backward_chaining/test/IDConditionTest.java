@@ -13,7 +13,8 @@ import org.junit.Test;
 import fr.lirmm.graphik.graal.backward_chaining.pure.utils.IDCondition;
 import fr.lirmm.graphik.graal.backward_chaining.pure.utils.IDConditionImpl;
 import fr.lirmm.graphik.graal.backward_chaining.pure.utils.TermPartition;
-import fr.lirmm.graphik.graal.core.Term;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.core.term.Term;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -33,8 +34,8 @@ public class IDConditionTest {
 	 */
 	@Test
 	public void getBodyTest1() {
-		Term x = new Term("X", Term.Type.VARIABLE);
-		Term y = new Term("Y", Term.Type.VARIABLE);
+		Term x = DefaultTermFactory.instance().createVariable("X");
+		Term y = DefaultTermFactory.instance().createVariable("Y");
 
 		Term[] body = { x, y, y };
 		Term[] head = { x };
@@ -54,7 +55,7 @@ public class IDConditionTest {
 	 */
 	@Test
 	public void getBodyTest2() {
-		Term x = new Term("X", Term.Type.VARIABLE);
+		Term x = DefaultTermFactory.instance().createVariable("X");
 
 		Term[] body = { x, x };
 		Term[] head = { x };
@@ -73,13 +74,13 @@ public class IDConditionTest {
 	 */
 	@Test
 	public void getUnificationTest() {
-		Term x = new Term("X", Term.Type.VARIABLE);
-		Term y = new Term("Y", Term.Type.VARIABLE);
+		Term x = DefaultTermFactory.instance().createVariable("X");
+		Term y = DefaultTermFactory.instance().createVariable("Y");
 
-		Term a = new Term("a", Term.Type.VARIABLE);
-		Term b = new Term("b", Term.Type.VARIABLE);
-		Term c = new Term("c", Term.Type.VARIABLE);
-		Term d = new Term("d", Term.Type.VARIABLE);
+		Term a = DefaultTermFactory.instance().createVariable("a");
+		Term b = DefaultTermFactory.instance().createVariable("b");
+		Term c = DefaultTermFactory.instance().createVariable("c");
+		Term d = DefaultTermFactory.instance().createVariable("d");
 
 		Term[] body = { x, y, x };
 		Term[] newBody = { b, c, d };
@@ -111,8 +112,8 @@ public class IDConditionTest {
 	 */
 	@Test
 	public void composeWithTest1() {
-		Term x = new Term("X", Term.Type.VARIABLE);
-		Term y = new Term("Y", Term.Type.VARIABLE);
+		Term x = DefaultTermFactory.instance().createVariable("X");
+		Term y = DefaultTermFactory.instance().createVariable("Y");
 
 		Term[] body1 = { x, y, x };
 		Term[] head1 = { y, x };
@@ -136,8 +137,8 @@ public class IDConditionTest {
 	 */
 	@Test
 	public void composeWithTest2() {
-		Term x = new Term("X", Term.Type.VARIABLE);
-		Term y = new Term("Y", Term.Type.VARIABLE);
+		Term x = DefaultTermFactory.instance().createVariable("X");
+		Term y = DefaultTermFactory.instance().createVariable("Y");
 
 		Term[] body1 = { x, y, x };
 		Term[] head1 = { y, x };
@@ -162,8 +163,8 @@ public class IDConditionTest {
 	 */
 	@Test
 	public void composeWithTest3() {
-		Term x = new Term("X", Term.Type.VARIABLE);
-		Term y = new Term("Y", Term.Type.VARIABLE);
+		Term x = DefaultTermFactory.instance().createVariable("X");
+		Term y = DefaultTermFactory.instance().createVariable("Y");
 
 		Term[] body1 = { x, y };
 		Term[] head1 = { y, x, x };
@@ -188,8 +189,8 @@ public class IDConditionTest {
 	 */
 	@Test
 	public void composeWithTest4() {
-		Term x = new Term("X", Term.Type.VARIABLE);
-		Term y = new Term("Y", Term.Type.VARIABLE);
+		Term x = DefaultTermFactory.instance().createVariable("X");
+		Term y = DefaultTermFactory.instance().createVariable("Y");
 
 		Term[] body1 = { x, y };
 		Term[] head1 = { y, x };
@@ -214,8 +215,8 @@ public class IDConditionTest {
 	 */
 	@Test
 	public void composeWithTest5() {
-		Term x = new Term("X", Term.Type.VARIABLE);
-		Term y = new Term("Y", Term.Type.VARIABLE);
+		Term x = DefaultTermFactory.instance().createVariable("X");
+		Term y = DefaultTermFactory.instance().createVariable("Y");
 
 		Term[] body1 = { x, y };
 		Term[] head1 = { y, x };
@@ -235,8 +236,8 @@ public class IDConditionTest {
 	 */
 	@Test
 	public void composeWithTest6() {
-		Term x = new Term("X", Term.Type.VARIABLE);
-		Term y = new Term("Y", Term.Type.VARIABLE);
+		Term x = DefaultTermFactory.instance().createVariable("X");
+		Term y = DefaultTermFactory.instance().createVariable("Y");
 
 		Term[] body1 = { x, y };
 		Term[] head1 = { y };
