@@ -11,6 +11,7 @@ import java.util.TreeSet;
 
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultDirectedGraph;
+import org.jgrapht.traverse.DepthFirstIterator;
 
 import fr.lirmm.graphik.util.stream.Filter; // stream???? TODO
 import fr.lirmm.graphik.graal.core.Rule;
@@ -100,6 +101,21 @@ public class GraphOfRuleDependencies {
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
+
+	// TODO
+	// add some unit test for this method...
+	public boolean hasCircuit() {
+		DepthFirstIterator<Rule,Integer> it = new DepthFirstIterator(this.graph);
+		Set<Rule> color = new TreeSet<Rule>();
+		Rule r = null;
+		while (it.hasNext()) {
+			r = it.next();
+			if (color.contains(r))
+				return true;
+			color.add(r);
+		}
+		return false;
+	}
 
 	public Set<Substitution> getUnifiers(Integer e) {
 		return Collections.unmodifiableSet(this.edgesValue.get(e));
