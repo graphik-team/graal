@@ -90,10 +90,8 @@ public class RuleAnalyser {
 			this.hierarchy.add(property);
 		}
 		for (RuleProperty property : this.getAllProperty()) {
-			for (RuleProperty parentProperty : this.getParentsLabels(property
-					.getLabel())) {
-				this.hierarchy.addParent(property.getLabel(),
-						parentProperty.getLabel());
+			for (RuleProperty parentProperty : this.getParentsLabels(property.getLabel())) {
+				this.hierarchy.addParent(property.getLabel(),parentProperty.getLabel());
 			}
 		}
 	}
@@ -156,8 +154,7 @@ public class RuleAnalyser {
 			componentCalculability = new int[nbrScc];
 
 			for (int c : scc.vertexSet()) {
-				RuleAnalyser subRA = this.getSubRuleAnalyser(scc
-						.getComponent(c));
+				RuleAnalyser subRA = this.getSubRuleAnalyser(scc.getComponent(c));
 				ruleAnalyserArray[c] = subRA;
 				subRA.checkAll();
 			}
@@ -507,8 +504,7 @@ public class RuleAnalyser {
 					predFES = false;
 				}
 			}
-			Boolean bool = ruleAnalyserArray[c]
-					.check(FESProperty.getInstance());
+			Boolean bool = ruleAnalyserArray[c].check(FESProperty.getInstance());
 			if (bool != null && bool && predFES) {
 				componentCalculability[c] += ComponentCalculabilityValue.FES;
 				for (int succ : scc.outgoingEdgesOf(c)) {
@@ -548,8 +544,7 @@ public class RuleAnalyser {
 					succFUS = false;
 				}
 			}
-			Boolean bool = ruleAnalyserArray[c]
-					.check(FUSProperty.getInstance());
+			Boolean bool = ruleAnalyserArray[c].check(FUSProperty.getInstance());
 			if (bool != null && bool && succFUS) {
 				componentCalculability[c] += ComponentCalculabilityValue.FUS;
 				for (int pred : scc.incomingEdgesOf(c)) {

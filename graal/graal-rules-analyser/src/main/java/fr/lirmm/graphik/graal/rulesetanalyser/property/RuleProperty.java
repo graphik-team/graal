@@ -19,6 +19,11 @@ public interface RuleProperty {
 	 */
 	Boolean check(AnalyserRuleSet ruleSet);
 
+	// FIXME these two methods SHOULD NOT be
+	// there!
+	// (let them be with the abstract
+	// implementation and just impose a single
+	// method!)
 	Boolean check(Rule rule);
 	
 	Boolean check(Iterable<Rule> ruleSet);
