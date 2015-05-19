@@ -12,6 +12,7 @@ import fr.lirmm.graphik.util.URIUtils;
  */
 public class Predicate implements Comparable<Predicate>, Serializable {
 
+    // FIXME this class is *not* consistent with equals
 	public static final Predicate EQUALITY = new Predicate("=", 2) {
 
 		private static final long serialVersionUID = -8961695871557858255L;
@@ -35,6 +36,7 @@ public class Predicate implements Comparable<Predicate>, Serializable {
 
 	private static final long serialVersionUID = 3098419922942769704L;
 
+    // discuss with Michel & Alain: Object instead of URI?
 	private final URI uri;
 	private final int arity;
 
