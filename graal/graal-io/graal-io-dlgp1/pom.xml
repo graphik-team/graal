@@ -79,6 +79,28 @@
 			    <preparationGoals>clean install</preparationGoals>
 			  </configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+				<version>2.5.1</version>
+				<executions>
+					<execution>
+						<id>install-jar-dlgp-parser</id>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<phase>validate</phase>
+						<configuration>
+							<groupId>fr.lirmm.graphik</groupId>
+							<artifactId>dlgp-parser</artifactId>
+							<version>1.1.0</version>
+							<packaging>jar</packaging>
+							<file>${project.basedir}/lib/dlgp-parser.jar</file>
+							<generatePom>true</generatePom>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
