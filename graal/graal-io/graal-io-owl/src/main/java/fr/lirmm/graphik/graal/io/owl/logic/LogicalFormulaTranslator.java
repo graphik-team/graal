@@ -4,7 +4,6 @@
 package fr.lirmm.graphik.graal.io.owl.logic;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
@@ -21,46 +20,56 @@ import fr.lirmm.graphik.graal.core.term.Term;
  * @author clement
  *
  */
-public final class LogicalFormulaRuleTranslator {
+public final class LogicalFormulaTranslator {
 
-	private static LogicalFormulaRuleTranslator instance;
+	private static LogicalFormulaTranslator instance;
 
-	private LogicalFormulaRuleTranslator() {
+	private LogicalFormulaTranslator() {
 	}
 
-	public static synchronized LogicalFormulaRuleTranslator getInstance() {
+	public static synchronized LogicalFormulaTranslator getInstance() {
 		if (instance == null)
-			instance = new LogicalFormulaRuleTranslator();
+			instance = new LogicalFormulaTranslator();
 
 		return instance;
 	}
 	
-	public Iterable<Rule> translate(LogicalFormula f) {
+	public Iterable<Object> translate(LogicalFormula f) {
+		Collection<Object> objectList = new LinkedList<Object>();
 		Collection<Rule> ruleList = new LinkedList<Rule>();
 		for(Collection<Literal> clause : f) {
 			
 			
 			Rule r = this.createRule(clause);
 			
-			Iterator<Atom> it = r.getHead().iterator();
-			if(!it.hasNext()) { // head.size == 0
-				add(ruleList,r);
+			Iterator<Atom> itBody = r.getBody().iterator();
+			if (!itBody.hasNext()) {
+				// it is a fact
+				for (Atom a : r.getHead()) {
+					objectList.add(a);
+				}
 			} else {
-				it.next();
-				if(!it.hasNext()) { // head.size == 1
+				Iterator<Atom> itHead = r.getHead().iterator();
+				if (!itHead.hasNext()) { // head.size == 0
 					add(ruleList,r);
 				} else {
-					// if head.size == 2, the rule imply a disjunction
-					// we does not deal with disjunction in the conclusion part
-					System.err.println("rejected: ");
-					for(Collection<Literal> c : f) {
-						System.err.println(c);
+					itHead.next();
+					if (!itHead.hasNext()) { // head.size == 1
+						add(ruleList, r);
+					} else {
+						// if head.size == 2, the rule imply a disjunction
+						// we does not deal with disjunction in the conclusion
+						// part
+						System.err.println("rejected: ");
+						for (Collection<Literal> c : f) {
+							System.err.println(c);
+						}
 					}
-					return Collections.emptyList();
 				}
 			}
 		}
-		return ruleList;
+		objectList.addAll(ruleList);
+		return objectList;
 	}
 	
 	/**

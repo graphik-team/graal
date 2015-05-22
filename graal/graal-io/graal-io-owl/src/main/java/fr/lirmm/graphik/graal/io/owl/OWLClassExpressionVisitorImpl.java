@@ -47,6 +47,7 @@ class OWLClassExpressionVisitorImpl implements
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(OWLClassExpressionVisitorImpl.class);
 
+
 	private Term glueVariable;
 	private SymbolGenerator varGen;
 	private ShortFormProvider prefixManager;
@@ -195,11 +196,14 @@ class OWLClassExpressionVisitorImpl implements
 
 	@Override
 	public LogicalFormula visit(OWLObjectOneOf arg) {
-		if (LOGGER.isWarnEnabled()) {
-			LOGGER.warn("OWLObjectOneOf is not supported. This axioms was skipped : "
-					+ arg);
+		LogicalFormula f = createLogicalFormula();
+		for (OWLIndividual ind : arg.getIndividuals()) {
+			try {
+				f.or(createLogicalFormula(createAtom(Predicate.EQUALITY, glueVariable, createTerm(ind))));
+			} catch (Exception e) {
+			}
 		}
-		return new LogicalFormula();
+		return f;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -300,8 +304,9 @@ class OWLClassExpressionVisitorImpl implements
 			predicate = new Predicate(this.prefixManager.getShortForm(owlClass
 					.asOWLClass()), 1);
 		} else {
-			System.out.println("###" + owlClass);
-			// this.tmpManageOWLClass(owlClass);
+			LOGGER.error(
+					"Create predicate from an anonymous owl class."
+							+ owlClass.toString());
 		}
 		return predicate;
 	}

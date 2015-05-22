@@ -61,13 +61,12 @@ import org.slf4j.LoggerFactory;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.SymbolGenerator;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.io.owl.logic.Literal;
 import fr.lirmm.graphik.graal.io.owl.logic.LogicalFormula;
-import fr.lirmm.graphik.graal.io.owl.logic.LogicalFormulaRuleTranslator;
+import fr.lirmm.graphik.graal.io.owl.logic.LogicalFormulaTranslator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -143,13 +142,13 @@ class OWLAxiomParser implements
 		subClass.not();
 		subClass.or(superClass);
 
-		return LogicalFormulaRuleTranslator.getInstance().translate(subClass);
+		return LogicalFormulaTranslator.getInstance().translate(subClass);
 	}
 
 	@Override
 	public Iterable<? extends Object> visit(OWLEquivalentClassesAxiom arg) {
 		freeVarGen.setIndex(1);
-		Collection<Rule> c = this.<Rule> createCollection();
+		Collection<Object> c = this.<Object> createCollection();
 		LogicalFormula f1, f2, f1Save;
 		List<OWLClassExpression> classes = new LinkedList<OWLClassExpression>(
 				arg.getClassExpressionsAsList());
@@ -171,7 +170,7 @@ class OWLAxiomParser implements
 				f1.not();
 				f1.or(f2);
 
-				for (Rule r : LogicalFormulaRuleTranslator.getInstance()
+				for (Object r : LogicalFormulaTranslator.getInstance()
 						.translate(f1)) {
 					c.add(r);
 				}
@@ -180,7 +179,7 @@ class OWLAxiomParser implements
 				f2.not();
 				f2.or(f1Save);
 
-				for (Rule r : LogicalFormulaRuleTranslator.getInstance()
+				for (Object r : LogicalFormulaTranslator.getInstance()
 						.translate(f2)) {
 					c.add(r);
 				}
@@ -218,7 +217,7 @@ class OWLAxiomParser implements
 			}
 		}
 
-		return LogicalFormulaRuleTranslator.getInstance().translate(c);
+		return LogicalFormulaTranslator.getInstance().translate(c);
 	}
 
 	@Override
@@ -248,7 +247,7 @@ class OWLAxiomParser implements
 		property.not();
 		property.or(range);
 
-		return LogicalFormulaRuleTranslator.getInstance().translate(property);
+		return LogicalFormulaTranslator.getInstance().translate(property);
 	}
 
 	@Override
@@ -257,7 +256,7 @@ class OWLAxiomParser implements
 		f.and(arg.getProperty().accept(propertyVisitorYX));
 
 		f.not();
-		return LogicalFormulaRuleTranslator.getInstance().translate(f);
+		return LogicalFormulaTranslator.getInstance().translate(f);
 	}
 
 	@Override
@@ -284,7 +283,7 @@ class OWLAxiomParser implements
 		f.not();
 		f.or(arg.getProperty().accept(propertyVisitorXZ));
 
-		return LogicalFormulaRuleTranslator.getInstance().translate(f);
+		return LogicalFormulaTranslator.getInstance().translate(f);
 	}
 
 	@Override
@@ -303,7 +302,7 @@ class OWLAxiomParser implements
 		f.not();
 		f.or(tmp);
 
-		return LogicalFormulaRuleTranslator.getInstance().translate(f);
+		return LogicalFormulaTranslator.getInstance().translate(f);
 	}
 
 	@Override
@@ -321,7 +320,7 @@ class OWLAxiomParser implements
 		subProperty.not();
 		subProperty.or(superProperty);
 
-		return LogicalFormulaRuleTranslator.getInstance()
+		return LogicalFormulaTranslator.getInstance()
 				.translate(subProperty);
 	}
 
@@ -331,7 +330,7 @@ class OWLAxiomParser implements
 		LogicalFormula f = arg.getProperty().accept(propertyVisiotrXX);
 		f.not();
 
-		return LogicalFormulaRuleTranslator.getInstance().translate(f);
+		return LogicalFormulaTranslator.getInstance().translate(f);
 	}
 
 	@Override
@@ -344,12 +343,12 @@ class OWLAxiomParser implements
 		f.or(new Literal(
 				new DefaultAtom(equalityPredicate, glueVarX, glueVarY), true));
 
-		return LogicalFormulaRuleTranslator.getInstance().translate(f);
+		return LogicalFormulaTranslator.getInstance().translate(f);
 	}
 
 	@Override
 	public Iterable<? extends Object> visit(OWLInverseObjectPropertiesAxiom arg) {
-		Collection<Rule> rules = new LinkedList<Rule>();
+		Collection<Object> rules = new LinkedList<Object>();
 		LogicalFormula p1, p2, p1Save;
 		Iterator<OWLObjectPropertyExpression> it = arg.getProperties()
 				.iterator();
@@ -360,14 +359,14 @@ class OWLAxiomParser implements
 		p1.not();
 		p1.or(p2);
 
-		for (Rule r : LogicalFormulaRuleTranslator.getInstance().translate(p1)) {
+		for (Object r : LogicalFormulaTranslator.getInstance().translate(p1)) {
 			rules.add(r);
 		}
 
 		p2.not();
 		p2.or(p1Save);
 
-		for (Rule r : LogicalFormulaRuleTranslator.getInstance().translate(p2)) {
+		for (Object r : LogicalFormulaTranslator.getInstance().translate(p2)) {
 			rules.add(r);
 		}
 
@@ -388,7 +387,7 @@ class OWLAxiomParser implements
 		subProperty.not();
 		subProperty.or(superProperty);
 
-		return LogicalFormulaRuleTranslator.getInstance()
+		return LogicalFormulaTranslator.getInstance()
 				.translate(subProperty);
 	}
 	
@@ -443,7 +442,7 @@ class OWLAxiomParser implements
 		f.not();
 		f.or(arg.getSuperProperty().accept(new OWLPropertyExpressionVisitorImpl(this.prefixManager, firstVarInChain, varX)));
 		
-		return LogicalFormulaRuleTranslator.getInstance().translate(f);
+		return LogicalFormulaTranslator.getInstance().translate(f);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -479,7 +478,7 @@ class OWLAxiomParser implements
 		f.not();
 		f.or(new LogicalFormula(new Literal(new DefaultAtom(equalityPredicate, glueVarX, glueVarY), true)));
 		
-		return LogicalFormulaRuleTranslator.getInstance().translate(f);
+		return LogicalFormulaTranslator.getInstance().translate(f);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -493,7 +492,7 @@ class OWLAxiomParser implements
 		LogicalFormula f = arg.getClassExpression().accept(
 				new OWLClassExpressionVisitorImpl(this.prefixManager,
 						freeVarGen, i));
-		return Collections.singleton(f.iterator().next().iterator().next());
+		return LogicalFormulaTranslator.getInstance().translate(f);
 	}
 
 	@Override
@@ -641,7 +640,7 @@ class OWLAxiomParser implements
 		p.not();
 		p.or(d);
 
-		return LogicalFormulaRuleTranslator.getInstance().translate(p);
+		return LogicalFormulaTranslator.getInstance().translate(p);
 	}
 
 	private Iterable<? extends Object> functionalPropertyAxiom(
@@ -653,12 +652,12 @@ class OWLAxiomParser implements
 		f.or(new Literal(
 				new DefaultAtom(equalityPredicate, glueVarX, glueVarY), true));
 
-		return LogicalFormulaRuleTranslator.getInstance().translate(f);
+		return LogicalFormulaTranslator.getInstance().translate(f);
 	}
 
 	private Iterable<? extends Object> equivalentPropertiesAxiom(
 			List<OWLPropertyExpression> properties) {
-		Collection<Rule> c = this.<Rule> createCollection();
+		Collection<Object> c = this.<Object> createCollection();
 		LogicalFormula f1, f2, f1Save;
 
 		Iterator<OWLPropertyExpression> it1, it2;
@@ -678,7 +677,7 @@ class OWLAxiomParser implements
 				f1.not();
 				f1.or(f2);
 
-				for (Rule r : LogicalFormulaRuleTranslator.getInstance()
+				for (Object r : LogicalFormulaTranslator.getInstance()
 						.translate(f1)) {
 					c.add(r);
 				}
@@ -687,7 +686,7 @@ class OWLAxiomParser implements
 				f2.not();
 				f2.or(f1Save);
 
-				for (Rule r : LogicalFormulaRuleTranslator.getInstance()
+				for (Object r : LogicalFormulaTranslator.getInstance()
 						.translate(f2)) {
 					c.add(r);
 				}
@@ -699,7 +698,7 @@ class OWLAxiomParser implements
 	
 	private Iterable<? extends Object> disjointPropertiesAxiom(
 			List<OWLPropertyExpression> properties) {
-		Collection<Rule> c = this.<Rule> createCollection();
+		Collection<Object> c = this.<Object> createCollection();
 		LogicalFormula f1, f2;
 
 		Iterator<OWLPropertyExpression> it1, it2;
@@ -718,7 +717,7 @@ class OWLAxiomParser implements
 				f2.and(f1);
 				f2.not();
 
-				for (Rule r : LogicalFormulaRuleTranslator.getInstance()
+				for (Object r : LogicalFormulaTranslator.getInstance()
 						.translate(f2)) {
 					c.add(r);
 				}
