@@ -15,6 +15,7 @@ import com.beust.jcommander.Parameter;
 
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
+import fr.lirmm.graphik.graal.grd.AtomErasingFilter;
 import fr.lirmm.graphik.graal.io.dlp.Dlgp1Parser;
 import fr.lirmm.graphik.graal.rulesetanalyser.RuleAnalyser;
 
@@ -29,6 +30,9 @@ public class Kiabora {
 
 	@Parameter(names = { "-h", "--help" }, help = true)
 	private boolean help;
+
+	@Parameter(names = { "-d", "--simple-dependencies"}, description = "Do not filter unifiers when computing dependencies")
+	private boolean simple_dependencies = false;
 
 //	@Parameter(names = { "--grd" })
 //	private boolean grd = false;
@@ -59,7 +63,13 @@ public class Kiabora {
 				rules.add((Rule) o);
 			}
 		}
-		grd = new GraphOfRuleDependencies(rules);
+
+		if (options.simple_dependencies) {
+			grd = new GraphOfRuleDependencies(rules);
+		}
+		else {
+			grd = new GraphOfRuleDependencies(rules,new AtomErasingFilter());
+		}
 
 		execute(grd);
 	}

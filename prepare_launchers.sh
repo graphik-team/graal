@@ -5,6 +5,7 @@ GRAAL_CLI_FILE="${GRAAL_DIR}/apps/graal-cli.sh"
 GRAAL_KIABORA_FILE="${GRAAL_DIR}/apps/graal-kiabora.sh"
 GRAAL_FGH_FILE="${GRAAL_DIR}/apps/graal-fgh.sh"
 GRAAL_PURE_FILE="${GRAAL_DIR}/apps/graal-pure.sh"
+GRAAL_RULES_FILE="${GRAAL_DIR}/apps/graal-labeler.sh"
 
 # compute library files
 LIBS=$(ls -l ${GRAAL_DIR}/lib | head -n 2 | tail -n 1 | perl -n -e '/.* (.*)/ && print "\${GRAAL_DIR}/lib/$1"')
@@ -49,6 +50,15 @@ echo "" >> "${GRAAL_PURE_FILE}";
 echo "GRAAL_CP=\"${LIBS}\"" >> "${GRAAL_PURE_FILE}";
 echo "java -cp \${GRAAL_CP}:\${GRAAL_RELEASE} fr.lirmm.graphik.graal.apps.PureRewriter \"\$@\"" >> "${GRAAL_PURE_FILE}";
 chmod +x "${GRAAL_PURE_FILE}"
+
+echo "#!/bin/sh" > "${GRAAL_RULES_FILE}";
+echo "" >> "${GRAAL_RULES_FILE}";
+echo "GRAAL_DIR=\"${GRAAL_DIR}\"" >> "${GRAAL_RULES_FILE}";
+echo "GRAAL_RELEASE=\"\${GRAAL_DIR}/target/release/graal.jar/\"" >> "${GRAAL_RULES_FILE}";
+echo "" >> "${GRAAL_RULES_FILE}";
+echo "GRAAL_CP=\"${LIBS}\"" >> "${GRAAL_RULES_FILE}";
+echo "java -cp \${GRAAL_CP}:\${GRAAL_RELEASE} fr.lirmm.graphik.graal.apps.RuleLabeler \"\$@\"" >> "${GRAAL_RULES_FILE}";
+chmod +x "${GRAAL_RULES_FILE}"
 
 
 

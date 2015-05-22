@@ -28,6 +28,7 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 	AffectedPositionSet affectedPositionSet;
 	GraphPositionDependencies graphPositionDependencies;
 	MarkedVariableSet markedVariableSet;
+	StronglyConnectedComponentsGraph<Rule> sccGraph;
 	
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
@@ -57,7 +58,7 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 		if(this.grd == null)
 			this.computeGRD();
 		
-		return grd;
+		return this.grd;
 	}
 	
 	/**
@@ -65,6 +66,7 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 	 */
 	public void setGraphOfRuleDependencies(GraphOfRuleDependencies grd) {
 		this.grd = grd;
+		this.sccGraph = null;
 	}
 
 	/**
@@ -74,7 +76,7 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 		if(this.affectedPositionSet == null)
 			this.computeAffectedPositionSet();
 		
-		return affectedPositionSet;
+		return this.affectedPositionSet;
 	}
 	
 	/**
@@ -84,7 +86,7 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 		if(this.graphPositionDependencies == null)
 			this.computeGraphPositionDependencies();
 		
-		return graphPositionDependencies;
+		return this.graphPositionDependencies;
 	}
 	
 	/**
@@ -94,11 +96,13 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 		if(this.markedVariableSet == null)
 			this.computeMarkedVariableSet();
 		
-		return markedVariableSet;
+		return this.markedVariableSet;
 	}
 	
 	public StronglyConnectedComponentsGraph<Rule> getStronglyConnectedComponentsGraph() {
-		return this.getGraphOfRuleDependencies().getStronglyConnectedComponentsGraph();
+		if (this.sccGraph == null)
+			this.sccGraph =  this.getGraphOfRuleDependencies().getStronglyConnectedComponentsGraph();
+		return this.sccGraph;
 	}
 	
 	public AnalyserRuleSet getSubRuleSetAnalyser(Iterable<Rule> rules) {
@@ -111,12 +115,12 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 	
 	@Override
 	public boolean contains(Rule rule) {
-		return ruleset.contains(rule);
+		return this.ruleset.contains(rule);
 	}
 
 	@Override
 	public Iterator<Rule> iterator() {
-		return ruleset.iterator();
+		return this.ruleset.iterator();
 	}
 	
 	private void computeGRD() {
