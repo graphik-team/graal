@@ -1,4 +1,4 @@
-# graal
+# Graal
 
 Coming soon...
 
