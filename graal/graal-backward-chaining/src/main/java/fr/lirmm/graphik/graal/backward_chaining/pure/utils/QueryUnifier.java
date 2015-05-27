@@ -107,7 +107,7 @@ public class QueryUnifier {
 		}
 
 		if (associatedSubstitution != null) {
-			atomset = associatedSubstitution.getSubstitut(f);
+			atomset = associatedSubstitution.createImageOf(f);
 		}
 
 		return atomset;

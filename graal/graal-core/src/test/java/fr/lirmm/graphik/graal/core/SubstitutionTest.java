@@ -47,9 +47,9 @@ public class SubstitutionTest {
 		Substitution composition = s1.compose(s2);
 		Assert.assertNotNull(composition);
 
-		Assert.assertEquals(A, composition.getSubstitute(X));
-		Assert.assertEquals(A, composition.getSubstitute(Y));
-		Assert.assertEquals(A, composition.getSubstitute(Z));
+		Assert.assertEquals(A, composition.createImageOf(X));
+		Assert.assertEquals(A, composition.createImageOf(Y));
+		Assert.assertEquals(A, composition.createImageOf(Z));
 	}
 	
 	@Theory
@@ -63,9 +63,9 @@ public class SubstitutionTest {
 		Substitution composition = s1.compose(s2);
 		Assert.assertNotNull(composition);
 		
-		Assert.assertEquals(A, composition.getSubstitute(X));
-		Assert.assertEquals(A, composition.getSubstitute(Y));
-		Assert.assertEquals(A, composition.getSubstitute(Z));
+		Assert.assertEquals(A, composition.createImageOf(X));
+		Assert.assertEquals(A, composition.createImageOf(Y));
+		Assert.assertEquals(A, composition.createImageOf(Z));
 	}
 
 	@Theory
@@ -79,9 +79,9 @@ public class SubstitutionTest {
 		Substitution composition = s1.compose(s2);
 		Assert.assertNotNull(composition);
 		
-		Assert.assertEquals(A, composition.getSubstitute(X));
-		Assert.assertEquals(A, composition.getSubstitute(Y));
-		Assert.assertEquals(A, composition.getSubstitute(Z));
+		Assert.assertEquals(A, composition.createImageOf(X));
+		Assert.assertEquals(A, composition.createImageOf(Y));
+		Assert.assertEquals(A, composition.createImageOf(Z));
 	}
 	
 	@Theory
@@ -95,9 +95,9 @@ public class SubstitutionTest {
 		Substitution composition = s1.compose(s2);
 		Assert.assertNotNull(composition);
 		
-		Assert.assertEquals(A, composition.getSubstitute(X));
-		Assert.assertEquals(A, composition.getSubstitute(Y));
-		Assert.assertEquals(A, composition.getSubstitute(Z));
+		Assert.assertEquals(A, composition.createImageOf(X));
+		Assert.assertEquals(A, composition.createImageOf(Y));
+		Assert.assertEquals(A, composition.createImageOf(Z));
 	}
 	
 	@Theory
@@ -107,8 +107,8 @@ public class SubstitutionTest {
 		
 		Assert.assertNotNull(s1);
 		
-		Assert.assertEquals(A, s1.getSubstitute(X));
-		Assert.assertEquals(A, s1.getSubstitute(Y));
+		Assert.assertEquals(A, s1.createImageOf(X));
+		Assert.assertEquals(A, s1.createImageOf(Y));
 	}
 	
 	@Theory

@@ -183,11 +183,11 @@ public class ConjunctiveQueryTest {
 			sub = subReader.next();
 			Assert.assertEquals(2, sub.getTerms().size());
 			Assert.assertEquals(
-sub.getSubstitute(DefaultTermFactory.instance()
+sub.createImageOf(DefaultTermFactory.instance()
 					.createVariable("X")), DefaultTermFactory.instance()
 					.createConstant("a"));
 			Assert.assertEquals(
-sub.getSubstitute(DefaultTermFactory.instance()
+sub.createImageOf(DefaultTermFactory.instance()
 					.createVariable("Y")), DefaultTermFactory.instance()
 					.createConstant("b"));
 
@@ -213,11 +213,11 @@ sub.getSubstitute(DefaultTermFactory.instance()
 			sub = subReader.next();
 			Assert.assertEquals(2, sub.getTerms().size());
 			Assert.assertEquals(
-sub.getSubstitute(DefaultTermFactory.instance()
+sub.createImageOf(DefaultTermFactory.instance()
 					.createVariable("X")), DefaultTermFactory.instance()
 					.createConstant("b"));
 			Assert.assertEquals(
-sub.getSubstitute(DefaultTermFactory.instance()
+sub.createImageOf(DefaultTermFactory.instance()
 					.createVariable("Y")), DefaultTermFactory.instance()
 					.createConstant("b"));
 
@@ -248,11 +248,11 @@ sub.getSubstitute(DefaultTermFactory.instance()
 			sub = subReader.next();
 			Assert.assertEquals(2, sub.getTerms().size());
 			Assert.assertEquals(
-sub.getSubstitute(DefaultTermFactory.instance()
+sub.createImageOf(DefaultTermFactory.instance()
 					.createVariable("X")), DefaultTermFactory.instance()
 					.createConstant("a"));
 			Assert.assertEquals(
-sub.getSubstitute(DefaultTermFactory.instance()
+sub.createImageOf(DefaultTermFactory.instance()
 					.createVariable("Y")), DefaultTermFactory.instance()
 					.createConstant("b"));
 
@@ -300,7 +300,7 @@ sub.getSubstitute(DefaultTermFactory.instance()
 			Assert.assertEquals(1, sub.getTerms().size());
 			Assert.assertEquals(
 					DefaultTermFactory.instance().createConstant("a"), sub
-							.getSubstitute(DefaultTermFactory.instance()
+							.createImageOf(DefaultTermFactory.instance()
 									.createVariable("X")));
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);

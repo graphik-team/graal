@@ -29,7 +29,7 @@ public class FGHRuleApplicationHandler implements RuleApplicationHandler {
 
 			LinkedList causes = new LinkedList<Integer>();
 			for (Atom a : from) {
-				causes.add(new Integer(this.index.get(s.getSubstitut(a))));
+				causes.add(new Integer(this.index.get(s.createImageOf(a))));
 			}
 			for (Atom a : atomSet) {
 				this.fgh.add(causes,this.index.get(a));

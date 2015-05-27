@@ -125,7 +125,7 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
         if (orderedVars.size() == 0) {
             Substitution filteredSub = new HashMapSubstitution();
             for (Term var : query.getAnswerVariables()) {
-                filteredSub.put(var, substitution.getSubstitute(var));
+                filteredSub.put(var, substitution.createImageOf(var));
             }
             substitutionList.add(filteredSub);
         } else {
@@ -192,9 +192,9 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
             AtomSet atomsTo, Substitution substitution) throws Exception {
         for (Atom atom : atomsFrom) {
             if (LOGGER.isDebugEnabled())
-                LOGGER.debug("contains? " + substitution.getSubstitut(atom));
+                LOGGER.debug("contains? " + substitution.createImageOf(atom));
 
-            if (!atomsTo.contains(substitution.getSubstitut(atom)))
+            if (!atomsTo.contains(substitution.createImageOf(atom)))
                 return false;
         }
         return true;

@@ -20,7 +20,7 @@ public class HashMapSubstitution extends AbstractSubstitution {
 	public HashMapSubstitution(Substitution substitution) {
 		super();
 		for (Term term : substitution.getTerms())
-			this.map.put(term, substitution.getSubstitute(term));
+			this.map.put(term, substitution.createImageOf(term));
 	}
 
 	/* (non-Javadoc)

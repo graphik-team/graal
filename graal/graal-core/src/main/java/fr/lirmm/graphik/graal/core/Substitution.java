@@ -2,6 +2,8 @@ package fr.lirmm.graphik.graal.core;
 
 import java.util.Set;
 
+import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.term.Term;
 
@@ -31,7 +33,7 @@ public interface Substitution {
 	 * @param term
 	 * @return the substitute.
 	 */
-	Term getSubstitute(Term term);
+	Term createImageOf(Term term);
 
 	/**
 	 * Add a term substitution.
@@ -53,30 +55,48 @@ public interface Substitution {
 	 * @param atom (const)
 	 * @return
 	 */
-	Atom getSubstitut(Atom atom);
+	Atom createImageOf(Atom atom);
 
 	/**
 	 * Apply this substitution on an atom set.
-	 * @param src (const)
+	 * 
+	 * @param src
+	 *            (const)
 	 * @return
+	 * @throws AtomSetException
 	 */
-	InMemoryAtomSet getSubstitut(InMemoryAtomSet src);
-	
+	InMemoryAtomSet createImageOf(AtomSet src);
+
 	/**
 	 * Apply this substitution on the given rule.
-	 * @param rule (const)
+	 * 
+	 * @param rule
+	 *            (const)
 	 * @return
+	 * @throws AtomSetException
 	 */
-	Rule getSubstitut(Rule rule);
+	Rule createImageOf(Rule rule);
 
 	/**
 	 * Insert the application of this substitution on the src atom set into the
 	 * target atom set.
 	 * 
-	 * @param src (const)
+	 * @param src
+	 *            (const)
+	 * @param dest
+	 * @throws AtomSetException
+	 */
+	void apply(AtomSet src, AtomSet target) throws AtomSetException;
+
+	/**
+	 * Insert the application of this substitution on the src atom set into the
+	 * target atom set.
+	 * 
+	 * @param src
+	 *            (const)
 	 * @param dest
 	 */
-	void substitut(InMemoryAtomSet src, InMemoryAtomSet target);
+	void apply(AtomSet src, InMemoryAtomSet target);
 
 	/**
 	 * The composition of a substitution is more complex that just put an other

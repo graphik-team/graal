@@ -45,7 +45,7 @@ public class SubstitutionReader2AtomReader extends AbstractReader<Atom> {
 	 */
 	@Override
 	public Atom next() {
-		return this.reader.next().getSubstitut(atom);
+		return this.reader.next().createImageOf(atom);
 	}
 
 }

@@ -2,7 +2,6 @@ package fr.lirmm.graphik.graal.grd;
 
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSets;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
@@ -11,10 +10,10 @@ public class AtomErasingFilter extends GraphOfRuleDependencies.DependencyChecker
 
 	@Override
 	protected boolean isValidDependency(Rule r1, Rule r2, Substitution s) {
-		InMemoryAtomSet B1 = s.getSubstitut(r1.getBody());
-		InMemoryAtomSet H1 = s.getSubstitut(r1.getHead());
-		InMemoryAtomSet B2 = s.getSubstitut(r2.getBody());
-		InMemoryAtomSet H2 = s.getSubstitut(r2.getHead());
+		InMemoryAtomSet B1 = s.createImageOf(r1.getBody());
+		InMemoryAtomSet H1 = s.createImageOf(r1.getHead());
+		InMemoryAtomSet B2 = s.createImageOf(r2.getBody());
+		InMemoryAtomSet H2 = s.createImageOf(r2.getHead());
 
 		InMemoryAtomSet f = new LinkedListAtomSet();
 		f.addAll(B1);

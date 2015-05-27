@@ -14,7 +14,7 @@ public class FreeVarSubstitution extends TreeMapSubstitution {
 	private SymbolGenerator gen = new DefaultFreeVarGen("X" + Integer.toString(this.getClass().hashCode()));
 	
 	@Override
-	public Term getSubstitute(Term term) {
+	public Term createImageOf(Term term) {
 		Term substitut = term;
 		if(Term.Type.VARIABLE.equals(term.getType())) {
 			substitut = this.getMap().get(term);

@@ -61,7 +61,7 @@ public class ChaseWithGRDAndUnfiers extends AbstractChase {
 			if(pair != null) {
 				unificator = pair.getRight();
 				rule = pair.getLeft();
-				unifiedRule = unificator.getSubstitut(pair.getLeft());
+				unifiedRule = unificator.createImageOf(pair.getLeft());
 				
 				if(LOGGER.isDebugEnabled()) {
 					LOGGER.debug("Execute rule: " + rule + " with unificator " + unificator);

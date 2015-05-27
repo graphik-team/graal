@@ -9,13 +9,13 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
 
-import fr.lirmm.graphik.util.stream.Filter; // stream?????? TODO
-
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.util.LinkedSet;
+import fr.lirmm.graphik.util.stream.Filter; // stream?????? TODO
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -48,11 +48,14 @@ public class Unifier {
 	 * @param atomset
 	 * @return
 	 */
-	public Set<Substitution> computePieceUnifier(Rule rule, AtomSet atomset) {
-		return computePieceUnifier(rule,atomset,new Filter<Substitution>() { public boolean filter(Substitution s) { return true; } } );
+	public Set<Substitution> computePieceUnifier(Rule rule,
+			InMemoryAtomSet atomset) {
+		return computePieceUnifier(rule,atomset,new Filter<Substitution>() { @Override
+		public boolean filter(Substitution s) { return true; } } );
 	}
 
-	public Set<Substitution> computePieceUnifier(Rule rule, AtomSet set, Filter<Substitution> filter) {
+	public Set<Substitution> computePieceUnifier(Rule rule,
+			InMemoryAtomSet set, Filter<Substitution> filter) {
 		// FIXME
 
 		Rule r1;
@@ -61,18 +64,22 @@ public class Unifier {
 		Substitution s1 = new TreeMapSubstitution();
 		Substitution s2 = new TreeMapSubstitution();
 
-		for (Term t1 : r1.getTerms(Term.Type.VARIABLE)) {
-			Term t1b = new Term(Term.Type.VARIABLE, "D::" + t1.getIdentifier().toString());
-			s1.add(t1,t1b);
+		for (Term t1 : rule.getTerms(Term.Type.VARIABLE)) {
+			Term t1b = DefaultTermFactory.instance().createVariable(
+					"D::"
+					+ t1.getIdentifier().toString());
+			s1.put(t1, t1b);
 		}
 
 		for (Term t2 : set.getTerms(Term.Type.VARIABLE)) {
-			Term t2b = new Term(Term.Type.VARIABLE, "R::" + t2.getIdentifier().toString());
-			s1.add(t2,t2b);
+			Term t2b = DefaultTermFactory.instance().createVariable(
+					"R::" + t2.getIdentifier().toString());
+			s1.put(t2, t2b);
 		}
 
-		r1 = s1.getSubstitut(rule1);
-		AtomSet atomset = s2.getSubstitut(set);
+
+		r1 = s1.createImageOf(rule);
+		atomset = s2.createImageOf(set);
 
 		Set<Substitution> unifiers = new LinkedSet<Substitution>();
 		Queue<Atom> atomQueue = new LinkedList<Atom>();
@@ -88,12 +95,14 @@ public class Unifier {
 	}
 
 	public boolean existPieceUnifier(Rule rule, InMemoryAtomSet atomset) {
-		return existPieceUnifier(rule,atomset,new Filter<Substitution>() { public boolean filter(Substitution s) { return true; } } );
+		return existPieceUnifier(rule,atomset,new Filter<Substitution>() { @Override
+		public boolean filter(Substitution s) { return true; } } );
 	}
 
-	public boolean existPieceUnifier(Rule rule, InMemoryAtomSet atomset, Filter<Substitution> filter) {
+	public boolean existPieceUnifier(Rule rule, InMemoryAtomSet atomset,
+			Filter<Substitution> filter) {
 		FreeVarSubstitution substitution = new FreeVarSubstitution();
-		InMemoryAtomSet atomsetSubstitut = substitution.getSubstitut(atomset);
+		InMemoryAtomSet atomsetSubstitut = substitution.createImageOf(atomset);
 
 		Queue<Atom> atomQueue = new LinkedList<Atom>();
 		for (Atom a : atomsetSubstitut) {
@@ -130,7 +139,7 @@ public class Unifier {
 					Atom a = it.next();
 
 					for (Term t : a) {
-						if (existentialVars.contains(u.getSubstitute(t))) {
+						if (existentialVars.contains(u.createImageOf(t))) {
 							newPieceElement = a;
 							break;
 						}
@@ -183,8 +192,8 @@ public class Unifier {
 
 	private static boolean compose(Substitution u, Set<Term> frontierVars,
 			Set<Term> existentials, Term term, Term substitut) {
-		Term termSubstitut = u.getSubstitute(term);
-		Term substitutSubstitut = u.getSubstitute(substitut);
+		Term termSubstitut = u.createImageOf(term);
+		Term substitutSubstitut = u.createImageOf(substitut);
 
 		if (Term.Type.CONSTANT.equals(termSubstitut.getType())
 				|| existentials.contains(termSubstitut)) {
@@ -194,7 +203,7 @@ public class Unifier {
 		}
 
 		for (Term t : u.getTerms()) {
-			if (termSubstitut.equals(u.getSubstitute(t))) {
+			if (termSubstitut.equals(u.createImageOf(t))) {
 				if (!put(u, frontierVars, existentials, t, substitutSubstitut)) {
 					return false;
 				}
@@ -239,7 +248,7 @@ public class Unifier {
 					Atom a = it.next();
 
 					for (Term t : a) {
-						if (existentialVars.contains(u.getSubstitute(t))) {
+						if (existentialVars.contains(u.createImageOf(t))) {
 							newPieceElement = a;
 							break;
 						}
