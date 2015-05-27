@@ -52,8 +52,27 @@ public class Unifier {
 		return computePieceUnifier(rule,atomset,new Filter<Substitution>() { public boolean filter(Substitution s) { return true; } } );
 	}
 
-	public Set<Substitution> computePieceUnifier(Rule rule, AtomSet atomset, Filter<Substitution> filter) {
+	public Set<Substitution> computePieceUnifier(Rule rule, AtomSet set, Filter<Substitution> filter) {
 		// FIXME
+
+		Rule r1;
+		AtomSet atomset;
+
+		Substitution s1 = new TreeMapSubstitution();
+		Substitution s2 = new TreeMapSubstitution();
+
+		for (Term t1 : r1.getTerms(Term.Type.VARIABLE)) {
+			Term t1b = new Term(Term.Type.VARIABLE, "D::" + t1.getIdentifier().toString());
+			s1.add(t1,t1b);
+		}
+
+		for (Term t2 : set.getTerms(Term.Type.VARIABLE)) {
+			Term t2b = new Term(Term.Type.VARIABLE, "R::" + t2.getIdentifier().toString());
+			s1.add(t2,t2b);
+		}
+
+		r1 = s1.getSubstitut(rule1);
+		AtomSet atomset = s2.getSubstitut(set);
 
 		Set<Substitution> unifiers = new LinkedSet<Substitution>();
 		Queue<Atom> atomQueue = new LinkedList<Atom>();
@@ -63,7 +82,7 @@ public class Unifier {
 
 		for (Atom a : atomset) {
 			Queue<Atom> tmp = new LinkedList<Atom>(atomQueue);
-			unifiers.addAll(extendUnifier(rule, tmp, a, new TreeMapSubstitution(), filter));
+			unifiers.addAll(extendUnifier(r1, tmp, a, new TreeMapSubstitution(), filter));
 		}
 		return unifiers;
 	}
