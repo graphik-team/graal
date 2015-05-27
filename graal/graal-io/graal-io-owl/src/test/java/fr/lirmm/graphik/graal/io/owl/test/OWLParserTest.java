@@ -197,4 +197,57 @@ public class OWLParserTest {
 		}
 	}
 	
+	// /////////////////////////////////////////////////////////////////////////
+	// MORE COMPLEX TEST
+	// /////////////////////////////////////////////////////////////////////////
+
+	@Test
+	public void test1() {
+		// !a(x) v b(x) v !c(x).
+		try {
+			OWLParser parser = new OWLParser(
+					"@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> . "
+							+ "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> ."
+							+ "@prefix owl: <http://www.w3.org/2002/07/owl#> . "
+							+ "@prefix test: <http://test.org/> . "
+							+ "test:ClassA rdf:type owl:Class . "
+							+ "test:ClassB rdf:type owl:Class . "
+							+ "test:ClassC rdf:type owl:Class . "
+							+ "test:ClassA rdfs:subClassOf [ "
+							+ "			owl:unionOf ( test:ClassB [ "
+							+ "					owl:complementOf test:ClassC ] ) ] ."
+							+ "");
+
+			boolean found = false;
+			Predicate classA = new Predicate("test:ClassA", 1);
+			Predicate classB = new Predicate("test:ClassB", 1);
+			Predicate classC = new Predicate("test:ClassC", 1);
+
+			for (Object o : parser) {
+				if (!(o instanceof Prefix)) {
+					System.out.println(o);
+					Rule r = (Rule) o;
+					Iterator<Atom> it = r.getBody().iterator();
+					Atom body = it.next();
+					Assert.assertTrue(classA.equals(body.getPredicate())
+							|| classC.equals(body.getPredicate()));
+					body = it.next();
+					Assert.assertTrue(classA.equals(body.getPredicate())
+							|| classC.equals(body.getPredicate()));
+
+					Atom classs = (Atom) r.getHead().iterator().next();
+					Assert.assertEquals(classB,
+							classs.getPredicate());
+
+					Assert.assertEquals(body.getTerm(0), classs.getTerm(0));
+					found = true;
+				}
+			}
+
+			Assert.assertTrue("Assertion not found", found);
+		} catch (Exception e) {
+			Assert.assertFalse(e.getMessage(), true);
+		}
+	}
+
 }
