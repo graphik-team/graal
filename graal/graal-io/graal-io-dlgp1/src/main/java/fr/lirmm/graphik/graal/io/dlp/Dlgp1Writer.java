@@ -223,7 +223,7 @@ public class Dlgp1Writer extends AbstractGraalWriter {
 	}
 
 	protected void writeTerm(Term t) throws IOException {
-		URI uri = new DefaultURI(t.getIdentifier());
+		URI uri = new DefaultURI(t.getIdentifier().toString());
 		String s = uri.getLocalname();
 		char first = s.charAt(0);
 		

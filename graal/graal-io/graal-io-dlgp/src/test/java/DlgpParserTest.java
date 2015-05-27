@@ -23,7 +23,7 @@ public class DlgpParserTest {
 
 	@Test
 	public void parseAtom() {
-		Atom a = DlgpParser.parseAtom("p(a,X).");
+		Atom a = DlgpParser.parseAtom("p(a, X).");
 		Assert.assertEquals(Term.Type.VARIABLE, a.getTerm(1).getType());
 	}
 	
@@ -66,9 +66,9 @@ public class DlgpParserTest {
 	}
 	
 	@Test
-	public void parseWithQuotes() {
+	public void parseWithChevron() {
 		Atom a1 = DlgpParser.parseAtom("p(a).");
-		Atom a2 = DlgpParser.parseAtom("\"p\"(a).");
+		Atom a2 = DlgpParser.parseAtom("<p>(<a>).");
 		Assert.assertEquals(a1, a2);
 	}
 }

@@ -38,6 +38,16 @@ final class LiteralVertex extends AbstractTermVertex implements Literal {
 		return this.term.getDatatype();
 	}
 
+	@Override
+	public String getIdentifier() {
+		return this.term.getIdentifier();
+	}
+
+	@Override
+	public String getLabel() {
+		return this.term.getLabel();
+	}
+
 	// /////////////////////////////////////////////////////////////////////////
 	// OBJECT OVERRIDE METHODS
 	// /////////////////////////////////////////////////////////////////////////
@@ -50,10 +60,4 @@ final class LiteralVertex extends AbstractTermVertex implements Literal {
 	protected Literal getTerm() {
 		return this.term;
 	}
-
-	@Override
-	public String getLabel() {
-		return this.term.getLabel();
-	}
-
 }

@@ -89,6 +89,12 @@ public class DlgpWriter extends AbstractGraalWriter {
 	}
 	
 	@Override
+	public void write(Atom atom) throws IOException {
+		this.writeAtom(atom);
+		this.write(".\n");
+	}
+
+	@Override
 	public void write(Rule rule) throws IOException {
 		this.writeLabel(rule.getLabel());
 
@@ -177,7 +183,7 @@ public class DlgpWriter extends AbstractGraalWriter {
 					this.write('\n');
 			}
 			
-			this.write(a);
+			this.writeAtom(a);
 		}
 	}
 	
@@ -215,27 +221,28 @@ public class DlgpWriter extends AbstractGraalWriter {
 
 	protected void writeTerm(Term t) throws IOException {
 		if(Type.VARIABLE.equals(t.getType())) {
-			if(!Character.isUpperCase(t.getIdentifier().charAt(0))) {
+			if (!Character.isUpperCase(t.getIdentifier().toString().charAt(0))) {
 				this.write("VAR_");
 			}
 			this.write(t.getIdentifier());
 		} else if(Type.CONSTANT.equals(t.getType())) {
 			this.write('<');
-			this.write(t.getIdentifier());
+			this.write(t.getIdentifier().toString());
 			this.write('>');
 		} else { // LITERAL
 			this.write('"');
-			this.write(t.getIdentifier());
+			this.write(t.getIdentifier().toString());
 			this.write('"');
 		}
 	}
 	
 	protected void writePredicate(Predicate p) throws IOException {
 		this.write('<');
-		this.write(p.getIdentifier());
+		this.write(p.getIdentifier().toString());
 		this.write('>');
 	}
 	
+
 	////////////////////////////////////////////////////////////////////////////
 	// STATIC METHODS this.writeln("PREFIX : <" + rdfPrefix + '>');
 

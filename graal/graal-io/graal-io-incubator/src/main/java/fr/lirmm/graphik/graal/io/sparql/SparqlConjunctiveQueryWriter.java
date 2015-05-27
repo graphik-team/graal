@@ -122,7 +122,7 @@ public class SparqlConjunctiveQueryWriter extends AbstractWriter implements
 			this.write('?');
 		}
 		
-		this.write(t.getIdentifier());
+		this.write(t.getIdentifier().toString());
 		this.write(' ');
 	}
 

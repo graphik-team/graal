@@ -25,6 +25,8 @@ public interface TermFactory {
 
 	Constant createConstant(String label);
 
+	Constant createConstant(URI label);
+
 	Literal createLiteral(Object value);
 
 	Literal createLiteral(URI datatype, Object value);

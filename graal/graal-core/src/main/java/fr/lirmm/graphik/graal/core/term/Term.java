@@ -21,7 +21,8 @@ public interface Term extends Comparable<Term>, Serializable {
 	boolean isConstant();
 
 	String getLabel();
-	String getIdentifier();
+
+	Object getIdentifier();
 
 	Type getType();
 

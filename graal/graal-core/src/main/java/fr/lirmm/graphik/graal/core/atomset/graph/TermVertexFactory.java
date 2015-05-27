@@ -97,4 +97,10 @@ public class TermVertexFactory implements TermFactory {
 				label));
 	}
 
+	@Override
+	public ConstantVertex createConstant(URI uri) {
+		return new ConstantVertex(DefaultTermFactory.instance().createConstant(
+				uri));
+	}
+
 }

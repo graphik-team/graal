@@ -64,7 +64,7 @@ public abstract class AbstractGraalWriter extends AbstractWriter implements
 			this.write(it.next());
 	}
 
-	protected void write(Atom atom) throws IOException {
+	protected void writeAtom(Atom atom) throws IOException {
 		if (atom.equals(Atom.BOTTOM)) {
 			this.writeBottom();
 		} else if (atom.getPredicate().equals(Predicate.EQUALITY)) {
@@ -72,18 +72,7 @@ public abstract class AbstractGraalWriter extends AbstractWriter implements
 		} else {
 			this.writeAtom(atom);
 		}
-		// TODO: j'ai change ca en supposant que c'etait une erreur
-		// verifie quand meme
-		// (dans le classe DlgpWriter, ca n'a pas de sens que ce
-		// soit un retour ligne ici, il faudra verifier pour les
-		// autres writer)
-		//this.write('\n');
 	}
-
-	/**
-	 * @param atom
-	 */
-	protected abstract void writeAtom(Atom atom) throws IOException;
 
 	/**
 	 * @param term

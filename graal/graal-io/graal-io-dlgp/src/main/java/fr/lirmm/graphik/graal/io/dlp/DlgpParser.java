@@ -16,9 +16,8 @@ import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import parser.DatalogGrammar;
+import parser.DLGP2Parser;
 import parser.ParseException;
-import parser.TERM_TYPE;
 import parser.TermFactory;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
@@ -30,9 +29,10 @@ import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.filter.AtomFilterIterator;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
-import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.io.AbstractParser;
 import fr.lirmm.graphik.graal.io.ParseError;
+import fr.lirmm.graphik.util.DefaultURI;
+import fr.lirmm.graphik.util.URI;
 import fr.lirmm.graphik.util.stream.ArrayBlockingStream;
 
 /**
@@ -80,21 +80,21 @@ public final class DlgpParser extends AbstractParser<Object> {
 	private static class InternalTermFactory implements TermFactory {
 
 		@Override
-		public Term createTerm(TERM_TYPE termType, Object term) {
-			switch(termType) {
-			case ANSWER_VARIABLE:
-			case VARIABLE:
-				return DefaultTermFactory.instance().createVariable(
-						(String) term);
-			case CONSTANT: 
-				return DefaultTermFactory.instance().createConstant(
-						(String) term);
-			case FLOAT:
-			case INTEGER:
-			case STRING:
-				return DefaultTermFactory.instance().createLiteral(term);
-			}
-			return null;
+		public Object createIRI(String s) {
+			return new DefaultURI(s);
+		}
+
+		@Override
+		public Object createLiteral(Object datatype, String stringValue,
+				String langTag) {
+			System.out.println("---- " + datatype + datatype.getClass());
+			return DefaultTermFactory.instance().createLiteral((URI) datatype,
+					stringValue);
+		}
+
+		@Override
+		public Object createVariable(String stringValue) {
+			return DefaultTermFactory.instance().createVariable(stringValue);
 		}
 	}
 
@@ -110,11 +110,12 @@ public final class DlgpParser extends AbstractParser<Object> {
 
 		@Override
 		public void run() {
-			DatalogGrammar dlpGrammar = new DatalogGrammar(
-					new InternalTermFactory(), reader);
-			dlpGrammar.addParserListener(new DlgpListener(buffer));
+			DLGP2Parser parser = new DLGP2Parser(new InternalTermFactory(), reader);
+			parser.addParserListener(new DlgpListener(buffer));
+			parser.setDefaultBase("graal:");
+
 			try {
-				dlpGrammar.document();
+				parser.document();
 			} catch (ParseException e) {
 				throw new ParseError("An error occured while parsing", e);
 			} finally {

@@ -23,7 +23,8 @@ public abstract class AbstractTerm implements Term {
 	public int compareTo(Term o) {
 		int res = this.getType().compareTo(o.getType());
 		if (res == 0) {
-			res = this.getIdentifier().compareTo(o.getIdentifier());
+			res = this.getIdentifier().toString()
+					.compareTo(o.getIdentifier().toString());
 		}
 		return res;
 	}
@@ -55,7 +56,7 @@ public abstract class AbstractTerm implements Term {
 
 	@Override
 	public String toString() {
-		return this.getIdentifier();
+		return this.getIdentifier().toString();
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

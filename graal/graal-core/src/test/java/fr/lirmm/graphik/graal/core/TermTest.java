@@ -21,7 +21,8 @@ public class TermTest
 		Term term = DefaultTermFactory.instance().createConstant(label);
 		
 		Assert.assertTrue(Term.Type.CONSTANT.equals(term.getType()));
-		Assert.assertTrue(term.getIdentifier().equals(
+		Assert.assertTrue(term.getIdentifier().toString()
+				.equals(
 				Prefix.CONSTANT.getPrefix() + label));
 	}
 	
@@ -40,7 +41,8 @@ public class TermTest
 		Term term = DefaultTermFactory.instance().createVariable(label);
 
 		Assert.assertTrue(Term.Type.VARIABLE.equals(term.getType()));
-		Assert.assertTrue(term.getIdentifier().equals(
+		Assert.assertTrue(term.getIdentifier().toString()
+				.equals(
 				Prefix.EMPTY.getPrefix() + label));
 	}
 	

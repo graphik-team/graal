@@ -40,11 +40,6 @@ abstract class AbstractTermVertex extends AbstractTerm implements TermVertex {
 	}
 
 	@Override
-	public String getIdentifier() {
-		return this.getTerm().getIdentifier();
-	}
-
-	@Override
 	public Type getType() {
 		return this.getTerm().getType();
 	}

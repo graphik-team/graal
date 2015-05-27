@@ -73,7 +73,8 @@ final class DefaultLiteral extends AbstractTerm implements Literal {
 
 	@Override
 	public String getIdentifier() {
-		return this.getDatatype().toString() + this.value.toString();
+		return this.value.toString() + "^^<" + this.getDatatype().toString()
+				+ ">";
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

@@ -30,6 +30,16 @@ final class VariableVertex extends AbstractTermVertex implements Variable {
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
+	@Override
+	public String getLabel() {
+		return this.term.getLabel();
+	}
+
+	@Override
+	public String getIdentifier() {
+		return this.getIdentifier();
+	}
+
 	// /////////////////////////////////////////////////////////////////////////
 	// OBJECT OVERRIDE METHODS
 	// /////////////////////////////////////////////////////////////////////////
@@ -41,11 +51,6 @@ final class VariableVertex extends AbstractTermVertex implements Variable {
 	@Override
 	protected Variable getTerm() {
 		return this.term;
-	}
-
-	@Override
-	public String getLabel() {
-		return this.term.getLabel();
 	}
 
 }

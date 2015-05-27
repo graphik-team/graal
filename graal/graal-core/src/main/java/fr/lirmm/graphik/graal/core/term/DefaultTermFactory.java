@@ -85,6 +85,11 @@ public class DefaultTermFactory implements TermFactory {
 		return new DefaultConstant(label);
 	}
 
+	@Override
+	public Constant createConstant(URI uri) {
+		return new DefaultConstant(uri);
+	}
+
 	// /////////////////////////////////////////////////////////////////////////
 	// OBJECT OVERRIDE METHODS
 	// /////////////////////////////////////////////////////////////////////////
