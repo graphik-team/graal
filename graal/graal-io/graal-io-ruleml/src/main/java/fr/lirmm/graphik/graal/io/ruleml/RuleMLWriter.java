@@ -210,7 +210,7 @@ public class RuleMLWriter extends AbstractGraalWriter {
 	}
 	
 	@Override
-	protected void writeAtom(Atom atom) throws IOException {
+	protected void writeStandardAtom(Atom atom) throws IOException {
 		this.openBalise("Atom");
 		this.writePredicate(atom.getPredicate());
 
