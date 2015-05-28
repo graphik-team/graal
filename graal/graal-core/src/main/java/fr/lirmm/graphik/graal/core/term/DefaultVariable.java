@@ -15,18 +15,18 @@ final class DefaultVariable extends AbstractTerm implements Variable {
 	
 	private static final long serialVersionUID = -8985351967341123126L;
 
-	private final String label;
+	private final Object identifier;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 	
 	public DefaultVariable(Variable var) {
-		this.label = var.getLabel();
+		this.identifier = var.getIdentifier();
 	}
 
-	public DefaultVariable(String label) {
-		this.label = label;
+	public DefaultVariable(Object identifier) {
+		this.identifier = identifier;
 	}
 	
 	// /////////////////////////////////////////////////////////////////////////
@@ -44,23 +44,13 @@ final class DefaultVariable extends AbstractTerm implements Variable {
 	}
 
 	@Override
-	public String getLabel() {
-		return this.label;
-	}
-
-	@Override
-	public String getIdentifier() {
-		return this.label;
+	public Object getIdentifier() {
+		return this.identifier;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// OBJECT OVERRIDE METHODS
 	// /////////////////////////////////////////////////////////////////////////
-
-	@Override
-	public String toString() {
-		return this.label;
-	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS

@@ -2,10 +2,6 @@ package fr.lirmm.graphik.graal.core;
 
 import java.io.Serializable;
 
-import fr.lirmm.graphik.util.Prefix;
-import fr.lirmm.graphik.util.URI;
-import fr.lirmm.graphik.util.URIUtils;
-
 /**
  * Represents a Predicate of an Atom.
  * 
@@ -16,8 +12,7 @@ public class Predicate implements Comparable<Predicate>, Serializable {
 
 	private static final long serialVersionUID = 3098419922942769704L;
 
-    // discuss with Michel & Alain: Object instead of URI?
-	private final URI uri;
+	private final Object identifier;
 	private final int arity;
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -31,20 +26,8 @@ public class Predicate implements Comparable<Predicate>, Serializable {
 	 * @param name
 	 * @param arity
 	 */
-	public Predicate(URI uri, int arity) {
-		this.uri = uri;
-		this.arity = arity;
-	}
-
-	/**
-	 * Construct a predicate
-	 * 
-	 * @param string
-	 * @param arity
-	 */
-	public Predicate(String string, int arity) {
-		this.uri = URIUtils.createURI(string, Prefix.PREDICATE);
-		;
+	public Predicate(Object identifier, int arity) {
+		this.identifier = identifier;
 		this.arity = arity;
 	}
 
@@ -58,7 +41,7 @@ public class Predicate implements Comparable<Predicate>, Serializable {
 	 * @return a string representing predicate label.
 	 */
 	public String getIdentifier() {
-		return this.uri.toString();
+		return this.identifier.toString();
 	}
 
 	/**

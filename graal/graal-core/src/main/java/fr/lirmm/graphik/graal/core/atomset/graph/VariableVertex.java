@@ -36,8 +36,8 @@ final class VariableVertex extends AbstractTermVertex implements Variable {
 	}
 
 	@Override
-	public String getIdentifier() {
-		return this.getIdentifier();
+	public Object getIdentifier() {
+		return this.term.getIdentifier();
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

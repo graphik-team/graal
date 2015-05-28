@@ -6,7 +6,6 @@ import org.junit.Test;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.core.term.Literal;
 import fr.lirmm.graphik.graal.core.term.Term;
-import fr.lirmm.graphik.util.Prefix;
 
 
 /**
@@ -22,8 +21,7 @@ public class TermTest
 		
 		Assert.assertTrue(Term.Type.CONSTANT.equals(term.getType()));
 		Assert.assertTrue(term.getIdentifier().toString()
-				.equals(
-				Prefix.CONSTANT.getPrefix() + label));
+.equals(label));
 	}
 	
 	@Test
@@ -42,8 +40,7 @@ public class TermTest
 
 		Assert.assertTrue(Term.Type.VARIABLE.equals(term.getType()));
 		Assert.assertTrue(term.getIdentifier().toString()
-				.equals(
-				Prefix.EMPTY.getPrefix() + label));
+.equals(label));
 	}
 	
 	@Test

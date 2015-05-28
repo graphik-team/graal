@@ -4,7 +4,6 @@
 package fr.lirmm.graphik.graal.core.atomset.graph;
 
 import fr.lirmm.graphik.graal.core.term.Constant;
-import fr.lirmm.graphik.util.URI;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -40,7 +39,7 @@ final class ConstantVertex extends AbstractTermVertex implements
 	}
 
 	@Override
-	public URI getIdentifier() {
+	public Object getIdentifier() {
 		return this.getTerm().getIdentifier();
 	}
 

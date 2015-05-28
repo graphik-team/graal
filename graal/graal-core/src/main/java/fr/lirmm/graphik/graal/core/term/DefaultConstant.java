@@ -3,9 +3,6 @@
  */
 package fr.lirmm.graphik.graal.core.term;
 
-import fr.lirmm.graphik.util.DefaultURI;
-import fr.lirmm.graphik.util.Prefix;
-import fr.lirmm.graphik.util.URI;
 
 /**
  * Immutable object
@@ -17,22 +14,18 @@ final class DefaultConstant extends AbstractTerm implements Constant {
 
 	private static final long serialVersionUID = 3531038070349085454L;
 
-	private final URI uri;
+	private final Object identifier;
 	
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 	
 	public DefaultConstant(Constant cst) {
-		this.uri = cst.getIdentifier();
-	}
-
-	public DefaultConstant(String label) {
-		this.uri = new DefaultURI(Prefix.CONSTANT, label);
+		this.identifier = cst.getIdentifier();
 	}
 	
-	public DefaultConstant(URI uri) {
-		this.uri = uri;
+	public DefaultConstant(Object identifier) {
+		this.identifier = identifier;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -50,13 +43,8 @@ final class DefaultConstant extends AbstractTerm implements Constant {
 	}
 
 	@Override
-	public String getLabel() {
-		return this.uri.getLocalname();
-	}
-
-	@Override
-	public URI getIdentifier() {
-		return this.uri;
+	public Object getIdentifier() {
+		return this.identifier;
 	}
 
 }
