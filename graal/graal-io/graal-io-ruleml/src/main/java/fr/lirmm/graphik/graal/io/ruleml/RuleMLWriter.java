@@ -237,15 +237,15 @@ public class RuleMLWriter extends AbstractGraalWriter {
 	protected void writeTerm(Term t) throws IOException {
 		if(Type.VARIABLE.equals(t.getType())) {
 			this.openBalise("Var");
-			this.write(t.getIdentifier());
+			this.write(t.getIdentifier().toString());
 			this.closeBalise("Var");
 		} else if(Type.CONSTANT.equals(t.getType())) {
 			this.openBalise("Ind");
-			this.write(t.getIdentifier());
+			this.write(t.getIdentifier().toString());
 			this.closeBalise("Ind");
 		} else { // LITERAL
 			this.openBalise("Data");
-			this.write(t.getIdentifier());
+			this.write(t.getIdentifier().toString());
 			this.closeBalise("Data");
 		}
 	}

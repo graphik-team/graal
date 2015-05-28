@@ -737,7 +737,8 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	 */
 	private void insertPredicate(String tableName, Predicate predicate)
 																	   throws SQLException {
-		this.insertPredicateStatement.setString(1, predicate.getIdentifier());
+		this.insertPredicateStatement.setString(1, predicate.getIdentifier()
+				.toString());
 		this.insertPredicateStatement.setInt(2, predicate.getArity());
 		this.insertPredicateStatement.setString(3, tableName);
 		this.insertPredicateStatement.execute();
@@ -756,7 +757,8 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		String predicateTableName = null;
 
 		try {
-			this.getPredicateTableStatement.setString(1, predicate.getIdentifier());
+			this.getPredicateTableStatement.setString(1, predicate
+					.getIdentifier().toString());
 			this.getPredicateTableStatement.setInt(2, predicate.getArity());
 			ResultSet results = this.getPredicateTableStatement.executeQuery();
 

@@ -110,7 +110,7 @@ public class SparqlConjunctiveQueryWriter extends AbstractWriter implements
 	 * @throws IOException 
 	 */
 	private void write(Predicate predicate) throws IOException {
-		this.write(predicate.getIdentifier());
+		this.write(predicate.getIdentifier().toString());
 	}
 
 	/**
