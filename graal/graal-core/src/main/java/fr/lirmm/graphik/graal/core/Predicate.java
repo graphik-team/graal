@@ -40,7 +40,7 @@ public class Predicate implements Comparable<Predicate>, Serializable {
 	 * 
 	 * @return a string representing predicate label.
 	 */
-	public String getIdentifier() {
+	public Object getIdentifier() {
 		return this.identifier.toString();
 	}
 
@@ -90,7 +90,8 @@ public class Predicate implements Comparable<Predicate>, Serializable {
 		int cmpVal = this.getArity() < other.getArity() ? -1 : this
 				.getArity() == other.getArity() ? 0 : 1;
 		if (cmpVal == 0) {
-			cmpVal = this.getIdentifier().compareTo(other.getIdentifier());
+			cmpVal = this.getIdentifier().toString()
+					.compareTo(other.getIdentifier().toString());
 		}
 		return cmpVal;
 	}

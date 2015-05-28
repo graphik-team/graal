@@ -237,7 +237,7 @@ public class RuleML2015Bench {
 					List<Term> terms = a.getTerms();
 					for(int i = 0; i < terms.size(); ++i) {
 						Term t = terms.get(i);
-						String s = t.getIdentifier();
+						String s = t.getIdentifier().toString();
 						if(s.charAt(0) == '<') {
 							a.setTerm(
 									i,

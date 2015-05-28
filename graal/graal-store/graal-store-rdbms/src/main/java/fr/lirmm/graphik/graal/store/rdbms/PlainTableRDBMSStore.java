@@ -181,7 +181,7 @@ public class PlainTableRDBMSStore extends AbstractRdbmsStore {
 	 * @return
 	 */
 	private String getPredicateTableName(Predicate predicate) {
-		return predicate.getIdentifier() + predicate.getArity();
+		return predicate.getIdentifier().toString() + predicate.getArity();
 	}
 
 	@Override

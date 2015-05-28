@@ -258,7 +258,8 @@ public class SailStore extends AbstractTripleStore {
 	// //////////////////////////////////////////////////////////////////////////
 
 	private Statement atomToStatement(Atom atom) {
-		URI predicate = this.createURI(atom.getPredicate().getIdentifier());
+		URI predicate = this.createURI(atom.getPredicate().getIdentifier()
+				.toString());
 		URI term0 = this.createURI(atom.getTerm(0).getIdentifier()
 				.toString());
 		URI term1 = this.createURI(atom.getTerm(1).getIdentifier()
