@@ -16,7 +16,7 @@ import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseWithGRDAndUnfiers;
-import fr.lirmm.graphik.graal.grd.GraphOfRuleDependenciesWithUnifiers;
+import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.io.ParseException;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.grd.GRDParser;
@@ -73,7 +73,7 @@ public class ForwardChaining {
 		AtomSet atomSet = new DefaultRdbmsStore(driver);
 		
 		Chase chase = null;
-		GraphOfRuleDependenciesWithUnifiers grd = null;
+		GraphOfRuleDependencies grd = null;
 		if(!options.grd.isEmpty()) {
 			grd = GRDParser.getInstance().parse(new File(options.grd));
 		} else {
@@ -84,7 +84,7 @@ public class ForwardChaining {
 					rules.add((Rule)o);
 				}
 			}
-			grd = new GraphOfRuleDependenciesWithUnifiers(rules);
+			grd = new GraphOfRuleDependencies(rules, true);
 		}
 			
 		chase = new ChaseWithGRDAndUnfiers(grd, atomSet);

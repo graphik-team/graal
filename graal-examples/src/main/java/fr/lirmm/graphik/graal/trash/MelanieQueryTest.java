@@ -20,7 +20,7 @@ import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 import fr.lirmm.graphik.graal.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseWithGRDAndUnfiers;
-import fr.lirmm.graphik.graal.grd.GraphOfRuleDependenciesWithUnifiers;
+import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
@@ -76,7 +76,8 @@ public class MelanieQueryTest {
 		
 
 	public static void forwardChaining(AtomSet atomSet) throws FileNotFoundException, IOException, ChaseException, ParseException {
-		GraphOfRuleDependenciesWithUnifiers grd = GRDParser.getInstance().parse(new File(GRD_FILE));
+		GraphOfRuleDependencies grd = GRDParser.getInstance().parse(
+				new File(GRD_FILE));
 
 		
 		Chase chase = new ChaseWithGRDAndUnfiers(grd, atomSet);
