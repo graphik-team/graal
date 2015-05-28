@@ -80,7 +80,7 @@ public class ComplexHomomorphism<Q extends ConjunctiveQuery, F extends AtomSet> 
 
 		protected boolean check(Substitution s) {
 			for (Atom a : builtInAtoms) {
-				Atom a2 = s.getSubstitut(a);
+				Atom a2 = s.createImageOf(a);
 				if (!((BuiltInPredicate)a2.getPredicate()).evaluate(a2.getTerms().toArray(new Term[a2.getTerms().size()]))) {
 					return false;
 				}

@@ -46,8 +46,8 @@ public final class Misc {
 		InMemoryAtomSet safeBody = new LinkedListAtomSet();
 		InMemoryAtomSet safeHead = new LinkedListAtomSet();
 
-		substitution.substitut(body, safeBody);
-		substitution.substitut(head, safeHead);
+		substitution.apply(body, safeBody);
+		substitution.apply(head, safeHead);
 
 		return new DefaultRule(safeBody, safeHead);
 	}

@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
 import fr.lirmm.graphik.graal.core.factory.RuleFactory;
@@ -33,7 +35,7 @@ public abstract class AbstractSubstitution implements Substitution {
 	}
 
 	@Override
-	public Term getSubstitute(Term term) {
+	public Term createImageOf(Term term) {
 		Term substitut = this.getMap().get(term);
 		return (substitut == null) ? term : substitut;
 	}
@@ -51,45 +53,52 @@ public abstract class AbstractSubstitution implements Substitution {
 	@Override
 	public void put(Substitution substitution) {
 		for (Term term : substitution.getTerms()) {
-			this.put(term, substitution.getSubstitute(term));
+			this.put(term, substitution.createImageOf(term));
 		}
 	}
 
 	@Override
-	public Atom getSubstitut(Atom atom) {
+	public Atom createImageOf(Atom atom) {
 		List<Term> termsSubstitut = new LinkedList<Term>();
 		for (Term term : atom.getTerms())
-			termsSubstitut.add(this.getSubstitute(term));
+			termsSubstitut.add(this.createImageOf(term));
 
 		return new DefaultAtom(atom.getPredicate(), termsSubstitut);
 	}
 
 	@Override
-	public InMemoryAtomSet getSubstitut(InMemoryAtomSet src) {
+	public InMemoryAtomSet createImageOf(AtomSet src) {
 		InMemoryAtomSet dest = AtomSetFactory.getInstance().createAtomSet();
-		this.substitut(src, dest);
+		this.apply(src, dest);
 		return dest;
 	}
 
 	@Override
-	public void substitut(InMemoryAtomSet src, InMemoryAtomSet dest) {
+	public void apply(AtomSet src, AtomSet dest) throws AtomSetException {
 		for (Atom a : src) {
-			dest.add(this.getSubstitut(a));
+			dest.add(this.createImageOf(a));
 		}
 	}
 
 	@Override
-	public Rule getSubstitut(Rule rule) {
+	public void apply(AtomSet src, InMemoryAtomSet dest) {
+		for (Atom a : src) {
+			dest.add(this.createImageOf(a));
+		}
+	}
+
+	@Override
+	public Rule createImageOf(Rule rule) {
 		Rule substitut = RuleFactory.getInstance().createRule();
-		this.substitut(rule.getBody(), substitut.getBody());
-		this.substitut(rule.getHead(), substitut.getHead());
+		this.apply(rule.getBody(), substitut.getBody());
+		this.apply(rule.getHead(), substitut.getHead());
 		return substitut;
 	}
 
 	@Override
 	public boolean compose(Term term, Term substitut) {
-		Term termSubstitut = this.getSubstitute(term);
-		Term substitutSubstitut = this.getSubstitute(substitut);
+		Term termSubstitut = this.createImageOf(term);
+		Term substitutSubstitut = this.createImageOf(substitut);
 
 		if (Term.Type.CONSTANT.equals(termSubstitut.getType())) {
 			Term tmp = termSubstitut;
@@ -98,7 +107,7 @@ public abstract class AbstractSubstitution implements Substitution {
 		}
 
 		for (Term t : this.getTerms()) {
-			if (termSubstitut.equals(this.getSubstitute(t))) {
+			if (termSubstitut.equals(this.createImageOf(t))) {
 				if (!this.put(t, substitutSubstitut)) {
 					return false;
 				}
@@ -118,12 +127,12 @@ public abstract class AbstractSubstitution implements Substitution {
 	public Substitution compose(Substitution s) {
 		Substitution newSub = this.getNewInstance();
 		for (Term term : this.getTerms()) {
-			if (!newSub.compose(term, this.getSubstitute(term))) {
+			if (!newSub.compose(term, this.createImageOf(term))) {
 				return null;
 			}
 		}
 		for (Term term : s.getTerms()) {
-			if (!newSub.compose(term, s.getSubstitute(term))) {
+			if (!newSub.compose(term, s.createImageOf(term))) {
 				return null;
 			}
 		}
@@ -145,7 +154,7 @@ public abstract class AbstractSubstitution implements Substitution {
 			else
 				builder.append(',');
 			builder.append(key).append("->");
-			builder.append(this.getSubstitute(key));
+			builder.append(this.createImageOf(key));
 		}
 		builder.append('}');
 		return builder.toString();
@@ -169,12 +178,12 @@ public abstract class AbstractSubstitution implements Substitution {
 
 	public boolean equals(Substitution other) { // NOPMD
 		for (Term t : this.getTerms()) {
-			if (!this.getSubstitute(t).equals(other.getSubstitute(t)))
+			if (!this.createImageOf(t).equals(other.createImageOf(t)))
 				return false;
 		}
 
 		for (Term t : other.getTerms()) {
-			if (!this.getSubstitute(t).equals(other.getSubstitute(t)))
+			if (!this.createImageOf(t).equals(other.createImageOf(t)))
 				return false;
 		}
 

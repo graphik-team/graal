@@ -107,9 +107,10 @@ public class DefaultRuleApplier<T extends AtomSet> implements
 				}
 
 				// the atom set produced by the rule application
-				AtomSet deductedAtomSet = substitution.getSubstitut(rule
+				AtomSet deductedAtomSet = substitution.createImageOf(rule
 						.getHead());
-				AtomSet bodyAtomSet = substitution.getSubstitut(rule.getBody());
+				AtomSet bodyAtomSet = substitution
+						.createImageOf(rule.getBody());
 
 				if (this.getHaltingCondition().canIAdd(deductedAtomSet,
 						fixedVars, bodyAtomSet, atomSet)) {

@@ -71,7 +71,7 @@ public class TestApplyRules {
 	public static InMemoryAtomSet substitute(Substitution s, InMemoryAtomSet atomSet) {
 		InMemoryAtomSet newAtomSet = new LinkedListAtomSet();
 		for(Atom a : atomSet) {
-			newAtomSet.add(s.getSubstitut(a));
+			newAtomSet.add(s.createImageOf(a));
 		}
 		
 		return newAtomSet;

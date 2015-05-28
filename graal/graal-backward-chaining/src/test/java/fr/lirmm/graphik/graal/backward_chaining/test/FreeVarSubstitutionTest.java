@@ -28,7 +28,7 @@ public class FreeVarSubstitutionTest {
 		
 		FreeVarSubstitution subtitution = new FreeVarSubstitution();
 		
-		Rule substitut = subtitution.getSubstitut(rule);
+		Rule substitut = subtitution.createImageOf(rule);
 		for(Term t : substitut.getTerms(Term.Type.VARIABLE)) {
 			if(t.equals(X) || t.equals(Y) || t.equals(Z)) {
 				Assert.assertFalse(true);

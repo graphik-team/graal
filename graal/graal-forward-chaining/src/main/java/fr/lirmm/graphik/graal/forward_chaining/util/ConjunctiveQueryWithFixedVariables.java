@@ -94,7 +94,7 @@ public class ConjunctiveQueryWithFixedVariables implements ConjunctiveQuery {
 
 		// apply substitution
 		for (Atom a : atomSet) {
-			fixedQuery.add(fixSub.getSubstitut(a));
+			fixedQuery.add(fixSub.createImageOf(a));
 		}
 		
 		return fixedQuery;
