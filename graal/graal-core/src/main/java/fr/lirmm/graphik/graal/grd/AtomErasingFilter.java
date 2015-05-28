@@ -29,11 +29,7 @@ public class AtomErasingFilter extends GraphOfRuleDependencies.DependencyChecker
 		// (mu may lead to a *new* application of R2)
 		// if (isSubsetEq(H2,f)) return false;
 
-		return !isSubsetEq(B2,B1) && !isSubsetEq(H2,f);
-	}
-
-	private static boolean isSubsetEq(final InMemoryAtomSet A1, final InMemoryAtomSet A2) {
-		return AtomSets.contains(A2,A1);
+		return !AtomSets.contains(B1,B2) && !AtomSets.contains(f,H2);
 	}
 
 };
