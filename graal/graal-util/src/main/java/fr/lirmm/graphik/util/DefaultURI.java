@@ -4,6 +4,7 @@
 package fr.lirmm.graphik.util;
 
 
+
 /**
  * Immutable
  * 
@@ -30,12 +31,11 @@ public final class DefaultURI implements URI {
 				URIUtils.getPrefix(uri));
 		this.localname = URIUtils.getLocalName(uri);
 	}
-	
-	@Override
-	public String toString() {
-		return this.prefix.getPrefix() + localname;
-	}
 
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
+	
 	@Override
 	public Prefix getPrefix() {
 		return this.prefix;
@@ -45,5 +45,25 @@ public final class DefaultURI implements URI {
 	public String getLocalname() {
 		return this.localname;
 	}
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// OVERRIDE OBJECT METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null || !(obj instanceof DefaultURI)) {
+			return false;
+		}
+		DefaultURI other = (DefaultURI) obj;
+		return this.toString().equals(other.toString());
+	}
+	
+	@Override
+	public String toString() {
+		return this.prefix.getPrefix() + localname;
+	}
 }
