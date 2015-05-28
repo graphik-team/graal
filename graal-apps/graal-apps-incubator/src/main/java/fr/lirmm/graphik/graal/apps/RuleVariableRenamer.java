@@ -61,8 +61,8 @@ public class RuleVariableRenamer {
 								DefaultTermFactory.instance().createVariable(
 										var.toString() + "_" + objectNumber));
 					}
-					AtomSet body = substitution.getSubstitut(rule.getBody());
-					AtomSet head = substitution.getSubstitut(rule.getHead());
+					AtomSet body = substitution.createImageOf(rule.getBody());
+					AtomSet head = substitution.createImageOf(rule.getHead());
 					String label = rule.getLabel();
 					if(label.isEmpty()) {
 						label = "R"+objectNumber;
