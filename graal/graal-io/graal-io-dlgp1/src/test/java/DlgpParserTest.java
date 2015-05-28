@@ -1,4 +1,9 @@
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Iterator;
 
 import org.junit.Assert;
@@ -70,5 +75,26 @@ public class DlgpParserTest {
 		Atom a1 = Dlgp1Parser.parseAtom("p(a).");
 		Atom a2 = Dlgp1Parser.parseAtom("\"p\"(a).");
 		Assert.assertEquals(a1, a2);
+	}
+
+	@Test
+	public void parseFile() throws FileNotFoundException {
+		Dlgp1Parser parser = new Dlgp1Parser(new File(
+				"./src/test/resources/test.dlgp"));
+		boolean found = false;
+		for (Object o : parser) {
+			if (o instanceof Rule) {
+				found = true;
+			}
+		}
+		parser.close();
+		Assert.assertTrue(found);
+	}
+
+	@Test
+	public void parseRule1() {
+		Rule r = Dlgp1Parser
+				.parseRule("[R0_p0]\"Employee\"(X1_0) :- \"AdministrativeStaff\"(X1_0).");
+		Assert.assertNotNull(r);
 	}
 }

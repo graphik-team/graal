@@ -79,6 +79,12 @@ public class Dlgp1Writer extends AbstractGraalWriter {
 	}
 
 	@Override
+	public void write(Atom atom) throws IOException {
+		this.writeAtom(atom);
+		this.write(".\n");
+	}
+
+	@Override
 	public void write(AtomSet atomset) throws IOException {
 		this.writeAtomSet(atomset, true);
 		this.writeln(".");
@@ -186,12 +192,12 @@ public class Dlgp1Writer extends AbstractGraalWriter {
 					this.write('\n');
 			}
 			
-			this.write(a);
+			this.writeAtom(a);
 		}
 	}
 	
 	@Override
-	protected void writeAtom(Atom atom) throws IOException {
+	protected void writeStandardAtom(Atom atom) throws IOException {
 		this.writePredicate(atom.getPredicate());
 		this.write('(');
 		

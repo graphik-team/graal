@@ -87,6 +87,13 @@ public class RuleMLWriter extends AbstractGraalWriter {
 	}
 
 	@Override
+	public void write(Atom atom) throws IOException {
+		this.openBalise("Assert");
+		this.writeAtom(atom);
+		this.closeBaliseWithReturnLine("Assert");
+	}
+
+	@Override
 	public void write(AtomSet atomset) throws IOException {
 		this.openBalise("Assert");
 		this.writeAtomSet(atomset);
@@ -165,6 +172,7 @@ public class RuleMLWriter extends AbstractGraalWriter {
 		this.closeBaliseWithReturnLine("Query");
 	}
 	
+	@Override
 	public void write(Prefix prefix) throws IOException {
 		// this.writer.write("@prefix ");
 		// this.writer.write(prefix.getPrefixName());

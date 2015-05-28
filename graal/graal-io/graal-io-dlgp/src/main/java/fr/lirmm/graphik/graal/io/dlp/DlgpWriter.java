@@ -188,7 +188,7 @@ public class DlgpWriter extends AbstractGraalWriter {
 	}
 	
 	@Override
-	protected void writeAtom(Atom atom) throws IOException {
+	protected void writeStandardAtom(Atom atom) throws IOException {
 		this.writePredicate(atom.getPredicate());
 		this.write('(');
 		

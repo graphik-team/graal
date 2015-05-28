@@ -64,15 +64,22 @@ public abstract class AbstractGraalWriter extends AbstractWriter implements
 			this.write(it.next());
 	}
 
-	protected void writeAtom(Atom atom) throws IOException {
+	protected final void writeAtom(Atom atom) throws IOException {
 		if (atom.equals(Atom.BOTTOM)) {
 			this.writeBottom();
 		} else if (atom.getPredicate().equals(Predicate.EQUALITY)) {
 			this.writeEquality(atom.getTerm(0), atom.getTerm(1));
 		} else {
-			this.writeAtom(atom);
+			this.writeStandardAtom(atom);
 		}
 	}
+
+	/**
+	 * 
+	 * @param atom
+	 * @throws IOException
+	 */
+	protected abstract void writeStandardAtom(Atom atom) throws IOException;
 
 	/**
 	 * @param term

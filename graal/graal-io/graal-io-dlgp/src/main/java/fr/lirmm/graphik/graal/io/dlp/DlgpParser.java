@@ -16,9 +16,9 @@ import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import parser.DLGP2Parser;
-import parser.ParseException;
-import parser.TermFactory;
+import fr.lirmm.graphik.dlgp2.parser.DLGP2Parser;
+import fr.lirmm.graphik.dlgp2.parser.ParseException;
+import fr.lirmm.graphik.dlgp2.parser.TermFactory;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
@@ -112,7 +112,7 @@ public final class DlgpParser extends AbstractParser<Object> {
 		public void run() {
 			DLGP2Parser parser = new DLGP2Parser(new InternalTermFactory(), reader);
 			parser.addParserListener(new DlgpListener(buffer));
-			parser.setDefaultBase("graal:");
+			parser.setDefaultBase("");
 
 			try {
 				parser.document();
