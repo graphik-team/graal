@@ -104,6 +104,19 @@ abstract class AbstractDlgpListener implements ParserListener {
 	public void createsEquality(Object term1, Object term2) {
 		atom = new DefaultAtom(Predicate.EQUALITY, createTerm(term1),
 				createTerm(term2));
+
+		switch (objectType) {
+		case FACT:
+			this.createAtom(atom);
+			break;
+		case QUERY:
+		case RULE:
+		case NEG_CONSTRAINT:
+			this.atomSet.add(atom);
+			break;
+		default:
+			break;
+		}
 	}
 
 	@Override
