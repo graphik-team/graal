@@ -3,24 +3,24 @@
  */
 package fr.lirmm.graphik.graal.grd;
 
-import java.util.Date;
 import java.util.ArrayList;
-import java.util.Set;
 import java.util.Collections;
+import java.util.Date;
+import java.util.Set;
 import java.util.TreeSet;
 
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.traverse.DepthFirstIterator;
 
-import fr.lirmm.graphik.util.stream.Filter; // stream???? TODO
+import fr.lirmm.graphik.graal.core.LabelRuleComparator;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.Unifier;
-import fr.lirmm.graphik.graal.core.LabelRuleComparator;
-import fr.lirmm.graphik.util.graph.scc.StronglyConnectedComponentsGraph;
 import fr.lirmm.graphik.util.LinkedSet;
+import fr.lirmm.graphik.util.graph.scc.StronglyConnectedComponentsGraph;
+import fr.lirmm.graphik.util.stream.Filter; // stream???? TODO
 
 /**
  * The graph of rule dependencies (GRD) is a directed graph built from a rule
@@ -87,6 +87,12 @@ public class GraphOfRuleDependencies {
 
 	public GraphOfRuleDependencies(Iterable<Rule> rules) {
 		this(rules,false);
+	}
+
+	protected GraphOfRuleDependencies(boolean wu) {
+		this.graph = new DefaultDirectedGraph<Rule, Integer>(Integer.class);
+		this.edgesValue = new ArrayList<Set<Substitution>>();
+		this.computingUnifiers = wu;
 	}
 
 	protected GraphOfRuleDependencies() {

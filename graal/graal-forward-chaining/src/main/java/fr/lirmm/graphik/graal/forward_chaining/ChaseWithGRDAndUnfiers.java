@@ -17,7 +17,7 @@ import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
-import fr.lirmm.graphik.graal.grd.GraphOfRuleDependenciesWithUnifiers;
+import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 
 /**
@@ -29,7 +29,7 @@ public class ChaseWithGRDAndUnfiers extends AbstractChase {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(ChaseWithGRDAndUnfiers.class);
 	
-	private GraphOfRuleDependenciesWithUnifiers grd;
+	private GraphOfRuleDependencies grd;
 	private AtomSet atomSet;
 	private Queue<Pair<Rule, Substitution>> queue = new LinkedList<Pair<Rule, Substitution>>();
 	
@@ -37,7 +37,7 @@ public class ChaseWithGRDAndUnfiers extends AbstractChase {
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 	
-	public ChaseWithGRDAndUnfiers(GraphOfRuleDependenciesWithUnifiers grd, AtomSet atomSet) {
+	public ChaseWithGRDAndUnfiers(GraphOfRuleDependencies grd, AtomSet atomSet) {
 		super(new DefaultRuleApplier(StaticHomomorphism.getSolverFactory()
 				.getSolver(new DefaultConjunctiveQuery(), atomSet)));
 		this.grd = grd;
