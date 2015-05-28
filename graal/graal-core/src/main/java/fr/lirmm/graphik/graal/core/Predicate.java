@@ -12,27 +12,7 @@ import fr.lirmm.graphik.util.URIUtils;
  */
 public class Predicate implements Comparable<Predicate>, Serializable {
 
-    // FIXME this class is *not* consistent with equals
-	public static final Predicate EQUALITY = new Predicate("=", 2) {
-
-		private static final long serialVersionUID = -8961695871557858255L;
-
-		@Override
-		public int compareTo(Predicate predicate) {
-			if (predicate == this) {
-				return 0;
-			}
-			return -1;
-		}
-
-		@Override
-		public boolean equals(Object o) {
-			if (o == null || !(o instanceof Predicate))
-				return false;
-			return this.compareTo((Predicate) o) == 0;
-		}
-
-	};
+	public static final Predicate EQUALITY = new Predicate("=", 2);
 
 	private static final long serialVersionUID = 3098419922942769704L;
 

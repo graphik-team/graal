@@ -17,79 +17,9 @@ public interface Atom extends Comparable<Atom>, Iterable<Term> {
 	 * This instance of Atom represents Bottom, it is always interpreted as
 	 * false.
 	 */
-	public static final Atom BOTTOM = new Atom() {
-		private List<Term> terms = new LinkedList<Term>();
-		private Predicate predicate = new Predicate("\u22A5", 0);
+	public static final Atom BOTTOM = new DefaultAtom(
+			new Predicate("\u22A5", 0), new LinkedList<Term>());
 
-		@Override
-		public int compareTo(Atom atom) {
-			if (atom.getPredicate() == BOTTOM.getPredicate()) {
-				return 0;
-			}
-			return -1;
-		}
-
-		@Override
-		public boolean equals(Object o) {
-			if (o == null || !(o instanceof Atom))
-				return false;
-			return this.compareTo((Atom) o) == 0;
-		}
-
-		@Override
-		public int hashCode() {
-			return 0;
-		}
-
-		@Override
-		public void setTerm(int index, Term term) {
-		}
-
-		@Override
-		public void setPredicate(Predicate predicate) {
-		}
-
-		@Override
-		public Collection<Term> getTerms(Type type) {
-			return terms;
-		}
-
-		@Override
-		public List<Term> getTerms() {
-			return terms;
-		}
-
-		@Override
-		public Term getTerm(int index) {
-			return null;
-		}
-
-		@Override
-		public Predicate getPredicate() {
-			return this.predicate;
-		}
-
-		@Override
-		public Iterator<Term> iterator() {
-			return terms.iterator();
-		}
-
-		@Override
-		public String toString() {
-			StringBuilder s = new StringBuilder(this.getPredicate().toString());
-			s.append('(');
-			boolean bool = false;
-			for (Term term : this.getTerms()) {
-				if (bool)
-					s.append(',');
-				s.append(term);
-				bool = true;
-			}
-			s.append(')');
-
-			return s.toString();
-		}
-	};
 
 	/**
 	 * Set the Predicate of this Atom.
