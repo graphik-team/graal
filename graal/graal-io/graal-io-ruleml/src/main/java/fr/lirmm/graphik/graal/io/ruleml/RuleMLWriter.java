@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -37,6 +38,7 @@ public class RuleMLWriter extends AbstractGraalWriter {
 
 	private final String indentStyle;
 	private transient int currentIndentSize = 0;
+	private boolean inFact = false;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
@@ -89,14 +91,18 @@ public class RuleMLWriter extends AbstractGraalWriter {
 	@Override
 	public void write(Atom atom) throws IOException {
 		this.openBalise("Assert");
+		this.inFact = true;
 		this.writeAtom(atom);
+		this.inFact = false;
 		this.closeBaliseWithReturnLine("Assert");
 	}
 
 	@Override
 	public void write(AtomSet atomset) throws IOException {
 		this.openBalise("Assert");
+		this.inFact = true;
 		this.writeAtomSet(atomset);
+		this.inFact = false;
 		this.closeBaliseWithReturnLine("Assert");
 	}
 	
@@ -106,9 +112,15 @@ public class RuleMLWriter extends AbstractGraalWriter {
 		Set<Term> universalVar = rule.getTerms(Type.VARIABLE);
 		universalVar.removeAll(existVar);
 
+		Iterator<Atom> it = rule.getHead().iterator();
+		if (it.hasNext()) {
+			it.next();
+		}
+		boolean isAtomicHead = !it.hasNext();
+
 		this.openBalise("Assert");
-		this.openBalise("Forall");
 		this.writeLabel(rule.getLabel());
+		this.openBalise("Forall");
 		for (Term t : universalVar) {
 			this.writeTerm(t);
 		}
@@ -119,18 +131,20 @@ public class RuleMLWriter extends AbstractGraalWriter {
 		this.closeBaliseWithReturnLine("And");
 		this.closeBaliseWithReturnLine("if");
 		this.openBalise("then");
-		if (existVar.isEmpty()) {
-			this.openBalise("And");
-			this.writeAtomSet(rule.getHead());
-			this.closeBaliseWithReturnLine("And");
-		} else {
+		if (!existVar.isEmpty()) {
 			this.openBalise("Exists");
 			for (Term t : existVar) {
 				this.writeTerm(t);
 			}
+		}
+		if (!isAtomicHead) {
 			this.openBalise("And");
-			this.writeAtomSet(rule.getHead());
+		}
+		this.writeAtomSet(rule.getHead());
+		if (!isAtomicHead) {
 			this.closeBaliseWithReturnLine("And");
+		}
+		if (!existVar.isEmpty()) {
 			this.closeBaliseWithReturnLine("Exists");
 		}
 		this.closeBaliseWithReturnLine("then");
@@ -188,6 +202,7 @@ public class RuleMLWriter extends AbstractGraalWriter {
 	@Override
 	public void close() throws IOException {
 		this.closeBaliseWithReturnLine("RuleML");
+		this.write("\n");
 		super.close();
 	}
 	
@@ -197,6 +212,7 @@ public class RuleMLWriter extends AbstractGraalWriter {
 	
 	protected void writeLabel(String label) throws IOException {
 		if(!label.isEmpty()) {
+			this.writeIndent();
 			this.write("<!-- ");
 			this.write(label);
 			this.write(" -->");
@@ -205,7 +221,7 @@ public class RuleMLWriter extends AbstractGraalWriter {
 	
 	protected void writeAtomSet(Iterable<Atom> atomSet) throws IOException {
 		for(Atom a : atomSet) {
-			this.write(a);
+			this.writeAtom(a);
 		}
 	}
 	
@@ -236,9 +252,16 @@ public class RuleMLWriter extends AbstractGraalWriter {
 
 	protected void writeTerm(Term t) throws IOException {
 		if(Type.VARIABLE.equals(t.getType())) {
-			this.openBalise("Var");
-			this.write(t.getIdentifier().toString());
-			this.closeBalise("Var");
+			if (this.inFact) {
+				// Facts does not allow existential variables
+				this.openBalise("Ind");
+				this.write(t.getIdentifier().toString());
+				this.closeBalise("Ind");
+			} else {
+				this.openBalise("Var");
+				this.write(t.getIdentifier().toString());
+				this.closeBalise("Var");
+			}
 		} else if(Type.CONSTANT.equals(t.getType())) {
 			this.openBalise("Ind");
 			this.write(t.getIdentifier().toString());
