@@ -129,7 +129,8 @@ public class CLI_FGH {
 					if (i < init_size) 
 						out.write("1.0 1.0\n"); // 1");
 					else {
-						Matcher m = p.matcher(a.getPredicate().getIdentifier());
+						Matcher m = p.matcher(a.getPredicate().getIdentifier()
+								.toString());
 						if (m.find()) // this is a "rule" predicate => last term is used to represent confidence value
 							// TODO perhaps GRAAL computes type in a good way:
 							// (Double)getValue() instead
@@ -155,7 +156,7 @@ public class CLI_FGH {
 					DefaultConjunctiveQuery q = new DefaultConjunctiveQuery(constraint);
 					q.setAnswerVariables(new LinkedList<Term>(q.getAtomSet().getTerms()));
 					for (Substitution s : solver.execute(q,atomset)) {
-						AtomSet conflict = s.getSubstitut(q.getAtomSet());
+						AtomSet conflict = s.createImageOf(q.getAtomSet());
 						int conflict_size = 0;
 						for (Atom a : conflict)
 							++conflict_size;
@@ -176,7 +177,7 @@ public class CLI_FGH {
 					DefaultConjunctiveQuery q = new DefaultConjunctiveQuery(constraint);
 					q.setAnswerVariables(new LinkedList<Term>(q.getAtomSet().getTerms()));
 					for (Substitution s : solver.execute(q,atomset)) {
-						AtomSet conflict = s.getSubstitut(q.getAtomSet());
+						AtomSet conflict = s.createImageOf(q.getAtomSet());
 						int conflict_size = 0;
 						for (Atom a : conflict)
 							++conflict_size;
