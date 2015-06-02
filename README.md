@@ -1,5 +1,5 @@
 # Graal
 
-Coming soon...
+Source available soon...
 
-[see wiki](https://github.com/graphik-team/graal/wiki)
+[See Graal homepage](https://graphik-team.github.io/graal)
