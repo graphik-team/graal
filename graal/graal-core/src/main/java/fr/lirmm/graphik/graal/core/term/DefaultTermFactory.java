@@ -66,8 +66,8 @@ public class DefaultTermFactory implements TermFactory {
 	}
 
 	@Override
-	public Variable createVariable(String label) {
-		return new DefaultVariable(label);
+	public Variable createVariable(Object identifier) {
+		return new DefaultVariable(identifier);
 	}
 
 	@Override
@@ -81,13 +81,8 @@ public class DefaultTermFactory implements TermFactory {
 	}
 
 	@Override
-	public Constant createConstant(String label) {
-		return new DefaultConstant(label);
-	}
-
-	@Override
-	public Constant createConstant(URI uri) {
-		return new DefaultConstant(uri);
+	public Constant createConstant(Object identifier) {
+		return new DefaultConstant(identifier);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

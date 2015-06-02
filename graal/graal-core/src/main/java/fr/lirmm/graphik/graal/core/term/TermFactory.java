@@ -21,11 +21,9 @@ public interface TermFactory {
 
 	Term createTerm(Object o, Term.Type type);
 
-	Variable createVariable(String label);
+	Variable createVariable(Object identifier);
 
-	Constant createConstant(String label);
-
-	Constant createConstant(URI label);
+	Constant createConstant(Object identifier);
 
 	Literal createLiteral(Object value);
 

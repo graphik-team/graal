@@ -74,9 +74,9 @@ public class TermVertexFactory implements TermFactory {
 	}
 
 	@Override
-	public VariableVertex createVariable(String label) {
+	public VariableVertex createVariable(Object identifier) {
 		return new VariableVertex(DefaultTermFactory.instance().createVariable(
-				label));
+				identifier));
 	}
 
 	@Override
@@ -92,15 +92,9 @@ public class TermVertexFactory implements TermFactory {
 	}
 
 	@Override
-	public ConstantVertex createConstant(String label) {
+	public ConstantVertex createConstant(Object identifier) {
 		return new ConstantVertex(DefaultTermFactory.instance().createConstant(
-				label));
-	}
-
-	@Override
-	public ConstantVertex createConstant(URI uri) {
-		return new ConstantVertex(DefaultTermFactory.instance().createConstant(
-				uri));
+				identifier));
 	}
 
 }

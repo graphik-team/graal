@@ -41,7 +41,7 @@ public class Predicate implements Comparable<Predicate>, Serializable {
 	 * @return a string representing predicate label.
 	 */
 	public Object getIdentifier() {
-		return this.identifier.toString();
+		return this.identifier;
 	}
 
 	/**
