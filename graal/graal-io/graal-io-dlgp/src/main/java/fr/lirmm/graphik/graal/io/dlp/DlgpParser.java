@@ -20,13 +20,16 @@ import fr.lirmm.graphik.dlgp2.parser.DLGP2Parser;
 import fr.lirmm.graphik.dlgp2.parser.ParseException;
 import fr.lirmm.graphik.dlgp2.parser.TermFactory;
 import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
+import fr.lirmm.graphik.graal.core.DefaultFreeVarGen;
 import fr.lirmm.graphik.graal.core.DefaultRule;
+import fr.lirmm.graphik.graal.core.FreeVarSubstitution;
 import fr.lirmm.graphik.graal.core.KnowledgeBase;
 import fr.lirmm.graphik.graal.core.NegativeConstraint;
 import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.core.SymbolGenerator;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
+import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.filter.AtomFilterIterator;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.io.AbstractParser;
@@ -51,14 +54,18 @@ public final class DlgpParser extends AbstractParser<Object> {
 	private static class DlgpListener extends AbstractDlgpListener {
 
 		private ArrayBlockingStream<Object> set;
+		private SymbolGenerator freeVarGen = new DefaultFreeVarGen("i");
 
 		DlgpListener(ArrayBlockingStream<Object> buffer) {
 			this.set = buffer;
 		}
 
 		@Override
-		protected void createAtom(DefaultAtom atom) {
-			this.set.write(atom);
+		protected void createAtomSet(InMemoryAtomSet atomset) {
+			FreeVarSubstitution s = new FreeVarSubstitution(freeVarGen);
+			for (Atom a : atomset) {
+				this.set.write(s.createImageOf(a));
+			}
 		}
 
 		@Override
@@ -81,6 +88,9 @@ public final class DlgpParser extends AbstractParser<Object> {
 
 		@Override
 		public Object createIRI(String s) {
+			if (s.indexOf(':') == -1) {
+				return s;
+			}
 			return new DefaultURI(s);
 		}
 

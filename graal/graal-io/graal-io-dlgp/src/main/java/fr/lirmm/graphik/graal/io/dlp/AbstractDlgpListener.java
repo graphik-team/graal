@@ -15,13 +15,13 @@ import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.NegativeConstraint;
 import fr.lirmm.graphik.graal.core.Predicate;
+import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.term.Constant;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.PrefixManager;
-import fr.lirmm.graphik.util.URI;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -40,7 +40,7 @@ abstract class AbstractDlgpListener implements ParserListener {
 
 	private OBJECT_TYPE objectType;
 
-	protected abstract void createAtom(DefaultAtom atom);
+	protected abstract void createAtomSet(InMemoryAtomSet atom);
 
 	protected abstract void createQuery(DefaultConjunctiveQuery query);
 
@@ -53,26 +53,14 @@ abstract class AbstractDlgpListener implements ParserListener {
 	public void startsObject(OBJECT_TYPE objectType, String name) {
 		this.label = (name == null) ? "" : name;
 
-		atomSet = atomSet2 = null;
+		atomSet = new LinkedListAtomSet();
+		atomSet2 = null;
 		this.objectType = objectType;
 
-		switch (objectType) {
-		case QUERY:
+		if (OBJECT_TYPE.QUERY.equals(objectType)) {
 			this.answerVars = new LinkedList<Term>();
-			this.atomSet = new LinkedListAtomSet();
-			break;
-		case RULE:
-		case NEG_CONSTRAINT:
-			this.atomSet = new LinkedListAtomSet();
-			break;
-		case FACT:
-			break;
-		default:
-			if (LOGGER.isWarnEnabled()) {
-				LOGGER.warn("Unrecognized object type: " + objectType);
-			}
-			break;
 		}
+
 
 	}
 
@@ -83,40 +71,18 @@ abstract class AbstractDlgpListener implements ParserListener {
 			list.add(createTerm(t));
 		}
 
-		atom = new DefaultAtom(createPredicate((URI) predicate, terms.length),
+		atom = new DefaultAtom(createPredicate(predicate, terms.length),
 				list);
+		this.atomSet.add(atom);
 
-		switch (objectType) {
-		case FACT:
-			this.createAtom(atom);
-			break;
-		case QUERY:
-		case RULE:
-		case NEG_CONSTRAINT:
-			this.atomSet.add(atom);
-			break;
-		default:
-			break;
-		}
 	}
 
 	@Override
 	public void createsEquality(Object term1, Object term2) {
 		atom = new DefaultAtom(Predicate.EQUALITY, createTerm(term1),
 				createTerm(term2));
+		this.atomSet.add(atom);
 
-		switch (objectType) {
-		case FACT:
-			this.createAtom(atom);
-			break;
-		case QUERY:
-		case RULE:
-		case NEG_CONSTRAINT:
-			this.atomSet.add(atom);
-			break;
-		default:
-			break;
-		}
 	}
 
 	@Override
@@ -146,6 +112,8 @@ abstract class AbstractDlgpListener implements ParserListener {
 						this.atomSet2));
 			}
 			break;
+		case FACT:
+			this.createAtomSet(this.atomSet);
 		default:
 			break;
 		}
@@ -181,21 +149,20 @@ abstract class AbstractDlgpListener implements ParserListener {
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	private Predicate createPredicate(URI uri, int arity) {
+	private Predicate createPredicate(Object uri, int arity) {
 		return new Predicate(uri, arity);
 	}
 
-	private Constant createConstant(URI uri) {
+	private Constant createConstant(Object uri) {
 		return DefaultTermFactory.instance().createConstant(uri);
 	}
 
 	private Term createTerm(Object t) {
 		if (t instanceof Term) {
 			return (Term) t;
-		} else if (t instanceof URI) {
-			return createConstant((URI) t);
+		} else {
+			return createConstant(t);
 		}
-		return null;
 	}
 
 }
