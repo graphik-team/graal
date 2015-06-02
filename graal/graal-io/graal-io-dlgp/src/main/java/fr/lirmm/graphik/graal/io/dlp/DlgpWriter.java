@@ -20,6 +20,7 @@ import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
+import fr.lirmm.graphik.graal.core.term.Literal;
 import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.core.term.Term.Type;
 import fr.lirmm.graphik.graal.io.AbstractGraalWriter;
@@ -230,9 +231,12 @@ public class DlgpWriter extends AbstractGraalWriter {
 			this.write(t.getIdentifier().toString());
 			this.write('>');
 		} else { // LITERAL
+			Literal l = (Literal) t;
 			this.write('"');
-			this.write(t.getIdentifier().toString());
-			this.write('"');
+			this.write(l.getValue().toString());
+			this.write("\"^^<");
+			this.write(l.getDatatype().toString());
+			this.write('>');
 		}
 	}
 	
