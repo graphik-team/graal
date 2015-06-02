@@ -11,7 +11,24 @@ import fr.lirmm.graphik.graal.core.term.Term;
  */
 public class FreeVarSubstitution extends TreeMapSubstitution {
 	
-	private SymbolGenerator gen = new DefaultFreeVarGen("X" + Integer.toString(this.getClass().hashCode()));
+	private SymbolGenerator gen;
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
+	
+	public FreeVarSubstitution() {
+		this(new DefaultFreeVarGen("X"
+				+ Integer.toString(FreeVarSubstitution.class.hashCode())));
+	}
+	
+	public FreeVarSubstitution(SymbolGenerator gen) {
+		this.gen = gen;
+	}
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
 	
 	@Override
 	public Term createImageOf(Term term) {
