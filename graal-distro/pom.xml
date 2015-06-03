@@ -53,7 +53,32 @@
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
-			<artifactId>graal-store</artifactId>
+			<artifactId>graal-store-api</artifactId>
+			<groupId>fr.lirmm.graphik</groupId>
+			<version>${project.parent.version}</version>
+		</dependency>
+                <dependency>
+			<artifactId>graal-store-rdbms</artifactId>
+			<groupId>fr.lirmm.graphik</groupId>
+			<version>${project.parent.version}</version>
+		</dependency>
+                <dependency>
+			<artifactId>graal-store-blueprints</artifactId>
+			<groupId>fr.lirmm.graphik</groupId>
+			<version>${project.parent.version}</version>
+		</dependency>
+                <dependency>
+			<artifactId>graal-store-jenaTDB</artifactId>
+			<groupId>fr.lirmm.graphik</groupId>
+			<version>${project.parent.version}</version>
+		</dependency>
+                <dependency>
+			<artifactId>graal-store-neo4j</artifactId>
+			<groupId>fr.lirmm.graphik</groupId>
+			<version>${project.parent.version}</version>
+		</dependency>
+                <dependency>
+			<artifactId>graal-store-openrdf</artifactId>
 			<groupId>fr.lirmm.graphik</groupId>
 			<version>${project.parent.version}</version>
 		</dependency>
