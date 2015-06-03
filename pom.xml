@@ -59,8 +59,8 @@
 				<artifactId>maven-pmd-plugin</artifactId>
 				<version>3.3</version>
 				<configuration>
+					<failOnViolation>false</failOnViolation>
 					<minimumPriority>2</minimumPriority>
-					<failurePriority>2</failurePriority>
 					<rulesets>
 						<ruleset>${project.basedir}/pmd-rulesets/basic.xml</ruleset>
 						<ruleset>${project.basedir}/pmd-rulesets/finalizers.xml</ruleset>
