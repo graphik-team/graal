@@ -47,7 +47,7 @@
         <ul>
           <li>
             a basic layer that provides generic interfaces to store
-            and query heterogeneous data without considering the
+            and query various kinds of data without considering the
             rules;
           </li>
           <li> ‘saturation’ algorithms, which apply rules on the data in a
@@ -56,18 +56,26 @@
           <li> ‘query rewriting’ algorithms, which reformulate a conjunctive
             query into a set (or ‘union’) of conjunctive queries;
           </li>
-          <li> utility tools: a format called dlgp (for ‘datalog+’) and its
-            parser, decomposition of rules, structural analysis of decidability
-            properties of a rule set, and translation of OWL 2 files into
-            dlgp.
+          <li> utility tools: 
+          		<ul>
+          		<li> a format called <i>DLGP</i> (for ‘datalog+’) and its
+            parser;
+                 </li>
+            	<li> a tool called <i>Kiabora</i>, which performs a structural analysis of an existential rule set to determine its decidability
+            properties ; it also allows to decompose rules;
+               </li>
+            <li> a translator of OWL 2 files to dlgp.
+            </li>
+            </ul>
+            </li>
           </li>
 
-          <h2>Related tools</h2>
+          <h2>Related standalone tools</h2>
              <ul>
-               <li><a href="./pure">Pure rewriter</a></li>
-               <li><a href="./dl/">Translator of OWL2 to DLGP (available soon)</a></li>
-               <li><a href="./dl/">Translator of DLGP to RuleML (available soon)</a></li>
-               <li><a href="http://www.lirmm.fr/kiabora/">kiabora</a></li>
+               <li><a href="./pure">Query rewriter (Pure: basic and compilation-based versions) </a></li>
+               <li><a href="./dl/">Translator of OWL 2 to DLGP v2 (available soon)</a></li>
+               <li><a href="./dl/">Translator of DLGP v2 to RuleML (available soon)</a></li>
+               <li><a href="http://www.lirmm.fr/kiabora/">Online Kiabora (works with DLGP v1)</a></li>
              </ul>
         
       </section>
