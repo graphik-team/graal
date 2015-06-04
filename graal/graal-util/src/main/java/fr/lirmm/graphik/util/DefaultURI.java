@@ -13,22 +13,16 @@ package fr.lirmm.graphik.util;
  */
 public final class DefaultURI implements URI {
 
-	private Prefix prefix;
+	private String prefix;
 	private String localname;
-
-	public DefaultURI(Prefix prefix, String localname) {
+	
+	public DefaultURI(String prefix, String localname) {
 		this.prefix = prefix;
 		this.localname = localname;
 	}
 	
-	public DefaultURI(String prefix, String localname) {
-		this.prefix = PrefixManager.getInstance().getPrefix(prefix);
-		this.localname = localname;
-	}
-	
 	public DefaultURI(String uri) {
-		this.prefix = PrefixManager.getInstance().getPrefix(
-				URIUtils.getPrefix(uri));
+		this.prefix = URIUtils.getPrefix(uri);
 		this.localname = URIUtils.getLocalName(uri);
 	}
 
@@ -37,7 +31,7 @@ public final class DefaultURI implements URI {
 	// /////////////////////////////////////////////////////////////////////////
 	
 	@Override
-	public Prefix getPrefix() {
+	public String getPrefix() {
 		return this.prefix;
 	}
 
@@ -64,6 +58,6 @@ public final class DefaultURI implements URI {
 	
 	@Override
 	public String toString() {
-		return this.prefix.getPrefix() + localname;
+		return this.prefix + localname;
 	}
 }

@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.core.SymbolGenerator;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
-import fr.lirmm.graphik.graal.core.term.Term;
+import fr.lirmm.graphik.graal.core.term.Variable;
 
 public class RdbmsSymbolGenenrator implements SymbolGenerator {
 
@@ -31,7 +31,7 @@ public class RdbmsSymbolGenenrator implements SymbolGenerator {
     }
 
     @Override
-    public Term getFreeVar() {
+	public Variable getFreeVar() {
         long value;
         PreparedStatement pstat = null;
         try {

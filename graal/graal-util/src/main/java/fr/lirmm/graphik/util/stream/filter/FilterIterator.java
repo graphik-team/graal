@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.lirmm.graphik.util.stream;
+package fr.lirmm.graphik.util.stream.filter;
 
 import java.util.Iterator;
 
@@ -10,15 +10,13 @@ import java.util.Iterator;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class FilterIterator<U,T> implements Iterator<T> {
-	
-	// Es-tu sûr que tu étais en forme le jour où tu as écris cette classe ?
-	
+public class FilterIterator<U, T extends U> implements Iterator<T> {
+
 	private final Iterator<U> it;
-	private final Filter filter;
+	private final Filter<U> filter;
 	private T next;
 
-	public FilterIterator(Iterator<U> it, Filter filter) {
+	public FilterIterator(Iterator<U> it, Filter<U> filter) {
 		this.filter = filter;
 		this.it = it;
 		this.next = null;

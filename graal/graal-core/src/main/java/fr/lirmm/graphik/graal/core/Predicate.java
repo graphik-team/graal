@@ -9,6 +9,8 @@ import java.io.Serializable;
 public class Predicate implements Comparable<Predicate>, Serializable {
 
 	public static final Predicate EQUALITY = new Predicate("=", 2);
+	public static final Predicate BOTTOM = new Predicate("\u22A5", 1);
+	public static final Predicate TOP = new Predicate("\u22A4", 1);
 
 	private static final long serialVersionUID = 3098419922942769704L;
 

@@ -14,8 +14,8 @@ import java.util.TreeMap;
 public final class PrefixManager implements Iterable<Prefix> {
 
 	private static final PrefixManager instance = new PrefixManager();
-	private static final Map<String, Prefix> PREFIX_MAP = new TreeMap<String, Prefix>();
-	private static final Map<String, Prefix> INVERSE_PREFIX_MAP = new TreeMap<String, Prefix>();
+	private final Map<String, Prefix> PREFIX_MAP = new TreeMap<String, Prefix>();
+	private final Map<String, Prefix> INVERSE_PREFIX_MAP = new TreeMap<String, Prefix>();
 	private static final String prefixString = "graal";
 	private static int prefixIndex = 0;
 	
@@ -32,7 +32,7 @@ public final class PrefixManager implements Iterable<Prefix> {
 	//
 	// //////////////////////////////////////////////////////////////////////////
 
-	private PrefixManager() {
+	public PrefixManager() {
 		super();
 	}
 
@@ -52,18 +52,11 @@ public final class PrefixManager implements Iterable<Prefix> {
 	/**
 	 * 
 	 * @param string
-	 * @return the prefix that represents the specified string as key or value.
-	 *         Create a new Prefix if not exists.
+	 * @return the prefix that represents the specified string as value. return
+	 *         null if not exist.
 	 */
-	public Prefix getPrefix(String string) {
-		Prefix p = PREFIX_MAP.get(string);
-		if (p == null) {
-			p = INVERSE_PREFIX_MAP.get(string);
-			if (p == null) {
-				p = genPrefix(string);
-			}
-		}
-		return p;
+	public Prefix getPrefixByValue(String string) {
+		return INVERSE_PREFIX_MAP.get(string);
 	}
 	
 	@Override
@@ -75,7 +68,9 @@ public final class PrefixManager implements Iterable<Prefix> {
 	// PRIVATE
 	////////////////////////////////////////////////////////////////////////////
 	
-	private static Prefix genPrefix(String value) {
-		return new Prefix(prefixString + ++prefixIndex, value);
+	public Prefix genAndPutPrefix(String value) {
+		Prefix p = new Prefix(prefixString + ++prefixIndex, value);
+		this.putPrefix(p);
+		return p;
 	}
 }

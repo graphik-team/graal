@@ -3,9 +3,11 @@
  */
 package fr.lirmm.graphik.graal.examples;
 
-import fr.lirmm.graphik.graal.io.owl.OWLParser;
-import fr.lirmm.graphik.graal.io.owl.OWLParserException;
-import fr.lirmm.graphik.util.Prefix;
+import java.io.IOException;
+
+import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
+import fr.lirmm.graphik.graal.io.owl.OWL2Parser;
+import fr.lirmm.graphik.graal.io.owl.OWL2ParserException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -13,92 +15,88 @@ import fr.lirmm.graphik.util.Prefix;
  */
 public class OWLParserExemple2 {
 
-	public static void main(String args[]) throws OWLParserException {
-		 OWLParser parser = new OWLParser(
-		 "@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> . "
-		 + "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> ."
-		 + "@prefix owl: <http://www.w3.org/2002/07/owl#> . "
-		 + "@prefix test: <http://test.org/> . "
-		 + "test:ClassA rdf:type owl:Class . "
-		 // + "test:toto rdf:type test:ClassA ."
-		 + "test:ClassB rdf:type owl:Class . "
-		 // + "test:ClassC rdf:type owl:Class . "
-		 + "test:ClassD rdf:type owl:Class . "
-		 + "test:ClassE rdf:type owl:Class . "
-		 // + "test:property rdfs:domain test:ClassA ."
-		 // + "test:ClassD owl:complementOf test:ClassC ."
-		 // // +
-		 + "test:ClassA rdfs:subClassOf [ "
-		 +
- "			owl:unionOf ( test:ClassB [ owl:complementOf test:ClassD ] ) ]. "
-		 + "test:toto a [ "
-		 +
- "			owl:unionOf ( test:ClassB [ owl:complementOf test:ClassD ] ) ]. "
-		
+	public static void main(String args[]) throws OWL2ParserException,
+			IOException {
 
-						+ "test:toto a test:ClassD .");
-		parser = new OWLParser(
-				"@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> . "
+			String owl = "@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> . "
 						+ "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> ."
 						+ "@prefix owl: <http://www.w3.org/2002/07/owl#> . "
-						+ "@prefix test: <http://test.org/> . "
-						+ "test:ClassA rdf:type owl:Class . "
-						+ "test:ClassB rdf:type owl:Class . "
-						+ "test:ClassC rdf:type owl:Class . "
-						+ "test:ClassA rdfs:subClassOf [ "
-						+ "			owl:unionOf ( test:ClassB [ "
-						+ "					owl:complementOf test:ClassC ] ) ] ."
-						+ "test:p rdf:type owl:ObjectProperty."
-						+ "				[ rdf:type           owl:Restriction ;   "
-						+ "			      rdfs:subClassOf    test:ClassC ; "
-						+ "				  owl:onProperty     test:p ;   "
-						+ "               owl:allValuesFrom   test:ClassB ] . "
-						+ "		"
-						+ "");
-//		OWLParser parser = new OWLParser(
-//				"@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> . "
-//						+ "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> ."
-//						+ "@prefix owl: <http://www.w3.org/2002/07/owl#> . "
-//						+ "@prefix test: <http://test.org/> . "
-//						+ "test:ClassA rdf:type owl:Class . "
-//						// + "test:toto rdf:type test:ClassA ."
-//						+ "test:ClassB rdf:type owl:Class . "
-//						// + "test:ClassC rdf:type owl:Class . "
-//						+ "test:ClassD rdf:type owl:Class . "
-//						+ "test:ClassE rdf:type owl:Class . "
-//						// + "test:property rdfs:domain test:ClassA ."
-//						// + "test:ClassD owl:complementOf test:ClassC ."
-//						// // +
-//						+ "[ owl:oneOf ( test:a test:b ) ] rdfs:subClassOf test:ClassA "
-//						+ "			. "
-// + " "
-//						//
-//						//
-//						// // +
-//						// "test:ClassA rdfs:subClassOf owl:UnionOf test:ClassB owl:ComplementOf test:ClassC . "
-//						+ "");
+						+ "@prefix : <http://test.org/> . "
+						+ ":A rdf:type owl:Class . "
+						+ ":B rdf:type owl:Class . "
+						+ ":C rdf:type owl:Class . "
+						+ ":D rdf:type owl:Class . "
+						+ ":E rdf:type owl:Class . "
+				+ ":F rdf:type owl:Class . "
+						+ ":p rdf:type owl:ObjectProperty . "
+				+ ":q rdf:type owl:ObjectProperty . "
+				
 
+				// " :A rdfs:subClassOf [owl:intersectionOf ( :C [owl:complementOf  [a owl:Restriction; owl:onProperty :p ; owl:allValuesFrom :E]] ) ] .";
+				
+				+ " [rdf:type owl:Restriction; owl:onProperty :p; "
+				+ "     owl:someValuesFrom [rdf:type owl:Restriction; owl:onProperty :p ; owl:allValuesFrom :A] ] rdfs:subClassOf :B .";
+				
+				
+				// +
+				// " [owl:unionOf ( :A [owl:complementOf :B])] rdfs:subClassOf :C .";
+				
+				// +
+				// "[ owl:intersectionOf ( :D [ owl:unionOf ( :A :B ) ]) ] rdfs:subClassOf [ rdf:type owl:Restriction; owl:onProperty :p ; owl:allValuesFrom :C ] .";
+		// + "[owl:intersectionOf ( "
+		// + "		:C "
+		// + "		[owl:unionOf ( :A :B ) ] "
+		// +
+		// "		[ a owl:Restriction; owl:onProperty :p ; owl:someValuesFrom [owl:intersectionOf "
+		// + "			( [owl:unionOf ( :C :D )] "
+		// +
+		// "				[ a owl:Restriction; owl:onProperty :q; owl:someValuesFrom :E]"
+		// + "			)" + "		]] ) ]" + "rdfs:subClassOf :F .";// +
+		// "test:ClassA rdfs:subClassOf [owl:unionOf (test:ClassB test:ClassC )]. ";
+		// + "test:ClassE rdfs:subClassOf [ owl:complementOf test:ClassD ]. "
+		// + "test:ClassC owl:equivalentClass test:ClassE. "
+		// + "test:ClassA rdfs:subClassOf ["
+		// + "		owl:intersectionOf ( test:ClassC test:ClassD ) ]. "
+		// +
+		// "[ owl:unionOf ( test:ClassC test:ClassD ) ] rdfs:subClassOf test:ClassA."
+		// +
+		// "[ a owl:Restriction; owl:someValuesFrom test:ClassA; owl:onProperty :prop1 ] rdfs:subClassOf test:ClassB. "
+		// + "[ rdf:type             owl:Restriction ;   "
+		// + "  rdfs:subClassOf      test:ClassC ; "
+		// + "  owl:onProperty       test:prop1 ;   "
+		// + "  owl:someValuesFrom   test:ClassA ]. "
+		// + "[ rdf:type             owl:Restriction ;   "
+		// + "  rdfs:subClassOf      test:ClassC ; "
+		// + "  owl:onProperty       test:prop1 ;   "
+		// +
+		// "  owl:someValuesFrom   [ owl:intersectionOf ( test:ClassA test:ClassB ) ] ]. "
+		// + "[ rdf:type             owl:Restriction ;   "
+		// + "  rdfs:subClassOf      test:ClassC ; "
+		// + "  owl:onProperty       test:prop1 ;   "
+		// + "  owl:someValuesFrom   [ rdf:type owl:Restriction ;"
+		// + "							owl:onProperty test:prop1 ;"
+		// + "	                        owl:someValuesFrom test:ClassA ] ]. "
+		// + " test:ClassA rdfs:subClassOf [ rdf:type owl:Restriction ;"
+		// + "							owl:onProperty test:prop1 ;"
+		// + "	                        owl:someValuesFrom test:ClassB ]. "
+		// + "[ rdf:type             owl:Restriction ;   "
+		// + "  rdfs:subClassOf      test:ClassC ; "
+		// + "  owl:onProperty       <http://example.com/p> ;   "
+		// +
+		// "  owl:someValuesFrom   [ owl:intersectionOf ( [ owl:unionOf ( test:ClassA test:ClassD ) ] test:ClassB ) ] ]. ";
+
+		
+
+		OWL2Parser parser = new OWL2Parser(owl);
+
+		
+
+		DlgpWriter w = new DlgpWriter();
 		for (Object o : parser) {
-			if (!(o instanceof Prefix)) {
-				System.out.println(o);
-
-			}
+			w.write(o);
+			w.flush();
 		}
+		w.close();
 	}
-	// /////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	// /////////////////////////////////////////////////////////////////////////
-
-	// /////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	// /////////////////////////////////////////////////////////////////////////
-	// OBJECT OVERRIDE METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	// /////////////////////////////////////////////////////////////////////////
-	// PRIVATE METHODS
-	// /////////////////////////////////////////////////////////////////////////
 
 }

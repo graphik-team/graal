@@ -17,7 +17,7 @@ public interface URI {
 	 * 
 	 * @return the first group of the regex pattern above.
 	 */
-	Prefix getPrefix();
+	String getPrefix();
 	
 	/**
 	 * Get the localname of this URI.

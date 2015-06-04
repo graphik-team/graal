@@ -12,13 +12,14 @@ import java.util.Iterator;
  */
 public abstract class AbstractParser<T> implements Parser<T> {
 
+	@Override
 	public void remove() {
 		throw new UnsupportedOperationException();
 	}
 	
+	@Override
 	public Iterator<T> iterator() {
 		return this;
 	}
-	
-	public abstract void close();
+
 }

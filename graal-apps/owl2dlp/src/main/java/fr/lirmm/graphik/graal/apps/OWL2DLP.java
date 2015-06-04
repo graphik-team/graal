@@ -7,13 +7,17 @@ import java.io.File;
 import java.io.IOException;
 
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Level;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
+import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
-import fr.lirmm.graphik.graal.io.owl.OWLParser;
-import fr.lirmm.graphik.graal.io.owl.OWLParserException;
+import fr.lirmm.graphik.graal.io.owl.OWL2Parser;
+import fr.lirmm.graphik.graal.io.owl.OWL2ParserException;
 import fr.lirmm.graphik.util.Apps;
 
 /**
@@ -38,10 +42,13 @@ public class OWL2DLP {
 	private String outputFile = "";
 
 	@Parameter(names = { "-p", "--prefix" }, description = "disable prefix")
-	private Boolean prefixDisable = false;
+	private Boolean prefixEnable = true;
+
+	@Parameter(names = { "-d", "--debug" }, description = "enable debug mode")
+	private Boolean debugMode = false;
 
 	public static void main(String args[]) throws OWLOntologyCreationException,
-			IOException, OWLParserException {
+			IOException, OWL2ParserException {
 
 		DlgpWriter writer;
 		OWL2DLP options = new OWL2DLP();
@@ -57,11 +64,16 @@ public class OWL2DLP {
 			System.exit(0);
 		}
 
-		OWLParser parser;
+		if (options.debugMode) {
+			((ch.qos.logback.classic.Logger) LoggerFactory
+					.getLogger(OWL2Parser.class)).setLevel(Level.DEBUG);
+		}
+
+		OWL2Parser parser;
 		if (options.inputFile.isEmpty()) {
-			parser = new OWLParser(System.in);
+			parser = new OWL2Parser(System.in);
 		} else {
-			parser = new OWLParser(new File(options.inputFile));
+			parser = new OWL2Parser(new File(options.inputFile));
 		}
 
 		if (options.outputFile.isEmpty()) {
@@ -70,7 +82,8 @@ public class OWL2DLP {
 			writer = new DlgpWriter(new File(options.outputFile));
 		}
 
-		parser.prefixEnable(!options.prefixDisable);
+		parser.prefixEnable(options.prefixEnable);
+		writer.setTopPredicate(new Predicate("top", 1));
 
 		// MAIN
 		for (Object o : parser) {

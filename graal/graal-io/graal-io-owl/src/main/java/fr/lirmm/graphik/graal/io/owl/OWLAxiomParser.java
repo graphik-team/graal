@@ -8,17 +8,33 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
+import org.apache.commons.lang3.tuple.Pair;
+import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAnnotationPropertyDomainAxiom;
 import org.semanticweb.owlapi.model.OWLAnnotationPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLAsymmetricObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLAxiomVisitorEx;
+import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLDataAllValuesFrom;
+import org.semanticweb.owlapi.model.OWLDataExactCardinality;
+import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLDataHasValue;
+import org.semanticweb.owlapi.model.OWLDataIntersectionOf;
+import org.semanticweb.owlapi.model.OWLDataMaxCardinality;
+import org.semanticweb.owlapi.model.OWLDataMinCardinality;
+import org.semanticweb.owlapi.model.OWLDataOneOf;
 import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLDataPropertyDomainAxiom;
+import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
 import org.semanticweb.owlapi.model.OWLDataPropertyRangeAxiom;
+import org.semanticweb.owlapi.model.OWLDataRange;
+import org.semanticweb.owlapi.model.OWLDataSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLDatatypeDefinitionAxiom;
 import org.semanticweb.owlapi.model.OWLDeclarationAxiom;
 import org.semanticweb.owlapi.model.OWLDifferentIndividualsAxiom;
@@ -36,13 +52,23 @@ import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLInverseFunctionalObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLInverseObjectPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLIrreflexiveObjectPropertyAxiom;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLNegativeDataPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLNegativeObjectPropertyAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLObjectAllValuesFrom;
+import org.semanticweb.owlapi.model.OWLObjectComplementOf;
+import org.semanticweb.owlapi.model.OWLObjectExactCardinality;
+import org.semanticweb.owlapi.model.OWLObjectHasSelf;
+import org.semanticweb.owlapi.model.OWLObjectHasValue;
+import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
+import org.semanticweb.owlapi.model.OWLObjectMaxCardinality;
+import org.semanticweb.owlapi.model.OWLObjectMinCardinality;
+import org.semanticweb.owlapi.model.OWLObjectOneOf;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyDomainAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLObjectPropertyRangeAxiom;
+import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
+import org.semanticweb.owlapi.model.OWLObjectUnionOf;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
 import org.semanticweb.owlapi.model.OWLReflexiveObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLSameIndividualAxiom;
@@ -58,41 +84,67 @@ import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
+import uk.ac.manchester.cs.owl.owlapi.OWLDataMaxCardinalityImpl;
+import uk.ac.manchester.cs.owl.owlapi.OWLDataMinCardinalityImpl;
+import uk.ac.manchester.cs.owl.owlapi.OWLDataSomeValuesFromImpl;
+import uk.ac.manchester.cs.owl.owlapi.OWLObjectIntersectionOfImpl;
+import uk.ac.manchester.cs.owl.owlapi.OWLObjectMaxCardinalityImpl;
+import uk.ac.manchester.cs.owl.owlapi.OWLObjectMinCardinalityImpl;
+import uk.ac.manchester.cs.owl.owlapi.OWLObjectOneOfImpl;
+import uk.ac.manchester.cs.owl.owlapi.OWLObjectSomeValuesFromImpl;
+import uk.ac.manchester.cs.owl.owlapi.OWLSubClassOfAxiomImpl;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
+import fr.lirmm.graphik.graal.core.DefaultRule;
+import fr.lirmm.graphik.graal.core.NegativeConstraint;
 import fr.lirmm.graphik.graal.core.Predicate;
+import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.SymbolGenerator;
+import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
-import fr.lirmm.graphik.graal.io.owl.logic.Literal;
-import fr.lirmm.graphik.graal.io.owl.logic.LogicalFormula;
-import fr.lirmm.graphik.graal.io.owl.logic.LogicalFormulaTranslator;
+import fr.lirmm.graphik.graal.core.term.Variable;
+import fr.lirmm.graphik.util.MathUtils;
+import fr.lirmm.graphik.util.collections.CollectionsUtils;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-class OWLAxiomParser implements
-		OWLAxiomVisitorEx<Iterable<? extends Object>> {
+class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(OWLAxiomParser.class);
 
-	private static SpecificFreeVarGen freeVarGen = new SpecificFreeVarGen();
+	private SpecificFreeVarGen freeVarGen = new SpecificFreeVarGen();
+	private static final OWLDataFactory DF = new OWLDataFactoryImpl();
+	private static final OWLClassExpression NOTHING = DF.getOWLNothing();
 
-	private Term glueVarX;
-	private Term glueVarY;
-	private Term glueVarZ;
+	private Variable glueVarX;
+	private Variable glueVarY;
+	private Variable glueVarZ;
 
 	private ShortFormProvider prefixManager;
 	private Predicate equalityPredicate;
-	private OWLClassExpressionVisitorImpl classVisitorX;
-	private OWLClassExpressionVisitorImpl classVisitorY;
+	private OWLEquivalentClassExpressionVisitorImpl classVisitorX;
+	private OWLEquivalentClassExpressionVisitorImpl classVisitorY;
+	private OWLEquivalentClassExpressionVisitorImpl classVisitorZ;
+
+	private OWLEquivalentDataRangeVisitorImpl dataRangeVisitorX;
+	private OWLEquivalentDataRangeVisitorImpl dataRangeVisitorY;
+	private OWLEquivalentDataRangeVisitorImpl dataRangeVisitorZ;
+
 	private OWLPropertyExpressionVisitorImpl propertyVisiotrXX;
 	private OWLPropertyExpressionVisitorImpl propertyVisitorXY;
 	private OWLPropertyExpressionVisitorImpl propertyVisitorYX;
 	private OWLPropertyExpressionVisitorImpl propertyVisitorXZ;
 	private OWLPropertyExpressionVisitorImpl propertyVisitorYZ;
+
+	private Collection<OWLAnnotation> emptyAnno = Collections
+			.<OWLAnnotation> emptyList();
 
 	public OWLAxiomParser(ShortFormProvider prefixManager) {
 		this.prefixManager = prefixManager;
@@ -101,20 +153,27 @@ class OWLAxiomParser implements
 		this.glueVarZ = freeVarGen.getFreeVar();
 
 		this.equalityPredicate = new Predicate("=", 2);
-		this.classVisitorX = new OWLClassExpressionVisitorImpl(
+		this.classVisitorX = new OWLEquivalentClassExpressionVisitorImpl(
 				this.prefixManager, freeVarGen, glueVarX);
-		this.classVisitorY = new OWLClassExpressionVisitorImpl(
+		this.classVisitorY = new OWLEquivalentClassExpressionVisitorImpl(
 				this.prefixManager, freeVarGen, glueVarY);
-		this.propertyVisiotrXX = new OWLPropertyExpressionVisitorImpl(
-				this.prefixManager, glueVarX, glueVarX);
-		this.propertyVisitorXY = new OWLPropertyExpressionVisitorImpl(
-				this.prefixManager, glueVarX, glueVarY);
-		this.propertyVisitorYX = new OWLPropertyExpressionVisitorImpl(
-				this.prefixManager, glueVarY, glueVarX);
-		this.propertyVisitorXZ = new OWLPropertyExpressionVisitorImpl(
-				this.prefixManager, glueVarX, glueVarZ);
-		this.propertyVisitorYZ = new OWLPropertyExpressionVisitorImpl(
-				this.prefixManager, glueVarY, glueVarZ);
+		this.classVisitorZ = new OWLEquivalentClassExpressionVisitorImpl(
+				this.prefixManager, freeVarGen, glueVarZ);
+
+		this.dataRangeVisitorX = new OWLEquivalentDataRangeVisitorImpl(glueVarX);
+		this.dataRangeVisitorY = new OWLEquivalentDataRangeVisitorImpl(glueVarY);
+		this.dataRangeVisitorZ = new OWLEquivalentDataRangeVisitorImpl(glueVarZ);
+
+		this.propertyVisiotrXX = new OWLPropertyExpressionVisitorImpl(glueVarX,
+				glueVarX);
+		this.propertyVisitorXY = new OWLPropertyExpressionVisitorImpl(glueVarX,
+				glueVarY);
+		this.propertyVisitorYX = new OWLPropertyExpressionVisitorImpl(glueVarY,
+				glueVarX);
+		this.propertyVisitorXZ = new OWLPropertyExpressionVisitorImpl(glueVarX,
+				glueVarZ);
+		this.propertyVisitorYZ = new OWLPropertyExpressionVisitorImpl(glueVarY,
+				glueVarZ);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -135,21 +194,115 @@ class OWLAxiomParser implements
 
 	@Override
 	public Iterable<? extends Object> visit(OWLSubClassOfAxiom arg) {
-		freeVarGen.setIndex(1);
-		LogicalFormula superClass = arg.getSuperClass().accept(classVisitorX);
-		LogicalFormula subClass = arg.getSubClass().accept(classVisitorX);
+		Collection<Object> objects = new LinkedList<Object>();
 
-		subClass.not();
-		subClass.or(superClass);
+		freeVarGen.setIndex(3);
+		OWLClassExpression superClass = OWLAPIUtils
+				.classExpressionDisjunctiveNormalForm(arg.getSuperClass());
+		OWLClassExpression subClass = OWLAPIUtils
+				.classExpressionDisjunctiveNormalForm(arg.getSubClass());
 
-		return LogicalFormulaTranslator.getInstance().translate(subClass);
+		if (OWLAPIUtils.isIntersection(superClass)) {
+			for (OWLClassExpression c : OWLAPIUtils
+					.getObjectIntersectionOperands(superClass)) {
+				CollectionsUtils.addAll(objects, new OWLSubClassOfAxiomImpl(
+						subClass, c, emptyAnno).accept(this));
+			}
+		} else if (superClass instanceof OWLObjectComplementOf) {
+			TreeSet<OWLClassExpression> operands = new TreeSet<>();
+			operands.add(subClass);
+			operands.add(((OWLObjectComplementOf) superClass).getOperand());
+			subClass = new OWLObjectIntersectionOfImpl(operands);
+			CollectionsUtils.addAll(objects, new OWLSubClassOfAxiomImpl(
+					subClass, NOTHING, emptyAnno).accept(this));
+		} else if (superClass instanceof OWLObjectAllValuesFrom) {
+			OWLObjectAllValuesFrom allValuesFrom = (OWLObjectAllValuesFrom) superClass;
+			subClass = new OWLObjectSomeValuesFromImpl(allValuesFrom
+					.getProperty().getInverseProperty(), subClass);
+			superClass = allValuesFrom.getFiller();
+			CollectionsUtils.addAll(objects, new OWLSubClassOfAxiomImpl(
+					subClass, superClass, emptyAnno).accept(this));
+		} else if (superClass instanceof OWLObjectMaxCardinality
+				&& ((OWLObjectMaxCardinality) superClass).getCardinality() == 0) {
+			TreeSet<OWLClassExpression> operands = new TreeSet<>();
+			operands.add(subClass);
+			OWLObjectMaxCardinality maxCard = (OWLObjectMaxCardinality) superClass;
+			operands.add(new OWLObjectSomeValuesFromImpl(maxCard.getProperty(),
+					maxCard.getFiller()));
+			subClass = new OWLObjectIntersectionOfImpl(operands);
+			CollectionsUtils.addAll(objects, new OWLSubClassOfAxiomImpl(
+					subClass, NOTHING, emptyAnno).accept(this));
+		} else if (superClass instanceof OWLDataMaxCardinality
+				&& ((OWLDataMaxCardinality) superClass).getCardinality() == 0) {
+			TreeSet<OWLClassExpression> operands = new TreeSet<>();
+			operands.add(subClass);
+			OWLDataMaxCardinality maxCard = (OWLDataMaxCardinality) superClass;
+			operands.add(new OWLDataSomeValuesFromImpl(maxCard.getProperty(),
+					maxCard.getFiller()));
+			subClass = new OWLObjectIntersectionOfImpl(operands);
+			CollectionsUtils.addAll(objects, new OWLSubClassOfAxiomImpl(
+					subClass, NOTHING, emptyAnno).accept(this));
+		} else if (superClass instanceof OWLObjectExactCardinality
+				&& ((OWLObjectExactCardinality) superClass).getCardinality() <= 1) {
+			OWLObjectExactCardinality exactCard = (OWLObjectExactCardinality) superClass;
+			OWLObjectMaxCardinality maxCard = new OWLObjectMaxCardinalityImpl(
+					exactCard.getProperty(), exactCard.getCardinality(),
+					exactCard.getFiller());
+			OWLObjectMinCardinality minCard = new OWLObjectMinCardinalityImpl(
+					exactCard.getProperty(), exactCard.getCardinality(),
+					exactCard.getFiller());
+
+			CollectionsUtils.addAll(objects, new OWLSubClassOfAxiomImpl(
+					subClass, maxCard, emptyAnno).accept(this));
+			CollectionsUtils.addAll(objects, new OWLSubClassOfAxiomImpl(
+					subClass, minCard, emptyAnno).accept(this));
+		} else if (superClass instanceof OWLDataExactCardinality
+				&& ((OWLDataExactCardinality) superClass).getCardinality() <= 1) {
+			OWLDataExactCardinality exactCard = (OWLDataExactCardinality) superClass;
+			OWLDataMaxCardinality maxCard = new OWLDataMaxCardinalityImpl(
+					exactCard.getProperty(), exactCard.getCardinality(),
+					exactCard.getFiller());
+			OWLDataMinCardinality minCard = new OWLDataMinCardinalityImpl(
+					exactCard.getProperty(), exactCard.getCardinality(),
+					exactCard.getFiller());
+
+			CollectionsUtils.addAll(objects, new OWLSubClassOfAxiomImpl(
+					subClass, maxCard, emptyAnno).accept(this));
+			CollectionsUtils.addAll(objects, new OWLSubClassOfAxiomImpl(
+					subClass, minCard, emptyAnno).accept(this));
+		} else if (isSuperClass(superClass)) {
+			if (subClass instanceof OWLObjectUnionOf) {
+				for (OWLClassExpression c : OWLAPIUtils
+						.getObjectUnionOperands(subClass)) {
+					CollectionsUtils
+							.addAll(objects, new OWLSubClassOfAxiomImpl(c,
+									superClass, emptyAnno).accept(this));
+				}
+			} else if (isEquivClass(subClass)) {
+				CollectionsUtils.addAll(objects, mainProcess(arg));
+			} else {
+				if (LOGGER.isWarnEnabled()) {
+					LOGGER.warn("[ "
+							+ subClass
+							+ "] is not supported as subClass. This axioms was skipped : "
+							+ arg);
+				}
+			}
+		} else {
+			if (LOGGER.isWarnEnabled()) {
+				LOGGER.warn("[ "
+						+ superClass
+						+ "] is not supported as superClass. This axioms was skipped : "
+						+ arg);
+			}
+		}
+
+		return objects;
 	}
 
 	@Override
 	public Iterable<? extends Object> visit(OWLEquivalentClassesAxiom arg) {
-		freeVarGen.setIndex(1);
-		Collection<Object> c = this.<Object> createCollection();
-		LogicalFormula f1, f2, f1Save;
+		Collection<Object> objects = new LinkedList<Object>();
 		List<OWLClassExpression> classes = new LinkedList<OWLClassExpression>(
 				arg.getClassExpressionsAsList());
 
@@ -161,63 +314,43 @@ class OWLAxiomParser implements
 
 			it2 = classes.iterator();
 			while (it2.hasNext()) {
-				f1 = classExpr.accept(classVisitorX);
-				f1Save = new LogicalFormula(f1);
 				OWLClassExpression next = it2.next();
-				f2 = next.accept(classVisitorX);
-
-				// 1 -> 2
-				f1.not();
-				f1.or(f2);
-
-				for (Object r : LogicalFormulaTranslator.getInstance()
-						.translate(f1)) {
-					c.add(r);
-				}
-
-				// 2 -> 1
-				f2.not();
-				f2.or(f1Save);
-
-				for (Object r : LogicalFormulaTranslator.getInstance()
-						.translate(f2)) {
-					c.add(r);
-				}
-
+				CollectionsUtils.addAll(objects, new OWLSubClassOfAxiomImpl(
+						classExpr, next, emptyAnno).accept(this));
+				CollectionsUtils.addAll(objects, new OWLSubClassOfAxiomImpl(
+						next, classExpr, emptyAnno).accept(this));
 			}
 		}
-		return c;
+		return objects;
 	}
 
 	@Override
 	public Iterable<? extends Object> visit(OWLDisjointClassesAxiom arg) {
-		freeVarGen.setIndex(1);
-		LogicalFormula c, tmp;
+		Collection<Object> objects = new LinkedList<Object>();
 
-		List<LogicalFormula> list = new LinkedList<LogicalFormula>();
-		for (OWLClassExpression e : arg.getClassExpressions()) {
-			tmp = e.accept(classVisitorX);
-			tmp.not();
-			list.add(tmp);
-		}
+		List<OWLClassExpression> classes = new LinkedList<OWLClassExpression>(
+				arg.getClassExpressionsAsList());
 
-		c = new LogicalFormula();
-		Iterator<LogicalFormula> it1, it2;
-		it1 = list.iterator();
-		LogicalFormula next;
+		Iterator<OWLClassExpression> it1, it2;
+		it1 = classes.iterator();
 		while (it1.hasNext()) {
-			next = it1.next();
+			OWLClassExpression classExpr = it1.next();
 			it1.remove();
 
-			it2 = list.iterator();
+			it2 = classes.iterator();
 			while (it2.hasNext()) {
-				tmp = new LogicalFormula(next);
-				tmp.or(it2.next());
-				c.and(tmp);
+				OWLClassExpression next = it2.next();
+				Set<OWLClassExpression> operands = new TreeSet<>();
+				operands.add(classExpr);
+				operands.add(next);
+				OWLClassExpression newExpr = new OWLObjectIntersectionOfImpl(
+						operands);
+				CollectionsUtils.addAll(objects, new OWLSubClassOfAxiomImpl(
+						newExpr, NOTHING, emptyAnno).accept(this));
 			}
 		}
 
-		return LogicalFormulaTranslator.getInstance().translate(c);
+		return objects;
 	}
 
 	@Override
@@ -234,75 +367,84 @@ class OWLAxiomParser implements
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
+	public Iterable<? extends Object> visit(OWLSubObjectPropertyOfAxiom arg) {
+		InMemoryAtomSet a1, a2;
+		a1 = arg.getSubProperty().accept(propertyVisitorXY);
+		a2 = arg.getSuperProperty().accept(propertyVisitorXY);
+
+		return Collections.singleton(new DefaultRule(a1, a2));
+	}
+
+	@Override
 	public Iterable<? extends Object> visit(OWLObjectPropertyDomainAxiom arg) {
-		return this.propertyDomainAxiom(arg.getProperty(), arg.getDomain());
+		OWLClassExpression subClass = new OWLObjectSomeValuesFromImpl(
+				arg.getProperty(), DF.getOWLThing());
+		OWLClassExpression superClass = arg.getDomain();
+		return new OWLSubClassOfAxiomImpl(subClass, superClass, emptyAnno)
+				.accept(this);
 	}
 
 	@Override
 	public Iterable<? extends Object> visit(OWLObjectPropertyRangeAxiom arg) {
-		freeVarGen.setIndex(2);
-		LogicalFormula property = arg.getProperty().accept(propertyVisitorXY);
-		LogicalFormula range = arg.getRange().accept(classVisitorY);
-
-		property.not();
-		property.or(range);
-
-		return LogicalFormulaTranslator.getInstance().translate(property);
+		OWLClassExpression subClass = new OWLObjectSomeValuesFromImpl(arg
+				.getProperty().getInverseProperty(), DF.getOWLThing());
+		OWLClassExpression superClass = arg.getRange();
+		return new OWLSubClassOfAxiomImpl(subClass, superClass, emptyAnno)
+				.accept(this);
 	}
 
 	@Override
 	public Iterable<? extends Object> visit(OWLAsymmetricObjectPropertyAxiom arg) {
-		LogicalFormula f = arg.getProperty().accept(propertyVisitorXY);
-		f.and(arg.getProperty().accept(propertyVisitorYX));
-
-		f.not();
-		return LogicalFormulaTranslator.getInstance().translate(f);
+		InMemoryAtomSet atomset = arg.getProperty().accept(propertyVisitorXY);
+		atomset.addAll(arg.getProperty().accept(propertyVisitorYX));
+		return Collections.singleton(new NegativeConstraint(atomset));
 	}
 
 	@Override
 	public Iterable<? extends Object> visit(OWLReflexiveObjectPropertyAxiom arg) {
-		if (LOGGER.isWarnEnabled()) {
-			LOGGER.warn("OWLReflexiveObjectPropertyAxiom is not implemented. This axioms was skipped : "
-					+ arg);
-		}
-		return Collections.emptyList();
+
+		InMemoryAtomSet head = arg.getProperty().accept(propertyVisiotrXX);
+		InMemoryAtomSet body = GraalUtils.createAtomSet(new DefaultAtom(
+				Predicate.TOP, glueVarX));
+
+		return Collections.singleton(new DefaultRule(body, head));
+	}
+
+	@Override
+	public Iterable<? extends Object> visit(
+			OWLIrreflexiveObjectPropertyAxiom arg) {
+		InMemoryAtomSet body = arg.getProperty().accept(propertyVisiotrXX);
+
+		return Collections.singleton(new NegativeConstraint(body));
 	}
 
 	@Override
 	public Iterable<? extends Object> visit(
 			OWLEquivalentObjectPropertiesAxiom arg) {
-		List<OWLPropertyExpression> properties = new LinkedList<OWLPropertyExpression>(
-				arg.getProperties());
-		return this.equivalentPropertiesAxiom(properties);
+		return this.equivalentPropertiesAxiom(arg.getProperties());
 	}
 
 	@Override
 	public Iterable<? extends Object> visit(OWLTransitiveObjectPropertyAxiom arg) {
-		LogicalFormula f = arg.getProperty().accept(propertyVisitorXY);
-		f.and(arg.getProperty().accept(propertyVisitorYZ));
-		f.not();
-		f.or(arg.getProperty().accept(propertyVisitorXZ));
+		InMemoryAtomSet body = arg.getProperty().accept(propertyVisitorXY);
+		body.addAll(arg.getProperty().accept(propertyVisitorYZ));
+		InMemoryAtomSet head = arg.getProperty().accept(propertyVisitorXZ);
 
-		return LogicalFormulaTranslator.getInstance().translate(f);
+		return Collections.singleton(new DefaultRule(body, head));
 	}
 
 	@Override
-	public Iterable<? extends Object> visit(
-			OWLDisjointObjectPropertiesAxiom arg) {
-		List<OWLPropertyExpression> properties = new LinkedList<OWLPropertyExpression>(
-				arg.getProperties());
-		return this.disjointPropertiesAxiom(properties);
+	public Iterable<? extends Object> visit(OWLDisjointObjectPropertiesAxiom arg) {
+		return this.disjointPropertiesAxiom(arg.getProperties());
 	}
 
 	@Override
 	public Iterable<? extends Object> visit(OWLSymmetricObjectPropertyAxiom arg) {
-		LogicalFormula f = arg.getProperty().accept(propertyVisitorXY);
-		LogicalFormula tmp = arg.getProperty().accept(propertyVisitorYX);
 
-		f.not();
-		f.or(tmp);
+		InMemoryAtomSet body = arg.getProperty().accept(propertyVisitorXY);
+		InMemoryAtomSet head = arg.getProperty().accept(propertyVisitorYX);
 
-		return LogicalFormulaTranslator.getInstance().translate(f);
+		return Collections.singleton(new DefaultRule(body, head));
 	}
 
 	@Override
@@ -311,64 +453,28 @@ class OWLAxiomParser implements
 	}
 
 	@Override
-	public Iterable<? extends Object> visit(OWLSubObjectPropertyOfAxiom arg) {
-		LogicalFormula subProperty = arg.getSubProperty().accept(
-				propertyVisitorXY);
-		LogicalFormula superProperty = arg.getSuperProperty().accept(
-				propertyVisitorXY);
-
-		subProperty.not();
-		subProperty.or(superProperty);
-
-		return LogicalFormulaTranslator.getInstance()
-				.translate(subProperty);
-	}
-
-	@Override
-	public Iterable<? extends Object> visit(
-			OWLIrreflexiveObjectPropertyAxiom arg) {
-		LogicalFormula f = arg.getProperty().accept(propertyVisiotrXX);
-		f.not();
-
-		return LogicalFormulaTranslator.getInstance().translate(f);
-	}
-
-	@Override
 	public Iterable<? extends Object> visit(
 			OWLInverseFunctionalObjectPropertyAxiom arg) {
-		LogicalFormula f = arg.getProperty().accept(propertyVisitorXZ);
-		f.and(arg.getProperty().accept(propertyVisitorYZ));
-		f.not();
+		InMemoryAtomSet body = arg.getProperty().accept(propertyVisitorXZ);
+		body.addAll(arg.getProperty().accept(propertyVisitorYZ));
 
-		f.or(new Literal(
-				new DefaultAtom(equalityPredicate, glueVarX, glueVarY), true));
+		InMemoryAtomSet head = GraalUtils.createAtomSet(new DefaultAtom(
+				equalityPredicate, glueVarX, glueVarY));
 
-		return LogicalFormulaTranslator.getInstance().translate(f);
+		return Collections.<Rule> singleton(new DefaultRule(body, head));
 	}
 
 	@Override
 	public Iterable<? extends Object> visit(OWLInverseObjectPropertiesAxiom arg) {
 		Collection<Object> rules = new LinkedList<Object>();
-		LogicalFormula p1, p2, p1Save;
+		InMemoryAtomSet a1, a2;
 		Iterator<OWLObjectPropertyExpression> it = arg.getProperties()
 				.iterator();
-		p1 = it.next().accept(propertyVisitorXY);
-		p1Save = new LogicalFormula(p1);
-		p2 = it.next().accept(propertyVisitorYX);
+		a1 = it.next().accept(propertyVisitorXY);
+		a2 = it.next().accept(propertyVisitorYX);
 
-		p1.not();
-		p1.or(p2);
-
-		for (Object r : LogicalFormulaTranslator.getInstance().translate(p1)) {
-			rules.add(r);
-		}
-
-		p2.not();
-		p2.or(p1Save);
-
-		for (Object r : LogicalFormulaTranslator.getInstance().translate(p2)) {
-			rules.add(r);
-		}
+		rules.add(new DefaultRule(a1, a2));
+		rules.add(new DefaultRule(a2, a1));
 
 		return rules;
 	}
@@ -379,30 +485,37 @@ class OWLAxiomParser implements
 
 	@Override
 	public Iterable<? extends Object> visit(OWLSubDataPropertyOfAxiom arg) {
-		LogicalFormula subProperty = arg.getSubProperty().accept(
-				propertyVisitorXY);
-		LogicalFormula superProperty = arg.getSuperProperty().accept(
-				propertyVisitorXY);
+		InMemoryAtomSet a1, a2;
+		a1 = arg.getSubProperty().accept(propertyVisitorXY);
+		a2 = arg.getSuperProperty().accept(propertyVisitorXY);
 
-		subProperty.not();
-		subProperty.or(superProperty);
-
-		return LogicalFormulaTranslator.getInstance()
-				.translate(subProperty);
+		return Collections.singleton(new DefaultRule(a1, a2));
 	}
-	
+
 	@Override
 	public Iterable<? extends Object> visit(OWLDataPropertyDomainAxiom arg) {
-		return this.propertyDomainAxiom(arg.getProperty(), arg.getDomain());
+		OWLClassExpression subClass = new OWLDataSomeValuesFromImpl(
+				arg.getProperty(), DF.getTopDatatype());
+		OWLClassExpression superClass = arg.getDomain();
+		return new OWLSubClassOfAxiomImpl(subClass, superClass, emptyAnno)
+				.accept(this);
 	}
 
 	@Override
 	public Iterable<? extends Object> visit(OWLDataPropertyRangeAxiom arg) {
-		if (LOGGER.isWarnEnabled()) {
-			LOGGER.warn("OWLDataPropertyRangeAxiom is not supported. This axioms was skipped : "
-					+ arg);
+		InMemoryAtomSet body = arg.getProperty().accept(propertyVisitorYX);
+		InMemoryAtomSet head = null;
+		try {
+			head = arg.getRange().accept(dataRangeVisitorX);
+		} catch (UnsupportedConstructor e) {
+			if (LOGGER.isWarnEnabled()) {
+				LOGGER.warn("[ " + e.getConstructor()
+						+ "] is not supported here. This axioms was skipped : "
+						+ arg);
+			}
+			return Collections.emptyList();
 		}
-		return Collections.emptyList();
+		return Collections.singleton(new DefaultRule(body, head));
 	}
 
 	@Override
@@ -412,37 +525,36 @@ class OWLAxiomParser implements
 
 	@Override
 	public Iterable<? extends Object> visit(OWLEquivalentDataPropertiesAxiom arg) {
-		List<OWLPropertyExpression> properties = new LinkedList<OWLPropertyExpression>(
-				arg.getProperties());
-		return this.equivalentPropertiesAxiom(properties);
+		return this.equivalentPropertiesAxiom(arg.getProperties());
 	}
 
 	@Override
 	public Iterable<? extends Object> visit(OWLDisjointDataPropertiesAxiom arg) {
-		List<OWLPropertyExpression> properties = new LinkedList<OWLPropertyExpression>(
-				arg.getProperties());
-		return this.disjointPropertiesAxiom(properties);
+		return this.disjointPropertiesAxiom(arg.getProperties());
 	}
-	
+
 	// /////////////////////////////////////////////////////////////////////////
 	// PropertyChain
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
 	public Iterable<? extends Object> visit(OWLSubPropertyChainOfAxiom arg) {
-		LogicalFormula f = new LogicalFormula();
+		freeVarGen.setIndex(0);
+		InMemoryAtomSet body = GraalUtils.createAtomSet();
 		Term varX, varY, firstVarInChain;
 		firstVarInChain = varX = freeVarGen.getFreeVar();
-		for(OWLPropertyExpression pe : arg.getPropertyChain()) {
+		for (OWLPropertyExpression pe : arg.getPropertyChain()) {
 			varY = freeVarGen.getFreeVar();
-			f.and(pe.accept(new OWLPropertyExpressionVisitorImpl(this.prefixManager, varX, varY)));
+			body.addAll(pe.accept(new OWLPropertyExpressionVisitorImpl(varX,
+					varY)));
 			varX = varY;
 		}
-		
-		f.not();
-		f.or(arg.getSuperProperty().accept(new OWLPropertyExpressionVisitorImpl(this.prefixManager, firstVarInChain, varX)));
-		
-		return LogicalFormulaTranslator.getInstance().translate(f);
+
+		InMemoryAtomSet head = arg.getSuperProperty().accept(
+				new OWLPropertyExpressionVisitorImpl(firstVarInChain, varX));
+
+		return Collections.singleton(new DefaultRule(body, head));
+
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -452,7 +564,8 @@ class OWLAxiomParser implements
 	@Override
 	public Iterable<? extends Object> visit(OWLDatatypeDefinitionAxiom arg) {
 		if (LOGGER.isInfoEnabled()) {
-			LOGGER.info("Visit OWLDatatypeDefinitionAxiom is not implemented: " + arg);
+			LOGGER.info("Visit OWLDatatypeDefinitionAxiom is not implemented: "
+					+ arg);
 		}
 		return Collections.emptyList();
 	}
@@ -463,22 +576,45 @@ class OWLAxiomParser implements
 
 	@Override
 	public Iterable<? extends Object> visit(OWLHasKeyAxiom arg) {
-		// =(Y, Z) :- C(Y), C(Z), p1(Y, X1), p1(Z, X1), ..., pn(Y, Xn), pn(Z, Xn).
-		
+		// =(Y, Z) :- C(Y), C(Z), p1(Y, X1), p1(Z, X1), ..., pn(Y, Xn), pn(Z,
+		// Xn).
+		Collection<Rule> rules = GraalUtils.<Rule> createCollection();
+
 		freeVarGen.setIndex(2);
-		LogicalFormula f = arg.getClassExpression().accept(classVisitorX);
-		f.and(arg.getClassExpression().accept(classVisitorY));
-		
-		for(OWLPropertyExpression pe : arg.getPropertyExpressions()) {
-			Term var = freeVarGen.getFreeVar();
-			f.and(pe.accept(new OWLPropertyExpressionVisitorImpl(this.prefixManager, glueVarX, var)));
-			f.and(pe.accept(new OWLPropertyExpressionVisitorImpl(this.prefixManager, glueVarY, var)));
+		InMemoryAtomSet head = GraalUtils.createAtomSet(GraalUtils.createAtom(
+				equalityPredicate, glueVarX, glueVarY));
+
+		OWLClassExpression classExpression = OWLAPIUtils.classExpressionDisjunctiveNormalForm(arg.getClassExpression());
+		for (Pair<OWLClassExpression, OWLClassExpression> pair : MathUtils
+				.selfCartesianProduct(OWLAPIUtils
+						.getObjectUnionOperands(classExpression))) {
+			InMemoryAtomSet body = pair.getLeft().accept(classVisitorX);
+			body.addAll(pair.getRight().accept(classVisitorY));
+
+			for (OWLObjectPropertyExpression pe : arg
+					.getObjectPropertyExpressions()) {
+				Term var = freeVarGen.getFreeVar();
+
+				body.addAll(pe.accept(new OWLPropertyExpressionVisitorImpl(
+						glueVarX, var)));
+				body.addAll(pe.accept(new OWLPropertyExpressionVisitorImpl(
+						glueVarY, var)));
+			}
+
+			for (OWLDataPropertyExpression pe : arg
+					.getDataPropertyExpressions()) {
+				Term var = freeVarGen.getFreeVar();
+
+				body.add(GraalUtils.createAtom(GraalUtils.createPredicate(pe),
+						glueVarX, var));
+				body.add(GraalUtils.createAtom(GraalUtils.createPredicate(pe),
+						glueVarY, var));
+			}
+
+			rules.add(new DefaultRule(body, head));
 		}
-		
-		f.not();
-		f.or(new LogicalFormula(new Literal(new DefaultAtom(equalityPredicate, glueVarX, glueVarY), true)));
-		
-		return LogicalFormulaTranslator.getInstance().translate(f);
+
+		return rules;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -487,58 +623,67 @@ class OWLAxiomParser implements
 
 	@Override
 	public Iterable<? extends Object> visit(OWLClassAssertionAxiom arg) {
-		freeVarGen.setIndex(0);
-		Term i = createConstant(arg.getIndividual().asOWLNamedIndividual());
-		LogicalFormula f = arg.getClassExpression().accept(
-				new OWLClassExpressionVisitorImpl(this.prefixManager,
-						freeVarGen, i));
-		return LogicalFormulaTranslator.getInstance().translate(f);
+		Collection<Object> objects = GraalUtils.createCollection();
+		OWLClassExpression sub = new OWLObjectOneOfImpl(
+				Collections.singleton(arg.getIndividual()));
+		OWLClassExpression sup = arg.getClassExpression();
+		CollectionsUtils.addAll(objects, new OWLSubClassOfAxiomImpl(sub, sup,
+				emptyAnno).accept(this));
+		return objects;
 	}
 
 	@Override
 	public Iterable<? extends Object> visit(OWLObjectPropertyAssertionAxiom arg) {
+
 		freeVarGen.setIndex(0);
-		Term a = createConstant(arg.getSubject().asOWLNamedIndividual());
-		Term b = createConstant(arg.getObject().asOWLNamedIndividual());
-		LogicalFormula f = arg.getProperty().accept(
-				new OWLPropertyExpressionVisitorImpl(this.prefixManager, a, b));
-		return Collections.singleton(f.iterator().next().iterator().next());
+		Term a = GraalUtils.createConstant(arg.getSubject()
+				.asOWLNamedIndividual());
+		Term b = GraalUtils.createConstant(arg.getObject()
+				.asOWLNamedIndividual());
+		AtomSet atomset = arg.getProperty().accept(
+				new OWLPropertyExpressionVisitorImpl(a, b));
+		return Collections.singleton(atomset);
 	}
 
 	@Override
 	public Iterable<? extends Object> visit(
 			OWLNegativeObjectPropertyAssertionAxiom arg) {
-		if (LOGGER.isWarnEnabled()) {
-			LOGGER.warn("OWLNegativeObjectPropertyAssertionAxiom is not supported. This axioms was skipped : "
-					+ arg);
-		}
-		return Collections.emptyList();
+		freeVarGen.setIndex(0);
+		Term a = GraalUtils.createConstant(arg.getSubject()
+				.asOWLNamedIndividual());
+		Term b = GraalUtils.createConstant(arg.getObject()
+				.asOWLNamedIndividual());
+		AtomSet atomset = arg.getProperty().accept(
+				new OWLPropertyExpressionVisitorImpl(a, b));
+		return Collections.singleton(new NegativeConstraint(atomset));
 	}
 
 	@Override
 	public Iterable<? extends Object> visit(OWLDataPropertyAssertionAxiom arg) {
 		freeVarGen.setIndex(0);
-		Term a = createConstant(arg.getSubject().asOWLNamedIndividual());
-		Term b = DefaultTermFactory.instance().createLiteral(
-				arg.getObject().getLiteral());
-		LogicalFormula f = arg.getProperty().accept(
-				new OWLPropertyExpressionVisitorImpl(this.prefixManager, a, b));
-		return Collections.singleton(f.iterator().next().iterator().next());
+		Term a = GraalUtils.createConstant(arg.getSubject()
+				.asOWLNamedIndividual());
+		Term b = GraalUtils.createLiteral(arg.getObject());
+		AtomSet atomset = arg.getProperty().accept(
+				new OWLPropertyExpressionVisitorImpl(a, b));
+		return Collections.singleton(atomset);
 	}
 
 	@Override
 	public Iterable<? extends Object> visit(
 			OWLNegativeDataPropertyAssertionAxiom arg) {
-		if (LOGGER.isWarnEnabled()) {
-			LOGGER.warn("OWLNegativeDataPropertyAssertionAxiom is not supported. This axioms was skipped : "
-					+ arg);
-		}
-		return Collections.emptyList();
+		freeVarGen.setIndex(0);
+		Term a = GraalUtils.createConstant(arg.getSubject()
+				.asOWLNamedIndividual());
+		Term b = GraalUtils.createLiteral(arg.getObject());
+		AtomSet atomset = arg.getProperty().accept(
+				new OWLPropertyExpressionVisitorImpl(a, b));
+		return Collections.singleton(new NegativeConstraint(atomset));
 	}
 
 	@Override
 	public Iterable<? extends Object> visit(OWLSameIndividualAxiom arg) {
-		Collection<Atom> c = this.<Atom> createCollection();
+		Collection<Atom> c = GraalUtils.<Atom> createCollection();
 		LinkedList<OWLIndividual> list = new LinkedList<OWLIndividual>(
 				arg.getIndividualsAsList());
 
@@ -547,28 +692,49 @@ class OWLAxiomParser implements
 		while (it1.hasNext()) {
 			OWLIndividual individu1 = it1.next();
 			it1.remove();
-			
-			Term t1 = createConstant(individu1.asOWLNamedIndividual());
-			
+
+			Term t1 = GraalUtils.createConstant(individu1
+					.asOWLNamedIndividual());
+
 			it2 = list.iterator();
 			while (it2.hasNext()) {
 				OWLIndividual individu2 = it2.next();
 
-				Term t2 = createConstant(individu2.asOWLNamedIndividual());
+				Term t2 = GraalUtils.createConstant(individu2
+						.asOWLNamedIndividual());
 				Atom a = new DefaultAtom(equalityPredicate, t1, t2);
 				c.add(a);
 			}
 		}
 		return c;
 	}
-	
+
 	@Override
 	public Iterable<? extends Object> visit(OWLDifferentIndividualsAxiom arg) {
-		if (LOGGER.isWarnEnabled()) {
-			LOGGER.warn("OWLDifferentIndividualsAxiom is not supported. This axioms was skipped : "
-					+ arg);
+		Collection<Object> c = GraalUtils.<Object> createCollection();
+		LinkedList<OWLIndividual> list = new LinkedList<OWLIndividual>(
+				arg.getIndividualsAsList());
+
+		Iterator<OWLIndividual> it1, it2;
+		it1 = list.iterator();
+		while (it1.hasNext()) {
+			OWLIndividual individu1 = it1.next();
+			it1.remove();
+
+			Term t1 = GraalUtils.createConstant(individu1
+					.asOWLNamedIndividual());
+
+			it2 = list.iterator();
+			while (it2.hasNext()) {
+				OWLIndividual individu2 = it2.next();
+
+				Term t2 = GraalUtils.createConstant(individu2
+						.asOWLNamedIndividual());
+				Atom a = new DefaultAtom(equalityPredicate, t1, t2);
+				c.add(new NegativeConstraint(Collections.<Atom> singleton(a)));
+			}
 		}
-		return Collections.emptyList();
+		return c;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -590,7 +756,8 @@ class OWLAxiomParser implements
 	@Override
 	public Iterable<? extends Object> visit(OWLAnnotationAssertionAxiom arg) {
 		if (LOGGER.isInfoEnabled()) {
-			LOGGER.info("Visit OWLAnnotationAssertionAxiom is not implemented: " + arg);
+			LOGGER.info("Visit OWLAnnotationAssertionAxiom is not implemented: "
+					+ arg);
 		}
 		return Collections.emptyList();
 	}
@@ -598,7 +765,8 @@ class OWLAxiomParser implements
 	@Override
 	public Iterable<? extends Object> visit(OWLSubAnnotationPropertyOfAxiom arg) {
 		if (LOGGER.isInfoEnabled()) {
-			LOGGER.info("Visit OWLSubAnnotationPropertyOfAxiom is not implemented: " + arg);
+			LOGGER.info("Visit OWLSubAnnotationPropertyOfAxiom is not implemented: "
+					+ arg);
 		}
 		return Collections.emptyList();
 	}
@@ -606,7 +774,8 @@ class OWLAxiomParser implements
 	@Override
 	public Iterable<? extends Object> visit(OWLAnnotationPropertyDomainAxiom arg) {
 		if (LOGGER.isInfoEnabled()) {
-			LOGGER.info("Visit OWLAnnotationPropertyDomainAxiom is not implemented: " + arg);
+			LOGGER.info("Visit OWLAnnotationPropertyDomainAxiom is not implemented: "
+					+ arg);
 		}
 		return Collections.emptyList();
 	}
@@ -614,7 +783,8 @@ class OWLAxiomParser implements
 	@Override
 	public Iterable<? extends Object> visit(OWLAnnotationPropertyRangeAxiom arg) {
 		if (LOGGER.isInfoEnabled()) {
-			LOGGER.info("Visit OWLAnnotationPropertyRangeAxiom is not implemented: " + arg);
+			LOGGER.info("Visit OWLAnnotationPropertyRangeAxiom is not implemented: "
+					+ arg);
 		}
 		return Collections.emptyList();
 	}
@@ -622,116 +792,178 @@ class OWLAxiomParser implements
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
-	
-	private Term createConstant(OWLNamedIndividual individu) {
-		String uri = this.prefixManager.getShortForm(individu);
-		if(uri.charAt(0) == '<') {
-			uri = uri.substring(1, uri.length()-1);
-		}
-		return DefaultTermFactory.instance().createConstant(uri);
-	}
-
-	private Iterable<? extends Object> propertyDomainAxiom(
-			OWLPropertyExpression property, OWLClassExpression domain) {
-		freeVarGen.setIndex(2);
-		LogicalFormula p = property.accept(propertyVisitorXY);
-		LogicalFormula d = domain.accept(classVisitorX);
-
-		p.not();
-		p.or(d);
-
-		return LogicalFormulaTranslator.getInstance().translate(p);
-	}
 
 	private Iterable<? extends Object> functionalPropertyAxiom(
 			OWLPropertyExpression property) {
-		LogicalFormula f = property.accept(propertyVisitorXY);
-		f.and(property.accept(propertyVisitorXZ));
+		InMemoryAtomSet body = property.accept(propertyVisitorXY);
+		body.addAll(property.accept(propertyVisitorXZ));
 
-		f.not();
-		f.or(new Literal(
-				new DefaultAtom(equalityPredicate, glueVarX, glueVarY), true));
+		InMemoryAtomSet head = GraalUtils.createAtomSet(new DefaultAtom(
+				equalityPredicate, glueVarY, glueVarZ));
 
-		return LogicalFormulaTranslator.getInstance().translate(f);
+		return Collections.<Rule> singleton(new DefaultRule(body, head));
 	}
 
 	private Iterable<? extends Object> equivalentPropertiesAxiom(
-			List<OWLPropertyExpression> properties) {
-		Collection<Object> c = this.<Object> createCollection();
-		LogicalFormula f1, f2, f1Save;
+			Iterable<? extends OWLPropertyExpression> properties) {
+		Collection<Rule> rules = GraalUtils.<Rule> createCollection();
+		InMemoryAtomSet a1, a2;
 
-		Iterator<OWLPropertyExpression> it1, it2;
+		Iterator<? extends OWLPropertyExpression> it1, it2;
 		it1 = properties.iterator();
 		while (it1.hasNext()) {
-			OWLPropertyExpression propExpr = it1.next();
+			OWLPropertyExpression propExpr = (OWLPropertyExpression) it1.next();
+			a1 = propExpr.accept(propertyVisitorXY);
 			it1.remove();
 
 			it2 = properties.iterator();
 			while (it2.hasNext()) {
-				f1 = propExpr.accept(propertyVisitorXY);
-				f1Save = new LogicalFormula(f1);
-				OWLPropertyExpression next = it2.next();
-				f2 = next.accept(propertyVisitorXY);
+				OWLPropertyExpression next = (OWLPropertyExpression) it2.next();
+				a2 = next.accept(propertyVisitorXY);
 
-				// 1 -> 2
-				f1.not();
-				f1.or(f2);
-
-				for (Object r : LogicalFormulaTranslator.getInstance()
-						.translate(f1)) {
-					c.add(r);
-				}
-
-				// 2 -> 1
-				f2.not();
-				f2.or(f1Save);
-
-				for (Object r : LogicalFormulaTranslator.getInstance()
-						.translate(f2)) {
-					c.add(r);
-				}
-
+				rules.add(new DefaultRule(a1, a2));
+				rules.add(new DefaultRule(a2, a1));
 			}
 		}
-		return c;
+		return rules;
 	}
-	
+
 	private Iterable<? extends Object> disjointPropertiesAxiom(
-			List<OWLPropertyExpression> properties) {
-		Collection<Object> c = this.<Object> createCollection();
-		LogicalFormula f1, f2;
+			Iterable<? extends OWLPropertyExpression> properties) {
 
-		Iterator<OWLPropertyExpression> it1, it2;
+		Collection<Rule> rules = GraalUtils.<Rule> createCollection();
+		InMemoryAtomSet a, a1, a2;
+
+		Iterator<? extends OWLPropertyExpression> it1, it2;
 		it1 = properties.iterator();
 		while (it1.hasNext()) {
-			OWLPropertyExpression propExpr = it1.next();
-			f1 = propExpr.accept(propertyVisitorXY);
+			OWLPropertyExpression propExpr = (OWLPropertyExpression) it1.next();
+			a1 = propExpr.accept(propertyVisitorXY);
 			it1.remove();
 
 			it2 = properties.iterator();
 			while (it2.hasNext()) {
-				OWLPropertyExpression next = it2.next();
-				f2 = next.accept(propertyVisitorXY);
-
-				// ! :- f1 ^ f2 
-				f2.and(f1);
-				f2.not();
-
-				for (Object r : LogicalFormulaTranslator.getInstance()
-						.translate(f2)) {
-					c.add(r);
-				}
+				OWLPropertyExpression next = (OWLPropertyExpression) it2.next();
+				a2 = next.accept(propertyVisitorXY);
+				a = GraalUtils.createAtomSet();
+				a.addAll(a1);
+				a.addAll(a2);
+				rules.add(new NegativeConstraint(a));
 			}
 		}
-		return c;
+		return rules;
+
 	}
 
-	// /////////////////////////////////////////////////////////////////////////
-	// PRIVATE FACTORY
-	// /////////////////////////////////////////////////////////////////////////
+	/**
+	 * @param expression
+	 * @return
+	 */
+	private boolean isEquivClass(OWLClassExpression expression) {
+		return expression instanceof OWLClass
+				|| expression instanceof OWLObjectIntersectionOf
+				|| expression instanceof OWLDataIntersectionOf
+				|| expression instanceof OWLObjectSomeValuesFrom
+				|| expression instanceof OWLDataSomeValuesFrom
+				|| expression instanceof OWLObjectHasValue
+				|| expression instanceof OWLDataHasValue
+				|| expression instanceof OWLObjectHasSelf
+				|| (expression instanceof OWLObjectMinCardinality && ((OWLObjectMinCardinality) expression)
+						.getCardinality() <= 1)
+				|| (expression instanceof OWLDataMinCardinality && ((OWLDataMinCardinality) expression)
+						.getCardinality() <= 1)
+				|| (expression instanceof OWLObjectOneOf && ((OWLObjectOneOf) expression)
+						.getIndividuals().size() == 1)
+				|| (expression instanceof OWLDataOneOf && ((OWLDataOneOf) expression)
+						.getValues().size() == 1);
+	}
 
-	private <T> Collection<T> createCollection() {
-		return new LinkedList<T>();
+	private boolean isSuperClass(OWLClassExpression expression) {
+		return isEquivClass(expression)
+				|| (expression instanceof OWLObjectMaxCardinality && ((OWLObjectMaxCardinality) expression)
+						.getCardinality() <= 1)
+				|| (expression instanceof OWLDataMaxCardinality && ((OWLDataMaxCardinality) expression)
+						.getCardinality() <= 1)
+				|| (expression instanceof OWLDataAllValuesFrom);
+	}
+
+	private Iterable<? extends Rule> mainProcess(OWLSubClassOfAxiom arg) {
+		Collection<Rule> objects = new LinkedList<Rule>();
+		InMemoryAtomSet body = null;
+		try {
+			body = arg.getSubClass().accept(this.classVisitorX);
+		} catch (UnsupportedConstructor e) {
+			if (LOGGER.isWarnEnabled()) {
+				LOGGER.warn("[ "
+						+ arg.getSubClass()
+						+ "] is not supported as subClass. This axioms was skipped : "
+						+ arg);
+			}
+			return Collections.emptyList();
+		}
+
+		// RULES
+		InMemoryAtomSet head = null;
+		try {
+			if (arg.getSuperClass() instanceof OWLObjectMaxCardinality) {
+				OWLObjectMaxCardinality maxCard = (OWLObjectMaxCardinality) arg
+						.getSuperClass();
+
+				Predicate p = GraalUtils.createPredicate(maxCard.getProperty());
+				body.add(GraalUtils.createAtom(p, glueVarX, glueVarY));
+				body.add(GraalUtils.createAtom(p, glueVarX, glueVarZ));
+				AtomSet bodyTemplate = body;
+				head = GraalUtils.createAtomSet(GraalUtils.createAtom(
+						Predicate.EQUALITY, glueVarY, glueVarZ));
+				OWLClassExpression expr = OWLAPIUtils.classExpressionDisjunctiveNormalForm(maxCard.getFiller());
+				for(Pair<OWLClassExpression,OWLClassExpression> pair : MathUtils.selfCartesianProduct(OWLAPIUtils
+							.getObjectUnionOperands(expr))) {
+					body = new LinkedListAtomSet(bodyTemplate);
+					body.addAll(pair.getLeft().accept(classVisitorY));
+					body.addAll(pair.getRight().accept(classVisitorZ));
+					objects.add(new DefaultRule(body, head));
+				}
+
+			} else if (arg.getSuperClass() instanceof OWLDataMaxCardinality) {
+				OWLDataMaxCardinality maxCard = (OWLDataMaxCardinality) arg
+						.getSuperClass();
+
+				Predicate p = GraalUtils.createPredicate(maxCard.getProperty());
+				body.add(GraalUtils.createAtom(p, glueVarX, glueVarY));
+				body.add(GraalUtils.createAtom(p, glueVarX, glueVarZ));
+				AtomSet bodyTemplate = body;
+				head = GraalUtils.createAtomSet(GraalUtils.createAtom(
+						Predicate.EQUALITY, glueVarY, glueVarZ));
+				OWLDataRange expr = OWLAPIUtils.dataRangeDisjunctiveNormalForm(maxCard.getFiller());
+				for(Pair<OWLDataRange,OWLDataRange> pair : MathUtils.selfCartesianProduct(OWLAPIUtils.getDataUnionOperands(expr))) {
+					body = new LinkedListAtomSet(bodyTemplate);
+					body.addAll(pair.getLeft().accept(dataRangeVisitorY));
+					body.addAll(pair.getRight().accept(dataRangeVisitorZ));
+					objects.add(new DefaultRule(body, head));
+				}
+			} else if (arg.getSuperClass() instanceof OWLDataAllValuesFrom) {
+				OWLDataAllValuesFrom allvalues = (OWLDataAllValuesFrom) arg
+						.getSuperClass();
+
+				Predicate p = GraalUtils.createPredicate(allvalues
+						.getProperty());
+				body.add(GraalUtils.createAtom(p, glueVarX, glueVarY));
+				head = allvalues.getFiller().accept(dataRangeVisitorY);
+				objects.add(new DefaultRule(body, head));
+			} else {
+				head = arg.getSuperClass().accept(this.classVisitorX);
+				objects.add(new DefaultRule(body, head));
+			}
+		} catch (UnsupportedConstructor e) {
+			if (LOGGER.isWarnEnabled()) {
+				LOGGER.warn("[ " + e.getConstructor()
+						+ "] is not supported here. This axioms was skipped : "
+						+ arg);
+			}
+			objects = Collections.emptyList();
+		}
+
+		return objects;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -743,7 +975,7 @@ class OWLAxiomParser implements
 		private int index = 0;
 
 		@Override
-		public Term getFreeVar() {
+		public Variable getFreeVar() {
 			return DefaultTermFactory.instance().createVariable("X" + index++);
 		}
 

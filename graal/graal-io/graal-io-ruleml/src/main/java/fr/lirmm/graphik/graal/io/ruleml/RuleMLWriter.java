@@ -271,7 +271,7 @@ public class RuleMLWriter extends AbstractGraalWriter {
 			Literal l = (Literal) t;
 			this.writeIndent();
 			this.write("<Data xsi:type=\"");
-			if (l.getDatatype().getPrefix().getPrefix()
+			if (l.getDatatype().getPrefix()
 					.equals(Prefix.XSD.getPrefix())) {
 				this.write("xsd:" + l.getDatatype().getLocalname());
 			} else {

@@ -1,8 +1,8 @@
 package fr.lirmm.graphik.graal.core;
 
-import fr.lirmm.graphik.graal.core.term.Term;
+import fr.lirmm.graphik.graal.core.term.Variable;
 
 public interface SymbolGenerator {
-	Term getFreeVar();
+	Variable getFreeVar();
 };
 

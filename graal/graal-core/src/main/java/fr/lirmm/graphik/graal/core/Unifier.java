@@ -15,7 +15,7 @@ import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.util.LinkedSet;
-import fr.lirmm.graphik.util.stream.Filter; // stream?????? TODO
+import fr.lirmm.graphik.util.stream.filter.Filter;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}

@@ -25,6 +25,8 @@ import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.core.term.Term.Type;
 import fr.lirmm.graphik.graal.io.AbstractGraalWriter;
 import fr.lirmm.graphik.util.Prefix;
+import fr.lirmm.graphik.util.PrefixManager;
+import fr.lirmm.graphik.util.URI;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -32,6 +34,9 @@ import fr.lirmm.graphik.util.Prefix;
  */
 public class DlgpWriter extends AbstractGraalWriter {
 	
+	private PrefixManager pm;
+	private Predicate top = Predicate.TOP;
+
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
@@ -50,6 +55,7 @@ public class DlgpWriter extends AbstractGraalWriter {
 	
 	public DlgpWriter(Writer out) {
 		super(out);
+		this.pm = new PrefixManager();
 	}
 	
 	public DlgpWriter(File file) throws IOException {
@@ -71,6 +77,13 @@ public class DlgpWriter extends AbstractGraalWriter {
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
 	
+	public void setTopPredicate(Predicate p) throws IOException {
+		this.write("@top ");
+		this.writePredicate(p);
+		this.write("\n");
+		this.top = p;
+	}
+
 	@Override
 	public void writeComment(String comment) throws IOException {
 		this.write("% ");
@@ -154,6 +167,7 @@ public class DlgpWriter extends AbstractGraalWriter {
 	
 	@Override
 	public void write(Prefix prefix) throws IOException {
+		this.pm.putPrefix(prefix);
 		this.write("@prefix ");
 		this.write(prefix.getPrefixName());
 		this.write(": <");
@@ -227,9 +241,13 @@ public class DlgpWriter extends AbstractGraalWriter {
 			}
 			this.write(t.getIdentifier());
 		} else if(Type.CONSTANT.equals(t.getType())) {
-			this.write('<');
-			this.write(t.getIdentifier().toString());
-			this.write('>');
+			if (t.getIdentifier() instanceof URI) {
+				this.writeURI((URI) t.getIdentifier());
+			} else {
+				this.write('<');
+				this.write(t.getIdentifier().toString());
+				this.write('>');
+			}
 		} else { // LITERAL
 			Literal l = (Literal) t;
 			this.write('"');
@@ -241,11 +259,29 @@ public class DlgpWriter extends AbstractGraalWriter {
 	}
 	
 	protected void writePredicate(Predicate p) throws IOException {
-		this.write('<');
-		this.write(p.getIdentifier().toString());
-		this.write('>');
+		if (p.equals(Predicate.TOP)) {
+			p = top;
+		}
+		if (p.getIdentifier() instanceof URI) {
+			this.writeURI((URI) p.getIdentifier());
+		} else {
+			this.write('<');
+			this.write(p.getIdentifier().toString());
+			this.write('>');
+		}
 	}
 	
+	protected void writeURI(URI uri) throws IOException {
+		Prefix prefix = this.pm.getPrefixByValue(uri.getPrefix());
+		if(prefix == null) {
+			this.write('<');
+			this.write(uri.toString());
+			this.write('>');
+		} else {
+			this.write(prefix.getPrefixName() + ":"
+					+ uri.getLocalname());
+		}
+	}
 
 	////////////////////////////////////////////////////////////////////////////
 	// STATIC METHODS this.writeln("PREFIX : <" + rdfPrefix + '>');

@@ -23,7 +23,7 @@ import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
 import fr.lirmm.graphik.graal.io.ConjunctiveQueryWriter;
 import fr.lirmm.graphik.graal.io.dlp.Dlgp1Parser;
-import fr.lirmm.graphik.util.stream.FilterIterator;
+import fr.lirmm.graphik.util.stream.filter.FilterIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}

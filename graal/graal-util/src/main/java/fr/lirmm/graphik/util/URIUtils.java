@@ -95,19 +95,12 @@ public final class URIUtils {
 	 */
 	public static URI createURI(String string, Prefix defaultPrefix) {
 		String prefixString = URIUtils.getPrefix(string);
-		Prefix prefix;
-		if (prefixString.equals("")) {
-			prefix = defaultPrefix;
-		} else {
-			prefix = PrefixManager.getInstance().getPrefix(
-					URIUtils.getPrefix(string));
-		}
 		String localname = URIUtils.getLocalName(string);
-		return new DefaultURI(prefix, localname);
+		return new DefaultURI(prefixString, localname);
 	}
 	
 	public static URI createURI(Prefix prefix, String localname) {
-		return new DefaultURI(prefix, localname);
+		return new DefaultURI(prefix.getPrefix(), localname);
 	}
 	
 	public static URI createURI(String uri) {

@@ -1,10 +1,10 @@
 /**
  * 
  */
-package fr.lirmm.graphik.graal.core.filter;
+package fr.lirmm.graphik.graal.core.stream.filter;
 
 import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.util.stream.Filter;
+import fr.lirmm.graphik.util.stream.filter.Filter;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>

@@ -20,7 +20,7 @@ import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.Unifier;
 import fr.lirmm.graphik.util.LinkedSet;
 import fr.lirmm.graphik.util.graph.scc.StronglyConnectedComponentsGraph;
-import fr.lirmm.graphik.util.stream.Filter; // stream???? TODO
+import fr.lirmm.graphik.util.stream.filter.Filter;
 
 /**
  * The graph of rule dependencies (GRD) is a directed graph built from a rule

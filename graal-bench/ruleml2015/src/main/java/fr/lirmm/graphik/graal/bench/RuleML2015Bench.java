@@ -22,8 +22,8 @@ import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
-import fr.lirmm.graphik.graal.core.filter.AtomFilterIterator;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
+import fr.lirmm.graphik.graal.core.stream.filter.AtomFilterIterator;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.forward_chaining.Chase;
@@ -35,8 +35,8 @@ import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.Parser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
-import fr.lirmm.graphik.graal.io.owl.OWLParser;
-import fr.lirmm.graphik.graal.io.owl.OWLParserException;
+import fr.lirmm.graphik.graal.io.owl.OWL2Parser;
+import fr.lirmm.graphik.graal.io.owl.OWL2ParserException;
 import fr.lirmm.graphik.graal.store.Store;
 import fr.lirmm.graphik.graal.store.rdbms.driver.DriverException;
 import fr.lirmm.graphik.util.Profiler;
@@ -83,7 +83,7 @@ public class RuleML2015Bench {
 
 
 	
-	public static void main(String[] args) throws AtomSetException, OWLParserException, IOException, DriverException, HomomorphismFactoryException, ChaseException {
+	public static void main(String[] args) throws AtomSetException, OWL2ParserException, IOException, DriverException, HomomorphismFactoryException, ChaseException {
 		
 		options = new RuleML2015Bench();
 		JCommander commander = new JCommander(options, args);
@@ -125,7 +125,7 @@ public class RuleML2015Bench {
 					}
 					
 					writer.write("load " + f.getName() + "\n");
-					Parser<Object> parser = new OWLParser(f);
+					Parser<Object> parser = new OWL2Parser(f);
 					store_unsat.addAll(new AtomFilterIterator(parser.iterator()));
 					parser.close();
 					
@@ -268,9 +268,9 @@ public class RuleML2015Bench {
 		writer.write("########## END DATA #############");
 	}
 	
-	public static Iterable<Rule> getOntology() throws FileNotFoundException, OWLParserException {
+	public static Iterable<Rule> getOntology() throws FileNotFoundException, OWL2ParserException {
 		File f = new File(options.onto_file);
-		Parser parser = new OWLParser(f);
+		Parser parser = new OWL2Parser(f);
 		List<Rule> rules = new LinkedList<Rule>();
 		for(Object o : parser) {
 			if(o instanceof Rule) {

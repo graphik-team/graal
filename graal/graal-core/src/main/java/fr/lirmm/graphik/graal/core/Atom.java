@@ -2,9 +2,9 @@ package fr.lirmm.graphik.graal.core;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.core.term.Term.Type;
 
@@ -18,7 +18,10 @@ public interface Atom extends Comparable<Atom>, Iterable<Term> {
 	 * false.
 	 */
 	public static final Atom BOTTOM = new DefaultAtom(
-			new Predicate("\u22A5", 0), new LinkedList<Term>());
+Predicate.BOTTOM,
+			DefaultTermFactory.instance().createVariable("X"));
+	public static final Atom TOP = new DefaultAtom(Predicate.TOP,
+			DefaultTermFactory.instance().createVariable("X"));
 
 
 	/**

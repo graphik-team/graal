@@ -11,6 +11,12 @@ import java.util.Iterator;
  */
 public interface Parser<T> extends Iterator<T>, Iterable<T> {
 	
+	@Override
+	boolean hasNext();
+
+	@Override
+	T next();
+
 	void close();
 	
 }
