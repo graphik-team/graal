@@ -14,6 +14,12 @@ mvn validate
 
 mvn package
 
+## How to generate Javadoc ##
+
+mvn javadoc:javadoc
+
+mvn javadoc:aggregate
+
 
 ## How to check code with code analyzer? ##
 
