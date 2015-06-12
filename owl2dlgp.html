@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'/>
+    <meta name="description" content="Graal : "/>
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css"/>
+
+    <title>OWL2 to Dlgp</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+
+          <h1 id="project_title">OWL2 to Dlgp</h1>
+
+          
+          <nav>
+            <a href="./">Home</a>
+            <a href="./documentation">Documentation</a>
+            <a href="./publications">Publications</a>
+            <a href="./downloads">Downloads</a>
+            <a href="https://github.com/graphik-team/graal/">Sources</a>
+          </nav>
+
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        The owl2dlgp program translates to <em>dlgp</em> any OWL2
+        ontologies that can be translated into the existential rule
+        framework. In particular, it translates the 3 tractable
+        profiles of OWL2 (EL, QL, RL). This tool uses
+        the <a href="http://owlapi.sourceforge.net/">OWL API</a> to
+        parse OWL2 ontologies that can be expressed in OWL/XML, OWL
+        Functional Syntax or Turtle.
+
+        <h2>Getting started</h2>
+        Download <a href="./dl/owl2dlgp-ALPHA2.jar">owl2dlgp</a>.</br>
+        
+        <ul>
+          <li>
+            Translate from OWL file to <em>dlgp</em> file: <br/>
+            <pre>java -jar owl2dlgp-*.jar -f ./example.owl -o ./example.dlp</pre>
+          </li>
+
+          <li>
+            Translate from the standard input to the standard output: <br/>
+            <pre>java -jar owl2dlgp-*.jar < ./example.owl > ./example.dlp</pre>
+          </li>
+        </ul>
+        
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Graal maintained
+        by <a href="https://team.inria.fr/graphik/">GraphIK</a> team</p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
