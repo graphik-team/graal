@@ -71,7 +71,7 @@ public interface Atom extends Comparable<Atom>, Iterable<Term> {
 	List<Term> getTerms();
 
 	/**
-	 * Get all Term of Type type.
+	 * Get all Term of the specified type.
 	 * 
 	 * @param type
 	 * @return

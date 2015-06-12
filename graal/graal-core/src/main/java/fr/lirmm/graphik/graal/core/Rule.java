@@ -15,11 +15,11 @@
 import java.util.Collection;
 import java.util.Set;
 
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.term.Term;
 
 /**
+ * This interface represents an existential rule.
  * A Rule is a pair (B,H) of atom set such as "B -> H".
  * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}

@@ -22,7 +22,7 @@ import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.term.Term;
 
 /**
- * Class representing a conjunctive query.
+ * This interface represents a conjunctive query.
  * A conjunctive query is composed of a fact and a set of answer variables.
  * 
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>

@@ -14,7 +14,6 @@
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.SymbolGenerator;
-import fr.lirmm.graphik.graal.core.Util;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 
 /**

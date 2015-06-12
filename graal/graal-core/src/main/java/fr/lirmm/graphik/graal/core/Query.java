@@ -13,7 +13,7 @@
  package fr.lirmm.graphik.graal.core;
 
 /**
- * Represents a generic query.
+ * This interface represents a generic query.
  * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
