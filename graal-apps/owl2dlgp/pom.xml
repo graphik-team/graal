@@ -8,9 +8,10 @@
 		<version>0.7.5-SNAPSHOT</version>
 	</parent>
 	
-	<artifactId>owl2dlp</artifactId>
-	<name>owl2dlp</name>
+	<artifactId>owl2dlgp</artifactId>
+	<name>owl2dlgp</name>
 	<packaging>jar</packaging>
+	<version>1.0.beta1</version>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -95,14 +96,14 @@
 		      <version>2.5.3</version>
 		      <configuration>
 		        <preparationGoals>compile</preparationGoals>
-		      	<finalName>owl2dlp-${project.parent.version}</finalName>
+		      	<finalName>owl2dlgp-${project.version}</finalName>
 		        <archive>
 		          <manifestEntries>
 		            <Built-On>${maven.build.timestamp}</Built-On>
 		          </manifestEntries>
 		          <manifest>
 					<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-		            <mainClass>fr.lirmm.graphik.graal.apps.OWL2DLP</mainClass>
+		            <mainClass>fr.lirmm.graphik.graal.apps.OWL2DLGP</mainClass>
 		          </manifest>
 		        </archive>
 		        <descriptorRefs>

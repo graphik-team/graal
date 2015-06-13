@@ -37,7 +37,7 @@ import fr.lirmm.graphik.util.Prefix;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class OWL2DLP {
+public class OWL2DLGP {
 
 	@Parameter(names = { "-h", "--help" }, description = "Print this message", help = true)
 	private boolean help;
@@ -58,8 +58,9 @@ public class OWL2DLP {
 			IOException, OWL2ParserException {
 
 		DlgpWriter writer;
-		OWL2DLP options = new OWL2DLP();
+		OWL2DLGP options = new OWL2DLGP();
 		JCommander commander = new JCommander(options, args);
+		commander.setProgramName("java -jar owl2dlgp-*.jar");
 
 		if (options.help) {
 			commander.usage();
@@ -67,7 +68,7 @@ public class OWL2DLP {
 		}
 
 		if (options.version) {
-			Apps.printVersion("owl2dlp");
+			Apps.printVersion("owl2dlgp");
 			System.exit(0);
 		}
 
