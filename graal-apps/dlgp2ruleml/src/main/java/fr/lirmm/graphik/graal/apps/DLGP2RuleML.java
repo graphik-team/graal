@@ -21,7 +21,7 @@ import java.io.IOException;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
-import fr.lirmm.graphik.graal.io.dlp.Dlgp1Parser;
+import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.ruleml.RuleMLWriter;
 import fr.lirmm.graphik.util.Apps;
 
@@ -62,11 +62,11 @@ public class DLGP2RuleML {
 			System.exit(0);
 		}
 
-		Dlgp1Parser parser;
+		DlgpParser parser;
 		if (options.inputFile.isEmpty()) {
-			parser = new Dlgp1Parser(System.in);
+			parser = new DlgpParser(System.in);
 		} else {
-			parser = new Dlgp1Parser(new File(options.inputFile));
+			parser = new DlgpParser(new File(options.inputFile));
 		}
 
 		if (options.outputFile.isEmpty()) {
