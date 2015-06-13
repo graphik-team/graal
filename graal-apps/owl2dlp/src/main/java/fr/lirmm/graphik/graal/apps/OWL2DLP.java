@@ -31,6 +31,7 @@ import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 import fr.lirmm.graphik.graal.io.owl.OWL2Parser;
 import fr.lirmm.graphik.graal.io.owl.OWL2ParserException;
 import fr.lirmm.graphik.util.Apps;
+import fr.lirmm.graphik.util.Prefix;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -41,9 +42,6 @@ public class OWL2DLP {
 	@Parameter(names = { "-h", "--help" }, description = "Print this message", help = true)
 	private boolean help;
 
-//	@Parameter(names = { "-v", "--verbose" }, description = "Enable verbose mode")
-//	private boolean verbose = false;
-
 	@Parameter(names = { "--version" }, description = "Print version information")
 	private boolean version = false;
 
@@ -53,10 +51,7 @@ public class OWL2DLP {
 	@Parameter(names = { "-o", "--output" }, description = "The output file")
 	private String outputFile = "";
 
-	@Parameter(names = { "-p", "--prefix" }, description = "disable prefix")
-	private Boolean prefixEnable = true;
-
-	@Parameter(names = { "-d", "--debug" }, description = "enable debug mode")
+	@Parameter(names = { "-d", "--debug" }, description = "enable debug mode", hidden = true)
 	private Boolean debugMode = false;
 
 	public static void main(String args[]) throws OWLOntologyCreationException,
@@ -94,12 +89,21 @@ public class OWL2DLP {
 			writer = new DlgpWriter(new File(options.outputFile));
 		}
 
-		parser.prefixEnable(options.prefixEnable);
-		writer.setTopPredicate(new Predicate("top", 1));
 
 		// MAIN
-		for (Object o : parser) {
+		Object o;
+		while (parser.hasNext()) {
+			o = parser.next();
+			if (!(o instanceof Prefix)) {
+				writer.writeTopPredicate(new Predicate("top", 1));
+				writer.write(o);
+				break;
+			}
 			writer.write(o);
+		}
+
+		while (parser.hasNext()) {
+			writer.write(parser.next());
 		}
 
 		writer.close();

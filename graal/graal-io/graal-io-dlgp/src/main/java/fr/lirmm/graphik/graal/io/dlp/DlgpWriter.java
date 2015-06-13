@@ -89,7 +89,7 @@ public class DlgpWriter extends AbstractGraalWriter {
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
 	
-	public void setTopPredicate(Predicate p) throws IOException {
+	public void writeTopPredicate(Predicate p) throws IOException {
 		this.write("@top ");
 		this.writePredicate(p);
 		this.write("\n");
