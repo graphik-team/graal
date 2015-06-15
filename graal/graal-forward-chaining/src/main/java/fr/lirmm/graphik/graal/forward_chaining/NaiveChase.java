@@ -28,10 +28,13 @@ import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.util.Verbosable;
 
 /**
+ * This chase (forward-chaining) algorithm iterates over all rules at each step.
+ * It stops if a step does not produce new facts.
+ * 
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class DefaultChase extends AbstractChase implements Verbosable {
+public class NaiveChase extends AbstractChase implements Verbosable {
 	
 //	private static final Logger LOGGER = LoggerFactory
 //			.getLogger(DefaultChase.class);
@@ -45,11 +48,11 @@ public class DefaultChase extends AbstractChase implements Verbosable {
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 	
-	public DefaultChase(Iterable<Rule> ruleSet, AtomSet atomSet) {
+	public NaiveChase(Iterable<Rule> ruleSet, AtomSet atomSet) {
 		this(ruleSet, atomSet, new DefaultFreeVarGen("E"));
 	}
 
-	public DefaultChase(Iterable<Rule> ruleSet, AtomSet atomSet,
+	public NaiveChase(Iterable<Rule> ruleSet, AtomSet atomSet,
 			SymbolGenerator existentialGen) {
 		super(new DefaultRuleApplier<AtomSet>(StaticHomomorphism
 				.getSolverFactory().getConjunctiveQuerySolver(atomSet)));
@@ -57,14 +60,14 @@ public class DefaultChase extends AbstractChase implements Verbosable {
 		this.atomSet = atomSet;
 	}
 
-	public DefaultChase(Iterable<Rule> ruleSet, AtomSet atomSet,
+	public NaiveChase(Iterable<Rule> ruleSet, AtomSet atomSet,
 			RuleApplier ruleApplier) {
 		super(ruleApplier);
 		this.ruleSet = ruleSet;
 		this.atomSet = atomSet;
 	}
 
-	public DefaultChase(Iterable<Rule> ruleSet, AtomSet atomSet,
+	public NaiveChase(Iterable<Rule> ruleSet, AtomSet atomSet,
 			SymbolGenerator existentialGen,
 			Homomorphism<ConjunctiveQuery, AtomSet> solver) {
 		super(new DefaultRuleApplier<AtomSet>(solver));
@@ -72,14 +75,14 @@ public class DefaultChase extends AbstractChase implements Verbosable {
 		this.atomSet = atomSet;
 	}
 	
-	public DefaultChase(Iterable<Rule> ruleSet, AtomSet atomSet,
+	public NaiveChase(Iterable<Rule> ruleSet, AtomSet atomSet,
 			Homomorphism<ConjunctiveQuery, AtomSet> solver) {
 		super(new DefaultRuleApplier<AtomSet>(solver));
 		this.ruleSet = ruleSet;
 		this.atomSet = atomSet;
 	}
 
-	public DefaultChase(Iterable<Rule> ruleSet, AtomSet atomSet,
+	public NaiveChase(Iterable<Rule> ruleSet, AtomSet atomSet,
 			Homomorphism<ConjunctiveQuery, AtomSet> solver,
 			ChaseHaltingCondition haltingCondition) {
 		super(new DefaultRuleApplier<AtomSet>(solver, haltingCondition));

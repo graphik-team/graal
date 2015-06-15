@@ -25,7 +25,7 @@ import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
-import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
+import fr.lirmm.graphik.graal.forward_chaining.NaiveChase;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;
@@ -65,7 +65,7 @@ public class MultiThreadTest {
 
 		
 		//Chase chase = new MultiThreadsChase(rules, atomsets, 4);
-		Chase chase = new DefaultChase(rules, atomsets.get(0));
+		Chase chase = new NaiveChase(rules, atomsets.get(0));
 		
 		long begin = System.nanoTime();
 		System.out.println(begin);

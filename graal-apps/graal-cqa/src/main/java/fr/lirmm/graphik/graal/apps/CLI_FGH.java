@@ -36,7 +36,7 @@ import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.cqa.AtomIndex;
 import fr.lirmm.graphik.graal.cqa.FGH;
 import fr.lirmm.graphik.graal.cqa.FGHRuleApplicationHandler;
-import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
+import fr.lirmm.graphik.graal.forward_chaining.NaiveChase;
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.ChaseHaltingCondition;
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.ChaseStopConditionWithHandler;
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.RestrictedChaseStopCondition;
@@ -81,7 +81,7 @@ public class CLI_FGH {
 			onRule.setSolver(solver);
 
 			ChaseHaltingCondition haltCondition = new ChaseStopConditionWithHandler(new RestrictedChaseStopCondition(),onRule);
-			DefaultChase chase = new DefaultChase(rules, atomset, solver, haltCondition);
+			NaiveChase chase = new NaiveChase(rules, atomset, solver, haltCondition);
 
 			if (options.input_file != "") {
 				System.out.println("Reading data from dlp file: " + options.input_file);

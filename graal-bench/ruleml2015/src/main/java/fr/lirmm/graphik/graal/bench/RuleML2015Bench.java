@@ -40,7 +40,7 @@ import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
-import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
+import fr.lirmm.graphik.graal.forward_chaining.NaiveChase;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
@@ -158,7 +158,7 @@ public class RuleML2015Bench {
 			// semi-saturation
 			if(enableSaturation) {
 				writer.write("############ CHASE ##############\n");
-				Chase chase = new DefaultChase(compilation.getSaturation(), store_semisat);
+				Chase chase = new NaiveChase(compilation.getSaturation(), store_semisat);
 				profiler.start("store semisaturation time");
 				chase.next();
 				profiler.start("store semisaturation time");

@@ -38,7 +38,7 @@ import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
 import fr.lirmm.graphik.graal.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseWithGRDAndUnfiers;
-import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
+import fr.lirmm.graphik.graal.forward_chaining.NaiveChase;
 import fr.lirmm.graphik.graal.forward_chaining.StaticChase;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
@@ -83,7 +83,7 @@ public class ChaseTest {
 		ruleSet.add(DlgpParser.parseRule("r(X,Z) :- q(X,Y)."));
 		ruleSet.add(DlgpParser.parseRule("q(X,Z) :- r(X,Y)."));
 
-		Chase chase = new DefaultChase(ruleSet, atomSet);
+		Chase chase = new NaiveChase(ruleSet, atomSet);
 		chase.execute();
 		
 		int size = 0;

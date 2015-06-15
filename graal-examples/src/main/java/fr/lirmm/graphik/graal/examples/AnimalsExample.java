@@ -30,7 +30,7 @@ import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
-import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
+import fr.lirmm.graphik.graal.forward_chaining.NaiveChase;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
@@ -128,7 +128,7 @@ public class AnimalsExample {
 		writer.flush();
 		waitEntry();
 
-		Chase chase = new DefaultChase(kb.getRuleSet(), kb.getAtomSet());
+		Chase chase = new NaiveChase(kb.getRuleSet(), kb.getAtomSet());
 		chase.execute();
 
 		writer.write("\n= Query =\n");
