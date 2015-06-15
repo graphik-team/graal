@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
 		<artifactId>graal-apps</artifactId>
-		<version>0.7.5-SNAPSHOT</version>
+		<version>0.8.0</version>
 	</parent>
 	
 	<artifactId>dlgp2ruleml</artifactId>
@@ -37,22 +37,22 @@
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-util</artifactId>
-			<version>${project.parent.version}</version>
+			<version>0.8.0</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-core</artifactId>
-			<version>${project.parent.version}</version>
+			<version>0.8.0</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-io-dlgp</artifactId>
-			<version>${project.parent.version}</version>
+			<version>0.8.0</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-io-ruleml</artifactId>
-			<version>${project.parent.version}</version>
+			<version>0.8.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.beust</groupId>
