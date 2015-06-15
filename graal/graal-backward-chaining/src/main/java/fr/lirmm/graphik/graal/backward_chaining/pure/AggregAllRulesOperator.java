@@ -15,10 +15,6 @@
 import java.util.Collection;
 import java.util.LinkedList;
 
-import fr.lirmm.graphik.graal.backward_chaining.pure.queries.MarkedQuery;
-import fr.lirmm.graphik.graal.backward_chaining.pure.queries.QueryUtils;
-import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
-import fr.lirmm.graphik.graal.backward_chaining.pure.utils.QueryUnifier;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Rule;
@@ -57,7 +53,7 @@ public class AggregAllRulesOperator extends BasicAggregAllRulesOperator {
 				ruleSet, compilation)) {
 			unifiers = getSinglePieceUnifiers(q, r, compilation);
 			for (QueryUnifier u : unifiers) {
-				rewriteSet.add(QueryUtils.rewriteWithMark(q, u));
+				rewriteSet.add(Utils.rewriteWithMark(q, u));
 			}
 		}
 

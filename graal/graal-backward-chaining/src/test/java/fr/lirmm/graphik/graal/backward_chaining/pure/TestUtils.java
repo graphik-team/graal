@@ -13,7 +13,7 @@
  /**
  * 
  */
-package fr.lirmm.graphik.graal.backward_chaining.test;
+package fr.lirmm.graphik.graal.backward_chaining.pure;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;

@@ -10,7 +10,7 @@
  *            Michel LECLÈRE
  *            Marie-Laure MUGNIER
  */
- package fr.lirmm.graphik.graal.backward_chaining.pure.queries;
+ package fr.lirmm.graphik.graal.backward_chaining.pure;
 
 import java.util.ArrayList;
 
@@ -21,7 +21,7 @@ import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.term.Term;
 
-public class MarkedQuery extends DefaultConjunctiveQuery {
+class MarkedQuery extends DefaultConjunctiveQuery {
 
 	private ArrayList<Atom> markedAtoms;
 

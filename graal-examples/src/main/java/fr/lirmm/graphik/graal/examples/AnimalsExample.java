@@ -21,7 +21,7 @@ import java.io.Reader;
 import java.util.Scanner;
 
 import fr.lirmm.graphik.graal.backward_chaining.BackwardChainer;
-import fr.lirmm.graphik.graal.backward_chaining.PureRewriter;
+import fr.lirmm.graphik.graal.backward_chaining.pure.PureRewriter;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultKnowledgeBase;
 import fr.lirmm.graphik.graal.core.KnowledgeBase;

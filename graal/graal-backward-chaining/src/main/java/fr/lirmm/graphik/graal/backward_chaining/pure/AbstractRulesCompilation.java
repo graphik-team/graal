@@ -13,13 +13,12 @@
  /**
  * 
  */
-package fr.lirmm.graphik.graal.backward_chaining.pure.rules;
+package fr.lirmm.graphik.graal.backward_chaining.pure;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import fr.lirmm.graphik.graal.backward_chaining.pure.utils.Misc;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
@@ -55,7 +54,7 @@ public abstract class AbstractRulesCompilation implements RulesCompilation {
 				.developpRewriting(pivotRewritingSet);
 
 		/** clean the rewrites to return **/
-		Misc.computeCover(unfoldingRewritingSet);
+		Utils.computeCover(unfoldingRewritingSet);
 		
 		if (this.getProfiler() != null) {
 			this.getProfiler().stop("Unfolding time");

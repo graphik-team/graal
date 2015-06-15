@@ -10,7 +10,7 @@
  *            Michel LECLÈRE
  *            Marie-Laure MUGNIER
  */
- package fr.lirmm.graphik.graal.backward_chaining.test;
+ package fr.lirmm.graphik.graal.backward_chaining;
 
 /**
  * 
@@ -25,15 +25,15 @@ import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
-import fr.lirmm.graphik.graal.backward_chaining.PureRewriter;
 import fr.lirmm.graphik.graal.backward_chaining.pure.AggregAllRulesOperator;
 import fr.lirmm.graphik.graal.backward_chaining.pure.AggregSingleRuleOperator;
 import fr.lirmm.graphik.graal.backward_chaining.pure.BasicAggregAllRulesOperator;
+import fr.lirmm.graphik.graal.backward_chaining.pure.HierarchicalCompilation;
+import fr.lirmm.graphik.graal.backward_chaining.pure.IDCompilation;
+import fr.lirmm.graphik.graal.backward_chaining.pure.NoCompilation;
+import fr.lirmm.graphik.graal.backward_chaining.pure.PureRewriter;
 import fr.lirmm.graphik.graal.backward_chaining.pure.RewritingOperator;
-import fr.lirmm.graphik.graal.backward_chaining.pure.rules.HierarchicalCompilation;
-import fr.lirmm.graphik.graal.backward_chaining.pure.rules.IDCompilation;
-import fr.lirmm.graphik.graal.backward_chaining.pure.rules.NoCompilation;
-import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
+import fr.lirmm.graphik.graal.backward_chaining.pure.RulesCompilation;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Predicate;

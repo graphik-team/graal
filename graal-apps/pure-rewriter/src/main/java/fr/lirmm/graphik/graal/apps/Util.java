@@ -23,10 +23,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
-import fr.lirmm.graphik.graal.backward_chaining.pure.rules.HierarchicalCompilation;
-import fr.lirmm.graphik.graal.backward_chaining.pure.rules.IDCompilation;
-import fr.lirmm.graphik.graal.backward_chaining.pure.rules.NoCompilation;
-import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
+import fr.lirmm.graphik.graal.backward_chaining.pure.HierarchicalCompilation;
+import fr.lirmm.graphik.graal.backward_chaining.pure.IDCompilation;
+import fr.lirmm.graphik.graal.backward_chaining.pure.NoCompilation;
+import fr.lirmm.graphik.graal.backward_chaining.pure.RulesCompilation;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;

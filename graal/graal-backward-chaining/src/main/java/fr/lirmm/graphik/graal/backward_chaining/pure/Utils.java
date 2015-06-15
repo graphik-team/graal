@@ -13,15 +13,16 @@
  /**
  * 
  */
-package fr.lirmm.graphik.graal.backward_chaining.pure.utils;
+package fr.lirmm.graphik.graal.backward_chaining.pure;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
-import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultFreeVarGen;
 import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.Rule;
@@ -38,12 +39,77 @@ import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */
-public final class Misc {
+final class Utils {
 
 	private static DefaultFreeVarGen varGen = new DefaultFreeVarGen("X"
-			+ Integer.toString(Misc.class.hashCode()));
+			+ Integer.toString(Utils.class.hashCode()));
 
-	private Misc() {
+	private Utils() {
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Rewrite the fact q according to the unifier u between the head of r and q
+	 * 
+	 * @param q
+	 *            the fact to rewrite
+	 * @param r
+	 *            the rule which is unified with q
+	 * @param u
+	 *            the unifier between q and r
+	 * @return the rewrite of q according to the unifier u between the head of r
+	 *         and q
+	 */
+	public static ConjunctiveQuery rewrite(ConjunctiveQuery q, QueryUnifier u) {
+		AtomSet ajout = u.getImageOf(u.getRule().getBody());
+		AtomSet restant = u.getImageOf(AtomSets.minus(q.getAtomSet(),
+				u.getPiece()));
+		ConjunctiveQuery rew = null;
+		if (ajout != null && restant != null) { // FIXME
+			AtomSet res = AtomSets.union(ajout, restant);
+			ArrayList<Term> ansVar = new ArrayList<Term>();
+			ansVar.addAll(q.getAnswerVariables());
+			rew = new DefaultConjunctiveQuery(res, ansVar);
+		}
+		return rew;
+	}
+
+	/**
+	 * Rewrite the marked fact q according to the unifier u between the head of
+	 * r and q
+	 * 
+	 * @param q
+	 *            the fact to rewrite must be a marked fact
+	 * @param r
+	 *            the rule which is unified with q
+	 * @param u
+	 *            the unifier between q and r
+	 * @return the rewrite of q according to the unifier u between the head of r
+	 *         and q
+	 */
+	public static MarkedQuery rewriteWithMark(ConjunctiveQuery q, QueryUnifier u) {
+
+		AtomSet ajout = u.getImageOf(u.getRule().getBody());
+		AtomSet restant = u.getImageOf(AtomSets.minus(q.getAtomSet(),
+				u.getPiece()));
+		MarkedQuery rew = null;
+		if (ajout != null && restant != null) { // FIXME
+			AtomSet res = AtomSets.union(ajout, restant);
+			ArrayList<Term> ansVar = new ArrayList<Term>();
+			ansVar.addAll(q.getAnswerVariables());
+			rew = new MarkedQuery(res, ansVar);
+
+			ArrayList<Atom> markedAtoms = new ArrayList<Atom>();
+			for (Atom a : ajout)
+				markedAtoms.add(a);
+
+			rew.setMarkedAtom(markedAtoms);
+		}
+
+		return rew;
 	}
 
 	public static Rule getSafeCopy(Rule rule) {
@@ -63,6 +129,7 @@ public final class Misc {
 
 		return new DefaultRule(safeBody, safeHead);
 	}
+
 
 	/**
 	 * Returns true if AtomSet h is more general than AtomSet f, and mark all
@@ -192,7 +259,7 @@ public final class Misc {
 			end = set.iterator();
 			while (!finished && end.hasNext()) {
 				o = end.next();
-				if (o != q && Misc.isMoreGeneralThan(o, q)) {
+				if (o != q && Utils.isMoreGeneralThan(o, q)) {
 					finished = true;
 					beg.remove();
 				}

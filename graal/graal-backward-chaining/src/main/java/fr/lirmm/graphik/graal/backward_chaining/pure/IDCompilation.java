@@ -10,7 +10,7 @@
  *            Michel LECLÈRE
  *            Marie-Laure MUGNIER
  */
- package fr.lirmm.graphik.graal.backward_chaining.pure.rules;
+ package fr.lirmm.graphik.graal.backward_chaining.pure;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,9 +22,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import fr.lirmm.graphik.graal.backward_chaining.pure.utils.IDCondition;
-import fr.lirmm.graphik.graal.backward_chaining.pure.utils.IDConditionImpl;
-import fr.lirmm.graphik.graal.backward_chaining.pure.utils.TermPartition;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultFreeVarGen;

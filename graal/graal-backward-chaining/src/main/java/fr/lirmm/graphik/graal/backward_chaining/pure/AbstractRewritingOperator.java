@@ -22,12 +22,6 @@ import java.util.TreeSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.backward_chaining.pure.rules.AtomicHeadRule;
-import fr.lirmm.graphik.graal.backward_chaining.pure.rules.IDCompilation;
-import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
-import fr.lirmm.graphik.graal.backward_chaining.pure.utils.Misc;
-import fr.lirmm.graphik.graal.backward_chaining.pure.utils.QueryUnifier;
-import fr.lirmm.graphik.graal.backward_chaining.pure.utils.TermPartition;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Predicate;
@@ -98,7 +92,7 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 		Iterator<Atom> i = unifiableAtoms.iterator();
 		while (i.hasNext()) {
 			InMemoryAtomSet p = new LinkedListAtomSet();
-			Rule tmpRule = Misc.getSafeCopy(r);
+			Rule tmpRule = Utils.getSafeCopy(r);
 			AtomicHeadRule copy = new AtomicHeadRule(tmpRule.getBody(), tmpRule
 					.getHead().iterator().next());
 			Atom toUnif = i.next();
@@ -167,7 +161,7 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 	private LinkedList<QueryUnifier> getSinglePieceUnifiersNAHR(
 			ConjunctiveQuery q, Rule r, RulesCompilation compilation) {
 		LinkedList<QueryUnifier> u = new LinkedList<QueryUnifier>();
-		Rule ruleCopy = Misc.getSafeCopy(r);
+		Rule ruleCopy = Utils.getSafeCopy(r);
 		HashMap<Atom, LinkedList<TermPartition>> possibleUnification = new HashMap<Atom, LinkedList<TermPartition>>();
 		// compute possible unification between atoms of Q and head(R)
 		for (Atom a : q) {

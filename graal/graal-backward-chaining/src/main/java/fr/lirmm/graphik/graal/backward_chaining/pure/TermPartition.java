@@ -10,7 +10,7 @@
  *            Michel LECLÈRE
  *            Marie-Laure MUGNIER
  */
- package fr.lirmm.graphik.graal.backward_chaining.pure.utils;
+ package fr.lirmm.graphik.graal.backward_chaining.pure;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,7 +25,7 @@ import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.util.Partition;
 
-public class TermPartition extends Partition<Term> {
+class TermPartition extends Partition<Term> {
 
 	/**
 	 * return the subset of sep containing terms that are in the same class than

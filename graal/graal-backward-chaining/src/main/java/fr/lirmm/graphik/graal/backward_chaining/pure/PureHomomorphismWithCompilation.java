@@ -13,12 +13,11 @@
  /**
  * 
  */
-package fr.lirmm.graphik.graal.backward_chaining.pure.utils;
+package fr.lirmm.graphik.graal.backward_chaining.pure;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
@@ -28,7 +27,7 @@ import fr.lirmm.graphik.graal.homomorphism.PureHomomorphism;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class PureHomomorphismWithCompilation extends PureHomomorphism {
+class PureHomomorphismWithCompilation extends PureHomomorphism {
 
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(PureHomomorphismWithCompilation.class);

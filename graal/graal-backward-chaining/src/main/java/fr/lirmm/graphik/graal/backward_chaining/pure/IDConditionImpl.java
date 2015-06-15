@@ -10,7 +10,7 @@
  *            Michel LECLÈRE
  *            Marie-Laure MUGNIER
  */
- package fr.lirmm.graphik.graal.backward_chaining.pure.utils;
+ package fr.lirmm.graphik.graal.backward_chaining.pure;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,7 +31,7 @@ import fr.lirmm.graphik.util.Partition;
  * @author Mélanie KÖNIG
  * 
  */
-public class IDConditionImpl implements IDCondition {
+class IDConditionImpl implements IDCondition {
 
 	private int[] condBody;
 	private int[] condHead;

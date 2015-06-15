@@ -13,7 +13,7 @@
  /**
  * 
  */
-package fr.lirmm.graphik.graal.backward_chaining.test;
+package fr.lirmm.graphik.graal.backward_chaining.pure;
 
 import org.junit.Assert;
 import org.junit.Test;

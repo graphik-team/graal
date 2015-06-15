@@ -17,7 +17,6 @@ package fr.lirmm.graphik.graal.backward_chaining.pure;
 
 import java.util.Collection;
 
-import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByHeadPredicatesRuleSet;
 import fr.lirmm.graphik.util.Profilable;

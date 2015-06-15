@@ -10,7 +10,7 @@
  *            Michel LECLÈRE
  *            Marie-Laure MUGNIER
  */
- package fr.lirmm.graphik.graal.backward_chaining.pure.utils;
+ package fr.lirmm.graphik.graal.backward_chaining.pure;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
@@ -28,7 +28,7 @@ import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
  * @author Mélanie KÖNIG
  * 
  */
-public class QueryUnifier {
+class QueryUnifier {
 	/**
 	 * the rule that are unified with the query
 	 */

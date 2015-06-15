@@ -20,9 +20,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import fr.lirmm.graphik.graal.backward_chaining.pure.queries.PureQuery;
-import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
-import fr.lirmm.graphik.graal.backward_chaining.pure.utils.Misc;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByHeadPredicatesRuleSet;
@@ -34,7 +31,7 @@ import fr.lirmm.graphik.util.Verbosable;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class RewritingAlgorithm implements Verbosable, Profilable {
+class RewritingAlgorithm implements Verbosable, Profilable {
 
 	private boolean verbose;
 	private Profiler profiler;
@@ -96,7 +93,7 @@ public class RewritingAlgorithm implements Verbosable, Profilable {
 			generatedRewrites += currentRewriteSet.size(); // stats
 
 			/* keep only the most general among query just computed */
-			Misc.computeCover(currentRewriteSet, compilation);
+			Utils.computeCover(currentRewriteSet, compilation);
 
 			/*
 			 * keep only the query just computed that are more general than
@@ -127,7 +124,7 @@ public class RewritingAlgorithm implements Verbosable, Profilable {
 		}
 
 		/* clean the rewrites to return */
-		Misc.computeCover(finalRewritingSet);
+		Utils.computeCover(finalRewritingSet);
 
 		if(this.verbose) {
 			this.profiler.stop("Rewriting time");
@@ -170,7 +167,7 @@ public class RewritingAlgorithm implements Verbosable, Profilable {
 			Collection<ConjunctiveQuery> rewriteSet, RulesCompilation compilation) {
 		for(ConjunctiveQuery q : rewriteSet) {
 			InMemoryAtomSet a = q.getAtomSet();
-			if (Misc.isMoreGeneralThan(a, f, compilation))
+			if (Utils.isMoreGeneralThan(a, f, compilation))
 				return true;
 		}
 		return false;

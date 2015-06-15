@@ -13,16 +13,11 @@
  /**
  * 
  */
-package fr.lirmm.graphik.graal.backward_chaining;
+package fr.lirmm.graphik.graal.backward_chaining.pure;
 
 import java.util.Iterator;
 
-import fr.lirmm.graphik.graal.backward_chaining.pure.AggregSingleRuleOperator;
-import fr.lirmm.graphik.graal.backward_chaining.pure.RewritingAlgorithm;
-import fr.lirmm.graphik.graal.backward_chaining.pure.RewritingOperator;
-import fr.lirmm.graphik.graal.backward_chaining.pure.queries.PureQuery;
-import fr.lirmm.graphik.graal.backward_chaining.pure.rules.NoCompilation;
-import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
+import fr.lirmm.graphik.graal.backward_chaining.AbstractBackwardChainer;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.RuleUtils;

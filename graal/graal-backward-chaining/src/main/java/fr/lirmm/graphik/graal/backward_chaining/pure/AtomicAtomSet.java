@@ -10,7 +10,7 @@
  *            Michel LECLÈRE
  *            Marie-Laure MUGNIER
  */
- package fr.lirmm.graphik.graal.backward_chaining.pure.utils;
+ package fr.lirmm.graphik.graal.backward_chaining.pure;
 
 import java.util.Iterator;
 
@@ -22,7 +22,7 @@ import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
  * Fact composed by only one atom
  * @author Mélanie KÖNIG
  */
-public class AtomicAtomSet extends LinkedListAtomSet {
+class AtomicAtomSet extends LinkedListAtomSet {
 	private static final long serialVersionUID = 1L;
 
 	public AtomicAtomSet() {

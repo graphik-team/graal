@@ -10,9 +10,8 @@
  *            Michel LECLÈRE
  *            Marie-Laure MUGNIER
  */
- package fr.lirmm.graphik.graal.backward_chaining.pure.rules;
+ package fr.lirmm.graphik.graal.backward_chaining.pure;
 
-import fr.lirmm.graphik.graal.backward_chaining.pure.utils.AtomicAtomSet;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
@@ -24,7 +23,7 @@ import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
  * @author Mélanie KÖNIG
  * 
  */
-public class AtomicHeadRule extends DefaultRule {
+class AtomicHeadRule extends DefaultRule {
 
 	/**
 	 * Construct an AtomicHeadRule

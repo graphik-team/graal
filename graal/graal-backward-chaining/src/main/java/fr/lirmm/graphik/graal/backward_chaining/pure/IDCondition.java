@@ -13,7 +13,7 @@
  /**
  * 
  */
-package fr.lirmm.graphik.graal.backward_chaining.pure.utils;
+package fr.lirmm.graphik.graal.backward_chaining.pure;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ import fr.lirmm.graphik.graal.core.term.Term;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface IDCondition {
+interface IDCondition {
 
 	List<Integer> getBody();
 	/**

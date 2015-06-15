@@ -13,7 +13,7 @@
  /**
  * 
  */
-package fr.lirmm.graphik.graal.backward_chaining.test;
+package fr.lirmm.graphik.graal.backward_chaining.pure;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -22,9 +22,9 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-import fr.lirmm.graphik.graal.backward_chaining.pure.utils.IDCondition;
-import fr.lirmm.graphik.graal.backward_chaining.pure.utils.IDConditionImpl;
-import fr.lirmm.graphik.graal.backward_chaining.pure.utils.TermPartition;
+import fr.lirmm.graphik.graal.backward_chaining.pure.IDCondition;
+import fr.lirmm.graphik.graal.backward_chaining.pure.IDConditionImpl;
+import fr.lirmm.graphik.graal.backward_chaining.pure.TermPartition;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
 

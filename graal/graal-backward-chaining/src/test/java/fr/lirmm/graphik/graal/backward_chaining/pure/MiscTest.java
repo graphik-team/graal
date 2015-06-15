@@ -13,7 +13,7 @@
  /**
  * 
  */
-package fr.lirmm.graphik.graal.backward_chaining.test;
+package fr.lirmm.graphik.graal.backward_chaining.pure;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
@@ -21,7 +21,7 @@ import java.lang.management.ThreadMXBean;
 import org.junit.Assert;
 import org.junit.Test;
 
-import fr.lirmm.graphik.graal.backward_chaining.pure.utils.Misc;
+import fr.lirmm.graphik.graal.backward_chaining.pure.Utils;
 import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.Rule;
 
@@ -78,61 +78,61 @@ public class MiscTest {
 
 	@Test
 	public void equalsLinearRulesTest() {		
-		Assert.assertTrue(Misc.imply(RULE_LIN1, RULE_LIN1));
-		Assert.assertFalse(Misc.imply(RULE_LIN1, RULE_LIN2));
-		Assert.assertFalse(Misc.imply(RULE_LIN1, RULE_LIN3));
-		Assert.assertFalse(Misc.imply(RULE_LIN1, RULE_LIN4));
-		Assert.assertFalse(Misc.imply(RULE_LIN1, RULE_LIN5));
-		Assert.assertFalse(Misc.imply(RULE_LIN1, RULE_LIN6));
-		Assert.assertFalse(Misc.imply(RULE_LIN1, RULE_LIN7));
+		Assert.assertTrue(Utils.imply(RULE_LIN1, RULE_LIN1));
+		Assert.assertFalse(Utils.imply(RULE_LIN1, RULE_LIN2));
+		Assert.assertFalse(Utils.imply(RULE_LIN1, RULE_LIN3));
+		Assert.assertFalse(Utils.imply(RULE_LIN1, RULE_LIN4));
+		Assert.assertFalse(Utils.imply(RULE_LIN1, RULE_LIN5));
+		Assert.assertFalse(Utils.imply(RULE_LIN1, RULE_LIN6));
+		Assert.assertFalse(Utils.imply(RULE_LIN1, RULE_LIN7));
 		
-		Assert.assertTrue(Misc.imply(RULE_LIN2, RULE_LIN1));
-		Assert.assertTrue(Misc.imply(RULE_LIN2, RULE_LIN2));
-		Assert.assertTrue(Misc.imply(RULE_LIN2, RULE_LIN3));
-		Assert.assertFalse(Misc.imply(RULE_LIN2, RULE_LIN4));
-		Assert.assertFalse(Misc.imply(RULE_LIN2, RULE_LIN5));
-		Assert.assertFalse(Misc.imply(RULE_LIN2, RULE_LIN6));
-		Assert.assertFalse(Misc.imply(RULE_LIN2, RULE_LIN7));
+		Assert.assertTrue(Utils.imply(RULE_LIN2, RULE_LIN1));
+		Assert.assertTrue(Utils.imply(RULE_LIN2, RULE_LIN2));
+		Assert.assertTrue(Utils.imply(RULE_LIN2, RULE_LIN3));
+		Assert.assertFalse(Utils.imply(RULE_LIN2, RULE_LIN4));
+		Assert.assertFalse(Utils.imply(RULE_LIN2, RULE_LIN5));
+		Assert.assertFalse(Utils.imply(RULE_LIN2, RULE_LIN6));
+		Assert.assertFalse(Utils.imply(RULE_LIN2, RULE_LIN7));
 		
-		Assert.assertTrue(Misc.imply(RULE_LIN3, RULE_LIN1));
-		Assert.assertTrue(Misc.imply(RULE_LIN3, RULE_LIN2));
-		Assert.assertTrue(Misc.imply(RULE_LIN3, RULE_LIN3));
-		Assert.assertFalse(Misc.imply(RULE_LIN3, RULE_LIN4));
-		Assert.assertFalse(Misc.imply(RULE_LIN3, RULE_LIN5));
-		Assert.assertFalse(Misc.imply(RULE_LIN3, RULE_LIN6));
-		Assert.assertFalse(Misc.imply(RULE_LIN3, RULE_LIN7));
+		Assert.assertTrue(Utils.imply(RULE_LIN3, RULE_LIN1));
+		Assert.assertTrue(Utils.imply(RULE_LIN3, RULE_LIN2));
+		Assert.assertTrue(Utils.imply(RULE_LIN3, RULE_LIN3));
+		Assert.assertFalse(Utils.imply(RULE_LIN3, RULE_LIN4));
+		Assert.assertFalse(Utils.imply(RULE_LIN3, RULE_LIN5));
+		Assert.assertFalse(Utils.imply(RULE_LIN3, RULE_LIN6));
+		Assert.assertFalse(Utils.imply(RULE_LIN3, RULE_LIN7));
 		
-		Assert.assertTrue(Misc.imply(RULE_LIN4, RULE_LIN1));
-		Assert.assertFalse(Misc.imply(RULE_LIN4, RULE_LIN2));
-		Assert.assertFalse(Misc.imply(RULE_LIN4, RULE_LIN3));
-		Assert.assertTrue(Misc.imply(RULE_LIN4, RULE_LIN4));
-		Assert.assertFalse(Misc.imply(RULE_LIN4, RULE_LIN5));
-		Assert.assertFalse(Misc.imply(RULE_LIN4, RULE_LIN6));
-		Assert.assertFalse(Misc.imply(RULE_LIN4, RULE_LIN7));
+		Assert.assertTrue(Utils.imply(RULE_LIN4, RULE_LIN1));
+		Assert.assertFalse(Utils.imply(RULE_LIN4, RULE_LIN2));
+		Assert.assertFalse(Utils.imply(RULE_LIN4, RULE_LIN3));
+		Assert.assertTrue(Utils.imply(RULE_LIN4, RULE_LIN4));
+		Assert.assertFalse(Utils.imply(RULE_LIN4, RULE_LIN5));
+		Assert.assertFalse(Utils.imply(RULE_LIN4, RULE_LIN6));
+		Assert.assertFalse(Utils.imply(RULE_LIN4, RULE_LIN7));
 		
-		Assert.assertFalse(Misc.imply(RULE_LIN5, RULE_LIN1));
-		Assert.assertFalse(Misc.imply(RULE_LIN5, RULE_LIN2));
-		Assert.assertFalse(Misc.imply(RULE_LIN5, RULE_LIN3));
-		Assert.assertFalse(Misc.imply(RULE_LIN5, RULE_LIN4));
-		Assert.assertTrue(Misc.imply(RULE_LIN5, RULE_LIN5));
-		Assert.assertFalse(Misc.imply(RULE_LIN5, RULE_LIN6));
-		Assert.assertTrue(Misc.imply(RULE_LIN5, RULE_LIN7));
+		Assert.assertFalse(Utils.imply(RULE_LIN5, RULE_LIN1));
+		Assert.assertFalse(Utils.imply(RULE_LIN5, RULE_LIN2));
+		Assert.assertFalse(Utils.imply(RULE_LIN5, RULE_LIN3));
+		Assert.assertFalse(Utils.imply(RULE_LIN5, RULE_LIN4));
+		Assert.assertTrue(Utils.imply(RULE_LIN5, RULE_LIN5));
+		Assert.assertFalse(Utils.imply(RULE_LIN5, RULE_LIN6));
+		Assert.assertTrue(Utils.imply(RULE_LIN5, RULE_LIN7));
 		
-		Assert.assertFalse(Misc.imply(RULE_LIN6, RULE_LIN1));
-		Assert.assertFalse(Misc.imply(RULE_LIN6, RULE_LIN2));
-		Assert.assertFalse(Misc.imply(RULE_LIN6, RULE_LIN3));
-		Assert.assertFalse(Misc.imply(RULE_LIN6, RULE_LIN4));
-		Assert.assertFalse(Misc.imply(RULE_LIN6, RULE_LIN5));
-		Assert.assertTrue(Misc.imply(RULE_LIN6, RULE_LIN6));
-		Assert.assertFalse(Misc.imply(RULE_LIN6, RULE_LIN7));
+		Assert.assertFalse(Utils.imply(RULE_LIN6, RULE_LIN1));
+		Assert.assertFalse(Utils.imply(RULE_LIN6, RULE_LIN2));
+		Assert.assertFalse(Utils.imply(RULE_LIN6, RULE_LIN3));
+		Assert.assertFalse(Utils.imply(RULE_LIN6, RULE_LIN4));
+		Assert.assertFalse(Utils.imply(RULE_LIN6, RULE_LIN5));
+		Assert.assertTrue(Utils.imply(RULE_LIN6, RULE_LIN6));
+		Assert.assertFalse(Utils.imply(RULE_LIN6, RULE_LIN7));
 		
-		Assert.assertFalse(Misc.imply(RULE_LIN7, RULE_LIN1));
-		Assert.assertFalse(Misc.imply(RULE_LIN7, RULE_LIN2));
-		Assert.assertFalse(Misc.imply(RULE_LIN7, RULE_LIN3));
-		Assert.assertFalse(Misc.imply(RULE_LIN7, RULE_LIN4));
-		Assert.assertTrue(Misc.imply(RULE_LIN7, RULE_LIN5));
-		Assert.assertFalse(Misc.imply(RULE_LIN7, RULE_LIN6));
-		Assert.assertTrue(Misc.imply(RULE_LIN7, RULE_LIN7));
+		Assert.assertFalse(Utils.imply(RULE_LIN7, RULE_LIN1));
+		Assert.assertFalse(Utils.imply(RULE_LIN7, RULE_LIN2));
+		Assert.assertFalse(Utils.imply(RULE_LIN7, RULE_LIN3));
+		Assert.assertFalse(Utils.imply(RULE_LIN7, RULE_LIN4));
+		Assert.assertTrue(Utils.imply(RULE_LIN7, RULE_LIN5));
+		Assert.assertFalse(Utils.imply(RULE_LIN7, RULE_LIN6));
+		Assert.assertTrue(Utils.imply(RULE_LIN7, RULE_LIN7));
 		
 	}
 	

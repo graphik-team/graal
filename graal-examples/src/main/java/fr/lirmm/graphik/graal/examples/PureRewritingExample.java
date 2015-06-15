@@ -16,7 +16,7 @@
 package fr.lirmm.graphik.graal.examples;
 
 import fr.lirmm.graphik.graal.backward_chaining.BackwardChainer;
-import fr.lirmm.graphik.graal.backward_chaining.PureRewriter;
+import fr.lirmm.graphik.graal.backward_chaining.pure.PureRewriter;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;

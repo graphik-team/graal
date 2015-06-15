@@ -30,7 +30,7 @@ import fr.lirmm.graphik.graal.backward_chaining.pure.AggregAllRulesOperator;
 import fr.lirmm.graphik.graal.backward_chaining.pure.AggregSingleRuleOperator;
 import fr.lirmm.graphik.graal.backward_chaining.pure.BasicAggregAllRulesOperator;
 import fr.lirmm.graphik.graal.backward_chaining.pure.RewritingOperator;
-import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
+import fr.lirmm.graphik.graal.backward_chaining.pure.RulesCompilation;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
 import fr.lirmm.graphik.graal.io.ConjunctiveQueryWriter;
@@ -140,7 +140,7 @@ class RewriteCommand extends PureCommand {
 				this.getProfiler().clear();
 				this.getProfiler().add("Initial query", query);
 			}
-			fr.lirmm.graphik.graal.backward_chaining.PureRewriter bc = new fr.lirmm.graphik.graal.backward_chaining.PureRewriter(
+			fr.lirmm.graphik.graal.backward_chaining.pure.PureRewriter bc = new fr.lirmm.graphik.graal.backward_chaining.pure.PureRewriter(
 					query, rules, compilation, operator);
 
 			if (this.isVerbose()) {

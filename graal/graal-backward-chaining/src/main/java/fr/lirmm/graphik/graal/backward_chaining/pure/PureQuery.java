@@ -13,7 +13,7 @@
  /**
  * 
  */
-package fr.lirmm.graphik.graal.backward_chaining.pure.queries;
+package fr.lirmm.graphik.graal.backward_chaining.pure;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,7 +34,7 @@ import fr.lirmm.graphik.graal.core.term.Term;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */
-public class PureQuery extends DefaultConjunctiveQuery {
+class PureQuery extends DefaultConjunctiveQuery {
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS

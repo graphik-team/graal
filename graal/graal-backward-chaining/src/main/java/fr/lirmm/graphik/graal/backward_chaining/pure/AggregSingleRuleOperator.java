@@ -18,9 +18,6 @@ package fr.lirmm.graphik.graal.backward_chaining.pure;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import fr.lirmm.graphik.graal.backward_chaining.pure.queries.QueryUtils;
-import fr.lirmm.graphik.graal.backward_chaining.pure.rules.RulesCompilation;
-import fr.lirmm.graphik.graal.backward_chaining.pure.utils.QueryUnifier;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByHeadPredicatesRuleSet;
@@ -61,7 +58,7 @@ public class AggregSingleRuleOperator extends AbstractRewritingOperator {
 		/** compute the rewrite from the unifier **/
 		ConjunctiveQuery a;
 		for (QueryUnifier u : unifiers) {
-			a = QueryUtils.rewrite(q, u);
+			a = Utils.rewrite(q, u);
 			if(a != null) {
 				rewriteSet.add(a);
 			}
