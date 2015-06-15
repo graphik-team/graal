@@ -139,22 +139,18 @@ abstract class AbstractDlgpListener implements ParserListener {
 
 	@Override
 	public void declareBase(String base) {
-		System.out.println(base);
 	}
 
 	@Override
 	public void declareTop(String top) {
-		System.out.println("top " + top);
 	}
 
 	@Override
 	public void declareUNA() {
-		System.out.println("una ");
 	}
 
 	@Override
 	public void directive(String text) {
-		System.out.println("directive " + text);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

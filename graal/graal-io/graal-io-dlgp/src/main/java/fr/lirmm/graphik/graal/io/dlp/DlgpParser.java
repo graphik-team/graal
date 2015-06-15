@@ -109,7 +109,6 @@ public final class DlgpParser extends AbstractParser<Object> {
 		@Override
 		public Object createLiteral(Object datatype, String stringValue,
 				String langTag) {
-			System.out.println("---- " + datatype + datatype.getClass());
 			return DefaultTermFactory.instance().createLiteral((URI) datatype,
 					stringValue);
 		}
