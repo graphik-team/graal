@@ -96,7 +96,7 @@
 		      <version>2.5.3</version>
 		      <configuration>
 		        <preparationGoals>compile</preparationGoals>
-		      	<finalName>dlgp2ruleml-${project.parent.version}</finalName>
+		      	<finalName>dlgp2ruleml-${project.version}</finalName>
 		        <archive>
 		          <manifestEntries>
 		            <Built-On>${maven.build.timestamp}</Built-On>
