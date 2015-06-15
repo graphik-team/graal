@@ -111,6 +111,7 @@
 					<minimumPriority>0</minimumPriority>
 					<failurePriority>0</failurePriority>
 					<rulesets>
+						<ruleset>${project.basedir}/pmd-rulesets/empty.xml</ruleset>
 					</rulesets>
 				</configuration>
 			</plugin>

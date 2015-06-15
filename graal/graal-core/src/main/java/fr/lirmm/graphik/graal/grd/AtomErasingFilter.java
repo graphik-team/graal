@@ -22,15 +22,15 @@ public class AtomErasingFilter extends GraphOfRuleDependencies.DependencyChecker
 
 	@Override
 	protected boolean isValidDependency(Rule r1, Rule r2, Substitution s) {
-		InMemoryAtomSet B1 = s.createImageOf(r1.getBody());
-		InMemoryAtomSet H1 = s.createImageOf(r1.getHead());
-		InMemoryAtomSet B2 = s.createImageOf(r2.getBody());
-		InMemoryAtomSet H2 = s.createImageOf(r2.getHead());
+		InMemoryAtomSet b1 = s.createImageOf(r1.getBody());
+		InMemoryAtomSet h1 = s.createImageOf(r1.getHead());
+		InMemoryAtomSet b2 = s.createImageOf(r2.getBody());
+		InMemoryAtomSet h2 = s.createImageOf(r2.getHead());
 
 		InMemoryAtomSet f = new LinkedListAtomSet();
-		f.addAll(B1);
-		f.addAll(H1);
-		f.addAll(B2);
+		f.addAll(b1);
+		f.addAll(h1);
+		f.addAll(b2);
 
 		// mu(B2) not subset of mu(B1) 
 		// (R2 could not be applied on F)
@@ -41,7 +41,7 @@ public class AtomErasingFilter extends GraphOfRuleDependencies.DependencyChecker
 		// (mu may lead to a *new* application of R2)
 		// if (isSubsetEq(H2,f)) return false;
 
-		return !AtomSets.contains(B1,B2) && !AtomSets.contains(f,H2);
+		return !AtomSets.contains(b1,b2) && !AtomSets.contains(f,h2);
 	}
 
 };

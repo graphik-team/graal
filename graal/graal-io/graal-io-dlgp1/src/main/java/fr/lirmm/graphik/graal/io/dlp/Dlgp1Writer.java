@@ -270,10 +270,6 @@ public class Dlgp1Writer extends AbstractGraalWriter {
 	
 	protected void writePredicate(Predicate p) throws IOException {
 		String s = p.getIdentifier().toString();
-		URI uri = new DefaultURI(p.getIdentifier().toString());
-		if (uri.getPrefix().equals(Prefix.PREDICATE)) {
-			s = uri.getLocalname();
-		}
 		
 		char first = s.charAt(0);
 		if (onlyValidChar(s) && first >= 'a' && first <= 'z') {

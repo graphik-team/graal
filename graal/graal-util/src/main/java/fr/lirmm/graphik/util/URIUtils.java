@@ -24,7 +24,8 @@ import java.net.URISyntaxException;
  */
 public final class URIUtils {
 	
-	public static URI XSD_STRING = URIUtils.createURI(Prefix.XSD, "string");
+	public static final URI XSD_STRING = URIUtils.createURI(Prefix.XSD,
+			"string");
 
 	
 	private URIUtils() {}

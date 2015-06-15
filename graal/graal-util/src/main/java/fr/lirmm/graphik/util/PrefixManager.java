@@ -25,19 +25,12 @@ import java.util.TreeMap;
  */
 public final class PrefixManager implements Iterable<Prefix> {
 
-	private static final PrefixManager instance = new PrefixManager();
+	private static final PrefixManager INSTANCE = new PrefixManager();
 	private final Map<String, Prefix> PREFIX_MAP = new TreeMap<String, Prefix>();
 	private final Map<String, Prefix> INVERSE_PREFIX_MAP = new TreeMap<String, Prefix>();
-	private static final String prefixString = "graal";
-	private static int prefixIndex = 0;
 	
 	static {
-		instance.putPrefix(Prefix.EMPTY);
-		instance.putPrefix(Prefix.LITERAL);
-		instance.putPrefix(Prefix.VARIABLE);
-		instance.putPrefix(Prefix.CONSTANT);
-		instance.putPrefix(Prefix.PREDICATE);
-		instance.putPrefix(Prefix.XSD);
+		INSTANCE.putPrefix(Prefix.XSD);
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -49,7 +42,7 @@ public final class PrefixManager implements Iterable<Prefix> {
 	}
 
 	public static PrefixManager getInstance() {
-		return instance;
+		return INSTANCE;
 	}
 	
 	// /////////////////////////////////////////////////////////////////////////
@@ -76,13 +69,4 @@ public final class PrefixManager implements Iterable<Prefix> {
 		return PREFIX_MAP.values().iterator();
 	}
 
-	////////////////////////////////////////////////////////////////////////////
-	// PRIVATE
-	////////////////////////////////////////////////////////////////////////////
-	
-	public Prefix genAndPutPrefix(String value) {
-		Prefix p = new Prefix(prefixString + ++prefixIndex, value);
-		this.putPrefix(p);
-		return p;
-	}
 }

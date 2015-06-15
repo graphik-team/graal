@@ -50,8 +50,6 @@ abstract class AbstractDlgpListener implements ParserListener {
 	private DefaultAtom atom;
 	private String label;
 
-	private OBJECT_TYPE objectType;
-
 	protected abstract void createAtomSet(InMemoryAtomSet atom);
 
 	protected abstract void createQuery(DefaultConjunctiveQuery query);
@@ -67,7 +65,6 @@ abstract class AbstractDlgpListener implements ParserListener {
 
 		atomSet = new LinkedListAtomSet();
 		atomSet2 = null;
-		this.objectType = objectType;
 
 		if (OBJECT_TYPE.QUERY.equals(objectType)) {
 			this.answerVars = new LinkedList<Term>();
@@ -126,6 +123,7 @@ abstract class AbstractDlgpListener implements ParserListener {
 			break;
 		case FACT:
 			this.createAtomSet(this.atomSet);
+			break;
 		default:
 			break;
 		}
@@ -139,18 +137,30 @@ abstract class AbstractDlgpListener implements ParserListener {
 
 	@Override
 	public void declareBase(String base) {
+		if (LOGGER.isInfoEnabled()) {
+			LOGGER.info("declare base: " + base);
+		}
 	}
 
 	@Override
 	public void declareTop(String top) {
+		if (LOGGER.isInfoEnabled()) {
+			LOGGER.info("declare top: " + top);
+		}
 	}
 
 	@Override
 	public void declareUNA() {
+		if (LOGGER.isInfoEnabled()) {
+			LOGGER.info("declare UNA");
+		}
 	}
 
 	@Override
 	public void directive(String text) {
+		if (LOGGER.isInfoEnabled()) {
+			LOGGER.info("directive text");
+		}
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

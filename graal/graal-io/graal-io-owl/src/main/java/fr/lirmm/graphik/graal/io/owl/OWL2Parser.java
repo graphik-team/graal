@@ -65,8 +65,8 @@ public class OWL2Parser extends AbstractParser<Object> {
 
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(OWL2Parser.class);
-	private static final RuleTransformator ruleTransfo = new RuleTransformator();
-	private static final InMemoryAtomSet bottomAtomSet = new LinkedListAtomSet(
+	private static final RuleTransformator RULE_TRANSFO = new RuleTransformator();
+	private static final InMemoryAtomSet BOTTOM_ATOMSET = new LinkedListAtomSet(
 			Atom.BOTTOM);
 	
 	private ArrayBlockingStream<Object> buffer = new ArrayBlockingStream<Object>(
@@ -243,7 +243,7 @@ public class OWL2Parser extends AbstractParser<Object> {
 					if (iterable != null) {
 						for (Object o : iterable) {
 							if (o instanceof Rule) {
-								o = ruleTransfo.transform((Rule) o);
+								o = RULE_TRANSFO.transform((Rule) o);
 							}
 							if (LOGGER.isDebugEnabled()) {
 								LOGGER.debug(" => " + o.toString());
@@ -331,7 +331,7 @@ public class OWL2Parser extends AbstractParser<Object> {
 		while (it.hasNext()) {
 			a = it.next();
 			if (a.getPredicate().equals(Predicate.BOTTOM)) {
-				return bottomAtomSet;
+				return BOTTOM_ATOMSET;
 			}
 		}
 

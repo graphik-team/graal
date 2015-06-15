@@ -29,14 +29,14 @@ public class DefaultTermFactory implements TermFactory {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(DefaultTermFactory.class);
 
-	private static final TermFactory instance = new DefaultTermFactory();
+	private static final TermFactory INSTANCE = new DefaultTermFactory();
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
 	public static TermFactory instance() {
-		return instance;
+		return INSTANCE;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

@@ -19,8 +19,6 @@ import org.semanticweb.owlapi.model.OWLDataIntersectionOf;
 import org.semanticweb.owlapi.model.OWLDataRange;
 import org.semanticweb.owlapi.model.OWLDatatype;
 import org.semanticweb.owlapi.model.OWLLiteral;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
@@ -32,9 +30,6 @@ import fr.lirmm.graphik.graal.core.term.Variable;
  */
 class OWLEquivalentDataRangeVisitorImpl extends
 		OWLEquivalentDataRangeVisitor {
-
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(OWLEquivalentDataRangeVisitorImpl.class);
 
 	private Variable glueVariable;
 

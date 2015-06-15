@@ -44,7 +44,7 @@ public class Kiabora {
 	private boolean help;
 
 	@Parameter(names = { "-d", "--simple-dependencies"}, description = "Do not filter unifiers when computing dependencies")
-	private boolean simple_dependencies = false;
+	private boolean simpleDependencies = false;
 
 //	@Parameter(names = { "--grd" })
 //	private boolean grd = false;
@@ -76,7 +76,7 @@ public class Kiabora {
 			}
 		}
 
-		if (options.simple_dependencies) {
+		if (options.simpleDependencies) {
 			grd = new GraphOfRuleDependencies(rules);
 		}
 		else {

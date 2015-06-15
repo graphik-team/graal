@@ -10,7 +10,7 @@ import java.util.Iterator;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class CollectionsUtils {
+public final class CollectionsUtils {
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS

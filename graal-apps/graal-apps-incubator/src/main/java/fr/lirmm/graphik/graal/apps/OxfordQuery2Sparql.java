@@ -30,8 +30,9 @@ import fr.lirmm.graphik.graal.io.sparql.SparqlConjunctiveQueryWriter;
  */
 public class OxfordQuery2Sparql {
 	
-	@Parameter(names = {"-p", "--prefix"}, description = "Rdf default prefix")
-	private String rdfPrefix = "";
+	// @Parameter(names = {"-p", "--prefix"}, description =
+	// "Rdf default prefix")
+	// private String rdfPrefix = "";
 	
 	@Parameter(names = {"-h", "--help"}, help = true)
 	private boolean help;

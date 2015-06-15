@@ -28,8 +28,6 @@ import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
 import org.semanticweb.owlapi.model.OWLObjectMinCardinality;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import org.semanticweb.owlapi.util.ShortFormProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 import fr.lirmm.graphik.graal.core.Atom;
@@ -46,9 +44,6 @@ import fr.lirmm.graphik.graal.core.term.Variable;
  */
 class OWLEquivalentClassExpressionVisitorImpl extends
 		OWLEquivalentClassExpressionVisitor {
-
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(OWLEquivalentClassExpressionVisitorImpl.class);
 
 	private static final OWLDataFactory DF = new OWLDataFactoryImpl();
 
