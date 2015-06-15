@@ -10,6 +10,7 @@
 	
 	<artifactId>dlgp2ruleml</artifactId>
 	<name>dlgp2ruleml</name>
+        <version>1.0.beta1</version>
 	<packaging>jar</packaging>
 
 	<properties>
