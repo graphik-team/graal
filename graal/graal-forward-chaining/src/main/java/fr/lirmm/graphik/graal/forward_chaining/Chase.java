@@ -17,22 +17,30 @@ package fr.lirmm.graphik.graal.forward_chaining;
 
 
 /**
+ * This interface represents a chase (forward chaining) algorithm seen as an
+ * iterative process.
+ * 
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
 public interface Chase {
 
 	/**
-	 * Sature the fact base
+	 * Calls next() until hasNext() return false.
 	 */
 	public void execute() throws ChaseException;;
 	
 	/**
-	 * Execute the next step of the saturation process
-	 * @throws ChaseException 
+	 * Execute the next step of the saturation process.
+	 * 
+	 * @throws ChaseException
 	 */
 	public void next() throws ChaseException;
 	
+	/**
+	 * 
+	 * @return true if the saturation process needs other steps.
+	 */
 	public boolean hasNext();
 	
 }
