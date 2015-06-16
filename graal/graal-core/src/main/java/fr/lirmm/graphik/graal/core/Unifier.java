@@ -40,7 +40,7 @@ public class Unifier {
 	protected Unifier() {
 	}
 
-	public static synchronized Unifier getInstance() {
+	public static synchronized Unifier instance() {
 		if (instance == null)
 			instance = new Unifier();
 
@@ -113,7 +113,7 @@ public class Unifier {
 
 	public boolean existPieceUnifier(Rule rule, InMemoryAtomSet atomset,
 			Filter<Substitution> filter) {
-		FreeVarSubstitution substitution = new FreeVarSubstitution();
+		FreshVarSubstitution substitution = new FreshVarSubstitution();
 		InMemoryAtomSet atomsetSubstitut = substitution.createImageOf(atomset);
 
 		Queue<Atom> atomQueue = new LinkedList<Atom>();
@@ -175,7 +175,7 @@ public class Unifier {
 			Atom atomFromHead, Set<Term> frontierVars, Set<Term> existentialVars) {
 		if (a1.getPredicate().equals(atomFromHead.getPredicate())) {
 			boolean error = false;
-			Substitution u = SubstitutionFactory.getInstance()
+			Substitution u = SubstitutionFactory.instance()
 					.createSubstitution();
 			u.put(baseUnifier);
 			for (int i = 0; i < a1.getPredicate().getArity(); ++i) {

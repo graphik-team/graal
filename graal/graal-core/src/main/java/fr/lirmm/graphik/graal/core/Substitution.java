@@ -20,9 +20,8 @@ import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.term.Term;
 
 /**
- * A substitution represents a set of transformation of a variable into a term.
- * To apply a substitution to a logical expression replace each variable symbols
- * by its substitute.
+ * A substitution is a syntactic transformation of a logical expression. This
+ * transformation replace some variables by other terms.
  * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  */
@@ -41,7 +40,8 @@ public interface Substitution {
 	Set<Term> getValues();
 
 	/**
-	 * Get the substitute of the given term.
+	 * Get the image of the given term by this substitution.
+	 * 
 	 * @param term
 	 * @return the substitute.
 	 */

@@ -18,7 +18,7 @@ package fr.lirmm.graphik.graal.backward_chaining.pure;
 import org.junit.Assert;
 import org.junit.Test;
 
-import fr.lirmm.graphik.graal.core.FreeVarSubstitution;
+import fr.lirmm.graphik.graal.core.FreshVarSubstitution;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
@@ -38,7 +38,7 @@ public class FreeVarSubstitutionTest {
 		
 		Rule rule = DlgpParser.parseRule("p(X,Y,Z) :- q(X,Y), q(Y,Z).");
 		
-		FreeVarSubstitution subtitution = new FreeVarSubstitution();
+		FreshVarSubstitution subtitution = new FreshVarSubstitution();
 		
 		Rule substitut = subtitution.createImageOf(rule);
 		for(Term t : substitut.getTerms(Term.Type.VARIABLE)) {

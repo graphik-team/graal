@@ -20,11 +20,11 @@ import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.core.SymbolGenerator;
+import fr.lirmm.graphik.graal.core.VariableGenerator;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.core.term.Variable;
 
-public class RdbmsSymbolGenenrator implements SymbolGenerator {
+public class RdbmsSymbolGenenrator implements VariableGenerator {
 
     private Connection dbConnection;
     private final String counterName;
@@ -43,7 +43,7 @@ public class RdbmsSymbolGenenrator implements SymbolGenerator {
     }
 
     @Override
-	public Variable getFreeVar() {
+	public Variable getFreshVar() {
         long value;
         PreparedStatement pstat = null;
         try {

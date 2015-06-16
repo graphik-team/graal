@@ -37,7 +37,7 @@ import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.SymbolGenerator;
+import fr.lirmm.graphik.graal.core.VariableGenerator;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
@@ -294,7 +294,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	}
 
 	@Override
-	public SymbolGenerator getFreeVarGen() {
+	public VariableGenerator getFreeVarGen() {
 		return new RdbmsSymbolGenenrator(this.getConnection(),
 				MAX_VARIABLE_ID_COUNTER, GET_COUNTER_VALUE_QUERY,
 				UPDATE_COUNTER_VALUE_QUERY);

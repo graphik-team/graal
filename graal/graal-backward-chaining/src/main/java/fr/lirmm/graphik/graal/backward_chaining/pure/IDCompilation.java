@@ -24,7 +24,7 @@ import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
-import fr.lirmm.graphik.graal.core.DefaultFreeVarGen;
+import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
@@ -38,7 +38,7 @@ import fr.lirmm.graphik.util.collections.ListComparator;
 
 public class IDCompilation extends AbstractRulesCompilation {
 
-	private static DefaultFreeVarGen varGen = new DefaultFreeVarGen("X"
+	private static DefaultVariableGenerator varGen = new DefaultVariableGenerator("X"
 			+ Integer.toString(IDCompilation.class.hashCode()));
 
 	// a matrix for store conditions ( p -> q : [q][p] )
@@ -147,7 +147,7 @@ public class IDCompilation extends AbstractRulesCompilation {
 			res = new LinkedList<IDCondition>();
 			ArrayList<Term> terms = new ArrayList<Term>(predB.getArity());
 			for (int i = 0; i < predH.getArity(); i++) {
-				terms.add(varGen.getFreeVar());
+				terms.add(varGen.getFreshVar());
 			}
 			res.add(new IDConditionImpl(terms, terms));
 		} else {

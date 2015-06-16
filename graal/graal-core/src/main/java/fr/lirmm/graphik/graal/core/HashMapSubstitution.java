@@ -18,6 +18,8 @@ import java.util.Map;
 import fr.lirmm.graphik.graal.core.term.Term;
 
 /**
+ * An implementation of Substitution using a {@link HashMap}.
+ * 
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
@@ -35,16 +37,9 @@ public class HashMapSubstitution extends AbstractSubstitution {
 			this.map.put(term, substitution.createImageOf(term));
 	}
 
-	/* (non-Javadoc)
-	 * @see fr.lirmm.graphik.kb.core.AbstractSubstitution#getMap()
-	 */
 	@Override
 	protected Map<Term, Term> getMap() {
 		return this.map;
 	}
 
-	@Override
-	protected Substitution getNewInstance() {
-		return new HashMapSubstitution();
-	}
 };

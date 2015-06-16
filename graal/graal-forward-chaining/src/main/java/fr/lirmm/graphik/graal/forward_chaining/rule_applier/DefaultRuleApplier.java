@@ -22,10 +22,10 @@ import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.DefaultFreeVarGen;
+import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
-import fr.lirmm.graphik.graal.core.SymbolGenerator;
+import fr.lirmm.graphik.graal.core.VariableGenerator;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.term.Term;
@@ -47,7 +47,7 @@ public class DefaultRuleApplier<T extends AtomSet> implements
 
 	private ChaseHaltingCondition haltingCondition;
 	private Homomorphism<ConjunctiveQuery, T> solver;
-	private SymbolGenerator existentialGen;
+	private VariableGenerator existentialGen;
 
 	// //////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -70,7 +70,7 @@ public class DefaultRuleApplier<T extends AtomSet> implements
 	public DefaultRuleApplier(
 			Homomorphism<ConjunctiveQuery, T> homomorphismSolver,
 			ChaseHaltingCondition haltingCondition) {
-		this(homomorphismSolver, haltingCondition, new DefaultFreeVarGen("E"));
+		this(homomorphismSolver, haltingCondition, new DefaultVariableGenerator("E"));
 	}
 	
 	/**
@@ -85,7 +85,7 @@ public class DefaultRuleApplier<T extends AtomSet> implements
 	public DefaultRuleApplier(
 			Homomorphism<ConjunctiveQuery, T> homomorphismSolver,
 			ChaseHaltingCondition haltingCondition,
-			SymbolGenerator existentialVarGenerator) {
+			VariableGenerator existentialVarGenerator) {
 		this.haltingCondition = haltingCondition;
 		this.solver = homomorphismSolver;
 		this.existentialGen = existentialVarGenerator;
@@ -159,7 +159,7 @@ public class DefaultRuleApplier<T extends AtomSet> implements
 	}
 
 	protected Term getFreeVar() {
-		return this.existentialGen.getFreeVar();
+		return this.existentialGen.getFreshVar();
 	}
 
 }

@@ -20,6 +20,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
+ * This class represents query which is the union of conjunctive queries.
+ * 
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */

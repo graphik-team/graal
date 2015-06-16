@@ -10,11 +10,22 @@
  *            Michel LECLÈRE
  *            Marie-Laure MUGNIER
  */
- package fr.lirmm.graphik.graal.core;
+package fr.lirmm.graphik.graal.core;
 
 import fr.lirmm.graphik.graal.core.term.Variable;
 
-public interface SymbolGenerator {
-	Variable getFreeVar();
+/**
+ * 
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+ *
+ */
+public interface VariableGenerator {
+
+	/**
+	 * Generate a fresh variable
+	 * 
+	 * @return
+	 */
+	Variable getFreshVar();
 };
 

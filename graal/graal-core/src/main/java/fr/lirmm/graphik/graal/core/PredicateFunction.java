@@ -14,6 +14,12 @@
 
 import fr.lirmm.graphik.graal.core.term.Term;
 
+/**
+ * This interface represents a function for a {@link BuiltInPredicate}
+ * 
+ * @author Swan Rocher {@literal <swan.rocher@lirmm.fr>}
+ *
+ */
 public interface PredicateFunction {
 
 	public boolean evaluate(Term... t);

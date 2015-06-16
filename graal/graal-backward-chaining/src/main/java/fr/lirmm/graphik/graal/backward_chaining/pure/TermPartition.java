@@ -55,7 +55,7 @@ class TermPartition extends Partition<Term> {
 	 * null if the partition contain two constants in the same class
 	 */
 	public Substitution getAssociatedSubstitution(ConjunctiveQuery context) {
-		Substitution substitution = SubstitutionFactory.getInstance()
+		Substitution substitution = SubstitutionFactory.instance()
 				.createSubstitution();
 		// we will choose a representant for all the equivalence set of the
 		// partition

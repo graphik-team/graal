@@ -22,10 +22,10 @@ import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.term.Term;
 
 /**
- * This interface represents a conjunctive query.
- * A conjunctive query is composed of a fact and a set of answer variables.
+ * This interface represents a conjunctive query. A conjunctive query is
+ * composed of a fact and a set of answer variables.
  * 
- * @author Clément Sipieter (INRIA) <clement@6pi.fr>
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
 public interface ConjunctiveQuery extends Query, Iterable<Atom> {
@@ -50,8 +50,9 @@ public interface ConjunctiveQuery extends Query, Iterable<Atom> {
 	List<Term> getAnswerVariables();
 
 	void setAnswerVariables(List<Term> ans);
+
 	/**
-	 * Iterator of the atom query conjunction.
+	 * Return an iterator over the atoms conjunction of the query.
 	 */
 	@Override
 	Iterator<Atom> iterator();

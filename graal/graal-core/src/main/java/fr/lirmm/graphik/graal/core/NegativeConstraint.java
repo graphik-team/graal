@@ -24,7 +24,7 @@ import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
  * The NegativeConstraint Class represent negative constraint by a rule that
  * produce the Bottom atom if the specified atom set is met.
  * 
- * @author Clément Sipieter (INRIA) <clement@6pi.fr>
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */
 public class NegativeConstraint extends DefaultRule {

@@ -29,7 +29,7 @@ public final class SubstitutionFactory {
 	private SubstitutionFactory() {
 	}
 
-	public static SubstitutionFactory getInstance() {
+	public static SubstitutionFactory instance() {
 		return instance;
 	}
 

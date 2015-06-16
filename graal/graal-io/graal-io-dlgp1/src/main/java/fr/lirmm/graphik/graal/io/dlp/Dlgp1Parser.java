@@ -256,9 +256,9 @@ public final class Dlgp1Parser extends AbstractParser<Object> {
 
 		for (Object o : parser) {
 			if (o instanceof Rule) {
-				target.getRuleSet().add((Rule) o);
+				target.getOntology().add((Rule) o);
 			} else if (o instanceof Atom) {
-				target.getAtomSet().add((Atom) o);
+				target.getFacts().add((Atom) o);
 			}
 		}
 	}

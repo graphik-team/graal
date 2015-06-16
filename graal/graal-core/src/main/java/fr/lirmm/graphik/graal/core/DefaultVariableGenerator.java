@@ -10,50 +10,48 @@
  *            Michel LECLÈRE
  *            Marie-Laure MUGNIER
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.core;
+ package fr.lirmm.graphik.graal.core;
 
-import fr.lirmm.graphik.graal.core.term.Term;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.core.term.Variable;
 
 /**
+ * Generate fresh variables by appending an incremental counter to the specified
+ * prefix.
+ * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class FreeVarSubstitution extends TreeMapSubstitution {
+public class DefaultVariableGenerator implements VariableGenerator {
 	
-	private SymbolGenerator gen;
-	
+	private String prefix;
+	private int index;
+
 	// /////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
+	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
-	
-	public FreeVarSubstitution() {
-		this(new DefaultFreeVarGen("X"
-				+ Integer.toString(FreeVarSubstitution.class.hashCode())));
+
+	public DefaultVariableGenerator(String prefix) {
+		this.index = 0;
+		this.prefix = prefix;
 	}
-	
-	public FreeVarSubstitution(SymbolGenerator gen) {
-		this.gen = gen;
-	}
-	
+
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
-	
-	@Override
-	public Term createImageOf(Term term) {
-		Term substitut = term;
-		if(Term.Type.VARIABLE.equals(term.getType())) {
-			substitut = this.getMap().get(term);
-			if(substitut == null) {
-				substitut = gen.getFreeVar();
-				this.put(term, substitut);
-			}
-		}
-		return substitut;
-	}
-	
 
-}
+	@Override
+	public Variable getFreshVar() {
+		return DefaultTermFactory.instance()
+				.createVariable(this.prefix + getFreshIndex());
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	private int getFreshIndex() {
+		return index++;
+	}
+
+};

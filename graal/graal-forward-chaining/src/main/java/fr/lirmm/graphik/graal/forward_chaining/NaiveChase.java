@@ -16,9 +16,9 @@
 package fr.lirmm.graphik.graal.forward_chaining;
 
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.DefaultFreeVarGen;
+import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.SymbolGenerator;
+import fr.lirmm.graphik.graal.core.VariableGenerator;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.ChaseHaltingCondition;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
@@ -49,11 +49,11 @@ public class NaiveChase extends AbstractChase implements Verbosable {
 	// /////////////////////////////////////////////////////////////////////////
 	
 	public NaiveChase(Iterable<Rule> ruleSet, AtomSet atomSet) {
-		this(ruleSet, atomSet, new DefaultFreeVarGen("E"));
+		this(ruleSet, atomSet, new DefaultVariableGenerator("E"));
 	}
 
 	public NaiveChase(Iterable<Rule> ruleSet, AtomSet atomSet,
-			SymbolGenerator existentialGen) {
+			VariableGenerator existentialGen) {
 		super(new DefaultRuleApplier<AtomSet>(StaticHomomorphism
 				.getSolverFactory().getConjunctiveQuerySolver(atomSet)));
 		this.ruleSet = ruleSet;
@@ -68,7 +68,7 @@ public class NaiveChase extends AbstractChase implements Verbosable {
 	}
 
 	public NaiveChase(Iterable<Rule> ruleSet, AtomSet atomSet,
-			SymbolGenerator existentialGen,
+			VariableGenerator existentialGen,
 			Homomorphism<ConjunctiveQuery, AtomSet> solver) {
 		super(new DefaultRuleApplier<AtomSet>(solver));
 		this.ruleSet = ruleSet;

@@ -27,7 +27,7 @@ import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.core.atomset.AtomSets;
+import fr.lirmm.graphik.graal.core.atomset.AtomSetUtils;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByHeadPredicatesRuleSet;
@@ -100,10 +100,10 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 			TermPartition partition = TermPartition.getPartitionByPosition(
 					toUnif, copy.getHead().getAtom());
 			// compute separating variable
-			LinkedList<Term> sep = AtomSets.sep(p, q.getAtomSet());
+			LinkedList<Term> sep = AtomSetUtils.sep(p, q.getAtomSet());
 			// compute sticky variable
 			LinkedList<Term> sticky = partition.getStickyVariable(sep, copy);
-			AtomSet pBar = AtomSets.minus(q.getAtomSet(), p);
+			AtomSet pBar = AtomSetUtils.minus(q.getAtomSet(), p);
 			while (partition != null && !sticky.isEmpty()) {
 
 				Iterator<Atom> ia = pBar.iterator();
@@ -131,8 +131,8 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 					}
 				}
 				if (partition != null) {
-					sep = AtomSets.sep(p, q.getAtomSet());
-					pBar = AtomSets.minus(q.getAtomSet(), p);
+					sep = AtomSetUtils.sep(p, q.getAtomSet());
+					pBar = AtomSetUtils.minus(q.getAtomSet(), p);
 					sticky = partition.getStickyVariable(sep, copy);
 				}
 			}
@@ -319,7 +319,7 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 		LinkedList<QueryUnifier> u = new LinkedList<QueryUnifier>();
 
 		// compute separating variable
-		LinkedList<Term> sep = AtomSets.sep(p, q.getAtomSet());
+		LinkedList<Term> sep = AtomSetUtils.sep(p, q.getAtomSet());
 		// compute sticky variable
 		LinkedList<Term> sticky = unif.getStickyVariable(sep, r);
 		if (sticky.isEmpty()) {
@@ -327,7 +327,7 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 		} else {
 			// compute Pext the atoms of Pbar linked to P by the sticky
 			// variables
-			InMemoryAtomSet pBar = AtomSets.minus(q.getAtomSet(), p);
+			InMemoryAtomSet pBar = AtomSetUtils.minus(q.getAtomSet(), p);
 			InMemoryAtomSet pExt = new LinkedListAtomSet();
 			for (Term t : sticky) {
 				Iterator<Atom> ib = pBar.iterator();
@@ -343,7 +343,7 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 			for (TermPartition uExt : preUnifier(pExt, r, possibleUnification)) {
 				part = unif.join(uExt);
 				if (part != null && part.isAdmissible(r)) {
-					u.addAll(extend(AtomSets.union(p, pExt), part,
+					u.addAll(extend(AtomSetUtils.union(p, pExt), part,
 							possibleUnification, q, r));
 				}
 			}
@@ -362,7 +362,7 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 					InMemoryAtomSet fa = new LinkedListAtomSet();
 					fa.add(a);
 					InMemoryAtomSet aBar = null;
-					aBar = AtomSets.minus(p, fa);
+					aBar = AtomSetUtils.minus(p, fa);
 
 					if (!aBar.iterator().hasNext())
 						res.add(ua);

@@ -30,7 +30,7 @@ import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.SymbolGenerator;
+import fr.lirmm.graphik.graal.core.VariableGenerator;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.core.term.Term.Type;
@@ -84,7 +84,7 @@ public class PlainTableRDBMSStore extends AbstractRdbmsStore {
 	}
 
 	@Override
-	public SymbolGenerator getFreeVarGen() {
+	public VariableGenerator getFreeVarGen() {
 		// TODO implement this method
 		throw new MethodNotImplementedError("This method isn't implemented");
 	}

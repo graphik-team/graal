@@ -112,7 +112,7 @@ import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.NegativeConstraint;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.SymbolGenerator;
+import fr.lirmm.graphik.graal.core.VariableGenerator;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
@@ -160,9 +160,9 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 
 	public OWLAxiomParser(ShortFormProvider prefixManager) {
 		this.prefixManager = prefixManager;
-		this.glueVarX = freeVarGen.getFreeVar();
-		this.glueVarY = freeVarGen.getFreeVar();
-		this.glueVarZ = freeVarGen.getFreeVar();
+		this.glueVarX = freeVarGen.getFreshVar();
+		this.glueVarY = freeVarGen.getFreshVar();
+		this.glueVarZ = freeVarGen.getFreshVar();
 
 		this.equalityPredicate = new Predicate("=", 2);
 		this.classVisitorX = new OWLEquivalentClassExpressionVisitorImpl(
@@ -554,9 +554,9 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 		freeVarGen.setIndex(0);
 		InMemoryAtomSet body = GraalUtils.createAtomSet();
 		Term varX, varY, firstVarInChain;
-		firstVarInChain = varX = freeVarGen.getFreeVar();
+		firstVarInChain = varX = freeVarGen.getFreshVar();
 		for (OWLPropertyExpression pe : arg.getPropertyChain()) {
-			varY = freeVarGen.getFreeVar();
+			varY = freeVarGen.getFreshVar();
 			body.addAll(pe.accept(new OWLPropertyExpressionVisitorImpl(varX,
 					varY)));
 			varX = varY;
@@ -605,7 +605,7 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 
 			for (OWLObjectPropertyExpression pe : arg
 					.getObjectPropertyExpressions()) {
-				Term var = freeVarGen.getFreeVar();
+				Term var = freeVarGen.getFreshVar();
 
 				body.addAll(pe.accept(new OWLPropertyExpressionVisitorImpl(
 						glueVarX, var)));
@@ -615,7 +615,7 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 
 			for (OWLDataPropertyExpression pe : arg
 					.getDataPropertyExpressions()) {
-				Term var = freeVarGen.getFreeVar();
+				Term var = freeVarGen.getFreshVar();
 
 				body.add(GraalUtils.createAtom(GraalUtils.createPredicate(pe),
 						glueVarX, var));
@@ -982,12 +982,12 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 	// PRIVATE CLASSES
 	// /////////////////////////////////////////////////////////////////////////
 
-	private static class SpecificFreeVarGen implements SymbolGenerator {
+	private static class SpecificFreeVarGen implements VariableGenerator {
 
 		private int index = 0;
 
 		@Override
-		public Variable getFreeVar() {
+		public Variable getFreshVar() {
 			return DefaultTermFactory.instance().createVariable("X" + index++);
 		}
 

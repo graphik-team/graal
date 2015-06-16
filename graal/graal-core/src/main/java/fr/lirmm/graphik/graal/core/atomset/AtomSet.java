@@ -20,6 +20,8 @@ import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.term.Term;
 
 /**
+ * This interface represents a set of atoms.
+ * 
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */

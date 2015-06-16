@@ -33,13 +33,13 @@ import fr.lirmm.graphik.dlgp2.parser.ParseException;
 import fr.lirmm.graphik.dlgp2.parser.TermFactory;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.DefaultFreeVarGen;
+import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.core.DefaultRule;
-import fr.lirmm.graphik.graal.core.FreeVarSubstitution;
+import fr.lirmm.graphik.graal.core.FreshVarSubstitution;
 import fr.lirmm.graphik.graal.core.KnowledgeBase;
 import fr.lirmm.graphik.graal.core.NegativeConstraint;
 import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.SymbolGenerator;
+import fr.lirmm.graphik.graal.core.VariableGenerator;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.stream.filter.AtomFilterIterator;
@@ -66,7 +66,7 @@ public final class DlgpParser extends AbstractParser<Object> {
 	private static class DlgpListener extends AbstractDlgpListener {
 
 		private ArrayBlockingStream<Object> set;
-		private SymbolGenerator freeVarGen = new DefaultFreeVarGen("i");
+		private VariableGenerator freeVarGen = new DefaultVariableGenerator("i");
 
 		DlgpListener(ArrayBlockingStream<Object> buffer) {
 			this.set = buffer;
@@ -74,7 +74,7 @@ public final class DlgpParser extends AbstractParser<Object> {
 
 		@Override
 		protected void createAtomSet(InMemoryAtomSet atomset) {
-			FreeVarSubstitution s = new FreeVarSubstitution(freeVarGen);
+			FreshVarSubstitution s = new FreshVarSubstitution(freeVarGen);
 			for (Atom a : atomset) {
 				this.set.write(s.createImageOf(a));
 			}
@@ -266,9 +266,9 @@ public final class DlgpParser extends AbstractParser<Object> {
 
 		for (Object o : parser) {
 			if (o instanceof Rule) {
-				target.getRuleSet().add((Rule) o);
+				target.getOntology().add((Rule) o);
 			} else if (o instanceof Atom) {
-				target.getAtomSet().add((Atom) o);
+				target.getFacts().add((Atom) o);
 			}
 		}
 	}

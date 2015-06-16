@@ -16,20 +16,13 @@
 package fr.lirmm.graphik.graal.core;
 
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.core.term.Term.Type;
-import fr.lirmm.graphik.util.EquivalentRelation;
-import fr.lirmm.graphik.util.TreeMapEquivalentRelation;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -135,59 +128,6 @@ public class DefaultRule implements Rule {
 		return this.existentials;
 	}
 
-	@Override
-	public Collection<InMemoryAtomSet> getPieces() {
-		Set<Term> existentials = getExistentials();
-		Collection<InMemoryAtomSet> pieces = new LinkedList<InMemoryAtomSet>();
-
-		// compute equivalent classes
-		EquivalentRelation<Term> classes = new TreeMapEquivalentRelation<Term>();
-		for (Atom a : this.getHead()) {
-			Term representant = null;
-			for (Term t : a) {
-				if (existentials.contains(t)) {
-					if (representant == null)
-						representant = t;
-					else
-						classes.mergeClasses(representant, t);
-				}
-			}
-		}
-
-		// init pieces for equivalent classes
-		Map<Integer, InMemoryAtomSet> tmpPieces = new TreeMap<Integer, InMemoryAtomSet>();
-		for (Term e : existentials) {
-			if (tmpPieces.get(classes.getIdClass(e)) == null) {
-				tmpPieces.put(classes.getIdClass(e), AtomSetFactory
-						.getInstance().createAtomSet());
-			}
-		}
-
-		// Affect atoms to one pieces
-		boolean isAffected;
-		InMemoryAtomSet atomset;
-		Term e;
-		for (Atom a : this.getHead()) {
-			isAffected = false;
-			Iterator<Term> it = existentials.iterator();
-			while (it.hasNext() && !isAffected) {
-				e = it.next();
-				if (a.getTerms().contains(e)) {
-					tmpPieces.get(classes.getIdClass(e)).add(a);
-					isAffected = true;
-				}
-			}
-			if (!isAffected) { // does not contain existential variable
-				atomset = AtomSetFactory.getInstance().createAtomSet();
-				atomset.add(a);
-				pieces.add(atomset);
-			}
-		}
-
-		pieces.addAll(tmpPieces.values());
-
-		return pieces;
-	}
 
 	@Override
 	public int compareTo(Rule other) {

@@ -26,6 +26,7 @@ import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
 import fr.lirmm.graphik.graal.core.factory.RuleFactory;
+import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
 
 /**
@@ -137,7 +138,8 @@ public abstract class AbstractSubstitution implements Substitution {
 	 */
 	@Override
 	public Substitution compose(Substitution s) {
-		Substitution newSub = this.getNewInstance();
+		Substitution newSub = SubstitutionFactory.instance()
+				.createSubstitution();
 		for (Term term : this.getTerms()) {
 			if (!newSub.compose(term, this.createImageOf(term))) {
 				return null;
@@ -171,8 +173,6 @@ public abstract class AbstractSubstitution implements Substitution {
 		builder.append('}');
 		return builder.toString();
 	}
-
-	protected abstract Substitution getNewInstance();
 
 	@Override
 	public boolean equals(Object obj) {

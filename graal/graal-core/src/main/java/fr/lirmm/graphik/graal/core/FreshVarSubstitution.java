@@ -10,39 +10,50 @@
  *            Michel LECLÈRE
  *            Marie-Laure MUGNIER
  */
- package fr.lirmm.graphik.graal.core;
-
+ /**
+ * 
+ */
+package fr.lirmm.graphik.graal.core;
 
 import fr.lirmm.graphik.graal.core.term.Term;
 
 /**
- * This class represents a built-in predicate. The function of this predicate is
- * defined by a {@link PredicateFunction}.
- * 
- * @author Swan Rocher {@literal <swan.rocher@lirmm.fr>}
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class BuiltInPredicate extends Predicate {
-
-	private static final long serialVersionUID = 201407180000L;
-
-	private PredicateFunction function;
-
+public class FreshVarSubstitution extends TreeMapSubstitution {
+	
+	private VariableGenerator gen;
+	
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
-
-	public BuiltInPredicate(String label, int arity, PredicateFunction function) {
-		super(label,arity);
-		this.function = function;
+	
+	public FreshVarSubstitution() {
+		this(new DefaultVariableGenerator("X"
+				+ Integer.toString(FreshVarSubstitution.class.hashCode())));
 	}
-
+	
+	public FreshVarSubstitution(VariableGenerator gen) {
+		this.gen = gen;
+	}
+	
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
-
-	public boolean evaluate(Term... t) {
-		return (this.function != null) && (this.function.evaluate(t));
+	
+	@Override
+	public Term createImageOf(Term term) {
+		Term substitut = term;
+		if(Term.Type.VARIABLE.equals(term.getType())) {
+			substitut = this.getMap().get(term);
+			if(substitut == null) {
+				substitut = gen.getFreshVar();
+				this.put(term, substitut);
+			}
+		}
+		return substitut;
 	}
+	
 
-};
+}

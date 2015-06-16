@@ -24,7 +24,17 @@ import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
  */
 public interface KnowledgeBase {
 
-	RuleSet getRuleSet();
+	/**
+	 * Get the ontology attached to this knowledge base.
+	 * 
+	 * @return a RuleSet representing the ontology.
+	 */
+	RuleSet getOntology();
 
-	AtomSet getAtomSet();
+	/**
+	 * Get the facts attached to this knowledgebase.
+	 * 
+	 * @return an AtomSet representing a conjunction of facts.
+	 */
+	AtomSet getFacts();
 }

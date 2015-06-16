@@ -14,7 +14,7 @@
 
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
-import fr.lirmm.graphik.graal.core.atomset.AtomSets;
+import fr.lirmm.graphik.graal.core.atomset.AtomSetUtils;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 
@@ -41,7 +41,7 @@ public class AtomErasingFilter extends GraphOfRuleDependencies.DependencyChecker
 		// (mu may lead to a *new* application of R2)
 		// if (isSubsetEq(H2,f)) return false;
 
-		return !AtomSets.contains(b1,b2) && !AtomSets.contains(f,h2);
+		return !AtomSetUtils.contains(b1,b2) && !AtomSetUtils.contains(f,h2);
 	}
 
 };

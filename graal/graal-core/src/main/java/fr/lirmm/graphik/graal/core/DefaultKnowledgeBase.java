@@ -38,9 +38,9 @@ public class DefaultKnowledgeBase implements KnowledgeBase {
 		this.atomset = AtomSetFactory.getInstance().createAtomSet();
 	}
 
-	public DefaultKnowledgeBase(RuleSet ruleset, AtomSet atomset) {
-		this.ruleset = ruleset;
-		this.atomset = atomset;
+	public DefaultKnowledgeBase(RuleSet ontology, AtomSet facts) {
+		this.ruleset = ontology;
+		this.atomset = facts;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -51,7 +51,7 @@ public class DefaultKnowledgeBase implements KnowledgeBase {
 	 * @return the ruleset
 	 */
 	@Override
-	public RuleSet getRuleSet() {
+	public RuleSet getOntology() {
 		return ruleset;
 	}
 
@@ -59,7 +59,7 @@ public class DefaultKnowledgeBase implements KnowledgeBase {
 	 * @return the atomset
 	 */
 	@Override
-	public AtomSet getAtomSet() {
+	public AtomSet getFacts() {
 		return atomset;
 	}
 

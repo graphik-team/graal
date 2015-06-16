@@ -39,9 +39,11 @@ import fr.lirmm.graphik.util.stream.filter.Filter;
  * set as follows: there is a vertex for each rule in the set and there is an
  * edge from a rule R1 to a rule R2 if R1 may lead to trigger R2, i.e., R2
  * depends on R1. R2 depends on R1 if and only if there is piece-unifier (for
- * this notion, see f.i. this paper (TODO)) between the body of R2 and the head of R1.
+ * this notion, see f.i. this paper (TODO)) between the body of R2 and the head
+ * of R1.
  * 
- * @author Clément Sipieter (INRIA) (ou pas !) <clement@6pi.fr>
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>} <br/>
+ *         Swan Rocher {@literal <swan.rocher@lirmm.fr>}
  * 
  */
 public class GraphOfRuleDependencies {
@@ -280,13 +282,13 @@ public class GraphOfRuleDependencies {
 		checker.setRule1(r1);
 		checker.setRule2(r2);
 		if (this.computingUnifiers) {
-			Set<Substitution> unifiers = Unifier.getInstance().computePieceUnifier(r1,r2.getBody(),checker);
+			Set<Substitution> unifiers = Unifier.instance().computePieceUnifier(r1,r2.getBody(),checker);
 			if (!unifiers.isEmpty()) {
 				this.setDependency(r1, unifiers, r2);
 			}
 		}
 		else {
-			if(Unifier.getInstance().existPieceUnifier(r1,r2.getBody(),checker)) {
+			if(Unifier.instance().existPieceUnifier(r1,r2.getBody(),checker)) {
 				this.addDependency(r1, r2);
 			}
 		}

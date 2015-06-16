@@ -10,7 +10,7 @@
  *            Michel LECLÈRE
  *            Marie-Laure MUGNIER
  */
- package fr.lirmm.graphik.graal.core;
+package fr.lirmm.graphik.graal.core;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -18,6 +18,8 @@ import java.util.TreeMap;
 import fr.lirmm.graphik.graal.core.term.Term;
 
 /**
+ * An implementation of Susbstitution using a {@link TreeMap}
+ * 
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
@@ -35,19 +37,9 @@ public class TreeMapSubstitution extends AbstractSubstitution {
 			this.map.put(term, substitution.createImageOf(term));
 	}
 
-	/* (non-Javadoc)
-	 * @see fr.lirmm.graphik.kb.core.AbstractSubstitution#getMap()
-	 */
 	@Override
 	protected Map<Term, Term> getMap() {
 		return this.map;
 	}
 
-	@Override
-	protected Substitution getNewInstance() {
-		return new TreeMapSubstitution();
-	}
-
-	
-	
 };

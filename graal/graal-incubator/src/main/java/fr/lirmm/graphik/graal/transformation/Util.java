@@ -18,7 +18,7 @@ import java.util.List;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.core.SymbolGenerator;
+import fr.lirmm.graphik.graal.core.VariableGenerator;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.term.Term;
@@ -33,11 +33,11 @@ public abstract class Util {
 	 * @param id
 	 * @return
 	 */
-	public static InMemoryAtomSet reification(Atom a, SymbolGenerator freeVarGen) {
+	public static InMemoryAtomSet reification(Atom a, VariableGenerator freeVarGen) {
 		InMemoryAtomSet atomSet = new LinkedListAtomSet();
 		
 		String predicatLabel = a.getPredicate().getIdentifier().toString();
-		Term termId = freeVarGen.getFreeVar();
+		Term termId = freeVarGen.getFreshVar();
 		List<Term> terms; 
 		
 		for(Integer i = 0; i < a.getPredicate().getArity(); ++i) {

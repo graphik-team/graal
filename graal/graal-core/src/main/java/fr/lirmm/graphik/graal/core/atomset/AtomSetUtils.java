@@ -26,9 +26,9 @@ import fr.lirmm.graphik.graal.core.term.Term;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */
-public final class AtomSets {
+public final class AtomSetUtils {
 
-	private AtomSets() {
+	private AtomSetUtils() {
 	}
 	
 	/**

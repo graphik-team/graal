@@ -55,11 +55,11 @@ public class AnimalsExample {
 		DlgpParser.parseKnowledgeBase(reader, kb);
 
 		writer.write("\n= Ontology =\n");
-		writer.write(kb.getRuleSet());
+		writer.write(kb.getOntology());
 		waitEntry();
 
 		writer.write("\n= Facts =\n");
-		writer.write(kb.getAtomSet());
+		writer.write(kb.getFacts());
 		writer.flush();
 		waitEntry();
 
@@ -71,7 +71,7 @@ public class AnimalsExample {
 
 		writer.write("\n= Answers =\n");
 		Iterable<Substitution> results = StaticHomomorphism.executeQuery(query,
-				kb.getAtomSet());
+				kb.getFacts());
 		for (Substitution s : results) {
 			writer.write(s.toString());
 			writer.write("\n");
@@ -89,7 +89,7 @@ public class AnimalsExample {
 		waitEntry();
 
 		BackwardChainer backwardChainer = new PureRewriter(query,
-				kb.getRuleSet());
+				kb.getOntology());
 		UnionConjunctiveQueries ucq = new UnionConjunctiveQueries();
 		while(backwardChainer.hasNext()) {
 			ucq.add(backwardChainer.next());
@@ -104,14 +104,14 @@ public class AnimalsExample {
 		waitEntry();
 
 		writer.write("\n= Facts =\n");
-		writer.write(kb.getAtomSet());
+		writer.write(kb.getFacts());
 		writer.flush();
 		waitEntry();
 
 		// /////////////////////////////////////////////////////////////////////////
 		// Backward Chaining Query
 		writer.write("\n= Answers =\n");
-		results = StaticHomomorphism.executeQuery(ucq, kb.getAtomSet());
+		results = StaticHomomorphism.executeQuery(ucq, kb.getFacts());
 		for (Substitution s : results) {
 			writer.write(s.toString());
 			writer.write("\n");
@@ -128,7 +128,7 @@ public class AnimalsExample {
 		writer.flush();
 		waitEntry();
 
-		Chase chase = new NaiveChase(kb.getRuleSet(), kb.getAtomSet());
+		Chase chase = new NaiveChase(kb.getOntology(), kb.getFacts());
 		chase.execute();
 
 		writer.write("\n= Query =\n");
@@ -138,14 +138,14 @@ public class AnimalsExample {
 		// /////////////////////////////////////////////////////////////////////////
 		// Saturated database
 		writer.write("\n= Facts =\n");
-		writer.write(kb.getAtomSet());
+		writer.write(kb.getFacts());
 		writer.flush();
 		waitEntry();
 
 		// /////////////////////////////////////////////////////////////////////////
 		// Forward Chaining Query
 		writer.write("\n= Answers =\n");
-		results = StaticHomomorphism.executeQuery(query, kb.getAtomSet());
+		results = StaticHomomorphism.executeQuery(query, kb.getFacts());
 		for (Substitution s : results) {
 			writer.write(s.toString());
 			writer.write("\n");
@@ -157,7 +157,7 @@ public class AnimalsExample {
 		writer.write("= Ontology Analysis                     =\n");
 		writer.write("=========================================\n");
 
-		RuleAnalyser ra = new RuleAnalyser(kb.getRuleSet());
+		RuleAnalyser ra = new RuleAnalyser(kb.getOntology());
 		writer.write(ra.toString());
 		writer.flush();
 
