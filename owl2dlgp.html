@@ -33,12 +33,12 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        The owl2dlgp program translates to <em>dlgp</em> any OWL2
-        ontologies that can be expressed into the existential rule
-        framework. In particular, it translates the 3 tractable
+        The owl2dlgp program translates into <em>dlgp</em> any OWL2
+        ontology that can be expressed into the existential rule
+        framework. In particular, it translates the three tractable
         profiles of OWL2 (EL, QL, RL). This tool uses
         the <a href="http://owlapi.sourceforge.net/">OWL API</a> to
-        parse OWL2 ontologies that can be expressed in OWL/XML, OWL
+        parse OWL 2 ontologies expressed in OWL/XML, OWL
         Functional Syntax or Turtle.
 
         <h2>Getting started</h2>
@@ -48,12 +48,12 @@
         
         <ul>
           <li>
-            Translate from OWL file to <em>dlgp</em> file: <br/>
+            Translate from an OWL 2 file to a <em>dlgp</em> file: <br/>
             <pre>java -jar owl2dlgp-*.jar -f ./example.owl -o ./example.dlp</pre>
           </li>
 
           <li>
-            Translate from the standard input to the standard output: <br/>
+            Translate from the standard input (OWL 2) to the standard output (dlgp): <br/>
             <pre>java -jar owl2dlgp-*.jar < ./example.owl > ./example.dlp</pre>
           </li>
         </ul>
