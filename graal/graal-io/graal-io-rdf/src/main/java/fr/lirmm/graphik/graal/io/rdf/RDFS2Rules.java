@@ -67,8 +67,8 @@ public class RDFS2Rules extends AbstractParser<Object> {
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 
-	public RDFS2Rules(Iterator<Atom> atomReader) {
-		this.reader = new RDF2Atom(atomReader);
+	public RDFS2Rules(RDFParser atomReader) {
+		this.reader = atomReader;
 	}
 	// /////////////////////////////////////////////////////////////////////////
 	// METHODS

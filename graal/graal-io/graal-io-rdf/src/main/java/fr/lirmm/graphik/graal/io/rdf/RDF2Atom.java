@@ -77,7 +77,7 @@ public class RDF2Atom extends AbstractAtomParser {
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 
-	public RDF2Atom(Iterator<Atom> atomReader) {
+	public RDF2Atom(RDFRawParser atomReader) {
 		this.reader = atomReader;
 	}
 	

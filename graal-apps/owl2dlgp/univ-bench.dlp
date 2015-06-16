@@ -1,0 +1,109 @@
+@prefix : <http://swat.cse.lehigh.edu/onto/univ-bench.owl#>
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+@top <top>
+:subOrganizationOf(X0, X2) :- :subOrganizationOf(X0, X1), :subOrganizationOf(X1, X2).
+:Person(X0) :- :Director(X0).
+:headOf(X0, X3), :Program(X3) :- :Director(X0).
+:Director(X0) :- :Person(X0), :headOf(X0, X3), :Program(X3).
+:Person(X0) :- :TeachingAssistant(X0).
+:teachingAssistantOf(X0, X3), :Course(X3) :- :TeachingAssistant(X0).
+:TeachingAssistant(X0) :- :Person(X0), :teachingAssistantOf(X0, X3), :Course(X3).
+:Person(X0) :- :Employee(X0).
+:worksFor(X0, X3), :Organization(X3) :- :Employee(X0).
+:Employee(X0) :- :Person(X0), :worksFor(X0, X3), :Organization(X3).
+:headOf(X0, X3), :College(X3) :- :Dean(X0).
+:Dean(X0) :- :headOf(X0, X3), :College(X3).
+:Person(X0) :- :Student(X0).
+:takesCourse(X0, X3), :Course(X3) :- :Student(X0).
+:Student(X0) :- :Person(X0), :takesCourse(X0, X3), :Course(X3).
+:Person(X0) :- :Chair(X0).
+:headOf(X0, X3), :Department(X3) :- :Chair(X0).
+:Chair(X0) :- :Person(X0), :headOf(X0, X3), :Department(X3).
+:ResearchGroup(X0) :- :researchProject(X0, X3).
+:Professor(X0) :- :tenured(X0, X3).
+:Publication(X0) :- :publicationAuthor(X0, X3).
+:Person(X0) :- :advisor(X0, X3).
+:Organization(X0) :- :orgPublication(X0, X3).
+:Organization(X0) :- :subOrganizationOf(X0, X3).
+:Publication(X0) :- :publicationDate(X0, X3).
+:Organization(X0) :- :affiliateOf(X0, X3).
+:Person(X0) :- :degreeFrom(X0, X3).
+:Publication(X0) :- :publicationResearch(X0, X3).
+:Organization(X0) :- :affiliatedOrganizationOf(X0, X3).
+:Schedule(X0) :- :listedCourse(X0, X3).
+:University(X0) :- :hasAlumnus(X0, X3).
+:TeachingAssistant(X0) :- :teachingAssistantOf(X0, X3).
+:Organization(X0) :- :member(X0, X3).
+:Software(X0) :- :softwareVersion(X0, X3).
+:Person(X0) :- :doctoralDegreeFrom(X0, X3).
+:Software(X0) :- :softwareDocumentation(X0, X3).
+:Person(X0) :- :mastersDegreeFrom(X0, X3).
+:Faculty(X0) :- :teacherOf(X0, X3).
+:Person(X0) :- :undergraduateDegreeFrom(X0, X3).
+:Professor(X0) :- :Dean(X0).
+:Person(X0) :- :ResearchAssistant(X0).
+:Course(X0) :- :GraduateCourse(X0).
+:Work(X0) :- :Research(X0).
+:Publication(X0) :- :Article(X0).
+:worksFor(X0, X3), :ResearchGroup(X3) :- :ResearchAssistant(X0).
+:Faculty(X0) :- :PostDoc(X0).
+:Article(X0) :- :JournalArticle(X0).
+:Professor(X0) :- :Chair(X0).
+:Organization(X0) :- :College(X0).
+:Publication(X0) :- :Manual(X0).
+:takesCourse(X0, X3), :GraduateCourse(X3) :- :GraduateStudent(X0).
+:Person(X0) :- :GraduateStudent(X0).
+:Organization(X0) :- :Department(X0).
+:AdministrativeStaff(X0) :- :SystemsStaff(X0).
+:Professor(X0) :- :FullProfessor(X0).
+:Article(X0) :- :ConferencePaper(X0).
+:Faculty(X0) :- :Professor(X0).
+:Publication(X0) :- :UnofficialPublication(X0).
+:Publication(X0) :- :Specification(X0).
+:Professor(X0) :- :VisitingProfessor(X0).
+:Professor(X0) :- :AssociateProfessor(X0).
+:Organization(X0) :- :Program(X0).
+:Professor(X0) :- :AssistantProfessor(X0).
+:Publication(X0) :- :Book(X0).
+:Employee(X0) :- :Faculty(X0).
+:Faculty(X0) :- :Lecturer(X0).
+:Organization(X0) :- :University(X0).
+:Student(X0) :- :UndergraduateStudent(X0).
+:Organization(X0) :- :ResearchGroup(X0).
+:Publication(X0) :- :Software(X0).
+:Organization(X0) :- :Institute(X0).
+:Work(X0) :- :Course(X0).
+:Employee(X0) :- :AdministrativeStaff(X0).
+:AdministrativeStaff(X0) :- :ClericalStaff(X0).
+:Article(X0) :- :TechnicalReport(X0).
+:degreeFrom(X0, X1) :- :mastersDegreeFrom(X0, X1).
+:degreeFrom(X0, X1) :- :doctoralDegreeFrom(X0, X1).
+:memberOf(X0, X1) :- :worksFor(X0, X1).
+:degreeFrom(X0, X1) :- :undergraduateDegreeFrom(X0, X1).
+:worksFor(X0, X1) :- :headOf(X0, X1).
+:memberOf(X1, X0) :- :member(X0, X1).
+:member(X0, X1) :- :memberOf(X1, X0).
+:hasAlumnus(X1, X0) :- :degreeFrom(X0, X1).
+:degreeFrom(X0, X1) :- :hasAlumnus(X1, X0).
+:Person(X0) :- :title(X0, X3).
+:Person(X0) :- :telephone(X0, X3).
+:Person(X0) :- :age(X0, X3).
+:Person(X0) :- :emailAddress(X0, X3).
+:Publication(X0) :- :softwareDocumentation(X3, X0).
+:University(X0) :- :mastersDegreeFrom(X3, X0).
+:University(X0) :- :undergraduateDegreeFrom(X3, X0).
+:Publication(X0) :- :orgPublication(X3, X0).
+:Professor(X0) :- :advisor(X3, X0).
+:Person(X0) :- :member(X3, X0).
+:Organization(X0) :- :subOrganizationOf(X3, X0).
+:Person(X0) :- :hasAlumnus(X3, X0).
+:Person(X0) :- :publicationAuthor(X3, X0).
+:Research(X0) :- :researchProject(X3, X0).
+:University(X0) :- :degreeFrom(X3, X0).
+:Research(X0) :- :publicationResearch(X3, X0).
+:Organization(X0) :- :affiliatedOrganizationOf(X3, X0).
+:Person(X0) :- :affiliateOf(X3, X0).
+:Course(X0) :- :teachingAssistantOf(X3, X0).
+:Course(X0) :- :teacherOf(X3, X0).
+:Course(X0) :- :listedCourse(X3, X0).
+:University(X0) :- :doctoralDegreeFrom(X3, X0).

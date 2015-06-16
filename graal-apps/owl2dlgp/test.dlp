@@ -1,0 +1,83 @@
+
+@prefix : <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#>
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+@prefix owl2xml: <http://www.w3.org/2006/12/owl2-xml#>
+@prefix univ-bench: <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#>
+@top <top>
+univ-bench:degreeFrom(X0, X1) :- univ-bench:undergraduateDegreeFrom(X0, X1).
+univ-bench:worksFor(X0, X1) :- univ-bench:headOf(X0, X1).
+univ-bench:degreeFrom(X0, X1) :- univ-bench:mastersDegreeFrom(X0, X1).
+univ-bench:degreeFrom(X0, X1) :- univ-bench:doctoralDegreeFrom(X0, X1).
+univ-bench:memberOf(X0, X1) :- univ-bench:worksFor(X0, X1).
+univ-bench:hasAlumnus(X1, X0) :- univ-bench:degreeFrom(X0, X1).
+univ-bench:degreeFrom(X0, X1) :- univ-bench:hasAlumnus(X1, X0).
+univ-bench:isPartOfUniversity(X1, X0) :- univ-bench:hasFaculty(X0, X1).
+univ-bench:hasFaculty(X0, X1) :- univ-bench:isPartOfUniversity(X1, X0).
+univ-bench:memberOf(X1, X0) :- univ-bench:member(X0, X1).
+univ-bench:member(X0, X1) :- univ-bench:memberOf(X1, X0).
+univ-bench:worksFor(X0, X3), univ-bench:Organization(X3) :- univ-bench:Employee(X0).
+univ-bench:Work(X0) :- univ-bench:Exam(X0).
+univ-bench:Professor(X0) :- univ-bench:AssociateProfessor(X0).
+univ-bench:Organization(X0) :- univ-bench:Program(X0).
+univ-bench:Professor(X0) :- univ-bench:AssistantProfessor(X0).
+univ-bench:Course(X0) :- univ-bench:GraduateCourse(X0).
+univ-bench:Work(X0) :- univ-bench:Degree(X0).
+univ-bench:Employee(X0) :- univ-bench:AdministrativeStaff(X0).
+univ-bench:AdministrativeStaff(X0) :- univ-bench:ClericalStaff(X0).
+univ-bench:Person(X0) :- univ-bench:Director(X0).
+univ-bench:Professor(X0) :- univ-bench:ExDean(X0).
+univ-bench:Professor(X0) :- univ-bench:Dean(X0).
+univ-bench:FacultyStaff(X0) :- univ-bench:Professor(X0).
+univ-bench:Student(X0) :- univ-bench:ResearchAssistant(X0).
+univ-bench:takesCourse(X0, X3), univ-bench:Course(X3) :- univ-bench:Student(X0).
+univ-bench:Work(X0) :- univ-bench:Career(X0).
+univ-bench:Person(X0) :- univ-bench:Employee(X0).
+univ-bench:FacultyStaff(X0) :- univ-bench:Lecturer(X0).
+univ-bench:Person(X0) :- univ-bench:GraduateStudent(X0).
+univ-bench:AdministrativeStaff(X0) :- univ-bench:SystemsStaff(X0).
+univ-bench:Professor(X0) :- univ-bench:FullProfessor(X0).
+univ-bench:Work(X0) :- univ-bench:ExamRecord(X0).
+univ-bench:Work(X0) :- univ-bench:Course(X0).
+univ-bench:headOf(X0, X3), univ-bench:Program(X3) :- univ-bench:Director(X0).
+univ-bench:Organization(X0) :- univ-bench:College(X0).
+univ-bench:Professor(X0) :- univ-bench:VisitingProfessor(X0).
+univ-bench:FacultyStaff(X0) :- univ-bench:PostDoc(X0).
+univ-bench:Student(X0) :- univ-bench:UndergraduateStudent(X0).
+univ-bench:Professor(X0) :- univ-bench:Chair(X0).
+univ-bench:headOf(X0, X3), univ-bench:College(X3) :- univ-bench:Dean(X0).
+univ-bench:Person(X0) :- univ-bench:Student(X0).
+univ-bench:Exam(X0) :- univ-bench:BachelorExam(X0).
+univ-bench:Organization(X0) :- univ-bench:Faculty(X0).
+univ-bench:takesCourse(X0, X3), univ-bench:GraduateCourse(X3) :- univ-bench:GraduateStudent(X0).
+univ-bench:Employee(X0) :- univ-bench:FacultyStaff(X0).
+univ-bench:Organization(X0) :- univ-bench:University(X0).
+univ-bench:Person(X0) :- univ-bench:degreeFrom(X0, X3).
+univ-bench:Person(X0) :- univ-bench:mastersDegreeFrom(X0, X3).
+univ-bench:Professor(X0) :- univ-bench:tenured(X0, X3).
+univ-bench:University(X0) :- univ-bench:hasAlumnus(X0, X3).
+univ-bench:Person(X0) :- univ-bench:advisor(X0, X3).
+univ-bench:Organization(X0) :- univ-bench:affiliatedOrganizationOf(X0, X3).
+univ-bench:University(X0) :- univ-bench:hasFaculty(X0, X3).
+univ-bench:Faculty(X0) :- univ-bench:isPartOfUniversity(X0, X3).
+univ-bench:Student(X0) :- univ-bench:hasExamRecord(X0, X3).
+univ-bench:Organization(X0) :- univ-bench:affiliateOf(X0, X3).
+univ-bench:Organization(X0) :- univ-bench:orgPublication(X0, X3).
+univ-bench:Person(X0) :- univ-bench:doctoralDegreeFrom(X0, X3).
+univ-bench:FacultyStaff(X0) :- univ-bench:teacherOf(X0, X3).
+univ-bench:Organization(X0) :- univ-bench:member(X0, X3).
+univ-bench:Person(X0) :- univ-bench:undergraduateDegreeFrom(X0, X3).
+univ-bench:Organization(X0) :- univ-bench:affiliatedOrganizationOf(X3, X0).
+univ-bench:Person(X0) :- univ-bench:member(X3, X0).
+univ-bench:Course(X0) :- univ-bench:teachingAssistantOf(X3, X0).
+univ-bench:Person(X0) :- univ-bench:hasAlumnus(X3, X0).
+univ-bench:University(X0) :- univ-bench:mastersDegreeFrom(X3, X0).
+univ-bench:University(X0) :- univ-bench:isPartOfUniversity(X3, X0).
+univ-bench:University(X0) :- univ-bench:doctoralDegreeFrom(X3, X0).
+univ-bench:Person(X0) :- univ-bench:publicationAuthor(X3, X0).
+univ-bench:University(X0) :- univ-bench:degreeFrom(X3, X0).
+univ-bench:Faculty(X0) :- univ-bench:hasFaculty(X3, X0).
+univ-bench:University(X0) :- univ-bench:undergraduateDegreeFrom(X3, X0).
+univ-bench:Course(X0) :- univ-bench:teacherOf(X3, X0).
+univ-bench:Person(X0) :- univ-bench:affiliateOf(X3, X0).
+univ-bench:ExamRecord(X0) :- univ-bench:hasExamRecord(X3, X0).
+univ-bench:Professor(X0) :- univ-bench:advisor(X3, X0).

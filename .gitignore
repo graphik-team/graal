@@ -59,3 +59,7 @@ Thumbs.db
 # ctags file
 tags
 
+# SPECIFIC DIRECTORY #
+######################
+
+graal-examples/src/main/java/fr/lirmm/graphik/graal/trash/*
