@@ -135,7 +135,7 @@ class IDConditionImpl implements IDCondition {
 		if (head.size() != condHead.length)
 			return false;
 
-		Term[] check = new Term[head.size()];
+		Term[] check = new Term[condBody.length];
 		for (int i = 0; i < condHead.length; i++) {
 			if (check[condHead[i]] == null) {
 				check[condHead[i]] = head.get(i);
