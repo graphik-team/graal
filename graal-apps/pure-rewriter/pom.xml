@@ -13,6 +13,11 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>1.6</jdk.version>
 	</properties>
+	
+	<scm>
+		<url>https://gite.lirmm.fr/graphik/graal</url>
+		<developerConnection>scm:git:git@gite.lirmm.fr:graphik/graal.git</developerConnection>
+	</scm>
 
 	<inceptionYear>2014</inceptionYear>
 
