@@ -2,18 +2,14 @@
 	
 	<modelVersion>4.0.0</modelVersion>
 	
-	<parent>
-		<groupId>fr.lirmm.graphik</groupId>
-		<artifactId>graal-apps</artifactId>
-		<version>0.8.1-SNAPSHOT</version>
-	</parent>
-	
+	<groupId>fr.lirmm.graphik</groupId>
 	<artifactId>owl2dlgp</artifactId>
 	<name>owl2dlgp</name>
 	<packaging>jar</packaging>
 	<version>1.0.beta3-SNAPSHOT</version>
 
 	<properties>
+		<graal.version>0.8.2-SNAPSHOT</graal.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>1.6</jdk.version>
 	</properties>
@@ -37,22 +33,22 @@
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-util</artifactId>
-			<version>0.8.1-SNAPSHOT</version>
+			<version>${graal.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-core</artifactId>
-			<version>0.8.1-SNAPSHOT</version>
+			<version>${graal.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-io-dlgp</artifactId>
-			<version>0.8.1-SNAPSHOT</version>
+			<version>${graal.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-io-owl</artifactId>
-			<version>0.8.1-SNAPSHOT</version>
+			<version>${graal.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.beust</groupId>

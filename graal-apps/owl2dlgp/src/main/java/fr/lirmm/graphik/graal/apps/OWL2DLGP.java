@@ -26,7 +26,7 @@ import ch.qos.logback.classic.Level;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
-import fr.lirmm.graphik.graal.core.Predicate;
+import fr.lirmm.graphik.graal.io.dlp.Directive;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 import fr.lirmm.graphik.graal.io.owl.OWL2Parser;
 import fr.lirmm.graphik.graal.io.owl.OWL2ParserException;
@@ -96,7 +96,7 @@ public class OWL2DLGP {
 		while (parser.hasNext()) {
 			o = parser.next();
 			if (!(o instanceof Prefix)) {
-				writer.writeTopPredicate(new Predicate("top", 1));
+				writer.writeDirective(new Directive(Directive.Type.TOP, "top"));
 				writer.write(o);
 				break;
 			}
