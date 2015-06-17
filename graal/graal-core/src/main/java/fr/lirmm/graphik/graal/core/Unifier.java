@@ -37,7 +37,7 @@ public class Unifier {
 
 	private static Unifier instance;
 
-	protected Unifier() {
+	private Unifier() {
 	}
 
 	public static synchronized Unifier instance() {
