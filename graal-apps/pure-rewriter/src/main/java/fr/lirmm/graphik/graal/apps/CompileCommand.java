@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
@@ -28,8 +30,8 @@ import fr.lirmm.graphik.graal.backward_chaining.pure.HierarchicalCompilation;
 import fr.lirmm.graphik.graal.backward_chaining.pure.IDCompilation;
 import fr.lirmm.graphik.graal.backward_chaining.pure.RulesCompilation;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
-import fr.lirmm.graphik.graal.io.RuleWriter;
-import fr.lirmm.graphik.graal.io.dlp.Dlgp1Writer;
+import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
+import fr.lirmm.graphik.util.Prefix;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -44,7 +46,7 @@ class CompileCommand extends PureCommand {
 	public static final String HIERACHICAL_COMPILATION_NAME = "H";
 	public static final String NO_COMPILATION_NAME = "NONE";
 
-	private RuleWriter writer;
+	private DlgpWriter writer;
 
 	@Parameter(names = { "-h", "--help" }, description = "Print this message", help = true)
 	private boolean help;
@@ -63,7 +65,7 @@ class CompileCommand extends PureCommand {
 	//
 	// //////////////////////////////////////////////////////////////////////////
 
-	public CompileCommand(RuleWriter writer) {
+	public CompileCommand(DlgpWriter writer) {
 		this.writer = writer;
 	}
 
@@ -81,7 +83,8 @@ class CompileCommand extends PureCommand {
 			System.exit(0);
 		}
 
-		RuleSet rules = Util.parseOntology(this.ontologyFile.get(0));
+		Pair<LinkedList<Prefix>, RuleSet> onto = Util
+				.parseOntology(this.ontologyFile.get(0));
 		RulesCompilation compilation;
 		if ("H".equals(this.compilationType)) {
 			compilation = new HierarchicalCompilation();
@@ -90,13 +93,15 @@ class CompileCommand extends PureCommand {
 		}
 
 		compilation.setProfiler(this.getProfiler());
-		compilation.compile(rules.iterator());
+		compilation.compile(onto.getRight().iterator());
 
-		RuleWriter w = writer;
+		DlgpWriter w = writer;
 		if (this.outputFile != null && !outputFile.isEmpty()) {
-			w = new Dlgp1Writer(new File(this.outputFile));
+			w = new DlgpWriter(new File(this.outputFile));
 		}
+		w.write(onto.getLeft());
 		Util.writeCompilation(compilation, w);
+		w.close();
 
 	}
 }

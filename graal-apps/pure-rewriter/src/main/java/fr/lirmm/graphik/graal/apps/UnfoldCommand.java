@@ -17,7 +17,10 @@ package fr.lirmm.graphik.graal.apps;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -26,7 +29,8 @@ import com.beust.jcommander.Parameters;
 import fr.lirmm.graphik.graal.backward_chaining.pure.RulesCompilation;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.io.ConjunctiveQueryWriter;
+import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
+import fr.lirmm.graphik.util.Prefix;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -46,13 +50,13 @@ public class UnfoldCommand extends PureCommand {
 	@Parameter(names = { "-q", "--queries" }, description = "The queries to rewrite in DLGP", required = true)
 	private String queriesString = null;
 
-	private ConjunctiveQueryWriter writer;
+	private DlgpWriter writer;
 
 	// //////////////////////////////////////////////////////////////////////////
 	//
 	// //////////////////////////////////////////////////////////////////////////
 
-	public UnfoldCommand(ConjunctiveQueryWriter writer) {
+	public UnfoldCommand(DlgpWriter writer) {
 		this.writer = writer;
 	}
 
@@ -67,22 +71,25 @@ public class UnfoldCommand extends PureCommand {
 			System.exit(0);
 		}
 
-		RulesCompilation compilation = Util.loadCompilation(new File(
+		Pair<LinkedList<Prefix>, RulesCompilation> onto = Util.loadCompilation(
+				new File(
 				this.compilationFile), Collections.<Rule> emptyList()
 				.iterator());
 
 		if (this.isVerbose()) {
-			compilation.setProfiler(this.getProfiler());
+			onto.getRight().setProfiler(this.getProfiler());
 		}
 
 		List<ConjunctiveQuery> queries = Util.parseQueries(this.queriesString);
 
-		Iterable<ConjunctiveQuery> unfold = compilation.unfold(queries);
+		Iterable<ConjunctiveQuery> unfold = onto.getRight().unfold(queries);
 
 		// display
+		writer.write(onto.getLeft());
 		for (ConjunctiveQuery q : unfold) {
 			writer.write(q);
 		}
+		writer.close();
 
 	}
 

@@ -2,17 +2,14 @@
 	
 	<modelVersion>4.0.0</modelVersion>
 	
-	<parent>
-		<groupId>fr.lirmm.graphik</groupId>
-		<artifactId>graal-apps</artifactId>
-		<version>0.8.1-SNAPSHOT</version>
-	</parent>
-	
+	<groupId>fr.lirmm.graphik</groupId>
 	<artifactId>pure-rewriter</artifactId>
 	<name>Pure rewriter</name>
+	<version>1.0.beta2-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<properties>
+		<graal.version>0.8.2-SNAPSHOT</graal.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>1.6</jdk.version>
 	</properties>
@@ -41,17 +38,17 @@
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-core</artifactId>
-			<version>${project.parent.version}</version>
+			<version>${graal.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-backward-chaining</artifactId>
-			<version>${project.parent.version}</version>
+			<version>${graal.version}</version>
 		</dependency>
 			<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-io-dlgp1</artifactId>
-			<version>${project.parent.version}</version>
+			<artifactId>graal-io-dlgp</artifactId>
+			<version>${graal.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.beust</groupId>
@@ -94,7 +91,7 @@
 		      <version>2.5.3</version>
 		      <configuration>
 		        <preparationGoals>compile</preparationGoals>
-				<finalName>pure-rewriter-${project.parent.version}</finalName>
+				<finalName>pure-rewriter-${project.version}</finalName>
 		        <archive>
 		          <manifestEntries>
 		            <Built-On>${maven.build.timestamp}</Built-On>

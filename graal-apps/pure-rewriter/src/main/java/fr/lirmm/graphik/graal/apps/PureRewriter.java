@@ -19,7 +19,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 
-import fr.lirmm.graphik.graal.io.dlp.Dlgp1Writer;
+import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 import fr.lirmm.graphik.util.Apps;
 import fr.lirmm.graphik.util.Profiler;
 
@@ -32,7 +32,7 @@ public class PureRewriter {
 
 	private static Profiler profiler;
 	private static PureRewriter options;
-	private static Dlgp1Writer writer = new Dlgp1Writer();
+	private static DlgpWriter writer = new DlgpWriter();
 
 	@Parameter(names = { "-h", "--help" }, description = "Print this message", help = true)
 	private boolean help;

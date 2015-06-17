@@ -10,7 +10,7 @@
  *            Michel LECLÈRE
  *            Marie-Laure MUGNIER
  */
- /**
+/**
  * 
  */
 package fr.lirmm.graphik.graal.apps;
@@ -21,7 +21,9 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Scanner;
+
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import fr.lirmm.graphik.graal.backward_chaining.pure.HierarchicalCompilation;
 import fr.lirmm.graphik.graal.backward_chaining.pure.IDCompilation;
@@ -31,8 +33,10 @@ import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
-import fr.lirmm.graphik.graal.io.RuleWriter;
-import fr.lirmm.graphik.graal.io.dlp.Dlgp1Parser;
+import fr.lirmm.graphik.graal.io.dlp.Directive;
+import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
+import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.stream.filter.FilterIterator;
 
 /**
@@ -48,16 +52,20 @@ final class Util {
 	//
 	// //////////////////////////////////////////////////////////////////////////
 
-	static RuleSet parseOntology(String ontologyFile)
+	static Pair<LinkedList<Prefix>, RuleSet> parseOntology(
+			String ontologyFile)
 			throws FileNotFoundException {
 		RuleSet rules = new LinkedListRuleSet();
-		Dlgp1Parser parser = new Dlgp1Parser(new File(ontologyFile));
+		LinkedList<Prefix> prefixes = new LinkedList<Prefix>();
+		DlgpParser parser = new DlgpParser(new File(ontologyFile));
 		for (Object o : parser) {
 			if (o instanceof Rule) {
 				rules.add((Rule) o);
+			} else if (o instanceof Prefix) {
+				prefixes.add((Prefix) o);
 			}
 		}
-		return rules;
+		return new ImmutablePair<LinkedList<Prefix>, RuleSet>(prefixes, rules);
 	}
 
 	static RulesCompilation selectCompilationType(String compilationName)
@@ -83,7 +91,7 @@ final class Util {
 		if (file.exists()) {
 			try {
 				Iterator<ConjunctiveQuery> it = new FilterIterator<Object, ConjunctiveQuery>(
-						new Dlgp1Parser(file), new ConjunctiveQueryFilter());
+						new DlgpParser(file), new ConjunctiveQueryFilter());
 				while (it.hasNext()) {
 					queries.add(it.next());
 				}
@@ -91,16 +99,12 @@ final class Util {
 				throw new PureException("Query file exists but not found !", e);
 			}
 		} else {
-			queries.add(Dlgp1Parser.parseQuery(queryOrQueriesFileName));
+			queries.add(DlgpParser.parseQuery(queryOrQueriesFileName));
 		}
 		return queries;
 	}
 
-	private static final String COMPILATION_TYPE_PREFIX = "compilation-type: ";
-	private static final int COMPILATION_TYPE_PREFIX_LEN = COMPILATION_TYPE_PREFIX
-			.length();
-
-	static void writeCompilation(RulesCompilation compilation, RuleWriter writer)
+	static void writeCompilation(RulesCompilation compilation, DlgpWriter writer)
 			throws IOException {
 		String compilationName = "UNKNOWN";
 		if (compilation instanceof IDCompilation) {
@@ -109,23 +113,30 @@ final class Util {
 			compilationName = CompileCommand.HIERACHICAL_COMPILATION_NAME;
 		}
 
-		writer.writeComment(COMPILATION_TYPE_PREFIX + compilationName + "\n");
+		writer.writeDirective(new Directive(Directive.Type.COMMENT,
+				compilationName));
 
 		for (Rule r : compilation.getSaturation()) {
 			writer.write(r);
 		}
 	}
 
-	static RulesCompilation loadCompilation(File file, Iterator<Rule> rules)
-			throws PureException,
-			FileNotFoundException {
-		Scanner scanner = new Scanner(file);
+	static Pair<LinkedList<Prefix>, RulesCompilation> loadCompilation(
+			File file, Iterator<Rule> rules)
+			throws PureException, FileNotFoundException {
 		String compilationType = "";
-		while (scanner.hasNextLine() && compilationType.isEmpty()) {
-			String line = scanner.nextLine();
-			if (line.startsWith("% " + COMPILATION_TYPE_PREFIX)) {
-				compilationType = line
-						.substring(COMPILATION_TYPE_PREFIX_LEN + 2);
+		RuleSet saturation = new LinkedListRuleSet();
+		LinkedList<Prefix> prefixes = new LinkedList<Prefix>();
+
+		DlgpParser parser = new DlgpParser(file);
+		for(Object o : parser) {
+			if (o instanceof Rule) {
+				saturation.add((Rule) o);
+			} else if (o instanceof Directive
+					&& ((Directive) o).getType().equals(Directive.Type.COMMENT)) {
+				compilationType = ((Directive) o).getText();
+			} else if (o instanceof Prefix) {
+				prefixes.add((Prefix) o);
 			}
 		}
 
@@ -139,17 +150,13 @@ final class Util {
 			throw new PureException("compilation type inference failed");
 		}
 
-		loadCompilation(compilation, file, rules);
-
-		return compilation;
+		
+		compilation.load(rules, saturation.iterator());
+		
+		return new ImmutablePair<LinkedList<Prefix>, RulesCompilation>(
+				prefixes, compilation);
 	}
 
-	static void loadCompilation(RulesCompilation compilation, File file,
-			Iterator<Rule> rules)
-			throws FileNotFoundException {
-		compilation.load(rules,
-				new FilterIterator<Object, Rule>(new Dlgp1Parser(file),
-						new RulesFilter()));
-	}
+
 
 }

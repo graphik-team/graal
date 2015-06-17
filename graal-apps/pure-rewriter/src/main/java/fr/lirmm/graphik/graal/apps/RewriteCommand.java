@@ -22,6 +22,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
@@ -33,8 +35,9 @@ import fr.lirmm.graphik.graal.backward_chaining.pure.RewritingOperator;
 import fr.lirmm.graphik.graal.backward_chaining.pure.RulesCompilation;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
-import fr.lirmm.graphik.graal.io.ConjunctiveQueryWriter;
-import fr.lirmm.graphik.graal.io.dlp.Dlgp1Parser;
+import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
+import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.stream.filter.FilterIterator;
 
 /**
@@ -46,7 +49,7 @@ class RewriteCommand extends PureCommand {
 	
 	public static final String NAME = "rewrite";
 	
-	private ConjunctiveQueryWriter writer;
+	private DlgpWriter writer;
 
 	@Parameter(names = { "-h", "--help" }, description = "Print this message", help = true)
 	private boolean help;
@@ -70,7 +73,7 @@ class RewriteCommand extends PureCommand {
 	// 
 	////////////////////////////////////////////////////////////////////////////
 	
-	public RewriteCommand(ConjunctiveQueryWriter writer) {
+	public RewriteCommand(DlgpWriter writer) {
 		this.writer = writer;
 	}
 	
@@ -81,15 +84,16 @@ class RewriteCommand extends PureCommand {
 	/**
 	 * @param commander
 	 * @throws PureException
-	 * @throws FileNotFoundException
+	 * @throws IOException
 	 */
-	public void run(JCommander commander) throws PureException, FileNotFoundException {
+	public void run(JCommander commander) throws PureException, IOException {
 		if (this.help) {
 			commander.usage(NAME);
 			System.exit(0);
 		}
 
-		RuleSet rules = Util.parseOntology(this.ontologyFile.get(0));
+		Pair<LinkedList<Prefix>, RuleSet> onto = Util
+				.parseOntology(this.ontologyFile.get(0));
 
 		RewritingOperator operator = selectOperator();
 		operator.setProfiler(this.getProfiler());
@@ -98,15 +102,17 @@ class RewriteCommand extends PureCommand {
 		File compilationFile = new File(this.compilationString);
 		if (compilationFile.exists()) {
 			compilation = Util.loadCompilation(compilationFile,
-					rules.iterator());
+ onto.getRight()
+.iterator()).getRight();
 			compilation.setProfiler(this.getProfiler());
 		} else {
 			compilation = Util.selectCompilationType(this.compilationString);
 			compilation.setProfiler(this.getProfiler());
-			compilation.compile(rules.iterator());
+			compilation.compile(onto.getRight().iterator());
 		}
 
-		this.processQuery(rules, compilation, operator);
+		writer.write(onto.getLeft());
+		this.processQuery(onto.getRight(), compilation, operator);
 	}
 
 	private RewritingOperator selectOperator() {
@@ -127,12 +133,12 @@ class RewriteCommand extends PureCommand {
 		File file = new File(this.query);
 		if (file.exists()) {
 			Iterator<ConjunctiveQuery> it = new FilterIterator<Object, ConjunctiveQuery>(
-					new Dlgp1Parser(file), new ConjunctiveQueryFilter());
+					new DlgpParser(file), new ConjunctiveQueryFilter());
 			while (it.hasNext()) {
 				queries.add(it.next());
 			}
 		} else {
-			queries.add(Dlgp1Parser.parseQuery(this.query));
+			queries.add(DlgpParser.parseQuery(this.query));
 		}
 
 		for (ConjunctiveQuery query : queries) {
@@ -151,12 +157,12 @@ class RewriteCommand extends PureCommand {
 			bc.enableUnfolding(this.isUnfoldingEnable);
 
 			try {
-				writer.writeComment("\n");
-				writer.writeComment("rewrite of: ");
-				writer.write(query);
+				writer.writeComment("rewrite of: "
+						+ DlgpWriter.writeToString(query).replace("\n", ""));
 				while (bc.hasNext()) {
 					writer.write(bc.next());
 				}
+				writer.close();
 			} catch (IOException e) {
 			}
 
