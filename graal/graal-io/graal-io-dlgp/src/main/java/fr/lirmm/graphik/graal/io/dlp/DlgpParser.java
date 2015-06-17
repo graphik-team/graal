@@ -33,8 +33,8 @@ import fr.lirmm.graphik.dlgp2.parser.ParseException;
 import fr.lirmm.graphik.dlgp2.parser.TermFactory;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.core.DefaultRule;
+import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.core.FreshVarSubstitution;
 import fr.lirmm.graphik.graal.core.KnowledgeBase;
 import fr.lirmm.graphik.graal.core.NegativeConstraint;
@@ -47,6 +47,7 @@ import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.io.AbstractParser;
 import fr.lirmm.graphik.graal.io.ParseError;
 import fr.lirmm.graphik.util.DefaultURI;
+import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.URI;
 import fr.lirmm.graphik.util.stream.ArrayBlockingStream;
 
@@ -93,6 +94,32 @@ public final class DlgpParser extends AbstractParser<Object> {
 		@Override
 		protected void createNegConstraint(NegativeConstraint negativeConstraint) {
 			this.set.write(negativeConstraint);
+		}
+
+		@Override
+		public void declarePrefix(String prefix, String ns) {
+			this.set.write(new Prefix(prefix.substring(0, prefix.length() - 1),
+					ns));
+		}
+
+		@Override
+		public void declareBase(String base) {
+			this.set.write(new Directive(Directive.Type.BASE, base));
+		}
+
+		@Override
+		public void declareTop(String top) {
+			this.set.write(new Directive(Directive.Type.TOP, top));
+		}
+
+		@Override
+		public void declareUNA() {
+			this.set.write(new Directive(Directive.Type.UNA, ""));
+		}
+
+		@Override
+		public void directive(String text) {
+			this.set.write(new Directive(Directive.Type.COMMENT, text));
 		}
 	};
 

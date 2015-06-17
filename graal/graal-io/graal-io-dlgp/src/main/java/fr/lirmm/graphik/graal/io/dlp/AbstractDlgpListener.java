@@ -32,8 +32,6 @@ import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.term.Constant;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
-import fr.lirmm.graphik.util.Prefix;
-import fr.lirmm.graphik.util.PrefixManager;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -129,39 +127,6 @@ abstract class AbstractDlgpListener implements ParserListener {
 		}
 	}
 
-	@Override
-	public void declarePrefix(String prefix, String ns) {
-		Prefix p = new Prefix(prefix.substring(0, prefix.length()), ns);
-		PrefixManager.getInstance().putPrefix(p);
-	}
-
-	@Override
-	public void declareBase(String base) {
-		if (LOGGER.isInfoEnabled()) {
-			LOGGER.info("declare base: " + base);
-		}
-	}
-
-	@Override
-	public void declareTop(String top) {
-		if (LOGGER.isInfoEnabled()) {
-			LOGGER.info("declare top: " + top);
-		}
-	}
-
-	@Override
-	public void declareUNA() {
-		if (LOGGER.isInfoEnabled()) {
-			LOGGER.info("declare UNA");
-		}
-	}
-
-	@Override
-	public void directive(String text) {
-		if (LOGGER.isInfoEnabled()) {
-			LOGGER.info("directive text");
-		}
-	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
