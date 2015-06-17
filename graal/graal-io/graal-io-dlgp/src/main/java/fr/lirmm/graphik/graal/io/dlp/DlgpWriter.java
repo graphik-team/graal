@@ -89,11 +89,26 @@ public class DlgpWriter extends AbstractGraalWriter {
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
 	
-	public void writeTopPredicate(Predicate p) throws IOException {
-		this.write("@top ");
-		this.writePredicate(p);
+	public void writeDirective(Directive d) throws IOException {
+		switch (d.getType()) {
+		case UNA:
+			this.write("@una");
+			break;
+		case BASE:
+			this.write("@base ");
+			this.write(d.getText());
+			break;
+		case TOP:
+			this.write("@top ");
+			this.write(d.getText());
+			this.top = new Predicate(d.getText(), 1);
+			break;
+		case COMMENT:
+			this.write("%% ");
+			this.write(d.getText());
+			break;
+		}
 		this.write("\n");
-		this.top = p;
 	}
 
 	@Override
@@ -253,13 +268,7 @@ public class DlgpWriter extends AbstractGraalWriter {
 			}
 			this.write(t.getIdentifier());
 		} else if(Type.CONSTANT.equals(t.getType())) {
-			if (t.getIdentifier() instanceof URI) {
-				this.writeURI((URI) t.getIdentifier());
-			} else {
-				this.write('<');
-				this.write(t.getIdentifier().toString());
-				this.write('>');
-			}
+			this.writeLowerIdentifier(t.getIdentifier());
 		} else { // LITERAL
 			Literal l = (Literal) t;
 			this.write('"');
@@ -274,15 +283,9 @@ public class DlgpWriter extends AbstractGraalWriter {
 		if (p.equals(Predicate.TOP)) {
 			p = top;
 		}
-		if (p.getIdentifier() instanceof URI) {
-			this.writeURI((URI) p.getIdentifier());
-		} else {
-			this.write('<');
-			this.write(p.getIdentifier().toString());
-			this.write('>');
-		}
+		this.writeLowerIdentifier(p.getIdentifier());
 	}
-	
+
 	protected void writeURI(URI uri) throws IOException {
 		Prefix prefix = this.pm.getPrefixByValue(uri.getPrefix());
 		if(prefix == null) {
@@ -295,10 +298,32 @@ public class DlgpWriter extends AbstractGraalWriter {
 		}
 	}
 
-	////////////////////////////////////////////////////////////////////////////
-	// STATIC METHODS this.writeln("PREFIX : <" + rdfPrefix + '>');
+	/**
+	 * @param string
+	 * @throws IOException
+	 */
+	private void writeLowerIdentifier(Object identifier) throws IOException {
 
-	////////////////////////////////////////////////////////////////////////////
+		if (identifier instanceof URI) {
+			this.writeURI((URI) identifier);
+		} else {
+			String s = identifier.toString();
+			char first = s.charAt(0);
+			if (onlySimpleChar(s) && first >= 'a' && first <= 'z') {
+				this.write(s);
+			} else {
+				this.write('<');
+				this.write(s);
+				this.write('>');
+			}
+		}
+
+
+	}
+
+	// //////////////////////////////////////////////////////////////////////////
+	// STATIC METHODS
+	// //////////////////////////////////////////////////////////////////////////
 
 	public static String writeToString(Object o) {
 		StringWriter s = new StringWriter();
@@ -307,9 +332,27 @@ public class DlgpWriter extends AbstractGraalWriter {
 			w.write(o);
 			w.close();
 		} catch (IOException e) {
-			
+
 		}
 		return s.toString();
+	}
+
+	/**
+	 * Check if the string contains only simple char (a-z A-Z 0-9 -)
+	 * 
+	 * @param s
+	 * @return
+	 */
+	private static boolean onlySimpleChar(String s) {
+		char c;
+		for (int i = 0; i < s.length(); ++i) {
+			c = s.charAt(i);
+			if (!(c >= 'a' && c <= 'z') && !(c >= 'A' && c <= 'Z')
+					&& !(c >= '0' && c <= '9') && !(c == '_')) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 };
