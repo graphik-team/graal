@@ -37,7 +37,7 @@
             The following program (Pure-rewriter) includes both the basic and the compilation-based versions of Pure.
 
             <ul>
-              <li>Download <a href="./dl/pure-rewriter-0.7.1.jar">pure-rewriter</a></li>
+              <li>Download <a href="./dl/pure-rewriter-1.0.beta2.jar">pure-rewriter</a></li>
               <li>Download <a href="./dl/example.dlp">example.dlp</a></li>
             </ul>
 
@@ -56,24 +56,24 @@
             <ul>
               <li>
                 Compile ontology into ./example.idc: <br/>
-                <pre>java -jar pure-rewriter-*.jar compile ./example.dlp -t ID -f ./example.idc </pre>
+                <pre>java -jar pure-rewriter-*.jar compile ./example.dlp -f ./example.idc </pre>
               </li>
 
               <li>
                 Rewrite the query using the compiled ontology file: <br/>
-                <pre>java -jar pure-rewriter-*.jar rewrite ./example.dlp -q "?(X):- criticalManager(X),woman(X)." -c ./example.idc -t ID > ./pivotal.dlp </pre>
+                <pre>java -jar pure-rewriter-*.jar rewrite ./example.dlp -q "?(X):- criticalManager(X),woman(X)." -c ./example.idc > ./pivotal.dlp </pre>
               </li>
 
               <li>Unfold the pivotal query: <br/>
 
-              <pre>java -jar pure-rewriter-*.jar unfold -c ./example.idc -t ID -q ./pivotal.dlp </pre></li>
+              <pre>java -jar pure-rewriter-*.jar unfold -c ./example.idc -q ./pivotal.dlp </pre></li>
               </ul>
 
 
             <h3> without compilation </h3>
              <ul>
               <li>
-                <pre>java -jar pure-rewriter-*.jar rewrite ./example.dlp -q "?(X):- criticalManager(X),woman(X)." -t NONE </pre>
+                <pre>java -jar pure-rewriter-*.jar rewrite ./example.dlp -q "?(X):- criticalManager(X),woman(X)." -c NONE </pre>
               </li>
              </ul>
 
@@ -81,11 +81,11 @@
             <ul>
               <li>
                 One line rewriting with compilation and unfolding:
-                <pre>java -jar pure-rewriter-*.jar rewrite ./example.dlp -q "?(X):- criticalManager(X),woman(X)." -t ID -u </pre>
+                <pre>java -jar pure-rewriter-*.jar rewrite ./example.dlp -q "?(X):- criticalManager(X),woman(X)." -u </pre>
               </li>
               <li>
                 Rewrite multiple queries from a file
-                <pre>java -jar pure-rewriter-*.jar rewrite ./example.dlp -q ./queries.dlp -t ID </pre>
+                <pre>java -jar pure-rewriter-*.jar rewrite ./example.dlp -q ./queries.dlp </pre>
               </li>
             </ul>
       </section>
