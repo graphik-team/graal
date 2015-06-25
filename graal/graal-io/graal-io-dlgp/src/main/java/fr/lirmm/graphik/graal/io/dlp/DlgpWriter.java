@@ -263,10 +263,7 @@ public class DlgpWriter extends AbstractGraalWriter {
 
 	protected void writeTerm(Term t) throws IOException {
 		if(Type.VARIABLE.equals(t.getType())) {
-			if (!Character.isUpperCase(t.getIdentifier().toString().charAt(0))) {
-				this.write("VAR_");
-			}
-			this.write(t.getIdentifier());
+			this.writeUpperIdentifier(t.getIdentifier());
 		} else if(Type.CONSTANT.equals(t.getType())) {
 			this.writeLowerIdentifier(t.getIdentifier());
 		} else { // LITERAL
@@ -278,7 +275,7 @@ public class DlgpWriter extends AbstractGraalWriter {
 			this.write('>');
 		}
 	}
-	
+
 	protected void writePredicate(Predicate p) throws IOException {
 		if (p.equals(Predicate.TOP)) {
 			p = top;
@@ -317,8 +314,20 @@ public class DlgpWriter extends AbstractGraalWriter {
 				this.write('>');
 			}
 		}
+	}
 
-
+	/**
+	 * @param identifier
+	 * @throws IOException
+	 */
+	private void writeUpperIdentifier(Object identifier) throws IOException {
+		String s = identifier.toString();
+		char first = s.charAt(0);
+		if (first < 'A' || first > 'Z') {
+			s = "VAR_" + s;
+		}
+		s = s.replaceAll("[^a-zA-Z0-9_]", "_");
+		this.write(s);
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
