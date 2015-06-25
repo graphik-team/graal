@@ -120,8 +120,7 @@ class OWLEquivalentClassExpressionVisitorImpl extends
 	public InMemoryAtomSet visit(OWLObjectHasValue arg) {
 		return arg.getProperty()
 				.accept(new OWLPropertyExpressionVisitorImpl(glueVariable,
-						GraalUtils.createConstant(arg.getFiller()
-								.asOWLNamedIndividual())));
+						GraalUtils.createTerm(arg.getFiller())));
 
 	}
 
@@ -186,7 +185,7 @@ class OWLEquivalentClassExpressionVisitorImpl extends
 	public InMemoryAtomSet objectOneOf1(OWLIndividual i) {
 		InMemoryAtomSet atomset = GraalUtils.createAtomSet();
 		atomset.add(GraalUtils.createAtom(Predicate.EQUALITY, glueVariable,
-				GraalUtils.createConstant(i.asOWLNamedIndividual())));
+				GraalUtils.createTerm(i)));
 		return atomset;
 	}
 

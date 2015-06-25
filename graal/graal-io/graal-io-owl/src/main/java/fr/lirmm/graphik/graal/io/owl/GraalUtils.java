@@ -23,8 +23,8 @@ import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
 import org.semanticweb.owlapi.model.OWLDatatype;
+import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +35,6 @@ import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.term.Constant;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.util.DefaultURI;
@@ -134,9 +133,14 @@ final class GraalUtils {
 	 * @param value
 	 * @return
 	 */
-	public static Constant createConstant(OWLNamedIndividual individu) {
-		return DefaultTermFactory.instance().createConstant(
+	public static Term createTerm(OWLIndividual individu) {
+		if (individu.isNamed()) {
+			return DefaultTermFactory.instance().createConstant(
 				convertIRI(individu.asOWLNamedIndividual().getIRI()));
+		} else {
+			return DefaultTermFactory.instance().createVariable(
+					individu.asOWLAnonymousIndividual().getID().getID());
+		}
 	}
 
 	/**

@@ -648,10 +648,8 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 	public Iterable<? extends Object> visit(OWLObjectPropertyAssertionAxiom arg) {
 
 		freeVarGen.setIndex(0);
-		Term a = GraalUtils.createConstant(arg.getSubject()
-				.asOWLNamedIndividual());
-		Term b = GraalUtils.createConstant(arg.getObject()
-				.asOWLNamedIndividual());
+		Term a = GraalUtils.createTerm(arg.getSubject());
+		Term b = GraalUtils.createTerm(arg.getObject());
 		AtomSet atomset = arg.getProperty().accept(
 				new OWLPropertyExpressionVisitorImpl(a, b));
 		return Collections.singleton(atomset);
@@ -661,10 +659,8 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 	public Iterable<? extends Object> visit(
 			OWLNegativeObjectPropertyAssertionAxiom arg) {
 		freeVarGen.setIndex(0);
-		Term a = GraalUtils.createConstant(arg.getSubject()
-				.asOWLNamedIndividual());
-		Term b = GraalUtils.createConstant(arg.getObject()
-				.asOWLNamedIndividual());
+		Term a = GraalUtils.createTerm(arg.getSubject());
+		Term b = GraalUtils.createTerm(arg.getObject());
 		AtomSet atomset = arg.getProperty().accept(
 				new OWLPropertyExpressionVisitorImpl(a, b));
 		return Collections.singleton(new NegativeConstraint(atomset));
@@ -673,8 +669,7 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 	@Override
 	public Iterable<? extends Object> visit(OWLDataPropertyAssertionAxiom arg) {
 		freeVarGen.setIndex(0);
-		Term a = GraalUtils.createConstant(arg.getSubject()
-				.asOWLNamedIndividual());
+		Term a = GraalUtils.createTerm(arg.getSubject());
 		Term b = GraalUtils.createLiteral(arg.getObject());
 		AtomSet atomset = arg.getProperty().accept(
 				new OWLPropertyExpressionVisitorImpl(a, b));
@@ -685,8 +680,7 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 	public Iterable<? extends Object> visit(
 			OWLNegativeDataPropertyAssertionAxiom arg) {
 		freeVarGen.setIndex(0);
-		Term a = GraalUtils.createConstant(arg.getSubject()
-				.asOWLNamedIndividual());
+		Term a = GraalUtils.createTerm(arg.getSubject());
 		Term b = GraalUtils.createLiteral(arg.getObject());
 		AtomSet atomset = arg.getProperty().accept(
 				new OWLPropertyExpressionVisitorImpl(a, b));
@@ -705,15 +699,13 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 			OWLIndividual individu1 = it1.next();
 			it1.remove();
 
-			Term t1 = GraalUtils.createConstant(individu1
-					.asOWLNamedIndividual());
+			Term t1 = GraalUtils.createTerm(individu1);
 
 			it2 = list.iterator();
 			while (it2.hasNext()) {
 				OWLIndividual individu2 = it2.next();
 
-				Term t2 = GraalUtils.createConstant(individu2
-						.asOWLNamedIndividual());
+				Term t2 = GraalUtils.createTerm(individu2);
 				Atom a = new DefaultAtom(equalityPredicate, t1, t2);
 				c.add(a);
 			}
@@ -733,15 +725,13 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 			OWLIndividual individu1 = it1.next();
 			it1.remove();
 
-			Term t1 = GraalUtils.createConstant(individu1
-					.asOWLNamedIndividual());
+			Term t1 = GraalUtils.createTerm(individu1);
 
 			it2 = list.iterator();
 			while (it2.hasNext()) {
 				OWLIndividual individu2 = it2.next();
 
-				Term t2 = GraalUtils.createConstant(individu2
-						.asOWLNamedIndividual());
+				Term t2 = GraalUtils.createTerm(individu2);
 				Atom a = new DefaultAtom(equalityPredicate, t1, t2);
 				c.add(new NegativeConstraint(Collections.<Atom> singleton(a)));
 			}
