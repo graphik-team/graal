@@ -24,6 +24,7 @@ import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.NegativeConstraint;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.util.Prefix;
 
@@ -59,6 +60,8 @@ public abstract class AbstractGraalWriter extends AbstractWriter implements
 			this.write((Prefix) o);
 		} else if (o instanceof String) {
 			this.write((String) o);
+		} else if (o instanceof AtomSet) {
+			this.write((AtomSet) o);
 		} else if (o instanceof Iterable<?>) {
 			this.writeIterable((Iterable<?>) o);
 		} else if (o instanceof Iterator<?>) {
