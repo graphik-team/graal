@@ -10,7 +10,7 @@
  *            Michel LECLÈRE
  *            Marie-Laure MUGNIER
  */
- /**
+/**
  * 
  */
 package fr.lirmm.graphik.graal.io.owl;
@@ -29,11 +29,13 @@ import java.util.TreeSet;
 import org.apache.commons.io.input.ReaderInputStream;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.formats.PrefixDocumentFormat;
+import org.semanticweb.owlapi.model.OWLAnonymousIndividual;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLDocumentFormat;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.util.DefaultPrefixManager;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.slf4j.Logger;
@@ -46,13 +48,13 @@ import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
+import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.io.AbstractParser;
 import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.stream.ArrayBlockingStream;
 import fr.lirmm.graphik.util.stream.transformator.Transformator;
-
 
 /**
  * This class parses OWL2 ontologies and converts them into Rule, Facts and
@@ -63,15 +65,12 @@ import fr.lirmm.graphik.util.stream.transformator.Transformator;
  */
 public class OWL2Parser extends AbstractParser<Object> {
 
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(OWL2Parser.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(OWL2Parser.class);
 	private static final RuleTransformator RULE_TRANSFO = new RuleTransformator();
-	private static final InMemoryAtomSet BOTTOM_ATOMSET = new LinkedListAtomSet(
-			Atom.BOTTOM);
-	
-	private ArrayBlockingStream<Object> buffer = new ArrayBlockingStream<Object>(
-			512);
-	
+	private static final InMemoryAtomSet BOTTOM_ATOMSET = new LinkedListAtomSet(Atom.BOTTOM);
+
+	private ArrayBlockingStream<Object> buffer = new ArrayBlockingStream<Object>(512);
+
 	private InputStream inputStream = null;
 	private OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 	private OWLOntology ontology;
@@ -85,7 +84,7 @@ public class OWL2Parser extends AbstractParser<Object> {
 	 * Constructor for parsing from the given reader.
 	 * 
 	 * @param inputStream
-	 * @throws OWL2ParserException 
+	 * @throws OWL2ParserException
 	 */
 	public OWL2Parser(InputStream stream) throws OWL2ParserException {
 		this.inputStream = stream;
@@ -100,7 +99,8 @@ public class OWL2Parser extends AbstractParser<Object> {
 
 	/**
 	 * Constructor for parsing from the standard input.
-	 * @throws OWL2ParserException 
+	 * 
+	 * @throws OWL2ParserException
 	 */
 	public OWL2Parser() throws OWL2ParserException {
 		this(System.in);
@@ -111,7 +111,7 @@ public class OWL2Parser extends AbstractParser<Object> {
 	 * 
 	 * @param file
 	 * @throws FileNotFoundException
-	 * @throws OWL2ParserException 
+	 * @throws OWL2ParserException
 	 */
 	public OWL2Parser(File file) throws FileNotFoundException, OWL2ParserException {
 		try {
@@ -127,7 +127,7 @@ public class OWL2Parser extends AbstractParser<Object> {
 	 * Constructor for parsing the content of the string s as OWL content.
 	 * 
 	 * @param s
-	 * @throws OWL2ParserException 
+	 * @throws OWL2ParserException
 	 */
 	public OWL2Parser(String s) throws OWL2ParserException {
 		this(new ByteArrayInputStream(s.getBytes()));
@@ -137,7 +137,7 @@ public class OWL2Parser extends AbstractParser<Object> {
 	 * Constructor for parsing the given InputStream.
 	 * 
 	 * @param in
-	 * @throws OWL2ParserException 
+	 * @throws OWL2ParserException
 	 */
 	public OWL2Parser(Reader in) throws OWL2ParserException {
 		this(new ReaderInputStream(in));
@@ -146,15 +146,17 @@ public class OWL2Parser extends AbstractParser<Object> {
 	// /////////////////////////////////////////////////////////////////////////
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
-	
+
 	/**
-	 * Enable or disable prefix short form. 
-	 * @param b Default value is true.
+	 * Enable or disable prefix short form.
+	 * 
+	 * @param b
+	 *            Default value is true.
 	 */
 	public void prefixEnable(boolean b) {
 		this.prefixEnable = b;
 	}
-	
+
 	@Override
 	public boolean hasNext() {
 		return buffer.hasNext();
@@ -164,7 +166,7 @@ public class OWL2Parser extends AbstractParser<Object> {
 	public Object next() {
 		return buffer.next();
 	}
-	
+
 	/**
 	 * Closes the stream and releases any system resources associated with it.
 	 * Closing a previously closed parser has no effect.
@@ -173,7 +175,7 @@ public class OWL2Parser extends AbstractParser<Object> {
 	 */
 	@Override
 	public void close() {
-		if(this.inputStream != null) {
+		if (this.inputStream != null) {
 			try {
 				this.inputStream.close();
 			} catch (IOException e) {
@@ -182,28 +184,28 @@ public class OWL2Parser extends AbstractParser<Object> {
 			this.inputStream = null;
 		}
 	}
-	
+
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
-	
+
 	private ShortFormProvider getShortFormProvider(OWLOntology ontology) {
 		OWLDocumentFormat format = this.manager.getOntologyFormat(this.ontology);
 		DefaultPrefixManager pm = new DefaultPrefixManager();
-		if(prefixEnable && format.isPrefixOWLOntologyFormat()) {
+		if (prefixEnable && format.isPrefixOWLOntologyFormat()) {
 			PrefixDocumentFormat prefixFormat = format.asPrefixOWLOntologyFormat();
-			
+
 			Map<String, String> prefixMap = prefixFormat.getPrefixName2PrefixMap();
-		
+
 			Set<String> forbiddenPrefix = new TreeSet<String>();
 			forbiddenPrefix.add("xml:");
 			forbiddenPrefix.add("rdf:");
 			forbiddenPrefix.add("rdfs:");
 			forbiddenPrefix.add("owl:");
-			
-			for(Map.Entry<String, String> entry : prefixMap.entrySet()) {
+
+			for (Map.Entry<String, String> entry : prefixMap.entrySet()) {
 				String prefix = entry.getKey();
-				if(!forbiddenPrefix.contains(prefix)) {
+				if (!forbiddenPrefix.contains(prefix)) {
 					pm.setPrefix(prefix, entry.getValue());
 					prefix = prefix.substring(0, prefix.length() - 1);
 					buffer.write(new Prefix(prefix, entry.getValue()));
@@ -212,11 +214,11 @@ public class OWL2Parser extends AbstractParser<Object> {
 		}
 		return pm;
 	}
-	
+
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE CLASSES
 	// /////////////////////////////////////////////////////////////////////////
-	
+
 	private static class Producer implements Runnable {
 
 		private OWLOntology onto;
@@ -232,30 +234,109 @@ public class OWL2Parser extends AbstractParser<Object> {
 		@Override
 		public void run() {
 			try {
-				
+
 				OWLAxiomParser visitor = new OWLAxiomParser(shortForm);
-	
-				for (OWLAxiom a : onto.getAxioms()) {
-					if (LOGGER.isDebugEnabled()) {
-						LOGGER.debug("### OWLAxiom: " + a.toString());
-					}
-					Iterable<?> iterable = a.accept(visitor);
-					if (iterable != null) {
-						for (Object o : iterable) {
-							if (o instanceof Rule) {
-								o = RULE_TRANSFO.transform((Rule) o);
+
+				// process axioms containing anonymous individuals
+				Set<OWLAnonymousIndividual> anonymousIndividuals = onto.getAnonymousIndividuals();
+
+				while (!anonymousIndividuals.isEmpty()) {
+					Iterator<OWLAnonymousIndividual> it = anonymousIndividuals.iterator();
+					TreeSet<OWLAnonymousIndividual> localAnonymousIndividuals = new TreeSet<>();
+					localAnonymousIndividuals.add(it.next());
+					it.remove();
+
+					InMemoryAtomSet fact = new LinkedListAtomSet();
+					AnonymousProcessor processor = new AnonymousProcessor(fact);
+
+					// keep an anonymous individu and process it
+					while (!localAnonymousIndividuals.isEmpty()) {
+						OWLAnonymousIndividual i = localAnonymousIndividuals.pollFirst();
+
+						for (OWLAxiom a : onto.getReferencingAxioms(i, Imports.EXCLUDED)) {
+							// add individu referenced by this axiom to the
+							// local set and remove it from the global set
+							for (OWLAnonymousIndividual neestedIndividu : a.getAnonymousIndividuals()) {
+								if (anonymousIndividuals.contains(neestedIndividu)) {
+									anonymousIndividuals.remove(neestedIndividu);
+									localAnonymousIndividuals.add(neestedIndividu);
+								}
 							}
-							if (LOGGER.isDebugEnabled()) {
-								LOGGER.debug(" => " + o.toString());
-							}
-							if (o != null) {
-								buffer.write(o);
-							}
+
+							// process current axiom
+							processAxiom(a, visitor, processor);
 						}
 					}
+					buffer.write(fact);
 				}
+
+				// process other axioms
+				for (OWLAxiom a : onto.getAxioms()) {
+					if (!a.getAnonymousIndividuals().isEmpty()) {
+						continue;
+					}
+					processAxiom(a, visitor, noAnonymousProcessor);
+				}
+
 			} finally {
 				buffer.close();
+			}
+		}
+
+		/**
+		 * @param a
+		 * @return
+		 */
+		private static void processAxiom(OWLAxiom a, OWLAxiomParser visitor, Processor p) {
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("### OWLAxiom: " + a.toString());
+			}
+
+			Iterable<? extends Object> iterable = a.accept(visitor);
+			if (iterable != null) {
+				for (Object o : iterable) {
+					if (o != null) {
+						if (o instanceof Rule) {
+							o = RULE_TRANSFO.transform((Rule) o);
+						}
+						if (LOGGER.isDebugEnabled()) {
+							LOGGER.debug(" => " + o.toString());
+						}
+						p.exec(o);
+					}
+				}
+			}
+		}
+
+		private static interface Processor {
+			void exec(Object o);
+		}
+
+		private static class AnonymousProcessor implements Processor {
+
+			private InMemoryAtomSet fact;
+
+			public AnonymousProcessor(InMemoryAtomSet fact) {
+				this.fact = fact;
+			}
+
+			@Override
+			public void exec(Object o) {
+				if (!(o instanceof AtomSet)) {
+					LOGGER.error("AnonymousIndividuals not allowed here: " + o);
+				} else {
+					fact.addAll((AtomSet) o);
+				}
+			}
+
+		}
+
+		private NoAnonymousProcessor noAnonymousProcessor = new NoAnonymousProcessor();
+
+		private class NoAnonymousProcessor implements Processor {
+			@Override
+			public void exec(Object o) {
+				buffer.write(o);
 			}
 		}
 
@@ -267,8 +348,7 @@ public class OWL2Parser extends AbstractParser<Object> {
 	 * @param r
 	 * @return
 	 */
-	private static class RuleTransformator implements
-			Transformator<Rule, Object> {
+	private static class RuleTransformator implements Transformator<Rule, Object> {
 
 		@Override
 		public Object transform(Rule r) {
@@ -276,14 +356,13 @@ public class OWL2Parser extends AbstractParser<Object> {
 			InMemoryAtomSet head = r.getHead();
 
 			Iterator<Atom> bodyIt = body.iterator();
-			
+
 			// Remove equality in body
 			Substitution s = new TreeMapSubstitution();
-			while(bodyIt.hasNext()) {
+			while (bodyIt.hasNext()) {
 				Atom a = bodyIt.next();
 				if (a.getPredicate().equals(Predicate.EQUALITY)
-						&& (!a.getTerm(0).isConstant() || !a.getTerm(1)
-								.isConstant())) {
+					&& (!a.getTerm(0).isConstant() || !a.getTerm(1).isConstant())) {
 					bodyIt.remove();
 					if (a.getTerm(0).isConstant()) {
 						s.put(a.getTerm(1), a.getTerm(0));
@@ -296,12 +375,11 @@ public class OWL2Parser extends AbstractParser<Object> {
 			body = removeUselessBottom(s.createImageOf(body));
 			bodyIt = body.iterator();
 
-			head = removeUselessTopInHead(removeUselessBottom(s
-					.createImageOf(head)));
+			head = removeUselessTopInHead(removeUselessBottom(s.createImageOf(head)));
 			Iterator<Atom> headIt = head.iterator();
-			
+
 			// USELESS STATEMENT
-			if(!headIt.hasNext()) {
+			if (!headIt.hasNext()) {
 				return null;
 				// CONSTRAINTS
 			} else if (headIt.next().getPredicate().equals(Predicate.BOTTOM)) {
@@ -324,8 +402,7 @@ public class OWL2Parser extends AbstractParser<Object> {
 	 * @param atomset
 	 * @return
 	 */
-	private static InMemoryAtomSet removeUselessBottom(
-			InMemoryAtomSet atomset) {
+	private static InMemoryAtomSet removeUselessBottom(InMemoryAtomSet atomset) {
 		Iterator<Atom> it = atomset.iterator();
 		Atom a;
 		while (it.hasNext()) {
@@ -338,8 +415,7 @@ public class OWL2Parser extends AbstractParser<Object> {
 		return atomset;
 	}
 
-	private static InMemoryAtomSet removeUselessTopInHead(
-			InMemoryAtomSet atomset) {
+	private static InMemoryAtomSet removeUselessTopInHead(InMemoryAtomSet atomset) {
 		InMemoryAtomSet newAtomset = new LinkedListAtomSet();
 		Iterator<Atom> it = atomset.iterator();
 		Atom a;
@@ -352,6 +428,5 @@ public class OWL2Parser extends AbstractParser<Object> {
 
 		return newAtomset;
 	}
-
 
 }

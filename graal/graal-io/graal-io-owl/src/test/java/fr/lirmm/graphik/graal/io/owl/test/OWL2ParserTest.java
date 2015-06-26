@@ -501,7 +501,6 @@ public class OWL2ParserTest {
 		for (Object o : parser) {
 			if (o instanceof Rule) {
 				++nbRules;
-				System.out.println(o);
 			}
 		}
 		Assert.assertEquals("Number of assertions found:", 3, nbRules);
@@ -707,19 +706,13 @@ public class OWL2ParserTest {
 
 		for (Object o : parser) {
 			if (o instanceof AtomSet) {
-				++nbRules;
-
-				AtomSet r = (AtomSet) o;
-				Iterator<Atom> bodyIt = r.iterator();
-				Assert.assertTrue(bodyIt.hasNext());
-
-				Atom body = bodyIt.next();
-				Assert.assertTrue(body.getTerm(0).equals(I1)
-						|| body.getTerm(0).equals(I2)
-						|| body.getTerm(0).equals(I3));
-				Assert.assertEquals(A, body.getPredicate());
-
-				Assert.assertFalse(bodyIt.hasNext());
+				for (Atom a : (AtomSet) o) {
+					++nbRules;
+					Assert.assertTrue(a.getTerm(0).equals(I1)
+							|| a.getTerm(0).equals(I2)
+							|| a.getTerm(0).equals(I3));
+					Assert.assertEquals(A, a.getPredicate());
+				}
 			}
 		}
 
@@ -841,7 +834,9 @@ public class OWL2ParserTest {
 
 		for (Object o : parser) {
 			if (o instanceof AtomSet) {
-				++nbRules;
+				for (Atom a : (AtomSet) o) {
+					++nbRules;
+				}
 			}
 		}
 		Assert.assertEquals("Number of assertions found:", 4, nbRules);
@@ -911,6 +906,7 @@ public class OWL2ParserTest {
 		int nbAssertions = 0;
 		for (Object o : parser) {
 			if (!(o instanceof Prefix)) {
+				System.out.println(o);
 				Assert.assertTrue(o instanceof Rule);
 				++nbAssertions;
 			}
@@ -1916,6 +1912,60 @@ public class OWL2ParserTest {
 		}
 		Assert.assertTrue("Number of assertions found:", found);
 
+	}
+
+	@Test
+	public void assertionWithExistential() throws OWL2ParserException {
+		try {
+			OWL2Parser parser = new OWL2Parser(PREFIXES
+					+ ":A rdf:type owl:Class . "
+					+ ":p rdf:type owl:ObjectProperty . "
+					+ ":i1 :p [a :A] ."
+					+ "");
+
+			int nbFacts = 0;
+			int nbAtoms = 0;
+			for (Object o : parser) {
+				if (o instanceof AtomSet) {
+					++nbFacts;
+					for (Atom a : (AtomSet) o) {
+						++nbAtoms;
+					}
+				}
+			}
+			Assert.assertEquals("Number of facts found:", 1, nbFacts);
+			Assert.assertEquals("Number of atoms found:", 2, nbAtoms);
+		} catch (Throwable e) {
+			Assert.fail("An exception was found: " + e);
+		}
+
+
+	}
+
+	@Test
+	public void complexAssertionWithExistential() throws OWL2ParserException {
+		try {
+			OWL2Parser parser = new OWL2Parser(PREFIXES
+					+ ":A a owl:Class . "
+					+ ":B a owl:Class . " + ":p a owl:ObjectProperty . "
+					+ "_:x1 a :A. " + "_:y1 a :B. " + "_:x1 :p _:y1. "
+					+ "_:x2 a :A. " + "_:y2 a :B. " + "_:x2 :p _:y2. ");
+
+			int nbFacts = 0;
+			int nbAtoms = 0;
+			for (Object o : parser) {
+				if (o instanceof AtomSet) {
+					++nbFacts;
+					for (Atom a : (AtomSet) o) {
+						++nbAtoms;
+					}
+				}
+			}
+			Assert.assertEquals("Number of facts found:", 2, nbFacts);
+			Assert.assertEquals("Number of atoms found:", 6, nbAtoms);
+		} catch (Throwable e) {
+			Assert.fail("An exception was found: " + e);
+		}
 	}
 
 	@Test
