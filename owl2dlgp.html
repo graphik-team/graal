@@ -33,7 +33,9 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        The owl2dlgp program translates into <em>dlgp</em> any OWL2
+        The owl2dlgp program translates
+        into <a href="http://graphik-team.github.io/graal/dl/datalog+_v2.0_en.pdf"><em>dlgp</em></a>
+        any <a href="http://www.w3.org/TR/owl2-overview/">OWL2</a>
         ontology that can be expressed into the existential rule
         framework. In particular, it translates the three tractable
         profiles of OWL2 (EL, QL, RL). This tool uses
@@ -42,19 +44,21 @@
         Functional Syntax or Turtle.
 
         <h2>Getting started</h2>
-        <p>
-          Download <a href="./dl/owl2dlgp-1.0.beta3.jar">owl2dlgp</a>.
-          </p>
+        <ul>
+          <li>Download <a href="./dl/owl2dlgp-1.0.beta3.jar">owl2dlgp</a></li>
+          <li>Download <a href="./dl/example-owl.ttl">example-owl.ttl</a></li>
+        </ul>
+        
         
         <ul>
           <li>
             Translate from an OWL 2 file to a <em>dlgp</em> file: <br/>
-            <pre>java -jar owl2dlgp-*.jar -f ./example.owl -o ./example.dlp</pre>
+            <pre>java -jar owl2dlgp-*.jar -f ./example-owl.ttl -o ./example.dlp</pre>
           </li>
 
           <li>
             Translate from the standard input (OWL 2) to the standard output (dlgp): <br/>
-            <pre>java -jar owl2dlgp-*.jar < ./example.owl > ./example.dlp</pre>
+            <pre>java -jar owl2dlgp-*.jar < ./example-owl.ttl > ./example.dlp</pre>
           </li>
         </ul>
         
