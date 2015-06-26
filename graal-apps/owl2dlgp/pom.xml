@@ -9,13 +9,17 @@
 	<version>1.0.beta3-SNAPSHOT</version>
 
 	<properties>
-		<graal.version>0.8.3-SNAPSHOT</graal.version>
+		<graal.version>0.8.3</graal.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>1.6</jdk.version>
 	</properties>
 
 	<inceptionYear>2014</inceptionYear>
-
+        
+	<scm>
+		<developerConnection>scm:git:git@gite.lirmm.fr:graphik/graal.git</developerConnection>
+	</scm>
+        
 	<organization>
 		<name>GraphIK (INRIA - LIRMM)</name>
 		<url>https://team.inria.fr/graphik/</url>
