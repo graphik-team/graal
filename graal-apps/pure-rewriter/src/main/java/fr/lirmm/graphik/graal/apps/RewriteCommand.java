@@ -162,10 +162,13 @@ class RewriteCommand extends PureCommand {
 				while (bc.hasNext()) {
 					writer.write(bc.next());
 				}
-				writer.close();
 			} catch (IOException e) {
 			}
 
+		}
+		try {
+			writer.close();
+		} catch (IOException e) {
 		}
 	}
 
