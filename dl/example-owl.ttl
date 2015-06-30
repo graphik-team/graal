@@ -32,4 +32,4 @@ _:x a :Project; :hasArea :kr; :hasCost 1.5.
 owl:Thing owl:hasKey (:isLeader).
 
 # R4
-[a owl:AllDisjointClasses; owl:members (:Reasearcher :Project)].
+[a owl:AllDisjointClasses; owl:members (:Researcher :Project)].
