@@ -64,7 +64,7 @@
               </ul>
 
 
-            <h3> without compilation </h3>
+            <h3> Without compilation </h3>
              <ul>
               <li>
                 <pre>java -jar pure-rewriter-*.jar rewrite ./example.dlp -q "?(X):- criticalManager(X),woman(X)." -c NONE </pre>
@@ -74,6 +74,9 @@
             <h3> Other useful options </h3>
             <ul>
               <li>
+                Verbose mode, print informations like time, number of rewritings...
+                <pre>java -jar pure-rewriter-*.jar -v compile ./example.dlp -f ./example.idc</pre>
+              <li>
                 One line rewriting with compilation and unfolding:
                 <pre>java -jar pure-rewriter-*.jar rewrite ./example.dlp -q "?(X):- criticalManager(X),woman(X)." -u </pre>
               </li>
@@ -81,6 +84,9 @@
                 Rewrite multiple queries from a file
                 <pre>java -jar pure-rewriter-*.jar rewrite ./example.dlp -q ./queries.dlp </pre>
               </li>
+              <li>
+                More options:
+                <pre>java -jar pure-rewriter-*.jar --help</pre>
             </ul>
       </section>
     </div>
