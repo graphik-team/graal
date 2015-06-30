@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset='utf-8'/>
-    <meta name="description" content="Graal : "/>
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css"/>
-    <script type="text/javascript" src="js/main.js"></script>
-    <title>Pure rewriter</title>
-  </head>
+
+  #define __TITLE__ Pure rewriter
+  #include "header.html"
+  
   <body>
+
     <!-- HEADER -->
     <div id="header_wrap" class="outer">
         <header class="inner">
+
           <h1 id="project_title">Pure rewriter</h1>
+
+          
           <nav>
             <a href="./">Home</a>
             <a href="./documentation">Documentation</a>
@@ -19,44 +20,57 @@
             <a href="./downloads">Downloads</a>
             <a href="https://github.com/graphik-team/graal/">Sources</a>
           </nav>
+
         </header>
     </div>
+
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
         <h2>Getting started</h2>
             The following program (Pure-rewriter) includes both the basic and the compilation-based versions of Pure.
+
             <ul>
               <li>Download <a href="./dl/pure-rewriter-1.0.beta3.jar">pure-rewriter</a></li>
               <li>Download <a href="./dl/example.dlp">example.dlp</a></li>
             </ul>
+
             There are three options for compilation:
             <ul>
               <li>NONE: no compilation</li>
               <li>H: compilation of hierarchical rules</li>
               <li>ID: compilation of all compilable rules</li>
             </ul>
+
             <h2> Running example from the paper on Graal at RuleML
             2015 </h2>
+
             <h3> Rewrite with ID compilation </h3>
+
             <ul>
               <li>
                 Compile ontology into ./example.idc: <br/>
                 <pre>java -jar pure-rewriter-*.jar compile ./example.dlp -f ./example.idc </pre>
               </li>
+
               <li>
                 Rewrite the query using the compiled ontology file: <br/>
                 <pre>java -jar pure-rewriter-*.jar rewrite ./example.dlp -q "?(X):- criticalManager(X),woman(X)." -c ./example.idc > ./pivotal.dlp </pre>
               </li>
+
               <li>Unfold the pivotal query: <br/>
+
               <pre>java -jar pure-rewriter-*.jar unfold -c ./example.idc -q ./pivotal.dlp </pre></li>
               </ul>
+
+
             <h3> without compilation </h3>
              <ul>
               <li>
                 <pre>java -jar pure-rewriter-*.jar rewrite ./example.dlp -q "?(X):- criticalManager(X),woman(X)." -c NONE </pre>
               </li>
              </ul>
+
             <h3> Other useful options </h3>
             <ul>
               <li>
@@ -70,21 +84,8 @@
             </ul>
       </section>
     </div>
-    <!-- FOOTER -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Graal maintained
-        by <a href="https://team.inria.fr/graphik/">GraphIK</a>
-          team</p>
-        <p> Contacts:
-        <script type="text/javascript">
-        <!--
-                Rot17.write('<r yivw="drzckf:jzgzvkvi@czidd.wi">jzgzvkvi@czidd.wi</r>');
-                document.write(' ');
-          Rot17.write('<r yivw="drzckf:dlxezvi@czidd.wi">dlxezvi@czidd.wi</r>');
-        </script></p>
-        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
+
+    #include "footer.html"
+
   </body>
 </html>

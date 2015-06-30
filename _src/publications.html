@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset='utf-8'/>
-    <meta name="description" content="Graal : "/>
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css"/>
-    <script type="text/javascript" src="js/main.js"></script>
-    <title>Graal Publications</title>
-  </head>
+
+  #define __TITLE__ Graal Publications
+  #include "header.html"
+
   <body>
+
     <!-- HEADER -->
     <div id="header_wrap" class="outer">
         <header class="inner">
+
           <h1 id="project_title">Graal Publications</h1>
+          
           <nav>
             <a href="./">Home</a>
             <a href="./documentation">Documentation</a>
@@ -19,56 +19,61 @@
             <a href="./downloads">Downloads</a>
             <a href="https://github.com/graphik-team/graal/">Sources</a>
           </nav>
+
         </header>
     </div>
+
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
+      
       <h5>Overview of Graal, with focus on the query rewriting algorithm </h5>
-      <p>J.-F. Baget, M. Leclère, M.-L. Mugnier, S. Rocher, and C. Sipieter.
-       <i>Graal: A Toolkit for Query Answering with Existential Rules.</i>
+      
+      <p>J.-F. Baget, M. Leclère, M.-L. Mugnier, S. Rocher, and C. Sipieter. 
+       <i>Graal: A Toolkit for Query Answering with Existential Rules.</i> 
        In <strong>RuleML 2015</strong> Conference, to appear, August 2015.
+      
       <hr>
       <h5>On the compilation-based query rewriting algorithm (implemented as the compilation-based PURE rewriter)</h5>
-      <p>M. König, M. Leclère, and M.-L. Mugnier.
-      <i>Query Rewriting for Existential Rules with Compiled Preorder</i>
+      
+      <p>M. König, M. Leclère, and M.-L. Mugnier. 
+      <i>Query Rewriting for Existential Rules with Compiled Preorder</i> 
       In <strong>IJCAI 2015</strong>, 2015.
+      
       <hr>
       <h5>Several papers on basic query rewriting algorithms (implemented as the basic PURE rewriter)</h5>
+      
       <p>M. Konig, M. Leclere, M.-L. Mugnier, M. Thomazo <i>Sound,
 Complete and Minimal UCQ-Rewriting for Existential Rules</i>.
 Semantic Web Journal, special issue on Web Reasoning and Rule
-Systems, Volume 6, Number 5, in Press.
-<a href = http:
- pdf file</a>
+Systems, Volume 6, Number 5, in Press. 
+<a href = http://www.semantic-web-journal.net/content/sound-complete-and-minimal-ucq-rewriting-existential-rules-0>
+	pdf file</a>
 </p>
+      
       <p>M. König, M. Leclère, M.-L. Mugnier, M. Thomazo, <i>Sound, Complete, and Minimal Query Rewriting for Existential Rules</i>, <strong>IJCAI 2013</strong> (Sister Conference Track), August 2013. <a href="http://ijcai.org/papers13/Papers/IJCAI13-448.pdf">pdf file</a></p>
-<p>M. König, M. Leclère, M.-L. Mugnier, M. Thomazo, <i>On the Exploration of the Query Rewriting Space with Existential Rules</i>, Proc. of the 7th International Conference on Web Reasoning and Rule Systems <strong>(RR 2013)</strong>, July 2013.
+
+<p>M. König, M. Leclère, M.-L. Mugnier, M. Thomazo, <i>On the Exploration of the Query Rewriting Space with Existential Rules</i>, Proc. of the 7th International Conference on Web Reasoning and Rule Systems <strong>(RR 2013)</strong>, July 2013. 
 <a href="http://www.lirmm.fr/%7Emugnier/ArticlesPostscript/RR2013_KLMT.pdf">pdf file</a><br>Full version: <a href="http://www.lirmm.fr/%7Emugnier/ArticlesPostscript/research-report-RR2013.pdf">Research Report LIRMM</a> 13016</p>
+
 <p>M. König, M. Leclère, M.-L. Mugnier, M. Thomazo, <i>A Sound and Complete Backward Chaining Algorithm for Existential Rules</i>, Proc. of the 6th International Conference on Web Reasoning and Rule Systems <strong>(RR 2012)</strong>, September 2012. Full version: <a href="http://www.lirmm.fr/%7Emugnier/ArticlesPostscript/FullTR-RR2012KonigLeclereMugnierThomazoV2.pdf">Research Report LIRMM</a> 12016 (v2 - August 2012)</p>
+	
+      
       <hr>
+      
       <h5>About the first version of Kiabora (web tool, works with file format DLGP v1)</h5>
-      <p>M. Leclère, M.-L. Mugnier, S.Rocher,
-      <i>KIABORA: An Analyzer of Existential Rule Bases</i>,
-      Proc. of the 7th International Conference on Web Reasoning and Rule Systems <strong>(RR 2013)</strong>, July 2013.
+      
+      <p>M. Leclère, M.-L. Mugnier, S.Rocher, 
+      <i>KIABORA: An Analyzer of Existential Rule Bases</i>, 
+      Proc. of the 7th International Conference on Web Reasoning and Rule Systems <strong>(RR 2013)</strong>, July 2013. 
       <a href="http://www.lirmm.fr/%7Emugnier/ArticlesPostscript/RR2013_LMR.pdf">pdf file</a></p>
+      
+      
+                
       </section>
     </div>
-    <!-- FOOTER -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Graal maintained
-        by <a href="https://team.inria.fr/graphik/">GraphIK</a>
-          team</p>
-        <p> Contacts:
-        <script type="text/javascript">
-        <!--
-                Rot17.write('<r yivw="drzckf:jzgzvkvi@czidd.wi">jzgzvkvi@czidd.wi</r>');
-                document.write(' ');
-          Rot17.write('<r yivw="drzckf:dlxezvi@czidd.wi">dlxezvi@czidd.wi</r>');
-        </script></p>
-        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
+
+    #include "footer.html"
+
   </body>
 </html>

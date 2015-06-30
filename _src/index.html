@@ -1,24 +1,26 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset='utf-8'/>
-    <meta name="description" content="Graal : "/>
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css"/>
-    <script type="text/javascript" src="js/main.js"></script>
-    <title>Graal</title>
-  </head>
+
+ #define __TITLE__ Graal
+ #include "./header.html"
+
  <body>
+
     <!-- HEADER -->
     <div id="header_wrap" class="outer">
       <header class="inner">
+        
           <h1 id="project_title">Graal Homepage</h1>
+
           <nav>
             <a href="./">Home</a>
             <a href="./documentation">Documentation</a>
             <a href="./publications">Publications</a>
             <a href="./downloads">Downloads</a>
-            <a href="https://github.com/graphik-team/graal/">Sources</a>
+            <a href="https://github.com/graphik-team/graal/">Sources</a>            
           </nav>
+
+
             <!--<section id="downloads">
               <a class="zip_download_link" href="https://github.com/graphik-team/graal/zipball/master">Download this project as a .zip file</a>
               <a class="tar_download_link" href="https://github.com/graphik-team/graal/tarball/master">Download this project as a tar.gz file</a>
@@ -26,11 +28,14 @@
             -->
         </header>
     </div>
+
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
         <p>Graal is a Java toolkit dedicated to querying knowledge bases within the framework of existential rules, aka Datalog+/-.</p>
+
         <p>The main features of Graal are the following:</p>
+
         <ul>
           <li>
             a basic layer that provides generic interfaces to store
@@ -43,7 +48,7 @@
           <li> ‘query rewriting’ algorithms, which reformulate a conjunctive
             query into a set (or ‘union’) of conjunctive queries;
           </li>
-          <li> utility tools:
+          <li> utility tools: 
             <ul>
               <li>
                 a format called <i>DLGP</i> (for ‘datalog+’) and its
@@ -62,6 +67,7 @@
             </ul>
           </li>
         </ul>
+
           <h2>Related standalone tools</h2>
              <ul>
                <li><a href="./pure">Query rewriter (Pure: basic and compilation-based versions) </a></li>
@@ -69,23 +75,15 @@
                <li><a href="./dl/dlgp2ruleml-1.0.beta1.jar">Translator from DLGP v2 to RuleML</a></li>
                <li><a href="http://www.lirmm.fr/kiabora/">Online Kiabora (works with DLGP v1)</a></li>
              </ul>
+        
       </section>
     </div>
-    <!-- FOOTER -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Graal maintained
-        by <a href="https://team.inria.fr/graphik/">GraphIK</a>
-          team</p>
-        <p> Contacts:
-        <script type="text/javascript">
-        <!--
-                Rot17.write('<r yivw="drzckf:jzgzvkvi@czidd.wi">jzgzvkvi@czidd.wi</r>');
-                document.write(' ');
-          Rot17.write('<r yivw="drzckf:dlxezvi@czidd.wi">dlxezvi@czidd.wi</r>');
-        </script></p>
-        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
+
+#include "./footer.html"
+
+  
+
+    
+
   </body>
 </html>
