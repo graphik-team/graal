@@ -14,15 +14,15 @@ public class Directive {
 	}
 
 	private Type type;
-	private String text;
+	private Object value;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public Directive(Type type, String text) {
+	public Directive(Type type, Object value) {
 		this.type = type;
-		this.text = text;
+		this.value = value;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -39,8 +39,8 @@ public class Directive {
 	/**
 	 * @return the text
 	 */
-	public String getText() {
-		return text;
+	public Object getValue() {
+		return value;
 	}
 
 }

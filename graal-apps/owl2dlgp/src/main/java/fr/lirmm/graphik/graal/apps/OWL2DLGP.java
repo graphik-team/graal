@@ -26,11 +26,18 @@ import ch.qos.logback.classic.Level;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
+import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.core.DefaultAtom;
+import fr.lirmm.graphik.graal.core.NegativeConstraint;
+import fr.lirmm.graphik.graal.core.Predicate;
+import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.io.dlp.Directive;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 import fr.lirmm.graphik.graal.io.owl.OWL2Parser;
 import fr.lirmm.graphik.graal.io.owl.OWL2ParserException;
 import fr.lirmm.graphik.util.Apps;
+import fr.lirmm.graphik.util.DefaultURI;
 import fr.lirmm.graphik.util.Prefix;
 
 /**
@@ -38,6 +45,11 @@ import fr.lirmm.graphik.util.Prefix;
  *
  */
 public class OWL2DLGP {
+	
+	private static Predicate THING = new Predicate(new DefaultURI("http://www.w3.org/2002/07/owl#Thing"), 1);
+	private static Atom NOTHING = new DefaultAtom(new Predicate(
+			new DefaultURI("http://www.w3.org/2002/07/owl#Nothing"), 1), DefaultTermFactory.instance().createVariable(
+			"X"));
 
 	@Parameter(names = { "-h", "--help" }, description = "Print this message", help = true)
 	private boolean help;
@@ -96,7 +108,8 @@ public class OWL2DLGP {
 		while (parser.hasNext()) {
 			o = parser.next();
 			if (!(o instanceof Prefix)) {
-				writer.writeDirective(new Directive(Directive.Type.TOP, "top"));
+				writer.writeDirective(new Directive(Directive.Type.TOP, THING));
+				writer.write(new NegativeConstraint(new LinkedListAtomSet(NOTHING)));
 				writer.write(o);
 				break;
 			}

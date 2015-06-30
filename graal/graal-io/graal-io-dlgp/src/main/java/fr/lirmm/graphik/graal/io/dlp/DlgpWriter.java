@@ -96,16 +96,20 @@ public class DlgpWriter extends AbstractGraalWriter {
 			break;
 		case BASE:
 			this.write("@base ");
-			this.write(d.getText());
+			this.write(d.getValue());
 			break;
 		case TOP:
+			if (d.getValue() instanceof Predicate) {
+				this.top = (Predicate) d.getValue();
+			} else {
+				this.top = new Predicate(d.getValue().toString(), 1);
+			}
 			this.write("@top ");
-			this.write(d.getText());
-			this.top = new Predicate(d.getText(), 1);
+			this.writePredicate(this.top);
 			break;
 		case COMMENT:
 			this.write("%% ");
-			this.write(d.getText());
+			this.write(d.getValue());
 			break;
 		}
 		this.write("\n");
