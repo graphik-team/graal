@@ -635,7 +635,7 @@ public class OWL2ParserTest {
 				+ ":B rdf:type owl:Class . " + ":p rdf:type owl:Property . "
 				+ ":A rdfs:subClassOf [ rdf:type owl:Restriction ;"
 				+ "							owl:onProperty :p ;"
-				+ "	                        owl:allValuesFrom :B ]. ");
+										   + "	                        owl:allValuesFrom :B ]. ");
 
 		int nbRules = 0;
 
@@ -1651,7 +1651,7 @@ public class OWL2ParserTest {
 	}
 
 	@Test
-	public void complexDataPropertyRangeAxiomWithIntersection()
+	public void dataRangeIntersection()
 			throws OWL2ParserException {
 		// D(Y) :- p(X, Y).
 		OWL2Parser parser = new OWL2Parser(PREFIXES
@@ -1672,7 +1672,7 @@ public class OWL2ParserTest {
 	}
 
 	@Test
-	public void complexDataPropertyRangeAxiomWithComplementOf()
+	public void dataRangeComplementOf()
 			throws OWL2ParserException {
 		// D(Y) :- p(X, Y).
 		OWL2Parser parser = new OWL2Parser(PREFIXES
@@ -1694,12 +1694,12 @@ public class OWL2ParserTest {
 	}
 
 	@Test
-	public void complexDataPropertyRangeAxiomWithOneOf()
+	public void dataRangeOneOf()
 			throws OWL2ParserException {
 		// D(Y) :- p(X, Y).
 		OWL2Parser parser = new OWL2Parser(PREFIXES
 				+ ":p rdf:type owl:DatatypeProperty . "
-				+ ":p rdfs:range [owl:complementOf [owl:oneOf ( :i1 :i2 ) ]] .");
+						+ ":p rdfs:range [a rdfs:Datatype; owl:complementOf [a rdfs:Datatype; owl:oneOf ( :i1 :i2 :i3 ) ]] .");
 
 		int nbAssertions = 0;
 		for (Object o : parser) {
@@ -1707,12 +1707,36 @@ public class OWL2ParserTest {
 				Assert.assertTrue(o instanceof Rule);
 				Rule r = (Rule) o;
 				++nbAssertions;
+			}
+		}
+
+		Assert.assertEquals("Number of assertions found:", 3, nbAssertions);
+	}
+	
+	@Test
+	public void dataRangeUnionOf()
+			throws OWL2ParserException {
+		// D(Y) :- p(X, Y).
+		OWL2Parser parser = new OWL2Parser(PREFIXES
+				+ ":p rdf:type owl:DatatypeProperty . "
+										   + ":D1 a rdfs:Datatype."
+										   + ":D2 a rdfs:Datatype."
+						+ ":p rdfs:range [a rdfs:Datatype; owl:complementOf [a rdfs:Datatype; owl:unionOf ( :D1 :D2 ) ]] .");
+
+		int nbAssertions = 0;
+		for (Object o : parser) {
+			if (!(o instanceof Prefix)) {
+				Assert.assertTrue(o instanceof Rule);
+				Rule r = (Rule) o;
+				System.out.println(o);
+				++nbAssertions;
 
 			}
 		}
 
 		Assert.assertEquals("Number of assertions found:", 2, nbAssertions);
 	}
+
 
 
 	@Test
@@ -1734,6 +1758,32 @@ public class OWL2ParserTest {
 		}
 
 		Assert.assertEquals("Number of assertions found:", 1, nbAssertions);
+	}
+
+	@Test
+	public void subDataRange() throws OWL2ParserException {
+		// p(X,Y) D(Y) :- A(X).
+		OWL2Parser parser = new OWL2Parser(
+				PREFIXES
+						+ ":A a owl:Class. "
+						+ ":D1 a rdfs:Datatype. "
+						+ ":D2 a rdfs:Datatype. "
+						+ ":D3 a rdfs:Datatype. "
+						+ ":p rdf:type owl:DatatypeProperty . "
+						+ "[a owl:Restriction; owl:onProperty :p; owl:someValuesFrom [a rdfs:Datatype; owl:unionOf (:D1 :D2 :D3)]] rdfs:subClassOf :A.");
+
+		int nbAssertions = 0;
+		for (Object o : parser) {
+			if (!(o instanceof Prefix)) {
+				Assert.assertTrue(o instanceof Rule);
+				Rule r = (Rule) o;
+				System.out.println(o);
+				++nbAssertions;
+
+			}
+		}
+
+		Assert.assertEquals("Number of assertions found:", 3, nbAssertions);
 	}
 
 	@Test
