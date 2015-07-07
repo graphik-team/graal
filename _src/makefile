@@ -9,7 +9,7 @@ all: ../documentation.html  ../downloads.html ../index.html  ../owl2dlgp.html  .
 
 ../%.html: %.html
 	@ echo "gen $@"
-	@ gcc -E -x c -P ${FLAGS} $< >> $@
+	@ gcc -E -x c -P ${FLAGS} $< > $@
 
 clean:
 	rm ../*.html
