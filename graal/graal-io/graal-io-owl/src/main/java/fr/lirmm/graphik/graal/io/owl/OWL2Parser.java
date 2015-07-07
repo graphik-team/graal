@@ -51,6 +51,8 @@ import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.graph.MemoryGraphAtomSet;
+import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.io.AbstractParser;
 import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.stream.ArrayBlockingStream;
@@ -299,10 +301,12 @@ public class OWL2Parser extends AbstractParser<Object> {
 						if (o instanceof Rule) {
 							o = RULE_TRANSFO.transform((Rule) o);
 						}
-						if (LOGGER.isDebugEnabled()) {
-							LOGGER.debug(" => " + o.toString());
+						if (o != null) {
+							if (LOGGER.isDebugEnabled()) {
+								LOGGER.debug(" => " + o.toString());
+							}
+							p.exec(o);
 						}
-						p.exec(o);
 					}
 				}
 			}
@@ -372,7 +376,7 @@ public class OWL2Parser extends AbstractParser<Object> {
 				}
 			}
 
-			body = removeUselessBottom(s.createImageOf(body));
+			body = removeUselessTopInBody(removeUselessBottom(s.createImageOf(body)));
 			bodyIt = body.iterator();
 
 			head = removeUselessTopInHead(removeUselessBottom(s.createImageOf(head)));
@@ -422,6 +426,33 @@ public class OWL2Parser extends AbstractParser<Object> {
 		while (it.hasNext()) {
 			a = it.next();
 			if (!a.getPredicate().equals(Predicate.TOP)) {
+				newAtomset.add(a);
+			}
+		}
+
+		return newAtomset;
+	}
+
+	private static InMemoryAtomSet removeUselessTopInBody(InMemoryAtomSet atomset) {
+		InMemoryAtomSet newAtomset = new MemoryGraphAtomSet();
+		Iterator<Atom> it = atomset.iterator();
+		Atom a;
+		while (it.hasNext()) {
+			a = it.next();
+			if (!a.getPredicate().equals(Predicate.TOP)) {
+				newAtomset.add(a);
+				it.remove();
+			} else {
+
+			}
+		}
+
+		// for each top predicate
+		Set<Term> terms = newAtomset.getTerms();
+		it = atomset.iterator();
+		while (it.hasNext()) {
+			a = it.next();
+			if (!terms.contains(a.getTerm(0))) {
 				newAtomset.add(a);
 			}
 		}
