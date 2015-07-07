@@ -483,6 +483,24 @@ public class OWL2ParserTest {
 		}
 		Assert.assertEquals("Number of assertions found:", 1, nbRules);
 	}
+	
+	@Test
+	public void objectMaxCardinality1WithInverseOf() throws OWL2ParserException {
+		OWL2Parser parser = new OWL2Parser(PREFIXES +
+				":A a owl:Class. " +
+				":p a owl:ObjectProperty. "+ 
+				":A rdfs:subClassOf [ rdf:type owl:Restriction ; " +
+				"                     owl:onProperty [owl:inverseOf :p] ; " + 
+				"                     owl:maxCardinality 1 ]. ");
+		int nbRules = 0;
+
+		for (Object o : parser) {
+			if (o instanceof Rule) {
+				++nbRules;
+			}
+		}
+		Assert.assertEquals("Number of assertions found:", 1, nbRules);
+	}
 
 	@Test
 	public void complexObjectMaxCardinality1() throws OWL2ParserException {

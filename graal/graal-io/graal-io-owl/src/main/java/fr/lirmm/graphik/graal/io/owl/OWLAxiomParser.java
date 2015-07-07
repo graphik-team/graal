@@ -911,9 +911,9 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 				OWLObjectMaxCardinality maxCard = (OWLObjectMaxCardinality) arg
 						.getSuperClass();
 
-				Predicate p = GraalUtils.createPredicate(maxCard.getProperty());
-				body.add(GraalUtils.createAtom(p, glueVarX, glueVarY));
-				body.add(GraalUtils.createAtom(p, glueVarX, glueVarZ));
+				body.addAll(maxCard.getProperty().accept(this.propertyVisitorXY));
+				body.addAll(maxCard.getProperty().accept(this.propertyVisitorXZ));
+
 				AtomSet bodyTemplate = body;
 				head = GraalUtils.createAtomSet(GraalUtils.createAtom(
 						Predicate.EQUALITY, glueVarY, glueVarZ));
