@@ -590,6 +590,7 @@ public class RuleAnalyser {
 
 		for (Rule r : rules) {
 			r.appendTo(sb);
+			sb.append("\n");
 		}
 	}
 
