@@ -29,7 +29,9 @@ _:x a :Project; :hasArea :kr; :hasCost 1.5.
 :isLeader rdfs:subPropertyOf :isMember.
 
 # R3
-owl:Thing owl:hasKey (:isLeader).
+:Project rdfs:subClassOf [ rdf:type owl:Restriction ; 
+		            owl:onProperty [owl:inverseOf :isLeader] ;
+			    owl:maxCardinality 1 ].
 
 # R4
-[a owl:AllDisjointClasses; owl:members (:Researcher :Project)].
+:Researcher owl:disjointWith :Project.
