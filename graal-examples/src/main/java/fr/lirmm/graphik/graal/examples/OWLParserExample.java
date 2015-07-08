@@ -34,11 +34,12 @@ public class OWLParserExample {
 			IOException, OWL2ParserException {
 
 		DlgpWriter writer = new DlgpWriter();
-		File f = new File("/tmp/00012.owl");
+		File f = new File("/tmp/example.owl");
 
 		OWL2Parser parser = new OWL2Parser(f);
 		for(Object o : parser) {
 			writer.write(o);
+			writer.flush();
 		}
 		parser.close();
 	}
