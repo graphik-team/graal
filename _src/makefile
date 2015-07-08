@@ -5,7 +5,16 @@ ifeq (${debug},1)
 	FLAGS+=${DEBUG_FLAGS}
 endif
 
-all: ../documentation.html  ../downloads.html ../index.html  ../owl2dlgp.html  ../experiments.html ../experiments1.html ../experiments2.html ../publications.html  ../pure.html
+all:../index.html\
+../documentation.html\
+../downloads.html\
+../owl2dlgp.html\
+../dlgp2ruleml.html\
+../experiments.html\
+../experiments1.html\
+../experiments2.html\
+../publications.html\
+../pure.html
 
 ../%.html: %.html
 	@ echo "gen $@"
