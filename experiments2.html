@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'/>
+    <meta name="description" content="Graal : "/>
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/table.css"/>
+    <script type="text/javascript" src="js/main.js"></script>
+    <title>Graal Experiments</title>
+  </head>
+  <body>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+      <header class="inner">
+        <h1 id="project_title">First experiments on <em>pivotal</em>
+        query evaluation</h1>
+          <nav>
+            <a href="./">Home</a>
+            <a href="./documentation">Documentation</a>
+            <a href="./publications">Publications</a>
+            <a href="./experiments">Experiments</a>
+            <a href="./downloads">Downloads</a>
+            <a href="https://github.com/graphik-team/graal/">Sources</a>
+          </nav>
+      </header>
+    </div>
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <p>We carried out first experiments to compare the evaluation of the classical
+UCQ rewriting on data with the evaluation of the pivotal UCQ on data semi-saturated
+by compilable rules.</p>
+        <h2>Benchmark</h2>
+        <p>For these experiments, we used the DL benchmark LUBM<sup>∃</sup><sub>20</sub>
+proposed in (Lutz, Seylan, Toman, and Wolter, ISWC 2013) and
+          available <a href="https://code.google.com/p/combo-obda/">here</a>,
+          which comes with a data generator. This benchmark is a
+          modification of the well-known benchmark <a href="http://swat.cse.lehigh.edu/projects/lubm/">LUBM</a> introduced in (Guo, Pan and Heflin, J. Web Sem. 2005) and provided
+with 14 queries. In particular, it yields more rules with existential variables and adds
+6 challenging queries. We consider two fact bases (stored in a RBDMS) of 151 MB
+(10 universities) and 3266 MB (200 universities) generated with the
+        default seed 0. In both cases, the ratio between the initial base and the semi-saturated base is rather small (approx. 1.22). Note that the semi-saturation step is independent from any query, hence it can be computed only once as a preprocessing step (for information, it took 41 seconds and 15 minutes respectively).</p>
+          <ul>
+            <li>Download the <em>dlgp</em> version of
+          LUBM<sup>∃</sup><sub>20</sub>: <a href="./dl/lubm-ex-20.dlp">lubm-ex-20.dlp</a></li>
+            <li>Download the
+              queries: <a href="./dl/lubm-ex-queries.dlp">lubm-ex-queries.dlp</a></li>
+          </ul>
+        <h2>Experiments</h2>
+        <p> (March 2015) </p>
+        <p>The table below reports the evaluation
+          runtime for each query ('UCQ': evaluation of the classical UCQ on the initial
+          database; 'Pivotal': evaluation of the pivotal query on the semi-saturated
+          database; 'Rew TO' and 'Ans TO': 30 minutes timeout in the rewriting step
+          and in the evaluation step resp.; 'SQL Err.': query too large for the RDBMS).
+          We can see that the pivotal UCQ is evaluated much more efficiently than the
+          classical UCQ (which could even not be produced or passed to the RDBMS in
+          several cases). Note that, despite the pivotal rewriting of Q<sub>18</sub> is a single CQ,
+          it could not be evaluated, even
+          on the smaller fact base, because it requires a large number of joins.
+        </p>
+        <table>
+          <caption><strong>Table:</strong>
+            Evaluation time over LUBM<sup>∃</sup><sub>20</sub> (in seconds)
+          </caption>
+          <tbody>
+            <tr>
+              <th>#&nbsp;univ.</th>
+              <td>Rew.</td>
+              <td class="slim">q1</td>
+              <td class="slim">q2</td>
+              <td class="slim">q3</td>
+              <td class="slim">q4</td>
+              <td class="slim">q5</td>
+              <td class="slim">q6</td>
+              <td class="slim">q7</td>
+              <td class="slim">q8</td>
+              <td class="slim">q9</td>
+              <td class="slim">q10</td>
+            </tr>
+            <tr>
+              <th rowspan=2>10</th>
+              <td>UCQ</td>
+              <td>0.62</td>
+              <td>1.09</td>
+              <td>0.62</td>
+              <td>0.91</td>
+              <td>0.64</td>
+              <td>13.99</td>
+              <td>0.74</td>
+              <td>4.35</td>
+              <td>3.40</td>
+              <td>0.78</td>
+            </tr>
+            <tr class="noborder">
+              <td>Pivotal</td>
+              <td>0.56</td>
+              <td>0.56</td>
+              <td>0.55</td>
+              <td>0.56</td>
+              <td>0.55</td>
+              <td>5.88</td>
+              <td>0.58</td>
+              <td>0.57</td>
+              <td>1.62</td>
+              <td>0.65</td>
+            </tr>
+            <tr> <th rowspan=2>200</th>
+              <td>UCQ</td>
+              <td>0.63</td>
+              <td>1.74</td>
+              <td>0.66</td>
+              <td>1.00</td>
+              <td>0.64</td>
+              <td>229.23</td>
+              <td>0.76</td>
+              <td>4.68</td>
+              <td>23.37</td>
+              <td>0.75</td>
+            </tr>
+            <tr class="noborder">
+              <td>Pivotal</td>
+              <td>0.58</td>
+              <td>0.82</td>
+              <td>0.56</td>
+              <td>0.58</td>
+              <td>0.57</td>
+              <td>85.00</td>
+              <td>0.58</td>
+              <td>0.58</td>
+              <td>6.56</td>
+              <td>0.66</td>
+            </tr>
+            <tr class="sep">
+              <th>#&nbsp;univ.</th>
+              <td>Rew.</td>
+              <td>q11</td>
+              <td>q12</td>
+              <td>q13</td>
+              <td>q14</td>
+              <td>q15</td>
+              <td>q16</td>
+              <td>q17</td>
+              <td>q18</td>
+              <td>q19</td>
+              <td>q20</td>
+            </tr>
+            <tr> <th rowspan=2>10</th>
+              <td>UCQ</td>
+              <td>0.65</td>
+              <td>0.86</td>
+              <td>0.648</td>
+              <td>11.27</td>
+              <td>Rew TO</td>
+              <td>SQL Err.</td>
+              <td>SQL Err.</td>
+              <td>Rew TO</td>
+              <td>3.31</td>
+              <td>4.62</td>
+            </tr>
+            <tr class="noborder">
+              <td>Pivotal</td>
+              <td>0.66</td>
+              <td>0.69</td>
+              <td>0.66</td>
+              <td>11.29</td>
+              <td>1.02</td>
+              <td>0.66</td>
+              <td>0.69</td>
+              <td>Ans TO</td>
+              <td>0.56</td>
+              <td>1.36</td>
+            </tr>
+            <tr> <th rowspan=2>200</th>
+              <td>UCQ</td>
+              <td>0.60</td>
+              <td>0.82</td>
+              <td>0.68</td>
+              <td>173.51</td>
+              <td>Rew TO</td>
+              <td>SQL Err.</td>
+              <td>SQL Err.</td>
+              <td>Rew TO</td>
+              <td>3.30</td>
+              <td>17.58</td>
+            </tr>
+            <tr class="noborder">
+              <td>Pivotal</td>
+              <td>0.67</td>
+              <td>0.66</td>
+              <td>0.65</td>
+              <td>168.45</td>
+              <td>4.71</td>
+              <td>0.95</td>
+              <td>0.68</td>
+              <td>Ans TO</td>
+              <td>0.58</td>
+              <td>5.58</td>
+            </tr>
+        </tbody></table>
+      </section>
+    </div>
+    <!-- FOOTER -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Graal maintained
+        by <a href="https://team.inria.fr/graphik/">GraphIK</a>
+          team</p>
+        <p> Contacts:
+        <script type="text/javascript">
+        <!--
+                Rot17.write('<r yivw="drzckf:jzgzvkvi@czidd.wi">jzgzvkvi@czidd.wi</r>');
+                document.write(' ');
+          Rot17.write('<r yivw="drzckf:dlxezvi@czidd.wi">dlxezvi@czidd.wi</r>');
+     -->
+        </script></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+  </body>
+</html>

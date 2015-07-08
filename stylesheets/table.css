@@ -8,19 +8,23 @@ table {
   text-align: center;
 }
 
+tbody {
+    margin-top: 2px;
+}
+
 tr {
   border-top: 1px solid #373737;
 }
 
-
-td {
+th, td {
   line-height: 1em;
   padding: 10px;
   border-left: 1px solid #373737;
   border-right: 1px solid #373737;
 }
 
-
+th {
+}
 
 td.slim {
     width: 80px;
@@ -34,4 +38,8 @@ tr.noborder {
 
 tr.noborder > td {
     padding-top: 0px;
+}
+
+tr.sep {
+    border-top: double;
 }
