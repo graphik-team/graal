@@ -15,7 +15,10 @@
  */
 package fr.lirmm.graphik.graal.core;
 
+import java.util.Iterator;
+
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
 
 /**
@@ -37,4 +40,6 @@ public interface KnowledgeBase {
 	 * @return an AtomSet representing a conjunction of facts.
 	 */
 	AtomSet getFacts();
+
+	void load(Iterator<Object> parser) throws AtomSetException;
 }

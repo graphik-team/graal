@@ -15,7 +15,10 @@
  */
 package fr.lirmm.graphik.graal.core;
 
+import java.util.Iterator;
+
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
@@ -61,6 +64,19 @@ public class DefaultKnowledgeBase implements KnowledgeBase {
 	@Override
 	public AtomSet getFacts() {
 		return atomset;
+	}
+
+	@Override
+	public void load(Iterator<Object> parser) throws AtomSetException {
+		Object o;
+		while (parser.hasNext()) {
+			o = parser.next();
+			if (o instanceof Rule) {
+				this.getOntology().add((Rule) o);
+			} else if (o instanceof Atom) {
+				this.getFacts().add((Atom) o);
+			}
+		}
 	}
 
 };
