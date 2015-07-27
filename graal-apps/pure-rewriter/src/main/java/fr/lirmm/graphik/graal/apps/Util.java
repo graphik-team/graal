@@ -134,7 +134,7 @@ final class Util {
 				saturation.add((Rule) o);
 			} else if (o instanceof Directive
 					&& ((Directive) o).getType().equals(Directive.Type.COMMENT)) {
-				compilationType = ((Directive) o).getText();
+				compilationType = (String) ((Directive) o).getValue();
 			} else if (o instanceof Prefix) {
 				prefixes.add((Prefix) o);
 			}

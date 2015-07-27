@@ -234,6 +234,14 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 		return answer;
 	}
 
+	/**
+	 * Aggregated Mono piece unifier
+	 * 
+	 * @param q
+	 * @param r
+	 * @param compilation
+	 * @return
+	 */
 	protected LinkedList<QueryUnifier> getSRUnifier(ConjunctiveQuery q, Rule r, RulesCompilation compilation) {
 		LinkedList<QueryUnifier> unifiers = new LinkedList<QueryUnifier>();
 
@@ -254,8 +262,7 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 	protected LinkedList<QueryUnifier> getAggregatedUnifiers(
 			LinkedList<QueryUnifier> unifToAggregate) {
 		LinkedList<QueryUnifier> unifAggregated = new LinkedList<QueryUnifier>();
-		LinkedList<QueryUnifier> restOfUnifToAggregate = (LinkedList<QueryUnifier>) unifToAggregate
-				.clone();
+		LinkedList<QueryUnifier> restOfUnifToAggregate = (LinkedList<QueryUnifier>) unifToAggregate.clone();
 		Iterator<QueryUnifier> itr = unifToAggregate.iterator();
 		QueryUnifier u;
 		while (itr.hasNext()) {

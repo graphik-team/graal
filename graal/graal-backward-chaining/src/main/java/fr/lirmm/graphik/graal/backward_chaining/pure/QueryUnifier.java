@@ -128,7 +128,7 @@ class QueryUnifier {
 	@Override
 	public String toString() {
 		try {
-			return "(Unifier|  P = " + piece + ", p = " + partition + ")";
+			return "(QueryUnifier |  " + piece + " <=>" + rule.getHead() + " | = " + partition + ")";
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -189,7 +189,7 @@ class QueryUnifier {
 				}
 			}
 		}
-		return getPartition().join(u.getPartition()).getAssociatedSubstitution(
+		return this.getPartition().join(u.getPartition()).getAssociatedSubstitution(
 				null) != null;
 	}
 

@@ -228,4 +228,29 @@ public class BackwardChainingTest {
 		Assert.assertEquals(3, i);
 	}
 
+
+	@Theory
+	public void issue22(RulesCompilation compilation, RewritingOperator operator) {
+		RuleSet rules = new LinkedListRuleSet();
+		rules.add(DlgpParser.parseRule("p(X,Y) :- q(X,Y)."));
+		rules.add(DlgpParser.parseRule("q(X,Y) :- a(X), p(X,Y)."));
+
+		ConjunctiveQuery query = DlgpParser.parseQuery("?(X) :- q(X,Y), p(Y,Z).");
+
+		compilation.compile(rules.iterator());
+		PureRewriter bc = new PureRewriter(query, rules, compilation, operator);
+		bc.enableUnfolding(true);
+
+
+		// int i = Iterators.count(bc);
+		int i = 0;
+		System.out.println(compilation.getClass() + "///" + operator.getClass());
+		while (bc.hasNext()) {
+			++i;
+			System.out.println("### > " + bc.next());
+		}
+		System.out.println(i);
+		// Assert.assertEquals(3, i);
+	}
+
 }
