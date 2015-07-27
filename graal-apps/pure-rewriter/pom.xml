@@ -5,7 +5,7 @@
 	<groupId>fr.lirmm.graphik</groupId>
 	<artifactId>pure-rewriter</artifactId>
 	<name>Pure rewriter</name>
-	<version>1.0.beta4-SNAPSHOT</version>
+	<version>1.0.beta4</version>
 	<packaging>jar</packaging>
 
 	<properties>
