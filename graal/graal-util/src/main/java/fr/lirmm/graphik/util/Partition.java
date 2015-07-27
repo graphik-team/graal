@@ -110,6 +110,10 @@ public class Partition<E> implements Iterable<ArrayList<E>> {
 		}
 	}
 
+	/**
+	 * @param toAdd
+	 *            (const)
+	 */
 	public void addClass(ArrayList<E> toAdd) {
 		Iterator<ArrayList<E>> i = partition.iterator();
 		ArrayList<E> fusion = null;
@@ -132,7 +136,7 @@ public class Partition<E> implements Iterable<ArrayList<E>> {
 			}
 		}
 		if (fusion == null)
-			partition.add(toAdd);
+			partition.add(new ArrayList<E>(toAdd));
 	}
 
 	/**

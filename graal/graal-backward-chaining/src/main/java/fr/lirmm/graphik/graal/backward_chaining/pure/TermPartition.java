@@ -161,7 +161,7 @@ class TermPartition extends Partition<Term> {
 	public TermPartition join(TermPartition p) {
 		TermPartition res = new TermPartition();
 		for (ArrayList<Term> cl : partition) {
-			res.partition.add(cl);
+			res.partition.add(new ArrayList<Term>(cl));
 		}
 		for (ArrayList<Term> cl : p.partition)
 			res.addClass(cl);
