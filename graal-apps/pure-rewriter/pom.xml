@@ -5,11 +5,11 @@
 	<groupId>fr.lirmm.graphik</groupId>
 	<artifactId>pure-rewriter</artifactId>
 	<name>Pure rewriter</name>
-	<version>1.0.beta4-SNAPSHOT</version>
+	<version>1.0.beta5-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<properties>
-		<graal.version>0.8.5-SNAPSHOT</graal.version>
+		<graal.version>0.8.5</graal.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>1.6</jdk.version>
 	</properties>
