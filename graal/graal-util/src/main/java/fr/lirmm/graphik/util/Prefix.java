@@ -24,6 +24,7 @@ package fr.lirmm.graphik.util;
  */
 public final class Prefix {
 
+	public static final Prefix RDF = new Prefix("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
 	public static final Prefix XSD = new Prefix("xsd",
 			"http://www.w3.org/2001/XMLSchema#");
 	

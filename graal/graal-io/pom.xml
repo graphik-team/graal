@@ -38,6 +38,7 @@
 		<module>graal-io-owl</module>
 		<module>graal-io-rdf</module>
                 <module>graal-io-ruleml</module>
+                <module>graal-io-sparql</module>
 	</modules>
 
 	<build>
