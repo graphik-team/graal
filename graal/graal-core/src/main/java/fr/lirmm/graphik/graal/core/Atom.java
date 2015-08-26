@@ -51,7 +51,7 @@ Predicate.BOTTOM,
 	Predicate getPredicate();
 
 	/**
-	 * Set the n<sup>th</sup> term of this Atom.
+	 * Set the n<sup>th</sup> term of this Atom. The first index is 0.
 	 * 
 	 * @param index
 	 * @param term
@@ -59,7 +59,7 @@ Predicate.BOTTOM,
 	void setTerm(int index, Term term);
 
 	/**
-	 * get the n<sup>th</sup> term of this Atom.
+	 * Get the n<sup>th</sup> term of this Atom. The first index is 0.
 	 * 
 	 * @param index
 	 * @return
