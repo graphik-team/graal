@@ -60,13 +60,13 @@ public class SparqlConjunctiveQueryParser {
 					Atom p = t.getPredicate();
 					if (p.getLongName().equals(URIUtils.RDF_TYPE.toString())) {
 						if (arg1.isQName()) {
-							Predicate predicate = new Predicate(arg1.getLongName(), 1);
+							Predicate predicate = new Predicate(URIUtils.createURI(arg1.getLongName()), 1);
 							atomset.add(new DefaultAtom(predicate, parseTerm(arg0)));
 						} else {
 							throw new ParseException("Variable over type is not permitted");
 						}
 					} else {
-						Predicate predicate = new Predicate(p.getLongName(), 2);
+						Predicate predicate = new Predicate(URIUtils.createURI(p.getLongName()), 2);
 						atomset.add(new DefaultAtom(predicate, parseTerm(arg0), parseTerm(arg1)));
 					}
 				}
