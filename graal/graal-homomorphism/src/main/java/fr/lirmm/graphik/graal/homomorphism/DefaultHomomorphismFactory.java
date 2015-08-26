@@ -19,9 +19,9 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.homomorphism.checker.DefaultUnionConjunctiveQueriesChecker;
 import fr.lirmm.graphik.graal.homomorphism.checker.HomomorphismChecker;
 import fr.lirmm.graphik.graal.homomorphism.checker.RecursiveBacktrackChecker;
@@ -35,7 +35,7 @@ public final class DefaultHomomorphismFactory implements HomomorphismFactory {
 	private SortedSet<HomomorphismChecker> elements;
 	
 	private static DefaultHomomorphismFactory instance = null;
-	private static ConjunctiveQuery emptyConjunctiveQuery = new DefaultConjunctiveQuery();
+	private static ConjunctiveQuery emptyConjunctiveQuery = ConjunctiveQueryFactory.instance().create();
 	
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR

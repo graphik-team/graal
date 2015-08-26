@@ -19,9 +19,9 @@ import java.util.Iterator;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
-import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.core.factory.RuleFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.io.AbstractParser;
@@ -81,7 +81,7 @@ public class RDFS2Rules extends AbstractParser<Object> {
 
 		String predicateLabel = a.getPredicate().toString();
 		if (RDFS_RANGE.equals(predicateLabel)) {
-			Rule rule = new DefaultRule();
+			Rule rule = RuleFactory.instance().create();
 			Predicate p = new Predicate(a.getTerm(0).toString(), 2);
 			rule.getBody().add(new DefaultAtom(p, X, Y));
 			p = new Predicate(a.getTerm(1).toString(), 1);
@@ -89,7 +89,7 @@ public class RDFS2Rules extends AbstractParser<Object> {
 			o = rule;
 
 		} else if (RDFS_DOMAIN.equals(predicateLabel)) {
-			Rule rule = new DefaultRule();
+			Rule rule = RuleFactory.instance().create();
 			Predicate p = new Predicate(a.getTerm(0).toString(), 2);
 			rule.getBody().add(new DefaultAtom(p, X, Y));
 			p = new Predicate(a.getTerm(1).toString(), 1);
@@ -97,7 +97,7 @@ public class RDFS2Rules extends AbstractParser<Object> {
 			o = rule;
 			
 		} else if (RDFS_SUB_CLASS_OF.equals(predicateLabel)) {
-			Rule rule = new DefaultRule();
+			Rule rule = RuleFactory.instance().create();
 			Predicate p1 = new Predicate(a.getTerm(0).toString(), 1);
 			Predicate p2 = new Predicate(a.getTerm(1).toString(), 1);
 			rule.getBody().add(new DefaultAtom(p1, X));
@@ -105,7 +105,7 @@ public class RDFS2Rules extends AbstractParser<Object> {
 			o = rule;
 			
 		} else if (RDFS_SUB_PROPERTY_OF.equals(predicateLabel)) {
-			Rule rule = new DefaultRule();
+			Rule rule = RuleFactory.instance().create();
 			Predicate p1 = new Predicate(a.getTerm(0).toString(), 2);
 			Predicate p2 = new Predicate(a.getTerm(1).toString(), 2);
 			rule.getBody().add(new DefaultAtom(p1, X, Y));

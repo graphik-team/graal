@@ -20,9 +20,9 @@ import java.util.TreeSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
@@ -49,7 +49,8 @@ public class ChaseWithGRD extends AbstractChase {
 	
 	public ChaseWithGRD(GraphOfRuleDependencies grd, AtomSet atomSet) {
 		super(new DefaultRuleApplier(StaticHomomorphism.getSolverFactory()
-				.getSolver(new DefaultConjunctiveQuery(), atomSet)));
+.getSolver(
+				ConjunctiveQueryFactory.instance().create(), atomSet)));
 		this.grd = grd;
 		this.atomSet = atomSet;
 		for(Rule r : grd.getRules()) {			

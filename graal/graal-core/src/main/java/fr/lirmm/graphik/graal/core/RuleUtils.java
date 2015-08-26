@@ -26,6 +26,7 @@ import java.util.TreeMap;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
+import fr.lirmm.graphik.graal.core.factory.RuleFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.util.EquivalentRelation;
 import fr.lirmm.graphik.util.TreeMapEquivalentRelation;
@@ -151,12 +152,12 @@ public final class RuleUtils {
 
 		if (label.isEmpty()) {
 			for (AtomSet piece : getPieces(rule)) {
-				monoPiece.add(new DefaultRule(rule.getBody(), piece));
+				monoPiece.add(RuleFactory.instance().create(rule.getBody(), piece));
 			}
 		} else {
 			int i = -1;
 			for (InMemoryAtomSet piece : getPieces(rule)) {
-				monoPiece.add(new DefaultRule(label + "-p" + ++i, rule
+				monoPiece.add(RuleFactory.instance().create(label + "-p" + ++i, rule
 						.getBody(), piece));
 			}
 		}

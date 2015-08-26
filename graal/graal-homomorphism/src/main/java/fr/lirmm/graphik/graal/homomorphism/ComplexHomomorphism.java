@@ -18,11 +18,11 @@ import java.util.LinkedList;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.BuiltInPredicate;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 import fr.lirmm.graphik.graal.core.term.Term;
 
@@ -49,7 +49,7 @@ public class ComplexHomomorphism<Q extends ConjunctiveQuery, F extends AtomSet> 
 				rawAtoms.add(a);
 			}
 		}
-		DefaultConjunctiveQuery rawQuery = new DefaultConjunctiveQuery(rawAtoms);
+		ConjunctiveQuery rawQuery = ConjunctiveQueryFactory.instance().create(rawAtoms);
 		rawQuery.setAnswerVariables(q.getAnswerVariables());
 		return new BuiltInSubstitutionReader(this.rawSolver.execute(rawQuery,f));
 	}

@@ -21,11 +21,11 @@ import java.util.LinkedList;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.util.Profiler;
 
 /**
@@ -36,14 +36,17 @@ public abstract class AbstractRulesCompilation implements RulesCompilation {
 
 	private Profiler profiler;
 
+	@Override
 	public void setProfiler(Profiler profiler) {
 		this.profiler = profiler;
 	}
 
+	@Override
 	public Profiler getProfiler() {
 		return this.profiler;
 	}
 
+	@Override
 	public Iterable<ConjunctiveQuery> unfold(
 			Iterable<ConjunctiveQuery> pivotRewritingSet) {
 		if (this.getProfiler() != null) {
@@ -117,7 +120,7 @@ public abstract class AbstractRulesCompilation implements RulesCompilation {
 				newQueriesAfter.clear();
 			}
 			for (AtomSet a : newQueriesBefore) {
-				unfoldingRewritingSet.add(new DefaultConjunctiveQuery(a,
+				unfoldingRewritingSet.add(ConjunctiveQueryFactory.instance().create(a,
 						originalQuery.getAnswerVariables()));
 			}
 		}

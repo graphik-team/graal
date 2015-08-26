@@ -22,13 +22,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.dlgp2.parser.ParserListener;
+import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
-import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.DefaultRule;
-import fr.lirmm.graphik.graal.core.NegativeConstraint;
 import fr.lirmm.graphik.graal.core.Predicate;
+import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
+import fr.lirmm.graphik.graal.core.factory.NegativeConstraint;
+import fr.lirmm.graphik.graal.core.factory.RuleFactory;
 import fr.lirmm.graphik.graal.core.term.Constant;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
@@ -50,9 +52,9 @@ abstract class AbstractDlgpListener implements ParserListener {
 
 	protected abstract void createAtomSet(InMemoryAtomSet atom);
 
-	protected abstract void createQuery(DefaultConjunctiveQuery query);
+	protected abstract void createQuery(ConjunctiveQuery query);
 
-	protected abstract void createRule(DefaultRule basicRule);
+	protected abstract void createRule(Rule basicRule);
 
 	protected abstract void createNegConstraint(
 			NegativeConstraint negativeConstraint);
@@ -103,7 +105,7 @@ abstract class AbstractDlgpListener implements ParserListener {
 	public void endsConjunction(OBJECT_TYPE objectType) {
 		switch (objectType) {
 		case QUERY:
-			this.createQuery(new DefaultConjunctiveQuery(this.label,
+			this.createQuery(ConjunctiveQueryFactory.instance().create(this.label,
 					this.atomSet, this.answerVars));
 			break;
 		case NEG_CONSTRAINT:
@@ -115,7 +117,7 @@ abstract class AbstractDlgpListener implements ParserListener {
 				this.atomSet2 = this.atomSet;
 				this.atomSet = new LinkedListAtomSet();
 			} else {
-				this.createRule(new DefaultRule(this.label, this.atomSet,
+				this.createRule(RuleFactory.instance().create(this.label, this.atomSet,
 						this.atomSet2));
 			}
 			break;

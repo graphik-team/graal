@@ -98,7 +98,7 @@ public class UnifierTest {
 	
 	@Test
 	public void pieceUnifierTest1() {
-		Rule rule = RuleFactory.getInstance().createRule();
+		Rule rule = RuleFactory.instance().create();
 		rule.getBody().add(qX);
 		rule.getHead().add(pXY);
 		rule.getHead().add(pYZ);
@@ -113,7 +113,7 @@ public class UnifierTest {
 	
 	@Test
 	public void pieceUnifierTest2() {
-		Rule rule = RuleFactory.getInstance().createRule();
+		Rule rule = RuleFactory.instance().create();
 		rule.getBody().add(qX);
 		rule.getHead().add(pXB);
 		
@@ -126,7 +126,7 @@ public class UnifierTest {
 
 	@Test
 	public void constantUnification() {
-		Rule rule = RuleFactory.getInstance().createRule();
+		Rule rule = RuleFactory.instance().create();
 		rule.getBody().add(qX);
 		rule.getHead().add(pXB);
 

@@ -50,7 +50,7 @@ public class RuleTest {
 
 	@Test
 	public void piecesTest1() {
-		Rule rule = RuleFactory.getInstance().createRule();
+		Rule rule = RuleFactory.instance().create();
 		rule.getHead().add(atom1);
 		rule.getHead().add(atom2);
 		rule.getHead().add(atom3);
@@ -59,7 +59,7 @@ public class RuleTest {
 	
 	@Test
 	public void piecesTest2() {
-		Rule rule = RuleFactory.getInstance().createRule();
+		Rule rule = RuleFactory.instance().create();
 		rule.getBody().add(atom2);
 		rule.getHead().add(atom1);
 		rule.getHead().add(atom2);
@@ -69,7 +69,7 @@ public class RuleTest {
 	
 	@Test
 	public void piecesTest3() {
-		Rule rule = RuleFactory.getInstance().createRule();
+		Rule rule = RuleFactory.instance().create();
 		rule.getHead().add(atom3);
 		rule.getHead().add(atom3);
 		rule.getHead().add(atom3);

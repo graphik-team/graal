@@ -18,10 +18,11 @@ package fr.lirmm.graphik.graal.io.oxford;
 import java.util.LinkedList;
 
 import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
-import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
 
@@ -35,7 +36,7 @@ class OxfordQueryParserListener {
 		HEAD, BODY
 	}
 	
-	private DefaultConjunctiveQuery cquery = null;
+	private ConjunctiveQuery cquery = null;
 	private State state;
 	private LinkedList<Term> awsweredVariables = new LinkedList<Term>();
 	private LinkedListAtomSet body = new LinkedListAtomSet();
@@ -43,7 +44,7 @@ class OxfordQueryParserListener {
 	private LinkedList<Term> termsOfCurrentAtom = null;
 	private String predicateLabelOfCurrentAtom = null;
 
-	public DefaultConjunctiveQuery getQuery() {
+	public ConjunctiveQuery getQuery() {
 		return this.cquery;
 	}
 	
@@ -53,7 +54,7 @@ class OxfordQueryParserListener {
 	
 
 	public void endOfQuery() {
-		this.cquery = new DefaultConjunctiveQuery(this.body, this.awsweredVariables);
+		this.cquery = ConjunctiveQueryFactory.instance().create(this.body, this.awsweredVariables);
 	}
 	
 

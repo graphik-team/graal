@@ -12,10 +12,15 @@
  */
  package fr.lirmm.graphik.graal.backward_chaining.pure;
 
+import java.util.Set;
+
 import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.DefaultRule;
+import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.core.factory.RuleFactory;
+import fr.lirmm.graphik.graal.core.term.Term;
+import fr.lirmm.graphik.graal.core.term.Term.Type;
 
 /**
  * rule with only one atom in its head
@@ -23,7 +28,9 @@ import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
  * @author Mélanie KÖNIG
  * 
  */
-class AtomicHeadRule extends DefaultRule {
+class AtomicHeadRule implements Rule {
+
+	private Rule rule;
 
 	/**
 	 * Construct an AtomicHeadRule
@@ -35,24 +42,57 @@ class AtomicHeadRule extends DefaultRule {
 	 * @throws Exception
 	 */
 	public AtomicHeadRule(AtomSet b, Atom h) {
-		super(b, new AtomicAtomSet(h));
-	}
-
-	/**
-	 * change the head of this rule by the given fact
-	 * 
-	 * @param h
-	 *            must be an AtomicFact
-	 */
-	public void setHead(Atom h) {
-		LinkedListAtomSet atomset = new LinkedListAtomSet();
-		atomset.add(h);
-		super.getHead();
+		this.rule = RuleFactory.instance().create(b, new AtomicAtomSet(h));
 	}
 
 	@Override
 	public AtomicAtomSet getHead() {
-		return (AtomicAtomSet) super.getHead();
+		return (AtomicAtomSet) this.rule.getHead();
+	}
+
+	@Override
+	public int compareTo(Rule arg0) {
+		return this.rule.compareTo(arg0);
+	}
+
+	@Override
+	public String getLabel() {
+		return this.rule.getLabel();
+	}
+
+	@Override
+	public void setLabel(String label) {
+		this.rule.setLabel(label);
+	}
+
+	@Override
+	public InMemoryAtomSet getBody() {
+		return this.rule.getBody();
+	}
+
+	@Override
+	public Set<Term> getFrontier() {
+		return this.rule.getFrontier();
+	}
+
+	@Override
+	public Set<Term> getExistentials() {
+		return this.rule.getExistentials();
+	}
+
+	@Override
+	public Set<Term> getTerms(Type type) {
+		return this.rule.getTerms(type);
+	}
+
+	@Override
+	public Set<Term> getTerms() {
+		return this.rule.getTerms();
+	}
+
+	@Override
+	public void appendTo(StringBuilder sb) {
+		this.rule.appendTo(sb);
 	}
 
 }

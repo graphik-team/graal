@@ -10,16 +10,16 @@
  *            Michel LECLÈRE
  *            Marie-Laure MUGNIER
  */
- package fr.lirmm.graphik.graal.core;
+ package fr.lirmm.graphik.graal.core.factory;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
 
 
@@ -110,6 +110,7 @@ public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 		return this.responseVariables; 
 	}
 
+	@Override
 	public void setAnswerVariables(List<Term> v) { 
 		this.responseVariables = v; 
 	}

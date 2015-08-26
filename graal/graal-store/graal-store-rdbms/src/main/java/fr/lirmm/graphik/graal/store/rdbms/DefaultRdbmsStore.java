@@ -34,13 +34,13 @@ import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.VariableGenerator;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.core.term.Term.Type;
@@ -557,7 +557,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		InMemoryAtomSet body = rangeRestrictedRule.getBody();
 		for (Atom headAtom : rangeRestrictedRule.getHead()) {
 			String tableName = this.getPredicateTable(headAtom.getPredicate()); 
-			ConjunctiveQuery query = new DefaultConjunctiveQuery(body, headAtom.getTerms());
+			ConjunctiveQuery query = ConjunctiveQueryFactory.instance().create(body, headAtom.getTerms());
 			String selectQuery = this.transformToSQL(query);
 			queries.add(this.getDriver().getInsertOrIgnoreStatement(tableName,
 					selectQuery));

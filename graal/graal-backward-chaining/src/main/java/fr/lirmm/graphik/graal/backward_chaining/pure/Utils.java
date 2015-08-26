@@ -22,9 +22,7 @@ import java.util.TreeMap;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
-import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
@@ -32,6 +30,8 @@ import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetUtils;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
+import fr.lirmm.graphik.graal.core.factory.RuleFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
 
@@ -72,7 +72,7 @@ final class Utils {
 			AtomSet res = AtomSetUtils.union(ajout, restant);
 			ArrayList<Term> ansVar = new ArrayList<Term>();
 			ansVar.addAll(q.getAnswerVariables());
-			rew = new DefaultConjunctiveQuery(res, ansVar);
+			rew = ConjunctiveQueryFactory.instance().create(res, ansVar);
 		}
 		return rew;
 	}
@@ -127,7 +127,7 @@ final class Utils {
 		substitution.apply(body, safeBody);
 		substitution.apply(head, safeHead);
 
-		return new DefaultRule(safeBody, safeHead);
+		return RuleFactory.instance().create(safeBody, safeHead);
 	}
 
 

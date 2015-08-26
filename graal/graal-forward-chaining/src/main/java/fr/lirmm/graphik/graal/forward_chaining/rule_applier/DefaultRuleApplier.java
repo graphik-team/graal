@@ -21,13 +21,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.VariableGenerator;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
+import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.ChaseHaltingCondition;
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.RestrictedChaseStopCondition;
@@ -99,7 +99,7 @@ public class DefaultRuleApplier<T extends AtomSet> implements
 	public boolean apply(Rule rule, T atomSet)
 			throws RuleApplicationException {
 		boolean isChanged = false;
-		ConjunctiveQuery query = new DefaultConjunctiveQuery(rule.getBody(),
+		ConjunctiveQuery query = ConjunctiveQueryFactory.instance().create(rule.getBody(),
 				rule.getFrontier());
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Rule to execute: " + rule);

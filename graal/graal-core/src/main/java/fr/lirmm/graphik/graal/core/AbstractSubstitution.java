@@ -102,7 +102,7 @@ public abstract class AbstractSubstitution implements Substitution {
 
 	@Override
 	public Rule createImageOf(Rule rule) {
-		Rule substitut = RuleFactory.getInstance().createRule();
+		Rule substitut = RuleFactory.instance().create();
 		this.apply(rule.getBody(), substitut.getBody());
 		this.apply(rule.getHead(), substitut.getHead());
 		return substitut;

@@ -15,7 +15,7 @@
  */
 package fr.lirmm.graphik.graal.core.factory;
 
-import fr.lirmm.graphik.graal.core.DefaultRule;
+import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.Rule;
 
 /**
@@ -27,14 +27,27 @@ public final class RuleFactory {
 	private static RuleFactory instance = new RuleFactory();
 	
 	private RuleFactory() {
+		super();
 	}
 
-	public static RuleFactory getInstance() {
+	public static RuleFactory instance() {
 		return instance;
 	}
 
-	public Rule createRule() {
+	public Rule create() {
 		return new DefaultRule();
+	}
+
+	public Rule create(Iterable<Atom> body, Iterable<Atom> head) {
+		return new DefaultRule(body, head);
+	}
+
+	public Rule create(String label, Iterable<Atom> body, Iterable<Atom> head) {
+		return new DefaultRule(label, body, head);
+	}
+
+	public Rule create(Rule rule) {
+		return new DefaultRule(rule);
 	}
 
 }

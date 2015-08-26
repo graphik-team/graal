@@ -25,12 +25,12 @@ import java.util.TreeSet;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
-import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.RuleUtils;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.core.factory.RuleFactory;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
@@ -100,7 +100,7 @@ public class IDCompilation extends AbstractRulesCompilation {
 				}
 				InMemoryAtomSet body = new LinkedListAtomSet();
 				body.add(new DefaultAtom(p, terms));
-				saturation.add(new DefaultRule(body, e2.getValue()));
+				saturation.add(RuleFactory.instance().create(body, e2.getValue()));
 			}
 		}
 		return saturation;

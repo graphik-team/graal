@@ -11,20 +11,17 @@
  *            Marie-Laure MUGNIER
  */
  
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.Iterator;
 
 import org.junit.Assert;
 import org.junit.Test;
 
 import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.NegativeConstraint;
+import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.core.factory.NegativeConstraint;
 import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.io.dlp.Dlgp1Parser;
 
@@ -46,7 +43,7 @@ public class DlgpParserTest {
 	
 	@Test
 	public void parseQuery() {
-		DefaultConjunctiveQuery q = Dlgp1Parser.parseQuery("?(X) :- p(a,X).");
+		ConjunctiveQuery q = Dlgp1Parser.parseQuery("?(X) :- p(a,X).");
 		Assert.assertEquals(Term.Type.VARIABLE, q.getAnswerVariables().iterator().next().getType());
 		Assert.assertEquals(Term.Type.VARIABLE, q.getAtomSet().iterator().next().getTerm(1).getType());
 	}

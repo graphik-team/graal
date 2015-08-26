@@ -17,9 +17,9 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.NegativeConstraint;
+import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.core.factory.NegativeConstraint;
 import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 
@@ -41,7 +41,7 @@ public class DlgpParserTest {
 	
 	@Test
 	public void parseQuery() {
-		DefaultConjunctiveQuery q = DlgpParser.parseQuery("?(X) :- p(a,X).");
+		ConjunctiveQuery q = DlgpParser.parseQuery("?(X) :- p(a,X).");
 		Assert.assertEquals(Term.Type.VARIABLE, q.getAnswerVariables().iterator().next().getType());
 		Assert.assertEquals(Term.Type.VARIABLE, q.getAtomSet().iterator().next().getTerm(1).getType());
 	}

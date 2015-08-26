@@ -16,12 +16,12 @@ import java.util.Iterator;
 import java.util.Set;
 
 import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.atomset.AbstractAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
+import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.core.term.Term.Type;
 import fr.lirmm.graphik.graal.homomorphism.DefaultHomomorphismFactory;
@@ -58,7 +58,7 @@ public class TransformAtomSet extends AbstractAtomSet implements AtomSet {
 
 	@Override
 	public boolean contains(Atom atom) throws AtomSetException {
-		Query query = new DefaultConjunctiveQuery(
+		Query query = ConjunctiveQueryFactory.instance().create(
 				this.transformator.transform(atom));
 		try {
 			return StaticHomomorphism.executeQuery(query, this).hasNext();

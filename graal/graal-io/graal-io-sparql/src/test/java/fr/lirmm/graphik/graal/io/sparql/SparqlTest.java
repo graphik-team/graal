@@ -98,28 +98,29 @@ public class SparqlTest {
 		Assert.assertEquals(2, nbTriple);
 	}
 
-	@Test
-	public void testStringLiteral() throws ParseException {
-		String query = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
-				   + "PREFIX : <"
-				   + PREFIX
-				   + ">"
-				   + "SELECT DISTINCT ?x ?y "
-				   + "WHERE"
-				   + "{"
-				   + "	?x :p \"toto\" ."
-				   + "}";
-    	ConjunctiveQuery cq = SparqlConjunctiveQueryParser.parse(query);
-    	Assert.assertEquals(2, cq.getAnswerVariables().size());
-    	int nbTriple = 0;
-    	for (Atom a : cq.getAtomSet()) {
-    		++nbTriple;
-    		Assert.assertEquals(P, a.getPredicate());
-			Assert.assertEquals(a.getTerm(1), STRING);
-    		
-    	}
-    	Assert.assertEquals(1, nbTriple);
-	}
+	// @Test
+	// public void testStringLiteral() throws ParseException {
+	// String query =
+	// "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
+	// + "PREFIX : <"
+	// + PREFIX
+	// + ">"
+	// + "SELECT DISTINCT ?x ?y "
+	// + "WHERE"
+	// + "{"
+	// + "	?x :p \"toto\" ."
+	// + "}";
+	// ConjunctiveQuery cq = SparqlConjunctiveQueryParser.parse(query);
+	// Assert.assertEquals(2, cq.getAnswerVariables().size());
+	// int nbTriple = 0;
+	// for (Atom a : cq.getAtomSet()) {
+	// ++nbTriple;
+	// Assert.assertEquals(P, a.getPredicate());
+	// Assert.assertEquals(a.getTerm(1), STRING);
+	//
+	// }
+	// Assert.assertEquals(1, nbTriple);
+	// }
 
 
 }

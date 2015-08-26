@@ -16,10 +16,10 @@ import fr.inria.acacia.corese.triple.parser.Triple;
 import fr.inria.acacia.corese.triple.parser.Variable;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
-import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.io.ParseException;
@@ -43,7 +43,7 @@ public class SparqlConjunctiveQueryParser {
 		List<Term> ans = new LinkedList<Term>();
 		InMemoryAtomSet atomset = new LinkedListAtomSet();
 
-		ConjunctiveQuery cq = new DefaultConjunctiveQuery();
+		ConjunctiveQuery cq = ConjunctiveQueryFactory.instance().create();
 		ASTQuery ast = ASTQuery.create(query);
 		try {
 			ParserSparql1.create(ast).parse();
@@ -77,7 +77,7 @@ public class SparqlConjunctiveQueryParser {
 			throw new ParseException("Error while parsing the query", e);
 		}
 
-		return new DefaultConjunctiveQuery(atomset, ans);
+		return ConjunctiveQueryFactory.instance().create(atomset, ans);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

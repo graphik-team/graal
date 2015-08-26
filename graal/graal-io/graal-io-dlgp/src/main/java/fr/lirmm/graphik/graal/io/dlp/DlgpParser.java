@@ -32,16 +32,15 @@ import fr.lirmm.graphik.dlgp2.parser.DLGP2Parser;
 import fr.lirmm.graphik.dlgp2.parser.ParseException;
 import fr.lirmm.graphik.dlgp2.parser.TermFactory;
 import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.DefaultRule;
+import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.core.FreshVarSubstitution;
 import fr.lirmm.graphik.graal.core.KnowledgeBase;
-import fr.lirmm.graphik.graal.core.NegativeConstraint;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.VariableGenerator;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.core.factory.NegativeConstraint;
 import fr.lirmm.graphik.graal.core.stream.filter.AtomFilterIterator;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.io.AbstractParser;
@@ -82,12 +81,12 @@ public final class DlgpParser extends AbstractParser<Object> {
 		}
 
 		@Override
-		protected void createQuery(DefaultConjunctiveQuery query) {
+		protected void createQuery(ConjunctiveQuery query) {
 			this.set.write(query);
 		}
 
 		@Override
-		protected void createRule(DefaultRule rule) {
+		protected void createRule(Rule rule) {
 			this.set.write(rule);
 		}
 
@@ -261,8 +260,8 @@ public final class DlgpParser extends AbstractParser<Object> {
 	// STATIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public static DefaultConjunctiveQuery parseQuery(String s) {
-		return (DefaultConjunctiveQuery) new DlgpParser(s).next();
+	public static ConjunctiveQuery parseQuery(String s) {
+		return (ConjunctiveQuery) new DlgpParser(s).next();
 	}
 
 	public static Atom parseAtom(String s) {

@@ -49,11 +49,11 @@ public class RuleSetTest {
 		atom2 = new DefaultAtom(predicate, Arrays.asList(terms));
 
 		
-		rule1 = RuleFactory.getInstance().createRule();
+		rule1 = RuleFactory.instance().create();
 		rule1.getBody().add(atom1);
 		rule1.getHead().add(atom2);
 		
-		rule2 = RuleFactory.getInstance().createRule();
+		rule2 = RuleFactory.instance().create();
 		rule2.getBody().add(atom2);
 		rule2.getHead().add(atom1);
 	}

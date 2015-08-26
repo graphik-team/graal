@@ -13,12 +13,14 @@
  /**
  * 
  */
-package fr.lirmm.graphik.graal.core;
+package fr.lirmm.graphik.graal.core.factory;
 
 import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 
+import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.term.Term;
@@ -28,7 +30,7 @@ import fr.lirmm.graphik.graal.core.term.Term.Type;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public class DefaultRule implements Rule {
+class DefaultRule implements Rule {
 
 	private String label;
 	private final InMemoryAtomSet body;

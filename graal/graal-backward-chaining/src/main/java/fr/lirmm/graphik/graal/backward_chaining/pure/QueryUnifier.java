@@ -14,12 +14,12 @@
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.core.factory.RuleFactory;
 
 /**
  * An unifier describe how to unify a piece of a fact with a part of an head
@@ -164,7 +164,7 @@ class QueryUnifier {
 		for (Atom a : u.getRule().getHead()) {
 			h.add(a);
 		}
-		Rule rule = new DefaultRule(b, h);
+		Rule rule = RuleFactory.instance().create(b, h);
 		// we create the partition which is the join of the two partitions
 		TermPartition part = getPartition().join(u.getPartition());
 

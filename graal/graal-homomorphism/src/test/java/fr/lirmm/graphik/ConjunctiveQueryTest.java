@@ -21,11 +21,12 @@ import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
-import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
+import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
@@ -50,7 +51,7 @@ public class ConjunctiveQueryTest {
 	public void emptyQueryAndEmptyAtomSetTest(AtomSet store) {
 		try {
 			InMemoryAtomSet queryAtomSet = new LinkedListAtomSet();
-			DefaultConjunctiveQuery query = new DefaultConjunctiveQuery(queryAtomSet);
+			ConjunctiveQuery query = ConjunctiveQueryFactory.instance().create(queryAtomSet);
 
 			SubstitutionReader subReader;
 			Substitution sub;
@@ -77,7 +78,7 @@ public class ConjunctiveQueryTest {
 			store.addAll(DlgpParser.parseAtomSet("p(a,b), p(b,c), q(a,c,d)."));
 
 			InMemoryAtomSet queryAtomSet = new LinkedListAtomSet();
-			DefaultConjunctiveQuery query = new DefaultConjunctiveQuery(queryAtomSet);
+			ConjunctiveQuery query = ConjunctiveQueryFactory.instance().create(queryAtomSet);
 
 			SubstitutionReader subReader;
 			Substitution sub;
@@ -103,7 +104,7 @@ public class ConjunctiveQueryTest {
 		try {
 			store.addAll(DlgpParser.parseAtomSet("p(a,b),p(b,c),q(a,c,d)."));
 
-			DefaultConjunctiveQuery query = DlgpParser.parseQuery("?(X) :- p(c,X).");
+			ConjunctiveQuery query = DlgpParser.parseQuery("?(X) :- p(c,X).");
 
 			SubstitutionReader subReader;
 
@@ -120,7 +121,7 @@ public class ConjunctiveQueryTest {
 	@Theory
 	public void noAnswerQueryTest2(AtomSet store) {
 		try {
-			DefaultConjunctiveQuery query = DlgpParser.parseQuery("?(Y,X) :- p(Y,X).");
+			ConjunctiveQuery query = DlgpParser.parseQuery("?(Y,X) :- p(Y,X).");
 
 			SubstitutionReader subReader;
 
@@ -138,7 +139,7 @@ public class ConjunctiveQueryTest {
 	public void noAnswerQueryTest3(AtomSet store) {
 		try {
 			store.addAll(DlgpParser.parseAtomSet("p(a,b), r(c,c)."));
-			DefaultConjunctiveQuery query = DlgpParser.parseQuery("?(Y,X) :- p(a,X), q(X,Y).");
+			ConjunctiveQuery query = DlgpParser.parseQuery("?(Y,X) :- p(a,X), q(X,Y).");
 
 			SubstitutionReader subReader;
 
@@ -161,7 +162,7 @@ public class ConjunctiveQueryTest {
 
 			InMemoryAtomSet queryAtomSet = new LinkedListAtomSet();
 			queryAtomSet.add(DlgpParser.parseAtom("q(a,c,d)."));
-			DefaultConjunctiveQuery query = new DefaultConjunctiveQuery(queryAtomSet);
+			ConjunctiveQuery query = ConjunctiveQueryFactory.instance().create(queryAtomSet);
 
 			SubstitutionReader subReader;
 			Substitution sub;
@@ -184,7 +185,7 @@ public class ConjunctiveQueryTest {
 		try {
 			store.addAll(DlgpParser.parseAtomSet("p(a,b).p(b,c)."));
 
-			DefaultConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y) :- p(X,Y),p(Y,c).");
+			ConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y) :- p(X,Y),p(Y,c).");
 
 			SubstitutionReader subReader;
 			Substitution sub;
@@ -214,7 +215,7 @@ sub.createImageOf(DefaultTermFactory.instance()
 		try {
 			store.addAll(DlgpParser.parseAtomSet("p(a,b),q(b,b)."));
 
-			DefaultConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y) :- p(a,X),q(X,Y),q(Y,X).");
+			ConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y) :- p(a,X),q(X,Y),q(Y,X).");
 
 			SubstitutionReader subReader;
 			Substitution sub;
@@ -249,7 +250,7 @@ sub.createImageOf(DefaultTermFactory.instance()
 		try {
 			store.addAll(DlgpParser.parseAtomSet("p(a,b),q(a,c,d),q(d,c,a)."));
 
-			DefaultConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y) :- q(a,c,d),p(X,Y).");
+			ConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y) :- q(a,c,d),p(X,Y).");
 
 			SubstitutionReader subReader;
 			Substitution sub;
@@ -282,7 +283,7 @@ sub.createImageOf(DefaultTermFactory.instance()
 		try {
 			store.addAll(DlgpParser.parseAtomSet("p(a,b),p(b,c),q(a,c,d),q(d,c,a)."));
 
-			DefaultConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y) :- q(a,f,d),p(X,Y).");
+			ConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y) :- q(a,f,d),p(X,Y).");
 
 			SubstitutionReader subReader;
 			subReader = StaticHomomorphism.executeQuery(query, store);
@@ -300,7 +301,7 @@ sub.createImageOf(DefaultTermFactory.instance()
 		try {
 			store.addAll(DlgpParser.parseAtomSet("p(a,b)."));
 
-			DefaultConjunctiveQuery query = DlgpParser.parseQuery("?(X) :- p(X,Y).");
+			ConjunctiveQuery query = DlgpParser.parseQuery("?(X) :- p(X,Y).");
 
 			SubstitutionReader subReader;
 			Substitution sub;
@@ -324,7 +325,7 @@ sub.createImageOf(DefaultTermFactory.instance()
 		try {
 			store.addAll(DlgpParser.parseAtomSet("p(a,b)."));
 
-			DefaultConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y) :- q(X,Y).");
+			ConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y) :- q(X,Y).");
 
 			SubstitutionReader subReader;
 			subReader = StaticHomomorphism.executeQuery(query, store);
@@ -338,7 +339,7 @@ sub.createImageOf(DefaultTermFactory.instance()
 	public void wrongArityQuery(AtomSet atomset) {
 		try {
 			atomset.add(DlgpParser.parseAtom("p(a,b)."));
-			DefaultConjunctiveQuery query = DlgpParser.parseQuery("? :- p(X).");
+			ConjunctiveQuery query = DlgpParser.parseQuery("? :- p(X).");
 	
 			SubstitutionReader subReader;
 			subReader = StaticHomomorphism.executeQuery(query, atomset);
@@ -352,7 +353,7 @@ sub.createImageOf(DefaultTermFactory.instance()
 	public void wrongArityQuery2(AtomSet atomset) {
 		try {
 			atomset.add(DlgpParser.parseAtom("p(a,b)."));
-			DefaultConjunctiveQuery query = DlgpParser.parseQuery("? :- p(X,Y,Z).");
+			ConjunctiveQuery query = DlgpParser.parseQuery("? :- p(X,Y,Z).");
 	
 			SubstitutionReader subReader;
 			subReader = StaticHomomorphism.executeQuery(query, atomset);
@@ -366,7 +367,7 @@ sub.createImageOf(DefaultTermFactory.instance()
 	public void diffLiteralQueryTest(AtomSet atomset) {
 		try {
 			atomset.add(DlgpParser.parseAtom("p(\"literal\")."));
-			DefaultConjunctiveQuery query = DlgpParser.parseQuery("? :- p(\"otherLiteral\").");
+			ConjunctiveQuery query = DlgpParser.parseQuery("? :- p(\"otherLiteral\").");
 	
 			SubstitutionReader subReader;
 			subReader = StaticHomomorphism.executeQuery(query, atomset);
@@ -380,7 +381,7 @@ sub.createImageOf(DefaultTermFactory.instance()
 	public void sameLiteralQueryTest(AtomSet atomset) {
 		try {
 			atomset.add(DlgpParser.parseAtom("p(\"literal\")."));
-			DefaultConjunctiveQuery query = DlgpParser.parseQuery("? :- p(\"literal\").");
+			ConjunctiveQuery query = DlgpParser.parseQuery("? :- p(\"literal\").");
 	
 			SubstitutionReader subReader;
 			subReader = StaticHomomorphism.executeQuery(query, atomset);

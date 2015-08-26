@@ -33,13 +33,12 @@ import parser.ParseException;
 import parser.TERM_TYPE;
 import parser.TermFactory;
 import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
-import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.KnowledgeBase;
-import fr.lirmm.graphik.graal.core.NegativeConstraint;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
+import fr.lirmm.graphik.graal.core.factory.NegativeConstraint;
 import fr.lirmm.graphik.graal.core.stream.filter.AtomFilterIterator;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
@@ -74,12 +73,12 @@ public final class Dlgp1Parser extends AbstractParser<Object> {
 		}
 
 		@Override
-		protected void createQuery(DefaultConjunctiveQuery query) {
+		protected void createQuery(ConjunctiveQuery query) {
 			this.set.write(query);
 		}
 
 		@Override
-		protected void createRule(DefaultRule rule) {
+		protected void createRule(Rule rule) {
 			this.set.write(rule);
 		}
 
@@ -224,8 +223,8 @@ public final class Dlgp1Parser extends AbstractParser<Object> {
 	// STATIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public static DefaultConjunctiveQuery parseQuery(String s) {
-		return (DefaultConjunctiveQuery) new Dlgp1Parser(s).next();
+	public static ConjunctiveQuery parseQuery(String s) {
+		return (ConjunctiveQuery) new Dlgp1Parser(s).next();
 	}
 
 	public static Atom parseAtom(String s) {
