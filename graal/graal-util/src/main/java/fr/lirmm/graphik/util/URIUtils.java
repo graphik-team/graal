@@ -27,6 +27,7 @@ public final class URIUtils {
 	public static final URI RDF_TYPE = URIUtils.createURI(Prefix.RDF, "type");
 	public static final URI XSD_STRING = URIUtils.createURI(Prefix.XSD,
 			"string");
+	public static final URI XSD_INTEGER = URIUtils.createURI(Prefix.XSD, "integer");
 
 	
 	private URIUtils() {}

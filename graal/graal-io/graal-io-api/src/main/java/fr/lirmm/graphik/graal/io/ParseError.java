@@ -26,6 +26,10 @@ public class ParseError extends Error {
 	 */
 	private static final long serialVersionUID = 6399295619031902779L;
 
+	public ParseError(String msg) {
+		super(msg);
+	}
+
 	public ParseError(String msg, Throwable t) {
 		super(msg,t);
 	}

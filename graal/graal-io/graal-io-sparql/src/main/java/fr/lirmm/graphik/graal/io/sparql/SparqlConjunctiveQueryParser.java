@@ -7,28 +7,29 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.jena.graph.Node;
-import org.apache.jena.query.Query;
-import org.apache.jena.query.QueryFactory;
-import org.apache.jena.sparql.core.TriplePath;
-import org.apache.jena.sparql.syntax.Element;
-import org.apache.jena.sparql.syntax.ElementAssign;
-import org.apache.jena.sparql.syntax.ElementBind;
-import org.apache.jena.sparql.syntax.ElementData;
-import org.apache.jena.sparql.syntax.ElementDataset;
-import org.apache.jena.sparql.syntax.ElementExists;
-import org.apache.jena.sparql.syntax.ElementFilter;
-import org.apache.jena.sparql.syntax.ElementGroup;
-import org.apache.jena.sparql.syntax.ElementMinus;
-import org.apache.jena.sparql.syntax.ElementNamedGraph;
-import org.apache.jena.sparql.syntax.ElementNotExists;
-import org.apache.jena.sparql.syntax.ElementOptional;
-import org.apache.jena.sparql.syntax.ElementPathBlock;
-import org.apache.jena.sparql.syntax.ElementService;
-import org.apache.jena.sparql.syntax.ElementSubQuery;
-import org.apache.jena.sparql.syntax.ElementTriplesBlock;
-import org.apache.jena.sparql.syntax.ElementUnion;
-import org.apache.jena.sparql.syntax.ElementVisitor;
+
+import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryFactory;
+import com.hp.hpl.jena.sparql.core.TriplePath;
+import com.hp.hpl.jena.sparql.syntax.Element;
+import com.hp.hpl.jena.sparql.syntax.ElementAssign;
+import com.hp.hpl.jena.sparql.syntax.ElementBind;
+import com.hp.hpl.jena.sparql.syntax.ElementData;
+import com.hp.hpl.jena.sparql.syntax.ElementDataset;
+import com.hp.hpl.jena.sparql.syntax.ElementExists;
+import com.hp.hpl.jena.sparql.syntax.ElementFilter;
+import com.hp.hpl.jena.sparql.syntax.ElementGroup;
+import com.hp.hpl.jena.sparql.syntax.ElementMinus;
+import com.hp.hpl.jena.sparql.syntax.ElementNamedGraph;
+import com.hp.hpl.jena.sparql.syntax.ElementNotExists;
+import com.hp.hpl.jena.sparql.syntax.ElementOptional;
+import com.hp.hpl.jena.sparql.syntax.ElementPathBlock;
+import com.hp.hpl.jena.sparql.syntax.ElementService;
+import com.hp.hpl.jena.sparql.syntax.ElementSubQuery;
+import com.hp.hpl.jena.sparql.syntax.ElementTriplesBlock;
+import com.hp.hpl.jena.sparql.syntax.ElementUnion;
+import com.hp.hpl.jena.sparql.syntax.ElementVisitor;
 
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Predicate;
@@ -58,31 +59,23 @@ public class SparqlConjunctiveQueryParser {
 
 	public static ConjunctiveQuery parse(String queryString) throws ParseException {
 		List<Term> ans = new LinkedList<Term>();
-		ConjunctiveQuery cq = ConjunctiveQueryFactory.instance().create();
 
 		Query sparql = QueryFactory.create(queryString);
 		if (sparql.isSelectType()) {
-			List<String> resultVars = sparql.getResultVars();
 			for (String v : sparql.getResultVars()) {
 				ans.add(DefaultTermFactory.instance().createVariable(v));
 			}
-
 		}
 
 		ElementVisitorImpl visitor = new ElementVisitorImpl();
-		sparql.getQueryPattern().visit(visitor); // The meat of the query, the
-												 // WHERE bit
+		sparql.getQueryPattern().visit(visitor);
 		InMemoryAtomSet atomset = visitor.getAtomSet();
 
 		return ConjunctiveQueryFactory.instance().create(atomset, ans);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
-	// OBJECT OVERRIDE METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	// /////////////////////////////////////////////////////////////////////////
-	// PRIVATE METHODS
+	// PRIVATE CLASSES
 	// /////////////////////////////////////////////////////////////////////////
 
 	private static final class ElementVisitorImpl implements ElementVisitor {
@@ -183,26 +176,6 @@ public class SparqlConjunctiveQueryParser {
 				} else {
 					throw new ParseError("Path is not allowed.");
 				}
-
-				// triple.Triple t = e.getTriple();
-				// Atom arg0 = t.getArg(0);
-				// Atom arg1 = t.getArg(1);
-				// Atom p = t.getPredicate();
-				// if (p.getLongName().equals(URIUtils.RDF_TYPE.toString())) {
-				// if (arg1.isQName()) {
-				// Predicate predicate = new
-				// Predicate(URIUtils.createURI(arg1.getLongName()), 1);
-				// atomset.add(new DefaultAtom(predicate, parseTerm(arg0)));
-				// } else {
-				// throw new
-				// ParseException("Variable over type is not permitted");
-				// }
-				// } else {
-				// Predicate predicate = new
-				// Predicate(URIUtils.createURI(p.getLongName()), 2);
-				// atomset.add(new DefaultAtom(predicate, parseTerm(arg0),
-				// parseTerm(arg1)));
-				// }
 			}
 		}
 
@@ -215,8 +188,13 @@ public class SparqlConjunctiveQueryParser {
 			if (node.isURI()) {
 				term = DefaultTermFactory.instance().createConstant(node.getURI());
 			} else if (node.isLiteral()) {
-				term = DefaultTermFactory.instance().createLiteral(
-						URIUtils.createURI(node.getLiteralDatatype().getURI()), node.getLiteralValue());
+				if (node.getLiteralValue() instanceof String) {
+					// FIXME Jena ARQ Bug fix
+					term = DefaultTermFactory.instance().createLiteral(URIUtils.XSD_STRING, node.getLiteralValue());
+				} else {
+					term = DefaultTermFactory.instance().createLiteral(
+							URIUtils.createURI(node.getLiteralDatatypeURI()), node.getLiteralValue());
+				}
 			} else if (node.isVariable()) {
 				term = DefaultTermFactory.instance().createVariable(node.getName());
 			} else {

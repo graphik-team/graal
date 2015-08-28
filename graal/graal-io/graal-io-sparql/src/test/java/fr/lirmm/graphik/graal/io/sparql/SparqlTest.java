@@ -32,6 +32,7 @@ public class SparqlTest {
 	private static final Constant TITI = DefaultTermFactory.instance().createConstant(
 			URIUtils.createURI(PREFIX + "titi"));
 	private static final Literal STRING = DefaultTermFactory.instance().createLiteral(URIUtils.XSD_STRING, "toto");
+	private static final Literal INTEGER = DefaultTermFactory.instance().createLiteral(URIUtils.XSD_INTEGER, 7);
 
 	@Test
 	public void test1() throws ParseException {
@@ -130,6 +131,24 @@ public class SparqlTest {
 		ConjunctiveQuery cq = SparqlConjunctiveQueryParser.parse(query);
 		Assert.assertEquals(3, cq.getAnswerVariables().size());
 	}
+	
+	@Test
+	public void testIntegerLiteral() throws ParseException {
+		String query = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
+					   + "PREFIX : <"
+					   + PREFIX
+					   + ">"
+					   + "SELECT DISTINCT ?x ?y "
+					   + "WHERE"
+					   + "{"
+					   + "	?x :p 7 ."
+					   + "}";
+		ConjunctiveQuery cq = SparqlConjunctiveQueryParser.parse(query);
+		for (Atom a : cq.getAtomSet()) {
+			Assert.assertEquals(P, a.getPredicate());
+			Assert.assertEquals(INTEGER, a.getTerm(1));
+		}
+	}
 
 	@Test
 	public void testStringLiteral() throws ParseException {
@@ -140,18 +159,12 @@ public class SparqlTest {
 					   + "SELECT DISTINCT ?x ?y "
 					   + "WHERE"
 					   + "{"
-					   + "	?x :p \"toto\" ."
+					   + "	?x :p 'toto' ."
 					   + "}";
 		ConjunctiveQuery cq = SparqlConjunctiveQueryParser.parse(query);
-		Assert.assertEquals(2, cq.getAnswerVariables().size());
-		int nbTriple = 0;
 		for (Atom a : cq.getAtomSet()) {
-			++nbTriple;
 			Assert.assertEquals(P, a.getPredicate());
 			Assert.assertEquals(STRING, a.getTerm(1));
-
 		}
-		Assert.assertEquals(1, nbTriple);
 	}
-
 }
