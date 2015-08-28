@@ -18,6 +18,7 @@ import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.term.Term;
+import fr.lirmm.graphik.util.string.AppendableToStringBuilder;
 
 /**
  * A substitution is a syntactic transformation of a logical expression. This
@@ -25,7 +26,7 @@ import fr.lirmm.graphik.graal.core.term.Term;
  * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  */
-public interface Substitution {
+public interface Substitution extends AppendableToStringBuilder {
 
 	/** 
 	 * Get all terms that have a substitute.

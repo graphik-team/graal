@@ -20,11 +20,12 @@ import fr.lirmm.graphik.graal.core.impl.DefaultAtom;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.core.term.Term.Type;
+import fr.lirmm.graphik.util.string.AppendableToStringBuilder;
 
 /**
  * This interface represents a logical atom like p(X,Y).
  */
-public interface Atom extends Comparable<Atom>, Iterable<Term> {
+public interface Atom extends Comparable<Atom>, Iterable<Term>, AppendableToStringBuilder {
 
 	/**
 	 * This instance of Atom represents Bottom, it is always interpreted as

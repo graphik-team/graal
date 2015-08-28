@@ -14,11 +14,13 @@
 
 import java.io.Serializable;
 
+import fr.lirmm.graphik.util.string.AppendableToStringBuilder;
+
 /**
  * Represents a Predicate of an Atom.
  * 
  */
-public class Predicate implements Comparable<Predicate>, Serializable {
+public class Predicate implements Comparable<Predicate>, Serializable, AppendableToStringBuilder {
 
 	public static final Predicate EQUALITY = new Predicate("=", 2);
 	public static final Predicate BOTTOM = new Predicate("\u22A5", 1);
@@ -113,9 +115,13 @@ public class Predicate implements Comparable<Predicate>, Serializable {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(this.getIdentifier()).append('[').append(this.getArity())
-				.append("]");
+		this.appendTo(sb);
 		return sb.toString();
+	}
+
+	@Override
+	public void appendTo(StringBuilder sb) {
+		sb.append(this.getIdentifier()).append('[').append(this.getArity()).append("]");
 	}
 
 };

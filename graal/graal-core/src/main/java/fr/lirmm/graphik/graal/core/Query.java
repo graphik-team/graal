@@ -12,13 +12,15 @@
  */
  package fr.lirmm.graphik.graal.core;
 
+import fr.lirmm.graphik.util.string.AppendableToStringBuilder;
+
 /**
  * This interface represents a generic query.
  * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */
-public interface Query {
+public interface Query extends AppendableToStringBuilder {
 
 	/**
 	 * @return true if the expected answer is boolean, false otherwise.

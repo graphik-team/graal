@@ -10,7 +10,7 @@
  *            Michel LECLÈRE
  *            Marie-Laure MUGNIER
  */
- package fr.lirmm.graphik.graal.core.impl;
+package fr.lirmm.graphik.graal.core.impl;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -23,10 +23,9 @@ import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
 
-
 /**
- * Class representing a conjunctive query.
- * A conjunctive query is composed of a fact and a set of answer variables.
+ * Class representing a conjunctive query. A conjunctive query is composed of a
+ * fact and a set of answer variables.
  */
 public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 
@@ -35,8 +34,8 @@ public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 	private List<Term> responseVariables;
 
 	// /////////////////////////////////////////////////////////////////////////
-    //	CONSTRUCTOR
-    // /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTOR
+	// /////////////////////////////////////////////////////////////////////////
 
 	public DefaultConjunctiveQuery() {
 		this.label = "";
@@ -46,9 +45,9 @@ public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 
 	public DefaultConjunctiveQuery(InMemoryAtomSet atomSet) {
 		this.label = "";
-        this.atomSet = atomSet;
-        this.responseVariables = new LinkedList<Term>(atomSet.getTerms(Term.Type.VARIABLE));
-    }
+		this.atomSet = atomSet;
+		this.responseVariables = new LinkedList<Term>(atomSet.getTerms(Term.Type.VARIABLE));
+	}
 
 	public DefaultConjunctiveQuery(InMemoryAtomSet atomSet, List<Term> ans) {
 		this("", atomSet, ans);
@@ -58,16 +57,19 @@ public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 		this.label = "";
 		this.atomSet = new LinkedListAtomSet(atomSet);
 		this.responseVariables = new LinkedList<Term>();
-		for(Term t : answerVariables) {
+		for (Term t : answerVariables) {
 			this.responseVariables.add(t);
 		}
 	}
-	
+
 	/**
 	 * 
-	 * @param label the name of this query
-	 * @param atomSet the conjunction of atom representing the query
-	 * @param ans the list of answer variables
+	 * @param label
+	 *            the name of this query
+	 * @param atomSet
+	 *            the conjunction of atom representing the query
+	 * @param ans
+	 *            the list of answer variables
 	 */
 	public DefaultConjunctiveQuery(String label, InMemoryAtomSet atomSet, List<Term> ans) {
 		this.label = label;
@@ -83,47 +85,47 @@ public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
-    //	PUBLIC METHODS
-    // /////////////////////////////////////////////////////////////////////////
-	
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
 	@Override
 	public String getLabel() {
 		return this.label;
 	}
-	
+
 	/**
 	 * Returns the fact of the query.
 	 */
 	@Override
-	public InMemoryAtomSet getAtomSet() { 
-		return this.atomSet; 
+	public InMemoryAtomSet getAtomSet() {
+		return this.atomSet;
 	}
-	
+
 	public void setAtomSet(InMemoryAtomSet atomSet) {
-	    this.atomSet = atomSet;
+		this.atomSet = atomSet;
 	}
 
 	/**
 	 * Returns the answer variables of the query.
 	 */
 	@Override
-	public List<Term> getAnswerVariables() { 
-		return this.responseVariables; 
+	public List<Term> getAnswerVariables() {
+		return this.responseVariables;
 	}
 
 	@Override
-	public void setAnswerVariables(List<Term> v) { 
-		this.responseVariables = v; 
+	public void setAnswerVariables(List<Term> v) {
+		this.responseVariables = v;
 	}
-	
+
 	@Override
 	public boolean isBoolean() {
 		return responseVariables.isEmpty();
 	}
-	
+
 	// /////////////////////////////////////////////////////////////////////////
-    //	OVERRIDE METHODS
-    // /////////////////////////////////////////////////////////////////////////
+	// OVERRIDE METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
 	public Iterator<Atom> iterator() {
@@ -132,14 +134,19 @@ public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 
 	@Override
 	public String toString() {
-	    StringBuilder s = new StringBuilder("ANS(");
-	    for(Term t : this.responseVariables)
-	        s.append(t).append(',');
-	    
-	    s.append(") : ");
-	    s.append(this.atomSet);
-	    return s.toString();
+		StringBuilder sb = new StringBuilder("ANS(");
+		this.appendTo(sb);
+		return sb.toString();
 	}
 
-	
+	@Override
+	public void appendTo(StringBuilder sb) {
+		sb.append("ANS(");
+		for (Term t : this.responseVariables)
+			sb.append(t).append(',');
+
+		sb.append(") : ");
+		sb.append(this.atomSet);
+	}
+
 }

@@ -7,12 +7,13 @@ import java.util.Set;
 
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.term.Term;
+import fr.lirmm.graphik.util.string.AppendableToStringBuilder;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface NegativeConstraint {
+public interface NegativeConstraint extends AppendableToStringBuilder {
 
 	/**
 	 * Get the label (the name) for this constraint.
@@ -49,5 +50,4 @@ public interface NegativeConstraint {
 	 */
 	Set<Term> getTerms();
 
-	void appendTo(StringBuilder sb);
 }

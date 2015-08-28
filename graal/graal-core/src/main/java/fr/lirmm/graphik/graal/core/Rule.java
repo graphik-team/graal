@@ -16,6 +16,7 @@ import java.util.Set;
 
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.term.Term;
+import fr.lirmm.graphik.util.string.AppendableToStringBuilder;
 
 /**
  * This interface represents an existential rule.
@@ -23,7 +24,7 @@ import fr.lirmm.graphik.graal.core.term.Term;
  * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  */
-public interface Rule extends Comparable<Rule> {
+public interface Rule extends Comparable<Rule>, AppendableToStringBuilder {
 
 	/**
 	 * Get the label (the name) for this rule.
@@ -80,8 +81,5 @@ public interface Rule extends Comparable<Rule> {
 	 * @return
 	 */
 	Set<Term> getTerms();
-
-
-	void appendTo(StringBuilder sb);
 
 };

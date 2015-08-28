@@ -89,14 +89,14 @@ public abstract class AbstractAtom implements Atom {
 	 */
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		this.toString(sb);
+		this.appendTo(sb);
 		return sb.toString();
 	}
 	
 	/**
 	 * @param sb
 	 */
-	public void toString(StringBuilder sb) {
+	public void appendTo(StringBuilder sb) {
 		sb.append(this.getPredicate().toString());
 		sb.append('(');
 		boolean bool = false;

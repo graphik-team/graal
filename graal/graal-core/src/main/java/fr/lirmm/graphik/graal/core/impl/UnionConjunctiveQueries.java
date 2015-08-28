@@ -148,12 +148,17 @@ public class UnionConjunctiveQueries implements Query,
 
 	@Override
 	public String toString() {
-		StringBuilder s = new StringBuilder();
+		StringBuilder sb = new StringBuilder();
+		this.appendTo(sb);
+		return sb.toString();
+	}
+
+	@Override
+	public void appendTo(StringBuilder sb) {
 		for (Query q : this.queries) {
-			s.append(q);
-			s.append(" | ");
+			sb.append(q);
+			sb.append(" | ");
 		}
-		return s.toString();
 	}
 
 }

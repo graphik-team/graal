@@ -118,17 +118,22 @@ class ConjunctiveQueryWithFixedVariables implements ConjunctiveQuery {
 
 	@Override
 	public String toString() {
-		StringBuilder s = new StringBuilder("FIXED(");
+		StringBuilder sb = new StringBuilder("FIXED(");
+		this.appendTo(sb);
+		return sb.toString();
+	}
+
+	@Override
+	public void appendTo(StringBuilder sb) {
 		for (Term t : this.atomSet.getTerms(Term.Type.CONSTANT))
-			s.append(t).append(',');
+			sb.append(t).append(',');
 
-		s.append("), ANS(");
+		sb.append("), ANS(");
 		for (Term t : this.answerVariables)
-			s.append(t).append(',');
+			sb.append(t).append(',');
 
-		s.append(") :- ");
-		s.append(this.atomSet);
-		return s.toString();
+		sb.append(") :- ");
+		sb.append(this.atomSet);
 	}
 	
 }

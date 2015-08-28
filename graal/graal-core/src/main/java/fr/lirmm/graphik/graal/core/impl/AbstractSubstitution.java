@@ -162,19 +162,24 @@ public abstract class AbstractSubstitution implements Substitution {
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		StringBuilder sb = new StringBuilder();
+		this.appendTo(sb);
+		return sb.toString();
+	}
+
+	@Override
+	public void appendTo(StringBuilder sb) {
 		boolean first = true;
-		builder.append('{');
+		sb.append('{');
 		for (Term key : this.getTerms()) {
 			if (first)
 				first = false;
 			else
-				builder.append(',');
-			builder.append(key).append("->");
-			builder.append(this.createImageOf(key));
+				sb.append(',');
+			sb.append(key).append("->");
+			sb.append(this.createImageOf(key));
 		}
-		builder.append('}');
-		return builder.toString();
+		sb.append('}');
 	}
 
 	@Override
