@@ -40,8 +40,9 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(RecursiveBacktrackHomomorphism.class);
-    
-    private static RecursiveBacktrackHomomorphism instance;
+
+	private static RecursiveBacktrackHomomorphism instance;
+	private Set<Term> domain;
 
     // /////////////////////////////////////////////////////////////////////////
     // CONSTRUCTORS
@@ -74,7 +75,10 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
                 Term.Type.VARIABLE));
         Collection<Atom>[] queryAtomRanked = getAtomRank(
                 query.getAtomSet(), orderedVars);
+
         try {
+			this.domain = facts.getTerms();
+
             if (isHomomorphism(queryAtomRanked[0], facts,
                     new HashMapSubstitution())) {
                 return new IteratorSubstitutionReader(homomorphism(query,
@@ -129,7 +133,7 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
      * @return
      * @throws Exception
      */
-    private static Collection<Substitution> homomorphism(ConjunctiveQuery query,
+	private Collection<Substitution> homomorphism(ConjunctiveQuery query,
             Collection<Atom>[] queryAtomRanked, AtomSet facts,
             Substitution substitution, List<Term> orderedVars, int rank)
             throws Exception {
@@ -141,11 +145,8 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
             }
             substitutionList.add(filteredSub);
         } else {
-            Term var;
-            Set<Term> domaine = facts.getTerms();
-
-            var = orderedVars.remove(0);
-            for (Term substitut : domaine) {
+			Term var = orderedVars.remove(0);
+			for (Term substitut : domain) {
                 Substitution tmpSubstitution = new HashMapSubstitution(
                         substitution);
                 tmpSubstitution.put(var, substitut);
