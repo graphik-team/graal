@@ -44,6 +44,9 @@ public final class URIUtils {
 	public static final URI XSD_Q_NAME = URIUtils.createURI(Prefix.XSD, "QName");
 	public static final URI XSD_NOTATION = URIUtils.createURI(Prefix.XSD, "NOTATION");
 	
+	// DERIVED XSD DATATYPES
+	public static final URI XSD_INTEGER = URIUtils.createURI(Prefix.XSD, "integer");
+
 	// /////////////////////////////////////////////////////////////////////////
 	//
 	// /////////////////////////////////////////////////////////////////////////

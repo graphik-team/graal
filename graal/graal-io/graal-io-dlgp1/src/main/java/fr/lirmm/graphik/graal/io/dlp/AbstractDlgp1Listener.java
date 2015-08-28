@@ -23,13 +23,13 @@ import org.slf4j.LoggerFactory;
 
 import parser.ParserListener;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
-import fr.lirmm.graphik.graal.core.factory.NegativeConstraint;
 import fr.lirmm.graphik.graal.core.factory.RuleFactory;
+import fr.lirmm.graphik.graal.core.impl.DefaultAtom;
+import fr.lirmm.graphik.graal.core.impl.DefaultNegativeConstraint;
 import fr.lirmm.graphik.graal.core.term.Term;
 
 /**
@@ -55,7 +55,7 @@ abstract class AbstractDlgp1Listener implements ParserListener {
 	
 	protected abstract void createRule(Rule basicRule);
 	
-	protected abstract void createNegConstraint(NegativeConstraint negativeConstraint);
+	protected abstract void createNegConstraint(DefaultNegativeConstraint negativeConstraint);
 
 	@Override
 	public void startsObject(OBJECT_TYPE objectType, String name) {
@@ -153,7 +153,7 @@ abstract class AbstractDlgp1Listener implements ParserListener {
 			this.createQuery(ConjunctiveQueryFactory.instance().create(this.label, this.atomSet, this.answerVars));
 			break;
 		case NEG_CONSTRAINT:
-			this.createNegConstraint(new NegativeConstraint(this.label, this.atomSet));
+			this.createNegConstraint(new DefaultNegativeConstraint(this.label, this.atomSet));
 			break;
 		case RULE:
 			if(this.atomSet2 == null) {

@@ -24,6 +24,8 @@ import java.util.Set;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
+import fr.lirmm.graphik.graal.core.impl.FreshVarSubstitution;
+import fr.lirmm.graphik.graal.core.impl.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.util.LinkedSet;

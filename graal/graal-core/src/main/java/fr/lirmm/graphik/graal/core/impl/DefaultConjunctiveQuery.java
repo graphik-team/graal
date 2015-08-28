@@ -10,7 +10,7 @@
  *            Michel LECLÈRE
  *            Marie-Laure MUGNIER
  */
- package fr.lirmm.graphik.graal.core.factory;
+ package fr.lirmm.graphik.graal.core.impl;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -20,6 +20,7 @@ import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
 
 

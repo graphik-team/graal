@@ -17,9 +17,9 @@ import java.io.IOException;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.NegativeConstraint;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
+import fr.lirmm.graphik.graal.core.impl.DefaultNegativeConstraint;
 import fr.lirmm.graphik.graal.io.ParseException;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
@@ -40,8 +40,8 @@ public class DlgpParserExample {
         
     	DlgpWriter writer = new DlgpWriter();
         for(Object o : parser) {
-        	if(o instanceof NegativeConstraint)
-        		writer.write((NegativeConstraint) o);
+        	if(o instanceof DefaultNegativeConstraint)
+        		writer.write((DefaultNegativeConstraint) o);
         	else if(o instanceof Rule)
         		writer.write((Rule)o);
         	else if(o instanceof Atom)

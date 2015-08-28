@@ -19,7 +19,7 @@ import org.junit.Test;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.factory.NegativeConstraint;
+import fr.lirmm.graphik.graal.core.impl.DefaultNegativeConstraint;
 import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 
@@ -62,7 +62,7 @@ public class DlgpParserTest {
 	
 	@Test
 	public void parseNegativeConstraint() {
-		NegativeConstraint r = DlgpParser.parseNegativeConstraint("[N1]!:-p(X,Y), q(X,Y).");
+		DefaultNegativeConstraint r = DlgpParser.parseNegativeConstraint("[N1]!:-p(X,Y), q(X,Y).");
 		
 		Iterator<Atom> it = r.getBody().iterator();
 		Atom body = it.next();

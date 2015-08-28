@@ -13,7 +13,7 @@
  /**
  * 
  */
-package fr.lirmm.graphik.graal.core;
+package fr.lirmm.graphik.graal.core.impl;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -21,6 +21,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;

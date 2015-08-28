@@ -24,7 +24,7 @@ import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.core.factory.NegativeConstraint;
+import fr.lirmm.graphik.graal.core.impl.DefaultNegativeConstraint;
 import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.util.Prefix;
 
@@ -50,8 +50,8 @@ public abstract class AbstractGraalWriter extends AbstractWriter implements
 	public void write(Object o) throws IOException {
 		if (o instanceof Atom) {
 			this.write((Atom) o);
-		} else if (o instanceof NegativeConstraint) {
-			this.write((NegativeConstraint) o);
+		} else if (o instanceof DefaultNegativeConstraint) {
+			this.write((DefaultNegativeConstraint) o);
 		} else if (o instanceof Rule) {
 			this.write((Rule) o);
 		} else if (o instanceof ConjunctiveQuery) {

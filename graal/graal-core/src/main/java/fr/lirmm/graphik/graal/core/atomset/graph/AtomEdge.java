@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import fr.lirmm.graphik.graal.core.AbstractAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
+import fr.lirmm.graphik.graal.core.impl.AbstractAtom;
 import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.core.term.Term.Type;
 

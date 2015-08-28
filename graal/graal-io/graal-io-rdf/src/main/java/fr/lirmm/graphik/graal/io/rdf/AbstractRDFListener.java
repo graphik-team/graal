@@ -19,8 +19,8 @@ import org.openrdf.model.Literal;
 import org.openrdf.model.Statement;
 import org.openrdf.rio.helpers.RDFHandlerBase;
 
-import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
+import fr.lirmm.graphik.graal.core.impl.DefaultAtom;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
 

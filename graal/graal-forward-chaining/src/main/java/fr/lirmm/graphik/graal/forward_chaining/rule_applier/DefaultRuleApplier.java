@@ -21,13 +21,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.VariableGenerator;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
+import fr.lirmm.graphik.graal.core.impl.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.ChaseHaltingCondition;
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.RestrictedChaseStopCondition;

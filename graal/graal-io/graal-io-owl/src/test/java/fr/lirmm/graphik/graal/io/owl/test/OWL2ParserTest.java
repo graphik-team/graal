@@ -12,7 +12,7 @@ import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.core.factory.NegativeConstraint;
+import fr.lirmm.graphik.graal.core.impl.DefaultNegativeConstraint;
 import fr.lirmm.graphik.graal.core.term.Constant;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.core.term.Literal;
@@ -144,10 +144,10 @@ public class OWL2ParserTest {
 		int nbNegativeConstraint = 0;
 
 		for (Object o : parser) {
-			if (o instanceof NegativeConstraint) {
+			if (o instanceof DefaultNegativeConstraint) {
 				++nbNegativeConstraint;
 				System.out.println(o);
-				NegativeConstraint r = (NegativeConstraint) o;
+				DefaultNegativeConstraint r = (DefaultNegativeConstraint) o;
 				Iterator<Atom> bodyIt = r.getBody().iterator();
 				Assert.assertTrue(bodyIt.hasNext());
 				Atom body1 = bodyIt.next();
@@ -458,7 +458,7 @@ public class OWL2ParserTest {
 		int nbRules = 0;
 
 		for (Object o : parser) {
-			if (o instanceof NegativeConstraint) {
+			if (o instanceof DefaultNegativeConstraint) {
 				++nbRules;
 			}
 		}
@@ -605,10 +605,10 @@ public class OWL2ParserTest {
 		int nbRules = 0;
 
 		for (Object o : parser) {
-			if (o instanceof NegativeConstraint) {
+			if (o instanceof DefaultNegativeConstraint) {
 				++nbRules;
 
-				NegativeConstraint r = (NegativeConstraint) o;
+				DefaultNegativeConstraint r = (DefaultNegativeConstraint) o;
 				Iterator<Atom> bodyIt = r.getBody().iterator();
 				Assert.assertTrue(bodyIt.hasNext());
 				Atom body1 = bodyIt.next();
@@ -1226,7 +1226,7 @@ public class OWL2ParserTest {
 
 			int nbRules = 0;
 			for (Object o : parser) {
-				if (o instanceof NegativeConstraint) {
+				if (o instanceof DefaultNegativeConstraint) {
 					++nbRules;
 					Rule r = (Rule) o;
 
@@ -1534,7 +1534,7 @@ public class OWL2ParserTest {
 		int nbRules = 0;
 
 		for (Object o : parser) {
-			if (o instanceof NegativeConstraint) {
+			if (o instanceof DefaultNegativeConstraint) {
 				++nbRules;
 			}
 		}
@@ -1946,9 +1946,9 @@ public class OWL2ParserTest {
 				Assert.assertEquals(I1, a.getTerm(0));
 
 			}
-			if ((o instanceof NegativeConstraint)) {
+			if ((o instanceof DefaultNegativeConstraint)) {
 				++nbConstraint;
-				Iterator<Atom> it = ((NegativeConstraint) o).getBody()
+				Iterator<Atom> it = ((DefaultNegativeConstraint) o).getBody()
 						.iterator();
 				Assert.assertTrue(it.hasNext());
 				Atom a = it.next();

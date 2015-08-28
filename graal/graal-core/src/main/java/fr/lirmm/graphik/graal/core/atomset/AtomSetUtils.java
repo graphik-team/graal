@@ -18,8 +18,8 @@ package fr.lirmm.graphik.graal.core.atomset;
 import java.util.LinkedList;
 
 import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
+import fr.lirmm.graphik.graal.core.impl.DefaultAtom;
 import fr.lirmm.graphik.graal.core.term.Term;
 
 /**

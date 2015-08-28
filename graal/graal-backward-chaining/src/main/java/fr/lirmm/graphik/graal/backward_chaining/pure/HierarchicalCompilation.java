@@ -19,9 +19,9 @@ import java.util.LinkedList;
 import java.util.TreeMap;
 
 import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.core.impl.DefaultAtom;
 
 public class HierarchicalCompilation extends AbstractRulesCompilation {
 

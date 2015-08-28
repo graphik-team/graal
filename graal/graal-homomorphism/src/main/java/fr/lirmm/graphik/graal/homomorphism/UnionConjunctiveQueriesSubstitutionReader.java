@@ -20,8 +20,8 @@ import java.util.Iterator;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.Substitution;
-import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.impl.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 
 /**

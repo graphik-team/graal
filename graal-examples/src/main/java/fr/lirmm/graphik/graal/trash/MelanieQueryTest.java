@@ -20,13 +20,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.Substitution;
-import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
+import fr.lirmm.graphik.graal.core.impl.DefaultAtom;
+import fr.lirmm.graphik.graal.core.impl.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 import fr.lirmm.graphik.graal.core.stream.filter.AtomFilterIterator;
 import fr.lirmm.graphik.graal.forward_chaining.Chase;

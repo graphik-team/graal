@@ -13,11 +13,14 @@
  /**
  * 
  */
-package fr.lirmm.graphik.graal.core;
+package fr.lirmm.graphik.graal.core.impl;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
+
+import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.core.Query;
 
 /**
  * This class represents query which is the union of conjunctive queries.

@@ -10,7 +10,7 @@
  *            Michel LECLÈRE
  *            Marie-Laure MUGNIER
  */
- package fr.lirmm.graphik.graal.core;
+ package fr.lirmm.graphik.graal.core.impl;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -19,6 +19,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ArrayList;
 
+import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.term.Term;
 
 /**

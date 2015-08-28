@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
-import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
+import fr.lirmm.graphik.graal.core.impl.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;

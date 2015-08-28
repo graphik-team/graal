@@ -8,6 +8,7 @@ import java.util.List;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.core.impl.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.term.Term;
 
 /**

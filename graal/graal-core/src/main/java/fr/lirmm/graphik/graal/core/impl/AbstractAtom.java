@@ -13,11 +13,12 @@
  /**
  * 
  */
-package fr.lirmm.graphik.graal.core;
+package fr.lirmm.graphik.graal.core.impl;
 
 import java.util.List;
 import java.util.Iterator;
 
+import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.term.Term;
 
 

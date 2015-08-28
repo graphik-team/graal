@@ -15,8 +15,8 @@
  */
 package fr.lirmm.graphik.graal.core.factory;
 
-import fr.lirmm.graphik.graal.core.HashMapSubstitution;
 import fr.lirmm.graphik.graal.core.Substitution;
+import fr.lirmm.graphik.graal.core.impl.HashMapSubstitution;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>

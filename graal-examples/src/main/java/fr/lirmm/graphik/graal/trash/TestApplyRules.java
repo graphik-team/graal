@@ -14,7 +14,6 @@
 import java.util.LinkedList;
 
 import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
@@ -22,6 +21,7 @@ import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
@@ -70,7 +70,7 @@ public class TestApplyRules {
 	}
 	
 	public static void applyRule(Rule rule, AtomSet atomSet) throws AtomSetException, HomomorphismFactoryException, HomomorphismException {
-		Query query = new DefaultConjunctiveQuery(rule.getBody(), rule.getFrontier());
+		Query query = ConjunctiveQueryFactory.instance().create(rule.getBody(), rule.getFrontier());
 		SubstitutionReader reader = StaticHomomorphism.executeQuery(query, atomSet);
 		for(Substitution s : reader) {
 			System.out.print(s);

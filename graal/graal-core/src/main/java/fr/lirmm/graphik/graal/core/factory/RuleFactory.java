@@ -17,6 +17,7 @@ package fr.lirmm.graphik.graal.core.factory;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.core.impl.DefaultRule;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}

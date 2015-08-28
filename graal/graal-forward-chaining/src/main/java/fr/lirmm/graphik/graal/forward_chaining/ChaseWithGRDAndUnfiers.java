@@ -23,11 +23,11 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.core.HashMapSubstitution;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
+import fr.lirmm.graphik.graal.core.impl.HashMapSubstitution;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;

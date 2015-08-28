@@ -16,10 +16,10 @@
 package fr.lirmm.graphik.graal.forward_chaining;
 
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.VariableGenerator;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.impl.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.ChaseHaltingCondition;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.RuleApplier;

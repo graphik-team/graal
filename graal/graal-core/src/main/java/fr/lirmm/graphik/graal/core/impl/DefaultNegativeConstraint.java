@@ -13,9 +13,10 @@
  /**
  * 
  */
-package fr.lirmm.graphik.graal.core.factory;
+package fr.lirmm.graphik.graal.core.impl;
 
 import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.core.NegativeConstraint;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 
@@ -28,7 +29,7 @@ import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */
-public class NegativeConstraint extends DefaultRule {
+public class DefaultNegativeConstraint extends DefaultRule implements NegativeConstraint {
 
 	private static final InMemoryAtomSet HEAD;
 	static {
@@ -40,15 +41,15 @@ public class NegativeConstraint extends DefaultRule {
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 
-	public NegativeConstraint() {
+	public DefaultNegativeConstraint() {
 		super("", new LinkedListAtomSet(), HEAD);
 	}
 
-	public NegativeConstraint(Iterable<Atom> atomSet) {
+	public DefaultNegativeConstraint(Iterable<Atom> atomSet) {
 		super("", atomSet, HEAD);
 	}
 
-	public NegativeConstraint(String label, Iterable<Atom> atomSet) {
+	public DefaultNegativeConstraint(String label, Iterable<Atom> atomSet) {
 		super(label, atomSet, HEAD);
 	}
 

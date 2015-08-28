@@ -107,15 +107,15 @@ import uk.ac.manchester.cs.owl.owlapi.OWLObjectOneOfImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLObjectSomeValuesFromImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLSubClassOfAxiomImpl;
 import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.VariableGenerator;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.factory.NegativeConstraint;
 import fr.lirmm.graphik.graal.core.factory.RuleFactory;
+import fr.lirmm.graphik.graal.core.impl.DefaultAtom;
+import fr.lirmm.graphik.graal.core.impl.DefaultNegativeConstraint;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.core.term.Variable;
@@ -409,7 +409,7 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 	public Iterable<? extends Object> visit(OWLAsymmetricObjectPropertyAxiom arg) {
 		InMemoryAtomSet atomset = arg.getProperty().accept(propertyVisitorXY);
 		atomset.addAll(arg.getProperty().accept(propertyVisitorYX));
-		return Collections.singleton(new NegativeConstraint(atomset));
+		return Collections.singleton(new DefaultNegativeConstraint(atomset));
 	}
 
 	@Override
@@ -427,7 +427,7 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 			OWLIrreflexiveObjectPropertyAxiom arg) {
 		InMemoryAtomSet body = arg.getProperty().accept(propertyVisiotrXX);
 
-		return Collections.singleton(new NegativeConstraint(body));
+		return Collections.singleton(new DefaultNegativeConstraint(body));
 	}
 
 	@Override
@@ -663,7 +663,7 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 		Term b = GraalUtils.createTerm(arg.getObject());
 		AtomSet atomset = arg.getProperty().accept(
 				new OWLPropertyExpressionVisitorImpl(a, b));
-		return Collections.singleton(new NegativeConstraint(atomset));
+		return Collections.singleton(new DefaultNegativeConstraint(atomset));
 	}
 
 	@Override
@@ -684,7 +684,7 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 		Term b = GraalUtils.createLiteral(arg.getObject());
 		AtomSet atomset = arg.getProperty().accept(
 				new OWLPropertyExpressionVisitorImpl(a, b));
-		return Collections.singleton(new NegativeConstraint(atomset));
+		return Collections.singleton(new DefaultNegativeConstraint(atomset));
 	}
 
 	@Override
@@ -733,7 +733,7 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 
 				Term t2 = GraalUtils.createTerm(individu2);
 				Atom a = new DefaultAtom(equalityPredicate, t1, t2);
-				c.add(new NegativeConstraint(Collections.<Atom> singleton(a)));
+				c.add(new DefaultNegativeConstraint(Collections.<Atom> singleton(a)));
 			}
 		}
 		return c;
@@ -850,7 +850,7 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 				a = GraalUtils.createAtomSet();
 				a.addAll(a1);
 				a.addAll(a2);
-				rules.add(new NegativeConstraint(a));
+				rules.add(new DefaultNegativeConstraint(a));
 			}
 		}
 		return rules;

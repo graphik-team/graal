@@ -15,8 +15,8 @@
  */
 package fr.lirmm.graphik.graal.homomorphism;
 
-import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.core.impl.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 
 /**

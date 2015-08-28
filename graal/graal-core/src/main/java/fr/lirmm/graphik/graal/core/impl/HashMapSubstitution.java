@@ -10,11 +10,12 @@
  *            Michel LECLÈRE
  *            Marie-Laure MUGNIER
  */
- package fr.lirmm.graphik.graal.core;
+ package fr.lirmm.graphik.graal.core.impl;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.term.Term;
 
 /**

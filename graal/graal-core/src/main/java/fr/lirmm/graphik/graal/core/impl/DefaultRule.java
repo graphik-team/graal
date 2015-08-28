@@ -13,7 +13,7 @@
  /**
  * 
  */
-package fr.lirmm.graphik.graal.core.factory;
+package fr.lirmm.graphik.graal.core.impl;
 
 import java.util.Collection;
 import java.util.Set;
@@ -30,7 +30,7 @@ import fr.lirmm.graphik.graal.core.term.Term.Type;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-class DefaultRule implements Rule {
+public class DefaultRule implements Rule {
 
 	private String label;
 	private final InMemoryAtomSet body;

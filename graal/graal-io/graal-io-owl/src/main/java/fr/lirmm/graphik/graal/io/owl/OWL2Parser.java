@@ -45,13 +45,13 @@ import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
-import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.graph.MemoryGraphAtomSet;
-import fr.lirmm.graphik.graal.core.factory.NegativeConstraint;
 import fr.lirmm.graphik.graal.core.factory.RuleFactory;
+import fr.lirmm.graphik.graal.core.impl.DefaultNegativeConstraint;
+import fr.lirmm.graphik.graal.core.impl.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.io.AbstractParser;
 import fr.lirmm.graphik.util.Prefix;
@@ -387,7 +387,7 @@ public class OWL2Parser extends AbstractParser<Object> {
 				return null;
 				// CONSTRAINTS
 			} else if (headIt.next().getPredicate().equals(Predicate.BOTTOM)) {
-				return new NegativeConstraint(body);
+				return new DefaultNegativeConstraint(body);
 				// ASSERTIONS
 			} else if (!bodyIt.hasNext()) {
 				return head;

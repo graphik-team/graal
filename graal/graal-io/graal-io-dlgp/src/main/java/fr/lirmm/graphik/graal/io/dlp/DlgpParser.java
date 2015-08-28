@@ -33,14 +33,14 @@ import fr.lirmm.graphik.dlgp2.parser.ParseException;
 import fr.lirmm.graphik.dlgp2.parser.TermFactory;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
-import fr.lirmm.graphik.graal.core.FreshVarSubstitution;
 import fr.lirmm.graphik.graal.core.KnowledgeBase;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.VariableGenerator;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
-import fr.lirmm.graphik.graal.core.factory.NegativeConstraint;
+import fr.lirmm.graphik.graal.core.impl.DefaultNegativeConstraint;
+import fr.lirmm.graphik.graal.core.impl.DefaultVariableGenerator;
+import fr.lirmm.graphik.graal.core.impl.FreshVarSubstitution;
 import fr.lirmm.graphik.graal.core.stream.filter.AtomFilterIterator;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.io.AbstractParser;
@@ -91,7 +91,7 @@ public final class DlgpParser extends AbstractParser<Object> {
 		}
 
 		@Override
-		protected void createNegConstraint(NegativeConstraint negativeConstraint) {
+		protected void createNegConstraint(DefaultNegativeConstraint negativeConstraint) {
 			this.set.write(negativeConstraint);
 		}
 
@@ -276,8 +276,8 @@ public final class DlgpParser extends AbstractParser<Object> {
 		return (Rule) new DlgpParser(s).next();
 	}
 	
-	public static NegativeConstraint parseNegativeConstraint(String s) {
-		return (NegativeConstraint) new DlgpParser(s).next();
+	public static DefaultNegativeConstraint parseNegativeConstraint(String s) {
+		return (DefaultNegativeConstraint) new DlgpParser(s).next();
 	}
 	
 	/**

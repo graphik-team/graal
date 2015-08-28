@@ -31,10 +31,10 @@ import org.semanticweb.owlapi.util.ShortFormProvider;
 
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.VariableGenerator;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.core.impl.DefaultAtom;
 import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.core.term.Variable;
 
