@@ -20,7 +20,7 @@ import java.io.IOException;
 import fr.lirmm.graphik.graal.core.Query;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
-import fr.lirmm.graphik.graal.core.atomset.graph.MemoryGraphAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
@@ -41,7 +41,7 @@ public class DefaultUseCaseExample {
 		
 		// /////////////////////////////////////////////////////////////////////
 		// create an atom set
-		InMemoryAtomSet atomSet = new MemoryGraphAtomSet();
+		InMemoryAtomSet atomSet = new DefaultInMemoryGraphAtomSet();
 
 		// add assertions into this atom set
 		atomSet.add(DlgpParser.parseAtom("p(a)."));

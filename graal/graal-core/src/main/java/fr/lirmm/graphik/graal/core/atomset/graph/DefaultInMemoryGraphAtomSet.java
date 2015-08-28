@@ -23,6 +23,7 @@ import fr.lirmm.graphik.graal.core.AtomComparator;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.TermValueComparator;
 import fr.lirmm.graphik.graal.core.atomset.AbstractInMemoryAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.stream.IteratorAtomReader;
 import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.core.term.Term.Type;
@@ -31,7 +32,7 @@ import fr.lirmm.graphik.util.MethodNotImplementedError;
 /**
  * Implementation of a graph in memory. Inherits directly from Fact.
  */
-public class MemoryGraphAtomSet extends AbstractInMemoryAtomSet {
+public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet implements GraphAtomSet, InMemoryAtomSet {
 
     private TreeSet<TermVertex> terms;
     private TreeSet<PredicateVertex> predicates;
@@ -41,7 +42,7 @@ public class MemoryGraphAtomSet extends AbstractInMemoryAtomSet {
     // CONSTRUCTORS
     // /////////////////////////////////////////////////////////////////////////
 
-    public MemoryGraphAtomSet() {
+    public DefaultInMemoryGraphAtomSet() {
         this.terms = new TreeSet<TermVertex>(new TermValueComparator());
         this.predicates = new TreeSet<PredicateVertex>();
         this.atoms = new TreeSet<AtomEdge>(new AtomComparator());
@@ -50,6 +51,18 @@ public class MemoryGraphAtomSet extends AbstractInMemoryAtomSet {
     // /////////////////////////////////////////////////////////////////////////
     // PUBLIC METHODS
     // /////////////////////////////////////////////////////////////////////////
+
+	@Override
+	public Iterator<AtomEdge> getAtoms(Predicate p) {
+		// TODO
+		throw new MethodNotImplementedError();
+	}
+
+	@Override
+	public Iterator<AtomEdge> getAtoms(Term t) {
+		// TODO
+		throw new MethodNotImplementedError();
+	}
 
     @Override
 	public Set<Predicate> getPredicates() {

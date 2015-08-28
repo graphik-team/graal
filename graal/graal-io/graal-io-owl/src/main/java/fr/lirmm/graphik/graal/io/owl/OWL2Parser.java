@@ -48,7 +48,7 @@ import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.atomset.graph.MemoryGraphAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.core.factory.RuleFactory;
 import fr.lirmm.graphik.graal.core.impl.DefaultNegativeConstraint;
 import fr.lirmm.graphik.graal.core.impl.TreeMapSubstitution;
@@ -434,7 +434,7 @@ public class OWL2Parser extends AbstractParser<Object> {
 	}
 
 	private static InMemoryAtomSet removeUselessTopInBody(InMemoryAtomSet atomset) {
-		InMemoryAtomSet newAtomset = new MemoryGraphAtomSet();
+		InMemoryAtomSet newAtomset = new DefaultInMemoryGraphAtomSet();
 		Iterator<Atom> it = atomset.iterator();
 		Atom a;
 		while (it.hasNext()) {

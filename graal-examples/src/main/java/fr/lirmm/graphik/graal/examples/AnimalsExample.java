@@ -25,7 +25,7 @@ import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.KnowledgeBase;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
-import fr.lirmm.graphik.graal.core.atomset.graph.MemoryGraphAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.core.impl.DefaultKnowledgeBase;
 import fr.lirmm.graphik.graal.core.impl.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
@@ -54,7 +54,7 @@ public class AnimalsExample {
 				"./src/main/resources/animals.dlp"));
 
 		KnowledgeBase kb = new DefaultKnowledgeBase(new LinkedListRuleSet(),
-				new MemoryGraphAtomSet());
+				new DefaultInMemoryGraphAtomSet());
 		kb.load(parser);
 
 		writer = new DlgpWriter();

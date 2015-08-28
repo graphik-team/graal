@@ -17,7 +17,7 @@ package fr.lirmm.graphik;
 
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.atomset.graph.MemoryGraphAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -30,7 +30,7 @@ public final class TestUtil {
 	
 	public static AtomSet[] writeableStore() {
 
-			return new AtomSet[] { new MemoryGraphAtomSet(),
+			return new AtomSet[] { new DefaultInMemoryGraphAtomSet(),
 				new LinkedListAtomSet() };
 
 	}
