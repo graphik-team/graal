@@ -10,9 +10,6 @@
  *            Michel LECLÈRE
  *            Marie-Laure MUGNIER
  */
- /**
- * 
- */
 package fr.lirmm.graphik.util;
 
 
@@ -25,11 +22,32 @@ import java.net.URISyntaxException;
 public final class URIUtils {
 	
 	public static final URI RDF_TYPE = URIUtils.createURI(Prefix.RDF, "type");
-	public static final URI XSD_STRING = URIUtils.createURI(Prefix.XSD,
-			"string");
-	public static final URI XSD_INTEGER = URIUtils.createURI(Prefix.XSD, "integer");
 
+	// PRIMITIVE XSD DATATYPES
+	public static final URI XSD_STRING = URIUtils.createURI(Prefix.XSD, "string");
+	public static final URI XSD_BOOLEAN = URIUtils.createURI(Prefix.XSD, "boolean");
+	public static final URI XSD_DECIMAL = URIUtils.createURI(Prefix.XSD, "decimal");
+	public static final URI XSD_FLOAT = URIUtils.createURI(Prefix.XSD, "float");
+	public static final URI XSD_DOUBLE = URIUtils.createURI(Prefix.XSD, "double");
+	public static final URI XSD_DURATION = URIUtils.createURI(Prefix.XSD, "duration");
+	public static final URI XSD_DATE_TIME = URIUtils.createURI(Prefix.XSD, "dateTime");
+	public static final URI XSD_TIME = URIUtils.createURI(Prefix.XSD, "time");
+	public static final URI XSD_DATE = URIUtils.createURI(Prefix.XSD, "date");
+	public static final URI XSD_G_YEAR_MONTH = URIUtils.createURI(Prefix.XSD, "gYearMonth");
+	public static final URI XSD_G_YEAR = URIUtils.createURI(Prefix.XSD, "gYear");
+	public static final URI XSD_G_MONTH_DAY = URIUtils.createURI(Prefix.XSD, "gMonthDay");
+	public static final URI XSD_G_DAY = URIUtils.createURI(Prefix.XSD, "gDay");
+	public static final URI XSD_G_MONTH = URIUtils.createURI(Prefix.XSD, "gMonth");
+	public static final URI XSD_HEX_BINARY = URIUtils.createURI(Prefix.XSD, "hexBinary");
+	public static final URI XSD_BASE64_BINARY = URIUtils.createURI(Prefix.XSD, "base64Binary");
+	public static final URI XSD_ANY_URI = URIUtils.createURI(Prefix.XSD, "anyURI");
+	public static final URI XSD_Q_NAME = URIUtils.createURI(Prefix.XSD, "QName");
+	public static final URI XSD_NOTATION = URIUtils.createURI(Prefix.XSD, "NOTATION");
 	
+	// /////////////////////////////////////////////////////////////////////////
+	//
+	// /////////////////////////////////////////////////////////////////////////
+
 	private URIUtils() {}
 
 	public static boolean isValidURI(String uriRef) {
