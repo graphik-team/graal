@@ -13,7 +13,6 @@ import fr.lirmm.graphik.graal.io.ParseException;
 import fr.lirmm.graphik.util.Iterators;
 import fr.lirmm.graphik.util.URIUtils;
 
-
 /**
  * 
  */
@@ -25,6 +24,7 @@ import fr.lirmm.graphik.util.URIUtils;
 public class SparqlTest {
 
 	private static final String PREFIX = "http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#";
+	private static final Predicate A = new Predicate(URIUtils.createURI(PREFIX + "A"), 1);
 	private static final Predicate P = new Predicate(URIUtils.createURI(PREFIX + "p"), 2);
 	private static final Predicate Q = new Predicate(URIUtils.createURI(PREFIX + "q"), 2);
 	private static final Constant TOTO = DefaultTermFactory.instance().createConstant(
@@ -98,29 +98,60 @@ public class SparqlTest {
 		Assert.assertEquals(2, nbTriple);
 	}
 
-	// @Test
-	// public void testStringLiteral() throws ParseException {
-	// String query =
-	// "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
-	// + "PREFIX : <"
-	// + PREFIX
-	// + ">"
-	// + "SELECT DISTINCT ?x ?y "
-	// + "WHERE"
-	// + "{"
-	// + "	?x :p \"toto\" ."
-	// + "}";
-	// ConjunctiveQuery cq = SparqlConjunctiveQueryParser.parse(query);
-	// Assert.assertEquals(2, cq.getAnswerVariables().size());
-	// int nbTriple = 0;
-	// for (Atom a : cq.getAtomSet()) {
-	// ++nbTriple;
-	// Assert.assertEquals(P, a.getPredicate());
-	// Assert.assertEquals(a.getTerm(1), STRING);
-	//
-	// }
-	// Assert.assertEquals(1, nbTriple);
-	// }
+	@Test
+	public void testRDFType() throws ParseException {
+		String query = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
+					   + "PREFIX : <"
+					   + PREFIX
+					   + ">"
+					   + "SELECT DISTINCT ?x ?y "
+					   + "WHERE"
+					   + "{"
+					   + "	?x a :A  ."
+					   + "}";
+		ConjunctiveQuery cq = SparqlConjunctiveQueryParser.parse(query);
+		for (Atom a : cq.getAtomSet()) {
+			Assert.assertEquals(A, a.getPredicate());
+		}
+	}
 
+	@Test
+	public void testStar() throws ParseException {
+		String query = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
+					   + "PREFIX : <"
+					   + PREFIX
+					   + ">"
+					   + "SELECT DISTINCT * "
+					   + "WHERE"
+					   + "{"
+					   + "	?0 :p ?1  ."
+					   + "	?1 :q ?2 "
+					   + "}";
+		ConjunctiveQuery cq = SparqlConjunctiveQueryParser.parse(query);
+		Assert.assertEquals(3, cq.getAnswerVariables().size());
+	}
+
+	@Test
+	public void testStringLiteral() throws ParseException {
+		String query = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
+					   + "PREFIX : <"
+					   + PREFIX
+					   + ">"
+					   + "SELECT DISTINCT ?x ?y "
+					   + "WHERE"
+					   + "{"
+					   + "	?x :p \"toto\" ."
+					   + "}";
+		ConjunctiveQuery cq = SparqlConjunctiveQueryParser.parse(query);
+		Assert.assertEquals(2, cq.getAnswerVariables().size());
+		int nbTriple = 0;
+		for (Atom a : cq.getAtomSet()) {
+			++nbTriple;
+			Assert.assertEquals(P, a.getPredicate());
+			Assert.assertEquals(STRING, a.getTerm(1));
+
+		}
+		Assert.assertEquals(1, nbTriple);
+	}
 
 }
