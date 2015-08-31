@@ -82,7 +82,7 @@ public class Unifier {
 		return s;
 	}
 
-	public static Substitution computeInitialAtomSetTermsSubstitution(AtomSet set) {
+	public static Substitution computeInitialAtomSetTermsSubstitution(InMemoryAtomSet set) {
 		Substitution s = new TreeMapSubstitution();
 
 		for (Term t2 : set.getTerms(Term.Type.VARIABLE)) {
@@ -98,8 +98,8 @@ public class Unifier {
 		Rule r1;
 		AtomSet atomset;
 
-		Substitution s1 = computeInitialRuleTermsSusbtitution(rule);
-		Substitution s2 = computeInitialAtomSetTermsSusbtitution(set);
+		Substitution s1 = Unifier.computeInitialRuleTermsSubstitution(rule);
+		Substitution s2 = Unifier.computeInitialAtomSetTermsSubstitution(set);
 
 		r1 = s1.createImageOf(rule);
 		atomset = s2.createImageOf(set);
