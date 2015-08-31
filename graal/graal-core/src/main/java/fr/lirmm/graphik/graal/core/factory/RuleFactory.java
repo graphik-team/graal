@@ -17,6 +17,7 @@ package fr.lirmm.graphik.graal.core.factory;
 
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.impl.DefaultRule;
 
 /**
@@ -41,6 +42,12 @@ public final class RuleFactory {
 
 	public Rule create(Iterable<Atom> body, Iterable<Atom> head) {
 		return new DefaultRule(body, head);
+	}
+
+	public Rule create(Atom body, Atom head) {
+		InMemoryAtomSet bodySet = AtomSetFactory.getInstance().createAtomSet(body);
+		InMemoryAtomSet headSet = AtomSetFactory.getInstance().createAtomSet(head);
+		return new DefaultRule(bodySet, headSet);
 	}
 
 	public Rule create(String label, Iterable<Atom> body, Iterable<Atom> head) {

@@ -46,4 +46,8 @@ public final class AtomSetFactory {
 		}
 		return atomset;
 	}
+
+	public InMemoryAtomSet createAtomSet(Atom atom) {
+		return new LinkedListAtomSet(atom);
+	}
 }
