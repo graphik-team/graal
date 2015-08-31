@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
+import fr.lirmm.graphik.graal.core.Unifier;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.impl.HashMapSubstitution;
@@ -74,7 +75,8 @@ public class ChaseWithGRDAndUnfiers extends AbstractChase {
 			if(pair != null) {
 				unificator = pair.getRight();
 				rule = pair.getLeft();
-				unifiedRule = unificator.createImageOf(pair.getLeft());
+				unifiedRule = Unifier.computeInitialAtomSetTermsSubstitution(rule.getBody()).createImageOf(rule);
+				unifiedRule = unificator.createImageOf(unifiedRule);
 				
 				if(LOGGER.isDebugEnabled()) {
 					LOGGER.debug("Execute rule: " + rule + " with unificator " + unificator);
