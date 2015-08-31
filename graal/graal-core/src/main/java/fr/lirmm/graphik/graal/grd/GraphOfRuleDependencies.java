@@ -145,8 +145,6 @@ public class GraphOfRuleDependencies {
 	 * @param ruleset
 	 * @return
 	 */
-	// TODO refactoring: return type has changed!
-	// (from GRDWithUnifiers to GRD)
 	public GraphOfRuleDependencies getSubGraph(Iterable<Rule> ruleSet) {
 		GraphOfRuleDependencies subGRD = new GraphOfRuleDependencies();
 		subGRD.addRuleSet(ruleSet);
