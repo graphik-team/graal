@@ -25,7 +25,7 @@ import fr.lirmm.graphik.graal.core.NegativeConstraint;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
-import fr.lirmm.graphik.graal.core.atomset.graph.MemoryGraphAtomSet;
+import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
@@ -47,7 +47,7 @@ public class DLPProgram {
 		if(args.length > 0)
 			 parser = new DlgpParser(new File(args[0]));
 		
-		InMemoryAtomSet atomSet = new MemoryGraphAtomSet();
+		InMemoryAtomSet atomSet = AtomSetFactory.getInstance().createAtomSet();
 		RuleSet ruleSet = new LinkedListRuleSet();
 		LinkedList<ConjunctiveQuery> querySet = new LinkedList<ConjunctiveQuery>();
 		
