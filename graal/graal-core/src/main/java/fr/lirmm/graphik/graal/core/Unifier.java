@@ -54,10 +54,6 @@ public class Unifier {
 	// /////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * FIXME possible conflict on variable name: the main problem is provide by
-	 * the computation of pieces unifiers between the same rule. The question is
-	 * how store them. {X -> X} is ambiguous.
-	 * 
 	 * @param rule
 	 * @param atomset
 	 * @return
