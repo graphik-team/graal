@@ -56,8 +56,14 @@ public class GraphOfRuleDependencies {
 
 		protected abstract boolean isValidDependency(Rule r1, Rule r2, Substitution s);
 
-		public final void setRule1(Rule r1) { this.rule1 = r1; }
-		public final void setRule2(Rule r2) { this.rule2 = r2; }
+		public final void setRule1(Rule r1) { 
+			Substitution s = Unifier.computeInitialRuleTermsSubstitution(r1);
+			this.rule1 = s.createImageOf(r1); 
+		}
+		public final void setRule2(Rule r2) { 
+			Substitution s = Unifier.computeInitialAtomSetTermsSubstitution(r2.getBody());
+			this.rule2 = s.createImageOf(r2); 
+		}
 
 		private Rule rule1;
 		private Rule rule2;
@@ -145,8 +151,6 @@ public class GraphOfRuleDependencies {
 	 * @param ruleset
 	 * @return
 	 */
-	// TODO refactoring: return type has changed!
-	// (from GRDWithUnifiers to GRD)
 	public GraphOfRuleDependencies getSubGraph(Iterable<Rule> ruleSet) {
 		GraphOfRuleDependencies subGRD = new GraphOfRuleDependencies();
 		subGRD.addRuleSet(ruleSet);

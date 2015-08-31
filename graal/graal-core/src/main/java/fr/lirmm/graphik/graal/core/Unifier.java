@@ -54,43 +54,48 @@ public class Unifier {
 	// /////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * FIXME possible conflict on variable name: the main problem is provide by
-	 * the computation of pieces unifiers between the same rule. The question is
-	 * how store them. {X -> X} is ambiguous.
-	 * 
 	 * @param rule
 	 * @param atomset
 	 * @return
 	 */
-	public Set<Substitution> computePieceUnifier(Rule rule,
-			InMemoryAtomSet atomset) {
-		return computePieceUnifier(rule,atomset,new Filter<Substitution>() { @Override
-		public boolean filter(Substitution s) { return true; } } );
+	public Set<Substitution> computePieceUnifier(Rule rule, InMemoryAtomSet atomset) {
+		return computePieceUnifier(rule,atomset,new Filter<Substitution>() { 
+			@Override
+			public boolean filter(Substitution s) { return true; } 
+		} );
 	}
 
-	public Set<Substitution> computePieceUnifier(Rule rule,
-			InMemoryAtomSet set, Filter<Substitution> filter) {
-		// FIXME
-
-		Rule r1;
-		AtomSet atomset;
-
-		Substitution s1 = new TreeMapSubstitution();
-		Substitution s2 = new TreeMapSubstitution();
+	public static Substitution computeInitialRuleTermsSubstitution(Rule rule) {
+		Substitution s = new TreeMapSubstitution();
 
 		for (Term t1 : rule.getTerms(Term.Type.VARIABLE)) {
 			Term t1b = DefaultTermFactory.instance().createVariable(
 					"D::"
 					+ t1.getIdentifier().toString());
-			s1.put(t1, t1b);
+			s.put(t1, t1b);
 		}
+
+		return s;
+	}
+
+	public static Substitution computeInitialAtomSetTermsSubstitution(InMemoryAtomSet set) {
+		Substitution s = new TreeMapSubstitution();
 
 		for (Term t2 : set.getTerms(Term.Type.VARIABLE)) {
 			Term t2b = DefaultTermFactory.instance().createVariable(
 					"R::" + t2.getIdentifier().toString());
-			s1.put(t2, t2b);
+			s.put(t2, t2b);
 		}
 
+		return s;
+	}
+
+	public Set<Substitution> computePieceUnifier(Rule rule, InMemoryAtomSet set, Filter<Substitution> filter) {
+		Rule r1;
+		AtomSet atomset;
+
+		Substitution s1 = Unifier.computeInitialRuleTermsSubstitution(rule);
+		Substitution s2 = Unifier.computeInitialAtomSetTermsSubstitution(set);
 
 		r1 = s1.createImageOf(rule);
 		atomset = s2.createImageOf(set);
