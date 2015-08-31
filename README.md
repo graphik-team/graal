@@ -1,6 +1,6 @@
-=========
-= GRAAL =
-=========
+# Graal
+
+[See Graal homepage](https://graphik-team.github.io/graal)
 
 ## How to build graal? ##
 
@@ -14,6 +14,7 @@ mvn validate
 
 mvn package
 
+
 ## How to generate Javadoc ##
 
 mvn javadoc:javadoc
@@ -26,12 +27,6 @@ mvn javadoc:aggregate
 mvn pmd:check
 
 mvn findbugs:check
-
-
-## How to generate the executable jar of graal-apps? ##
-
-mvn compile assembly:single
-
 
 
 ## How to build graal when you don't want to get all stuff maven brings?
