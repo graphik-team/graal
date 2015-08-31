@@ -62,35 +62,44 @@ public class Unifier {
 	 * @param atomset
 	 * @return
 	 */
-	public Set<Substitution> computePieceUnifier(Rule rule,
-			InMemoryAtomSet atomset) {
-		return computePieceUnifier(rule,atomset,new Filter<Substitution>() { @Override
-		public boolean filter(Substitution s) { return true; } } );
+	public Set<Substitution> computePieceUnifier(Rule rule, InMemoryAtomSet atomset) {
+		return computePieceUnifier(rule,atomset,new Filter<Substitution>() { 
+			@Override
+			public boolean filter(Substitution s) { return true; } 
+		} );
 	}
 
-	public Set<Substitution> computePieceUnifier(Rule rule,
-			InMemoryAtomSet set, Filter<Substitution> filter) {
-		// FIXME
-
-		Rule r1;
-		AtomSet atomset;
-
-		Substitution s1 = new TreeMapSubstitution();
-		Substitution s2 = new TreeMapSubstitution();
+	public static Substitution computeInitialRuleTermsSubstitution(Rule rule) {
+		Substitution s = new TreeMapSubstitution();
 
 		for (Term t1 : rule.getTerms(Term.Type.VARIABLE)) {
 			Term t1b = DefaultTermFactory.instance().createVariable(
 					"D::"
 					+ t1.getIdentifier().toString());
-			s1.put(t1, t1b);
+			s.put(t1, t1b);
 		}
+
+		return s;
+	}
+
+	public static Substitution computeInitialAtomSetTermsSubstitution(AtomSet set) {
+		Substitution s = new TreeMapSubstitution();
 
 		for (Term t2 : set.getTerms(Term.Type.VARIABLE)) {
 			Term t2b = DefaultTermFactory.instance().createVariable(
 					"R::" + t2.getIdentifier().toString());
-			s1.put(t2, t2b);
+			s.put(t2, t2b);
 		}
 
+		return s;
+	}
+
+	public Set<Substitution> computePieceUnifier(Rule rule, InMemoryAtomSet set, Filter<Substitution> filter) {
+		Rule r1;
+		AtomSet atomset;
+
+		Substitution s1 = computeInitialRuleTermsSusbtitution(rule);
+		Substitution s2 = computeInitialAtomSetTermsSusbtitution(set);
 
 		r1 = s1.createImageOf(rule);
 		atomset = s2.createImageOf(set);
