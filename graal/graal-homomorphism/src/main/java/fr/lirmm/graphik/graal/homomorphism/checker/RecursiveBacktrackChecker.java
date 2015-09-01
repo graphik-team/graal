@@ -58,7 +58,7 @@ public class RecursiveBacktrackChecker extends AbstractChecker {
 	
 	@Override
 	public RecursiveBacktrackHomomorphism getSolver() {
-		return RecursiveBacktrackHomomorphism.getInstance();
+		return RecursiveBacktrackHomomorphism.instance();
 	}
 	
 	@Override

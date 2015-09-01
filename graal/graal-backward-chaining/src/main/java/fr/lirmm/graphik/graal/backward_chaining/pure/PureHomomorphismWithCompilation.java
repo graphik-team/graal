@@ -68,7 +68,7 @@ class PureHomomorphismWithCompilation extends PureHomomorphism {
 		super();
 	}
 
-	public static synchronized PureHomomorphismWithCompilation getInstance() {
+	public static synchronized PureHomomorphismWithCompilation instance() {
 		if (instance == null)
 			instance = new PureHomomorphismWithCompilation();
 

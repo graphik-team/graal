@@ -78,7 +78,7 @@ public final class AtomSetUtils {
 
 
 	public static InMemoryAtomSet minus(InMemoryAtomSet a1, InMemoryAtomSet a2) {
-		InMemoryAtomSet atomset = AtomSetFactory.getInstance().createAtomSet();
+		InMemoryAtomSet atomset = AtomSetFactory.instance().createAtomSet();
 		for (Atom a : a1) {
 			if (!a2.contains(a)) {
 				atomset.add(a);
@@ -102,7 +102,7 @@ public final class AtomSetUtils {
 	}
 	
 	public static InMemoryAtomSet union(AtomSet a1, AtomSet a2) {
-		InMemoryAtomSet atomset = AtomSetFactory.getInstance().createAtomSet();
+		InMemoryAtomSet atomset = AtomSetFactory.instance().createAtomSet();
 		for (Atom a : a1) {
 			atomset.add(new DefaultAtom(a));
 		}

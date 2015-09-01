@@ -64,7 +64,7 @@ public class DefaultUnionConjunctiveQueriesChecker extends AbstractChecker {
 
 	@Override
 	public Homomorphism<? extends Query, ? extends AtomSet> getSolver() {
-		 return DefaultUnionConjunctiveQueriesHomomorphism.getInstance();
+		 return DefaultUnionConjunctiveQueriesHomomorphism.instance();
 	}
 
 	@Override

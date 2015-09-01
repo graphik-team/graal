@@ -64,7 +64,7 @@ public class SqlHomomorphismChecker extends AbstractChecker {
 
 	@Override
 	public SqlHomomorphism getSolver() {
-         return SqlHomomorphism.getInstance();
+         return SqlHomomorphism.instance();
 	}
 
 	@Override

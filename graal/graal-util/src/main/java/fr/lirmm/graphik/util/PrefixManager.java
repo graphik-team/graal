@@ -71,7 +71,7 @@ public final class PrefixManager implements Iterable<Prefix> {
 		super();
 	}
 
-	public static PrefixManager getInstance() {
+	public static PrefixManager instance() {
 		return INSTANCE;
 	}
 	

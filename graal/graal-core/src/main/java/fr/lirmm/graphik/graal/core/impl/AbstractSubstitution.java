@@ -114,7 +114,7 @@ public abstract class AbstractSubstitution implements Substitution {
 
 	@Override
 	public InMemoryAtomSet createImageOf(AtomSet src) {
-		InMemoryAtomSet dest = AtomSetFactory.getInstance().createAtomSet();
+		InMemoryAtomSet dest = AtomSetFactory.instance().createAtomSet();
 		this.apply(src, dest);
 		return dest;
 	}

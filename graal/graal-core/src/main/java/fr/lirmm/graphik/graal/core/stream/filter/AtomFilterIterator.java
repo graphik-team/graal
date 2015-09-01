@@ -61,7 +61,7 @@ public class AtomFilterIterator extends FilterIterator<Object, Atom> {
 	 * @param filter
 	 */
 	public AtomFilterIterator(Iterator<Object> it) {
-		super(it, AtomFilter.getInstance());
+		super(it, AtomFilter.instance());
 	}
 
 }

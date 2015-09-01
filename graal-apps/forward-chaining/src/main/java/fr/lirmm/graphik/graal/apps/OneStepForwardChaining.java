@@ -125,7 +125,7 @@ public class OneStepForwardChaining {
 		}
 			
 		RuleApplier<Rule, RdbmsStore> applier = new SQLRuleApplier<RdbmsStore>(
-				SqlHomomorphism.getInstance());
+				SqlHomomorphism.instance());
 		chase = new NaiveChase(rules, atomSet, applier);
 
 		chase.enableVerbose(true);

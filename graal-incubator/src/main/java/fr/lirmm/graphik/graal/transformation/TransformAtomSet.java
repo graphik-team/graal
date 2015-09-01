@@ -65,7 +65,7 @@ public class TransformAtomSet extends AbstractAtomSet implements AtomSet {
 	private AAtomTransformator transformator;
 
 	static {
-		DefaultHomomorphismFactory.getInstance().addChecker(
+		DefaultHomomorphismFactory.instance().addChecker(
 				new TransformatorSolverChecker());
 	}
 

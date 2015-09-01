@@ -116,7 +116,7 @@ class DefaultRdbmsIterator implements Iterator<Atom> {
 				
 				ConjunctiveQuery query = ConjunctiveQueryFactory.instance().create(atomSet);
 				
-				SqlHomomorphism solver = SqlHomomorphism.getInstance();
+				SqlHomomorphism solver = SqlHomomorphism.instance();
 				try {
 					this.atomReader = new SubstitutionReader2AtomReader(atom, solver.execute(query, this.store));
 				} catch (HomomorphismException e) {

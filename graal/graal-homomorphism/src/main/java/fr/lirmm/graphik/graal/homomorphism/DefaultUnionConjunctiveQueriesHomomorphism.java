@@ -64,7 +64,7 @@ public final class DefaultUnionConjunctiveQueriesHomomorphism implements UnionCo
     private DefaultUnionConjunctiveQueriesHomomorphism() {
     }
     
-    public static synchronized DefaultUnionConjunctiveQueriesHomomorphism getInstance() {
+    public static synchronized DefaultUnionConjunctiveQueriesHomomorphism instance() {
     	if(instance == null)
     		instance = new DefaultUnionConjunctiveQueriesHomomorphism();
     	

@@ -69,7 +69,7 @@ public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 
 	public DefaultConjunctiveQuery() {
 		this.label = "";
-		this.atomSet = AtomSetFactory.getInstance().createAtomSet();
+		this.atomSet = AtomSetFactory.instance().createAtomSet();
 		this.responseVariables = new LinkedList<Term>();
 	}
 

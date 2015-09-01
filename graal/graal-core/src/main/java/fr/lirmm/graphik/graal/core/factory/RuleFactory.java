@@ -75,8 +75,8 @@ public final class RuleFactory {
 	}
 
 	public Rule create(Atom body, Atom head) {
-		InMemoryAtomSet bodySet = AtomSetFactory.getInstance().createAtomSet(body);
-		InMemoryAtomSet headSet = AtomSetFactory.getInstance().createAtomSet(head);
+		InMemoryAtomSet bodySet = AtomSetFactory.instance().createAtomSet(body);
+		InMemoryAtomSet headSet = AtomSetFactory.instance().createAtomSet(head);
 		return new DefaultRule(bodySet, headSet);
 	}
 

@@ -93,7 +93,7 @@ public class WriterExample {
 		// w = new RuleMLWriter(new File("/tmp/test.ruleml"));
 		w = new DlgpWriter();
 
-		for (Prefix p : PrefixManager.getInstance()) {
+		for (Prefix p : PrefixManager.instance()) {
 			w.write(p);
 		}
 		w.writeComment("facts");
@@ -108,7 +108,7 @@ public class WriterExample {
 
 		w = new Dlgp1Writer();
 
-		for (Prefix p : PrefixManager.getInstance()) {
+		for (Prefix p : PrefixManager.instance()) {
 			w.write(p);
 		}
 		w.writeComment("facts");
@@ -122,7 +122,7 @@ public class WriterExample {
 		System.out.println("##########################");
 
 		ConjunctiveQueryWriter qw = new SparqlConjunctiveQueryWriter();
-		for (Prefix p : PrefixManager.getInstance()) {
+		for (Prefix p : PrefixManager.instance()) {
 			qw.write(p);
 		}
 		for (ConjunctiveQuery cq : queries)
