@@ -41,6 +41,7 @@
 		<module>graal-examples</module>
 		<module>graal-distro</module>
                 <module>graal-bench</module>
+                <module>graal-incubator</module>
 	</modules>
 
 	<build>

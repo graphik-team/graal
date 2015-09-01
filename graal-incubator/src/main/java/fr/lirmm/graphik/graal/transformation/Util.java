@@ -40,63 +40,44 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
+ package fr.lirmm.graphik.graal.transformation;
 
-import org.junit.Assert;
-import org.junit.Test;
+import java.util.LinkedList;
+import java.util.List;
 
-import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.io.ParseException;
-import fr.lirmm.graphik.graal.io.oxford.OxfordQueryParser;
+import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.core.Predicate;
+import fr.lirmm.graphik.graal.core.VariableGenerator;
+import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.core.impl.DefaultAtom;
+import fr.lirmm.graphik.graal.core.term.Term;
 
-/**
- * @author Clément Sipieter (INRIA) <clement@6pi.fr>
- * 
- */
-public class OxfordQueryFormatTest {
+public abstract class Util {
 
-	@Test
-	public void testNoParseException() {
-		ConjunctiveQuery cquery;
-		try {
-			cquery = OxfordQueryParser
-					.parseQuery("Q(?0,?1,?2) <- FinantialInstrument(?0), belongsToCompany(constant,?19), Company(?1)");
-			Assert.assertNotNull("Returned query is null.", cquery);
-			Assert.assertEquals("Wrong number of answered variables", 3, cquery
-					.getAnswerVariables().size());
-		} catch (ParseException e) {
-			Assert.assertFalse("Parse error:" + e, true);
+	/**
+	 * Transform 
+	 * (reification)
+	 * @param a
+	 * @param freeVarGen 
+	 * @param id
+	 * @return
+	 */
+	public static InMemoryAtomSet reification(Atom a, VariableGenerator freeVarGen) {
+		InMemoryAtomSet atomSet = new LinkedListAtomSet();
+		
+		String predicatLabel = a.getPredicate().getIdentifier().toString();
+		Term termId = freeVarGen.getFreshVar();
+		List<Term> terms; 
+		
+		for(Integer i = 0; i < a.getPredicate().getArity(); ++i) {
+			terms = new LinkedList<Term>();
+			terms.add(termId);
+			terms.add(a.getTerm(i));
+			atomSet.add(new DefaultAtom( new Predicate(predicatLabel + "#" + i.toString(), 2), terms));
 		}
+			
+		
+		return atomSet;
 	}
-
-	@Test
-	public void testNoParseExceptionOnComplicatedQuery() {
-		ConjunctiveQuery cquery;
-		try {
-			cquery = OxfordQueryParser
-					.parseQuery(" Q(	?0,	?1,? 2		) <- Fin  a-ntial_Inst  rument (?	0   )   , bel1ongs0ToCompany    ( constant   , ?1	9	), Comp3			any(?1)");
-			Assert.assertNotNull("Returned query is null.", cquery);
-			Assert.assertEquals("Wrong number of answered variables", 3, cquery
-					.getAnswerVariables().size());
-		} catch (ParseException e) {
-			Assert.assertFalse("Parse error:" + e, true);
-		}
-	}
-
-	@Test
-	public void testQuery() {
-		ConjunctiveQuery cquery;
-		try {
-			cquery = OxfordQueryParser
-					.parseQuery("Q(?0) <- FinantialInstrument(?0), belongsToCompany(?0,?1), Company(?1)");
-			Assert.assertNotNull("Returned query is null.", cquery);
-			Assert.assertEquals("Wrong number of answered variables", 1, cquery
-					.getAnswerVariables().size());
-		} catch (ParseException e) {
-			Assert.assertFalse("Parse error:" + e, true);
-		}
-	}
-
 }
