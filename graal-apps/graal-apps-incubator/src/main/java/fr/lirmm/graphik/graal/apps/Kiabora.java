@@ -1,0 +1,280 @@
+package fr.lirmm.graphik.graal.apps;
+
+import java.util.List;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.io.FileInputStream;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
+
+import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.rulesetanalyser.Analyser;
+import fr.lirmm.graphik.graal.rulesetanalyser.RuleSetPropertyHierarchy;
+import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.*;
+import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
+
+public class Kiabora {
+
+	public static final String PROGRAM_NAME = "kiabora";
+	public static final Map<String,RuleSetProperty> propertyMap =
+		new TreeMap<String,RuleSetProperty>();
+
+	public static void main(String args[]) {
+		Kiabora options = new Kiabora();
+
+		JCommander commander = new JCommander(options,args);
+
+		if (options.help) {
+			commander.usage();
+			System.exit(0);
+		}
+
+		initPropertyMap();
+
+		// init parser
+		DlgpParser parser = null;
+		List<Rule> rules = new LinkedList<Rule>();
+
+		if (options.input_filepath.equals("-"))
+			parser = new DlgpParser(System.in);
+		else {
+			try { parser = new DlgpParser(new FileInputStream(options.input_filepath)); }
+			catch (Exception e) {
+				System.err.println("Could not open file: " + options.input_filepath);
+				System.err.println(e);
+				e.printStackTrace();
+				System.exit(1);
+			}
+		}
+
+		// parse rule set
+		while (parser.hasNext()) {
+			Object o = parser.next();
+			if (o instanceof Rule)
+				rules.add((Rule)o);
+			else
+				System.err.println("[WARNING] Ignoring non rule: " + o);
+		}
+
+		AnalyserRuleSet ruleset = new AnalyserRuleSet(rules);
+
+		// set up analyser
+		Map<String,RuleSetProperty> properties = new TreeMap<String,RuleSetProperty>();
+		for (String label : options.ruleset_properties) {
+			System.out.println("Adding label = '" + label + "'");
+			if (label.equals("*"))
+				properties.putAll(propertyMap);
+			else {
+				System.out.println(propertyMap.get(label));
+				if (propertyMap.get(label) != null)
+					properties.put(label,propertyMap.get(label));
+				else
+					System.err.println("[WARNING] Requesting unknown property: " + label);
+			}
+		}
+		RuleSetPropertyHierarchy hierarchy = new RuleSetPropertyHierarchy(properties.values());
+
+		Analyser analyser = new Analyser();
+		analyser.setProperties(hierarchy);
+		analyser.setRuleSet(ruleset);
+
+
+		if (options.print_ruleset) {
+			System.out.println("====== RULE SET ======");
+			printRuleSet(ruleset);
+			System.out.println("======================");
+			System.out.println("");
+		}
+
+		if (options.print_grd) {
+			System.out.println("======== GRD =========");
+			printGRD(ruleset);
+			System.out.println("======================");
+			System.out.println("");
+		}
+
+		if (options.print_scc) {
+			System.out.println("======== SCC =========");
+			printSCC(ruleset);
+			System.out.println("======================");
+			System.out.println("");
+		}
+
+		if (options.print_sccg) {
+			System.out.println("===== SCC GRAPH ======");
+			printSCCGraph(ruleset);
+			System.out.println("======================");
+			System.out.println("");
+		}
+
+		if (options.print_scc_pties) {
+			System.out.println("=== SCC PROPERTIES ===");
+			printSCCProperties(analyser);
+			System.out.println("======================");
+			System.out.println("");
+		}
+
+		if (options.print_pties) {
+			System.out.println("===== PROPERTIES =====");
+			printProperties(analyser);
+			System.out.println("======================");
+			System.out.println("");
+		}
+
+		if (options.combine_fes) {
+			System.out.println("=== COMBINE (FES) ====");
+			printCombineFES(analyser);
+			System.out.println("======================");
+			System.out.println("");
+		}
+
+		if (options.combine_fus) {
+			System.out.println("=== COMBINE (FUS) ====");
+			printCombineFUS(analyser);
+			System.out.println("======================");
+			System.out.println("");
+		}
+
+	}
+
+	public static void printRuleSet(AnalyserRuleSet ruleset) {
+		for (Rule r : ruleset) {
+			System.out.print(DlgpWriter.writeToString(r));
+		}
+	}
+
+	public static void printGRD(AnalyserRuleSet ruleset) {
+		System.out.println("TODO");
+	}
+
+	public static void printSCC(AnalyserRuleSet ruleset) {
+		System.out.println("TODO");
+	}
+
+	public static void printSCCGraph(AnalyserRuleSet ruleset) {
+		System.out.println("TODO");
+	}
+
+	public static void printProperties(Analyser analyser) {
+		int cell_size = 7;
+		StringBuilder out = new StringBuilder();
+		Map<String, Integer> pties = analyser.ruleSetProperties();
+
+		out.append("+");
+		out.append(StringUtils.center("", (cell_size+1)*pties.entrySet().size()-1, '-'));
+		out.append("+");
+		out.append("\n");
+		for (Map.Entry<String, Integer> e : pties.entrySet()) {
+			out.append("|");
+			if (e.getValue() == 0) 
+				out.append(StringUtils.center("?", cell_size));
+			else if (e.getValue() < 0)
+				out.append(StringUtils.center(" ", cell_size));
+			else
+				out.append(StringUtils.center("X", cell_size));
+		}
+		out.append("|\n");
+		out.append("+");
+		out.append(StringUtils.center("", (cell_size+1)*pties.entrySet().size()-1, '-'));
+		out.append("+\n");
+		for (Map.Entry<String, Integer> e : pties.entrySet()) {
+			out.append("|");
+			out.append(StringUtils.center(e.getKey(), cell_size));
+		}
+		out.append("|\n");
+		out.append("+");
+		out.append(StringUtils.center("", (cell_size+1)*pties.entrySet().size()-1, '-'));
+		out.append("+");
+		System.out.println(out);
+	}
+
+	public static void printSCCProperties(Analyser analyser) {
+		System.out.println("TODO");
+	}
+
+	public static void printCombineFES(Analyser analyser) {
+		System.out.println("TODO");
+	}
+
+	public static void printCombineFUS(Analyser analyser) {
+		System.out.println("TODO");
+	}
+
+	public static void initPropertyMap() {
+		propertyMap.put("agrd", AGRDProperty.instance());
+		propertyMap.put("bts",  BTSProperty.instance());
+		propertyMap.put("disc", DisconnectedProperty.instance());
+		propertyMap.put("dr",   DomainRestrictedProperty.instance());
+		propertyMap.put("fes",  FESProperty.instance());
+		propertyMap.put("fg",   FrontierGuardedProperty.instance());
+		propertyMap.put("fr1",  FrontierOneProperty.instance());
+		propertyMap.put("fus",  FUSProperty.instance());
+		propertyMap.put("gbts", GBTSProperty.instance());
+		propertyMap.put("lin",  LinearProperty.instance());
+		propertyMap.put("rr",   RangeRestrictedProperty.instance());
+		propertyMap.put("s",    StickyProperty.instance());
+		propertyMap.put("wa",   WeaklyAcyclicProperty.instance());
+		propertyMap.put("wfg",  WeaklyFrontierGuardedSetProperty.instance());
+		propertyMap.put("wg",   WeaklyGuardedSetProperty.instance());
+		propertyMap.put("ws",   WeaklyStickyProperty.instance());
+	}
+
+	@Parameter(names = { "-f", "--input-file" },
+	           description = "Rule set input file (use '-' for stdin).")
+	private String input_filepath = "-";
+
+	@Parameter(names = { "-p", "--properties" },
+	           description = "Select which properties must be checked (use '*' to select all).",
+	           variableArity = true)
+	private List<String> ruleset_properties = new LinkedList<String>();
+
+	@Parameter(names = { "-g", "--grd" },
+	           description = "Print the Graph of Rule Dependencies.")
+	private boolean print_grd = false;
+
+	@Parameter(names = { "-s", "--scc" },
+	           description = "Print the GRD Strongly Connected Components.")
+	private boolean print_scc = false;
+
+	@Parameter(names = { "-G", "--scc-graph" },
+	           description = "Print the graph of the GRD Strongly Connected Components.")
+	private boolean print_sccg = false;
+
+	@Parameter(names = { "-r", "--rule-set" },
+	           description = "Print the rule set (can be usefull if some rules were not labelled in the input file).")
+	private boolean print_ruleset = false;
+
+	@Parameter(names = { "-S", "--scc-properties" },
+	           description = "Print properties for each GRD SCC.")
+	private boolean print_scc_pties = false;
+
+	@Parameter(names = { "-R", "--ruleset-properties" },
+	           description = "Print properties for the whole rule set.")
+	private boolean print_pties = false;
+
+	@Parameter(names = { "-c", "--combine-fes" },
+	           description = "Combine GRD connected components in attempt to find some decidable combination while maximising the forward chaining (chase).")
+	private boolean combine_fes = false;
+
+	@Parameter(names = { "-b", "--combine-fus" },
+	           description = "Combine GRD connected components in attempt to find some decidable combination while maximising the backward chaining (query reformulation).")
+	private boolean combine_fus = false;
+
+	@Parameter(names = { "-u", "--fast-unification" },
+	           description = "Enable a faster unification, Kiabora may detect dependencies where there is none.")
+	private boolean fast_unification = false;
+
+	@Parameter(names = { "-h", "--help" },
+	           description = "Print this message.")
+	private boolean help = false;
+
+};
+
