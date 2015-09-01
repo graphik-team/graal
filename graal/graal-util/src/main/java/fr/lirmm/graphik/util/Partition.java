@@ -198,6 +198,17 @@ public class Partition<E> implements Iterable<ArrayList<E>> {
 	public String toString() {
 		return partition.toString();
 	}
+	
+	@Override
+	public int hashCode() {
+		int hashCode = 0;
+		for (ArrayList<E> list : this) {
+			for (E e : list) {
+				hashCode = 31 * hashCode + e.hashCode();
+			}
+		}
+		return hashCode * 31 + this.partition.size();
+	}
 
 	@Override
 	public boolean equals(Object obj) {

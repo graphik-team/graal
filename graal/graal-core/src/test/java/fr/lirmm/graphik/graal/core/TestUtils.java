@@ -57,9 +57,9 @@ import fr.lirmm.graphik.graal.core.term.Term;
  */
 public final class TestUtils {
 
-	public static Predicate p = new Predicate("p", 2);
-	public static Predicate q = new Predicate("q", 1);
-	public static Predicate r = new Predicate("r", 1);
+	public static final Predicate p = new Predicate("p", 2);
+	public static final Predicate q = new Predicate("q", 1);
+	public static final Predicate r = new Predicate("r", 1);
 
 	public static final Term X = DefaultTermFactory.instance().createVariable("X");
 	public static final Term Y = DefaultTermFactory.instance().createVariable("Y");
@@ -71,8 +71,8 @@ public final class TestUtils {
 	public static final Term A = DefaultTermFactory.instance().createConstant("a");
 	public static final Term B = DefaultTermFactory.instance().createConstant("b");
 
-	public static Atom pXY, pYZ, pUV, pVW, pAU, pXA, pXB;
-	public static Atom qX, rX;
+	public static final Atom pXY, pYZ, pUV, pVW, pAU, pXA, pXB;
+	public static final Atom qX, rX;
 
 	static {
 		Term[] terms = new Term[2];

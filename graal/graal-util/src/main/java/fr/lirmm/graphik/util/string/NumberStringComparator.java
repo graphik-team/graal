@@ -45,13 +45,16 @@
  */
 package fr.lirmm.graphik.util.string;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
  * find on {@literal http://stackoverflow.com/questions/7270447/java-string-number-comparator}
  */
-public class NumberStringComparator implements Comparator<String> {
+public class NumberStringComparator implements Comparator<String>, Serializable {
 	
+	private static final long serialVersionUID = -775069701717974426L;
+
 	@Override
 	public int compare(String a, String b) {
 	    int la = a.length();

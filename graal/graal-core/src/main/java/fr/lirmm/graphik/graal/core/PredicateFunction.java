@@ -42,6 +42,8 @@
  */
  package fr.lirmm.graphik.graal.core;
 
+import java.io.Serializable;
+
 import fr.lirmm.graphik.graal.core.term.Term;
 
 /**
@@ -50,7 +52,7 @@ import fr.lirmm.graphik.graal.core.term.Term;
  * @author Swan Rocher {@literal <swan.rocher@lirmm.fr>}
  *
  */
-public interface PredicateFunction {
+public interface PredicateFunction extends Serializable {
 
 	public boolean evaluate(Term... t);
 

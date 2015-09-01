@@ -45,6 +45,7 @@
  */
 package fr.lirmm.graphik.graal.core;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 import fr.lirmm.graphik.util.string.NumberStringComparator;
@@ -53,8 +54,9 @@ import fr.lirmm.graphik.util.string.NumberStringComparator;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */
-public class LabelRuleComparator implements Comparator<Rule> {
+public class LabelRuleComparator implements Comparator<Rule>, Serializable {
 
+	private static final long serialVersionUID = 6343752949100619619L;
 	private static final NumberStringComparator COMPARATOR = new NumberStringComparator();
 	
 	@Override

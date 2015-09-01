@@ -61,10 +61,9 @@ public interface Atom extends Comparable<Atom>, Iterable<Term>, AppendableToStri
 	 * This instance of Atom represents Bottom, it is always interpreted as
 	 * false.
 	 */
-	public static final Atom BOTTOM = new DefaultAtom(
-Predicate.BOTTOM,
+	static final Atom BOTTOM = new DefaultAtom(Predicate.BOTTOM,
 			DefaultTermFactory.instance().createVariable("X"));
-	public static final Atom TOP = new DefaultAtom(Predicate.TOP,
+	static final Atom TOP = new DefaultAtom(Predicate.TOP,
 			DefaultTermFactory.instance().createVariable("X"));
 
 

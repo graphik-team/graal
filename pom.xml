@@ -82,6 +82,7 @@
 					<effort>Max</effort>
 					<threshold>Low</threshold>
 					<xmlOutput>true</xmlOutput>
+				  <excludeFilterFile>findbugs/exclude-filter.xml</excludeFilterFile>
 				</configuration>
 			</plugin>
 			<plugin>
