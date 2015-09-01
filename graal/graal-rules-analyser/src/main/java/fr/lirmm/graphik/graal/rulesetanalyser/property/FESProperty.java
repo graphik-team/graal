@@ -45,6 +45,10 @@
  */
 package fr.lirmm.graphik.graal.rulesetanalyser.property;
 
+import java.util.List;
+import java.util.LinkedList;
+
+
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
 
@@ -52,14 +56,13 @@ import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public final class FESProperty implements RuleProperty {
+public final class FESProperty extends RuleSetProperty.Default {
 
 	private static FESProperty instance;
 
-	private FESProperty() {
-	}
+	private FESProperty() { }
 
-	public static synchronized FESProperty getInstance() {
+	public static synchronized FESProperty instance() {
 		if (instance == null)
 			instance = new FESProperty();
 
@@ -72,18 +75,16 @@ public final class FESProperty implements RuleProperty {
 	}
 
 	@Override
-	public Boolean check(Rule rule) {
-		return null;
+	public int check(AnalyserRuleSet ruleSet) {
+		return 0;
 	}
 
 	@Override
-	public Boolean check(AnalyserRuleSet ruleSet) {
-		return null;
+	public Iterable<RuleSetProperty> getGeneralisations() {
+		List<RuleSetProperty> gen = new LinkedList<RuleSetProperty>();
+		gen.add(BTSProperty.instance());
+		return gen;
 	}
 
-	@Override
-	public Boolean check(Iterable<Rule> ruleSet) {
-		return null;
-	}
+};
 
-}

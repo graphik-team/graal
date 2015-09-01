@@ -68,52 +68,28 @@ import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
  * @author Swan Rocher
  * 
  */
-public final class WeaklyStickyProperty implements RuleProperty {
+public final class WeaklyStickyProperty extends RuleSetProperty.Default {
 
 	private static WeaklyStickyProperty instance = null;
+	private WeaklyStickyProperty() { }
 
-	private WeaklyStickyProperty() {
-	}
-
-	public static synchronized WeaklyStickyProperty getInstance() {
+	public static synchronized WeaklyStickyProperty instance() {
 		if (instance == null) {
 			instance = new WeaklyStickyProperty();
 		}
 		return instance;
 	}
 
-	// /////////////////////////////////////////////////////////////////////////
-	// METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	@Override
-	public Boolean check(Rule rule) {
-		LinkedList<Rule> rules = new LinkedList<Rule>();
-		rules.add(rule);
-		return this.check(rules);
-
-	}
-
-	public Boolean check(Iterable<Rule> rules) {
-		GraphPositionDependencies gpd = new GraphPositionDependencies(rules);
-		MarkedVariableSet markedVariableSet = new MarkedVariableSet(rules);
-		return this.check(markedVariableSet, gpd);
-	}
-
-	public Boolean check(AnalyserRuleSet ruleSet) {
-		return this.check(ruleSet.getMarkedVariableSet(), ruleSet.getGraphPositionDependencies());
+	public int check(AnalyserRuleSet ruleSet) {
+		if (this.check(ruleSet.getMarkedVariableSet(), ruleSet.getGraphPositionDependencies())) return 1;
+		return -1;
 	}
 	
-
 	@Override
 	public String getLabel() {
 		return "ws";
 	}
 	
-	// /////////////////////////////////////////////////////////////////////////
-	// PRIVATE METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
 	private boolean check(MarkedVariableSet markedVariableSet, GraphPositionDependencies gpd) {
 		int nbOccurence;
 		int position;
@@ -141,4 +117,5 @@ public final class WeaklyStickyProperty implements RuleProperty {
 		}
 		return true;
 	}
-}
+};
+

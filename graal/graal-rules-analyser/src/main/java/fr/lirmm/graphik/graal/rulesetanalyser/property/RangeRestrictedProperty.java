@@ -54,13 +54,13 @@ import fr.lirmm.graphik.graal.core.Rule;
  * @author Swan Rocher
  *
  */
-public final class RangeRestrictedProperty extends AbstractRuleProperty {
+public final class RangeRestrictedProperty extends RuleSetProperty.Local {
 
 	private static RangeRestrictedProperty instance = null;
 	
-	private RangeRestrictedProperty(){}
+	private RangeRestrictedProperty() { }
 	
-	public static synchronized RangeRestrictedProperty getInstance() {
+	public static synchronized RangeRestrictedProperty instance() {
 		if(instance == null) {
 			instance = new RangeRestrictedProperty();
 		}
@@ -68,8 +68,9 @@ public final class RangeRestrictedProperty extends AbstractRuleProperty {
 	}
 	
 	@Override
-	public Boolean check(Rule rule) {
-		return rule.getExistentials().isEmpty();
+	public int check(Rule rule) {
+		if (rule.getExistentials().isEmpty()) return 1;
+		return -1;
 	}
 
 	@Override

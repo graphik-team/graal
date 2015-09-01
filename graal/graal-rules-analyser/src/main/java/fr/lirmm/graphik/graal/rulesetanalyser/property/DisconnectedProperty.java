@@ -42,6 +42,10 @@
  */
  package fr.lirmm.graphik.graal.rulesetanalyser.property;
 
+import java.util.List;
+import java.util.LinkedList;
+
+
 import fr.lirmm.graphik.graal.core.Rule;
 
 /**
@@ -52,13 +56,13 @@ import fr.lirmm.graphik.graal.core.Rule;
  * @author Swan Rocher
  * 
  */
-public final class DisconnectedProperty extends AbstractRuleProperty {
+public final class DisconnectedProperty extends RuleSetProperty.Local {
 
 	private static DisconnectedProperty instance = null;
 	
 	private DisconnectedProperty(){}
 	
-	public static synchronized DisconnectedProperty getInstance() {
+	public static synchronized DisconnectedProperty instance() {
 		if(instance == null) {
 			instance = new DisconnectedProperty();
 		}
@@ -66,8 +70,10 @@ public final class DisconnectedProperty extends AbstractRuleProperty {
 	}
 	
 	@Override
-	public Boolean check(Rule rule) {
-		return rule.getFrontier().isEmpty();
+	public int check(Rule rule) {
+		if (rule.getFrontier().isEmpty())
+			return 1;
+		return -1;
 	}
 
 	@Override
@@ -75,4 +81,13 @@ public final class DisconnectedProperty extends AbstractRuleProperty {
 		return "disc";
 	}
 
-}
+	@Override
+	public Iterable<RuleSetProperty> getGeneralisations() {
+		List<RuleSetProperty> gen = new LinkedList<RuleSetProperty>();
+		gen.add(FESProperty.instance());
+		gen.add(FUSProperty.instance());
+		return gen;
+	}
+
+};
+

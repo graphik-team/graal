@@ -52,14 +52,13 @@ import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public final class FUSProperty implements RuleProperty {
+public final class FUSProperty extends RuleSetProperty.Default {
 
 	private static FUSProperty instance;
 
-	private FUSProperty() {
-	}
+	private FUSProperty() { }
 
-	public static synchronized FUSProperty getInstance() {
+	public static synchronized FUSProperty instance() {
 		if (instance == null)
 			instance = new FUSProperty();
 
@@ -72,18 +71,9 @@ public final class FUSProperty implements RuleProperty {
 	}
 
 	@Override
-	public Boolean check(Rule rule) {
-		return null;
+	public int check(AnalyserRuleSet ruleSet) {
+		return 0;
 	}
 
-	@Override
-	public Boolean check(AnalyserRuleSet ruleSet) {
-		return null;
-	}
+};
 
-	@Override
-	public Boolean check(Iterable<Rule> ruleSet) {
-		return null;
-	}
-
-}

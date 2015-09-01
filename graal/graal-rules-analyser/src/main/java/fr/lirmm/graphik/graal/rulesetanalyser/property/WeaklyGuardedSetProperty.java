@@ -62,55 +62,22 @@ import fr.lirmm.graphik.graal.rulesetanalyser.util.RuleUtil;
  * @author Swan Rocher
  * 
  */
-public final class WeaklyGuardedSetProperty implements RuleProperty {
-
-	// /////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	// /////////////////////////////////////////////////////////////////////////
+public final class WeaklyGuardedSetProperty extends RuleSetProperty.Default {
 
 	private static WeaklyGuardedSetProperty instance = null;
+	private WeaklyGuardedSetProperty() { }
 
-	private WeaklyGuardedSetProperty() {
-	}
-
-	public static synchronized WeaklyGuardedSetProperty getInstance() {
+	public static synchronized WeaklyGuardedSetProperty instance() {
 		if (instance == null) {
 			instance = new WeaklyGuardedSetProperty();
 		}
 		return instance;
 	}
 
-	// /////////////////////////////////////////////////////////////////////////
-	// METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.lirmm.graphik.graal.rulesetanalyser.UnitProperty#check(fr.lirmm.graphik
-	 * .graal.core.Rule)
-	 */
 	@Override
-	public Boolean check(Rule rule) {
-		LinkedList<Rule> rules = new LinkedList<Rule>();
-		rules.add(rule);
-		return this.check(rules);
-	}
-
-	/**
-	 * At least one atom in the body of each rule contains all affected
-	 * variables from the body.
-	 */
-	@Override
-	public Boolean check(Iterable<Rule> rules) {
-		AffectedPositionSet affectedPositionSet = new AffectedPositionSet(rules);
-		return this.check(affectedPositionSet);
-	}
-	
-	@Override
-	public Boolean check(AnalyserRuleSet ruleSet) {
-		return this.check(ruleSet.getAffectedPositionSet());
+	public int check(AnalyserRuleSet ruleSet) {
+		if (this.check(ruleSet.getAffectedPositionSet())) return 1;
+		return -1;
 	}
 
 	@Override
@@ -118,10 +85,6 @@ public final class WeaklyGuardedSetProperty implements RuleProperty {
 		return "wg";
 	}
 	
-	// /////////////////////////////////////////////////////////////////////////
-	// PRIVATE METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
 	private boolean check(AffectedPositionSet affectedPositionSet) {
 		for (Rule r : affectedPositionSet.getRules()) {
 			Set<Term> affectedVars = affectedPositionSet
@@ -133,4 +96,5 @@ public final class WeaklyGuardedSetProperty implements RuleProperty {
 		}
 		return true;
 	}
-}
+};
+

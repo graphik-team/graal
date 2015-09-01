@@ -40,30 +40,22 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
 package fr.lirmm.graphik.graal.rulesetanalyser.property;
+
+import java.util.List;
+import java.util.LinkedList;
 
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
 
-/**
- * Each marked variable occurs at most once in a rule body
- * (cf. {@link MarkedVariableSet}).
- * 
- * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- * @author Swan Rocher
- * 
- */
-public final class AGRDProperty implements RuleProperty {
+public final class AGRDProperty extends RuleSetProperty.Default {
 
 	private static AGRDProperty instance = null;
 	
 	private AGRDProperty() {}
 	
-	public static synchronized AGRDProperty getInstance() {
+	public static synchronized AGRDProperty instance() {
 		if(instance == null) {
 			instance = new AGRDProperty();
 		}
@@ -76,9 +68,10 @@ public final class AGRDProperty implements RuleProperty {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public Boolean check(AnalyserRuleSet ruleset) {
+	public int check(AnalyserRuleSet ruleset) {
 		GraphOfRuleDependencies g = ruleset.getGraphOfRuleDependencies();
-		return !g.hasCircuit();
+		if (g.hasCircuit()) return -1;
+		return 1;
 	}
 
 	@Override
@@ -86,7 +79,13 @@ public final class AGRDProperty implements RuleProperty {
 		return "aGRD";
 	}
 
-	public Boolean check(Rule rule) { return false; }
-	public Boolean check(Iterable<Rule> ruleSet) { return false; }
+	@Override
+	public Iterable<RuleSetProperty> getGeneralisations() {
+		List<RuleSetProperty> gen = new LinkedList<RuleSetProperty>();
+		gen.add(FESProperty.instance());
+		gen.add(FUSProperty.instance());
+		return gen;
+	}
+
 };
 

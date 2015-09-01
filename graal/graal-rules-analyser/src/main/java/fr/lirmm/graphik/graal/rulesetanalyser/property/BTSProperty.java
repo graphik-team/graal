@@ -52,14 +52,13 @@ import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public final class BTSProperty implements RuleProperty {
+public final class BTSProperty extends RuleSetProperty.Default {
 
 	private static BTSProperty instance;
 
-	private BTSProperty() {
-	}
+	private BTSProperty() { }
 
-	public static synchronized BTSProperty getInstance() {
+	public static synchronized BTSProperty instance() {
 		if (instance == null)
 			instance = new BTSProperty();
 
@@ -72,18 +71,9 @@ public final class BTSProperty implements RuleProperty {
 	}
 
 	@Override
-	public Boolean check(Rule rule) {
-		return null;
+	public int check(AnalyserRuleSet ruleSet) {
+		return 0;
 	}
 
-	@Override
-	public Boolean check(AnalyserRuleSet ruleSet) {
-		return null;
-	}
+};
 
-	@Override
-	public Boolean check(Iterable<Rule> ruleSet) {
-		return null;
-	}
-
-}

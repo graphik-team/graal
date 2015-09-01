@@ -54,6 +54,7 @@ import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.ruleset.ImmutableRuleSet;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
+import fr.lirmm.graphik.graal.grd.AtomErasingFilter;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.AffectedPositionSet;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.GraphPositionDependencies;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.MarkedVariableSet;
@@ -64,13 +65,14 @@ import fr.lirmm.graphik.util.graph.scc.StronglyConnectedComponentsGraph;
  *
  */
 public class AnalyserRuleSet implements ImmutableRuleSet {
-	
-	Collection<Rule> ruleset;
-	GraphOfRuleDependencies grd;
-	AffectedPositionSet affectedPositionSet;
-	GraphPositionDependencies graphPositionDependencies;
-	MarkedVariableSet markedVariableSet;
-	StronglyConnectedComponentsGraph<Rule> sccGraph;
+
+	private Collection<Rule> ruleset;
+	private GraphOfRuleDependencies grd;
+	private AffectedPositionSet affectedPositionSet;
+	private GraphPositionDependencies graphPositionDependencies;
+	private MarkedVariableSet markedVariableSet;
+	private StronglyConnectedComponentsGraph<Rule> sccGraph;
+	private GraphOfRuleDependencies.DependencyChecker dependencyChecker;
 	
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
@@ -78,6 +80,12 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 	
 	public AnalyserRuleSet(Iterable<Rule> rules) {
 		this.ruleset = Collections.unmodifiableCollection(new LinkedListRuleSet(rules));
+		this.dependencyChecker = new AtomErasingFilter();
+	}
+
+	public AnalyserRuleSet(Iterable<Rule> rules, GraphOfRuleDependencies.DependencyChecker checker) {
+		this.ruleset = Collections.unmodifiableCollection(new LinkedListRuleSet(rules));
+		this.dependencyChecker = checker;
 	}
 	
 	public AnalyserRuleSet(GraphOfRuleDependencies grd) {
@@ -166,7 +174,7 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 	}
 	
 	private void computeGRD() {
-		this.grd = new GraphOfRuleDependencies(ruleset);
+		this.grd = new GraphOfRuleDependencies(ruleset, false, this.dependencyChecker);
 	}
 	
 	private void computeAffectedPositionSet() {

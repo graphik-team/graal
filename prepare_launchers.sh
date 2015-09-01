@@ -30,7 +30,7 @@ echo "GRAAL_DIR=\"${GRAAL_DIR}\"" >> "${GRAAL_KIABORA_FILE}";
 echo "GRAAL_RELEASE=\"\${GRAAL_DIR}/target/release/graal.jar/\"" >> "${GRAAL_KIABORA_FILE}";
 echo "" >> "${GRAAL_KIABORA_FILE}";
 echo "GRAAL_CP=\"${LIBS}\"" >> "${GRAAL_KIABORA_FILE}";
-echo "java -cp \${GRAAL_CP}:\${GRAAL_RELEASE} fr.lirmm.graphik.Kiabora \"\$@\"" >> "${GRAAL_KIABORA_FILE}";
+echo "java -cp \${GRAAL_CP}:\${GRAAL_RELEASE} fr.lirmm.graphik.graal.apps.Kiabora \"\$@\"" >> "${GRAAL_KIABORA_FILE}";
 chmod +x "${GRAAL_KIABORA_FILE}"
 
 echo "#!/bin/sh" > "${GRAAL_FGH_FILE}";
