@@ -166,14 +166,14 @@ public class Kiabora {
 	public static void printSCC(AnalyserRuleSet ruleset) {
 		StringBuilder out = new StringBuilder();
 		StronglyConnectedComponentsGraph<Rule> scc = ruleset.getStronglyConnectedComponentsGraph();
+		boolean first;
 		for (int v : scc.vertexSet()) {
 			out.append("C" + v + " = {");
-			boolean isFirst = true;
+			first = true;
 			for (Rule r : scc.getComponent(v)) {
-				if (!isFirst)
-					out.append(", ");
+				if (first) first = false;
+				else out.append(", ");
 				out.append(r.getLabel());
-				isFirst = false;
 			}
 			out.append("}\n");
 		}
@@ -181,7 +181,23 @@ public class Kiabora {
 	}
 
 	public static void printSCCGraph(AnalyserRuleSet ruleset) {
-		System.out.println("TODO");
+		StringBuilder out = new StringBuilder();
+		StronglyConnectedComponentsGraph<Rule> scc = ruleset.getStronglyConnectedComponentsGraph();
+		boolean first;
+		for (int v : scc.vertexSet()) {
+			out.append("C" + v);
+			first = true;
+			for (int t : scc.outgoingEdgesOf(v)) {
+				if (first) {
+					first = false;
+					out.append(" ---> ");
+				}
+				else out.append(", ");
+				out.append(""+t);
+			}
+			out.append("\n");
+		}
+		System.out.println(out);
 	}
 
 	public static void printProperties(Analyser analyser) {
