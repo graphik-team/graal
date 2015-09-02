@@ -99,56 +99,48 @@ public class Kiabora {
 		if (options.print_ruleset) {
 			System.out.println("====== RULE SET ======");
 			printRuleSet(ruleset);
-			System.out.println("======================");
 			System.out.println("");
 		}
 
 		if (options.print_grd) {
 			System.out.println("======== GRD =========");
 			printGRD(ruleset);
-			System.out.println("======================");
 			System.out.println("");
 		}
 
 		if (options.print_scc) {
 			System.out.println("======== SCC =========");
 			printSCC(ruleset);
-			System.out.println("======================");
 			System.out.println("");
 		}
 
 		if (options.print_sccg) {
 			System.out.println("===== SCC GRAPH ======");
 			printSCCGraph(ruleset);
-			System.out.println("======================");
 			System.out.println("");
 		}
 
 		if (options.print_scc_pties) {
 			System.out.println("=== SCC PROPERTIES ===");
 			printSCCProperties(analyser);
-			System.out.println("======================");
 			System.out.println("");
 		}
 
 		if (options.print_pties) {
 			System.out.println("===== PROPERTIES =====");
 			printProperties(analyser);
-			System.out.println("======================");
 			System.out.println("");
 		}
 
 		if (options.combine_fes) {
 			System.out.println("=== COMBINE (FES) ====");
 			printCombineFES(analyser);
-			System.out.println("======================");
 			System.out.println("");
 		}
 
 		if (options.combine_fus) {
 			System.out.println("=== COMBINE (FUS) ====");
 			printCombineFUS(analyser);
-			System.out.println("======================");
 			System.out.println("");
 		}
 
