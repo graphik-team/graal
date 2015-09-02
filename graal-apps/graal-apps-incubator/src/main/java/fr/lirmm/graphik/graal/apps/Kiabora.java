@@ -23,9 +23,6 @@ import fr.lirmm.graphik.graal.rulesetanalyser.property.*;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 
-// TODO
-// we should probably generate labels for rules that have none.
-// (allow to display more easily the GRD, etc...
 public class Kiabora {
 
 	public static final String PROGRAM_NAME = "kiabora";
