@@ -45,6 +45,7 @@
  */
 package fr.lirmm.graphik.graal.rulesetanalyser.property;
 
+import java.util.List;
 import java.util.LinkedList;
 import java.util.Set;
 
@@ -96,5 +97,13 @@ public final class WeaklyFrontierGuardedSetProperty extends RuleSetProperty.Defa
 		}
 		return true;
 	}
+
+	@Override
+	public Iterable<RuleSetProperty> getGeneralisations() {
+		List<RuleSetProperty> gen = new LinkedList<RuleSetProperty>();
+		gen.add(GBTSProperty.instance());
+		return gen;
+	}
+
 };
 

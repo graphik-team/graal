@@ -117,5 +117,6 @@ public final class WeaklyStickyProperty extends RuleSetProperty.Default {
 		}
 		return true;
 	}
+
 };
 

@@ -42,6 +42,10 @@
  */
  package fr.lirmm.graphik.graal.rulesetanalyser.property;
 
+import java.util.List;
+import java.util.LinkedList;
+
+
 import java.util.Iterator;
 
 import fr.lirmm.graphik.graal.core.Atom;
@@ -81,4 +85,13 @@ public final class LinearProperty extends RuleSetProperty.Local {
 		return "lin";
 	}
 	
-}
+	@Override
+	public Iterable<RuleSetProperty> getGeneralisations() {
+		List<RuleSetProperty> gen = new LinkedList<RuleSetProperty>();
+		gen.add(FUSProperty.instance());
+		gen.add(GuardedProperty.instance());
+		return gen;
+	}
+
+};
+

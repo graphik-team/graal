@@ -84,8 +84,9 @@ public final class DisconnectedProperty extends RuleSetProperty.Local {
 	@Override
 	public Iterable<RuleSetProperty> getGeneralisations() {
 		List<RuleSetProperty> gen = new LinkedList<RuleSetProperty>();
-		gen.add(FESProperty.instance());
-		gen.add(FUSProperty.instance());
+		gen.add(WeaklyAcyclicProperty.instance());
+		gen.add(FrontierGuardedProperty.instance());
+		gen.add(DomainRestrictedProperty.instance());
 		return gen;
 	}
 

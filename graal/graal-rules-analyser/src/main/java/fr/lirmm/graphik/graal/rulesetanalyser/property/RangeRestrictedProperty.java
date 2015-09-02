@@ -45,6 +45,10 @@
  */
 package fr.lirmm.graphik.graal.rulesetanalyser.property;
 
+import java.util.List;
+import java.util.LinkedList;
+
+
 import fr.lirmm.graphik.graal.core.Rule;
 
 /**
@@ -78,4 +82,13 @@ public final class RangeRestrictedProperty extends RuleSetProperty.Local {
 		return "rr";
 	}
 
-}
+	@Override
+	public Iterable<RuleSetProperty> getGeneralisations() {
+		List<RuleSetProperty> gen = new LinkedList<RuleSetProperty>();
+		gen.add(WeaklyAcyclicProperty.instance());
+		gen.add(WeaklyGuardedSetProperty.instance());
+		return gen;
+	}
+
+};
+

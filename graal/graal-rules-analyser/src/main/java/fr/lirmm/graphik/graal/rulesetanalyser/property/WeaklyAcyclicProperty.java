@@ -85,5 +85,14 @@ public final class WeaklyAcyclicProperty extends RuleSetProperty.Default {
 		return "wa";
 	}
 
+	@Override
+	public Iterable<RuleSetProperty> getGeneralisations() {
+		List<RuleSetProperty> gen = new LinkedList<RuleSetProperty>();
+		gen.add(WeaklyStickyProperty.instance());
+		gen.add(FESProperty.instance());
+		return gen;
+	}
+
 };
+
 

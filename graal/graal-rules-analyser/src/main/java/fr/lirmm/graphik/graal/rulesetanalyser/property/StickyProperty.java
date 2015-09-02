@@ -45,6 +45,7 @@
  */
 package fr.lirmm.graphik.graal.rulesetanalyser.property;
 
+import java.util.List;
 import java.util.LinkedList;
 
 import fr.lirmm.graphik.graal.core.Atom;
@@ -110,6 +111,12 @@ public final class StickyProperty extends RuleSetProperty.Default {
 		return "s";
 	}
 
-	
+	@Override
+	public Iterable<RuleSetProperty> getGeneralisations() {
+		List<RuleSetProperty> gen = new LinkedList<RuleSetProperty>();
+		gen.add(FUSProperty.instance());
+		return gen;
+	}
 
-}
+};
+

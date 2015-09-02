@@ -45,6 +45,8 @@
  */
 package fr.lirmm.graphik.graal.rulesetanalyser.property;
 
+import java.util.List;
+import java.util.LinkedList;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
 
@@ -73,6 +75,13 @@ public final class GBTSProperty extends RuleSetProperty.Default {
 	@Override
 	public int check(AnalyserRuleSet ruleSet) {
 		return 0;
+	}
+
+	@Override
+	public Iterable<RuleSetProperty> getGeneralisations() {
+		List<RuleSetProperty> gen = new LinkedList<RuleSetProperty>();
+		gen.add(BTSProperty.instance());
+		return gen;
 	}
 
 };
