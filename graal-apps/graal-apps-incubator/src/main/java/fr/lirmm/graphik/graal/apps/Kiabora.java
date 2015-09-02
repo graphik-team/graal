@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
+import fr.lirmm.graphik.util.graph.scc.StronglyConnectedComponentsGraph;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.rulesetanalyser.Analyser;
@@ -30,6 +31,8 @@ public class Kiabora {
 	public static final String PROGRAM_NAME = "kiabora";
 	public static final Map<String,RuleSetProperty> propertyMap =
 		new TreeMap<String,RuleSetProperty>();
+
+	private static long currentRuleID = 0;
 
 	public static void main(String args[]) {
 		Kiabora options = new Kiabora();
@@ -62,8 +65,12 @@ public class Kiabora {
 		// parse rule set
 		while (parser.hasNext()) {
 			Object o = parser.next();
-			if (o instanceof Rule)
+			if (o instanceof Rule) {
+				Rule r = (Rule)o;
+				if (r.getLabel() == null || r.getLabel().equals(""))
+					r.setLabel("R" + currentRuleID++);
 				rules.add((Rule)o);
+			}
 			else
 				System.err.println("[WARNING] Ignoring non rule: " + o);
 		}
@@ -157,7 +164,20 @@ public class Kiabora {
 	}
 
 	public static void printSCC(AnalyserRuleSet ruleset) {
-		System.out.println("TODO");
+		StringBuilder out = new StringBuilder();
+		StronglyConnectedComponentsGraph<Rule> scc = ruleset.getStronglyConnectedComponentsGraph();
+		for (int v : scc.vertexSet()) {
+			out.append("C" + v + " = {");
+			boolean isFirst = true;
+			for (Rule r : scc.getComponent(v)) {
+				if (!isFirst)
+					out.append(", ");
+				out.append(r.getLabel());
+				isFirst = false;
+			}
+			out.append("}\n");
+		}
+		System.out.println(out);
 	}
 
 	public static void printSCCGraph(AnalyserRuleSet ruleset) {
