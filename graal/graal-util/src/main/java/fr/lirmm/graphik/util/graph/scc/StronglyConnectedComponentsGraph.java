@@ -106,8 +106,10 @@ public class StronglyConnectedComponentsGraph<V> extends
 							break;
 					}
 				}
-				else if (this.getComponent(src).size() > 1)
-					this.addEdge(src,src);
+				// Actually we prefere to not have these edges so
+				// that getSources work as we want it to work...
+				/*else if (this.getComponent(src).size() > 1)
+					this.addEdge(src,src);*/
 			}
 		}
 	}
