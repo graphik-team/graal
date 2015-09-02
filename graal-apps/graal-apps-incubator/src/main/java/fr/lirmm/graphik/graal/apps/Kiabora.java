@@ -331,6 +331,13 @@ public class Kiabora {
 		System.out.println(out);
 	}
 
+	/**
+	 * Prepare the list of rule set properties.
+	 * If you have implemented a new rule set property, and you want
+	 * an easy way to test it, you are in the right place.
+	 * Just add a line that will add an instance of your new class,
+	 * compile, and everything will (should) work!
+	 */
 	public static void initPropertyMap() {
 		propertyMap.put("agrd", AGRDProperty.instance());
 		propertyMap.put("bts",  BTSProperty.instance());
