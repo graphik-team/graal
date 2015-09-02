@@ -2,6 +2,8 @@ package fr.lirmm.graphik.graal.rulesetanalyser;
 
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.List;
+import java.util.LinkedList;
 
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
@@ -36,12 +38,24 @@ public class Analyser {
 	}
 
 	public Map<String,Integer> ruleSetProperties() {
+		return computeProperties(this.ruleSet);
+	}
+
+	public List<Map<String,Integer>> sccProperties() {
+		List<Map<String,Integer>> result = new LinkedList<Map<String,Integer>>();
+		for (AnalyserRuleSet subAnalyser : this.ruleSet.getSCC()) {
+			result.add(computeProperties(subAnalyser));
+		}
+		return result;
+	}
+
+	protected Map<String,Integer> computeProperties(AnalyserRuleSet set) {
 		Map<String, Integer> result = new TreeMap<String, Integer>();
 		Iterable<RuleSetProperty> pties = this.hierarchy.getOrderedProperties();
 		int res;
 		for (RuleSetProperty p : pties) {
 			if (result.get(p.getLabel()) == null) {
-				res = p.check(this.ruleSet);
+				res = p.check(set);
 				result.put(p.getLabel(), new Integer(res));
 				if (res > 0) {
 					for (RuleSetProperty p2 : this.hierarchy.getGeneralisationsOf(p))

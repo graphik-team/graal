@@ -49,6 +49,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.ruleset.ImmutableRuleSet;
@@ -72,6 +73,7 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 	private GraphPositionDependencies graphPositionDependencies;
 	private MarkedVariableSet markedVariableSet;
 	private StronglyConnectedComponentsGraph<Rule> sccGraph;
+	private List<AnalyserRuleSet> scc;
 	private GraphOfRuleDependencies.DependencyChecker dependencyChecker;
 	private boolean withUnifiers = false;
 	
@@ -165,6 +167,13 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 	public AnalyserRuleSet getSubRuleSetAnalyser(Iterable<Rule> rules) {
 		return new AnalyserRuleSet(this.getGraphOfRuleDependencies().getSubGraph(rules));
 	}
+
+	public List<AnalyserRuleSet> getSCC() {
+		if (this.scc == null) {
+			computeSCC();
+		}
+		return this.scc;
+	}
 	
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
@@ -182,6 +191,12 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 	
 	private void computeGRD() {
 		this.grd = new GraphOfRuleDependencies(ruleset, this.withUnifiers, this.dependencyChecker);
+	}
+
+	private void computeSCC() {
+		this.scc = new LinkedList<AnalyserRuleSet>();
+		for (int s : this.getStronglyConnectedComponentsGraph().vertexSet())
+			this.scc.add(this.getSubRuleSetAnalyser(this.getStronglyConnectedComponentsGraph().getComponent(s)));
 	}
 	
 	private void computeAffectedPositionSet() {
