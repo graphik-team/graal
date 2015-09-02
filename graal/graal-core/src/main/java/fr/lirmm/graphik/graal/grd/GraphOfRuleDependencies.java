@@ -159,10 +159,6 @@ public class GraphOfRuleDependencies {
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	// TODO
-	// add some unit test for this method...
-	// Obviously it does not work, since the DFS filters before
-	// us...
 	public boolean hasCircuit() {
 		CycleDetector<Rule,Integer> cycle = new CycleDetector<Rule,Integer>(this.graph);
 		return cycle.detectCycles();
