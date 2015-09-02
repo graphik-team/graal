@@ -87,6 +87,9 @@ public final class RangeRestrictedProperty extends RuleSetProperty.Local {
 		List<RuleSetProperty> gen = new LinkedList<RuleSetProperty>();
 		gen.add(WeaklyAcyclicProperty.instance());
 		gen.add(WeaklyGuardedSetProperty.instance());
+		gen.add(FESProperty.instance());
+		gen.add(GBTSProperty.instance());
+		gen.add(BTSProperty.instance());
 		return gen;
 	}
 

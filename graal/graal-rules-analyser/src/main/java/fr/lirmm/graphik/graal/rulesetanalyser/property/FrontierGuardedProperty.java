@@ -104,6 +104,8 @@ public final class FrontierGuardedProperty extends RuleSetProperty.Local {
 	public Iterable<RuleSetProperty> getGeneralisations() {
 		List<RuleSetProperty> gen = new LinkedList<RuleSetProperty>();
 		gen.add(WeaklyFrontierGuardedSetProperty.instance());
+		gen.add(GBTSProperty.instance());
+		gen.add(BTSProperty.instance());
 		return gen;
 	}
 

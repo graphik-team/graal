@@ -25,6 +25,10 @@ import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
  * more specific one is already satisfied,
  * and to know if some abstract (i.e., unrecognizable) properties
  * are satisfied (usefull for the 'combine' step).
+ * Also, the rule property hierarchy is only computed on the
+ * selected properties. Therefore, you should specify all
+ * generalisations (even the ones that can be deduced by the
+ * transitive closure).
  * 
  * The various check methods must return 1 if the property is
  * satisfied, -1 if it is not, and 0 if you cannot tell.

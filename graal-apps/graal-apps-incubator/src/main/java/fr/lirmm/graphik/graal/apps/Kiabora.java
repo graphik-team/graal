@@ -21,6 +21,9 @@ import fr.lirmm.graphik.graal.rulesetanalyser.property.*;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 
+// TODO
+// we should probably generate labels for rules that have none.
+// (allow to display more easily the GRD, etc...
 public class Kiabora {
 
 	public static final String PROGRAM_NAME = "kiabora";
@@ -69,11 +72,9 @@ public class Kiabora {
 		// set up analyser
 		Map<String,RuleSetProperty> properties = new TreeMap<String,RuleSetProperty>();
 		for (String label : options.ruleset_properties) {
-			System.out.println("Adding label = '" + label + "'");
 			if (label.equals("*"))
 				properties.putAll(propertyMap);
 			else {
-				System.out.println(propertyMap.get(label));
 				if (propertyMap.get(label) != null)
 					properties.put(label,propertyMap.get(label));
 				else
@@ -152,7 +153,7 @@ public class Kiabora {
 	}
 
 	public static void printGRD(AnalyserRuleSet ruleset) {
-		System.out.println("TODO");
+		System.out.println(ruleset.getGraphOfRuleDependencies().toString());
 	}
 
 	public static void printSCC(AnalyserRuleSet ruleset) {
@@ -164,7 +165,7 @@ public class Kiabora {
 	}
 
 	public static void printProperties(Analyser analyser) {
-		int cell_size = 7;
+		int cell_size = 6;
 		StringBuilder out = new StringBuilder();
 		Map<String, Integer> pties = analyser.ruleSetProperties();
 

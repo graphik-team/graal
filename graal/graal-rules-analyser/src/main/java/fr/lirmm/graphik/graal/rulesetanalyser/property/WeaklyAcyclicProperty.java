@@ -90,6 +90,7 @@ public final class WeaklyAcyclicProperty extends RuleSetProperty.Default {
 		List<RuleSetProperty> gen = new LinkedList<RuleSetProperty>();
 		gen.add(WeaklyStickyProperty.instance());
 		gen.add(FESProperty.instance());
+		gen.add(BTSProperty.instance());
 		return gen;
 	}
 

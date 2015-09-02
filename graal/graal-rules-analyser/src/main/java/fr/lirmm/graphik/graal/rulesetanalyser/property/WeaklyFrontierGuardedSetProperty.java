@@ -102,6 +102,7 @@ public final class WeaklyFrontierGuardedSetProperty extends RuleSetProperty.Defa
 	public Iterable<RuleSetProperty> getGeneralisations() {
 		List<RuleSetProperty> gen = new LinkedList<RuleSetProperty>();
 		gen.add(GBTSProperty.instance());
+		gen.add(BTSProperty.instance());
 		return gen;
 	}
 

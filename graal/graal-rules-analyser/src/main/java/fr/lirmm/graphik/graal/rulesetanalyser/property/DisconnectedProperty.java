@@ -87,6 +87,10 @@ public final class DisconnectedProperty extends RuleSetProperty.Local {
 		gen.add(WeaklyAcyclicProperty.instance());
 		gen.add(FrontierGuardedProperty.instance());
 		gen.add(DomainRestrictedProperty.instance());
+		gen.add(FESProperty.instance());
+		gen.add(FUSProperty.instance());
+		gen.add(GBTSProperty.instance());
+		gen.add(BTSProperty.instance());
 		return gen;
 	}
 
