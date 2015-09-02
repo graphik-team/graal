@@ -261,11 +261,47 @@ public class Kiabora {
 	}
 
 	public static void printCombineFES(Analyser analyser) {
-		System.out.println("TODO");
+		int combine[] = analyser.combineFES();
+		if (combine == null) {
+			System.out.println("None!");
+			return;
+		}
+
+		StringBuilder out = new StringBuilder();
+		for (int i = 0 ; i < combine.length ; ++i) {
+			out.append("C" + i + ": ");
+			if ((combine[i] & Analyser.COMBINE_FES) != 0)
+				out.append("FES");
+			else if ((combine[i] & Analyser.COMBINE_BTS) != 0)
+				out.append("BTS");
+			else if ((combine[i] & Analyser.COMBINE_FUS) != 0)
+				out.append("FUS");
+			out.append("\n");
+		}
+
+		System.out.println(out);
 	}
 
 	public static void printCombineFUS(Analyser analyser) {
-		System.out.println("TODO");
+		int combine[] = analyser.combineFUS();
+		if (combine == null) {
+			System.out.println("None!");
+			return;
+		}
+
+		StringBuilder out = new StringBuilder();
+		for (int i = 0 ; i < combine.length ; ++i) {
+			out.append("C" + i + ": ");
+			if ((combine[i] & Analyser.COMBINE_FES) != 0)
+				out.append("FES");
+			else if ((combine[i] & Analyser.COMBINE_BTS) != 0)
+				out.append("BTS");
+			else if ((combine[i] & Analyser.COMBINE_FUS) != 0)
+				out.append("FUS");
+			out.append("\n");
+		}
+
+		System.out.println(out);
 	}
 
 	public static void initPropertyMap() {
