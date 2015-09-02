@@ -127,15 +127,15 @@ public class Kiabora {
 			System.out.println("");
 		}
 
-		if (options.print_scc_pties) {
-			System.out.println("=== SCC PROPERTIES ===");
-			printSCCProperties(analyser);
-			System.out.println("");
-		}
-
 		if (options.print_pties) {
 			System.out.println("===== PROPERTIES =====");
 			printProperties(analyser);
+			System.out.println("");
+		}
+
+		if (options.print_scc_pties) {
+			System.out.println("=== SCC PROPERTIES ===");
+			printSCCProperties(analyser);
 			System.out.println("");
 		}
 
@@ -218,7 +218,46 @@ public class Kiabora {
 	}
 
 	public static void printSCCProperties(Analyser analyser) {
-		System.out.println("TODO");
+		int cell_size = 6;
+		StringBuilder out = new StringBuilder();
+		Map<String,Integer> basePties = analyser.sccProperties().iterator().next();
+
+		int cIndex = 0;
+		if (basePties == null) return;
+
+		out.append("+");
+		out.append(StringUtils.center("", (cell_size+1)*basePties.entrySet().size()-1, '-'));
+		out.append("+");
+		out.append("\n");
+
+		for (Map<String,Integer> pties : analyser.sccProperties()) {
+			for (Map.Entry<String, Integer> e : pties.entrySet()) {
+				out.append("|");
+				if (e.getValue() == 0) 
+					out.append(StringUtils.center("?", cell_size));
+				else if (e.getValue() < 0)
+					out.append(StringUtils.center(" ", cell_size));
+				else
+					out.append(StringUtils.center("X", cell_size));
+			}
+			out.append("|");
+			out.append(StringUtils.center("C"+cIndex++,cell_size));
+			out.append("\n");
+		}
+
+		out.append("+");
+		out.append(StringUtils.center("", (cell_size+1)*basePties.entrySet().size()-1, '-'));
+		out.append("+\n");
+		for (Map.Entry<String, Integer> e : basePties.entrySet()) {
+			out.append("|");
+			out.append(StringUtils.center(e.getKey(), cell_size));
+		}
+		out.append("|\n");
+		out.append("+");
+		out.append(StringUtils.center("", (cell_size+1)*basePties.entrySet().size()-1, '-'));
+		out.append("+");
+
+		System.out.println(out);
 	}
 
 	public static void printCombineFES(Analyser analyser) {
