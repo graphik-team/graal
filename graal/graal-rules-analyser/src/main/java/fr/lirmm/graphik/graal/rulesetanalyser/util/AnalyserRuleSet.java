@@ -73,6 +73,7 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 	private MarkedVariableSet markedVariableSet;
 	private StronglyConnectedComponentsGraph<Rule> sccGraph;
 	private GraphOfRuleDependencies.DependencyChecker dependencyChecker;
+	private boolean withUnifiers = false;
 	
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
@@ -101,6 +102,12 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 	// GETTERS
 	// /////////////////////////////////////////////////////////////////////////
 
+	public void setDependencyChecker(GraphOfRuleDependencies.DependencyChecker c) {
+		this.dependencyChecker = c;
+	}
+	public void enableUnifiers(boolean wu) {
+		this.withUnifiers = wu;
+	}
 	/**
 	 * @return the grd
 	 */
@@ -174,7 +181,7 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 	}
 	
 	private void computeGRD() {
-		this.grd = new GraphOfRuleDependencies(ruleset, false, this.dependencyChecker);
+		this.grd = new GraphOfRuleDependencies(ruleset, this.withUnifiers, this.dependencyChecker);
 	}
 	
 	private void computeAffectedPositionSet() {
