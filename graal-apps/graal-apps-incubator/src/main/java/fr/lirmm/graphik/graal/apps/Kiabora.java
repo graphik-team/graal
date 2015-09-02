@@ -23,6 +23,20 @@ import fr.lirmm.graphik.graal.rulesetanalyser.property.*;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 
+/**
+ * Analyse a rule set.
+ * 
+ * The input file must be DLGP formatted.
+ * 
+ * For details about the various arguments use '--help'.
+ * 
+ * What remains:
+ *   - first, we should implement some tests to check if everything
+ *   works correctly;
+ *   - second, we should implement another main that will do
+ *   conversions that old kiabora (may it rest in peace) did;
+ *   - finally, upgrade the servlet so it calls this program.
+ */
 public class Kiabora {
 
 	public static final String PROGRAM_NAME = "kiabora";
