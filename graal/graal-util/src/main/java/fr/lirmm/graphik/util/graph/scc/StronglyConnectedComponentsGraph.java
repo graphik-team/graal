@@ -82,8 +82,7 @@ public class StronglyConnectedComponentsGraph<V> extends
 	 */
 	public <E> StronglyConnectedComponentsGraph(DirectedGraph<V, E> graph) {
 		this();
-		List<Set<V>> stronglyConnectedSets = new StrongConnectivityInspector<V, E>(
-				graph).stronglyConnectedSets();
+		List<Set<V>> stronglyConnectedSets = new StrongConnectivityInspector<V, E>(graph).stronglyConnectedSets();
 
 		// add components
 		int componentIndex = -1;
@@ -107,6 +106,8 @@ public class StronglyConnectedComponentsGraph<V> extends
 							break;
 					}
 				}
+				else if (this.getComponent(src).size() > 1)
+					this.addEdge(src,src);
 			}
 		}
 	}
@@ -119,6 +120,7 @@ public class StronglyConnectedComponentsGraph<V> extends
 		this.addEdge(tail, head, ++edgeMaxIndex);
 	}
 
+	// TODO: check, but it seems this is a useless method...
 	public void addToComponent(int vertex, V v) {
 		Set<V> set = this.map.get(vertex);
 		if (set == null) {
@@ -129,6 +131,7 @@ public class StronglyConnectedComponentsGraph<V> extends
 	}
 
 	public void addComponent(int vertex, Set<V> vertices) {
+		this.addVertex(vertex);
 		this.map.put(vertex, vertices);
 	}
 
