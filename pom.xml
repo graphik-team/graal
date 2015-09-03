@@ -3,31 +3,43 @@
 
 	<groupId>fr.lirmm.graphik</groupId>
 	<artifactId>graal-main-project</artifactId>
-        <version>0.8.7-SNAPSHOT</version>
-	<name>Generic Rule ApplicAtion Library</name>
-
+	<version>0.8.7-SNAPSHOT</version>
+	<name>fr.lirmm.graphik:graal-main-project</name>
 	<packaging>pom</packaging>
-
-	<distributionManagement>
-		<site>
-			<id>graal.com</id>
-			<name>GRAAL Website</name>
-			<url>/tmp/site/</url>
-		</site>
-	</distributionManagement>
-
-	<scm>
-		<developerConnection>scm:git:git@gite.lirmm.fr:graphik/graal.git</developerConnection>
-	</scm>
-
+	
 	<inceptionYear>2014</inceptionYear>
-
+	<description>Graal is a java toolkit dedicated to ontological query answering in the framework of existential rules. We consider knowledge bases composed of data and an ontology expressed by existential rules. The main features of Graal are the following: a basic layer that provides generic interfaces to store and query various kinds of data, forward chaining and query rewriting
+algorithms, structural analysis of decidability properties of a rule set, a textual format and its parser, and import of OWL 2 files. We describe in more detail the query rewriting algorithms, which rely on original techniques, and report some experiments.
+	</description>
+	<url>https://graphik-team.github.io/graal/</url>
+	
+	<licenses>
+		<license>
+			<name></name>
+			<url>http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.txt</url>
+		</license>
+	</licenses>
+	
 	<organization>
-		<name>INRIA</name>
-		<url>http://www.inria.fr/</url>
+		<name>GraphIK (INRIA - LIRMM)</name>
+		<url>https://team.inria.fr/graphik/</url>
 	</organization>
 
+	<scm>
+		<connection>scm:git:git@github.com:graphik-team/graal.git</connection>
+		<url>https://github.com/graphik-team/graal/</url>
+		<developerConnection>scm:git:git@github.com:graphik-team/graal.git</developerConnection>
+	</scm>
+
 	<developers>
+		<developer>
+			<name>Mélanie KONIG</name>
+			<organization>LIRMM</organization>
+		</developer>
+		<developer>
+			<name>Swan ROCHER</name>
+			<organization>INRIA</organization>
+		</developer>
 		<developer>
 			<name>Clément SIPIETER</name>
 			<email>clement@6pi.fr</email>
@@ -40,8 +52,8 @@
 		<module>graal-apps</module>
 		<module>graal-examples</module>
 		<module>graal-distro</module>
-                <module>graal-bench</module>
-                <module>graal-incubator</module>
+		<module>graal-bench</module>
+		<module>graal-incubator</module>
 	</modules>
 
 	<build>
@@ -54,6 +66,56 @@
 					<source>1.6</source>
 					<target>1.6</target>
 				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.5.2</version>
+				<configuration>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+					<useReleaseProfile>false</useReleaseProfile>
+					<releaseProfiles>release</releaseProfiles>
+					<goals>deploy</goals>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9.1</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -109,5 +171,16 @@
 			</plugin>
 		</plugins>
 	</reporting>
+	
+	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+	</distributionManagement>
 
 </project>
