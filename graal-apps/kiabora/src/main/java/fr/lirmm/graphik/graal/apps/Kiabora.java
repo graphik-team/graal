@@ -204,7 +204,7 @@ public class Kiabora {
 					out.append(" ---> ");
 				}
 				else out.append(", ");
-				out.append(""+t);
+				out.append("C"+scc.getEdgeTarget(t));
 			}
 			out.append("\n");
 		}
@@ -299,10 +299,10 @@ public class Kiabora {
 			out.append("C" + i + ": ");
 			if ((combine[i] & Analyser.COMBINE_FES) != 0)
 				out.append("FES");
-			else if ((combine[i] & Analyser.COMBINE_BTS) != 0)
-				out.append("BTS");
 			else if ((combine[i] & Analyser.COMBINE_FUS) != 0)
 				out.append("FUS");
+			else if ((combine[i] & Analyser.COMBINE_BTS) != 0)
+				out.append("BTS");
 			out.append("\n");
 		}
 
@@ -321,10 +321,10 @@ public class Kiabora {
 			out.append("C" + i + ": ");
 			if ((combine[i] & Analyser.COMBINE_FES) != 0)
 				out.append("FES");
-			else if ((combine[i] & Analyser.COMBINE_BTS) != 0)
-				out.append("BTS");
 			else if ((combine[i] & Analyser.COMBINE_FUS) != 0)
 				out.append("FUS");
+			else if ((combine[i] & Analyser.COMBINE_BTS) != 0)
+				out.append("BTS");
 			out.append("\n");
 		}
 

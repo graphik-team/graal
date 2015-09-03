@@ -87,7 +87,8 @@ public class Analyser {
 			if (result[s] == 0) return null;
 			if ((result[s] & COMBINE_FES) != 0) result[s] = COMBINE_FES;
 			else if ((result[s] & COMBINE_FUS) != 0) result[s] = COMBINE_FUS;
-			for (int succ : scc.outgoingEdgesOf(s)) {
+			for (int t : scc.outgoingEdgesOf(s)) {
+				int succ = scc.getEdgeTarget(t);
 				if ((result[s] & COMBINE_FES) == 0) {
 					result[succ] ^= COMBINE_FES;
 					result[succ] ^= COMBINE_BTS;
@@ -105,7 +106,7 @@ public class Analyser {
 	public int[] combineFUS() {
 		final int n = this.ruleSet.getSCC().size();
 		final StronglyConnectedComponentsGraph<Rule> scc = this.ruleSet.getStronglyConnectedComponentsGraph();
-		final int[] layers = scc.computeLayers(scc.getSources(), false);
+		final int[] layers = scc.computeLayers(scc.getSinks(), false);
 		boolean[] mark = new boolean[n];
 		int[] result = prepareCombine();
 		int i;
@@ -114,7 +115,7 @@ public class Analyser {
 			mark[i] = false;
 
 		Deque<Integer> waiting = new LinkedList<Integer>();
-		for (Integer s : scc.getSources()) {
+		for (Integer s : scc.getSinks()) {
 			waiting.addLast(s);
 			mark[s.intValue()] = true;
 		}
@@ -125,7 +126,8 @@ public class Analyser {
 			if (result[s] == 0) return null;
 			if ((result[s] & COMBINE_FUS) != 0) result[s] = COMBINE_FUS;
 			else if ((result[s] & COMBINE_FES) != 0) result[s] = COMBINE_FES;
-			for (int succ : scc.outgoingEdgesOf(s)) {
+			for (int t : scc.incomingEdgesOf(s)) {
+				int succ = scc.getEdgeSource(t);
 				if ((result[s] & COMBINE_FUS) == 0) {
 					result[succ] ^= COMBINE_FUS;
 					result[succ] ^= COMBINE_BTS;

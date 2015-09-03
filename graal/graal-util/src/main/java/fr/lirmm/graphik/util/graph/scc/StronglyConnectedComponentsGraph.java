@@ -203,7 +203,10 @@ public class StronglyConnectedComponentsGraph<V> extends
 		else
 			it = this.incomingEdgesOf(v);
 		
-		for (int succ : it) {
+		for (int s : it) {
+			int succ;
+			if (direction) succ = this.getEdgeTarget(s);
+			else succ = this.getEdgeSource(s);
 			if (layers[succ] < actualLayer && v != succ) {
 				layers[succ] = actualLayer;
 				computeLayersRec(succ, layers, actualLayer + 1, direction);
