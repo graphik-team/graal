@@ -3,7 +3,7 @@
 
 	<groupId>fr.lirmm.graphik</groupId>
 	<artifactId>graal-main-project</artifactId>
-	<version>0.8.7-SNAPSHOT</version>
+	<version>0.8.7</version>
 	<name>fr.lirmm.graphik:graal-main-project</name>
 	<packaging>pom</packaging>
 	
@@ -15,7 +15,7 @@ algorithms, structural analysis of decidability properties of a rule set, a text
 	
 	<licenses>
 		<license>
-			<name></name>
+			<name />
 			<url>http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.txt</url>
 		</license>
 	</licenses>
@@ -29,7 +29,8 @@ algorithms, structural analysis of decidability properties of a rule set, a text
 		<connection>scm:git:git@github.com:graphik-team/graal.git</connection>
 		<url>https://github.com/graphik-team/graal/</url>
 		<developerConnection>scm:git:git@github.com:graphik-team/graal.git</developerConnection>
-	</scm>
+	  <tag>graal-0.8.7</tag>
+  </scm>
 
 	<developers>
 		<developer>

@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
 		<artifactId>graal-main-project</artifactId>
-		<version>0.8.7-SNAPSHOT</version>
+		<version>0.8.7</version>
 	</parent>
 
 	<artifactId>graal</artifactId>
@@ -16,7 +16,8 @@
 	<scm>
 		<url>https://gite.lirmm.fr/graphik/graal</url>
 		<developerConnection>scm:git:git@gite.lirmm.fr:graphik/graal.git</developerConnection>
-	</scm>
+	  <tag>graal-0.8.7</tag>
+  </scm>
 
 	<inceptionYear>2014</inceptionYear>
 
