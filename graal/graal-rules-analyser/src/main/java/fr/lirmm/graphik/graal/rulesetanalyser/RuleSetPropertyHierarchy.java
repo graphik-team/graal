@@ -58,7 +58,7 @@ public class RuleSetPropertyHierarchy {
 				if (!mark[i]) {
 					is_source = true;
 					for (j = 0 ; j < this.currentPtyIndex && is_source ; ++j) {
-						if (this.specialisations[j][i]) is_source = false;
+						if (spec[j][i]) is_source = false;
 					}
 				}
 			}
@@ -69,7 +69,8 @@ public class RuleSetPropertyHierarchy {
 				result.add(this.properties.get(i));
 				// update spec list
 				for (j = 0 ; j < this.currentPtyIndex ; ++j)
-					spec[j][i] = false;
+					spec[i][j] = false;
+					//spec[j][i] = false;
 			}
 			else running = false;
 		}
