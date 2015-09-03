@@ -31,13 +31,13 @@
 	</developers>
 
 	<modules>
-                <module>graal-store-api</module>
-                <module>graal-store-test</module>
+		<module>graal-store-api</module>
+		<module>graal-store-test</module>
 		<module>graal-store-rdbms</module>
-                <module>graal-store-neo4j</module>
-                <module>graal-store-openrdf</module>
-                <module>graal-store-jenaTDB</module>
-                <module>graal-store-blueprints</module>
+		<module>graal-store-neo4j</module>
+		<module>graal-store-openrdf</module>
+		<module>graal-store-jenaTDB</module>
+		<module>graal-store-blueprints</module>
 	</modules>
 
 </project>
