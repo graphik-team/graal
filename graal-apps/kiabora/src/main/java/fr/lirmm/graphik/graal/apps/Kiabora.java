@@ -225,7 +225,7 @@ public class Kiabora {
 			if (e.getValue() == 0) 
 				out.append(StringUtils.center("?", cell_size));
 			else if (e.getValue() < 0)
-				out.append(StringUtils.center(" ", cell_size));
+				out.append(StringUtils.center("-", cell_size));
 			else
 				out.append(StringUtils.center("X", cell_size));
 		}
@@ -263,7 +263,7 @@ public class Kiabora {
 				if (e.getValue() == 0) 
 					out.append(StringUtils.center("?", cell_size));
 				else if (e.getValue() < 0)
-					out.append(StringUtils.center(" ", cell_size));
+					out.append(StringUtils.center("-", cell_size));
 				else
 					out.append(StringUtils.center("X", cell_size));
 			}
