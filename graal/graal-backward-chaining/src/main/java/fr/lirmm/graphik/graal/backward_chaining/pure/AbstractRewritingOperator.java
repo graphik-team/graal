@@ -229,7 +229,7 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 
 	protected Collection<Rule> getUnifiableRules(Iterator<Predicate> preds,
 			IndexedByHeadPredicatesRuleSet ruleSet, RulesCompilation compilation) {
-		TreeSet<Rule> res = new TreeSet<Rule>(RuleOrder.getInstance());
+		TreeSet<Rule> res = new TreeSet<Rule>(RuleOrder.instance());
 		TreeSet<Predicate> unifiablePreds = new TreeSet<Predicate>();
 		
 		while (preds.hasNext()) {
@@ -445,7 +445,7 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 		private RuleOrder() {
 		}
 
-		public static synchronized RuleOrder getInstance() {
+		public static synchronized RuleOrder instance() {
 			if (instance == null)
 				instance = new RuleOrder();
 

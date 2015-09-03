@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
 		<artifactId>graal</artifactId>
-		<version>0.8.6-SNAPSHOT</version>
+		<version>0.8.7-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>graal-io</artifactId>
@@ -34,7 +34,6 @@
 		<module>graal-io-api</module>
                 <module>graal-io-dlgp</module>
                 <module>graal-io-dlgp1</module>
-                <module>graal-io-incubator</module>
 		<module>graal-io-owl</module>
 		<module>graal-io-rdf</module>
                 <module>graal-io-ruleml</module>

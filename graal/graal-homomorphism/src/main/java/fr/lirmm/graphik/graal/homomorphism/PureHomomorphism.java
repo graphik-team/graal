@@ -81,7 +81,7 @@ public class PureHomomorphism implements
 	protected PureHomomorphism() {
 	}
 
-	public static synchronized PureHomomorphism getInstance() {
+	public static synchronized PureHomomorphism instance() {
 		if (instance == null)
 			instance = new PureHomomorphism();
 

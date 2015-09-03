@@ -43,7 +43,7 @@
  /**
  * 
  */
-
+package fr.lirmm.graphik.graal.io.oxford;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -61,7 +61,7 @@ public final class AtomSetFactory {
 	private AtomSetFactory() {
 	}
 
-	public static AtomSetFactory getInstance() {
+	public static AtomSetFactory instance() {
 		return instance;
 	}
 

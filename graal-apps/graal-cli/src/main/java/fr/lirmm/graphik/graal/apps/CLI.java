@@ -131,7 +131,7 @@ public class CLI {
 		catch (NumberFormatException e) { } // no saturation requested
 
 		DlgpWriter writer = new DlgpWriter(System.out);
-		Homomorphism solver = new ComplexHomomorphism(SqlHomomorphism.getInstance());
+		Homomorphism solver = new ComplexHomomorphism(SqlHomomorphism.instance());
 
 		NaiveChase chase = new NaiveChase(rules,atomset,solver);
 

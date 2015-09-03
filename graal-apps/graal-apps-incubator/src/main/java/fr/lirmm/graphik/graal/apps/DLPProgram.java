@@ -77,7 +77,7 @@ public class DLPProgram {
 		if(args.length > 0)
 			 parser = new DlgpParser(new File(args[0]));
 		
-		InMemoryAtomSet atomSet = AtomSetFactory.getInstance().createAtomSet();
+		InMemoryAtomSet atomSet = AtomSetFactory.instance().createAtomSet();
 		RuleSet ruleSet = new LinkedListRuleSet();
 		LinkedList<ConjunctiveQuery> querySet = new LinkedList<ConjunctiveQuery>();
 		

@@ -164,7 +164,7 @@ public class GraalQuery {
 			WRITER.write(ucq);
 		}
 			
-		SqlUCQHomomorphism solver = SqlUCQHomomorphism.getInstance();
+		SqlUCQHomomorphism solver = SqlUCQHomomorphism.instance();
 		if (options.verbose) {
 			PROFILER.start("answering time");
 		}

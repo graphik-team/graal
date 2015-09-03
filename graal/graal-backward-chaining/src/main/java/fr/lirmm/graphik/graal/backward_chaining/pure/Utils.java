@@ -177,7 +177,7 @@ final class Utils {
 			moreGen = true;
 		} else {
 			try {
-				moreGen = PureHomomorphismWithCompilation.getInstance().exist(
+				moreGen = PureHomomorphismWithCompilation.instance().exist(
 						h, f, compilation);
 			} catch (HomomorphismException e) {
 			}

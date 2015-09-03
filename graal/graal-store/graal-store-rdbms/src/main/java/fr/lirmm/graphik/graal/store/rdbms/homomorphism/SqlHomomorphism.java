@@ -69,7 +69,7 @@ public final class SqlHomomorphism implements Homomorphism<ConjunctiveQuery, Rdb
 	private SqlHomomorphism() {
 	}
 
-	public static synchronized SqlHomomorphism getInstance() {
+	public static synchronized SqlHomomorphism instance() {
 		if (instance == null)
 			instance = new SqlHomomorphism();
 

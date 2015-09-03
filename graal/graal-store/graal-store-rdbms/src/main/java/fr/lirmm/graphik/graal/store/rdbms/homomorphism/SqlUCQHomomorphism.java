@@ -74,7 +74,7 @@ public final class SqlUCQHomomorphism implements UnionConjunctiveQueriesHomomorp
 	private SqlUCQHomomorphism() {
 	}
 	
-	public static synchronized SqlUCQHomomorphism getInstance() {
+	public static synchronized SqlUCQHomomorphism instance() {
 		if(instance == null)
 			instance = new SqlUCQHomomorphism();
 		

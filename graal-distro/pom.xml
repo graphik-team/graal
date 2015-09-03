@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
 		<artifactId>graal-main-project</artifactId>
-		<version>0.8.6-SNAPSHOT</version>
+		<version>0.8.7-SNAPSHOT</version>
 	</parent>
 
 	<properties>
@@ -28,15 +28,35 @@
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
-			<artifactId>graal-io-dlgp</artifactId>
+			<artifactId>graal-io-dlgp1</artifactId>
 			<groupId>fr.lirmm.graphik</groupId>
 			<version>${project.parent.version}</version>
 		</dependency>
+                <dependency>
+                  	<artifactId>graal-io-dlgp</artifactId>
+			<groupId>fr.lirmm.graphik</groupId>
+			<version>${project.parent.version}</version>
+                </dependency>
+                <dependency>
+                  	<artifactId>graal-io-rdf</artifactId>
+			<groupId>fr.lirmm.graphik</groupId>
+			<version>${project.parent.version}</version>
+                </dependency>
 		<dependency>
 			<artifactId>graal-io-owl</artifactId>
 			<groupId>fr.lirmm.graphik</groupId>
 			<version>${project.parent.version}</version>
 		</dependency>
+                <dependency>
+                  	<artifactId>graal-io-ruleml</artifactId>
+			<groupId>fr.lirmm.graphik</groupId>
+			<version>${project.parent.version}</version>
+                </dependency>
+                <dependency>
+                  	<artifactId>graal-io-sparql</artifactId>
+			<groupId>fr.lirmm.graphik</groupId>
+			<version>${project.parent.version}</version>
+                </dependency>
 		<dependency>
 			<artifactId>graal-homomorphism</artifactId>
 			<groupId>fr.lirmm.graphik</groupId>
@@ -84,6 +104,11 @@
 		</dependency>
 		<dependency>
 			<artifactId>graal-rules-analyser</artifactId>
+			<groupId>fr.lirmm.graphik</groupId>
+			<version>${project.parent.version}</version>
+		</dependency>
+                <dependency>
+			<artifactId>graal-util</artifactId>
 			<groupId>fr.lirmm.graphik</groupId>
 			<version>${project.parent.version}</version>
 		</dependency>

@@ -1,9 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>fr.lirmm.graphik</groupId>
+	<parent>
+		<groupId>fr.lirmm.graphik</groupId>
+		<artifactId>graal-main-project</artifactId>
+		<version>0.8.7-SNAPSHOT</version>
+	</parent>
+
 	<artifactId>graal</artifactId>
-	<version>0.8.6-SNAPSHOT</version>
 	<name>GRAAL - Generic Rules ApplicAtion Library</name>
 	<packaging>pom</packaging>
 
@@ -37,7 +41,6 @@
 		<module>graal-store</module>
 		<module>graal-backward-chaining</module>
 		<module>graal-rules-analyser</module>
-		<module>graal-incubator</module>
 		<module>graal-util</module>
 	</modules>
 

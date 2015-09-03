@@ -86,7 +86,7 @@ public class UnionConjunctiveQueriesSubstitutionReader implements SubstitutionRe
                 Query q = this.cqueryIterator.next();
                 Homomorphism solver;
                 try {
-                    solver = DefaultHomomorphismFactory.getInstance().getSolver(q, this.atomSet);
+                    solver = DefaultHomomorphismFactory.instance().getSolver(q, this.atomSet);
                     if(solver == null) {
                     	return false;
                     } else {

@@ -71,7 +71,7 @@ public class DefaultKnowledgeBase implements KnowledgeBase {
 
 	public DefaultKnowledgeBase() {
 		this.ruleset = new LinkedListRuleSet();
-		this.atomset = AtomSetFactory.getInstance().createAtomSet();
+		this.atomset = AtomSetFactory.instance().createAtomSet();
 	}
 
 	public DefaultKnowledgeBase(RuleSet ontology, AtomSet facts) {

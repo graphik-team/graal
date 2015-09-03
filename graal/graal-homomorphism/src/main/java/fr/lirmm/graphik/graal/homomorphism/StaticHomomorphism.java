@@ -62,7 +62,7 @@ public class StaticHomomorphism {
 			.getLogger(StaticHomomorphism.class);
 	
 	public static HomomorphismFactory getSolverFactory() {
-		return DefaultHomomorphismFactory.getInstance();
+		return DefaultHomomorphismFactory.instance();
 	}
 
 	/**
@@ -82,7 +82,7 @@ public class StaticHomomorphism {
 			LOGGER.debug("Query : " + query);
 
 		Homomorphism solver = DefaultHomomorphismFactory
-				.getInstance()
+				.instance()
 				.getSolver(query,
 				atomSet);
 		return solver.execute(query, atomSet);

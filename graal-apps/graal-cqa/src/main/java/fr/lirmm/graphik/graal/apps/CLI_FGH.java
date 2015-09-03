@@ -105,7 +105,7 @@ public class CLI_FGH {
 
 			FGH fgh = new FGH();
 
-			Homomorphism solver = new ComplexHomomorphism(SqlHomomorphism.getInstance());
+			Homomorphism solver = new ComplexHomomorphism(SqlHomomorphism.instance());
 
 			FGHRuleApplicationHandler onRule = new FGHRuleApplicationHandler(index,fgh);
 			onRule.setSolver(solver);

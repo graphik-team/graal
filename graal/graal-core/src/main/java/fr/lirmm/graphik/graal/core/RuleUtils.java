@@ -129,7 +129,7 @@ public final class RuleUtils {
 		for (Term e : existentials) {
 			if (tmpPieces.get(classes.getIdClass(e)) == null) {
 				tmpPieces.put(classes.getIdClass(e), AtomSetFactory
-						.getInstance().createAtomSet());
+						.instance().createAtomSet());
 			}
 		}
 
@@ -148,7 +148,7 @@ public final class RuleUtils {
 				}
 			}
 			if (!isAffected) { // does not contain existential variable
-				atomset = AtomSetFactory.getInstance().createAtomSet();
+				atomset = AtomSetFactory.instance().createAtomSet();
 				atomset.add(a);
 				pieces.add(atomset);
 			}

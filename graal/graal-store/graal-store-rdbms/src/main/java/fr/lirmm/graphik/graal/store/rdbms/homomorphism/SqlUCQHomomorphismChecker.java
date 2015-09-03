@@ -66,7 +66,7 @@ public class SqlUCQHomomorphismChecker extends
 
 	@Override
 	public SqlUCQHomomorphism getSolver() {
-		return SqlUCQHomomorphism.getInstance();
+		return SqlUCQHomomorphism.instance();
 	}
 
 	@Override

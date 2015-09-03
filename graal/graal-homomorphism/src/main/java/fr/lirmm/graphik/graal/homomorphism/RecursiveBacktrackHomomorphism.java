@@ -80,7 +80,7 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
 	private RecursiveBacktrackHomomorphism() {
 	}
 
-	public static synchronized RecursiveBacktrackHomomorphism getInstance() {
+	public static synchronized RecursiveBacktrackHomomorphism instance() {
 		if (instance == null)
 			instance = new RecursiveBacktrackHomomorphism();
 

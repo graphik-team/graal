@@ -69,9 +69,9 @@ public abstract class AbstractRdbmsStore extends AbstractAtomSet implements
 		RdbmsStore {
 
 	static {
-		DefaultHomomorphismFactory.getInstance().addChecker(
+		DefaultHomomorphismFactory.instance().addChecker(
 				new SqlHomomorphismChecker());
-		DefaultHomomorphismFactory.getInstance().addChecker(
+		DefaultHomomorphismFactory.instance().addChecker(
 				new SqlUCQHomomorphismChecker());
 	}
 

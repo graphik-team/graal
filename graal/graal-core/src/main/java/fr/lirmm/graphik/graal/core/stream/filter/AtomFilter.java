@@ -60,7 +60,7 @@ public class AtomFilter implements Filter {
 		super();
 	}
 
-	public static synchronized AtomFilter getInstance() {
+	public static synchronized AtomFilter instance() {
 		if (instance == null)
 			instance = new AtomFilter();
 

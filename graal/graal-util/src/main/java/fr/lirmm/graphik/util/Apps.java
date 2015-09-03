@@ -40,11 +40,12 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
+/**
  * 
  */
 package fr.lirmm.graphik.util;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.jar.Attributes;
@@ -55,9 +56,10 @@ import java.util.jar.Manifest;
  *
  */
 public final class Apps {
-	
-	private Apps(){}
-	
+
+	private Apps() {
+	}
+
 	public static void printVersion(String applicationName) {
 		Manifest manifest;
 		InputStream is;
@@ -80,7 +82,7 @@ public final class Apps {
 			buildDate = att.getValue("Built-On");
 
 			is.close();
-		} catch (Exception ex) {
+		} catch (IOException ex) {
 			version = vendor = buildDate = "?";
 		}
 
@@ -102,8 +104,7 @@ public final class Apps {
 		// classSimpleName = VersionUtil.class
 
 		// 2 - Récupérer le chemin physique de la classe
-		String pathToClass = Apps.class.getResource(classSimpleName)
-				.toString();
+		String pathToClass = Apps.class.getResource(classSimpleName).toString();
 		// pathToClass =
 		// file:/C:/workspace/VersionUtil/bin/com/abdennebi/version/VersionUtil.class
 		// pathToClass =
@@ -111,20 +112,17 @@ public final class Apps {
 
 		// 3 - Récupérer le chemin de la classe à partir de la racine du
 		// classpath
-		String classFullName = Apps.class.getName().replace('.', '/')
-				+ ".class";
+		String classFullName = Apps.class.getName().replace('.', '/') + ".class";
 		// classFullName = com/abdennebi/version/VersionUtil.class
 
 		// 4 - Récupérer le chemin complet vers MANIFEST.MF
-		String pathToManifest = pathToClass.substring(0, pathToClass.length()
-				- (classFullName.length()))
-				+ "META-INF/MANIFEST.MF";
+		String pathToManifest = pathToClass.substring(0, pathToClass.length() - (classFullName.length()))
+								+ "META-INF/MANIFEST.MF";
 		// pathToManifest =
 		// file:/C:/workspace/VersionUtil/bin/META-INF/MANIFEST.MF
 		// pathToManifest = jar:file:/C:/version.jar!/META-INF/MANIFEST.MF
 
 		return pathToManifest;
 	}
-
 
 }

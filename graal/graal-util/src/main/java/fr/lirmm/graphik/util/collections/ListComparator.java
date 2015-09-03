@@ -45,6 +45,7 @@
  */
 package fr.lirmm.graphik.util.collections;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
 
@@ -53,7 +54,9 @@ import java.util.List;
  *
  */
 public class ListComparator<E extends Comparable<E>> implements
-		Comparator<List<E>> {
+		Comparator<List<E>>, Serializable {
+
+	private static final long serialVersionUID = -2288519712129349305L;
 
 	@Override
 	public int compare(List<E> o1, List<E> o2) {

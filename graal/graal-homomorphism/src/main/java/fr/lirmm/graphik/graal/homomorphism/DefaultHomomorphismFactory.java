@@ -77,7 +77,7 @@ public final class DefaultHomomorphismFactory implements HomomorphismFactory {
 		this.elements.add(new DefaultUnionConjunctiveQueriesChecker());
 	}
 	
-	public static synchronized final DefaultHomomorphismFactory getInstance() {
+	public static synchronized final DefaultHomomorphismFactory instance() {
 		if(instance == null)
 			instance = new DefaultHomomorphismFactory();
 		

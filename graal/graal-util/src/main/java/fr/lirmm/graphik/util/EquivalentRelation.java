@@ -51,7 +51,7 @@ package fr.lirmm.graphik.util;
  */
 public interface EquivalentRelation<T> {
 
-	public boolean compare(T o1, T o2);
+	boolean compare(T o1, T o2);
 
 	/**
 	 * @param elements

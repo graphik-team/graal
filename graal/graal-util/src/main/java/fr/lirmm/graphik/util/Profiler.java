@@ -85,7 +85,9 @@ public class Profiler {
 
 	public void stop(String key) {
 		Long oldTime = (Long) this.map.get(key);
-		oldTime = (oldTime == null) ? 0 : oldTime;
+		if(oldTime == null) {
+			oldTime = 0L;
+		}
 		Long newTime = oldTime + this.getTime() - this.tmpMap.get(key);
 		this.map.put(key, newTime);
 		if (this.out != null) {

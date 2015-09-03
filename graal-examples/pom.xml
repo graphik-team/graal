@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
 		<artifactId>graal-main-project</artifactId>
-		<version>0.8.6-SNAPSHOT</version>
+		<version>0.8.7-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>graal-examples</artifactId>
@@ -65,11 +65,6 @@
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-io-dlgp</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-io-incubator</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>

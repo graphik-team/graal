@@ -45,6 +45,7 @@
  */
 package fr.lirmm.graphik.util;
 
+import java.util.Map;
 import java.util.TreeMap;
 
 /**
@@ -83,9 +84,9 @@ public class TreeMapEquivalentRelation<T extends Comparable<T>> implements Equiv
 		} else if (c2 == null) {
 			this.classes.put(o2, c1);
 		} else {
-			for(T t : this.classes.keySet()) {
-				if(this.classes.get(t).equals(c1)) {
-					this.classes.put(t, c2);
+			for (Map.Entry<T, Integer> e : this.classes.entrySet()) {
+				if (e.getValue().equals(c1)) {
+					this.classes.put(e.getKey(), c2);
 				}
 			}
 		}
