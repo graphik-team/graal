@@ -150,17 +150,25 @@ public class Unifier {
 
 	public boolean existPieceUnifier(Rule rule, InMemoryAtomSet atomset,
 			Filter<Substitution> filter) {
-		FreshVarSubstitution substitution = new FreshVarSubstitution();
-		InMemoryAtomSet atomsetSubstitut = substitution.createImageOf(atomset);
+		// TODO: check, why do you do that?
+		/*FreshVarSubstitution substitution = new FreshVarSubstitution();
+		InMemoryAtomSet atomsetSubstitut = substitution.createImageOf(atomset);*/
+
+		Substitution s1 = Unifier.computeInitialRuleTermsSubstitution(rule);
+		Substitution s2 = Unifier.computeInitialAtomSetTermsSubstitution(atomset);
+
+		Rule rule_fresh = s1.createImageOf(rule);
+		AtomSet atomset_fresh = s2.createImageOf(atomset);
+
 
 		Queue<Atom> atomQueue = new LinkedList<Atom>();
-		for (Atom a : atomsetSubstitut) {
+		for (Atom a : atomset_fresh/*Substitut*/) {
 			atomQueue.add(a);
 		}
 
-		for (Atom a : atomsetSubstitut) {
+		for (Atom a : atomset_fresh/*Substitut*/) {
 			Queue<Atom> tmp = new LinkedList<Atom>(atomQueue);
-			if (existExtendedUnifier(rule, tmp, a, new TreeMapSubstitution(), filter)) {
+			if (existExtendedUnifier(rule_fresh, tmp, a, new TreeMapSubstitution(), filter)) {
 				return true;
 			}
 		}
@@ -309,7 +317,8 @@ public class Unifier {
 					if (filter.filter(u)) {
 						return true;
 					}
-				} else {
+				} 
+				else {
 					if (existExtendedUnifier(rule, atomset, newPieceElement, u, filter)) {
 						return true;
 					}

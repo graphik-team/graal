@@ -42,6 +42,10 @@
  */
  package fr.lirmm.graphik.graal.rulesetanalyser.property;
 
+import java.util.List;
+import java.util.LinkedList;
+
+
 import fr.lirmm.graphik.graal.core.Rule;
 
 /**
@@ -51,14 +55,13 @@ import fr.lirmm.graphik.graal.core.Rule;
  * @author Swan Rocher
  * 
  */
-public final class FrontierOneProperty extends AbstractRuleProperty {
+public final class FrontierOneProperty extends RuleSetProperty.Local {
 
 	private static FrontierOneProperty instance = null;
 
-	private FrontierOneProperty() {
-	}
+	private FrontierOneProperty() { }
 
-	public static synchronized FrontierOneProperty getInstance() {
+	public static synchronized FrontierOneProperty instance() {
 		if (instance == null) {
 			instance = new FrontierOneProperty();
 		}
@@ -66,8 +69,10 @@ public final class FrontierOneProperty extends AbstractRuleProperty {
 	}
 
 	@Override
-	public Boolean check(Rule rule) {
-		return rule.getFrontier().size() == 1;
+	public int check(Rule rule) {
+		if (rule.getFrontier().size() == 1)
+			return 1;
+		return -1;
 	}
 
 	@Override
@@ -75,4 +80,14 @@ public final class FrontierOneProperty extends AbstractRuleProperty {
 		return "fr1";
 	}
 
-}
+	@Override
+	public Iterable<RuleSetProperty> getGeneralisations() {
+		List<RuleSetProperty> gen = new LinkedList<RuleSetProperty>();
+		gen.add(FrontierGuardedProperty.instance());
+		gen.add(GBTSProperty.instance());
+		gen.add(BTSProperty.instance());
+		return gen;
+	}
+
+};
+

@@ -44,6 +44,10 @@
 
 import java.util.Set;
 
+import java.util.List;
+import java.util.LinkedList;
+
+
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.term.Term;
@@ -55,13 +59,13 @@ import fr.lirmm.graphik.graal.core.term.Term;
  * @author Swan Rocher
  * 
  */
-public class DomainRestrictedProperty extends AbstractRuleProperty {
+public class DomainRestrictedProperty extends RuleSetProperty.Local {
 
 	private static DomainRestrictedProperty instance = null;
 	
 	private DomainRestrictedProperty(){}
 	
-	public static synchronized DomainRestrictedProperty getInstance() {
+	public static synchronized DomainRestrictedProperty instance() {
 		if(instance == null) {
 			instance = new DomainRestrictedProperty();
 		}
@@ -69,7 +73,7 @@ public class DomainRestrictedProperty extends AbstractRuleProperty {
 	}
 	
 	@Override
-	public Boolean check(Rule rule) {
+	public int check(Rule rule) {
 		boolean none;
 		boolean all;
 
@@ -84,12 +88,12 @@ public class DomainRestrictedProperty extends AbstractRuleProperty {
 					all = false;
 				}
 				if (!none && !all) {
-					return false;
+					return -1;
 				}
 			}
 		}
 
-		return true;
+		return 1;
 	}
 
 	@Override
@@ -97,4 +101,12 @@ public class DomainRestrictedProperty extends AbstractRuleProperty {
 		return "dr";
 	}
 
+	@Override
+	public Iterable<RuleSetProperty> getGeneralisations() {
+		List<RuleSetProperty> gen = new LinkedList<RuleSetProperty>();
+		gen.add(FUSProperty.instance());
+		return gen;
+	}
+
 };
+

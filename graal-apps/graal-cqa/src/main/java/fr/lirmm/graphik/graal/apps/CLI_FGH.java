@@ -82,7 +82,7 @@ public class CLI_FGH {
 	public final String PROGRAM_NAME = "graal-cli-fgh";
 
 	public static void main(String... args) {
-		CLI_FGH options = new CLI_FGH();
+		static CLI_FGH options = new CLI_FGH();
 		JCommander commander = new JCommander(options,args);
 
 		if (options.help) {

@@ -82,8 +82,7 @@ public class StronglyConnectedComponentsGraph<V> extends
 	 */
 	public <E> StronglyConnectedComponentsGraph(DirectedGraph<V, E> graph) {
 		this();
-		List<Set<V>> stronglyConnectedSets = new StrongConnectivityInspector<V, E>(
-				graph).stronglyConnectedSets();
+		List<Set<V>> stronglyConnectedSets = new StrongConnectivityInspector<V, E>(graph).stronglyConnectedSets();
 
 		// add components
 		int componentIndex = -1;
@@ -107,6 +106,10 @@ public class StronglyConnectedComponentsGraph<V> extends
 							break;
 					}
 				}
+				// Actually we prefere to not have these edges so
+				// that getSources work as we want it to work...
+				/*else if (this.getComponent(src).size() > 1)
+					this.addEdge(src,src);*/
 			}
 		}
 	}
@@ -119,6 +122,7 @@ public class StronglyConnectedComponentsGraph<V> extends
 		this.addEdge(tail, head, ++edgeMaxIndex);
 	}
 
+	// TODO: check, but it seems this is a useless method...
 	public void addToComponent(int vertex, V v) {
 		Set<V> set = this.map.get(vertex);
 		if (set == null) {
@@ -129,6 +133,7 @@ public class StronglyConnectedComponentsGraph<V> extends
 	}
 
 	public void addComponent(int vertex, Set<V> vertices) {
+		this.addVertex(vertex);
 		this.map.put(vertex, vertices);
 	}
 
@@ -198,7 +203,10 @@ public class StronglyConnectedComponentsGraph<V> extends
 		else
 			it = this.incomingEdgesOf(v);
 		
-		for (int succ : it) {
+		for (int s : it) {
+			int succ;
+			if (direction) succ = this.getEdgeTarget(s);
+			else succ = this.getEdgeSource(s);
 			if (layers[succ] < actualLayer && v != succ) {
 				layers[succ] = actualLayer;
 				computeLayersRec(succ, layers, actualLayer + 1, direction);

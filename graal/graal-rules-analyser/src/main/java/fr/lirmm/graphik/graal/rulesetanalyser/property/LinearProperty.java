@@ -40,32 +40,63 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.rulesetanalyser.property;
+ package fr.lirmm.graphik.graal.rulesetanalyser.property;
 
+import java.util.List;
+import java.util.LinkedList;
+
+
+import java.util.Iterator;
+
+import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
 
 /**
- * @author Clément Sipieter (INRIA) <clement@6pi.fr>
- *
+ * The body contains only one atom.
+ * 
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+ * @author Swan Rocher
+ * 
  */
-public abstract class AbstractRuleProperty implements RuleProperty {
+public final class LinearProperty extends RuleSetProperty.Local {
+
+	private static LinearProperty instance = null;
 	
-	@Override
-	public Boolean check(Iterable<Rule> rules) {
-		for(Rule rule : rules)
-			if(!this.check(rule))
-				return false;
-		
-		return true;
+	private LinearProperty(){}
+	
+	public static synchronized LinearProperty instance() {
+		if(instance == null) {
+			instance = new LinearProperty();
+		}
+		return instance;	
 	}
 	
 	@Override
-	public Boolean check(AnalyserRuleSet ruleSet) {
-		return this.check((Iterable<Rule>) ruleSet);
+	public int check(Rule rule) {
+		Iterator<Atom> it = rule.getBody().iterator();
+		if(it.hasNext())
+			it.next();
+		if (it.hasNext()) return -1;
+		return 1;
+	}
+	
+	@Override
+	public String getLabel() {
+		return "lin";
+	}
+	
+	@Override
+	public Iterable<RuleSetProperty> getGeneralisations() {
+		List<RuleSetProperty> gen = new LinkedList<RuleSetProperty>();
+		gen.add(FUSProperty.instance());
+		gen.add(GuardedProperty.instance());
+		gen.add(FrontierGuardedProperty.instance());
+		gen.add(WeaklyGuardedSetProperty.instance());
+		gen.add(WeaklyFrontierGuardedSetProperty.instance());
+		gen.add(GBTSProperty.instance());
+		gen.add(BTSProperty.instance());
+		return gen;
 	}
 
-}
+};
+

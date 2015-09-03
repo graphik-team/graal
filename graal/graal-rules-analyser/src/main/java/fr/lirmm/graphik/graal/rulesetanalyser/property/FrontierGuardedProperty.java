@@ -44,6 +44,10 @@
 
 import java.util.Set;
 
+import java.util.List;
+import java.util.LinkedList;
+
+
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.term.Term;
@@ -56,13 +60,13 @@ import fr.lirmm.graphik.graal.core.term.Term;
  * @author Swan Rocher
  * 
  */
-public final class FrontierGuardedProperty extends AbstractRuleProperty {
+public final class FrontierGuardedProperty extends RuleSetProperty.Local {
 
 	private static FrontierGuardedProperty instance = null;
 	
 	private FrontierGuardedProperty(){}
 	
-	public static synchronized FrontierGuardedProperty getInstance() {
+	public static synchronized FrontierGuardedProperty instance() {
 		if(instance == null) {
 			instance = new FrontierGuardedProperty();
 		}
@@ -70,7 +74,7 @@ public final class FrontierGuardedProperty extends AbstractRuleProperty {
 	}
 	
 	@Override
-	public Boolean check(Rule rule) {
+	public int check(Rule rule) {
 		Set<Term> frontier = rule.getFrontier();
 		boolean isGuarded = true;
 
@@ -87,7 +91,8 @@ public final class FrontierGuardedProperty extends AbstractRuleProperty {
 			}
 		}
 
-		return isGuarded;
+		if (isGuarded) return 1;
+		return -1;
 	}
 
 	@Override
@@ -95,4 +100,14 @@ public final class FrontierGuardedProperty extends AbstractRuleProperty {
 		return "fg";
 	}
 
-}
+	@Override
+	public Iterable<RuleSetProperty> getGeneralisations() {
+		List<RuleSetProperty> gen = new LinkedList<RuleSetProperty>();
+		gen.add(WeaklyFrontierGuardedSetProperty.instance());
+		gen.add(GBTSProperty.instance());
+		gen.add(BTSProperty.instance());
+		return gen;
+	}
+
+};
+

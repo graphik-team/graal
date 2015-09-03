@@ -45,6 +45,7 @@
  */
 package fr.lirmm.graphik.graal.rulesetanalyser.property;
 
+import java.util.List;
 import java.util.LinkedList;
 
 import fr.lirmm.graphik.graal.core.Atom;
@@ -62,13 +63,13 @@ import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
  * @author Swan Rocher
  * 
  */
-public final class StickyProperty implements RuleProperty {
+public final class StickyProperty extends RuleSetProperty.Default {
 
 	private static StickyProperty instance = null;
 	
-	private StickyProperty(){}
+	private StickyProperty() { }
 	
-	public static synchronized StickyProperty getInstance() {
+	public static synchronized StickyProperty instance() {
 		if(instance == null) {
 			instance = new StickyProperty();
 		}
@@ -80,27 +81,9 @@ public final class StickyProperty implements RuleProperty {
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.lirmm.graphik.graal.rulesetanalyser.UnitProperty#check(fr.lirmm.graphik
-	 * .graal.core.Rule)
-	 */
-	@Override
-	public Boolean check(Rule rule) {
-		LinkedList<Rule> rules = new LinkedList<Rule>();
-		rules.add(rule);
-		return this.check(rules);
-	}
-
-	public Boolean check(Iterable<Rule> rules) {
-		MarkedVariableSet markedVariableSet = new MarkedVariableSet(rules);
-		return this.check(markedVariableSet);
-	}
-	
-	public Boolean check(AnalyserRuleSet ruleSet) {
-		return this.check(ruleSet.getMarkedVariableSet());
+	public int check(AnalyserRuleSet ruleSet) {
+		if (this.check(ruleSet.getMarkedVariableSet())) return 1;
+		return -1;
 	}
 
 	public boolean check(MarkedVariableSet markedVariableSet) {
@@ -128,6 +111,12 @@ public final class StickyProperty implements RuleProperty {
 		return "s";
 	}
 
-	
+	@Override
+	public Iterable<RuleSetProperty> getGeneralisations() {
+		List<RuleSetProperty> gen = new LinkedList<RuleSetProperty>();
+		gen.add(FUSProperty.instance());
+		return gen;
+	}
 
-}
+};
+

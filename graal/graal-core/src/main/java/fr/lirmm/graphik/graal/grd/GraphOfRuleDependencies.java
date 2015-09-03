@@ -52,6 +52,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.jgrapht.DirectedGraph;
+import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.traverse.DepthFirstIterator;
 
@@ -158,19 +159,9 @@ public class GraphOfRuleDependencies {
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	// TODO
-	// add some unit test for this method...
 	public boolean hasCircuit() {
-		DepthFirstIterator<Rule,Integer> it = new DepthFirstIterator(this.graph);
-		Set<Rule> color = new TreeSet<Rule>();
-		Rule r = null;
-		while (it.hasNext()) {
-			r = it.next();
-			if (color.contains(r))
-				return true;
-			color.add(r);
-		}
-		return false;
+		CycleDetector<Rule,Integer> cycle = new CycleDetector<Rule,Integer>(this.graph);
+		return cycle.detectCycles();
 	}
 
 	public Set<Substitution> getUnifiers(Integer e) {

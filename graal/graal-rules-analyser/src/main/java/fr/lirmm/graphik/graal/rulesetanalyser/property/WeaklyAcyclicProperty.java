@@ -61,51 +61,23 @@ import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
  * @author Swan Rocher
  * 
  */
-public final class WeaklyAcyclicProperty implements RuleProperty {
-
-	// /////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	// /////////////////////////////////////////////////////////////////////////
+public final class WeaklyAcyclicProperty extends RuleSetProperty.Default {
 
 	private static WeaklyAcyclicProperty instance = null;
 
-	private WeaklyAcyclicProperty() {
-	}
+	private WeaklyAcyclicProperty() { }
 
-	public static synchronized WeaklyAcyclicProperty getInstance() {
+	public static synchronized WeaklyAcyclicProperty instance() {
 		if (instance == null) {
 			instance = new WeaklyAcyclicProperty();
 		}
 		return instance;
 	}
 
-	// /////////////////////////////////////////////////////////////////////////
-	// METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.lirmm.graphik.graal.rulesetanalyser.UnitProperty#check(fr.lirmm.graphik
-	 * .graal.core.Rule)
-	 */
 	@Override
-	public Boolean check(Rule rule) {
-		List<Rule> rules = new LinkedList<Rule>();
-		rules.add(rule);
-		return this.check(rules);
-	}
-
-	@Override
-	public Boolean check(Iterable<Rule> rules) {
-		GraphPositionDependencies graph = new GraphPositionDependencies(rules);
-		return graph.isWeaklyAcyclic();
-	}
-	
-	@Override
-	public Boolean check(AnalyserRuleSet ruleSet) {
-		return ruleSet.getGraphPositionDependencies().isWeaklyAcyclic();
+	public int check(AnalyserRuleSet ruleSet) {
+		if (ruleSet.getGraphPositionDependencies().isWeaklyAcyclic()) return 1;
+		return -1;
 	}
 
 	@Override
@@ -113,4 +85,15 @@ public final class WeaklyAcyclicProperty implements RuleProperty {
 		return "wa";
 	}
 
-}
+	@Override
+	public Iterable<RuleSetProperty> getGeneralisations() {
+		List<RuleSetProperty> gen = new LinkedList<RuleSetProperty>();
+		gen.add(WeaklyStickyProperty.instance());
+		gen.add(FESProperty.instance());
+		gen.add(BTSProperty.instance());
+		return gen;
+	}
+
+};
+
+

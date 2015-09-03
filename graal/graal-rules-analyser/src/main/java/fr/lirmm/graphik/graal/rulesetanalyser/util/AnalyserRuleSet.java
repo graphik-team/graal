@@ -49,11 +49,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.ruleset.ImmutableRuleSet;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
+import fr.lirmm.graphik.graal.grd.AtomErasingFilter;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.AffectedPositionSet;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.GraphPositionDependencies;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.MarkedVariableSet;
@@ -64,13 +66,16 @@ import fr.lirmm.graphik.util.graph.scc.StronglyConnectedComponentsGraph;
  *
  */
 public class AnalyserRuleSet implements ImmutableRuleSet {
-	
-	Collection<Rule> ruleset;
-	GraphOfRuleDependencies grd;
-	AffectedPositionSet affectedPositionSet;
-	GraphPositionDependencies graphPositionDependencies;
-	MarkedVariableSet markedVariableSet;
-	StronglyConnectedComponentsGraph<Rule> sccGraph;
+
+	private Collection<Rule> ruleset;
+	private GraphOfRuleDependencies grd;
+	private AffectedPositionSet affectedPositionSet;
+	private GraphPositionDependencies graphPositionDependencies;
+	private MarkedVariableSet markedVariableSet;
+	private StronglyConnectedComponentsGraph<Rule> sccGraph;
+	private List<AnalyserRuleSet> scc;
+	private GraphOfRuleDependencies.DependencyChecker dependencyChecker;
+	private boolean withUnifiers = false;
 	
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
@@ -78,6 +83,12 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 	
 	public AnalyserRuleSet(Iterable<Rule> rules) {
 		this.ruleset = Collections.unmodifiableCollection(new LinkedListRuleSet(rules));
+		this.dependencyChecker = new AtomErasingFilter();
+	}
+
+	public AnalyserRuleSet(Iterable<Rule> rules, GraphOfRuleDependencies.DependencyChecker checker) {
+		this.ruleset = Collections.unmodifiableCollection(new LinkedListRuleSet(rules));
+		this.dependencyChecker = checker;
 	}
 	
 	public AnalyserRuleSet(GraphOfRuleDependencies grd) {
@@ -93,6 +104,12 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 	// GETTERS
 	// /////////////////////////////////////////////////////////////////////////
 
+	public void setDependencyChecker(GraphOfRuleDependencies.DependencyChecker c) {
+		this.dependencyChecker = c;
+	}
+	public void enableUnifiers(boolean wu) {
+		this.withUnifiers = wu;
+	}
 	/**
 	 * @return the grd
 	 */
@@ -150,6 +167,13 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 	public AnalyserRuleSet getSubRuleSetAnalyser(Iterable<Rule> rules) {
 		return new AnalyserRuleSet(this.getGraphOfRuleDependencies().getSubGraph(rules));
 	}
+
+	public List<AnalyserRuleSet> getSCC() {
+		if (this.scc == null) {
+			computeSCC();
+		}
+		return this.scc;
+	}
 	
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
@@ -166,7 +190,13 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 	}
 	
 	private void computeGRD() {
-		this.grd = new GraphOfRuleDependencies(ruleset);
+		this.grd = new GraphOfRuleDependencies(ruleset, this.withUnifiers, this.dependencyChecker);
+	}
+
+	private void computeSCC() {
+		this.scc = new LinkedList<AnalyserRuleSet>();
+		for (int s : this.getStronglyConnectedComponentsGraph().vertexSet())
+			this.scc.add(this.getSubRuleSetAnalyser(this.getStronglyConnectedComponentsGraph().getComponent(s)));
 	}
 	
 	private void computeAffectedPositionSet() {
