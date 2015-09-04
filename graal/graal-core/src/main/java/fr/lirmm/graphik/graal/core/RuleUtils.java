@@ -199,7 +199,7 @@ public final class RuleUtils {
 		return monoPiece;
 	}
 
-	private static class MonoPieceRulesIterator implements Iterator<Rule>, Iterable<Rule> {
+	public static class MonoPieceRulesIterator implements Iterator<Rule>, Iterable<Rule> {
 
 		Iterator<Rule> it;
 		Queue<Rule> currentMonoPiece = new LinkedList<Rule>();
