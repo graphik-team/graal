@@ -60,46 +60,7 @@ import fr.lirmm.graphik.util.Prefix;
 public interface GraalWriter extends ConjunctiveQueryWriter, RuleWriter,
 		AtomSetWriter, AtomWriter {
 
-	public GraalWriter DEFAULT = new GraalWriter() {
+	public void write(Object o) throws IOException;
 
-		@Override
-		public void write(Atom atom) throws IOException {
-			System.out.println(atom);
-		}
+};
 
-		@Override
-		public void write(AtomSet atomSet) throws IOException {
-			System.out.println(atomSet);
-		}
-
-		@Override
-		public void write(Rule rule) throws IOException {
-			System.out.println(rule);
-		}
-
-		@Override
-		public void writeComment(String string) throws IOException {
-			System.out.println("# " + string);
-		}
-
-		@Override
-		public void write(Prefix prefix) throws IOException {
-			System.out.println(prefix);
-		}
-
-		@Override
-		public void write(ConjunctiveQuery query) throws IOException {
-			System.out.println(query);
-		}
-
-		@Override
-		public void flush() throws IOException {
-			System.out.flush();
-		}
-
-		@Override
-		public void close() throws IOException {
-		}
-	};
-
-}
