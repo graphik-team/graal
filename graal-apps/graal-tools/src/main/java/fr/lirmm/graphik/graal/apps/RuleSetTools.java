@@ -9,6 +9,11 @@ import com.beust.jcommander.Parameter;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 
+import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
+import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
+import fr.lirmm.graphik.graal.core.RuleUtils;
+
 public class RuleSetTools {
 	public static final String   PROGRAM_NAME   = "ruleset-tools";
 
@@ -45,10 +50,11 @@ public class RuleSetTools {
 			else System.err.println("[WARNING] Ignoring non rule: " + o);
 		}
 
-		if (options.single_piece) {
+		if (options.singlepiece) {
 			System.out.println("%%%% SINGLE PIECE %%%%");
 			for (Rule r : RuleUtils.computeMonoPiece(rules.iterator()))
-				System.out.println(DlgpWriter.writeToString(r));
+				System.out.print(DlgpWriter.writeToString(r));
+			System.out.println("");
 		}
 
 		if (options.atomic) {
@@ -56,7 +62,10 @@ public class RuleSetTools {
 			System.out.println("TODO");
 			//for (Rule r : RuleUtils.computeAtomicHead(rules.iterator()))
 				//System.out.println(DlgpWriter.writeToString(r));
+			System.out.println("");
 		}
+
+	}
 
 
 	@Parameter(names = { "-p", "--singlepiece-head" },
