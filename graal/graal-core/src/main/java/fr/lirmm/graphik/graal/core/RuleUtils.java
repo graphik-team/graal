@@ -170,7 +170,7 @@ public final class RuleUtils {
 	 *            a set of rules
 	 * @return The equivalent set of mono-piece rules.
 	 */
-	public static Iterator<Rule> computeMonoPiece(Iterator<Rule> rules) {
+	public static MonoPieceRulesIterator computeMonoPiece(Iterator<Rule> rules) {
 		return new MonoPieceRulesIterator(rules);
 	}
 
@@ -199,7 +199,7 @@ public final class RuleUtils {
 		return monoPiece;
 	}
 
-	private static class MonoPieceRulesIterator implements Iterator<Rule> {
+	private static class MonoPieceRulesIterator implements Iterator<Rule>, Iterable<Rule> {
 
 		Iterator<Rule> it;
 		Queue<Rule> currentMonoPiece = new LinkedList<Rule>();
@@ -227,6 +227,11 @@ public final class RuleUtils {
 		@Override
 		public void remove() {
 			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public Iterator<Rule> iterator() {
+			return this;
 		}
 
 	}
