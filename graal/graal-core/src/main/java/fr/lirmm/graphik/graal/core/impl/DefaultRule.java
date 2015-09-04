@@ -46,6 +46,7 @@
 package fr.lirmm.graphik.graal.core.impl;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -76,6 +77,11 @@ public class DefaultRule implements Rule {
 
 	public DefaultRule() {
 		this("", new LinkedListAtomSet(), new LinkedListAtomSet());
+	}
+
+	public DefaultRule(Iterator<Atom> body, Iterator<Atom> head) {
+		this("", new LinkedListAtomSet(body), new LinkedListAtomSet(head));
+
 	}
 
 	public DefaultRule(Iterable<Atom> body, Iterable<Atom> head) {

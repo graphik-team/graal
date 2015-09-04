@@ -199,7 +199,7 @@ public final class RuleUtils {
 		return monoPiece;
 	}
 
-	public static class MonoPieceRulesIterator implements Iterator<Rule>, Iterable<Rule> {
+	public static class MonoPieceRulesIterator implements Iterator<Rule> {
 
 		Iterator<Rule> it;
 		Queue<Rule> currentMonoPiece = new LinkedList<Rule>();
@@ -227,11 +227,6 @@ public final class RuleUtils {
 		@Override
 		public void remove() {
 			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public Iterator<Rule> iterator() {
-			return this;
 		}
 
 	}

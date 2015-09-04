@@ -133,6 +133,7 @@ public class PureRewriter extends AbstractBackwardChainer implements Verbosable 
 		return this.isUnfoldingEnable;
 	}
 	
+	@Override
 	public void enableVerbose(boolean enable) {
 		this.verbose = enable;
 	}

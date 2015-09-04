@@ -1,18 +1,17 @@
 package fr.lirmm.graphik.graal.apps;
 
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.util.Iterator;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
+import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.core.RuleUtils;
+import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
+import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
-
-import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
-import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
-import fr.lirmm.graphik.graal.core.RuleUtils;
 
 public class RuleSetTools {
 	public static final String   PROGRAM_NAME   = "ruleset-tools";
@@ -52,8 +51,10 @@ public class RuleSetTools {
 
 		if (options.singlepiece) {
 			System.out.println("%%%% SINGLE PIECE %%%%");
-			for (Rule r : RuleUtils.computeMonoPiece(rules.iterator()))
-				System.out.print(DlgpWriter.writeToString(r));
+			Iterator<Rule> it = RuleUtils.computeMonoPiece(rules.iterator());
+			while (it.hasNext()) {
+				System.out.print(DlgpWriter.writeToString(it.next()));
+			}
 			System.out.println("");
 		}
 

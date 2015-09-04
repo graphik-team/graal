@@ -87,6 +87,13 @@ public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements
 			this.linkedList.add(a);
 	}
 
+	public LinkedListAtomSet(Iterator<Atom> it) {
+		this();
+		while (it.hasNext()) {
+			this.linkedList.add(it.next());
+		}
+	}
+
 	/**
 	 *  copy constructor
 	 */

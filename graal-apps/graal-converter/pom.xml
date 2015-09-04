@@ -5,19 +5,19 @@
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
 		<artifactId>graal-apps</artifactId>
-		<version>0.8.8-SNAPSHOT </version>
+		<version>0.8.8-SNAPSHOT</version>
 	</parent>
 	
-	<artifactId>kiabora</artifactId>
-	<name>Kiabora</name>
+	<artifactId>graal-converter</artifactId>
+	<name>fr.lirmm.graphik:graal-converter</name>
 	<packaging>jar</packaging>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jdk.version>1.6</jdk.version>
+		<jdk.version>1.7</jdk.version>
 	</properties>
 
-	<inceptionYear>2014</inceptionYear>
+	<inceptionYear>2015</inceptionYear>
 
 	<organization>
 		<name>INRIA</name>
@@ -40,7 +40,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-core</artifactId>
+			<artifactId>graal-io-api</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
@@ -50,35 +50,18 @@
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-rules-analyser</artifactId>
+			<artifactId>graal-io-ruleml</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.3.2</version>
+			<groupId>fr.lirmm.graphik</groupId>
+			<artifactId>graal-io-owl</artifactId>
+			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.beust</groupId>
 			<artifactId>jcommander</artifactId>
 			<version>1.35</version>
-		</dependency>
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<version>1.1.1</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.code.findbugs</groupId>
-			<artifactId>annotations</artifactId>
-			<version>2.0.3</version>
-		</dependency>
-		<!-- Test -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.11</version>
-			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
@@ -105,11 +88,11 @@
 				<version>2.4.1</version>
 				<configuration>
 					<preparationGoals>compile</preparationGoals>
-					<finalName>Kiabora-${project.parent.version}</finalName>
+					<finalName>graal-converter-${project.parent.version}</finalName>
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<mainClass>fr.lirmm.graphik.graal.apps.Kiabora</mainClass>
+							<mainClass>fr.lirmm.graphik.graal.apps.GraalConverter</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>
