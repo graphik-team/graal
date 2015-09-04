@@ -65,6 +65,10 @@ import fr.lirmm.graphik.util.TreeMapEquivalentRelation;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
+// TODO we should move the static method from ruleanalyser.util.RuleUtils
+// to this class... Refactor ;)
+// 
+// By the way, while refactoring, mono piece sounds worst than single piece
 public final class RuleUtils {
 
 	private RuleUtils() {
@@ -166,7 +170,7 @@ public final class RuleUtils {
 	 *            a set of rules
 	 * @return The equivalent set of mono-piece rules.
 	 */
-	public static Iterator<Rule> computeMonoPiece(Iterator<Rule> rules) {
+	public static MonoPieceRulesIterator computeMonoPiece(Iterator<Rule> rules) {
 		return new MonoPieceRulesIterator(rules);
 	}
 
@@ -195,7 +199,7 @@ public final class RuleUtils {
 		return monoPiece;
 	}
 
-	private static class MonoPieceRulesIterator implements Iterator<Rule> {
+	public static class MonoPieceRulesIterator implements Iterator<Rule>, Iterable<Rule> {
 
 		Iterator<Rule> it;
 		Queue<Rule> currentMonoPiece = new LinkedList<Rule>();
@@ -223,6 +227,11 @@ public final class RuleUtils {
 		@Override
 		public void remove() {
 			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public Iterator<Rule> iterator() {
+			return this;
 		}
 
 	}

@@ -77,6 +77,7 @@ public abstract class AbstractGraalWriter extends AbstractWriter implements
 	@Override
 	public abstract void writeComment(String comment) throws IOException;
 
+	@Override
 	public void write(Object o) throws IOException {
 		if (o instanceof Atom) {
 			this.write((Atom) o);
