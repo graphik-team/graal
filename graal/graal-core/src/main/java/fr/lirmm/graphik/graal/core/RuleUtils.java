@@ -65,6 +65,10 @@ import fr.lirmm.graphik.util.TreeMapEquivalentRelation;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
+// TODO we should move the static method from ruleanalyser.util.RuleUtils
+// to this class... Refactor ;)
+// 
+// By the way, while refactoring, mono piece sounds worst than single piece
 public final class RuleUtils {
 
 	private RuleUtils() {
