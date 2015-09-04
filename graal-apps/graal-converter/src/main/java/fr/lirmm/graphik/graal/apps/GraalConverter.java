@@ -35,10 +35,16 @@ public class GraalConverter {
 		GraalWriter     writer  = null;
 		Parser          reader  = null;
 
-		if (options.input_file.equals("-"))
+		System.err.print("[info] Reading from ");
+		if (options.input_file.equals("-")) {
+			System.err.println("<STDIN>");
 			in = System.in;
+		}
 		else {
-			try { in = new FileInputStream(options.input_file); }
+			try {
+				in = new FileInputStream(options.input_file);
+				System.err.println("'" + options.input_file + "'"); 
+			}
 			catch (Exception e) {
 				System.err.println("Could not open file: " + options.input_file);
 				System.err.println(e);
@@ -47,10 +53,16 @@ public class GraalConverter {
 			}
 		}
 
-		if (options.output_file.equals("-"))
+		System.err.print("[info] Writing to ");
+		if (options.output_file.equals("-")) {
 			out = System.out;
+			System.err.println("<STDOUT>");
+		}
 		else {
-			try { out = new FileOutputStream(options.output_file); }
+			try {
+				out = new FileOutputStream(options.output_file);
+				System.err.println("'" + options.output_file + "'");
+			}
 			catch (Exception e) {
 				System.err.println("Could not open file: " + options.output_file);
 				System.err.println(e);
@@ -59,6 +71,7 @@ public class GraalConverter {
 			}
 		}
 
+		System.err.println("[info] Input format: " + options.input_format);
 		switch (options.input_format) {
 			case "dlp":
 			case "dlgp":
@@ -78,6 +91,7 @@ public class GraalConverter {
 				System.exit(2);
 		}
 
+		System.err.println("[info] Output format: " + options.output_format);
 		switch (options.output_format) {
 			case "dlp":
 			case "dlgp":
@@ -101,6 +115,11 @@ public class GraalConverter {
 				System.err.println("Exception while writing: " + e);
 				System.err.println("Couldn't write " + o);
 			}
+		}
+		try { writer.close(); }
+		catch (Exception e) {
+			System.err.println("Exception while closing output: " + e);
+			System.exit(3);
 		}
 
 	}
