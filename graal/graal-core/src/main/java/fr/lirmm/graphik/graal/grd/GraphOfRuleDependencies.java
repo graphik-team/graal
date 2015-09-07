@@ -46,16 +46,22 @@
 package fr.lirmm.graphik.graal.grd;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.LinkedList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.traverse.DepthFirstIterator;
 
+import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.LabelRuleComparator;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.core.Substitution;
@@ -121,11 +127,8 @@ public class GraphOfRuleDependencies {
 		for (Rule r : rules) {
 			this.addRule(r);
 		}
-		for (Rule r1 : rules) {
-			for (Rule r2 : rules) {
-				computeDependency(r1,r2,checker);
-			}
-		}
+
+		this.computeDependencies(checker);
 	}
 
 	public GraphOfRuleDependencies(Iterable<Rule> rules, boolean wu) {
@@ -151,7 +154,6 @@ public class GraphOfRuleDependencies {
 		this.edgesValue = new ArrayList<Set<Substitution>>();
 		this.computingUnifiers = false;
 	}
-
 
 
 
@@ -332,6 +334,33 @@ public class GraphOfRuleDependencies {
 	protected void addRuleSet(Iterable<Rule> ruleSet) {
 		for (Rule r : ruleSet) {
 			this.addRule(r);
+		}
+	}
+
+	protected void computeDependencies(DependencyChecker checker) {
+		// preprocess
+		Map<Predicate, List<Rule>> index = new TreeMap<Predicate,List<Rule>>();
+		for (Rule r : this.graph.vertexSet()) {
+			for (Atom a : r.getBody()) {
+				if (index.get(a.getPredicate()) == null)
+					index.put(a.getPredicate(),new LinkedList<Rule>());
+				index.get(a.getPredicate()).add(r);
+			}
+		}
+
+		List<Rule> candidates = null;
+		Set<String> marked = new TreeSet<String>();
+		for (Rule r1 : this.graph.vertexSet()) {
+			marked.clear();
+			for (Atom a : r1.getHead()) {
+				candidates = index.get(a.getPredicate());
+				if (candidates != null) {
+					for (Rule r2 : candidates) {
+						if (marked.add(r2.getLabel()))
+							computeDependency(r1,r2,checker);
+					}
+				}
+			}
 		}
 	}
 
