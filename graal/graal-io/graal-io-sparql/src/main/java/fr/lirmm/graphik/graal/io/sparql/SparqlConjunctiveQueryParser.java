@@ -49,7 +49,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryFactory;
@@ -228,7 +227,7 @@ public class SparqlConjunctiveQueryParser {
 		private Term parseTerm(Node node) {
 			Term term;
 			if (node.isURI()) {
-				term = DefaultTermFactory.instance().createConstant(node.getURI());
+				term = DefaultTermFactory.instance().createConstant(URIUtils.createURI(node.getURI()));
 			} else if (node.isLiteral()) {
 				if (node.getLiteralValue() instanceof String) {
 					// FIXME Jena ARQ Bug fix

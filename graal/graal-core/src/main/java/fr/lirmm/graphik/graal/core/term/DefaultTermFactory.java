@@ -96,9 +96,9 @@ public class DefaultTermFactory implements TermFactory {
 	public Term createTerm(Object o, Term.Type type) {
 		switch (type) {
 		case VARIABLE:
-			return this.createVariable(o.toString());
+			return this.createVariable(o);
 		case CONSTANT:
-			return this.createConstant(o.toString());
+			return this.createConstant(o);
 		case LITERAL:
 			return this.createLiteral(o);
 		default:
