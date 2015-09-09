@@ -50,7 +50,7 @@ package fr.lirmm.graphik.util;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface URI {
+public interface URI extends Comparable<URI> {
 	
 	/**
 	 * Get the prefix of this URI.
