@@ -105,6 +105,11 @@ public final class DefaultURI implements URI {
 			return false;
 		}
 		URI other = (URI) obj;
+		return this.equals(other);
+	}
+
+	@Override
+	public boolean equals(URI other) {
 		return this.toString().equals(other.toString());
 	}
 	
