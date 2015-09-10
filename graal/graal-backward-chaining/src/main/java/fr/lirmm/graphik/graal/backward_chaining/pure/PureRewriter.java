@@ -94,7 +94,7 @@ public class PureRewriter extends AbstractBackwardChainer implements Verbosable 
 	public PureRewriter(ConjunctiveQuery query, Iterable<Rule> rules,
 			RulesCompilation compilation, RewritingOperator operator) {
 		this.pquery = new PureQuery(query);
-		this.ruleset = new LinkedListRuleSet(RuleUtils.computeMonoPiece(rules.iterator()));
+		this.ruleset = new LinkedListRuleSet(RuleUtils.computeSinglePiece(rules.iterator()));
 		this.compilation = compilation;
 		this.operator = operator;
 	}

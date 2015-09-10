@@ -51,7 +51,7 @@ public class RuleSetTools {
 
 		if (options.singlepiece) {
 			System.out.println("%%%% SINGLE PIECE %%%%");
-			Iterator<Rule> it = RuleUtils.computeMonoPiece(rules.iterator());
+			Iterator<Rule> it = RuleUtils.computeSinglePiece(rules.iterator());
 			while (it.hasNext()) {
 				System.out.print(DlgpWriter.writeToString(it.next()));
 			}

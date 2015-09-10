@@ -45,15 +45,15 @@
  */
 package fr.lirmm.graphik.graal.rulesetanalyser.property;
 
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.core.RuleUtils;
 import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.AffectedPositionSet;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
-import fr.lirmm.graphik.graal.rulesetanalyser.util.RuleUtil;
 
 /**
  * At least one atom in the body of each rule contains all affected variable
@@ -90,7 +90,7 @@ public final class WeaklyGuardedSetProperty extends RuleSetProperty.Default {
 		for (Rule r : affectedPositionSet.getRules()) {
 			Set<Term> affectedVars = affectedPositionSet
 					.getAllAffectedVariables(r.getBody());
-			if (!RuleUtil.thereIsOneAtomThatContainsAllVars(r.getBody(),
+			if (!RuleUtils.isThereOneAtomThatContainsAllVars(r.getBody(),
 					affectedVars)) {
 				return false;
 			}

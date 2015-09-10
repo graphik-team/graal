@@ -58,6 +58,7 @@ import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
 import fr.lirmm.graphik.graal.core.factory.RuleFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
+import fr.lirmm.graphik.graal.core.term.Term.Type;
 import fr.lirmm.graphik.util.EquivalentRelation;
 import fr.lirmm.graphik.util.TreeMapEquivalentRelation;
 
@@ -65,10 +66,6 @@ import fr.lirmm.graphik.util.TreeMapEquivalentRelation;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-// TODO we should move the static method from ruleanalyser.util.RuleUtils
-// to this class... Refactor ;)
-// 
-// By the way, while refactoring, mono piece sounds worst than single piece
 public final class RuleUtils {
 
 	private RuleUtils() {
@@ -170,8 +167,8 @@ public final class RuleUtils {
 	 *            a set of rules
 	 * @return The equivalent set of mono-piece rules.
 	 */
-	public static MonoPieceRulesIterator computeMonoPiece(Iterator<Rule> rules) {
-		return new MonoPieceRulesIterator(rules);
+	public static SinglePieceRulesIterator computeSinglePiece(Iterator<Rule> rules) {
+		return new SinglePieceRulesIterator(rules);
 	}
 
 	/**
@@ -180,7 +177,7 @@ public final class RuleUtils {
 	 * @param rule
 	 * @return
 	 */
-	public static Collection<Rule> computeMonoPiece(Rule rule) {
+	public static Collection<Rule> computeSinglePiece(Rule rule) {
 		String label = rule.getLabel();
 		Collection<Rule> monoPiece = new LinkedList<Rule>();
 
@@ -199,13 +196,22 @@ public final class RuleUtils {
 		return monoPiece;
 	}
 
-	public static class MonoPieceRulesIterator implements Iterator<Rule> {
+	public static boolean isThereOneAtomThatContainsAllVars(Iterable<Atom> atomset, Collection<Term> terms) {
+		for (Atom atom : atomset) {
+			if (atom.getTerms(Type.VARIABLE).containsAll(terms)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static class SinglePieceRulesIterator implements Iterator<Rule> {
 
 		Iterator<Rule> it;
 		Queue<Rule> currentMonoPiece = new LinkedList<Rule>();
 		Rule currentRule;
 
-		MonoPieceRulesIterator(Iterator<Rule> iterator) {
+		SinglePieceRulesIterator(Iterator<Rule> iterator) {
 			this.it = iterator;
 		}
 
@@ -219,7 +225,7 @@ public final class RuleUtils {
 			if (currentMonoPiece.isEmpty()) {
 				currentRule = it.next();
 				currentMonoPiece
-						.addAll(RuleUtils.computeMonoPiece(currentRule));
+						.addAll(RuleUtils.computeSinglePiece(currentRule));
 			}
 			return currentMonoPiece.poll();
 		}
@@ -230,4 +236,5 @@ public final class RuleUtils {
 		}
 
 	}
+
 }
