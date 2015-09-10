@@ -63,8 +63,8 @@ public class GRDTest {
 	@Test
 	public void atomErasingFilterTest() {
 		LinkedList<Rule> rules = new LinkedList<Rule>();
-		rules.add(RuleFactory.instance().create(TestUtils.qX, TestUtils.rX));
-		rules.add(RuleFactory.instance().create(TestUtils.rX, TestUtils.qX));
+		rules.add(RuleFactory.instance().create(TestUtils.sX, TestUtils.rX));
+		rules.add(RuleFactory.instance().create(TestUtils.rX, TestUtils.sX));
 		rules.add(RuleFactory.instance().create(TestUtils.rX, TestUtils.pXY));
 
 		GraphOfRuleDependencies grd = new GraphOfRuleDependencies(rules, true, new AtomErasingFilter());
