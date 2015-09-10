@@ -54,7 +54,6 @@ import java.util.Set;
 import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
-import fr.lirmm.graphik.graal.core.impl.FreshVarSubstitution;
 import fr.lirmm.graphik.graal.core.impl.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
@@ -195,10 +194,12 @@ public class Unifier {
 				while (it.hasNext() && newPieceElement == null) {
 					Atom a = it.next();
 
-					for (Term t : a) {
-						if (existentialVars.contains(u.createImageOf(t))) {
-							newPieceElement = a;
-							break;
+					for (Term t1 : a) {
+						for (Term t2 : existentialVars) {
+							if (u.createImageOf(t2).equals(u.createImageOf(t1))) {
+								newPieceElement = a;
+								break;
+							}
 						}
 					}
 
@@ -209,7 +210,8 @@ public class Unifier {
 						unifierCollection.add(u);
 					}
 				} else {
-					unifierCollection.addAll(extendUnifier(rule, atomset, newPieceElement, u, filter));
+					unifierCollection.addAll(extendUnifier(rule, new LinkedList<Atom>(atomset), newPieceElement, u,
+					        filter));
 				}
 			}
 		}
@@ -217,27 +219,18 @@ public class Unifier {
 	}
 
 	private static Substitution unifier(Substitution baseUnifier, Atom a1,
-			Atom atomFromHead, Set<Term> frontierVars, Set<Term> existentialVars) {
-		if (a1.getPredicate().equals(atomFromHead.getPredicate())) {
+			Atom a2, Set<Term> frontierVars, Set<Term> existentialVars) {
+		if (a1.getPredicate().equals(a2.getPredicate())) {
 			boolean error = false;
 			Substitution u = SubstitutionFactory.instance()
 					.createSubstitution();
+
 			u.put(baseUnifier);
+
 			for (int i = 0; i < a1.getPredicate().getArity(); ++i) {
 				Term t1 = a1.getTerm(i);
-				Term t2 = atomFromHead.getTerm(i);
-				if (!t1.equals(t2)) {
-					if (Term.Type.VARIABLE.equals(t1.getType())) {
-						if (!compose(u, frontierVars, existentialVars, t1, t2))
-							error = true;
-					} else if (Term.Type.VARIABLE.equals(t2.getType())
-							&& !existentialVars.contains(t2)) {
-						if (!compose(u, frontierVars, existentialVars, t2, t1))
-							error = true;
-					} else {
-						error = true;
-					}
-				}
+				Term t2 = a2.getTerm(i);
+				error = error || !compose(u, frontierVars, existentialVars, t1, t2);
 			}
 
 			if (!error)
@@ -252,23 +245,24 @@ public class Unifier {
 		Term termSubstitut = u.createImageOf(term);
 		Term substitutSubstitut = u.createImageOf(substitut);
 
-		if (Term.Type.CONSTANT.equals(termSubstitut.getType())
-				|| existentials.contains(termSubstitut)) {
-			Term tmp = termSubstitut;
-			termSubstitut = substitutSubstitut;
-			substitutSubstitut = tmp;
-		}
+		if (!termSubstitut.equals(substitutSubstitut)) {
+			if (Term.Type.CONSTANT.equals(termSubstitut.getType()) || existentials.contains(termSubstitut)) {
+				Term tmp = termSubstitut;
+				termSubstitut = substitutSubstitut;
+				substitutSubstitut = tmp;
+			}
 
-		for (Term t : u.getTerms()) {
-			if (termSubstitut.equals(u.createImageOf(t))) {
-				if (!put(u, frontierVars, existentials, t, substitutSubstitut)) {
-					return false;
+			for (Term t : u.getTerms()) {
+				if (termSubstitut.equals(u.createImageOf(t))) {
+					if (!put(u, frontierVars, existentials, t, substitutSubstitut)) {
+						return false;
+					}
 				}
 			}
-		}
 
-		if (!put(u, frontierVars, existentials, termSubstitut, substitutSubstitut)) {
-			return false;
+			if (!put(u, frontierVars, existentials, termSubstitut, substitutSubstitut)) {
+				return false;
+			}
 		}
 		return true;
 	}
