@@ -1,13 +1,14 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
 		<artifactId>graal-apps</artifactId>
 		<version>0.8.8-SNAPSHOT </version>
 	</parent>
-	
+
 	<artifactId>kiabora</artifactId>
 	<name>Kiabora</name>
 	<packaging>jar</packaging>
@@ -20,13 +21,13 @@
 	<inceptionYear>2014</inceptionYear>
 
 	<organization>
-		<name>INRIA</name>
-		<url>http://www.inria.fr/</url>
+		<name>GraphIK (INRIA - LIRMM)</name>
+		<url>https://team.inria.fr/graphik/</url>
 	</organization>
 
 	<developers>
-	    <developer>
-		    <name>Swan ROCHER</name>
+		<developer>
+			<name>Swan ROCHER</name>
 			<email>rocher@lirmm.fr</email>
 			<organization>INRIA</organization>
 		</developer>
@@ -38,6 +39,11 @@
 	</developers>
 
 	<dependencies>
+		<dependency>
+			<groupId>fr.lirmm.graphik</groupId>
+			<artifactId>graal-util</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-core</artifactId>
@@ -68,18 +74,6 @@
 			<artifactId>logback-classic</artifactId>
 			<version>1.1.1</version>
 		</dependency>
-		<dependency>
-			<groupId>com.google.code.findbugs</groupId>
-			<artifactId>annotations</artifactId>
-			<version>2.0.3</version>
-		</dependency>
-		<!-- Test -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.11</version>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 
 	<build>
@@ -107,8 +101,11 @@
 					<preparationGoals>compile</preparationGoals>
 					<finalName>Kiabora-${project.parent.version}</finalName>
 					<archive>
+						<manifestEntries>
+							<Built-On>${maven.build.timestamp}</Built-On>
+						</manifestEntries>
 						<manifest>
-							<addClasspath>true</addClasspath>
+							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
 							<mainClass>fr.lirmm.graphik.graal.apps.Kiabora</mainClass>
 						</manifest>
 					</archive>

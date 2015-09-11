@@ -1,27 +1,44 @@
 package fr.lirmm.graphik.graal.apps;
 
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
 import java.io.FileInputStream;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
-import fr.lirmm.graphik.util.graph.scc.StronglyConnectedComponentsGraph;
 import fr.lirmm.graphik.graal.core.Rule;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
-import fr.lirmm.graphik.graal.rulesetanalyser.Analyser;
-import fr.lirmm.graphik.graal.rulesetanalyser.RuleSetPropertyHierarchy;
-import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
-import fr.lirmm.graphik.graal.rulesetanalyser.property.*;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
+import fr.lirmm.graphik.graal.rulesetanalyser.Analyser;
+import fr.lirmm.graphik.graal.rulesetanalyser.RuleSetPropertyHierarchy;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.AGRDProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.BTSProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.DisconnectedProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.DomainRestrictedProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.FESProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.FUSProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.FrontierGuardedProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.FrontierOneProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.GBTSProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.LinearProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.RangeRestrictedProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.RuleSetProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.StickyProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.WeaklyAcyclicProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.WeaklyFrontierGuardedSetProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.WeaklyGuardedSetProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.WeaklyStickyProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
+import fr.lirmm.graphik.util.Apps;
+import fr.lirmm.graphik.util.graph.scc.StronglyConnectedComponentsGraph;
 
 /**
  * Analyse a rule set.
@@ -39,6 +56,8 @@ import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
  */
 public class Kiabora {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(Kiabora.class);
+
 	public static final String PROGRAM_NAME = "kiabora";
 	public static final Map<String,RuleSetProperty> propertyMap =
 		new TreeMap<String,RuleSetProperty>();
@@ -48,10 +67,21 @@ public class Kiabora {
 	public static void main(String args[]) {
 		Kiabora options = new Kiabora();
 
-		JCommander commander = new JCommander(options,args);
+		JCommander commander = null;
+		try {
+			commander = new JCommander(options, args);
+		} catch (com.beust.jcommander.ParameterException e) {
+			System.err.println(e.getMessage());
+			System.exit(1);
+		}
 
 		if (options.help) {
 			commander.usage();
+			System.exit(0);
+		}
+
+		if (options.version) {
+			Apps.printVersion(PROGRAM_NAME);
 			System.exit(0);
 		}
 
@@ -82,8 +112,6 @@ public class Kiabora {
 					r.setLabel("R" + currentRuleID++);
 				rules.add((Rule)o);
 			}
-			else
-				System.err.println("[WARNING] Ignoring non rule: " + o);
 		}
 
 		AnalyserRuleSet ruleset = new AnalyserRuleSet(rules);
@@ -103,8 +131,8 @@ public class Kiabora {
 			else {
 				if (propertyMap.get(label) != null)
 					properties.put(label,propertyMap.get(label));
-				else
-					System.err.println("[WARNING] Requesting unknown property: " + label);
+				else if (LOGGER.isWarnEnabled())
+					LOGGER.warn("Requesting unknown property: " + label);
 			}
 		}
 		RuleSetPropertyHierarchy hierarchy = new RuleSetPropertyHierarchy(properties.values());
@@ -409,6 +437,9 @@ public class Kiabora {
 	@Parameter(names = { "-h", "--help" },
 	           description = "Print this message.")
 	private boolean help = false;
+
+	@Parameter(names = { "-V", "--version" }, description = "Print version information")
+	private boolean version = false;
 
 };
 
