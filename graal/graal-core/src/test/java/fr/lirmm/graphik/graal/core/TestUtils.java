@@ -58,32 +58,60 @@ import fr.lirmm.graphik.graal.core.term.Term;
 public final class TestUtils {
 
 	public static final Predicate p = new Predicate("p", 2);
-	public static final Predicate q = new Predicate("q", 1);
+	public static final Predicate q = new Predicate("q", 2);
 	public static final Predicate r = new Predicate("r", 1);
+	public static final Predicate s = new Predicate("s", 1);
 
+	public static final Term T = DefaultTermFactory.instance().createVariable("T");
+	public static final Term U = DefaultTermFactory.instance().createVariable("U");
+	public static final Term V = DefaultTermFactory.instance().createVariable("V");
+	public static final Term W = DefaultTermFactory.instance().createVariable("W");
 	public static final Term X = DefaultTermFactory.instance().createVariable("X");
 	public static final Term Y = DefaultTermFactory.instance().createVariable("Y");
 	public static final Term Z = DefaultTermFactory.instance().createVariable("Z");
-	public static final Term U = DefaultTermFactory.instance().createVariable("U");
-	public static final Term V = DefaultTermFactory.instance().createVariable("V");
-	public static final Term W = DefaultTermFactory.instance().createVariable("w");
 
 	public static final Term A = DefaultTermFactory.instance().createConstant("a");
 	public static final Term B = DefaultTermFactory.instance().createConstant("b");
 
-	public static final Atom pXY, pYZ, pUV, pVW, pAU, pXA, pXB;
-	public static final Atom qX, rX;
+	public static final Atom pTU, pUV, pVW, pWX, pXY, pYX, pYZ, pYW, pUU, pWV, pWT, pUW, pAU, pXA, pXB;
+	public static final Atom qXY, qTW, qUV, qVW;
+	public static final Atom sX, rX;
 
 	static {
 		Term[] terms = new Term[2];
+		terms[0] = T;
+		terms[1] = U;
+		pTU = new DefaultAtom(p, Arrays.asList(terms));
+		
+		terms = new Term[2];
+		terms[0] = W;
+		terms[1] = X;
+		pWX = new DefaultAtom(p, Arrays.asList(terms));
+
+		terms = new Term[2];
 		terms[0] = X;
 		terms[1] = Y;
 		pXY = new DefaultAtom(p, Arrays.asList(terms));
 
 		terms = new Term[2];
 		terms[0] = Y;
+		terms[1] = X;
+		pYX = new DefaultAtom(p, Arrays.asList(terms));
+
+		terms = new Term[2];
+		terms[0] = Y;
 		terms[1] = Z;
 		pYZ = new DefaultAtom(p, Arrays.asList(terms));
+
+		terms = new Term[2];
+		terms[0] = Y;
+		terms[1] = W;
+		pYW = new DefaultAtom(p, Arrays.asList(terms));
+
+		terms = new Term[2];
+		terms[0] = U;
+		terms[1] = U;
+		pUU = new DefaultAtom(p, Arrays.asList(terms));
 
 		terms = new Term[2];
 		terms[0] = U;
@@ -94,6 +122,21 @@ public final class TestUtils {
 		terms[0] = V;
 		terms[1] = W;
 		pVW = new DefaultAtom(p, Arrays.asList(terms));
+		
+		terms = new Term[2];
+		terms[0] = W;
+		terms[1] = V;
+		pWV = new DefaultAtom(p, Arrays.asList(terms));
+		
+		terms = new Term[2];
+		terms[0] = W;
+		terms[1] = T;
+		pWT = new DefaultAtom(p, Arrays.asList(terms));
+		
+		terms = new Term[2];
+		terms[0] = U;
+		terms[1] = W;
+		pUW = new DefaultAtom(p, Arrays.asList(terms));
 
 		terms = new Term[2];
 		terms[0] = A;
@@ -109,10 +152,36 @@ public final class TestUtils {
 		terms[0] = X;
 		terms[1] = B;
 		pXB = new DefaultAtom(p, Arrays.asList(terms));
+		
+		// q
+
+		terms = new Term[2];
+		terms[0] = X;
+		terms[1] = Y;
+		qXY = new DefaultAtom(q, Arrays.asList(terms));
+
+		terms = new Term[2];
+		terms[0] = U;
+		terms[1] = V;
+		qUV = new DefaultAtom(q, Arrays.asList(terms));
+
+		terms = new Term[2];
+		terms[0] = V;
+		terms[1] = W;
+		qVW = new DefaultAtom(q, Arrays.asList(terms));
+
+		terms = new Term[2];
+		terms[0] = T;
+		terms[1] = W;
+		qTW = new DefaultAtom(q, Arrays.asList(terms));
+		
+		// s
 
 		terms = new Term[1];
 		terms[0] = X;
-		qX = new DefaultAtom(q, Arrays.asList(terms));
+		sX = new DefaultAtom(s, Arrays.asList(terms));
+		
+		// r
 
 		terms = new Term[1];
 		terms[0] = X;

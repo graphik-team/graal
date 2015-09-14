@@ -227,14 +227,26 @@ public abstract class AbstractSubstitution implements Substitution {
 	}
 
 	public boolean equals(Substitution other) { // NOPMD
-		for (Term t : this.getTerms()) {
-			if (!this.createImageOf(t).equals(other.createImageOf(t)))
-				return false;
+		Set<Term> termsThis = new TreeSet<Term>();
+		termsThis.addAll(this.getTerms());
+		termsThis.addAll(this.getValues());
+
+		Set<Term> termsOther = new TreeSet<Term>();
+		termsOther.addAll(other.getTerms());
+		termsOther.addAll(other.getValues());
+
+		if (!termsThis.equals(termsOther)) {
+			return false;
 		}
 
-		for (Term t : other.getTerms()) {
-			if (!this.createImageOf(t).equals(other.createImageOf(t)))
-				return false;
+		for (Term t1 : termsThis) {
+			for (Term t2 : termsThis) {
+				boolean a = this.createImageOf(t1).equals(this.createImageOf(t2));
+				boolean b = other.createImageOf(t1).equals(other.createImageOf(t2));
+				if (a != b) {
+					return false;
+				}
+			}
 		}
 
 		return true;

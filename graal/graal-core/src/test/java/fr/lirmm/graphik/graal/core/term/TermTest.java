@@ -40,28 +40,26 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik;
+package fr.lirmm.graphik.graal.core.term;
 
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
+import org.junit.Assert;
+import org.junit.Test;
+
+import fr.lirmm.graphik.util.URI;
+import fr.lirmm.graphik.util.URIUtils;
 
 /**
- * @author Clément Sipieter (INRIA) <clement@6pi.fr>
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public final class TestUtil {
-	
-	private TestUtil(){}
-	
-	
-	public static AtomSet[] writeableStore() {
+public class TermTest {
 
-			return new AtomSet[] { new DefaultInMemoryGraphAtomSet(),
-				new LinkedListAtomSet() };
-
+	@Test
+	public void testURI() {
+		URI uri = URIUtils.createURI("http://toto.fr");
+		Term t1 = DefaultTermFactory.instance().createConstant("http://toto.fr");
+		Term t2 = DefaultTermFactory.instance().createConstant(uri);
+		Assert.assertNotEquals(t1, t2);
 	}
+
 }

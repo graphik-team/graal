@@ -43,7 +43,7 @@
  /**
  * 
  */
-package fr.lirmm.graphik;
+package fr.lirmm.graphik.graal.store.test;
 
 import org.junit.Assert;
 import org.junit.experimental.theories.DataPoints;
@@ -70,8 +70,8 @@ import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 public class ConjunctiveQueryTest {
 
 	@DataPoints
-	public static AtomSet[] writeableStore() {
-		return TestUtil.writeableStore();
+	public static AtomSet[] atomset() {
+		return TestUtil.getAtomSet();
 	}
 
 	/**
@@ -201,7 +201,6 @@ public class ConjunctiveQueryTest {
 
 			Assert.assertTrue(subReader.hasNext());
 			sub = subReader.next();
-			System.out.println(sub.getTerms());
 			Assert.assertEquals(0, sub.getTerms().size());
 
 			Assert.assertFalse(subReader.hasNext());

@@ -122,16 +122,6 @@ public class StronglyConnectedComponentsGraph<V> extends
 		this.addEdge(tail, head, ++edgeMaxIndex);
 	}
 
-	// TODO: check, but it seems this is a useless method...
-	public void addToComponent(int vertex, V v) {
-		Set<V> set = this.map.get(vertex);
-		if (set == null) {
-			set = new TreeSet<V>();
-			this.map.put(vertex, set);
-		}
-		set.add(v);
-	}
-
 	public void addComponent(int vertex, Set<V> vertices) {
 		this.addVertex(vertex);
 		this.map.put(vertex, vertices);

@@ -62,16 +62,6 @@ public abstract class AbstractTerm implements Term {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public int compareTo(Term o) {
-		int res = this.getType().compareTo(o.getType());
-		if (res == 0) {
-			res = this.getIdentifier().toString()
-					.compareTo(o.getIdentifier().toString());
-		}
-		return res;
-	}
-
-	@Override
 	public String getLabel() {
 		return this.getIdentifier().toString();
 	}
@@ -81,15 +71,37 @@ public abstract class AbstractTerm implements Term {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
+	public int compareTo(Term o) {
+		int res = this.getType().compareTo(o.getType());
+		if (res == 0) {
+			if(this.getIdentifier().getClass().equals(o.getIdentifier().getClass())) {
+				res = this.getIdentifier().toString().compareTo(o.getIdentifier().toString());
+			} else {
+				res = this.getIdentifier().getClass().toString().compareTo(o.getIdentifier().getClass().toString());
+			}
+		}
+		return res;
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (obj == null || !(obj instanceof AbstractTerm)) {
+		if (!(obj instanceof Term)) {
 			return false;
 		}
-		AbstractTerm other = (AbstractTerm) obj;
-		return this.compareTo(other) == 0;
+		Term other = (Term) obj;
+		return this.equals(other);
+	}
+
+	public boolean equals(Term term) {
+		if (this.getType().equals(term.getType())) {
+			if (this.getIdentifier().getClass().equals(term.getIdentifier().getClass())) {
+				return this.getIdentifier().equals(term.getIdentifier());
+			}
+		}
+		return false;
 	}
 
 	@Override

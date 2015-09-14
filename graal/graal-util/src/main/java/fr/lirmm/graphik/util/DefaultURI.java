@@ -87,6 +87,11 @@ public final class DefaultURI implements URI {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
+	public int compareTo(URI uri) {
+		return this.toString().compareTo(uri.toString());
+	}
+
+	@Override
 	public int hashCode() {
 		return this.toString().hashCode();
 	}
@@ -96,10 +101,14 @@ public final class DefaultURI implements URI {
 		if (this == obj) {
 			return true;
 		}
-		if (obj == null || !(obj instanceof DefaultURI)) {
+		if (obj == null || !(obj instanceof URI)) {
 			return false;
 		}
-		DefaultURI other = (DefaultURI) obj;
+		URI other = (URI) obj;
+		return this.equals(other);
+	}
+
+	public boolean equals(URI other) {
 		return this.toString().equals(other.toString());
 	}
 	

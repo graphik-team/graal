@@ -63,7 +63,7 @@ public class UnifierTest {
 	@Test
 	public void pieceUnifierTest1() {
 		Rule rule = RuleFactory.instance().create();
-		rule.getBody().add(TestUtils.qX);
+		rule.getBody().add(TestUtils.sX);
 		rule.getHead().add(TestUtils.pXY);
 		rule.getHead().add(TestUtils.pYZ);
 		
@@ -78,7 +78,7 @@ public class UnifierTest {
 	@Test
 	public void pieceUnifierTest2() {
 		Rule rule = RuleFactory.instance().create();
-		rule.getBody().add(TestUtils.qX);
+		rule.getBody().add(TestUtils.sX);
 		rule.getHead().add(TestUtils.pXB);
 		
 		InMemoryAtomSet atomset = AtomSetFactory.instance().createAtomSet();
@@ -91,7 +91,7 @@ public class UnifierTest {
 	@Test
 	public void constantUnification() {
 		Rule rule = RuleFactory.instance().create();
-		rule.getBody().add(TestUtils.qX);
+		rule.getBody().add(TestUtils.sX);
 		rule.getHead().add(TestUtils.pXB);
 
 		InMemoryAtomSet atomset = AtomSetFactory.instance().createAtomSet();
@@ -102,4 +102,71 @@ public class UnifierTest {
 		Assert.assertEquals(0, unifiers.size());
 	}
 
+	@Test
+	public void unificationExistentialWithFrontier() {
+		Rule rule = RuleFactory.instance().create();
+		rule.getBody().add(TestUtils.sX);
+		rule.getHead().add(TestUtils.pXY);
+
+		InMemoryAtomSet atomset = AtomSetFactory.instance().createAtomSet();
+		atomset.add(TestUtils.pUU);
+
+		Collection<Substitution> unifiers = Unifier.instance().computePieceUnifier(rule, atomset);
+		Assert.assertEquals(0, unifiers.size());
+	}
+
+	@Test
+	public void pieceUnifierTest3() {
+		Rule rule = RuleFactory.instance().create();
+		rule.getBody().add(TestUtils.sX);
+		rule.getHead().add(TestUtils.pXY);
+		rule.getHead().add(TestUtils.pYZ);
+
+		InMemoryAtomSet atomset = AtomSetFactory.instance().createAtomSet();
+		atomset.add(TestUtils.pTU);
+		atomset.add(TestUtils.pUV);
+		atomset.add(TestUtils.pVW);
+		atomset.add(TestUtils.pWX);
+
+		Collection<Substitution> unifiers = Unifier.instance().computePieceUnifier(rule, atomset);
+		Assert.assertEquals(2, unifiers.size());
+	}
+
+	@Test
+	public void example33MelanieThesis() {
+		Rule rule = RuleFactory.instance().create();
+		rule.getBody().add(TestUtils.sX);
+		rule.getHead().add(TestUtils.pXY);
+
+		InMemoryAtomSet atomset = AtomSetFactory.instance().createAtomSet();
+		atomset.add(TestUtils.pUV);
+		atomset.add(TestUtils.pWV);
+		atomset.add(TestUtils.pWT);
+		atomset.add(TestUtils.pUW);
+
+		Collection<Substitution> unifiers = Unifier.instance().computePieceUnifier(rule, atomset);
+		Assert.assertEquals(2, unifiers.size());
+	}
+
+	@Test
+	public void example35MelanieThesis() {
+		Rule rule = RuleFactory.instance().create();
+		rule.getBody().add(TestUtils.pXY);
+		rule.getHead().add(TestUtils.qXY);
+
+		InMemoryAtomSet atomset = AtomSetFactory.instance().createAtomSet();
+		atomset.add(TestUtils.qUV);
+		atomset.add(TestUtils.pVW);
+		atomset.add(TestUtils.qTW);
+
+		Collection<Substitution> unifiers = Unifier.instance().computePieceUnifier(rule, atomset);
+		print(unifiers);
+		Assert.assertEquals(2, unifiers.size());
+	}
+
+	private void print(Collection<Substitution> list) {
+		for (Substitution s : list) {
+			System.out.println(s);
+		}
+	}
 }

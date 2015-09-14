@@ -55,8 +55,10 @@ import org.junit.Assert;
 
 import com.tinkerpop.blueprints.impls.tg.TinkerGraph;
 
+import fr.lirmm.graphik.graal.core.atomset.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
-import fr.lirmm.graphik.graal.store.Store;
+import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.store.TripleStore;
 import fr.lirmm.graphik.graal.store.gdb.BlueprintsGraphDBStore;
 import fr.lirmm.graphik.graal.store.gdb.Neo4jStore;
@@ -76,8 +78,8 @@ public final class TestUtil {
 
 	public static final String HSQLDB_TEST = "test";
 
-	public static final File JENA_TEST;
-	public static final File NEO4J_TEST;
+	public static final String JENA_TEST;
+	public static final String NEO4J_TEST;
 	static {
 		File jena;
 		File neo4j;
@@ -88,8 +90,10 @@ public final class TestUtil {
 			jena = new File("/tmp/jena-test.db");
 			neo4j = new File("/tmp/neo4j-test.db");
 		}
-		JENA_TEST = jena;
-		NEO4J_TEST = neo4j;
+		rm(neo4j);
+		JENA_TEST = jena.getAbsolutePath();
+		NEO4J_TEST = neo4j.getAbsolutePath();
+
 	}
 
 	public static DefaultRdbmsStore rdbmsStore = null;
@@ -98,11 +102,10 @@ public final class TestUtil {
 	public static Neo4jStore neo4jStore = null;
 	public static SailStore sailStore = null;
 
-	public static Store[] getStores() {
+	public static AtomSet[] getAtomSet() {
 		if (rdbmsStore != null) {
 			try {
-				rdbmsStore.getDriver().getConnection().createStatement()
-						.executeQuery("DROP SCHEMA PUBLIC CASCADE");
+				rdbmsStore.getDriver().getConnection().createStatement().executeQuery("DROP SCHEMA PUBLIC CASCADE");
 			} catch (SQLException e) {
 				// TODO treat this exception e.printStackTrace(); throw new
 				throw new Error("Untreated exception");
@@ -118,20 +121,16 @@ public final class TestUtil {
 			neo4jStore.close();
 		}
 
-		if (sailStore != null) {
-			sailStore.close();
-		}
-
 		try {
-			rdbmsStore = new DefaultRdbmsStore(new HSQLDBDriver(HSQLDB_TEST,
-					null));
+			rdbmsStore = new DefaultRdbmsStore(new HSQLDBDriver(HSQLDB_TEST, null));
 			graphStore = new BlueprintsGraphDBStore(new TinkerGraph());
 			rm(NEO4J_TEST);
 			neo4jStore = new Neo4jStore(NEO4J_TEST);
 
-			return new Store[] { rdbmsStore, graphStore, neo4jStore };
+			return new AtomSet[] { new DefaultInMemoryGraphAtomSet(), new LinkedListAtomSet(), rdbmsStore, graphStore,
+			        neo4jStore };
 		} catch (AtomSetException e) { // TODO treat this exception
-										// e.printStackTrace();
+			                           // e.printStackTrace();
 			throw new Error("Untreated exception", e);
 		}
 	}
@@ -147,7 +146,7 @@ public final class TestUtil {
 		}
 
 		rm(JENA_TEST);
-		jenaStore = new JenaStore(JENA_TEST.getAbsolutePath());
+		jenaStore = new JenaStore(JENA_TEST);
 
 		try {
 			sailStore = new SailStore();
@@ -156,6 +155,10 @@ public final class TestUtil {
 		}
 
 		return new TripleStore[] { jenaStore, sailStore };
+	}
+
+	private static void rm(String path) {
+		rm(new File(path));
 	}
 
 	private static void rm(File file) {

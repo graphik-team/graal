@@ -95,6 +95,8 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	static final String COUNTER_TABLE_NAME = "counters";
 	static final String PREDICATE_TABLE_NAME = "predicates";
 	static final String TERM_TABLE_NAME = "terms";
+	static final String EMPTY_TABLE_NAME = "empty";
+	static final String TEST_TABLE_NAME = "test";
 
 	// table fields name
 	static final String PREFIX_TERM_FIELD = "term";
@@ -237,8 +239,11 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug("Create database schema");
 
-			statement.executeUpdate("create table test (i int)");
-			statement.executeUpdate("insert into test values (1)");
+			statement.executeUpdate("create table " + TEST_TABLE_NAME + " (i int)");
+			statement.executeUpdate("insert into " + TEST_TABLE_NAME + " values (1)");
+
+			statement.executeUpdate("create table " + EMPTY_TABLE_NAME + " (i int)");
+
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug(createPredicateTableQuery);
 			statement.executeUpdate(createPredicateTableQuery);
@@ -565,8 +570,11 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		else
 			query.append("1");
 
+		query.append(" FROM ");
 		if (tables.length() > 0)
-			query.append(" FROM ").append(tables);
+			query.append(tables);
+		else
+			query.append(TEST_TABLE_NAME);
 
 		if (where.length() > 0)
 			query.append(" WHERE ").append(where);
@@ -863,7 +871,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		for(int i=1; i<nbAnswerVars; ++i)
 			s.append(", 0");
 		
-		s.append(" from (select 0) as t where 0;");
+		s.append(" from ").append(EMPTY_TABLE_NAME).append(';');
 		return s.toString();
 
 	}
