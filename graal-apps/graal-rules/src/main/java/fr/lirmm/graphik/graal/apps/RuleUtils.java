@@ -70,6 +70,8 @@ public class RuleUtils {
 	public static final String LABEL_RANGE                  = "Rng";
 	// a(x) -> p(x,y)
 	public static final String LABEL_MANDATORY_ROLE         = "MR";
+	// a(y) -> p(x,y)
+	public static final String LABEL_INVERSE_MANDATORY_ROLE = "IMR";
 	// p(x,y),p(y,z) -> p(x,z)
 	public static final String LABEL_TRANSITIVITY           = "Trans";
 	// p(x,y),r(y,z) -> s(x,z)
@@ -97,6 +99,8 @@ public class RuleUtils {
 			label = updateLabel(label, LABEL_RANGE);
 		if (isMandatoryRole(r))
 			label = updateLabel(label, LABEL_MANDATORY_ROLE);
+		if (isInvMandatoryRole(r))
+			label = updateLabel(label, LABEL_INVERSE_MANDATORY_ROLE);
 		if (isTransitivity(r))
 			label = updateLabel(label, LABEL_TRANSITIVITY);
 		if (isRoleComposition(r))
@@ -204,7 +208,17 @@ public class RuleUtils {
 		Atom P1 = r.getHead().iterator().next();
 		if (!isConcept(C1)) return false;
 		if (!isRole(P1)) return false;
-		return C1.getTerm(0).equals(P1.getTerm(0));
+		return (C1.getTerm(0).equals(P1.getTerm(0)) 
+			 && !C1.getTerm(0).equals(P1.getTerm(1)));
+	}
+	public boolean isInvMandatoryRole(Rule r) {
+		if (!isInclusion(r)) return false;
+		Atom C1 = r.getBody().iterator().next();
+		Atom P1 = r.getHead().iterator().next();
+		if (!isConcept(C1)) return false;
+		if (!isRole(P1)) return false;
+		return (C1.getTerm(0).equals(P1.getTerm(1))
+			 && !C1.getTerm(0).equals(P1.getTerm(0)));
 	}
 
 	public boolean isRoleComposition(Rule r) {
@@ -217,9 +231,12 @@ public class RuleUtils {
 		if (!isRole(P1)) return false;
 		if (!isRole(P2)) return false;
 		if (!isRole(P3)) return false;
-		return P1.getTerm(0).equals(P3.getTerm(0))
-			&& P1.getTerm(1).equals(P2.getTerm(0))
-			&& P2.getTerm(1).equals(P3.getTerm(1));
+		return (P1.getTerm(0).equals(P3.getTerm(0))
+			 && P1.getTerm(1).equals(P2.getTerm(0))
+			 && P2.getTerm(1).equals(P3.getTerm(1)))
+			|| (P2.getTerm(0).equals(P3.getTerm(0))
+			 && P2.getTerm(1).equals(P1.getTerm(0))
+			 && P1.getTerm(1).equals(P3.getTerm(1)));
 	}
 
 	public boolean isTransitivity(Rule r) {
