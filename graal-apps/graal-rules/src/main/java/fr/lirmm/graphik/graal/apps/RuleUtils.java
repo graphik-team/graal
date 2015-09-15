@@ -72,6 +72,10 @@ public class RuleUtils {
 	public static final String LABEL_MANDATORY_ROLE         = "MR";
 	// a(y) -> p(x,y)
 	public static final String LABEL_INVERSE_MANDATORY_ROLE = "IMR";
+	// a(x) -> p(x,y), b(y)
+	public static final String LABEL_EXIST_RC               = "ERC";
+	// a(x) -> p(y,x), b(y)
+	public static final String LABEL_INV_EXIST_RC           = "IERC";
 	// p(x,y),p(y,z) -> p(x,z)
 	public static final String LABEL_TRANSITIVITY           = "Trans";
 	// p(x,y),r(y,z) -> s(x,z)
@@ -101,6 +105,10 @@ public class RuleUtils {
 			label = updateLabel(label, LABEL_MANDATORY_ROLE);
 		if (isInvMandatoryRole(r))
 			label = updateLabel(label, LABEL_INVERSE_MANDATORY_ROLE);
+		if (isExistRC(r))
+			label = updateLabel(label, LABEL_EXIST_RC);
+		if (isInvExistRC(r))
+			label = updateLabel(label, LABEL_INV_EXIST_RC);
 		if (isTransitivity(r))
 			label = updateLabel(label, LABEL_TRANSITIVITY);
 		if (isRoleComposition(r))
@@ -219,6 +227,48 @@ public class RuleUtils {
 		if (!isRole(P1)) return false;
 		return (C1.getTerm(0).equals(P1.getTerm(1))
 			 && !C1.getTerm(0).equals(P1.getTerm(0)));
+	}
+
+	public boolean isExistRC(Rule r) {
+		if (!isSingleton(r.getBody())) return false;
+		if (!hasSize2(r.getHead())) return false;
+		Iterator<Atom> h = r.getHead().iterator();
+		Atom P1 = r.getBody().iterator().next();
+		Atom P2 = h.next();
+		Atom P3 = h.next();
+		Atom tmp;
+		if (!isConcept(P1)) return false;
+		if (isConcept(P2) && isRole(P3)) {
+			tmp = P2;
+			P2 = P3;
+			P3 = tmp;
+		}
+		if (!isRole(P2)) return false;
+		if (!isConcept(P3)) return false;
+		return (P1.getTerm(0).equals(P2.getTerm(0))
+		     && P2.getTerm(1).equals(P3.getTerm(0))
+		     && !P1.getTerm(0).equals(P3.getTerm(0)));
+	}
+
+	public boolean isInvExistRC(Rule r) {
+		if (!isSingleton(r.getBody())) return false;
+		if (!hasSize2(r.getHead())) return false;
+		Iterator<Atom> h = r.getHead().iterator();
+		Atom P1 = r.getBody().iterator().next();
+		Atom P2 = h.next();
+		Atom P3 = h.next();
+		Atom tmp;
+		if (!isConcept(P1)) return false;
+		if (isConcept(P2) && isRole(P3)) {
+			tmp = P2;
+			P2 = P3;
+			P3 = tmp;
+		}
+		if (!isRole(P2)) return false;
+		if (!isConcept(P3)) return false;
+		return (P1.getTerm(0).equals(P2.getTerm(1))
+		     && P2.getTerm(0).equals(P3.getTerm(0))
+		     && !P1.getTerm(0).equals(P3.getTerm(0)));
 	}
 
 	public boolean isRoleComposition(Rule r) {
