@@ -1,6 +1,7 @@
 package fr.lirmm.graphik.graal.apps;
 
 import java.io.FileInputStream;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -166,6 +167,12 @@ public class Kiabora {
 			System.out.println("");
 		}
 
+		if (options.print_rule_pties) {
+			System.out.println("== RULE PROPERTIES ===");
+			printRuleProperties(analyser);
+			System.out.println("");
+		}
+
 		if (options.print_pties) {
 			System.out.println("===== PROPERTIES =====");
 			printProperties(analyser);
@@ -236,6 +243,50 @@ public class Kiabora {
 			}
 			out.append("\n");
 		}
+		System.out.println(out);
+	}
+	
+	public static void printRuleProperties(Analyser analyser) {
+		int cell_size = 6;
+		StringBuilder out = new StringBuilder();
+		Map<String, Integer> basePties = analyser.ruleProperties().iterator().next();
+		Iterator<Rule> rules = analyser.getRuleSet().iterator();
+
+		if (basePties == null)
+			return;
+
+		out.append("+");
+		out.append(StringUtils.center("", (cell_size + 1) * basePties.entrySet().size() - 1, '-'));
+		out.append("+");
+		out.append("\n");
+
+		for (Map<String, Integer> pties : analyser.ruleProperties()) {
+			for (Map.Entry<String, Integer> e : pties.entrySet()) {
+				out.append("|");
+				if (e.getValue() == 0)
+					out.append(StringUtils.center("?", cell_size));
+				else if (e.getValue() < 0)
+					out.append(StringUtils.center("-", cell_size));
+				else
+					out.append(StringUtils.center("X", cell_size));
+			}
+			out.append("|");
+			out.append(StringUtils.center(rules.next().getLabel(), cell_size));
+			out.append("\n");
+		}
+
+		out.append("+");
+		out.append(StringUtils.center("", (cell_size + 1) * basePties.entrySet().size() - 1, '-'));
+		out.append("+\n");
+		for (Map.Entry<String, Integer> e : basePties.entrySet()) {
+			out.append("|");
+			out.append(StringUtils.center(e.getKey(), cell_size));
+		}
+		out.append("|\n");
+		out.append("+");
+		out.append(StringUtils.center("", (cell_size + 1) * basePties.entrySet().size() - 1, '-'));
+		out.append("+");
+
 		System.out.println(out);
 	}
 
@@ -409,6 +460,9 @@ public class Kiabora {
 	@Parameter(names = { "-r", "--rule-set" },
 	           description = "Print the rule set (can be usefull if some rules were not labelled in the input file).")
 	private boolean print_ruleset = false;
+
+	@Parameter(names = { "-P", "--rule-properties" }, description = "")
+	private boolean print_rule_pties = false;
 
 	@Parameter(names = { "-S", "--scc-properties" },
 	           description = "Print properties for each GRD SCC.")

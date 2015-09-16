@@ -1,18 +1,18 @@
 package fr.lirmm.graphik.graal.rulesetanalyser;
 
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Deque;
 
-import fr.lirmm.graphik.util.graph.scc.StronglyConnectedComponentsGraph;
 import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
-import fr.lirmm.graphik.graal.rulesetanalyser.property.RuleSetProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.BTSProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.FESProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.FUSProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.RuleSetProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
+import fr.lirmm.graphik.util.graph.scc.StronglyConnectedComponentsGraph;
 
 public class Analyser {
 
@@ -24,6 +24,7 @@ public class Analyser {
 	private AnalyserRuleSet             ruleSet;
 	private RuleSetPropertyHierarchy    hierarchy;
 	private List<Map<String,Integer>>   sccProperties;
+	private List<Map<String, Integer>>  ruleProperties;
 	private Map<String,Integer>         ruleSetProperties;
 	public Analyser() { }
 
@@ -32,6 +33,10 @@ public class Analyser {
 	}
 	public void setRuleSet(Iterable<Rule> rules) {
 		this.ruleSet = new AnalyserRuleSet(rules);
+	}
+
+	public AnalyserRuleSet getRuleSet() {
+		return this.ruleSet;
 	}
 
 	public void setProperties(RuleSetPropertyHierarchy h) {
@@ -45,7 +50,7 @@ public class Analyser {
 	 * @return true only if some property ensures the rule set is decidable
 	 */
 	public boolean isDecidable() {
-		return false;
+		return false; // TODO
 	}
 
 	public Map<String,Integer> ruleSetProperties() {
@@ -62,6 +67,17 @@ public class Analyser {
 			}
 		}
 		return this.sccProperties;
+	}
+
+	public List<Map<String, Integer>> ruleProperties() {
+		if (this.ruleProperties == null) {
+			this.ruleProperties = new LinkedList<Map<String, Integer>>();
+			for (Rule r : this.ruleSet) {
+				AnalyserRuleSet subAnalyser = new AnalyserRuleSet(r);
+				this.ruleProperties.add(computeProperties(subAnalyser));
+			}
+		}
+		return this.ruleProperties;
 	}
 
 	public int[] combineFES() {
