@@ -164,7 +164,7 @@ public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder("ANS(");
+		StringBuilder sb = new StringBuilder();
 		this.appendTo(sb);
 		return sb.toString();
 	}
