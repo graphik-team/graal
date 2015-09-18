@@ -28,9 +28,9 @@ has_part(X, bone_skeleton) :- osteichthyen(X).
 chondrichthyen(X) :- animal(X), has_part(X, cartilage_skeleton).
 has_part(X, cartilage_skeleton) :- chondrichthyen(X).
 
-mammal(X) :- animal(X), has_part(X, hairs).
+mammal(X) :- animal(X), has_part(X, hair).
 mammal(X) :- animal(X), has_part(X, mammals).
-has_part(X, hairs),has_part(X, mammals) :- mammal(X).
+has_part(X, hair),has_part(X, mammals) :- mammal(X).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Facts
@@ -39,4 +39,4 @@ has_part(X, hairs),has_part(X, mammals) :- mammal(X).
 skeleton(bone_skeleton), 
 skeleton(cartilage_skeleton).
 
-animal(mice), has_part(mice, hairs).
+animal(mice), has_part(mice, hair).
