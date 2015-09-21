@@ -11,5 +11,5 @@
 
 #define __DLGP__ Dlgp
 
-#define __GRAAL_VERSION__ 0.8.7
+#define __GRAAL_VERSION__ 0.9.0
 
