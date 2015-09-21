@@ -41,6 +41,7 @@ dest/%.html: src/%.html
 install:
 	cp -r dest/* ~/dev/graphik/graal-website
 	cp -r dl/* ~/dev/graphik/graal-website/dl
+	cp -r versions/* ~/dev/graphik/graal-website
 
 clean:
 	rm dest/*.html
