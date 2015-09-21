@@ -27,11 +27,6 @@
 			<groupId>fr.lirmm.graphik</groupId>
 			<version>${project.parent.version}</version>
 		</dependency>
-		<dependency>
-			<artifactId>graal-io-dlgp1</artifactId>
-			<groupId>fr.lirmm.graphik</groupId>
-			<version>${project.parent.version}</version>
-		</dependency>
                 <dependency>
                   	<artifactId>graal-io-dlgp</artifactId>
 			<groupId>fr.lirmm.graphik</groupId>

@@ -65,7 +65,7 @@ import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.io.ParseException;
-import fr.lirmm.graphik.graal.io.dlp.Dlgp1Parser;
+import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -152,7 +152,7 @@ public class GRDParser {
 	}
 
 	private static void parseRule(String line, GRD grd, Map<String, Rule> rules) {
-		Rule r = Dlgp1Parser.parseRule(line);
+		Rule r = DlgpParser.parseRule(line);
 		rules.put(r.getLabel(), r);
 		grd.addRule(r);
 	}

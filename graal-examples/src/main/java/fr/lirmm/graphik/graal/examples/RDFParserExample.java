@@ -54,7 +54,7 @@ import org.openrdf.rio.RDFFormat;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
-import fr.lirmm.graphik.graal.io.dlp.Dlgp1Writer;
+import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 import fr.lirmm.graphik.graal.io.rdf.RDFParser;
 
 /**
@@ -67,7 +67,7 @@ public class RDFParserExample {
 			HomomorphismException, URISyntaxException, IOException {
 
 		URL url = new URL("file:///tmp/Levenshtein-little.xml");
-		Dlgp1Writer writer = new Dlgp1Writer(System.out);
+		DlgpWriter writer = new DlgpWriter(System.out);
 		
 		RDFParser parser = new RDFParser(url, RDFFormat.RDFXML);
 		System.out.println();
