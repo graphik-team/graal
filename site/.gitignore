@@ -1,3 +1,4 @@
 dest/*.html
 dest/modules/*.html
 src/modules/*.html
+*~
