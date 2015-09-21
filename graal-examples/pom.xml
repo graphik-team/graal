@@ -69,11 +69,6 @@
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-io-iris-dtg</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-io-owl</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
