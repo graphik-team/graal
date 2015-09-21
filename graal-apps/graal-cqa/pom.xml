@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
 		<artifactId>graal-apps</artifactId>
-		<version>0.9.0 </version>
+		<version>0.9.1-SNAPSHOT </version>
 	</parent>
 
 	<artifactId>graal-cqa</artifactId>
