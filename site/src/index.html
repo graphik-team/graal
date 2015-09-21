@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+#include "config.h"
+<html>
+
+ #define __TITLE__ Graal
+ #include "./header.html"
+
+ <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+      <header class="inner">
+        
+          <h1 id="project_title">Graal Homepage</h1>
+          #include "nav.html"
+
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <p>Graal is a Java toolkit dedicated to querying knowledge
+        bases within the framework of existential rules, aka
+        Datalog+/-. It's an open source library published
+        under <a href="http://www.cecill.info/licences/Licence_CeCILL_V2.1-fr.html">CeCILL
+        v2.1 license</a> (GPL compatible).</p>
+
+        <p>The main features of Graal are the following:</p>
+
+        <ul>
+          <li>
+            a basic layer that provides generic interfaces to store
+            and query various kinds of data without considering the
+            rules;
+          </li>
+          <li> ‘saturation’ algorithms, which apply rules on the data in a
+            forward chaining manner;
+          </li>
+          <li> ‘query rewriting’ algorithms, which reformulate a conjunctive
+            query into a set (or ‘union’) of conjunctive queries;
+          </li>
+          <li> utility tools: 
+            <ul>
+              <li>
+                a format called <i>DLGP</i> (for ‘datalog+’) and its
+                parser;
+              </li>
+              <li>
+                a tool called <i>Kiabora</i>, which performs a structural analysis of an existential rule set to determine its decidability
+                properties; it also allows to decompose rules;
+              </li>
+              <li>
+                a translator from OWL 2 files to <em>dlgp</em>;
+              </li>
+              <li>
+                a translator from <em>dlgp</em> to RuleML.
+              </li>
+            </ul>
+          </li>
+        </ul>
+
+          <h2>Related standalone tools</h2>
+             <ul>
+               <li><a href="./pure">Query rewriter (Pure: basic and compilation-based versions) </a></li>
+               <li><a href="./owl2dlgp">Translator from OWL 2 to DLGP v2</a></li>
+               <li><a href="./dlgp2ruleml">Translator from DLGP v2 to RuleML</a></li>
+               <li><a href="http://www.lirmm.fr/kiabora/">Online Kiabora (works with DLGP v1)</a></li>
+             </ul>
+
+         <h2>Keep me informed</h2>
+           <a href="mailto:sympa@lirmm.fr?subject=SUBSCRIBE graal">Subscribe to Graal newsletter</a>
+      </section>
+    </div>
+
+#include "./footer.html"
+
+  
+
+    
+
+  </body>
+</html>

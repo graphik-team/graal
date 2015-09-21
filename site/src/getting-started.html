@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+#include "config.h"
+<html>
+
+  
+  #define __TITLE__ Getting Started
+  #include "header.html"
+  
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+
+          <h1 id="project_title">Getting Started</h1>
+          #include "nav.html"
+
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h2>Requirements</h2>
+
+        <ul>
+          <li>Graal requires Java 7 or newer.</li>
+          <li>Download <a href=STR(CONCAT4(__GRAAL_VERSION__,/graal-,__GRAAL_VERSION__,-jar-with-dependencies.jar))>Graal</a></li>
+          <li>Download <a href="examples/Example0.java">Example0.java</a></li>
+          <li>Download <a href="resources/animals.dlp">animals.dlp</a></li>
+        </ul>
+
+        
+        <h2>Build</h2>
+
+        <p>Open a terminal and go to the folder where downloaded
+        files are. Then, execute the command below:</p>
+
+        <pre><code>javac -cp .:./graal-__GRAAL_VERSION__.jar Example.java</code></pre>
+
+        <p>Alternatively, you can download the <a href="">pre-compiled
+          version</a>.</p>
+
+        
+        <h2>Run the example</h2>
+
+        <p>Execute this command:</p>
+        <code>java -cp .:./graal-*.jar Example</code>
+
+        <h2>What does this example do?</h2>
+        <ol>
+          <li>Create a relational database store with HSQLDB (An
+            InMemory Java database system),</li>
+          <li>Parse Animals.dlp (A __DLGP__ file with rules and
+            facts),</li>
+          <li>Print the set of rules in __DLGP__,</li>
+          <li>Print the set of facts in __DLGP__,</li>
+          <li>Parse a query from the code and print it,</li>
+          <li>Query the store without reasoning,</li>
+          <li>Backward chaining,</li>
+          <li>Forward chaining.</li>
+        </ol>
+
+        <h2>To continue</h2>
+
+        <p>More examples are available <a href="">here</a> and will soon be
+        discuss here.</p>
+ 
+      </section>
+    </div>
+
+    #include "footer.html"
+
+  </body>
+</html>

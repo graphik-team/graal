@@ -1,0 +1,37 @@
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix : <http://example.org/> .
+
+:Project a owl:Class.
+:Researcher a owl:Class.
+
+:isProject a owl:ObjectProperty.
+:hasArea a owl:ObjectProperty.
+:hasExpertise a owl:ObjectProperty.
+:isMember a owl:ObjectProperty.
+:isLeader a owl:ObjectProperty.
+:hasCost a owl:DatatypeProperty.
+
+# F1
+:alice a :Researcher.
+
+# F2
+:alice :isMember _:x.
+_:y :isLeader _:x.
+_:x a :Project; :hasArea :kr; :hasCost 1.5.
+
+# F3
+:bob a :Researcher; :hasExpertise :semanticWeb.
+
+# R1
+:isLeader rdfs:subPropertyOf :isMember.
+
+# R3
+:Project rdfs:subClassOf [ rdf:type owl:Restriction ; 
+		            owl:onProperty [owl:inverseOf :isLeader] ;
+			    owl:maxCardinality 1 ].
+
+# R4
+:Researcher owl:disjointWith :Project.
