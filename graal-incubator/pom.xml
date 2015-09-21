@@ -44,6 +44,11 @@
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
+			<artifactId>graal-io-dlgp</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-forward-chaining</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
@@ -75,12 +80,6 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.11</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-io-dlgp</artifactId>
-			<version>${project.parent.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

@@ -50,7 +50,6 @@ import java.util.Iterator;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.repository.RepositoryException;
 
-import parser.TERM_TYPE;
 import fr.lirmm.graphik.graal.core.Atom;
 import fr.lirmm.graphik.graal.core.Predicate;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
@@ -66,26 +65,7 @@ import fr.lirmm.graphik.graal.store.triplestore.SailStore;
  *
  */
 public class SailStoreTest {
-	
-	public static Term createTerm(TERM_TYPE termType, Object term) {
-		Term.Type type = null;
-		switch(termType) {
-		case ANSWER_VARIABLE:
-		case VARIABLE:
-			type = Term.Type.VARIABLE;
-			break;
-		case CONSTANT: 
-			type = Term.Type.CONSTANT;
-			break;
-		case FLOAT:
-		case INTEGER:
-		case STRING:
-			type = Term.Type.LITERAL;
-			break;
-		}
-		return DefaultTermFactory.instance().createTerm(term, type);
-	}
-	
+
 	public static void main(String args[]) throws RepositoryException, MalformedQueryException, AtomSetException {
 				
 		Store store = new SailStore();
