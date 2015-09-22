@@ -1,0 +1,47 @@
+
+<!DOCTYPE html>
+#include "../config.h"
+<html>
+  
+  #define __BASEDIR__ ../
+  #define __TITLE__ graal-util
+  #include "../header.html"
+  
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+
+          <h1 id="project_title">graal-util</h1>
+          #include "../nav.html"
+
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+
+      <h2>Download</h2>
+      <a href=STR(CONCAT5(../,__GRAAL_VERSION__,/graal-util-,__GRAAL_VERSION__,.jar))>graal-util-__GRAAL_VERSION__.jar</a>
+
+      <h2>Maven</h2>
+<pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;fr.lirmm.graphik&lt;/groupId&gt;
+    &lt;artifactId&gt;graal-util&lt;/artifactId&gt;
+    &lt;version&gt;__GRAAL_VERSION__&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+      <h2>Dependency list</h2>
+        <ul>
+          <li><a href="https://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.3.2/commons-lang3-3.3.2.jar">commons-lang3-3.3.2</a></li>
+          <li><a href="https://repo1.maven.org/maven2/org/jgrapht/jgrapht-core/0.9.0/jgrapht-core-0.9.0.jar">jgrapht-core-0.9.0</a></li>
+        </ul>
+      </section>
+    </div>
+
+    #include "../footer.html"
+
+  </body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'/>
+    <meta name="description" content="Graal : "/>
+    <link rel="stylesheet" type="text/css" media="screen" href="./stylesheets/stylesheet.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="./stylesheets/table.css"/>
+    <script type="text/javascript" src="./js/main.js"></script>
+    <title>Getting Started</title>
+  </head>
+  <body>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <h1 id="project_title">Getting Started</h1>
+          <nav>
+            <a href="./">Home</a>
+            <a href="./documentation">Documentation</a>
+            <a href="./publications">Publications</a>
+            <a href="./experiments">Experiments</a>
+            <a href="./downloads">Downloads</a>
+            <a href="https://github.com/graphik-team/graal/">Sources</a>
+          </nav>
+        </header>
+    </div>
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h2>Requirements</h2>
+        <ul>
+          <li>Graal requires Java 7 or newer.</li>
+          <li>Download <a href="0.8.7/graal-0.8.7-jar-with-dependencies.jar">Graal</a></li>
+          <li>Download <a href="examples/Example0.java">Example0.java</a></li>
+          <li>Download <a href="resources/Animals.dlp">Animals.dlp</a></li>
+        </ul>
+        <h2>Build</h2>
+        <p>Open a terminal and go to the folder where downloaded
+        files are. Then, execute the command below:</p>
+        <pre><code>javac -cp .:./graal-*.jar Example.java</code></pre>
+        <p>Alternatively, you can download the <a href="">pre-compiled
+          version</a>.</p>
+        <h2>Run the example</h2>
+        <p>Execute this command:</p>
+        <code>java -cp .:./graal-*.jar Example</code>
+        <h2>What does this example?</h2>
+        <ol>
+          <li>Create a relational database store with HSQLDB (An
+            InMemory Java database system),</li>
+          <li>Parse Animals.dlp (A Dlgp file with rules and
+            facts),</li>
+          <li>Print the set of rules in Dlgp,</li>
+          <li>Print the set of facts in Dlgp,</li>
+          <li>Parse a query from the code and print it,</li>
+          <li>Query the store without reasoning,</li>
+          <li>Backward chaining,</li>
+          <li>Forward chaining.</li>
+        </ol>
+        <h2>To continue</h2>
+        <p>More examples are available <a href="">here</a> and will soon be
+        discuss here.</p>
+      </section>
+    </div>
+    <!-- FOOTER -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <a href="mailto:sympa@lirmm.fr?subject=SUBSCRIBE graal">Subscribe to Graal newsletter</a>
+        <p class="copyright">Graal maintained
+        by <a href="https://team.inria.fr/graphik/">GraphIK</a>
+          team</p>
+        <p> Contacts:
+        <script type="text/javascript">
+        <!--
+                Rot17.write('<r yivw="drzckf:jzgzvkvi@czidd.wi">jzgzvkvi@czidd.wi</r>');
+                document.write(' ');
+          Rot17.write('<r yivw="drzckf:dlxezvi@czidd.wi">dlxezvi@czidd.wi</r>');
+     -->
+        </script></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+    <!-- Piwik -->
+    <script type="text/javascript">
+      var _paq = _paq || [];
+      _paq.push(['trackPageView']);
+      _paq.push(['enableLinkTracking']);
+      (function() {
+      var u="//sipieter.piwikpro.com/";
+      _paq.push(['setTrackerUrl', u+'piwik.php']);
+      _paq.push(['setSiteId', 3]);
+      var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+      g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+      })();
+    </script>
+    <noscript><p><img src="//sipieter.piwikpro.com/piwik.php?idsite=3" style="border:0;" alt="" /></p></noscript>
+    <!-- End Piwik Code -->
+  </body>
+</html>
