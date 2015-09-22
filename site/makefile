@@ -16,6 +16,7 @@ dest/experiments1.html\
 dest/experiments2.html\
 dest/publications.html\
 dest/pure.html\
+dest/kiabora.html\
 dest/getting-started.html\
 dest/getting-started1.html\
 dest/modules/graal-util.html\
@@ -35,6 +36,7 @@ page-modules:
 	./make-site.sh
 
 dest/%.html: src/%.html
+	mkdir -p dest
 	@ echo "gen $@"
 	@ gcc -E -x c -P ${FLAGS} $< > $@  & true
 
@@ -42,6 +44,7 @@ install:
 	cp -r dest/* ~/dev/graphik/graal-website
 	cp -r dl/* ~/dev/graphik/graal-website/dl
 	cp -r versions/* ~/dev/graphik/graal-website
+	cp -r resources/* ~/dev/graphik/graal-website
 
 clean:
 	rm dest/*.html
