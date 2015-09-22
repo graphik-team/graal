@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
 		<artifactId>graal-main-project</artifactId>
-		<version>0.8.8-SNAPSHOT</version>
+		<version>0.9.1-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>graal-apps</artifactId>
@@ -34,7 +34,6 @@
 	<modules>
 		<module>graal-apps-incubator</module>
 		<module>graal-cli</module>
-		<module>kiabora</module>
 		<module>graal-cqa</module>
 		<module>graal-converter</module>
 		<module>graal-query</module>

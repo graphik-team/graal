@@ -209,6 +209,27 @@ public class ConjunctiveQueryTest {
 		}
 	}
 
+	/**
+	 * Test a boolean query
+	 */
+	@Theory
+	public void booleanQueryWithoutAnswerTest(AtomSet store) {
+		try {
+			InMemoryAtomSet queryAtomSet = new LinkedListAtomSet();
+			queryAtomSet.add(DlgpParser.parseAtom("q(a,c,d)."));
+			ConjunctiveQuery query = ConjunctiveQueryFactory.instance().create(queryAtomSet);
+
+			SubstitutionReader subReader;
+			Substitution sub;
+
+			subReader = StaticHomomorphism.executeQuery(query, store);
+
+			Assert.assertFalse(subReader.hasNext());
+		} catch (Exception e) {
+			Assert.assertTrue(e.getMessage(), false);
+		}
+	}
+
 	@Theory
 	public void basicQueryTest(AtomSet store) {
 		try {

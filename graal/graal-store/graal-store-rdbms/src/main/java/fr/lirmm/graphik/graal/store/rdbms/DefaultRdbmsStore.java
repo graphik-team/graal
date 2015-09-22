@@ -54,6 +54,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -547,8 +548,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			tableName = this.predicateTableExist(entries.getKey()
 					.getPredicate());
 			if (tableName == null)
-				return this
-						.createEmptyQuery(cquery.getAnswerVariables().size());
+				return this.createEmptyQuery(cquery.getAnswerVariables());
 			else
 				tables.append(tableName);
 
@@ -865,11 +865,20 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	 * @param nbAnswerVars number of column needed
 	 * @return 
 	 */
-	private String createEmptyQuery(int nbAnswerVars) {
-		StringBuilder s = new StringBuilder("select 0");
+	private String createEmptyQuery(List<Term> answerVars) {
+		StringBuilder s = new StringBuilder("select ");
 		
-		for(int i=1; i<nbAnswerVars; ++i)
-			s.append(", 0");
+		boolean first = true;
+		for (Term t : answerVars) {
+			if (!first) {
+				s.append(", ");
+			}
+			s.append("'' as ").append(t.getLabel());
+			first = false;
+		}
+		if (first) {
+			s.append("'' ");
+		}
 		
 		s.append(" from ").append(EMPTY_TABLE_NAME).append(';');
 		return s.toString();

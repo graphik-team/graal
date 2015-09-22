@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
 		<artifactId>graal-main-project</artifactId>
-		<version>0.8.8-SNAPSHOT</version>
+		<version>0.9.1-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>graal-examples</artifactId>
@@ -69,11 +69,6 @@
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-io-iris-dtg</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-io-owl</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
@@ -90,11 +85,6 @@
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-io-ruleml</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-io-dlgp1</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>

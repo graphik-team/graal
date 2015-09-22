@@ -56,7 +56,6 @@ import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
 import fr.lirmm.graphik.graal.io.AbstractGraalWriter;
 import fr.lirmm.graphik.graal.io.ConjunctiveQueryWriter;
-import fr.lirmm.graphik.graal.io.dlp.Dlgp1Writer;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 import fr.lirmm.graphik.graal.io.sparql.SparqlConjunctiveQueryWriter;
@@ -106,7 +105,7 @@ public class WriterExample {
 
 		System.out.println("##########################");
 
-		w = new Dlgp1Writer();
+		w = new DlgpWriter();
 
 		for (Prefix p : PrefixManager.instance()) {
 			w.write(p);
