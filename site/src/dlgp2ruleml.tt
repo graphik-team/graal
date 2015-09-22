@@ -1,19 +1,16 @@
 <!DOCTYPE html>
-#include "config.h"
 <html>
-
-  #define __TITLE__ Dlgp to RuleML
-  #include "header.html"
+  [%- PROCESS config.tt -%]
+  [%- title = "Dlgp to RuleML" -%]  
+  [%- INCLUDE header.tt -%]
 
   <body>
 
     <!-- HEADER -->
     <div id="header_wrap" class="outer">
         <header class="inner">
-
-          <h1 id="project_title">Dlgp 2 RuleML</h1>
-          #include "nav.html"
-
+          <h1 id="project_title">[% title %]</h1>
+          [%- INCLUDE nav.tt -%]
         </header>
     </div>
 
@@ -57,9 +54,7 @@
       </section>
     </div>
 
-  #include "footer.html"
-
-    
+  [%- INCLUDE footer.tt -%]
 
   </body>
 </html>

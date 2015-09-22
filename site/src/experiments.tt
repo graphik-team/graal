@@ -1,21 +1,20 @@
 <!DOCTYPE html>
-#include "config.h"
 <html>
-
-  #define __TITLE__ Graal Experiments
-  #include "header.html"
-
+  [%- PROCESS config.tt -%]
+  [%- title = "Graal Experiments" -%]  
+  [%- INCLUDE header.tt -%]
+  
   <body>
 
     <!-- HEADER -->
     <div id="header_wrap" class="outer">
       <header class="inner">
-
-        <h1 id="project_title">Experiments of Query Rewriting Algorithms (Pure and Pure<sub>C</sub>)</h1>
-        #include "nav.html"
-        
+        <h1 id="project_title">Experiments of Query Rewriting
+          Algorithms (Pure and Pure<sub>C</sub>)</h1>
+          [% INCLUDE nav.tt %]        
       </header>
     </div>
+    
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
@@ -29,7 +28,7 @@
       </section>
     </div>
     
-    #include "footer.html"
-
+    [% INCLUDE footer.tt %]
+    
   </body>
 </html>

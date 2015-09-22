@@ -1,20 +1,17 @@
 <!DOCTYPE html>
-#include "config.h"
 <html>
-
-  #define __TITLE__ Kiabora
-  #include "header.html"
+  [%- PROCESS config.tt -%]
+  [%- title = "Kiabora" -%]  
+  [%- INCLUDE header.tt -%]
   
   <body>
 
     <!-- HEADER -->
     <div id="header_wrap" class="outer">
-        <header class="inner">
-
-          <h1 id="project_title">Kiabora: an analyzer of existential rule bases</h1>
-          #include "nav.html"
-
-        </header>
+      <header class="inner">
+          <h1 id="project_title">[% title %]</h1>
+          [%- INCLUDE nav.tt -%]
+      </header>
     </div>
 
     <!-- MAIN CONTENT -->
@@ -43,7 +40,7 @@
       </section>
     </div>
 
-    #include "footer.html"
+    [%- INCLUDE footer.tt -%]
 
   </body>
 </html>

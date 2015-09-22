@@ -1,0 +1,15 @@
+[%#
+content
+basedir
+title
+-%]
+  <head>
+    <meta charset='utf-8'/>
+    <meta name="description" content="[% description %]"/>
+
+    <link rel="stylesheet" type="text/css" media="screen" href="[% config.basedir %]stylesheets/stylesheet.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="[% config.basedir %]stylesheets/table.css"/>
+    <script type="text/javascript" src="[% config.basedir %]js/main.js"></script>
+    
+    <title>[% title %]</title>
+  </head>

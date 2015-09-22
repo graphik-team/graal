@@ -1,19 +1,16 @@
 <!DOCTYPE html>
-#include "config.h"
 <html>
-
-  #define __TITLE__ Graal Publications
-  #include "header.html"
+  [%- PROCESS config.tt -%]
+  [%- title = "Graal Publications" -%]  
+  [%- INCLUDE header.tt -%]
 
   <body>
 
     <!-- HEADER -->
     <div id="header_wrap" class="outer">
         <header class="inner">
-
-          <h1 id="project_title">Graal Publications</h1>
-          #include "nav.html"
-          
+          <h1 id="project_title">[% title %]</h1>
+          [%- INCLUDE nav.tt -%]
         </header>
     </div>
 
@@ -28,13 +25,13 @@
       <p>J.-F. Baget, M. Leclère, M.-L. Mugnier, S. Rocher, and C. Sipieter. 
       <i>Graal: A Toolkit for Query Answering with Existential Rules</i>,
       in <strong>RuleML 2015</strong> Conference, August
-      2015. <a href="http://link.springer.com/chapter/10.1007/978-3-319-21542-6_21">
+      2015. <a href="./papers/graal-ruleml2015.pdf">
          pdf file</a></p>
       
       <hr/>
       <h5>Formats and translations</h2>
 
-      <p><img src="./images/award.pang" alt=""/> J.-F. Baget, A. Gutierrez, M. Leclère, M.-L. Mugnier,
+      <p><img src="./images/award.png" alt=""/> J.-F. Baget, A. Gutierrez, M. Leclère, M.-L. Mugnier,
         S. Rocher and C. Sipieter.
       <i>Datalog+, RuleML and OWL 2: Formats and Translations for
       Existential Rules</i>, won the <strong>9th International Rule
@@ -44,6 +41,8 @@
 
 
       <hr/>
+
+      <a name="KIABORA_RR2013"></a>
       <h5>About the first version of Kiabora (web tool, works with file format DLGP v1)</h5>
 
       <p>M. Leclère, M.-L. Mugnier, S.Rocher.
@@ -51,7 +50,7 @@
       Proc. of the 7th International Conference on Web Reasoning and Rule Systems <strong>(RR 2013)</strong>, July 2013. 
       <a href="http://www.lirmm.fr/%7Emugnier/ArticlesPostscript/RR2013_LMR.pdf">pdf file</a></p>
 
-      <h2>Theoritical foundation and Algorithms</h2>
+      <h2>Theoretical foundation and Algorithms</h2>
 
       <h5>On the compilation-based query rewriting algorithm (implemented as the compilation-based PURE rewriter)</h5>
 
@@ -85,7 +84,7 @@ Systems, Volume 6, Number 5, 2015. <a href="http://www.semantic-web-journal.net/
       </section>
     </div>
 
-    #include "footer.html"
+  [%- INCLUDE footer.tt -%]
 
   </body>
 </html>

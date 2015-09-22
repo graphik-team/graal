@@ -1,23 +1,20 @@
 <!DOCTYPE html>
-#include "config.h"
-#include "bib.h"
-#define __LUBMEX__ LUBM<sup>∃</sup><sub>20</sub>
-#define __TITLE__ Graal Experiments
 <html>
-  
-  
-  #include "header.html"
-
+  [%- PROCESS config.tt -%]
+  [%- PROCESS bib.tt -%]
+  [%- title = "Graal Experiments"
+      lubmex = "LUBM<sup>∃</sup><sub>20</sub>"
+  -%]  
+  [%- INCLUDE header.tt -%]
+    
   <body>
 
     <!-- HEADER -->
     <div id="header_wrap" class="outer">
       <header class="inner">
-
         <h1 id="project_title">First experiments on <em>pivotal</em>
         query evaluation</h1>
-        #include "nav.html"
-        
+        [%- INCLUDE nav.tt -%]        
       </header>
     </div>
 
@@ -31,10 +28,11 @@ by compilable rules.</p>
 
         <h2>Benchmark</h2>
         <p>For these experiments, we used the DL benchmark LUBM<sup>∃</sup><sub>20</sub>
-proposed in _LSTW13_ and
+proposed in [% LSTW13 %] and
           available <a href="https://code.google.com/p/combo-obda/">here</a>,
           which comes with a data generator. This benchmark is a
-          modification of the well-known benchmark <a href="http://swat.cse.lehigh.edu/projects/lubm/">LUBM</a> introduced in _GPH05_ and provided
+          modification of the well-known benchmark <a href="http://swat.cse.lehigh.edu/projects/lubm/">LUBM</a>
+          introduced in [% GPH05 %] and provided
 with 14 queries. In particular, it yields more rules with existential variables and adds
 6 challenging queries. We consider two fact bases (stored in a RBDMS) of 151 MB
 (10 universities) and 3266 MB (200 universities) generated with the
@@ -43,7 +41,7 @@ with 14 queries. In particular, it yields more rules with existential variables 
         
           <ul>
             <li>Download the <em>dlgp</em> version of
-          __LUBMEX__: <a href="./dl/lubm-ex-20.dlp">lubm-ex-20.dlp</a></li>
+          [% lubmex %]: <a href="./dl/lubm-ex-20.dlp">lubm-ex-20.dlp</a></li>
             <li>Download the
               queries: <a href="./dl/lubm-ex-queries.dlp">lubm-ex-queries.dlp</a></li>
           </ul>
@@ -64,7 +62,7 @@ with 14 queries. In particular, it yields more rules with existential variables 
 
         <table>
           <caption><strong>Table:</strong>
-            Evaluation time over __LUBMEX__ (in seconds)
+            Evaluation time over [% lubmex %] (in seconds)
           </caption>
           <tbody>
             <tr>
@@ -204,7 +202,7 @@ with 14 queries. In particular, it yields more rules with existential variables 
       </section>
     </div>
 
-    #include "footer.html"
+    [%- INCLUDE footer.tt -%]
 
   </body>
 </html>

@@ -1,19 +1,16 @@
 <!DOCTYPE html>
-#include "config.h"
 <html>
-
-  #define __TITLE__ Pure rewriter
-  #include "header.html"
+  [%- PROCESS config.tt -%]
+  [%- title = "Pure rewriter" -%]  
+  [%- INCLUDE header.tt -%]<html>
   
   <body>
 
     <!-- HEADER -->
     <div id="header_wrap" class="outer">
         <header class="inner">
-
-          <h1 id="project_title">Pure rewriter</h1>
-          #include "nav.html"
-
+          <h1 id="project_title">[% title %]</h1>
+          [%- INCLUDE nav.tt -%]
         </header>
     </div>
 
@@ -88,7 +85,7 @@
       </section>
     </div>
 
-    #include "footer.html"
+  [%- INCLUDE footer.tt -%]
 
   </body>
 </html>

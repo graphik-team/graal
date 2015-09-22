@@ -1,20 +1,16 @@
 <!DOCTYPE html>
-#include "config.h"
 <html>
-
-  
-  #define __TITLE__ Graal Documentation
-  #include "header.html"
+  [%- PROCESS config.tt -%]
+  [%- title = "Graal Documentation" -%]  
+  [%- INCLUDE header.tt -%]
   
   <body>
 
     <!-- HEADER -->
     <div id="header_wrap" class="outer">
         <header class="inner">
-
-          <h1 id="project_title">Graal Documentation</h1>
-          #include "nav.html"
-
+          <h1 id="project_title">[% title %]</h1>
+          [% INCLUDE nav.tt %]
         </header>
     </div>
 
@@ -24,7 +20,7 @@
         <h2>Graal technical documentation</h2>
         <ul>
           <li><a href="./getting-started">=&gt; Getting started &lt;=</a></li>
-          <li><a href=STR(CONCAT3(./,__GRAAL_VERSION__,/javadocs/))>Javadoc</a></li>
+          <li><a href="./[% config.graalVersion %]/javadocs/">Javadoc</a></li>
         </ul>
 
             
@@ -44,7 +40,7 @@
       </section>
     </div>
 
-    #include "footer.html"
+    [% INCLUDE footer.tt %]
 
   </body>
 </html>

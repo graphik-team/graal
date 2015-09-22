@@ -1,19 +1,16 @@
 <!DOCTYPE html>
-#include "config.h"
 <html>
-
-  #define __TITLE__ Graal Downloads
-  #include "header.html"
+  [%- PROCESS config.tt -%]
+  [%- title = "Graal Downloads" -%]  
+  [%- INCLUDE header.tt -%]
   
   <body>
 
     <!-- HEADER -->
     <div id="header_wrap" class="outer">
         <header class="inner">
-
-          <h1 id="project_title">Graal Downloads</h1>
-          #include "nav.html"
-
+          <h1 id="project_title">[% title %]</h1>
+          [%- INCLUDE nav.tt -%]
         </header>
     </div>
 
@@ -24,7 +21,8 @@
         <h2>Graal Modules</h2>
 
         <ul>
-          <li><a href=STR(CONCAT(CONCAT(CONCAT(__GRAAL_VERSION__,/graal-),__GRAAL_VERSION__),-jar-with-dependencies.jar))>All Graal modules and dependencies in one jar</a></li>
+          <li><a href="[% config.graalVersion _ '/graal-' _
+          config.graalVersion _ '-jar-with-dependencies.jar' %]">All Graal modules and dependencies in one jar</a></li>
 
           <li><a href="./modules/graal-util">graal-util</a></li>
           <li><a href="./modules/graal-core">graal-core</a></li>
@@ -53,7 +51,7 @@
       </section>
     </div>
 
-    #include "footer.html"
+    [%- INCLUDE footer.tt -%]
 
   </body>
 </html>

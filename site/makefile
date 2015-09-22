@@ -6,6 +6,7 @@ ifeq (${debug},1)
 endif
 
 all:\
+prepare\
 dest/index.html\
 dest/documentation.html\
 dest/downloads.html\
@@ -18,7 +19,6 @@ dest/publications.html\
 dest/pure.html\
 dest/kiabora.html\
 dest/getting-started.html\
-dest/getting-started1.html\
 dest/modules/graal-util.html\
 dest/modules/graal-core.html\
 dest/modules/graal-backward-chaining.html\
@@ -32,13 +32,16 @@ dest/modules/graal-io-sparql.html\
 dest/modules/graal-store-api.html\
 dest/modules/graal-store-rdbms.html
 
-page-modules:
+prepare:
+	mkdir -p dest/modules
+
+page-modules: 
 	./make-site.sh
 
-dest/%.html: src/%.html
-	mkdir -p dest
+
+dest/%.html: src/%.tt src/header.tt src/footer.tt src/config.tt
 	@ echo "gen $@"
-	@ gcc -E -x c -P ${FLAGS} $< > $@  & true
+	@ tpage --include_path=src/ ${FLAGS} $< | sed '/^\s*$$/d' | sed 's/\s*$$//g' > $@
 
 install:
 	cp -r dest/* ~/dev/graphik/graal-website
