@@ -34,7 +34,6 @@
 	<modules>
 		<module>graal-apps-incubator</module>
 		<module>graal-cli</module>
-		<module>kiabora</module>
 		<module>graal-cqa</module>
 		<module>graal-converter</module>
 		<module>graal-query</module>
