@@ -21,7 +21,7 @@
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
         <p>The <em>dlgp2ruleml</em> program
-          translates <a href="http://graphik-team.github.io/graal/dl/datalog+_v2.0_en.pdf"><em>dlgp</em></a>
+          translates <a href="http://graphik-team.github.io/graal/papers/datalog+_v2.0_en.pdf"><em>dlgp</em></a>
           to the Datalog+ fragment of <a href="http://wiki.ruleml.org/index.php/Specification_of_Deliberation_RuleML_1.01">Deliberation RuleML 1.01</a>. This sublanguage includes:</p>
 
         <ul>
