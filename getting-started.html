@@ -30,19 +30,21 @@
         <h2>Requirements</h2>
         <ul>
           <li>Graal requires Java 7 or newer.</li>
-          <li>Download <a href="./0.9.0/graal-0.9.0-jar-with-dependencies.jar">Graal</a></li>
+          <li>Download <a href="./0.9.0/graal-0.9.0-for-example0.jar">Graal</a> (this
+          package contains the core, homomorphism, backward_chaining,
+          forward_chaining, io-dlgp, store-rdbms modules and their dependencies)</li>
           <li>Download <a href="dl/examples/Example0.java">Example0.java</a></li>
           <li>Download <a href="dl/resources/animals.dlp">animals.dlp</a></li>
         </ul>
         <h2>Build</h2>
         <p>Open a terminal and go to the folder where downloaded
         files are. Then, execute the command below:</p>
-        <pre><code>javac -cp .:./graal-0.9.0-jar-with-dependencies.jar Example0.java</code></pre>
+        <pre><code>javac -cp .:./graal-0.9.0-for-example0.jar Example0.java</code></pre>
         <p>Alternatively, you can download the <a href="dl/examples/Example0.class">pre-compiled
           version</a>.</p>
         <h2>Run the example</h2>
         <p>Execute this command:</p>
-        <code>java -cp .:./graal-0.9.0-jar-with-dependencies.jar Example0 animals.dlp</code>
+        <code>java -cp .:./graal-0.9.0-for-example0.jar Example0 animals.dlp</code>
         <h2>What does this example do?</h2>
         <ol>
           <li>Create a relational database store with HSQLDB (An
