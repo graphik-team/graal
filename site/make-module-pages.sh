@@ -2,6 +2,7 @@
 cd $1
 module=$(basename $1)
 title=$module
+description=$(awk -F "[><]" '/description/{print $3}' pom.xml)
 deplist=$(mvn dependency:list | grep ":compile" | sort | uniq | sed 's/\[INFO\]\s*\([^:]*\):\([^:]*\):jar:\([^:]*\):compile.*/\1:\2:\3/' |  perl -n -e 'my $t; if (/(.*?):(.*)/) {$t = $2;} $_ = $1; s/[.:]/\//g; print "$_/$t\n"' | perl -n -e '/(.*)\/(.*)\/(.*)/ && print "/$1/$2/$3/$3.jar\n"' | sed 's@:@/@' | sed 's@:@-@')
 
 echo '
@@ -26,6 +27,8 @@ echo '
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
+
+      <p>'$description'</p>
 
       <h2>Download</h2>
       <a href="[% "../" _ config.graalVersion _ "/'$module'-" _ config.graalVersion _ ".jar" %]">'$module'-[% config.graalVersion %].jar</a>
