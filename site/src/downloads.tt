@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
   [%- PROCESS config.tt -%]
-  [%- title = "Graal Downloads" -%]  
+  [%- title = "Graal Downloads"
+  desc="Download page of Graal"
+  keywords="download, graal, modules, jar" -%]  
   [%- INCLUDE header.tt -%]
   
   <body>

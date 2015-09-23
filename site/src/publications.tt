@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
   [%- PROCESS config.tt -%]
-  [%- title = "Graal Publications" -%]  
+  [%- title = "Graal Publications"
+  desc="Publications related to Graal"
+  keywords="publication, graal, kiabora, pure" -%]  
   [%- INCLUDE header.tt -%]
 
   <body>

@@ -3,10 +3,13 @@
 [% PROCESS config.tt -%]
 [% INCLUDE header.tt
   title="Graal Homepage"
-  description="Graal is a Java toolkit dedicated to querying knowledge
+  desc="Graal is a Java toolkit dedicated to querying knowledge
         bases within the framework of existential rules, aka
-        Datalog+/-."
--%]
+Datalog+/-."
+  keywords="existential rules, datalog+, toolkit, library, ontology,
+software, graal, forward chaining, chase, rewriting, backward
+chaining, query answering, OWL2, knowledge representation, knowledge
+reasoning, data engineering, java, semantic web, description logics" -%]
 
  <body>
 

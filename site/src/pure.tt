@@ -2,7 +2,12 @@
 <html>
   [%- PROCESS config.tt -%]
   [%- title = "Pure rewriter" -%]  
-  [%- INCLUDE header.tt -%]<html>
+  [%- INCLUDE header.tt
+  desc="Pure is a compilation based query rewriter dedicated to the
+  datalog+ framework."
+  keywords="Pure, conjunctive query, rewriter, existential rules,
+  ontology, datalog+"
+  -%]<html>
   
   <body>
 

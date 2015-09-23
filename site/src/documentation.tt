@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html>
   [%- PROCESS config.tt -%]
-  [%- title = "Graal Documentation" -%]  
+  [%- title = "Graal Documentation"
+  desc="Documentation of Graal library"
+  keywords="Graal, documentation, javadoc, getting started"
+  -%]  
   [%- INCLUDE header.tt -%]
   
   <body>

@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html>
   [%- PROCESS config.tt -%]
-  [%- title = "OWL2 to Dlgp" -%]  
+  [%- title = "OWL2 to Dlgp"
+  desc="Translator from OWL2 to Dlgp"
+  keywords="translator, owl2, dlgp, existential rules, ER profile,
+  semantic web, description logics" -%]  
   [%- INCLUDE header.tt -%]
 
   <body>

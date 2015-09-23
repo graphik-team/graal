@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html>
   [%- PROCESS config.tt -%]
-  [%- title = "Dlgp to RuleML" -%]  
+  [%- title = "Dlgp to RuleML"
+  desc="Translator from Dlgp to RuleML"
+  keywords="dlgp, ruleml, translator, rule, format, existential rules,
+  datalog+" -%]  
   [%- INCLUDE header.tt -%]
 
   <body>
