@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   [%- PROCESS config.tt -%]
-  [%- title = "Getting Started" -%]  
+  [%- title = "Getting Started using Maven" -%]  
   [%- INCLUDE header.tt -%]
   
   <body>
@@ -17,38 +17,33 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        This page shows how to build and run a simple project based
-        on Graal without any build tool. If you prefer, you can
-        build and run this example 
-        <a href="./getting-started-maven">using Maven</a>.
+        This example shows how to build and run a simple project based
+        on Graal using the Maven build tool. If you prefer, you can
+        build and run this example <a href="./getting-started">without any build tool</a>.
         <h2>Requirements</h2>
 
         <ul>
           <li>Graal requires Java 7 or newer.</li>
-          <li>Download <a href="[% './' _ config.graalVersion _ '/graal-' _
-          config.graalVersion _ '-for-example0.jar' %]">Graal</a> (this
-          package contains the core, homomorphism, backward_chaining,
-          forward_chaining, io-dlgp, store-rdbms modules and their dependencies)</li>
-          <li>Download <a href="dl/examples/Example0.java">Example0.java</a></li>
-          <li>Download <a href="dl/resources/animals.dlp">animals.dlp</a></li>
+          <li><a href="https://maven.apache.org/download.cgi">Download</a>
+        and <a href="https://maven.apache.org/install.html">install</a>
+        Maven.</li>
+          <li>Download the
+          project <a href="./dl/examples/graal-getting-started.zip">graal-getting-started.zip</a> and
+          extract it where you want.</li>
         </ul>
 
-        
         <h2>Build</h2>
 
-        <p>Open a terminal and go to the folder where downloaded
-        files are. Then, execute the command below:</p>
+          <p>Open a terminal and go to the graal-getting-started
+          folder. Then, execute the command below:</p>
+          
+          <code>mvn package</code>
 
-        <pre><code>javac -cp .:./graal-[% config.graalVersion %]-for-example0.jar Example0.java</code></pre>
+          <h2>Run the example</h2>
 
-        <p>Alternatively, you can download the <a href="dl/examples/Example0.class">pre-compiled
-          version</a>.</p>
-
-        
-        <h2>Run the example</h2>
-
-        <p>Execute this command:</p>
-        <code>java -cp .:./graal-[% config.graalVersion %]-for-example0.jar Example0 animals.dlp</code>
+         <p>Execute the project:</p>
+         <code>java -jar target/getting-started-1.0-SNAPSHOT.jar src/main/resources/animals.dlp</code>
+         
 
         <h2>What does this example do?</h2>
         <ol>
@@ -68,11 +63,9 @@
 
         <p>More examples are available <a href="https://github.com/graphik-team/graal/tree/master/graal-examples/src/main/java/fr/lirmm/graphik/graal/examples">here</a> and will soon be
         discuss here.</p>
- 
       </section>
     </div>
 
-    [%- INCLUDE footer.tt -%]
-
+[% INCLUDE footer.tt %]
   </body>
 </html>

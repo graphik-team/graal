@@ -19,6 +19,7 @@ dest/publications.html\
 dest/pure.html\
 dest/kiabora.html\
 dest/getting-started.html\
+dest/getting-started-maven.html\
 dest/modules/graal-util.html\
 dest/modules/graal-core.html\
 dest/modules/graal-backward-chaining.html\
