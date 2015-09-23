@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <meta charset='utf-8'/>
-    <meta name="description" content="Graal : "/>
+    <meta name="description" content=""/>
     <link rel="stylesheet" type="text/css" media="screen" href="./stylesheets/stylesheet.css"/>
     <link rel="stylesheet" type="text/css" media="screen" href="./stylesheets/table.css"/>
     <script type="text/javascript" src="./js/main.js"></script>
     <title>Pure rewriter</title>
-  </head>
+  </head><html>
   <body>
     <!-- HEADER -->
     <div id="header_wrap" class="outer">
@@ -46,37 +46,37 @@
             <ul>
               <li>
                 Compile ontology into ./example.idc: <br/>
-                <pre>java -jar pure-rewriter-*.jar compile ./example.dlp -f ./example.idc </pre>
+                <code>java -jar pure-rewriter-*.jar compile ./example.dlp -f ./example.idc </code>
               </li>
               <li>
                 Rewrite the query using the compiled ontology file: <br/>
-                <pre>java -jar pure-rewriter-*.jar rewrite ./example.dlp -q "?(X):- criticalManager(X),woman(X)." -c ./example.idc > ./pivotal.dlp </pre>
+                <code>java -jar pure-rewriter-*.jar rewrite ./example.dlp -q "?(X):- criticalManager(X),woman(X)." -c ./example.idc > ./pivotal.dlp </code>
               </li>
               <li>Unfold the pivotal query: <br/>
-              <pre>java -jar pure-rewriter-*.jar unfold -c ./example.idc -q ./pivotal.dlp </pre></li>
+              <code>java -jar pure-rewriter-*.jar unfold -c ./example.idc -q ./pivotal.dlp </code></li>
               </ul>
             <h3> Without compilation </h3>
              <ul>
               <li>
-                <pre>java -jar pure-rewriter-*.jar rewrite ./example.dlp -q "?(X):- criticalManager(X),woman(X)." -c NONE </pre>
+                <code>java -jar pure-rewriter-*.jar rewrite ./example.dlp -q "?(X):- criticalManager(X),woman(X)." -c NONE </code>
               </li>
              </ul>
             <h3> Other useful options </h3>
             <ul>
               <li>
                 Verbose mode, print informations like time, number of rewritings...
-                <pre>java -jar pure-rewriter-*.jar -v compile ./example.dlp -f ./example.idc</pre>
+                <code>java -jar pure-rewriter-*.jar -v compile ./example.dlp -f ./example.idc</code>
               <li>
                 One line rewriting with compilation and unfolding:
-                <pre>java -jar pure-rewriter-*.jar rewrite ./example.dlp -q "?(X):- criticalManager(X),woman(X)." -u </pre>
+                <code>java -jar pure-rewriter-*.jar rewrite ./example.dlp -q "?(X):- criticalManager(X),woman(X)." -u </code>
               </li>
               <li>
                 Rewrite multiple queries from a file
-                <pre>java -jar pure-rewriter-*.jar rewrite ./example.dlp -q ./queries.dlp </pre>
+                <code>java -jar pure-rewriter-*.jar rewrite ./example.dlp -q ./queries.dlp </code>
               </li>
               <li>
                 More options:
-                <pre>java -jar pure-rewriter-*.jar --help</pre>
+                <code>java -jar pure-rewriter-*.jar --help</code>
             </ul>
       </section>
     </div>
@@ -89,7 +89,7 @@
           team</p>
         <p> Contacts:
         <script type="text/javascript">
-        <!--
+        <!-- //encodage de l'adresse email
                 Rot17.write('<r yivw="drzckf:jzgzvkvi@czidd.wi">jzgzvkvi@czidd.wi</r>');
                 document.write(' ');
           Rot17.write('<r yivw="drzckf:dlxezvi@czidd.wi">dlxezvi@czidd.wi</r>');
