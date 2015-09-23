@@ -68,7 +68,6 @@ import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
-import fr.lirmm.graphik.graal.io.owl.OWL2ParserException;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.HSQLDBDriver;
 
@@ -79,7 +78,7 @@ public class Example0 {
 
 	public static void main(String args[]) throws ChaseException, IOException,
  HomomorphismFactoryException,
-	                                      HomomorphismException, AtomSetException, OWL2ParserException {
+	                                      HomomorphismException, AtomSetException {
 
 		// 0 - Create a Dlgp writer and a structure to store rules.
 		writer = new DlgpWriter();
