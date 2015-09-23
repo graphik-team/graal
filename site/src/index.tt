@@ -64,6 +64,34 @@ reasoning, data engineering, java, semantic web, description logics" -%]
           </li>
         </ul>
 
+        <h2>Existential rule framework</h2>
+	     
+	<p>
+	  <strong>Existential rules</strong> allow to assert the existence of not-yet-known individuals. The
+	  existential rule framework is also known as an extension to Datalog, called
+	  <strong>Datalog+/-</strong>. 
+	</p>
+	<p>
+	  It is particularly relevant to <strong>ontology-based query answering</strong>. In
+	  this framework, a knowledge base is composed of facts (or data) and of
+	  ontological knowledge expressed by existential rules (including rules with
+	  equality atoms) and negative constraints. 
+	  The considered queries are conjunctive queries; 
+	  extending them to unions of conjunctive queries is straightforward.
+	</p>
+	<p>
+	  [More: <a href="./papers/framework_en.pdf">A brief overview of the 
+	    existential rules framework</a>]
+	</p>
+	<p>
+	  For a thorough theoretical presentation the visitor is referred to:
+	  J.-F. Baget, M. Lecl&egrave;re, M.-L. Mugnier, E. Salvat, <i>On Rules with 
+	    Existential Variables:
+	    Walking the Decidability Line</i>, <strong>Artificial Intelligence Journal</strong> 175 (2011), 
+	  pp. 1620-1654.<a href="http://www.lirmm.fr/~mugnier/ArticlesPostscript/BLMSDecidabilityLine-PreAIJ2011.pdf">
+	    Author's file (pdf)</a>. 
+	</p>
+
           <h2>Related standalone tools</h2>
              <ul>
                <li><a href="./pure">Query rewriter (Pure: basic and compilation-based versions) </a></li>
