@@ -11,6 +11,8 @@
 	<artifactId>graal-core</artifactId>
 	<packaging>jar</packaging>
 	<name>graal-core</name>
+	
+	<description>This module contains the main interfaces and classes of Graal.</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
