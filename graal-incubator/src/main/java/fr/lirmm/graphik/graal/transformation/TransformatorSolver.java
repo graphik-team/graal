@@ -47,8 +47,8 @@ package fr.lirmm.graphik.graal.transformation;
 
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.stream.SubstitutionReader;
-import fr.lirmm.graphik.graal.homomorphism.Homomorphism;
-import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
 
 /**
