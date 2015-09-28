@@ -53,7 +53,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
 
 /**

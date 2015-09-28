@@ -32,7 +32,6 @@
 	</developers>
 
 	<modules>
-		<module>graal-store-api</module>
 		<module>graal-store-test</module>
 		<module>graal-store-rdbms</module>
 		<module>graal-store-neo4j</module>

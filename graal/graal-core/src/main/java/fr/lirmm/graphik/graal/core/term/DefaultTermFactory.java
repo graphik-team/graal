@@ -48,6 +48,11 @@ package fr.lirmm.graphik.graal.core.term;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.lirmm.graphik.graal.api.core.Constant;
+import fr.lirmm.graphik.graal.api.core.Literal;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.graal.api.factory.TermFactory;
 import fr.lirmm.graphik.util.URI;
 
 /**

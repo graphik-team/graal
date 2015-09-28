@@ -52,7 +52,7 @@ import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.AtomSetException;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>

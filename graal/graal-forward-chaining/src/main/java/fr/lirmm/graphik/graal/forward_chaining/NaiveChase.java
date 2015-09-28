@@ -45,15 +45,17 @@
  */
 package fr.lirmm.graphik.graal.forward_chaining;
 
-import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.VariableGenerator;
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.core.impl.DefaultVariableGenerator;
-import fr.lirmm.graphik.graal.forward_chaining.halting_condition.ChaseHaltingCondition;
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.VariableGenerator;
+import fr.lirmm.graphik.graal.api.forward_chaining.AbstractChase;
+import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
+import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
+import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
+import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
+import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
-import fr.lirmm.graphik.graal.forward_chaining.rule_applier.RuleApplier;
-import fr.lirmm.graphik.graal.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.util.Verbosable;
 

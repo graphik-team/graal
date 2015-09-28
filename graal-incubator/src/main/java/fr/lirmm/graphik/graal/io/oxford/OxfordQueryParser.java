@@ -49,8 +49,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 
-import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.io.ParseException;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.io.ParseException;
 
 /**
  * 

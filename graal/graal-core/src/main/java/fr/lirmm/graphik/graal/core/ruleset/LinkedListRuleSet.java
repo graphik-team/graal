@@ -46,7 +46,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.core.stream.IteratorRuleReader;
 
 public class LinkedListRuleSet extends AbstractRuleSet implements

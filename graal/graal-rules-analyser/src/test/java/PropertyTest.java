@@ -50,7 +50,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.rulesetanalyser.Analyser;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.DisconnectedProperty;

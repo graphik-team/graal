@@ -47,10 +47,12 @@ package fr.lirmm.graphik.graal.core.atomset;
 
 import java.util.LinkedList;
 
-import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
-import fr.lirmm.graphik.graal.core.impl.DefaultAtom;
-import fr.lirmm.graphik.graal.core.term.Term;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}

@@ -45,6 +45,8 @@
 import org.junit.Assert;
 import org.junit.Test;
 
+import fr.lirmm.graphik.graal.api.core.Predicate;
+
 public class PredicateTest {
 
     @Test

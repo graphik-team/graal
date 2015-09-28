@@ -51,10 +51,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.core.impl.AbstractAtom;
-import fr.lirmm.graphik.graal.core.term.Term;
-import fr.lirmm.graphik.graal.core.term.Term.Type;
+import fr.lirmm.graphik.graal.api.core.AbstractAtom;
+import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Term.Type;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>

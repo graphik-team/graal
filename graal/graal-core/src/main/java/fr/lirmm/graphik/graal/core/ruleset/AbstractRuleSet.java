@@ -47,7 +47,8 @@ package fr.lirmm.graphik.graal.core.ruleset;
 
 import java.util.Iterator;
 
-import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.RuleSet;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}

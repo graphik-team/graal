@@ -42,7 +42,7 @@
  */
  package fr.lirmm.graphik.graal.transformation;
 
-import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.api.core.Atom;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>

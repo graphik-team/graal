@@ -48,8 +48,8 @@ package fr.lirmm.graphik.graal.core.atomset.graph;
 import java.util.Set;
 import java.util.TreeSet;
 
-import fr.lirmm.graphik.graal.core.term.AbstractTerm;
-import fr.lirmm.graphik.graal.core.term.Term;
+import fr.lirmm.graphik.graal.api.core.AbstractTerm;
+import fr.lirmm.graphik.graal.api.core.Term;
 
 abstract class AbstractTermVertex extends AbstractTerm implements TermVertex {
 

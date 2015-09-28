@@ -50,9 +50,9 @@ import org.semanticweb.owlapi.model.OWLDataRange;
 import org.semanticweb.owlapi.model.OWLDatatype;
 import org.semanticweb.owlapi.model.OWLLiteral;
 
-import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
-import fr.lirmm.graphik.graal.core.term.Variable;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Variable;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}

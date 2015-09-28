@@ -47,7 +47,8 @@ package fr.lirmm.graphik.graal.core.stream;
 
 import java.util.Iterator;
 
-import fr.lirmm.graphik.graal.core.Substitution;
+import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.api.core.stream.SubstitutionReader;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>

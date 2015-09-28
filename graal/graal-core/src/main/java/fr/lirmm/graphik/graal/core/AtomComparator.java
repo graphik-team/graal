@@ -49,7 +49,8 @@ import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
 
-import fr.lirmm.graphik.graal.core.term.Term;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.Term;
 
 /**
  * Compare atoms by their predicates then by their terms using a

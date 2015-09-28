@@ -49,7 +49,7 @@ import java.util.List;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
-import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.io.oxford.OxfordQueryParser;
 import fr.lirmm.graphik.graal.io.sparql.SparqlConjunctiveQueryWriter;
 

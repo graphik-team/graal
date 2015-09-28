@@ -43,7 +43,8 @@
  package fr.lirmm.graphik.graal.core;
 
 
-import fr.lirmm.graphik.graal.core.term.Term;
+import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Term;
 
 /**
  * This class represents a built-in predicate. The function of this predicate is

@@ -47,7 +47,7 @@ package fr.lirmm.graphik.graal.transformation;
 
 import java.util.Iterator;
 
-import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.stream.AbstractReader;
 

@@ -48,7 +48,7 @@ package fr.lirmm.graphik.graal.core.atomset.graph;
 import java.util.Set;
 import java.util.TreeSet;
 
-import fr.lirmm.graphik.graal.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Predicate;
 
 
 class PredicateVertex extends Predicate implements Vertex {

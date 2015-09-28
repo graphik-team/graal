@@ -45,10 +45,10 @@
  */
 package fr.lirmm.graphik.graal.core.factory;
 
-import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
-import fr.lirmm.graphik.graal.core.impl.DefaultRule;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.core.DefaultRule;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}

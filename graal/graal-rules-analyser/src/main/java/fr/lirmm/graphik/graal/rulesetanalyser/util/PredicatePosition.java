@@ -45,7 +45,7 @@
  */
 package fr.lirmm.graphik.graal.rulesetanalyser.util;
 
-import fr.lirmm.graphik.graal.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Predicate;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>

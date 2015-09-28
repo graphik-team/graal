@@ -45,8 +45,8 @@
  */
 package fr.lirmm.graphik.graal.transformation;
 
-import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.util.stream.transformator.Transformator;
 
 /**

@@ -45,12 +45,12 @@
  */
 package fr.lirmm.graphik.graal.examples;
 
-import fr.lirmm.graphik.graal.backward_chaining.BackwardChainer;
+import fr.lirmm.graphik.graal.api.backward_chaining.BackwardChainer;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.backward_chaining.pure.PureRewriter;
-import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
-import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 
 /**

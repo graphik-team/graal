@@ -44,7 +44,7 @@
 
 import java.util.Iterator;
 
-import fr.lirmm.graphik.graal.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Predicate;
 
 public interface PredicateReader extends Iterable<Predicate>, Iterator<Predicate> {
 	

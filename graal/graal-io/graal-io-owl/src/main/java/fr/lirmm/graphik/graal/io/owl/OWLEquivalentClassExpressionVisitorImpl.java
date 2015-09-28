@@ -60,13 +60,14 @@ import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
-import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.core.VariableGenerator;
-import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
-import fr.lirmm.graphik.graal.core.impl.DefaultAtom;
-import fr.lirmm.graphik.graal.core.term.Term;
-import fr.lirmm.graphik.graal.core.term.Variable;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.graal.api.core.VariableGenerator;
+import fr.lirmm.graphik.graal.core.DefaultAtom;
+import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -178,7 +179,7 @@ class OWLEquivalentClassExpressionVisitorImpl extends
 	@Override
 	public InMemoryAtomSet dataMinCardinality0(OWLDataMinCardinality arg) {
 		InMemoryAtomSet atomset = GraalUtils.createAtomSet();
-		atomset.add(Atom.TOP);
+		atomset.add(DefaultAtomFactory.instance().getTop());
 		return atomset;
 	}
 

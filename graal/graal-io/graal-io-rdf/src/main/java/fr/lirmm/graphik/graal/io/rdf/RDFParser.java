@@ -52,8 +52,8 @@ import java.net.URL;
 
 import org.openrdf.rio.RDFFormat;
 
-import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.io.AbstractAtomParser;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.io.AbstractAtomParser;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}

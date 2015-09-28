@@ -35,6 +35,7 @@
 	</developers>
 
 	<modules>
+                <module>graal-api</module>
 		<module>graal-core</module>
 		<module>graal-homomorphism</module>
 		<module>graal-io</module>

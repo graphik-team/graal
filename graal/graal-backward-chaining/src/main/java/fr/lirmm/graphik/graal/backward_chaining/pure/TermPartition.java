@@ -47,12 +47,12 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.Substitution;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
-import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.util.Partition;
 
 class TermPartition extends Partition<Term> {

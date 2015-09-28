@@ -45,7 +45,8 @@
  */
 package fr.lirmm.graphik.graal.core.stream;
 
-import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.stream.SubstitutionReader;
 import fr.lirmm.graphik.util.stream.AbstractReader;
 
 /**

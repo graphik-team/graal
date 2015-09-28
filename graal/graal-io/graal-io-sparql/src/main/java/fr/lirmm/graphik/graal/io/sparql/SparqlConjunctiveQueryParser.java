@@ -72,16 +72,16 @@ import com.hp.hpl.jena.sparql.syntax.ElementTriplesBlock;
 import com.hp.hpl.jena.sparql.syntax.ElementUnion;
 import com.hp.hpl.jena.sparql.syntax.ElementVisitor;
 
-import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.io.ParseError;
+import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.factory.AtomFactory;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
-import fr.lirmm.graphik.graal.core.term.Term;
-import fr.lirmm.graphik.graal.io.ParseError;
-import fr.lirmm.graphik.graal.io.ParseException;
 import fr.lirmm.graphik.util.URIUtils;
 
 /**
@@ -209,9 +209,10 @@ public class SparqlConjunctiveQueryParser {
 					Node object = triple.getObject();
 					Node predicate = triple.getPredicate();
 					if (predicate.getURI().equals(URIUtils.RDF_TYPE.toString())) {
-						atomset.add(AtomFactory.instance().create(parsePredicate(object, 1), parseTerm(subject)));
+						atomset.add(DefaultAtomFactory.instance().create(parsePredicate(object, 1), parseTerm(subject)));
 					} else {
-						atomset.add(AtomFactory.instance().create(parsePredicate(predicate, 2), parseTerm(subject),
+						atomset.add(DefaultAtomFactory.instance().create(parsePredicate(predicate, 2),
+						        parseTerm(subject),
 								parseTerm(object)));
 					}
 				} else {

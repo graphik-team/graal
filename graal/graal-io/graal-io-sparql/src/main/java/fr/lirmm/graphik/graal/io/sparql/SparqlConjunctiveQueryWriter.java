@@ -52,13 +52,13 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
-import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.core.term.Term;
-import fr.lirmm.graphik.graal.io.AbstractWriter;
-import fr.lirmm.graphik.graal.io.ConjunctiveQueryWriter;
-import fr.lirmm.graphik.graal.io.WriterException;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.io.AbstractWriter;
+import fr.lirmm.graphik.graal.api.io.ConjunctiveQueryWriter;
+import fr.lirmm.graphik.graal.api.io.WriterException;
 import fr.lirmm.graphik.util.Prefix;
 
 /**

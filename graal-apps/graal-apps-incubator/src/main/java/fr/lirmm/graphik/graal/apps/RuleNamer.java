@@ -48,7 +48,7 @@ package fr.lirmm.graphik.graal.apps;
 import java.io.File;
 import java.io.IOException;
 
-import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 

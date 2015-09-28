@@ -45,6 +45,7 @@ package fr.lirmm.graphik.graal.core.term;
 import org.junit.Assert;
 import org.junit.Test;
 
+import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.util.URI;
 import fr.lirmm.graphik.util.URIUtils;
 

@@ -44,7 +44,7 @@
 
 import java.io.Serializable;
 
-import fr.lirmm.graphik.graal.core.term.Term;
+import fr.lirmm.graphik.graal.api.core.Term;
 
 /**
  * This interface represents a function for a {@link BuiltInPredicate}

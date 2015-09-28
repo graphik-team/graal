@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.BTSProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.FESProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.FUSProperty;

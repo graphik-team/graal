@@ -45,9 +45,9 @@
 import org.junit.Assert;
 import org.junit.Test;
 
+import fr.lirmm.graphik.graal.api.core.Literal;
+import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
-import fr.lirmm.graphik.graal.core.term.Literal;
-import fr.lirmm.graphik.graal.core.term.Term;
 
 
 /**

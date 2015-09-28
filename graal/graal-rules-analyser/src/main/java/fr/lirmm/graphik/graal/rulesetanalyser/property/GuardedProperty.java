@@ -44,13 +44,11 @@
 
 import java.util.List;
 import java.util.LinkedList;
-
-
 import java.util.Set;
 
-import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.term.Term;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Term;
 
 /**
  * At least one atom in the body (called a guard) contains all the variables

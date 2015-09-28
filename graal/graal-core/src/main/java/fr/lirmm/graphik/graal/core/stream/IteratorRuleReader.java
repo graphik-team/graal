@@ -44,7 +44,7 @@
 
 import java.util.Iterator;
 
-import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.util.stream.AbstractReader;
 
 public class IteratorRuleReader extends AbstractReader<Rule> {

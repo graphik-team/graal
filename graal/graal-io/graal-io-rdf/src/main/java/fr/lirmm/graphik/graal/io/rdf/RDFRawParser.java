@@ -57,10 +57,10 @@ import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.RDFParseException;
 import org.openrdf.rio.Rio;
 
-import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.impl.DefaultAtom;
-import fr.lirmm.graphik.graal.io.AbstractAtomParser;
-import fr.lirmm.graphik.graal.io.ParseError;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.io.AbstractAtomParser;
+import fr.lirmm.graphik.graal.api.io.ParseError;
+import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.util.stream.ArrayBlockingStream;
 
 /**

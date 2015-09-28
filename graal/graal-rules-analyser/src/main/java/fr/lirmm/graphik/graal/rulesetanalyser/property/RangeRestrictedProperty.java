@@ -48,8 +48,7 @@ package fr.lirmm.graphik.graal.rulesetanalyser.property;
 import java.util.List;
 import java.util.LinkedList;
 
-
-import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Rule;
 
 /**
  * All variables that appear in the head also occur in the body.

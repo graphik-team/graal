@@ -44,12 +44,10 @@
 
 import java.util.List;
 import java.util.LinkedList;
-
-
 import java.util.Iterator;
 
-import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.Rule;
 
 /**
  * The body contains only one atom.
