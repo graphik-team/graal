@@ -27,8 +27,8 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        This page shows how to build and run a simple project based
-        on Graal without any build tool. If you prefer, you can
+        This page shows how to build and run a simple Graal project
+        without any build tool. If you prefer, you can
         build and run this example
         <a href="./getting-started-maven">using Maven</a>.
         <h2>Requirements</h2>
@@ -49,22 +49,22 @@
         <h2>Run the example</h2>
         <p>Execute this command:</p>
         <code>java -cp .:./graal-0.9.0-for-example0.jar Example0 animals.dlp</code>
-        <h2>What does this example do?</h2>
+      <h2>What does this example do?</h2>
         <ol>
-          <li>Create a relational database store with HSQLDB (An
+          <li>Create a relational database store with HSQLDB (an
             InMemory Java database system),</li>
-          <li>Parse Animals.dlp (A <em>Dlgp</em> file with rules and
+          <li>Parse Animals.dlp (a <em>Dlgp</em> file with rules and
             facts),</li>
-          <li>Print the set of rules in <em>Dlgp</em>,</li>
-          <li>Print the set of facts in <em>Dlgp</em>,</li>
+          <li>Print the set of rules in <em>Dlgp</em> format,</li>
+          <li>Print the set of facts in <em>Dlgp</em> format,</li>
           <li>Parse a query from the code and print it,</li>
-          <li>Query the store without reasoning,</li>
-          <li>Backward chaining,</li>
-          <li>Forward chaining.</li>
+          <li>Query the store without rule reasoning,</li>
+          <li>Backward chaining (based on query rewriting),</li>
+          <li>Forward chaining (based on fact saturation).</li>
         </ol>
         <h2>To continue</h2>
         <p>More examples are available <a href="https://github.com/graphik-team/graal/tree/master/graal-examples/src/main/java/fr/lirmm/graphik/graal/examples">here</a> and will soon be
-        discuss here.</p>
+        discussed here.</p>
       </section>
     </div>
     <!-- FOOTER -->
