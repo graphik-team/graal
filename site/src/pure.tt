@@ -29,20 +29,21 @@
         <h2>Getting started</h2>
             The following program (Pure-rewriter) includes both the basic and the compilation-based versions of Pure.
 
-            <ul>
-              <li>Download <a href="./dl/pure-rewriter-1.0.beta6.jar">pure-rewriter</a></li>
-              <li>Download <a href="./dl/example.dlp">example.dlp</a></li>
-            </ul>
+            <p>Download <a href="./dl/pure-rewriter-1.0.beta6.jar">pure-rewriter</a></p>
 
-            There are three options for compilation:
+            
+            <p>There are three options for compilation:</p>
             <ul>
               <li>NONE: no compilation</li>
               <li>H: compilation of hierarchical rules</li>
               <li>ID: compilation of all compilable rules</li>
             </ul>
 
-            <h2> Running example from the paper on Graal at RuleML
-            2015 </h2>
+            <h2> Running example </h2>
+
+            <p>Download <a href="./dl/example.dlp">example.dlp</a>
+            (example from <a href="./publications#RuleML2015">the paper on Graal at RuleML
+            2015</a>)</p>
 
             <h3> Rewrite with ID compilation </h3>
 

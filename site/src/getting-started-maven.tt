@@ -17,8 +17,8 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        This example shows how to build and run a simple project based
-        on Graal using the Maven build tool. If you prefer, you can
+        This example shows how to build and run a simple Graal project
+        using the Maven build tool. If you prefer, you can
         build and run this example <a href="./getting-started">without any build tool</a>.
         <h2>Requirements</h2>
 
@@ -45,24 +45,8 @@
          <code>java -jar target/getting-started-1.0-SNAPSHOT.jar src/main/resources/animals.dlp</code>
          
 
-        <h2>What does this example do?</h2>
-        <ol>
-          <li>Create a relational database store with HSQLDB (An
-            InMemory Java database system),</li>
-          <li>Parse Animals.dlp (A <em>Dlgp</em> file with rules and
-            facts),</li>
-          <li>Print the set of rules in <em>Dlgp</em>,</li>
-          <li>Print the set of facts in <em>Dlgp</em>,</li>
-          <li>Parse a query from the code and print it,</li>
-          <li>Query the store without reasoning,</li>
-          <li>Backward chaining,</li>
-          <li>Forward chaining.</li>
-        </ol>
-
-        <h2>To continue</h2>
-
-        <p>More examples are available <a href="https://github.com/graphik-team/graal/tree/master/graal-examples/src/main/java/fr/lirmm/graphik/graal/examples">here</a> and will soon be
-        discuss here.</p>
+         [%- INCLUDE getting_started_inc.tt -%]
+         
       </section>
     </div>
 
