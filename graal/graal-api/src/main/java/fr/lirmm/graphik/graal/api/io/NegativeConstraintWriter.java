@@ -47,13 +47,19 @@ package fr.lirmm.graphik.graal.api.io;
 
 import java.io.IOException;
 
+import fr.lirmm.graphik.graal.api.core.NegativeConstraint;
+
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface GraalWriter extends ConjunctiveQueryWriter, RuleWriter,
- AtomSetWriter, AtomWriter, NegativeConstraintWriter {
+public interface NegativeConstraintWriter extends Writer {
 
-	public void write(Object o) throws IOException;
+	public void write(NegativeConstraint constraint) throws IOException;
 
-};
+	@Override
+	void flush() throws IOException;
+
+	@Override
+	void close() throws IOException;
+}

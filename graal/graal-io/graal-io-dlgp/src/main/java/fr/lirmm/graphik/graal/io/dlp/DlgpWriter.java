@@ -58,6 +58,7 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Literal;
+import fr.lirmm.graphik.graal.api.core.NegativeConstraint;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.core.Rule;
@@ -65,7 +66,6 @@ import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.io.AbstractGraalWriter;
-import fr.lirmm.graphik.graal.core.DefaultNegativeConstraint;
 import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
 import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.PrefixManager;
@@ -180,7 +180,8 @@ public class DlgpWriter extends AbstractGraalWriter {
 		this.write(".\n");
 	}
 	
-	public void write(DefaultNegativeConstraint constraint) throws IOException {
+	@Override
+	public void write(NegativeConstraint constraint) throws IOException {
 		this.writeLabel(constraint.getLabel());
 		
 		this.write(" ! :- ");
