@@ -37,6 +37,7 @@
 		<module>graal-io-rdf</module>
 		<module>graal-io-ruleml</module>
 		<module>graal-io-sparql</module>
+		<module>graal-io-iris-dtg</module>
 	</modules>
 
 </project>
