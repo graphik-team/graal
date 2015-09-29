@@ -74,14 +74,20 @@ public final class RuleFactory {
 		return new DefaultRule(body, head);
 	}
 
+	public Rule create(String label, Iterable<Atom> body, Iterable<Atom> head) {
+		return new DefaultRule(label, body, head);
+	}
+
 	public Rule create(Atom body, Atom head) {
 		InMemoryAtomSet bodySet = AtomSetFactory.instance().createAtomSet(body);
 		InMemoryAtomSet headSet = AtomSetFactory.instance().createAtomSet(head);
 		return new DefaultRule(bodySet, headSet);
 	}
 
-	public Rule create(String label, Iterable<Atom> body, Iterable<Atom> head) {
-		return new DefaultRule(label, body, head);
+	public Rule create(String label, Atom body, Atom head) {
+		InMemoryAtomSet bodySet = AtomSetFactory.instance().createAtomSet(body);
+		InMemoryAtomSet headSet = AtomSetFactory.instance().createAtomSet(head);
+		return new DefaultRule(label, bodySet, headSet);
 	}
 
 	public Rule create(Rule rule) {
