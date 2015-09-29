@@ -46,6 +46,7 @@
 package fr.lirmm.graphik.graal.core;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
@@ -56,10 +57,13 @@ import java.util.TreeMap;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
+import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
 import fr.lirmm.graphik.graal.core.factory.RuleFactory;
 import fr.lirmm.graphik.util.EquivalentRelation;
 import fr.lirmm.graphik.util.TreeMapEquivalentRelation;
@@ -99,6 +103,15 @@ public final class RuleUtils {
 		boolean res = it.hasNext();
 		it.next();
 		return res && !it.hasNext();
+	}
+
+	public static boolean isThereOneAtomThatContainsAllVars(Iterable<Atom> atomset, Collection<Term> terms) {
+		for (Atom atom : atomset) {
+			if (atom.getTerms(Type.VARIABLE).containsAll(terms)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -162,6 +175,10 @@ public final class RuleUtils {
 		return pieces;
 	}
 
+	// /////////////////////////////////////////////////////////////////////////
+	// TRANSFORM RULES
+	// /////////////////////////////////////////////////////////////////////////
+
 	/**
 	 * Generate an iterator of mono-piece rules from an iterator of rules.
 	 * 
@@ -172,6 +189,18 @@ public final class RuleUtils {
 	public static SinglePieceRulesIterator computeSinglePiece(Iterator<Rule> rules) {
 		return new SinglePieceRulesIterator(rules);
 	}
+
+	/**
+	 * Generate an iterator of atomic head rules from an iterator of rules.
+	 * 
+	 * @param rules
+	 *            a set of rules
+	 * @return The equivalent set of atomic head rules.
+	 */
+	public static Iterator<Rule> computeAtomicHead(Iterator<Rule> rules) {
+		return new AtomicHeadIterator(rules);
+	}
+
 
 	/**
 	 * Generate a set of mono-piece rules equivalent of the specified rule.
@@ -198,16 +227,48 @@ public final class RuleUtils {
 		return monoPiece;
 	}
 
-	public static boolean isThereOneAtomThatContainsAllVars(Iterable<Atom> atomset, Collection<Term> terms) {
-		for (Atom atom : atomset) {
-			if (atom.getTerms(Type.VARIABLE).containsAll(terms)) {
-				return true;
+	private static int auxIndex = -1;
+
+	/**
+	 * Generate a set of atomic head rules equivalent of the specified rule.
+	 * 
+	 * @param rule
+	 * @return
+	 */
+	public static Collection<Rule> computeAtomicHead(Rule rule) {
+		String label = rule.getLabel();
+		Collection<Rule> atomicHead = new LinkedList<Rule>();
+
+		if (rule.getHead().isEmpty() || hasAtomicHead(rule)) {
+			return Collections.<Rule> singleton(rule);
+		} else {
+			Predicate predicate = new Predicate("aux_" + ++auxIndex, rule.getTerms().size());
+			Atom aux = DefaultAtomFactory.instance().create(predicate,
+			        rule.getTerms().toArray(new Term[rule.getTerms().size()]));
+
+			if (label.isEmpty()) {
+				atomicHead.add(RuleFactory.instance().create(rule.getBody(), new LinkedListAtomSet(aux)));
+				for (Atom atom : rule.getHead()) {
+					atomicHead.add(RuleFactory.instance().create(aux, atom));
+				}
+			} else {
+				int i = -1;
+				atomicHead.add(RuleFactory.instance().create(label + "-a" + ++i, rule.getBody(),
+				        new LinkedListAtomSet(aux)));
+				for (Atom atom : rule.getHead()) {
+					atomicHead.add(RuleFactory.instance().create(label + "-a" + ++i, aux, atom));
+				}
 			}
 		}
-		return false;
+
+		return atomicHead;
 	}
 
-	public static class SinglePieceRulesIterator implements Iterator<Rule> {
+	// /////////////////////////////////////////////////////////////////////////
+	// Private classes
+	// /////////////////////////////////////////////////////////////////////////
+
+	private static class SinglePieceRulesIterator implements Iterator<Rule> {
 
 		Iterator<Rule> it;
 		Queue<Rule> currentMonoPiece = new LinkedList<Rule>();
@@ -230,6 +291,37 @@ public final class RuleUtils {
 						.addAll(RuleUtils.computeSinglePiece(currentRule));
 			}
 			return currentMonoPiece.poll();
+		}
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
+
+	}
+
+	private static class AtomicHeadIterator implements Iterator<Rule> {
+
+		Iterator<Rule> it;
+		Queue<Rule> currentAtomicHead = new LinkedList<Rule>();
+		Rule currentRule;
+
+		AtomicHeadIterator(Iterator<Rule> iterator) {
+			this.it = iterator;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return !currentAtomicHead.isEmpty() || it.hasNext();
+		}
+
+		@Override
+		public Rule next() {
+			if (currentAtomicHead.isEmpty()) {
+				currentRule = it.next();
+				currentAtomicHead.addAll(RuleUtils.computeAtomicHead(currentRule));
+			}
+			return currentAtomicHead.poll();
 		}
 
 		@Override
