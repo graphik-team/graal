@@ -1,6 +1,7 @@
 package fr.lirmm.graphik.graal.apps;
 
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Iterator;
 
 import com.beust.jcommander.JCommander;
@@ -10,13 +11,15 @@ import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.core.RuleUtils;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
+import fr.lirmm.graphik.graal.io.dlp.Directive;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
+import fr.lirmm.graphik.util.Prefix;
 
 public class RuleSetTools {
 	public static final String   PROGRAM_NAME   = "ruleset-tools";
 
-	public static void main(String args[]) {
+	public static void main(String args[]) throws IOException {
 		RuleSetTools options = new RuleSetTools();
 
 		JCommander commander = new JCommander(options,args);
@@ -29,6 +32,7 @@ public class RuleSetTools {
 		// init parser
 		DlgpParser parser = null;
 		RuleSet rules = new LinkedListRuleSet();
+		DlgpWriter writer = new DlgpWriter();
 
 		if (options.input_file.equals("-"))
 			parser = new DlgpParser(System.in);
@@ -45,26 +49,35 @@ public class RuleSetTools {
 		// parse rule set
 		while (parser.hasNext()) {
 			Object o = parser.next();
-			if (o instanceof Rule) rules.add((Rule)o);
-			else System.err.println("[WARNING] Ignoring non rule: " + o);
+			if (o instanceof Rule) {
+				rules.add((Rule) o);
+			} else if (o instanceof Directive) {
+				writer.writeDirective((Directive) o);
+			} else if (o instanceof Prefix) {
+				writer.write((Prefix) o);
+			} else {
+				System.err.println("[WARNING] Ignoring non rule: " + o);
+			}
 		}
 
 		if (options.singlepiece) {
 			System.out.println("%%%% SINGLE PIECE %%%%");
 			Iterator<Rule> it = RuleUtils.computeSinglePiece(rules.iterator());
 			while (it.hasNext()) {
-				System.out.print(DlgpWriter.writeToString(it.next()));
+				writer.write(it.next());
 			}
-			System.out.println("");
 		}
 
 		if (options.atomic) {
 			System.out.println("%%%%% ATOMIC HEAD %%%%");
-			System.out.println("TODO");
-			//for (Rule r : RuleUtils.computeAtomicHead(rules.iterator()))
-				//System.out.println(DlgpWriter.writeToString(r));
-			System.out.println("");
+			Iterator<Rule> it = RuleUtils.computeAtomicHead(RuleUtils.computeSinglePiece(rules.iterator()));
+			while (it.hasNext()) {
+				writer.write(it.next());
+			}
 		}
+
+		writer.write('\n');
+		writer.close();
 
 	}
 
