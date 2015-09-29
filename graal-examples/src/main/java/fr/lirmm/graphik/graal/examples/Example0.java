@@ -141,7 +141,7 @@ public class Example0 {
 		writer.write(store);
 
 		// Print the set of rewritings
-		writer.write("\n= Queries Union =\n");
+		writer.write("\n= Union of queries =\n");
 		writer.write(ucq);
 
 		// Query data with the union of queries
