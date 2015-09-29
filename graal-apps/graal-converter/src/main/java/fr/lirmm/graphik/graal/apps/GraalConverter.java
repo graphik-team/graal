@@ -12,6 +12,7 @@ import fr.lirmm.graphik.graal.api.io.GraalWriter;
 import fr.lirmm.graphik.graal.api.io.Parser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
+import fr.lirmm.graphik.graal.io.iris_dtg.IrisDtgWriter;
 import fr.lirmm.graphik.graal.io.owl.OWL2Parser;
 import fr.lirmm.graphik.graal.io.ruleml.RuleMLWriter;
 
@@ -101,6 +102,9 @@ public class GraalConverter {
 			case "ruleml":
 				writer = new RuleMLWriter(out);
 				break;
+		case "iris-dtg":
+				writer = new IrisDtgWriter(out);
+				break;
 			default:
 				System.err.println("Unrecognized output format: " + options.output_format);
 				System.exit(2);
@@ -137,7 +141,7 @@ public class GraalConverter {
 	private String input_format = "dlp";
 
 	@Parameter(names = { "-O", "--output-format" },
-	           description = "Output format ('dlp', 'ruleml').")
+	           description = "Output format ('dlp', 'ruleml', 'iris-dtg').")
 	private String output_format = "dlp";
 
 	@Parameter(names = { "-h", "--help" },
