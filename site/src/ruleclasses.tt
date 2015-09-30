@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+  [%- PROCESS config.tt -%]
+  [%- title = "Kiabora - Rule Classes" -%]  
+  [%- INCLUDE header.tt -%]
+
+[%
+
+%]
+  
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+      <header class="inner">
+          <h1 id="project_title">[% title %]</h1>
+          [%- INCLUDE nav.tt -%]
+      </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+  	  [% PROCESS rc.tt %]
+
+		<ul>
+			<li><a href='#structures'>Structures</a></li>
+			<ul>
+				<li><a href='#grd'>Graph of rule dependencies</a></li>
+				<li><a href='#gp'>Graph of position dependencies</a></li>
+				<li><a href='#marked'>Marked variable set</a></li>
+				<li><a href='#affected'>Affected position set</a></li>
+			</ul>
+			</li>
+			<li><a href='#rc'>Rule classes</a>
+			<ul>
+				<li><a href='#abstract'>Abstract rule classes</a>
+				<ul>
+					[% FOR c IN rule_classes.abstract %]
+					[% link = '#' _ c.label %]
+						<li><a href='[% link %]'>[% c.name %]</a></li>
+					[% END %]
+				</ul>
+				</li>
+				<li><a href='#concrete'>Concrete rule classes</a>
+				<ul>
+					[% FOR c IN rule_classes.concrete %]
+					[% link = '#' _ c.label %]
+						<li><a href='[% link %]'>[% c.name %]</a></li>
+					[% END %]
+				</ul>
+				</li>
+			</ul>
+			</li>
+		</ul>
+
+		<section id="structures" class="inner">
+		<h2><a name='structures'>Structures</a></h2>
+
+		</section>
+
+		<section id="rc" class="inner">
+		<h2><a name='rc'>Rule Classes</a></h2>
+
+		<h3><a name='abstract'>Abstract Rule Classes</a></h3>
+		<p>
+		These rule classes are said <em>abstract</em> because they
+		have no syntactic property and are used to classify concrete
+		classes. Each of these classes ensures the existence of
+		query mechanisms that halt in finite time for any query.
+		Determining if a rule (or a set of rules) belongs to one
+		of these abstract classes is an undecidable problem.
+		</p>
+
+		[% FOR c IN rule_classes.abstract %]
+			<h4><a name='[% c.label %]'>[% c.name %] ([% c.label %])</a></h4>
+			<p>[% c.description %]</p>
+		[% END %]
+
+		</section>
+
+		<h3><a name='concrete'>Concrete Rule Classes</a></h3>
+		<p>
+		These classes are presented with their syntactic property
+		and the abstract classes they belong to.
+		</p>
+
+		<p>
+		There are two kinds of syntactic properties:
+		<ul>
+		<li><strong>local properties</strong> which are checked on
+		each rule independently from the others (hence a set fulfils
+		a local property if all of its rules fullfil it);</li>
+		<li><strong>global properties</strong> which are checked on
+		the set of rules (note that the analyser may <em>cut</em> the set
+		into subsets of rules thanks to the <a href='#grd'>graph of
+		rule dependencies</a> strongly connected components).
+		</ul>
+		</p>
+
+		<p>
+		Reminder: the <em>frontier</em> of a rule is the set of
+		variables shared by its body and its head.
+		<p>
+
+		[% FOR c IN rule_classes.concrete %]
+			<h4><a name='[% c.label %]'>[% c.name %] ([% c.label %])</a></h4>
+			[% IF c.type == 'link' %]
+				[% l = '#' _ c.link_label %]
+				See <a ref='[% l %]'>[% c.link_name %]</a>.
+			[% ELSE %]
+				<p>This rule class property is a [% c.type %] property.</p>
+				<p>Ensures:
+				<ul>
+					[% FOR c2 IN c.ensures %]
+						<li>[% c2 %]</li>
+					[% END %]
+				</ul>
+				</p>
+				<p>[% c.description %]</p>
+			[% END %]
+		[% END %]
+    </div>
+
+    [%- INCLUDE footer.tt -%]
+
+  </body>
+</html>

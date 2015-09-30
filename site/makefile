@@ -18,6 +18,7 @@ dest/experiments2.html\
 dest/publications.html\
 dest/pure.html\
 dest/kiabora.html\
+dest/ruleclasses.html\
 dest/getting-started.html\
 dest/getting-started-maven.html\
 dest/modules/graal-util.html\

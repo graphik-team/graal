@@ -20,8 +20,10 @@
 
         <p>This tool is dedicated to the analysis of a set of
         existential rules. It can check if this set belongs to a known
-        decidable class of rules, either directly or by means of its
-        Graph of Rule Dependencies (GRD). Kiabora analyzes the
+        <strong>decidable</strong> class of rules,
+        either directly or by means of its
+        <strong>Graph of Rule Dependencies (GRD)</strong>.
+        Kiabora analyzes the
         properties of the strongly connected components in the GRD,
         which allows to determine properties of the rule set with
         respect to decidability as well as the kind of paradigm
@@ -29,8 +31,7 @@
         
         <h2>Associated publications</h2>
         
-            <p>See <a href="./publications#KIABORA_RR2013">KIABORA: An
-            Analyzer of Existential Rule Bases (RR 2013)</a>.</p>
+            <p>See <a href="./publications#KIABORA_RR2013">KIABORA: An Analyzer of Existential Rule Bases (RR 2013)</a>.</p>
         
         <h2>Getting started</h2>
 
