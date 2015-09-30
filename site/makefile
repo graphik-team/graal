@@ -37,7 +37,8 @@ dest/modules/graal-store-rdbms.html
 prepare:
 	mkdir -p dest/modules
 
-page-modules: 
+page-modules:
+	mkdir -p src/modules
 	./make-site.sh
 
 

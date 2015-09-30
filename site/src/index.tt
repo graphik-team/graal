@@ -25,8 +25,8 @@ reasoning, data engineering, java, semantic web, description logics" -%]
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
         <p>Graal is a Java toolkit dedicated to querying knowledge
-        bases within the framework of existential rules, aka
-        Datalog+/-. It's an open source library published
+        bases within the framework of <strong>existential rules</strong>, aka
+        Datalog+/-. It is an open source library published
         under <a href="http://www.cecill.info/licences/Licence_CeCILL_V2.1-fr.html">CeCILL
         v2.1 license</a> (GPL compatible).</p>
 
@@ -34,14 +34,14 @@ reasoning, data engineering, java, semantic web, description logics" -%]
 
         <ul>
           <li>
-            a basic layer that provides generic interfaces to store
+            a basic layer that provides <strong>generic interfaces</strong> to store
             and query various kinds of data without considering the
             rules;
           </li>
-          <li> ‘saturation’ algorithms, which apply rules on the data in a
+          <li> <strong>saturation</strong> algorithms, which apply rules on the data in a
             forward chaining manner;
           </li>
-          <li> ‘query rewriting’ algorithms, which reformulate a conjunctive
+          <li> <strong>query rewriting</strong> algorithms, which reformulate a conjunctive
             query into a set (or ‘union’) of conjunctive queries;
           </li>
           <li> utility tools: 
@@ -55,7 +55,7 @@ reasoning, data engineering, java, semantic web, description logics" -%]
                 properties; it also allows to decompose rules;
               </li>
               <li>
-                a translator from OWL 2 files to <em>dlgp</em>;
+                a translator from OWL 2 to <em>dlgp</em>;
               </li>
               <li>
                 a translator from <em>dlgp</em> to RuleML.
@@ -72,7 +72,7 @@ reasoning, data engineering, java, semantic web, description logics" -%]
 	  <strong>Datalog+/-</strong>. 
 	</p>
 	<p>
-	  It is particularly relevant to <strong>ontology-based query answering</strong>. In
+	  It is particularly relevant to <strong>ontology-mediated query answering</strong>. In
 	  this framework, a knowledge base is composed of facts (or data) and of
 	  ontological knowledge expressed by existential rules (including rules with
 	  equality atoms) and negative constraints. 
@@ -84,11 +84,11 @@ reasoning, data engineering, java, semantic web, description logics" -%]
 	    existential rules framework</a>]
 	</p>
 	<p>
-	  For a thorough theoretical presentation the visitor is referred to:
+	  For a thorough theoretical presentation please see the following paper:
 	  J.-F. Baget, M. Lecl&egrave;re, M.-L. Mugnier, E. Salvat, <i>On Rules with 
 	    Existential Variables:
-	    Walking the Decidability Line</i>, <strong>Artificial Intelligence Journal</strong> 175 (2011), 
-	  pp. 1620-1654.<a href="http://www.lirmm.fr/~mugnier/ArticlesPostscript/BLMSDecidabilityLine-PreAIJ2011.pdf">
+	    Walking the Decidability Line</i>, <strong>Artificial Intelligence Journal</strong> 175&nbsp;(9-10), 
+	  pp. 1620-1654 (2011).<a href="http://www.lirmm.fr/~mugnier/ArticlesPostscript/BLMSDecidabilityLine-PreAIJ2011.pdf">
 	    Author's file (pdf)</a>. 
 	</p>
 
