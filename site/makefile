@@ -8,6 +8,7 @@ endif
 all:\
 prepare\
 dest/index.html\
+dest/ruleclasses.html\
 dest/documentation.html\
 dest/downloads.html\
 dest/owl2dlgp.html\
@@ -42,7 +43,7 @@ page-modules:
 	./make-site.sh
 
 
-dest/%.html: src/%.tt src/header.tt src/footer.tt src/config.tt
+dest/%.html: src/%.tt src/header.tt src/footer.tt src/config.tt src/nav.tt
 	@ echo "gen $@"
 	@ tpage --include_path=src/ ${FLAGS} $< | sed '/^\s*$$/d' | sed 's/\s*$$//g' > $@
 

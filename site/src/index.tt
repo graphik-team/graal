@@ -17,8 +17,8 @@ reasoning, data engineering, java, semantic web, description logics" -%]
     <div id="header_wrap" class="outer">
       <header class="inner">  
         <h1 id="project_title">Graal Homepage</h1>
-          [% INCLUDE nav.tt %]
       </header>
+      [% INCLUDE nav.tt %]
     </div>
 
     <!-- MAIN CONTENT -->

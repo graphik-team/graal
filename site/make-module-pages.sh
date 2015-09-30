@@ -20,9 +20,11 @@ echo '
     <div id="header_wrap" class="outer">
         <header class="inner">
           <h1 id="project_title">[% title %]</h1>
-          [%- INCLUDE nav.tt -%]
         </header>
+        [%- INCLUDE nav.tt -%]
     </div>
+
+    [%- INCLUDE downloads_sub_menu.tt -%]
 
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">

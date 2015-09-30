@@ -13,9 +13,11 @@
     <div id="header_wrap" class="outer">
         <header class="inner">
           <h1 id="project_title">[% title %]</h1>
-          [%- INCLUDE nav.tt -%]
         </header>
+        [%- INCLUDE nav.tt -%]
     </div>
+
+    [%- INCLUDE downloads_sub_menu.tt -%]
 
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
@@ -40,12 +42,12 @@
         <ul>
           <li>
             Translate from an OWL 2 file to a <em>dlgp</em> file: <br/>
-            <pre>java -jar owl2dlgp-*.jar -f ./example-owl.ttl -o ./example.dlp</pre>
+            <code>java -jar owl2dlgp-*.jar -f ./example-owl.ttl -o ./example.dlp</code>
           </li>
 
           <li>
             Translate from the standard input (OWL 2) to the standard output (dlgp): <br/>
-            <pre>java -jar owl2dlgp-*.jar < ./example-owl.ttl > ./example.dlp</pre>
+            <code>java -jar owl2dlgp-*.jar < ./example-owl.ttl > ./example.dlp</code>
           </li>
         </ul>
         

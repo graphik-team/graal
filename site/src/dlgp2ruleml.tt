@@ -13,9 +13,11 @@
     <div id="header_wrap" class="outer">
         <header class="inner">
           <h1 id="project_title">[% title %]</h1>
-          [%- INCLUDE nav.tt -%]
         </header>
+        [%- INCLUDE nav.tt -%]
     </div>
+
+    [%- INCLUDE downloads_sub_menu.tt -%]
 
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
@@ -47,11 +49,11 @@
          <ul>
           <li>
             Translate from an <em>dlgp</em> file to a RuleML file: <br/>
-            <pre>java -jar dlgp2ruleml*.jar -f ./example2.dlp -o ./example.ruleml</pre>
+            <code>java -jar dlgp2ruleml*.jar -f ./example2.dlp -o ./example.ruleml</code>
           </li>
           <li>
             Translate from the standard input (dlgp) to the standard output (RuleML): <br/>
-            <pre>java -jar dlgp2ruleml*.jar < ./example2.dlp > ./example.ruleml</pre>
+            <code>java -jar dlgp2ruleml*.jar < ./example2.dlp > ./example.ruleml</code>
           </li>
         </ul>
       </section>

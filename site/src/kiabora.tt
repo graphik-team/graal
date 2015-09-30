@@ -10,9 +10,11 @@
     <div id="header_wrap" class="outer">
       <header class="inner">
           <h1 id="project_title">[% title %]</h1>
-          [%- INCLUDE nav.tt -%]
       </header>
+      [%- INCLUDE nav.tt -%]
     </div>
+
+    [%- INCLUDE downloads_sub_menu.tt -%]
 
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
@@ -28,6 +30,8 @@
         which allows to determine properties of the rule set with
         respect to decidability as well as the kind of paradigm
         (forward or backward chaining) ensuring decidability.</p>
+
+        <a href="./ruleclasses">Rule classes</a>
         
         <h2>Associated publications</h2>
         

@@ -1,0 +1,9 @@
+        <div id="sub_menu" class="outer">
+          <nav class="inner">
+            <a href="./downloads">Graal</a>
+            <a href="./pure">Pure</a>
+            <a href="./owl2dlgp">OWL2DLGP</a>
+            <a href="./dlgp2ruleml">DLGP2RuleML</a>
+            <a href="./kiabora">Kiabora</a>
+          </nav>
+        </div>        

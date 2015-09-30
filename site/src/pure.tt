@@ -15,9 +15,11 @@
     <div id="header_wrap" class="outer">
         <header class="inner">
           <h1 id="project_title">[% title %]</h1>
-          [%- INCLUDE nav.tt -%]
         </header>
+        [%- INCLUDE nav.tt -%]
     </div>
+
+    [%- INCLUDE downloads_sub_menu.tt -%]
 
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
@@ -29,7 +31,12 @@
         <h2>Getting started</h2>
             The following program (Pure-rewriter) includes both the basic and the compilation-based versions of Pure.
 
-            <p>Download <a href="./dl/pure-rewriter-1.0.beta6.jar">pure-rewriter</a></p>
+        <ul>
+            <li>Download <a href="./dl/pure-rewriter-1.0.beta6.jar">pure-rewriter</a></li>
+            <li>Download <a href="./dl/example.dlp">example.dlp</a>
+            (example from <a href="./publications#RuleML2015">the paper on Graal at RuleML
+            2015</a>)</li>
+        </ul>
 
             
             <p>There are three options for compilation:</p>
@@ -39,11 +46,6 @@
               <li>ID: compilation of all compilable rules</li>
             </ul>
 
-            <h2> Running example </h2>
-
-            <p>Download <a href="./dl/example.dlp">example.dlp</a>
-            (example from <a href="./publications#RuleML2015">the paper on Graal at RuleML
-            2015</a>)</p>
 
             <h3> Rewrite with ID compilation </h3>
 

@@ -40,6 +40,29 @@ ol, ul {
 }
 
 /*******************************************************************************
+Specific Styles
+*******************************************************************************/
+
+#menu {
+  color: #ccc;
+  background-color: #222;
+}
+
+#menu a {
+  color: #ccc;
+}
+
+
+#sub_menu {
+  background-color: #eee;
+}
+
+#toc li, #rc li {
+  line-height: 20px;
+}
+
+
+/*******************************************************************************
 Theme Styles
 *******************************************************************************/
 
@@ -83,6 +106,7 @@ h3 {
 
 h4 {
   font-size: 21px;
+  margin: 10px 0 0 0;
 }
 
 h5 {
@@ -94,7 +118,7 @@ h6 {
 }
 
 p {
-  margin: 10px 0 15px 0;
+  margin: 5px 0 15px 0;
 }
 
 footer p {
@@ -140,22 +164,14 @@ img {
   padding: 5px;
   margin: 10px 0 10px 0;
   border: 1px solid #ebebeb;
-
   box-shadow: 0 0 5px #ebebeb;
-  -webkit-box-shadow: 0 0 5px #ebebeb;
-  -moz-box-shadow: 0 0 5px #ebebeb;
-  -o-box-shadow: 0 0 5px #ebebeb;
-  -ms-box-shadow: 0 0 5px #ebebeb;
 }
 
-p img {
-  display: inline;
-  margin: 0;
-  padding: 0;
-  vertical-align: middle;
-  text-align: center;
-  border: none;
+#main_content > p > img, #main_content > img {
+    display: block; 
+    margin: 10px auto 20px auto;
 }
+
 
 pre, code {
   font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
@@ -222,6 +238,14 @@ form {
   padding: 20px;
 }
 
+nav {
+  font-weight: bold;
+}
+
+nav > a {
+  color: #333;
+}
+
 /*******************************************************************************
 Full-Width Styles
 *******************************************************************************/
@@ -254,10 +278,6 @@ Full-Width Styles
 
 #header_wrap {
   background: #F5F5F5;
-}
-
-#header_wrap .inner {
-  padding: 50px 10px 30px 10px;
 }
 
 #project_title {
@@ -333,7 +353,7 @@ Full-Width Styles
 Small Device Styles
 *******************************************************************************/
 
-@media screen and (max-width: 480px) {
+@media screen and (max-width: 600px) {
   body {
     font-size:14px;
   }
@@ -379,6 +399,10 @@ Small Device Styles
     min-width: 320px;
     max-width: 480px;
     font-size: 11px;
+  }
+
+  nav, nav > a { 
+      display: block;
   }
 
 }

@@ -12,9 +12,11 @@
     <div id="header_wrap" class="outer">
         <header class="inner">
           <h1 id="project_title">[% title %]</h1>
-          [%- INCLUDE nav.tt -%]
         </header>
+        [%- INCLUDE nav.tt -%]
     </div>
+
+    [%- INCLUDE downloads_sub_menu.tt -%]
 
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
@@ -40,16 +42,6 @@
           <li><a href="./modules/graal-store-rdbms">graal-store-rdbms</a></li>
         </ul>
 
-        <h2>Graal Apps</h2>
-        <p>This section contains applications built over Graal</p>
-        
-        <ul>
-               <li><a href="./pure">Query rewriter (Pure: basic and compilation-based versions) </a></li>
-               <li><a href="./owl2dlgp">Translator from OWL 2 to DLGP v2</a></li>
-               <li><a href="./dlgp2ruleml">Translator from DLGP v2 to RuleML</a></li>
-               <li><a href="./kiabora">Kiabora</a></li>
-             </ul>
-        
       </section>
     </div>
 
