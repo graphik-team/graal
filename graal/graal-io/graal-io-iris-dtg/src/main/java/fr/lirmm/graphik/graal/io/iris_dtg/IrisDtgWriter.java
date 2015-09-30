@@ -63,12 +63,9 @@ import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Literal;
 import fr.lirmm.graphik.graal.api.core.NegativeConstraint;
 import fr.lirmm.graphik.graal.api.core.Predicate;
-import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.core.Rule;
-import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.io.AbstractGraalWriter;
-import fr.lirmm.graphik.graal.core.DefaultNegativeConstraint;
 import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
 import fr.lirmm.graphik.util.DefaultURI;
 import fr.lirmm.graphik.util.Prefix;
@@ -122,59 +119,44 @@ public class IrisDtgWriter extends AbstractGraalWriter {
 	// /////////////////////////////////////////////////////////////////////////
 	
 	@Override
-	public void writeComment(String comment) throws IOException {
+	public IrisDtgWriter writeComment(String comment) throws IOException {
 		this.write("// ");
 		this.writeln(comment);
+
+		return this;
 	}
 
 	@Override
-	public void write(Atom atom) throws IOException {
+	public IrisDtgWriter write(Atom atom) throws IOException {
 		this.writeAtom(atom);
 		this.write(".\n");
+
+		return this;
 	}
 
 	@Override
-	public void write(AtomSet atomset) throws IOException {
+	public IrisDtgWriter write(AtomSet atomset) throws IOException {
 		this.writeAtomSet(atomset, true);
 		this.writeln(".");
-	}
 
-	public void write(RuleSet ruleset) throws IOException {
-		for (Rule r : ruleset) {
-			this.write(r);
-		}
+		return this;
 	}
 	
 	@Override
-	public void write(Rule rule) throws IOException {
+	public IrisDtgWriter write(Rule rule) throws IOException {
 		this.writeLabel(rule.getLabel());
 
 		this.writeAtomSet(rule.getHead(), false);
 		this.write(" :- ");
 		this.writeAtomSet(rule.getBody(), false);
 		this.write(".\n");
-	}
-	
-	public void write(DefaultNegativeConstraint constraint) throws IOException {
-		this.writeLabel(constraint.getLabel());
-	}
 
-	public void write(Query query) throws IOException {
-		if (query instanceof ConjunctiveQuery) {
-			this.write((ConjunctiveQuery)query);
-		}
-		else if (query instanceof Iterable) {
-			for (Object q : (Iterable<?>)query) {
-				if (q instanceof ConjunctiveQuery) {
-					this.write((ConjunctiveQuery)q);
-				}
-			}
-		}
+		return this;
 	}
 	
 	private static int cpt = 0;
 	@Override
-	public void write(ConjunctiveQuery query) throws IOException {
+	public IrisDtgWriter write(ConjunctiveQuery query) throws IOException {
 		int queryIndex = ++cpt;
 		if(!query.getLabel().isEmpty()) {
 			this.writeLabel(query.getLabel());
@@ -218,17 +200,22 @@ public class IrisDtgWriter extends AbstractGraalWriter {
 			this.write(')');
 		}
 		this.write(".\n");
-		this.flush();
+
+		return this;
 	}
 	
 	@Override
-	public void write(Prefix prefix) throws IOException {
+	public IrisDtgWriter write(Prefix prefix) throws IOException {
 		LOGGER.warn("Prefix not supported: " + prefix.toString());
+
+		return this;
 	}
 	
 	@Override
-	public void write(NegativeConstraint constraint) throws IOException {
+	public IrisDtgWriter write(NegativeConstraint constraint) throws IOException {
 		LOGGER.warn("NegativeConstraint not yet implemented");
+
+		return this;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

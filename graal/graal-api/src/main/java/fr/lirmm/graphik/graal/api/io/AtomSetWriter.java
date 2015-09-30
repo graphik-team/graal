@@ -55,7 +55,7 @@ import fr.lirmm.graphik.graal.api.core.AtomSet;
  */
 public interface AtomSetWriter extends Writer {
 
-	public void write(AtomSet atomSet) throws IOException;
+	public AtomSetWriter write(AtomSet atomSet) throws IOException;
 
 	@Override
 	void flush() throws IOException;

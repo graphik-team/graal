@@ -55,7 +55,7 @@ import fr.lirmm.graphik.graal.api.core.Atom;
  */
 public interface AtomWriter extends Writer {
 
-	public void write(Atom atom) throws IOException;
+	public AtomWriter write(Atom atom) throws IOException;
 
 	@Override
 	void flush() throws IOException;

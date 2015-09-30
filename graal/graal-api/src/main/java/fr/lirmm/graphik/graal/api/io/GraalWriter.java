@@ -54,6 +54,8 @@ import java.io.IOException;
 public interface GraalWriter extends ConjunctiveQueryWriter, RuleWriter,
  AtomSetWriter, AtomWriter, NegativeConstraintWriter {
 
-	public void write(Object o) throws IOException;
+	public GraalWriter write(Object o) throws IOException;
+
+	public GraalWriter write(Object... o) throws IOException;
 
 };

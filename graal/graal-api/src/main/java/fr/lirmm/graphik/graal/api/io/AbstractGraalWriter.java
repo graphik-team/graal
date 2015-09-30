@@ -78,10 +78,10 @@ public abstract class AbstractGraalWriter extends AbstractWriter implements
 	// //////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public abstract void writeComment(String comment) throws IOException;
+	public abstract AbstractGraalWriter writeComment(String comment) throws IOException;
 
 	@Override
-	public void write(Object o) throws IOException {
+	public AbstractGraalWriter write(Object o) throws IOException {
 		if (o instanceof Atom) {
 			this.write((Atom) o);
 		} else if (o instanceof NegativeConstraint) {
@@ -100,15 +100,28 @@ public abstract class AbstractGraalWriter extends AbstractWriter implements
 			this.writeIterable((Iterable<?>) o);
 		} else if (o instanceof Iterator<?>) {
 			this.writeIterator((Iterator<?>) o);
+		} else {
+			// fallback
+			this.write(o.toString());
 		}
+		return this;
 	}
 
-	public void writeIterable(Iterable<?> it) throws IOException {
+	@Override
+	public AbstractGraalWriter write(Object... objects) throws IOException {
+		for (Object o : objects) {
+			this.write(o);
+		}
+		return this;
+	}
+
+
+	protected void writeIterable(Iterable<?> it) throws IOException {
 		for (Object o : it)
 			this.write(o);
 	}
 
-	public void writeIterator(Iterator<?> it) throws IOException {
+	protected void writeIterator(Iterator<?> it) throws IOException {
 		while (it.hasNext())
 			this.write(it.next());
 	}

@@ -55,7 +55,7 @@ import fr.lirmm.graphik.graal.api.core.Rule;
  */
 public interface RuleWriter extends Writer {
 
-	public void write(Rule rule) throws IOException;
+	public RuleWriter write(Rule rule) throws IOException;
 
 	@Override
 	void flush() throws IOException;

@@ -96,16 +96,18 @@ public class SparqlConjunctiveQueryWriter extends AbstractWriter implements
 	//
 	// //////////////////////////////////////////////////////////////////////////
 	@Override
-	public void write(Prefix prefix) throws IOException {
+	public SparqlConjunctiveQueryWriter write(Prefix prefix) throws IOException {
 		this.write("PREFIX ");
 		this.write(prefix.getPrefixName());
 		this.write(": <");
 		this.write(prefix.getPrefix());
 		this.writeln('>');
+
+		return this;
 	}
 	
 	@Override
-	public void write(ConjunctiveQuery query)
+	public SparqlConjunctiveQueryWriter write(ConjunctiveQuery query)
 			throws IOException {
 
 		this.write("SELECT DISTINCT ");
@@ -124,7 +126,21 @@ public class SparqlConjunctiveQueryWriter extends AbstractWriter implements
 		}
 		
 		this.write("\n}\n");
+
+		return this;
 	}
+
+	@Override
+	public SparqlConjunctiveQueryWriter writeComment(String comment) throws IOException {
+		this.write("# ");
+		this.writeln(comment);
+
+		return this;
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * @param a
@@ -166,12 +182,6 @@ public class SparqlConjunctiveQueryWriter extends AbstractWriter implements
 		
 		this.write(t.getIdentifier().toString());
 		this.write(' ');
-	}
-
-	@Override
-	public void writeComment(String comment) throws IOException {
-		this.write("# ");
-		this.writeln(comment);
 	}
 
 }

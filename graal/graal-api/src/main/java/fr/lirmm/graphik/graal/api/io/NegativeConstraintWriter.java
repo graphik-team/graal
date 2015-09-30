@@ -55,7 +55,7 @@ import fr.lirmm.graphik.graal.api.core.NegativeConstraint;
  */
 public interface NegativeConstraintWriter extends Writer {
 
-	public void write(NegativeConstraint constraint) throws IOException;
+	public NegativeConstraintWriter write(NegativeConstraint constraint) throws IOException;
 
 	@Override
 	void flush() throws IOException;

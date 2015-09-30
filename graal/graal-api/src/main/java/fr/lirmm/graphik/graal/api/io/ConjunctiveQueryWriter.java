@@ -55,7 +55,7 @@ import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
  */
 public interface ConjunctiveQueryWriter extends Writer {
 
-	void write(ConjunctiveQuery query) throws IOException;
+	ConjunctiveQueryWriter write(ConjunctiveQuery query) throws IOException;
 
 	@Override
 	void flush() throws IOException;

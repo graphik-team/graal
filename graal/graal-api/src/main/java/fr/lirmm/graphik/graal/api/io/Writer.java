@@ -59,8 +59,8 @@ public interface Writer {
 
 	void close() throws IOException;
 	
-	void write(Prefix prefix) throws IOException;
+	Writer write(Prefix prefix) throws IOException;
 
-	void writeComment(String string) throws IOException;
+	Writer writeComment(String string) throws IOException;
 
 }
