@@ -44,11 +44,12 @@
 
 import java.util.Iterator;
 
-import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.term.Term;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
 
 public class RuleUtils {
 
@@ -306,7 +307,7 @@ public class RuleUtils {
 
 	public boolean isNegativeConstraint(Rule r) {
 		if (!isSingleton(r.getHead())) return false;
-		return r.getHead().iterator().next().equals(Atom.BOTTOM);
+		return r.getHead().iterator().next().equals(DefaultAtomFactory.instance().getBottom());
 	}
 
 	public boolean isDisjointConcept(Rule r) {
