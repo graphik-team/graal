@@ -1,6 +1,6 @@
 #!/bin/sh
-mkdir -p lib
-cd lib
+mkdir -p ../lib
+cd ../lib
 
 while read dep
 do
@@ -8,4 +8,4 @@ do
     then
         wget https://repo1.maven.org/maven2$dep
     fi
-done < ../dep-list
+done < ../scripts/dep-list
