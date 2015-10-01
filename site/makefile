@@ -13,7 +13,6 @@ dest/documentation.html\
 dest/downloads.html\
 dest/owl2dlgp.html\
 dest/dlgp2ruleml.html\
-dest/experiments.html\
 dest/experiments1.html\
 dest/experiments2.html\
 dest/publications.html\

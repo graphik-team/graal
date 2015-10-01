@@ -26,7 +26,8 @@
         <h2>Overview</h2>
         <p>
           Graal is dedicated to the <strong>ontology-mediated query
-          answering</strong>. We consider a <strong>knowledge
+          answering</strong>. We consider a <strong>conjunctive
+          query</strong> over a <strong>knowledge
           base</strong> composed of an <strong>ontology</strong>
           and a set of <strong>facts</strong>. The ontology is
           described in the framework of <strong><a href="http://graphik-team.github.io/graal/papers/framework_en.pdf">existential
@@ -34,14 +35,13 @@
           <img src="images/context.svg" alt="" width="50%" />
         </p>
 
-        <p>Graal is composed of eight modules:
+        <p>Graal can be broken down into seven parts:
           <ul>
-            <li>The <strong>Api</strong> module provides all interfaces.</li>
             <li>The <strong>Core</strong> module implements
             main classes such as Atom, AtomSet, Rule, ConjunctiveQuery…</li>
             <li>The <strong>IO</strong> module provides reader from or
             writer to textual formats.</li>
-            <li>The <strong>Store</strong> module provides access to
+            <li>The <strong>Store</strong> module allows access to
             storage systems.</li>
             <li>The <strong>Homomorphism</strong> module implements
             algorithms to query data. </li>
@@ -55,19 +55,7 @@
           </ul>
           <img src="images/graal-compact.svg" alt="" width="80%"/>
         </p>
-            
-        <h2>Associated Reports</h2>
 
-        <ul>
-          <li><a href="./papers/datalog+_v2.0_en.pdf">DLGP Version 2 specifications</a></li>
-          <li><a href="./papers/OWL2-ER-TechR.pdf">From OWL 2 to DLGP, the ER profile</a></li>
-        </ul>
-
-
-        <h2>Other links</h2>
-        <ul>
-          <li><a href="http://www.lirmm.fr/kiabora/">Online Kiabora and associated documentation</a></li>
-        </ul>
         
       </section>
     </div>

@@ -172,6 +172,14 @@ img {
     margin: 10px auto 20px auto;
 }
 
+#main_content > p > img.icon {
+    display: inline;
+    margin: 0px;
+    padding: 0px;
+    vertical-align: middle;
+    text-align: center;
+    border: medium none;
+}
 
 pre, code {
   font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
@@ -285,7 +293,6 @@ Full-Width Styles
   color: #373737;
   font-size: 42px;
   font-weight: 700;
-  text-shadow: #111 0px 0px 10px;
 }
 
 #project_tagline {

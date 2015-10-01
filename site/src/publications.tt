@@ -34,12 +34,14 @@
       <hr/>
       <h5>Formats and translations</h2>
 
-      <p><img src="./images/award.png" alt=""/> J.-F. Baget, A. Gutierrez, M. Leclère, M.-L. Mugnier,
+      <p><img src="./images/award.png" class="icon" alt=""/> J.-F. Baget, A. Gutierrez, M. Leclère, M.-L. Mugnier,
         S. Rocher and C. Sipieter.
       <i>Datalog+, RuleML and OWL 2: Formats and Translations for
       Existential Rules</i>, won the <strong>9th International Rule
         Challenge Award</strong>, August 2015.
-          <a href="http://ceur-ws.org/Vol-1417/paper9.pdf">pdf file</a></p>
+          <a href="http://ceur-ws.org/Vol-1417/paper9.pdf">pdf
+            file</a> - <a href="./papers/OWL2-ER-TechR.pdf">long
+            version about OWL 2 to DLGP and the ER profile</a>
       </p>
 
 
