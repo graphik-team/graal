@@ -1,6 +1,6 @@
 #!/bin/sh
-mkdir -p ../lib
-cd ../lib
+mkdir -p ./lib
+cd ./lib
 
 while read dep
 do
