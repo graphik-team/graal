@@ -15,16 +15,26 @@
     <div id="header_wrap" class="outer">
         <header class="inner">
           <h1 id="project_title">Dlgp to RuleML</h1>
-          <nav>
+        </header>        <div id="menu" class="outer">
+          <nav class="inner">
             <a href="./">Home</a>
             <a href="./documentation">Documentation</a>
             <a href="./publications">Publications</a>
-            <a href="./experiments">Experiments</a>
+            <a href="./experiments1">Experiments</a>
             <a href="./downloads">Downloads</a>
             <a href="https://github.com/graphik-team/graal/">Sources</a>
           </nav>
-        </header>
+        </div>
     </div>
+        <div id="sub_menu" class="outer">
+          <nav class="inner">
+            <a href="./downloads">Graal</a>
+            <a href="./pure">Pure</a>
+            <a href="./owl2dlgp">OWL2DLGP</a>
+            <a href="./dlgp2ruleml">DLGP2RuleML</a>
+            <a href="./kiabora">Kiabora</a>
+          </nav>
+        </div>
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
@@ -51,11 +61,11 @@
          <ul>
           <li>
             Translate from an <em>dlgp</em> file to a RuleML file: <br/>
-            <pre>java -jar dlgp2ruleml*.jar -f ./example2.dlp -o ./example.ruleml</pre>
+            <code>java -jar dlgp2ruleml*.jar -f ./example2.dlp -o ./example.ruleml</code>
           </li>
           <li>
             Translate from the standard input (dlgp) to the standard output (RuleML): <br/>
-            <pre>java -jar dlgp2ruleml*.jar < ./example2.dlp > ./example.ruleml</pre>
+            <code>java -jar dlgp2ruleml*.jar < ./example2.dlp > ./example.ruleml</code>
           </li>
         </ul>
       </section>
