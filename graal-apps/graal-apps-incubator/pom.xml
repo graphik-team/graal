@@ -9,20 +9,8 @@
 	</parent>
 
 	<artifactId>graal-apps-incubator</artifactId>
-	<name>graal-apps-incubator</name>
+	<name>fr.lirmm.graphik:graal-apps-incubator</name>
 	<packaging>jar</packaging>
-
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jdk.version>1.6</jdk.version>
-	</properties>
-
-	<inceptionYear>2014</inceptionYear>
-
-	<organization>
-		<name>INRIA</name>
-		<url>http://www.inria.fr/</url>
-	</organization>
 
 	<developers>
 		<developer>

@@ -10,21 +10,9 @@
 
 	<artifactId>graal-core</artifactId>
 	<packaging>jar</packaging>
-	<name>graal-core</name>
+	<name>fr.lirmm.graphik:graal-core</name>
 	
 	<description>This module contains the main interfaces and classes of Graal.</description>
-
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jdk.version>1.6</jdk.version>
-	</properties>
-
-	<inceptionYear>2014</inceptionYear>
-
-	<organization>
-		<name>INRIA</name>
-		<url>http://www.inria.fr/</url>
-	</organization>
 
 	<developers>
 		<developer>
@@ -69,19 +57,5 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
-				<configuration>
-					<source>${jdk.version}</source>
-					<target>${jdk.version}</target>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 
 </project>

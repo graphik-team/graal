@@ -10,19 +10,11 @@
 
 	<artifactId>graal-store-test</artifactId>
 	<packaging>jar</packaging>
-	<name>graal-store-test</name>
+	<name>fr.lirmm.graphik:graal-store-test</name>
 
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>1.7</jdk.version>
 	</properties>
-
-	<inceptionYear>2014</inceptionYear>
-
-	<organization>
-		<name>INRIA</name>
-		<url>http://www.inria.fr/</url>
-	</organization>
 
 	<developers>
 		<developer>
@@ -100,26 +92,5 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
-				<configuration>
-					<source>${jdk.version}</source>
-					<target>${jdk.version}</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-release-plugin</artifactId>
-				<version>2.1</version>
-				<configuration>
-					<preparationGoals>clean install</preparationGoals>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 
 </project>

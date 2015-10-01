@@ -9,20 +9,14 @@
 	</parent>
 	
 	<artifactId>ruleml2015</artifactId>
-	<name>ruleml2015 bench</name>
+	<name>fr.lirmm.graphik:ruleml2015</name>
 	<packaging>jar</packaging>
 
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>1.7</jdk.version>
 	</properties>
 
 	<inceptionYear>2015</inceptionYear>
-
-	<organization>
-		<name>GraphIK (INRIA - LIRMM)</name>
-		<url>https://team.inria.fr/graphik/</url>
-	</organization>
 
 	<developers>
 		<developer>
@@ -89,22 +83,6 @@
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.2</version>
-				<configuration>
-					<source>${jdk.version}</source>
-					<target>${jdk.version}</target>
-				</configuration>
-			</plugin>
-            <plugin>
-			  <artifactId>maven-release-plugin</artifactId>
-			  <version>2.1</version>
-			  <configuration>
-			    <preparationGoals>clean install</preparationGoals>
-			  </configuration>
-			</plugin>
 		    <plugin>
 		      <artifactId>maven-assembly-plugin</artifactId>
 		      <version>2.5.3</version>

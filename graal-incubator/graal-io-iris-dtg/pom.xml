@@ -4,25 +4,16 @@
 	
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
-		<artifactId>graal-io</artifactId>
+		<artifactId>graal-main-project</artifactId>
 		<version>0.9.1-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>graal-io-iris-dtg</artifactId>
 	<packaging>jar</packaging>
 	<name>fr.lirmm.graphik:graal-io-iris-dtg</name>
-
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jdk.version>1.6</jdk.version>
-	</properties>
+	<description>The graal-io-iris-dtg module provides a writer for the iris compatible dtg format.</description>
 
 	<inceptionYear>2015</inceptionYear>
-
-	<organization>
-		<name>INRIA</name>
-		<url>http://www.inria.fr/</url>
-	</organization>
 
 	<developers>
 		<developer>
@@ -44,26 +35,5 @@
 			<version>${project.parent.version}</version>
 		</dependency>
 	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
-				<configuration>
-					<source>${jdk.version}</source>
-					<target>${jdk.version}</target>
-				</configuration>
-			</plugin>
-			<plugin>
-			  <artifactId>maven-release-plugin</artifactId>
-			  <version>2.1</version>
-			  <configuration>
-			    <preparationGoals>clean install</preparationGoals>
-			  </configuration>
-			</plugin>
-		</plugins>
-	</build>
 
 </project>

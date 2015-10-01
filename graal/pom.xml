@@ -8,34 +8,11 @@
 	</parent>
 
 	<artifactId>graal</artifactId>
-	<name>GRAAL - Generic Rules ApplicAtion Library</name>
+	<name>fr.lirmm.graphik:graal</name>
 	<packaging>pom</packaging>
 
-	<url>http://graphik-team.github.io/graal/</url>
-
-	<scm>
-		<url>https://gite.lirmm.fr/graphik/graal</url>
-		<developerConnection>scm:git:git@gite.lirmm.fr:graphik/graal.git</developerConnection>
-	  <tag>HEAD</tag>
-  </scm>
-
-	<inceptionYear>2014</inceptionYear>
-
-	<organization>
-		<name>INRIA</name>
-		<url>http://www.inria.fr/</url>
-	</organization>
-
-	<developers>
-		<developer>
-			<name>Clément SIPIETER</name>
-			<email>clement@6pi.fr</email>
-			<organization>INRIA</organization>
-		</developer>
-	</developers>
-
 	<modules>
-                <module>graal-api</module>
+		<module>graal-api</module>
 		<module>graal-core</module>
 		<module>graal-homomorphism</module>
 		<module>graal-io</module>
@@ -45,67 +22,5 @@
 		<module>graal-rules-analyser</module>
 		<module>graal-util</module>
 	</modules>
-
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-release-plugin</artifactId>
-				<version>2.1</version>
-				<configuration>
-					<preparationGoals>clean install</preparationGoals>
-				</configuration>
-			</plugin>
-		</plugins>
-
-		<pluginManagement>
-			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
-					only. It has no influence on the Maven build itself. -->
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>
-											org.apache.maven.plugins
-										</groupId>
-										<artifactId>
-											maven-install-plugin
-										</artifactId>
-										<versionRange>
-											[2.5.1,)
-										</versionRange>
-										<goals>
-											<goal>install-file</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore />
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-	</build>
-
-	<reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.10.1</version>
-				<configuration>
-					<show>public</show>
-				</configuration>
-			</plugin>
-		</plugins>
-	</reporting>
 
 </project>

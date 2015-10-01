@@ -10,19 +10,7 @@
 
 	<artifactId>graal-store-neo4j</artifactId>
 	<packaging>jar</packaging>
-	<name>graal-store-neo4j</name>
-
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jdk.version>1.6</jdk.version>
-	</properties>
-
-	<inceptionYear>2014</inceptionYear>
-
-	<organization>
-		<name>INRIA</name>
-		<url>http://www.inria.fr/</url>
-	</organization>
+	<name>fr.lirmm.graphik:graal-store-neo4j</name>
 
 	<developers>
 		<developer>

@@ -1,17 +1,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
 	<modelVersion>4.0.0</modelVersion>
 	
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
-		<artifactId>graal-io</artifactId>
+		<artifactId>graal-main-project</artifactId>
 		<version>0.9.1-SNAPSHOT</version>
 	</parent>
 	
-	<artifactId>graal-io-dlgp</artifactId>
+	<artifactId>graal-incubator-misc</artifactId>
+	<name>fr.lirmm.graphik:graal-incubator-misc</name>
 	<packaging>jar</packaging>
-	<name>fr.lirmm.graphik:graal-io-dlgp</name>
-	<description>The graal-io-dlgp provides a parser and a writer for the Dlgp format.</description>
+
+	<properties>
+		<jdk.version>1.7</jdk.version>
+	</properties>
 
 	<developers>
 		<developer>
@@ -24,30 +26,48 @@
 	<dependencies>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-util</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-core</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-io-api</artifactId>
+			<artifactId>graal-api</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>dlgp2-parser</artifactId>
-			<version>1.0.0</version>
+			<artifactId>graal-io-dlgp</artifactId>
+			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.7.6</version>
+			<groupId>fr.lirmm.graphik</groupId>
+			<artifactId>graal-forward-chaining</artifactId>
+			<version>${project.parent.version}</version>
 		</dependency>
-		<!-- test -->
+		<dependency>
+			<groupId>fr.lirmm.graphik</groupId>
+			<artifactId>graal-homomorphism</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		
+		
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.3.2</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.findbugs</groupId>
+			<artifactId>annotations</artifactId>
+			<version>2.0.3</version>
+		</dependency>
+		
+		<!-- Test -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

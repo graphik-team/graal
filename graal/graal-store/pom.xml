@@ -8,20 +8,8 @@
 	</parent>
 	
 	<artifactId>graal-store</artifactId>
-	<name>graal-store</name>
+	<name>fr.lirmm.graphik:graal-store</name>
 	<packaging>pom</packaging>
-    
-	<scm>
-		<developerConnection>scm:git:https://info-depot.lirmm.fr/repos/GraphIK/GRAAL</developerConnection>
-	  <tag>HEAD</tag>
-  </scm>
-	
-	<inceptionYear>2014</inceptionYear>
-
-	<organization>
-		<name>INRIA</name>
-		<url>http://www.inria.fr/</url>
-	</organization>
 
 	<developers>
 		<developer>

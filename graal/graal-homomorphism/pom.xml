@@ -8,20 +8,9 @@
 	</parent>
 	
 	<artifactId>graal-homomorphism</artifactId>
-	<name>graal-homomorphism</name>
+	<name>fr.lirmm.graphik:graal-homomorphism</name>
 	<packaging>jar</packaging>
-
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jdk.version>1.6</jdk.version>
-	</properties>
-
-	<inceptionYear>2014</inceptionYear>
-
-	<organization>
-		<name>INRIA</name>
-		<url>http://www.inria.fr/</url>
-	</organization>
+	<description>The Homomorphism module implements algorithms to query data.</description>
 
 	<developers>
 		<developer>
@@ -62,42 +51,5 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
-				<configuration>
-					<source>${jdk.version}</source>
-					<target>${jdk.version}</target>
-				</configuration>
-			</plugin>
-			<plugin>
-			  <artifactId>maven-release-plugin</artifactId>
-			  <version>2.1</version>
-			  <configuration>
-			    <preparationGoals>clean install</preparationGoals>
-			  </configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifest>
-							<mainClass>benchmark.Benchmark</mainClass>
-							<addClasspath>true</addClasspath>
-							<classpathPrefix>lib/</classpathPrefix>
-						</manifest>
-					</archive>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 
 </project>

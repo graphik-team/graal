@@ -8,22 +8,21 @@
 	</parent>
 
 	<artifactId>graal-rules-analyser</artifactId>
-	<name>graal-rules-analyser</name>
+	<name>fr.lirmm.graphik:graal-rules-analyser</name>
 	<packaging>jar</packaging>
-
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jdk.version>1.6</jdk.version>
-	</properties>
-
-	<inceptionYear>2014</inceptionYear>
-
-	<organization>
-		<name>INRIA</name>
-		<url>http://www.inria.fr/</url>
-	</organization>
+	<description>This module is dedicated to the analysis of a set of existential rules. 
+	It can check if this set belongs to a known decidable class of rules, 
+	either directly or by means of its Graph of Rule Dependencies (GRD). 
+	This module allows to analyze the properties of the strongly connected components in the GRD, 
+	which allows to determine properties of the rule set with respect to decidability 
+	as well as the kind of paradigm (forward or backward chaining) ensuring decidability.
+	</description>
 
 	<developers>
+		<developer>
+			<name>Swan ROCHER</name>
+			<organization>INRIA</organization>
+		</developer>
 		<developer>
 			<name>Clément SIPIETER</name>
 			<email>clement@6pi.fr</email>
@@ -66,42 +65,5 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
-				<configuration>
-					<source>${jdk.version}</source>
-					<target>${jdk.version}</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-release-plugin</artifactId>
-				<version>2.1</version>
-				<configuration>
-					<preparationGoals>clean install</preparationGoals>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifest>
-							<mainClass>benchmark.Benchmark</mainClass>
-							<addClasspath>true</addClasspath>
-							<classpathPrefix>lib/</classpathPrefix>
-						</manifest>
-					</archive>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 
 </project>

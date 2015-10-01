@@ -9,20 +9,13 @@
 	</parent>
 	
 	<artifactId>forward-chaining</artifactId>
-	<name>Forward chaining</name>
+	<name>fr.lirmm.graphik:forward-chaining</name>
 	<packaging>jar</packaging>
-
+	
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<apps.mainClass>fr.lirmm.graphik.graal.apps.OneStepForwardChaining</apps.mainClass>
 		<jdk.version>1.7</jdk.version>
 	</properties>
-
-	<inceptionYear>2014</inceptionYear>
-
-	<organization>
-		<name>GraphIK (INRIA - LIRMM)</name>
-		<url>https://team.inria.fr/graphik/</url>
-	</organization>
 
 	<developers>
 		<developer>
@@ -81,46 +74,5 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
-				<configuration>
-					<source>${jdk.version}</source>
-					<target>${jdk.version}</target>
-				</configuration>
-			</plugin>
-            <plugin>
-			  <artifactId>maven-release-plugin</artifactId>
-			  <version>2.1</version>
-			  <configuration>
-			    <preparationGoals>clean install</preparationGoals>
-			  </configuration>
-			</plugin>
-			<plugin>
-		      <artifactId>maven-assembly-plugin</artifactId>
-		      <version>2.5.3</version>
-		      <configuration>
-		        <preparationGoals>compile</preparationGoals>
-		      	<finalName>forwardChaining-${project.parent.version}</finalName>
-		        <archive>
-		          <manifestEntries>
-		            <Built-On>${maven.build.timestamp}</Built-On>
-		          </manifestEntries>
-		          <manifest>
-					<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-		            <mainClass>fr.lirmm.graphik.graal.apps.OneStepForwardChaining</mainClass>
-		          </manifest>
-		        </archive>
-		        <descriptorRefs>
-		          <descriptorRef>jar-with-dependencies</descriptorRef>
-		        </descriptorRefs>
-		      </configuration>
-		    </plugin>
-		</plugins>
-	</build>
 
 </project>
