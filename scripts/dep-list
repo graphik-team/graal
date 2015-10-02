@@ -1,5 +1,5 @@
-/ch/qos/logback/logback-classic/1.1.1/logback-classic-1.1.1.jar
-/ch/qos/logback/logback-core/1.1.1/logback-core-1.1.1.jar
+/ch/qos/logback/logback-classic/1.1.3/logback-classic-1.1.3.jar
+/ch/qos/logback/logback-core/1.1.3/logback-core-1.1.3.jar
 /com/beust/jcommander/1.35/jcommander-1.35.jar
 /com/carrotsearch/hppc/0.6.0/hppc-0.6.0.jar
 /com/fasterxml/jackson/core/jackson-annotations/2.2.3/jackson-annotations-2.2.3.jar
@@ -82,6 +82,5 @@
 /org/parboiled/parboiled-scala_2.10/1.1.6/parboiled-scala_2.10-1.1.6.jar
 /org/scala-lang/scala-library/2.10.4/scala-library-2.10.4.jar
 /org/slf4j/jcl-over-slf4j/1.7.6/jcl-over-slf4j-1.7.6.jar
-/org/slf4j/slf4j-api/1.7.6/slf4j-api-1.7.6.jar
-/org/slf4j/slf4j-log4j12/1.7.6/slf4j-log4j12-1.7.6.jar
+/org/slf4j/slf4j-api/1.7.7/slf4j-api-1.7.7.jar
 /org/xerial/sqlite-jdbc/3.7.2/sqlite-jdbc-3.7.2.jar
