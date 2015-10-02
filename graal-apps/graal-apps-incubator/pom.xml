@@ -68,7 +68,7 @@
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-incubator</artifactId>
+			<artifactId>graal-incubator-misc</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>

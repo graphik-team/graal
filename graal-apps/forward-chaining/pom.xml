@@ -48,11 +48,6 @@
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-incubator</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-io-dlgp</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
