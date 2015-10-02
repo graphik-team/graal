@@ -6,11 +6,9 @@
 
 * clone the repository
 
-  git clone <repo>
+  git clone git@github.com:graphik-team/graal.git
 
 * build the project
-
-mvn validate 
 
 mvn package
 
