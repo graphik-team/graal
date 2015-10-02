@@ -13,7 +13,7 @@
 	<packaging>jar</packaging>
 
 	<properties>
-		<apps.mainClass>fr.lirmm.graphik.graal.apps.RuleSetTools</apps.mainClass>
+		<apps.mainClass>fr.lirmm.graphik.graal.apps.GraalTools</apps.mainClass>
 	</properties>
 
 	<inceptionYear>2015</inceptionYear>

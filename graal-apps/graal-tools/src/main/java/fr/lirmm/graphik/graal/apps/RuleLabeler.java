@@ -42,91 +42,92 @@
  */
  package fr.lirmm.graphik.graal.apps;
 
-import java.io.FileReader;
-import java.io.InputStreamReader;
-import java.io.Reader;
-
-import com.beust.jcommander.JCommander;
-import com.beust.jcommander.Parameter;
-
 import fr.lirmm.graphik.graal.api.core.Rule;
-import fr.lirmm.graphik.graal.api.core.RuleSet;
-import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
-import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
-import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
+import fr.lirmm.graphik.graal.core.RuleUtils;
 
-public class RuleLabeler {
+public final class RuleLabeler {
 
-	
-	public static void main(String args[]) {
-		RuleLabeler options = new RuleLabeler();
+	public static final String LABEL_PREFIX                 = "";
+	public static final String LABEL_SUFFIX                 = "_";
+	public static final String LABEL_SEPARATOR              = "-";
 
-		JCommander commander = new JCommander(options,args);
+	// A(x) -> B(x)
+	public static final String LABEL_CONCEPT_INCLUSION      = "CI";
+	// p(x,y) -> r(x,y)
+	public static final String LABEL_ROLE_INCLUSION         = "RI";
+	// p(x,y) -> r(y,x)
+	public static final String LABEL_INVERSE_ROLE           = "Inv";
+	// p(x,y) -> a(x)
+	public static final String LABEL_DOMAIN                 = "Dom";
+	// p(x,y) -> a(y)
+	public static final String LABEL_RANGE                  = "Rng";
+	// a(x) -> p(x,y)
+	public static final String LABEL_MANDATORY_ROLE         = "MR";
+	// a(y) -> p(x,y)
+	public static final String LABEL_INVERSE_MANDATORY_ROLE = "IMR";
+	// a(x) -> p(x,y), b(y)
+	public static final String LABEL_EXIST_RC               = "ERC";
+	// a(x) -> p(y,x), b(y)
+	public static final String LABEL_INV_EXIST_RC           = "IERC";
+	// p(x,y),p(y,z) -> p(x,z)
+	public static final String LABEL_TRANSITIVITY           = "Trans";
+	// p(x,y),r(y,z) -> s(x,z)
+	public static final String LABEL_ROLE_COMPOSITION       = "RC";
+	// B -> x = y
+	public static final String LABEL_FUNCTIONAL             = "Func";
+	// ! a(x),b(x)
+	public static final String LABEL_DISJOINT_CONCEPT       = "DC";
+	// ! p(x,y),r(x,y)
+	public static final String LABEL_DISJOINT_ROLE          = "DR";
+	// ! B
+	public static final String LABEL_NEGATIVE_CONSTRAINT    = "NC";
 
-		if (options.help) {
-			commander.usage();
-			System.exit(0);
-		}
-
-		RuleSet rules = new LinkedListRuleSet();
-
-		try {
-
-			if (options.input_file != "") {
-				if (options.verbose)
-					System.err.println("Reading data from dlp file: " + options.input_file);
-				Reader reader;
-				if (options.input_file.equals("-")) reader = new InputStreamReader(System.in);
-				else reader = new FileReader(options.input_file);
-
-				DlgpParser parser = new DlgpParser(reader);
-
-				for (Object o : parser) {
-					if (o instanceof Rule)
-						rules.add((Rule)o);
-					else if (options.verbose)
-						System.err.println("Ignoring non rule object: " + o);
-				}
-				if (options.verbose)
-					System.err.println("Done!");
-			}
-
-			if (options.verbose)
-				System.err.println("Start analysing rules...");
-			DlgpWriter writer = new DlgpWriter(System.out);
-			for (Rule r : rules) {
-				r.setLabel(computeLabel(r));
-				writer.write(r);
-			}
-			writer.close();
-			if (options.verbose)
-				System.err.println("Done!");
-
-		}
-
-		catch (Exception e) {
-			System.err.println("Something went wrong: " + e);
-			e.printStackTrace();
-			System.exit(1);
-		}
+	public static String computeBaseLabel(Rule r) {
+		String label = LABEL_PREFIX;
+		if (RuleUtils.isConceptInclusion(r))
+			label = updateLabel(label, LABEL_CONCEPT_INCLUSION);
+		if (RuleUtils.isRoleInclusion(r))
+			label = updateLabel(label, LABEL_ROLE_INCLUSION);
+		if (RuleUtils.isInverseRole(r))
+			label = updateLabel(label, LABEL_INVERSE_ROLE);
+		if (RuleUtils.isDomain(r))
+			label = updateLabel(label, LABEL_DOMAIN);
+		if (RuleUtils.isRange(r))
+			label = updateLabel(label, LABEL_RANGE);
+		if (RuleUtils.isMandatoryRole(r))
+			label = updateLabel(label, LABEL_MANDATORY_ROLE);
+		if (RuleUtils.isInvMandatoryRole(r))
+			label = updateLabel(label, LABEL_INVERSE_MANDATORY_ROLE);
+		if (RuleUtils.isExistRC(r))
+			label = updateLabel(label, LABEL_EXIST_RC);
+		if (RuleUtils.isInvExistRC(r))
+			label = updateLabel(label, LABEL_INV_EXIST_RC);
+		if (RuleUtils.isTransitivity(r))
+			label = updateLabel(label, LABEL_TRANSITIVITY);
+		if (RuleUtils.isRoleComposition(r))
+			label = updateLabel(label, LABEL_ROLE_COMPOSITION);
+		if (RuleUtils.isFunctional(r))
+			label = updateLabel(label, LABEL_FUNCTIONAL);
+		if (RuleUtils.isDisjointConcept(r))
+			label = updateLabel(label, LABEL_DISJOINT_CONCEPT);
+		if (RuleUtils.isDisjointRole(r))
+			label = updateLabel(label, LABEL_DISJOINT_ROLE);
+		if (RuleUtils.isDisjointInverseRole(r))
+			label = updateLabel(label, LABEL_INVERSE_ROLE);
+		if (RuleUtils.isNegativeConstraint(r))
+			label = updateLabel(label, LABEL_NEGATIVE_CONSTRAINT);
+		label += LABEL_SUFFIX;
+		return label;
 	}
 
-	private static int currentRuleID = 0;
-	public static String computeLabel(final Rule r) {
-		return RuleUtils.INSTANCE.computeBaseLabel(r) + "r" + (currentRuleID++);
+	private static String updateLabel(String l, String s) {
+		if (!l.equals(LABEL_PREFIX))
+			l += LABEL_SEPARATOR;
+		l += s;
+		return l;
 	}
 
-	@Parameter(names = {"-v","--verbose"}, description = "Enable verbose mode")
-	private boolean verbose = false;
-
-	@Parameter(names = {"-h","--help"}, description = "Print this message")
-	private boolean help = false;
-
-	//@Parameter(names = {"-p","--pieces"}, description = "Convert all rules to single-piece headed rules before analysing")
-	//private boolean to_single_piece = false;
-
-	@Parameter(names = {"-f","--file"}, description = "Input file path (dlgp)")
-	private String input_file = "-";
+	private RuleLabeler() { }
 
 };
 

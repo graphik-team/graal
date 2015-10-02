@@ -45,6 +45,7 @@
  */
 package fr.lirmm.graphik.graal.core.atomset;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
@@ -63,6 +64,25 @@ public final class AtomSetUtils {
 	private AtomSetUtils() {
 	}
 	
+	public static boolean isSingleton(AtomSet a) {
+		Iterator<Atom> i = a.iterator();
+		if (!i.hasNext())
+			return false;
+		i.next();
+		return !i.hasNext();
+	}
+
+	public static boolean hasSize2(AtomSet a) {
+		Iterator<Atom> i = a.iterator();
+		if (!i.hasNext())
+			return false;
+		i.next();
+		if (!i.hasNext())
+			return false;
+		i.next();
+		return !i.hasNext();
+	}
+
 	/**
 	 * 
 	 * @param a1

@@ -1,6 +1,7 @@
 package fr.lirmm.graphik.graal.apps;
 
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 
@@ -16,11 +17,11 @@ import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 import fr.lirmm.graphik.util.Prefix;
 
-public class RuleSetTools {
+public class GraalTools {
 	public static final String   PROGRAM_NAME   = "ruleset-tools";
 
 	public static void main(String args[]) throws IOException {
-		RuleSetTools options = new RuleSetTools();
+		GraalTools options = new GraalTools();
 
 		JCommander commander = new JCommander(options,args);
 
@@ -31,15 +32,34 @@ public class RuleSetTools {
 
 		// init parser
 		DlgpParser parser = null;
+		DlgpWriter writer = null;
 		RuleSet rules = new LinkedListRuleSet();
-		DlgpWriter writer = new DlgpWriter();
 
-		if (options.input_file.equals("-"))
+		if (options.input_file.equals("-")) {
+			if (options.verbose)
+				System.err.println("Reading data from standard input...");
 			parser = new DlgpParser(System.in);
+		}
 		else {
-			try { parser = new DlgpParser(new FileInputStream(options.input_file)); }
-			catch (Exception e) {
+			try {
+				if (options.verbose)
+					System.err.println("Reading data from dlp file: " + options.input_file);
+				parser = new DlgpParser(new FileInputStream(options.input_file));
+			} catch (Exception e) {
 				System.err.println("Could not open file: " + options.input_file);
+				System.err.println(e);
+				e.printStackTrace();
+				System.exit(1);
+			}
+		}
+
+		if (options.output_file.equals("-")) {
+			writer = new DlgpWriter(System.out);
+		} else {
+			try {
+				writer = new DlgpWriter(new FileOutputStream(options.output_file));
+			} catch (Exception e) {
+				System.err.println("Could not open file: " + options.output_file);
 				System.err.println(e);
 				e.printStackTrace();
 				System.exit(1);
@@ -76,11 +96,28 @@ public class RuleSetTools {
 			}
 		}
 
+		if (options.labeler) {
+			if (options.verbose)
+				System.err.println("Start analysing rules...");
+			for (Rule r : rules) {
+				r.setLabel(computeLabel(r));
+				writer.write(r);
+			}
+			if (options.verbose)
+				System.err.println("Done!");
+		}
+
 		writer.write('\n');
 		writer.close();
 
 	}
 
+	@Parameter(names = { "-v", "--verbose" }, description = "Enable verbose mode")
+	private boolean verbose = false;
+
+	@Parameter(names = { "-l", "--labeler" }, 
+	           description = "Add label on rules")
+	private boolean labeler = false;
 
 	@Parameter(names = { "-p", "--singlepiece-head" },
 	           description = "Translate rules to singlepiece-headed rules")
@@ -102,7 +139,13 @@ public class RuleSetTools {
 	           description = "Print this message.")
 	private boolean help = false;
 
-	private RuleSetTools() { }
+	private GraalTools() { }
+
+	private static int currentRuleID = 0;
+
+	public static String computeLabel(final Rule r) {
+		return RuleLabeler.computeBaseLabel(r) + "r" + (currentRuleID++);
+	}
 
 };
 

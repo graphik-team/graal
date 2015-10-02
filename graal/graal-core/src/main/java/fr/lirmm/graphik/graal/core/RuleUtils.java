@@ -61,6 +61,7 @@ import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
+import fr.lirmm.graphik.graal.core.atomset.AtomSetUtils;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
@@ -85,10 +86,7 @@ public final class RuleUtils {
 	 *         one atom.
 	 */
 	public static boolean hasAtomicBody(Rule rule) {
-		Iterator<Atom> it = rule.getBody().iterator();
-		boolean res = it.hasNext();
-		it.next();
-		return res && !it.hasNext();
+		return AtomSetUtils.isSingleton(rule.getBody());
 	}
 
 	/**
@@ -99,10 +97,7 @@ public final class RuleUtils {
 	 *         one atom.
 	 */
 	public static boolean hasAtomicHead(Rule rule) {
-		Iterator<Atom> it = rule.getHead().iterator();
-		boolean res = it.hasNext();
-		it.next();
-		return res && !it.hasNext();
+		return AtomSetUtils.isSingleton(rule.getHead());
 	}
 
 	public static boolean isThereOneAtomThatContainsAllVars(Iterable<Atom> atomset, Collection<Term> terms) {
@@ -262,6 +257,243 @@ public final class RuleUtils {
 		}
 
 		return atomicHead;
+	}
+	
+	// /////////////////////////////////////////////////////////////////////////
+    // ANALYSE KIND OF RULE
+    // /////////////////////////////////////////////////////////////////////////
+
+	public static boolean isConcept(Atom a) {
+		return a.getPredicate().getArity() == 1;
+	}
+
+	public static boolean isRole(Atom a) {
+		return a.getPredicate().getArity() == 2;
+	}
+
+	public static boolean isInclusion(Rule r) {
+		return hasAtomicBody(r) && hasAtomicHead(r);
+	}
+
+	public static boolean isConceptInclusion(Rule r) {
+		if (!isInclusion(r))
+			return false;
+		Atom C1 = r.getBody().iterator().next();
+		Atom C2 = r.getHead().iterator().next();
+		if (!isConcept(C1))
+			return false;
+		if (!isConcept(C2))
+			return false;
+		return C1.getTerm(0).equals(C2.getTerm(0));
+	}
+
+	public static boolean isRoleInclusion(Rule r) {
+		if (!isInclusion(r))
+			return false;
+		Atom P1 = r.getBody().iterator().next();
+		Atom P2 = r.getHead().iterator().next();
+		if (!isRole(P1))
+			return false;
+		if (!isRole(P2))
+			return false;
+		Term t1_1 = P1.getTerm(0);
+		Term t1_2 = P1.getTerm(1);
+		Term t2_1 = P2.getTerm(0);
+		Term t2_2 = P2.getTerm(1);
+		return (t1_1.equals(t2_1) && t1_2.equals(t2_2)) || (t1_1.equals(t2_2) && t1_2.equals(t2_1));
+	}
+
+	public static boolean isInverseRole(Rule r) {
+		if (!isRoleInclusion(r))
+			return false;
+		Atom P1 = r.getBody().iterator().next();
+		Atom P2 = r.getHead().iterator().next();
+		Term t1_1 = P1.getTerm(0);
+		Term t1_2 = P1.getTerm(1);
+		Term t2_1 = P2.getTerm(0);
+		Term t2_2 = P2.getTerm(1);
+		return t1_1.equals(t2_2) && t1_2.equals(t2_1);
+	}
+
+	public static boolean isSignature(Rule r) {
+		if (!isInclusion(r))
+			return false;
+		Atom P1 = r.getBody().iterator().next();
+		Atom C1 = r.getHead().iterator().next();
+		return isRole(P1) && isConcept(C1);
+	}
+
+	public static boolean isDomain(Rule r) {
+		if (!isSignature(r))
+			return false;
+		Atom P1 = r.getBody().iterator().next();
+		Atom C1 = r.getHead().iterator().next();
+		return P1.getTerm(0).equals(C1.getTerm(0));
+	}
+
+	public static boolean isRange(Rule r) {
+		if (!isSignature(r))
+			return false;
+		Atom P1 = r.getBody().iterator().next();
+		Atom C1 = r.getHead().iterator().next();
+		return P1.getTerm(1).equals(C1.getTerm(0));
+	}
+
+	public static boolean isMandatoryRole(Rule r) {
+		if (!isInclusion(r))
+			return false;
+		Atom C1 = r.getBody().iterator().next();
+		Atom P1 = r.getHead().iterator().next();
+		if (!isConcept(C1))
+			return false;
+		if (!isRole(P1))
+			return false;
+		return (C1.getTerm(0).equals(P1.getTerm(0)) && !C1.getTerm(0).equals(P1.getTerm(1)));
+	}
+
+	public static boolean isInvMandatoryRole(Rule r) {
+		if (!isInclusion(r))
+			return false;
+		Atom C1 = r.getBody().iterator().next();
+		Atom P1 = r.getHead().iterator().next();
+		if (!isConcept(C1))
+			return false;
+		if (!isRole(P1))
+			return false;
+		return (C1.getTerm(0).equals(P1.getTerm(1)) && !C1.getTerm(0).equals(P1.getTerm(0)));
+	}
+
+	public static boolean isExistRC(Rule r) {
+		if (!AtomSetUtils.isSingleton(r.getBody()))
+			return false;
+		if (!AtomSetUtils.hasSize2(r.getHead()))
+			return false;
+		Iterator<Atom> h = r.getHead().iterator();
+		Atom P1 = r.getBody().iterator().next();
+		Atom P2 = h.next();
+		Atom P3 = h.next();
+		Atom tmp;
+		if (!isConcept(P1))
+			return false;
+		if (isConcept(P2) && isRole(P3)) {
+			tmp = P2;
+			P2 = P3;
+			P3 = tmp;
+		}
+		if (!isRole(P2))
+			return false;
+		if (!isConcept(P3))
+			return false;
+		return (P1.getTerm(0).equals(P2.getTerm(0)) && P2.getTerm(1).equals(P3.getTerm(0)) && !P1.getTerm(0).equals(
+		        P3.getTerm(0)));
+	}
+
+	public static boolean isInvExistRC(Rule r) {
+		if (!AtomSetUtils.isSingleton(r.getBody()))
+			return false;
+		if (!AtomSetUtils.hasSize2(r.getHead()))
+			return false;
+		Iterator<Atom> h = r.getHead().iterator();
+		Atom P1 = r.getBody().iterator().next();
+		Atom P2 = h.next();
+		Atom P3 = h.next();
+		Atom tmp;
+		if (!isConcept(P1))
+			return false;
+		if (isConcept(P2) && isRole(P3)) {
+			tmp = P2;
+			P2 = P3;
+			P3 = tmp;
+		}
+		if (!isRole(P2))
+			return false;
+		if (!isConcept(P3))
+			return false;
+		return (P1.getTerm(0).equals(P2.getTerm(1)) && P2.getTerm(0).equals(P3.getTerm(0)) && !P1.getTerm(0).equals(
+		        P3.getTerm(0)));
+	}
+
+	public static boolean isRoleComposition(Rule r) {
+		if (!AtomSetUtils.hasSize2(r.getBody()))
+			return false;
+		if (!AtomSetUtils.isSingleton(r.getHead()))
+			return false;
+		Iterator<Atom> b = r.getBody().iterator();
+		Atom P1 = b.next();
+		Atom P2 = b.next();
+		Atom P3 = r.getHead().iterator().next();
+		if (!isRole(P1))
+			return false;
+		if (!isRole(P2))
+			return false;
+		if (!isRole(P3))
+			return false;
+		return (P1.getTerm(0).equals(P3.getTerm(0)) && P1.getTerm(1).equals(P2.getTerm(0)) && P2.getTerm(1).equals(
+		        P3.getTerm(1)))
+		       || (P2.getTerm(0).equals(P3.getTerm(0)) && P2.getTerm(1).equals(P1.getTerm(0)) && P1.getTerm(1).equals(
+		               P3.getTerm(1)));
+	}
+
+	public static boolean isTransitivity(Rule r) {
+		if (!isRoleComposition(r))
+			return false;
+		Iterator<Atom> b = r.getBody().iterator();
+		Atom P1 = b.next();
+		Atom P2 = b.next();
+		Atom P3 = r.getHead().iterator().next();
+		return P1.getPredicate().equals(P2.getPredicate()) && P1.getPredicate().equals(P3.getPredicate());
+	}
+
+	public static boolean isFunctional(Rule r) {
+		if (!AtomSetUtils.isSingleton(r.getHead()))
+			return false;
+		return r.getHead().iterator().next().getPredicate().equals(Predicate.EQUALITY);
+	}
+
+	public static boolean isNegativeConstraint(Rule r) {
+		if (!AtomSetUtils.isSingleton(r.getHead()))
+			return false;
+		return r.getHead().iterator().next().equals(DefaultAtomFactory.instance().getBottom());
+	}
+
+	public static boolean isDisjointConcept(Rule r) {
+		if (!AtomSetUtils.hasSize2(r.getBody()))
+			return false;
+		if (!isNegativeConstraint(r))
+			return false;
+		Iterator<Atom> b = r.getBody().iterator();
+		Atom C1 = b.next();
+		Atom C2 = b.next();
+		if (!isConcept(C1))
+			return false;
+		if (!isConcept(C2))
+			return false;
+		return (C1.getTerm(0).equals(C2.getTerm(0)));
+	}
+
+	public static boolean isDisjointRole(Rule r) {
+		if (!AtomSetUtils.hasSize2(r.getBody()))
+			return false;
+		if (!isNegativeConstraint(r))
+			return false;
+		Iterator<Atom> b = r.getBody().iterator();
+		Atom P1 = b.next();
+		Atom P2 = b.next();
+		if (!isRole(P1))
+			return false;
+		if (!isRole(P2))
+			return false;
+		return (P1.getTerm(0).equals(P2.getTerm(0)) && P1.getTerm(1).equals(P2.getTerm(1)))
+		       || (P1.getTerm(1).equals(P2.getTerm(0)) && P1.getTerm(0).equals(P2.getTerm(1)));
+	}
+
+	public static boolean isDisjointInverseRole(Rule r) {
+		if (!isDisjointRole(r))
+			return false;
+		Iterator<Atom> b = r.getBody().iterator();
+		Atom P1 = b.next();
+		Atom P2 = b.next();
+		return P1.getTerm(1).equals(P2.getTerm(0)) && P1.getTerm(0).equals(P2.getTerm(1));
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
