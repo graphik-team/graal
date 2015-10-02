@@ -10,8 +10,6 @@
 
 * build the project
 
-mvn validate 
-
 mvn package
 
 
