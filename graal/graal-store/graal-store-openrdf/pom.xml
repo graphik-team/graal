@@ -28,7 +28,7 @@
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-store-api</artifactId>
+			<artifactId>graal-api</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
