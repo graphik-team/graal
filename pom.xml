@@ -3,7 +3,7 @@
 
 	<groupId>fr.lirmm.graphik</groupId>
 	<artifactId>graal-main-project</artifactId>
-	<version>0.9.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>fr.lirmm.graphik:graal-main-project</name>
 	<packaging>pom</packaging>
 	
@@ -29,7 +29,7 @@ algorithms, structural analysis of decidability properties of a rule set, a text
 		<url>https://github.com/graphik-team/graal/</url>
 		<connection>scm:git:git@github.com:graphik-team/graal.git</connection>
 		<developerConnection>scm:git:git@github.com:graphik-team/graal.git</developerConnection>
-		<tag>HEAD</tag>
+		<tag>graal-main-project-1.0.0</tag>
 	</scm>
 
 	<developers>
