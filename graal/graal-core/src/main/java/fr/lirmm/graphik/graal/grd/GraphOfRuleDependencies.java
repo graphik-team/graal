@@ -60,13 +60,13 @@ import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.traverse.DepthFirstIterator;
 
-import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.core.LabelRuleComparator;
-import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.Substitution;
+import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.Unifier;
-import fr.lirmm.graphik.graal.core.impl.TreeMapSubstitution;
 import fr.lirmm.graphik.util.LinkedSet;
 import fr.lirmm.graphik.util.graph.scc.StronglyConnectedComponentsGraph;
 import fr.lirmm.graphik.util.stream.filter.Filter;

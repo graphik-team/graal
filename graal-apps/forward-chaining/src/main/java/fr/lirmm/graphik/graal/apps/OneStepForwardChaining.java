@@ -52,12 +52,12 @@ import java.util.LinkedList;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
-import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
-import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
+import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
+import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
+import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.forward_chaining.NaiveChase;
-import fr.lirmm.graphik.graal.forward_chaining.rule_applier.RuleApplier;
-import fr.lirmm.graphik.graal.io.ParseException;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;

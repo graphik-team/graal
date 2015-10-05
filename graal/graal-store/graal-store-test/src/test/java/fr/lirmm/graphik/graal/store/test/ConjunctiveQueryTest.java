@@ -51,13 +51,13 @@ import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
-import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.Substitution;
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.api.core.stream.SubstitutionReader;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
-import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;

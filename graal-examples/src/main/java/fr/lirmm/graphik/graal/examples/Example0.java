@@ -49,26 +49,25 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
 
-import fr.lirmm.graphik.graal.backward_chaining.BackwardChainer;
+import fr.lirmm.graphik.graal.api.backward_chaining.BackwardChainer;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.RuleSet;
+import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.api.forward_chaining.Chase;
+import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.backward_chaining.pure.PureRewriter;
-import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.Substitution;
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
-import fr.lirmm.graphik.graal.core.impl.UnionConjunctiveQueries;
+import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
-import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
-import fr.lirmm.graphik.graal.forward_chaining.Chase;
-import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.forward_chaining.NaiveChase;
-import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
-import fr.lirmm.graphik.graal.io.owl.OWL2ParserException;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.HSQLDBDriver;
 
@@ -79,7 +78,7 @@ public class Example0 {
 
 	public static void main(String args[]) throws ChaseException, IOException,
  HomomorphismFactoryException,
-	                                      HomomorphismException, AtomSetException, OWL2ParserException {
+	                                      HomomorphismException, AtomSetException {
 
 		// 0 - Create a Dlgp writer and a structure to store rules.
 		writer = new DlgpWriter();
@@ -142,7 +141,7 @@ public class Example0 {
 		writer.write(store);
 
 		// Print the set of rewritings
-		writer.write("\n= Queries Union =\n");
+		writer.write("\n= Union of queries =\n");
 		writer.write(ucq);
 
 		// Query data with the union of queries

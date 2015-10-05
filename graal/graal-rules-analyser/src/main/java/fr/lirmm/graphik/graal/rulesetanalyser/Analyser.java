@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.BTSProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.FESProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.FUSProperty;
@@ -106,8 +106,12 @@ public class Analyser {
 			for (int t : scc.outgoingEdgesOf(s)) {
 				int succ = scc.getEdgeTarget(t);
 				if ((result[s] & COMBINE_FES) == 0) {
-					result[succ] ^= COMBINE_FES;
-					result[succ] ^= COMBINE_BTS;
+					result[succ] &= COMBINE_FUS;
+					/*
+					 * equivalent to:
+					 * result[succ] &= ~COMBINE_FES;
+					 * result[succ] &= ~COMBINE_BTS;
+					 */
 				}
 				if (!mark[succ] && (layers[s] + 1 == layers[succ])) {
 					mark[succ] = true;
@@ -145,8 +149,12 @@ public class Analyser {
 			for (int t : scc.incomingEdgesOf(s)) {
 				int succ = scc.getEdgeSource(t);
 				if ((result[s] & COMBINE_FUS) == 0) {
-					result[succ] ^= COMBINE_FUS;
-					result[succ] ^= COMBINE_BTS;
+					result[succ] &= COMBINE_FES;
+					/*
+					 * equivalent to:
+					 * result[succ] &= ~COMBINE_FUS;
+					 * result[succ] &= ~COMBINE_BTS;
+					 */
 				}
 				if (!mark[succ] && (layers[s] + 1 == layers[succ])) {
 					mark[succ] = true;

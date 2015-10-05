@@ -47,16 +47,16 @@ package fr.lirmm.graphik.graal.examples;
 
 import java.io.IOException;
 
-import fr.lirmm.graphik.graal.core.Query;
-import fr.lirmm.graphik.graal.core.Substitution;
-import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.Query;
+import fr.lirmm.graphik.graal.api.core.RuleSet;
+import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
-import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
-import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.forward_chaining.StaticChase;
-import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;

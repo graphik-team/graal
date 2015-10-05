@@ -3,34 +3,34 @@
 
 	<groupId>fr.lirmm.graphik</groupId>
 	<artifactId>graal-main-project</artifactId>
-	<version>0.9.0</version>
+	<version>1.0.0</version>
 	<name>fr.lirmm.graphik:graal-main-project</name>
 	<packaging>pom</packaging>
 	
-	<inceptionYear>2014</inceptionYear>
 	<description>Graal is a java toolkit dedicated to ontological query answering in the framework of existential rules. We consider knowledge bases composed of data and an ontology expressed by existential rules. The main features of Graal are the following: a basic layer that provides generic interfaces to store and query various kinds of data, forward chaining and query rewriting
 algorithms, structural analysis of decidability properties of a rule set, a textual format and its parser, and import of OWL 2 files. We describe in more detail the query rewriting algorithms, which rely on original techniques, and report some experiments.
 	</description>
-	<url>https://graphik-team.github.io/graal/</url>
 	
+	<url>https://graphik-team.github.io/graal/</url>
+	<inceptionYear>2014</inceptionYear>
 	<licenses>
 		<license>
 			<name />
 			<url>http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.txt</url>
 		</license>
 	</licenses>
-	
+
 	<organization>
 		<name>GraphIK (INRIA - LIRMM)</name>
 		<url>https://team.inria.fr/graphik/</url>
 	</organization>
 
 	<scm>
-		<connection>scm:git:git@github.com:graphik-team/graal.git</connection>
 		<url>https://github.com/graphik-team/graal/</url>
+		<connection>scm:git:git@github.com:graphik-team/graal.git</connection>
 		<developerConnection>scm:git:git@github.com:graphik-team/graal.git</developerConnection>
-	  <tag>graal-0.9.0</tag>
-  </scm>
+		<tag>graal-main-project-1.0.0</tag>
+	</scm>
 
 	<developers>
 		<developer>
@@ -47,6 +47,11 @@ algorithms, structural analysis of decidability properties of a rule set, a text
 			<organization>INRIA</organization>
 		</developer>
 	</developers>
+	
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<jdk.version>1.6</jdk.version>
+	</properties>
 
 	<modules>
 		<module>graal</module>
@@ -64,8 +69,8 @@ algorithms, structural analysis of decidability properties of a rule set, a text
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
 				</configuration>
 			</plugin>
 			<plugin>

@@ -51,12 +51,14 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
 
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
-import fr.lirmm.graphik.graal.core.impl.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
-import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.util.LinkedSet;
 import fr.lirmm.graphik.util.stream.filter.Filter;
 

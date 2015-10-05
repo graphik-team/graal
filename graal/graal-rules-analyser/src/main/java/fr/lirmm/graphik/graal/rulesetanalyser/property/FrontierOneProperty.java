@@ -45,8 +45,7 @@
 import java.util.List;
 import java.util.LinkedList;
 
-
-import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Rule;
 
 /**
  * The frontier contains only one variable.

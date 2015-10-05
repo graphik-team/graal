@@ -46,11 +46,11 @@ import java.util.Iterator;
 import org.junit.Assert;
 import org.junit.Test;
 
-import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.impl.DefaultNegativeConstraint;
-import fr.lirmm.graphik.graal.core.term.Term;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.core.DefaultNegativeConstraint;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 
 /**

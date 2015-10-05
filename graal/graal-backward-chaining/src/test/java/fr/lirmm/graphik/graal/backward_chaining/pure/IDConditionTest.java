@@ -52,11 +52,11 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
+import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.backward_chaining.pure.IDCondition;
 import fr.lirmm.graphik.graal.backward_chaining.pure.IDConditionImpl;
 import fr.lirmm.graphik.graal.backward_chaining.pure.TermPartition;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
-import fr.lirmm.graphik.graal.core.term.Term;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}

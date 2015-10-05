@@ -45,10 +45,10 @@
  */
 package fr.lirmm.graphik.graal.core.factory;
 
-import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
-import fr.lirmm.graphik.graal.core.impl.DefaultRule;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.core.DefaultRule;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -74,14 +74,20 @@ public final class RuleFactory {
 		return new DefaultRule(body, head);
 	}
 
+	public Rule create(String label, Iterable<Atom> body, Iterable<Atom> head) {
+		return new DefaultRule(label, body, head);
+	}
+
 	public Rule create(Atom body, Atom head) {
 		InMemoryAtomSet bodySet = AtomSetFactory.instance().createAtomSet(body);
 		InMemoryAtomSet headSet = AtomSetFactory.instance().createAtomSet(head);
 		return new DefaultRule(bodySet, headSet);
 	}
 
-	public Rule create(String label, Iterable<Atom> body, Iterable<Atom> head) {
-		return new DefaultRule(label, body, head);
+	public Rule create(String label, Atom body, Atom head) {
+		InMemoryAtomSet bodySet = AtomSetFactory.instance().createAtomSet(body);
+		InMemoryAtomSet headSet = AtomSetFactory.instance().createAtomSet(head);
+		return new DefaultRule(label, bodySet, headSet);
 	}
 
 	public Rule create(Rule rule) {

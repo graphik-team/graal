@@ -48,6 +48,7 @@ package fr.lirmm.graphik.graal.core;
 import java.io.Serializable;
 import java.util.Comparator;
 
+import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.util.string.NumberStringComparator;
 
 /**

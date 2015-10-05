@@ -44,12 +44,12 @@
 
 import java.util.ArrayList;
 
-import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.core.impl.DefaultAtom;
-import fr.lirmm.graphik.graal.core.impl.DefaultConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.term.Term;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.core.DefaultAtom;
+import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 
 class MarkedQuery extends DefaultConjunctiveQuery {
 

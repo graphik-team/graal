@@ -47,9 +47,10 @@ package fr.lirmm.graphik.graal.core;
 
 import java.util.Arrays;
 
-import fr.lirmm.graphik.graal.core.impl.DefaultAtom;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
-import fr.lirmm.graphik.graal.core.term.Term;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}

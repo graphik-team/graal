@@ -4,40 +4,18 @@
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
 		<artifactId>graal</artifactId>
-		<version>0.9.0</version>
+		<version>1.0.0</version>
 	</parent>
 	
 	<artifactId>graal-io</artifactId>
-	<name>graal-io</name>
+	<name>fr.lirmm.graphik:graal-io</name>
 	<packaging>pom</packaging>
-    
-	<scm>
-		<developerConnection>scm:git:https://info-depot.lirmm.fr/repos/GraphIK/GRAAL</developerConnection>
-	  <tag>graal-0.9.0</tag>
-  </scm>
-	
-	<inceptionYear>2014</inceptionYear>
-
-	<organization>
-		<name>INRIA</name>
-		<url>http://www.inria.fr/</url>
-	</organization>
-
-	<developers>
-		<developer>
-			<name>Clément SIPIETER</name>
-			<email>clement@6pi.fr</email>
-			<organization>INRIA</organization>
-		</developer>
-	</developers>
 
 	<modules>
-		<module>graal-io-api</module>
-                <module>graal-io-dlgp</module>
+		<module>graal-io-dlgp</module>
 		<module>graal-io-owl</module>
-		<module>graal-io-rdf</module>
-                <module>graal-io-ruleml</module>
-                <module>graal-io-sparql</module>
+		<module>graal-io-ruleml</module>
+		<module>graal-io-sparql</module>
 	</modules>
 
 </project>

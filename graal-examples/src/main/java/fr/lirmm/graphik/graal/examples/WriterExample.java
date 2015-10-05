@@ -49,13 +49,13 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.RuleSet;
+import fr.lirmm.graphik.graal.api.io.AbstractGraalWriter;
+import fr.lirmm.graphik.graal.api.io.ConjunctiveQueryWriter;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
-import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
-import fr.lirmm.graphik.graal.io.AbstractGraalWriter;
-import fr.lirmm.graphik.graal.io.ConjunctiveQueryWriter;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 import fr.lirmm.graphik.graal.io.sparql.SparqlConjunctiveQueryWriter;

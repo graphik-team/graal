@@ -45,8 +45,7 @@
 import java.util.List;
 import java.util.LinkedList;
 
-
-import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Rule;
 
 /**
  * The rule frontier is empty. Note that any disconnected rule needs to be

@@ -45,6 +45,10 @@
  */
 package fr.lirmm.graphik.graal.core.term;
 
+import fr.lirmm.graphik.graal.api.core.AbstractTerm;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
+
 
 
 /**

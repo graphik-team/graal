@@ -50,10 +50,10 @@ import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.impl.UnionConjunctiveQueries;
-import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
-import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.stream.SubstitutionReader;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.homomorphism.UnionConjunctiveQueriesHomomorphism;
 import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.ResultSetSubstitutionReader;

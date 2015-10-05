@@ -45,7 +45,7 @@
  */
 package fr.lirmm.graphik.graal.core.stream.filter;
 
-import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.util.stream.filter.Filter;
 
 /**

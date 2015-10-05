@@ -4,24 +4,12 @@
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
 		<artifactId>graal</artifactId>
-		<version>0.9.0</version>
+		<version>1.0.0</version>
 	</parent>
 	
 	<artifactId>graal-store</artifactId>
-	<name>graal-store</name>
+	<name>fr.lirmm.graphik:graal-store</name>
 	<packaging>pom</packaging>
-    
-	<scm>
-		<developerConnection>scm:git:https://info-depot.lirmm.fr/repos/GraphIK/GRAAL</developerConnection>
-	  <tag>graal-0.9.0</tag>
-  </scm>
-	
-	<inceptionYear>2014</inceptionYear>
-
-	<organization>
-		<name>INRIA</name>
-		<url>http://www.inria.fr/</url>
-	</organization>
 
 	<developers>
 		<developer>
@@ -32,7 +20,6 @@
 	</developers>
 
 	<modules>
-		<module>graal-store-api</module>
 		<module>graal-store-test</module>
 		<module>graal-store-rdbms</module>
 		<module>graal-store-neo4j</module>

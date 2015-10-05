@@ -51,9 +51,9 @@ import java.net.URL;
 
 import org.openrdf.rio.RDFFormat;
 
-import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.homomorphism.HomomorphismFactoryException;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 import fr.lirmm.graphik.graal.io.rdf.RDFParser;
 

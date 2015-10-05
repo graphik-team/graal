@@ -44,7 +44,7 @@
 
 import java.util.Iterator;
 
-import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.util.stream.AbstractReader;
 
 public class IteratorAtomReader extends AbstractReader<Atom> {

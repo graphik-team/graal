@@ -48,10 +48,10 @@ package fr.lirmm.graphik.graal.backward_chaining.pure;
 import org.junit.Assert;
 import org.junit.Test;
 
-import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.impl.FreshVarSubstitution;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.core.FreshVarSubstitution;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
-import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 
 /**

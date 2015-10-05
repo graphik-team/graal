@@ -51,8 +51,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.ruleset.ImmutableRuleSet;
+import fr.lirmm.graphik.graal.api.core.ImmutableRuleSet;
+import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.grd.AtomErasingFilter;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;

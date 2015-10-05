@@ -47,9 +47,9 @@ package fr.lirmm.graphik.graal.core.atomset.graph;
 
 import java.util.Iterator;
 
-import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.core.term.Term;
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Term;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}

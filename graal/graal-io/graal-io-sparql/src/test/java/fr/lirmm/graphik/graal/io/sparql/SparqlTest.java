@@ -45,13 +45,13 @@ package fr.lirmm.graphik.graal.io.sparql;
 import org.junit.Assert;
 import org.junit.Test;
 
-import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.core.term.Constant;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.Constant;
+import fr.lirmm.graphik.graal.api.core.Literal;
+import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
-import fr.lirmm.graphik.graal.core.term.Literal;
-import fr.lirmm.graphik.graal.io.ParseException;
 import fr.lirmm.graphik.util.Iterators;
 import fr.lirmm.graphik.util.URIUtils;
 

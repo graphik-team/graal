@@ -5,24 +5,14 @@
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
 		<artifactId>graal</artifactId>
-		<version>0.9.0 </version>
+		<version>1.0.0 </version>
 	</parent>
 
 	<artifactId>graal-core</artifactId>
 	<packaging>jar</packaging>
-	<name>graal-core</name>
-
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jdk.version>1.6</jdk.version>
-	</properties>
-
-	<inceptionYear>2014</inceptionYear>
-
-	<organization>
-		<name>INRIA</name>
-		<url>http://www.inria.fr/</url>
-	</organization>
+	<name>fr.lirmm.graphik:graal-core</name>
+	
+	<description>This module contains the main interfaces and classes of Graal.</description>
 
 	<developers>
 		<developer>
@@ -39,6 +29,11 @@
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>fr.lirmm.graphik</groupId>
+			<artifactId>graal-api</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>3.3.2</version>
@@ -51,7 +46,7 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.7.6</version>
+			<version>1.7.7</version>
 		</dependency>
 		
 		<!-- Test -->
@@ -62,19 +57,5 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
-				<configuration>
-					<source>${jdk.version}</source>
-					<target>${jdk.version}</target>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 
 </project>

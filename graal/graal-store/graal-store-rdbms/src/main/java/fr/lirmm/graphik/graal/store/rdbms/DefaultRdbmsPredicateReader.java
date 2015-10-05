@@ -52,8 +52,8 @@ import java.sql.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.store.rdbms.driver.DriverException;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
 import fr.lirmm.graphik.util.stream.AbstractReader;

@@ -45,16 +45,18 @@
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import fr.lirmm.graphik.graal.core.Atom;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.stream.SubstitutionReader;
+import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.BuiltInPredicate;
-import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.Substitution;
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
-import fr.lirmm.graphik.graal.core.stream.SubstitutionReader;
-import fr.lirmm.graphik.graal.core.term.Term;
 
 
 public class ComplexHomomorphism<Q extends ConjunctiveQuery, F extends AtomSet> implements Homomorphism<Q,F> {

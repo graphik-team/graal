@@ -54,18 +54,17 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Collection;
 
-import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.core.Query;
-import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.core.impl.DefaultNegativeConstraint;
-import fr.lirmm.graphik.graal.core.ruleset.RuleSet;
-import fr.lirmm.graphik.graal.core.term.Literal;
-import fr.lirmm.graphik.graal.core.term.Term;
-import fr.lirmm.graphik.graal.core.term.Term.Type;
-import fr.lirmm.graphik.graal.io.AbstractGraalWriter;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.Literal;
+import fr.lirmm.graphik.graal.api.core.NegativeConstraint;
+import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Term.Type;
+import fr.lirmm.graphik.graal.api.io.AbstractGraalWriter;
+import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
 import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.PrefixManager;
 import fr.lirmm.graphik.util.URI;
@@ -96,7 +95,7 @@ public class DlgpWriter extends AbstractGraalWriter {
 	}
 	
 	public DlgpWriter(Writer out) {
-		super(out);
+		super(out, DefaultAtomFactory.instance());
 		this.pm = new PrefixManager();
 	}
 	
@@ -146,62 +145,54 @@ public class DlgpWriter extends AbstractGraalWriter {
 	}
 
 	@Override
-	public void writeComment(String comment) throws IOException {
+	public DlgpWriter writeComment(String comment) throws IOException {
 		this.write("% ");
 		this.writeln(comment);
+
+		return this;
 	}
 
 	@Override
-	public void write(AtomSet atomset) throws IOException {
+	public DlgpWriter write(AtomSet atomset) throws IOException {
 		this.writeAtomSet(atomset, true);
 		this.writeln(".");
-	}
 
-	public void write(RuleSet ruleset) throws IOException {
-		for (Rule r : ruleset) {
-			this.write(r);
-		}
+		return this;
 	}
 	
 	@Override
-	public void write(Atom atom) throws IOException {
+	public DlgpWriter write(Atom atom) throws IOException {
 		this.writeAtom(atom);
 		this.write(".\n");
+
+		return this;
 	}
 
 	@Override
-	public void write(Rule rule) throws IOException {
+	public DlgpWriter write(Rule rule) throws IOException {
 		this.writeLabel(rule.getLabel());
 
 		this.writeAtomSet(rule.getHead(), false);
 		this.write(" :- ");
 		this.writeAtomSet(rule.getBody(), false);
 		this.write(".\n");
+
+		return this;
 	}
 	
-	public void write(DefaultNegativeConstraint constraint) throws IOException {
+	@Override
+	public DlgpWriter write(NegativeConstraint constraint) throws IOException {
 		this.writeLabel(constraint.getLabel());
 		
 		this.write(" ! :- ");
 		this.writeAtomSet(constraint.getBody(), false);
 		this.write(".\n");
-	}
 
-	public void write(Query query) throws IOException {
-		if (query instanceof ConjunctiveQuery) {
-			this.write((ConjunctiveQuery)query);
-		}
-		else if (query instanceof Iterable) {
-			for (Object q : (Iterable<?>)query) {
-				if (q instanceof ConjunctiveQuery) {
-					this.write((ConjunctiveQuery)q);
-				}
-			}
-		}
+		return this;
 	}
 	
 	@Override
-	public void write(ConjunctiveQuery query) throws IOException {
+	public DlgpWriter write(ConjunctiveQuery query) throws IOException {
 		if(!query.getLabel().isEmpty()) {
 			this.writeLabel(query.getLabel());
 		}
@@ -224,16 +215,20 @@ public class DlgpWriter extends AbstractGraalWriter {
 		this.write(" :- ");
 		this.writeAtomSet(query.getAtomSet(), false);
 		this.write(".\n");
+
+		return this;
 	}
 	
 	@Override
-	public void write(Prefix prefix) throws IOException {
+	public DlgpWriter write(Prefix prefix) throws IOException {
 		this.pm.putPrefix(prefix);
 		this.write("@prefix ");
 		this.write(prefix.getPrefixName());
 		this.write(": <");
 		this.write(prefix.getPrefix());
 		this.write(">\n");
+
+		return this;
 	}
 	
 	// /////////////////////////////////////////////////////////////////////////

@@ -45,7 +45,7 @@
  */
 package fr.lirmm.graphik.graal.core.atomset.graph;
 
-import fr.lirmm.graphik.graal.core.term.Constant;
+import fr.lirmm.graphik.graal.api.core.Constant;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}

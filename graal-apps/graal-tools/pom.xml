@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
 		<artifactId>graal-apps</artifactId>
-		<version>0.9.0</version>
+		<version>1.0.0</version>
 	</parent>
 	
 	<artifactId>graal-tools</artifactId>
@@ -13,8 +13,7 @@
 	<packaging>jar</packaging>
 
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jdk.version>1.6</jdk.version>
+		<apps.mainClass>fr.lirmm.graphik.graal.apps.GraalTools</apps.mainClass>
 	</properties>
 
 	<inceptionYear>2015</inceptionYear>
@@ -54,26 +53,5 @@
 			<version>1.35</version>
 		</dependency>
 	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
-				<configuration>
-					<source>${jdk.version}</source>
-					<target>${jdk.version}</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-release-plugin</artifactId>
-				<version>2.1</version>
-				<configuration>
-					<preparationGoals>clean install</preparationGoals>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 
 </project>

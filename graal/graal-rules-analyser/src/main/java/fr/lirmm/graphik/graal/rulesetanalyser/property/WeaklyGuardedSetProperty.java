@@ -49,9 +49,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.RuleUtils;
-import fr.lirmm.graphik.graal.core.term.Term;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.AffectedPositionSet;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
 

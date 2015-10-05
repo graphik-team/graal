@@ -45,8 +45,9 @@
  */
 package fr.lirmm.graphik.graal.homomorphism;
 
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.core.impl.UnionConjunctiveQueries;
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
+import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}

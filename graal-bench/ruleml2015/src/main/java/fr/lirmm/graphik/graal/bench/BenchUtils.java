@@ -49,8 +49,8 @@ import java.io.File;
 
 import org.apache.commons.io.FileUtils;
 
-import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
-import fr.lirmm.graphik.graal.store.Store;
+import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.store.Store;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.DriverException;
 import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;

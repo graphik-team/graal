@@ -45,9 +45,10 @@
  */
 package fr.lirmm.graphik.graal.homomorphism.checker;
 
-import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.Query;
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.Query;
+import fr.lirmm.graphik.graal.api.homomorphism.AbstractChecker;
 import fr.lirmm.graphik.graal.homomorphism.RecursiveBacktrackHomomorphism;
 
 /**

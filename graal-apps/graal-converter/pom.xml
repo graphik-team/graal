@@ -5,24 +5,19 @@
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
 		<artifactId>graal-apps</artifactId>
-		<version>0.9.0</version>
+		<version>1.0.0</version>
 	</parent>
 	
 	<artifactId>graal-converter</artifactId>
 	<name>fr.lirmm.graphik:graal-converter</name>
 	<packaging>jar</packaging>
-
+	
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<apps.mainClass>fr.lirmm.graphik.graal.apps.GraalConverter</apps.mainClass>
 		<jdk.version>1.7</jdk.version>
 	</properties>
 
 	<inceptionYear>2015</inceptionYear>
-
-	<organization>
-		<name>INRIA</name>
-		<url>http://www.inria.fr/</url>
-	</organization>
 
 	<developers>
 	    <developer>
@@ -40,7 +35,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-io-api</artifactId>
+			<artifactId>graal-api</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
@@ -59,48 +54,15 @@
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>fr.lirmm.graphik</groupId>
+			<artifactId>graal-io-iris-dtg</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>com.beust</groupId>
 			<artifactId>jcommander</artifactId>
 			<version>1.35</version>
 		</dependency>
 	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
-				<configuration>
-					<source>${jdk.version}</source>
-					<target>${jdk.version}</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-release-plugin</artifactId>
-				<version>2.1</version>
-				<configuration>
-					<preparationGoals>clean install</preparationGoals>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.4.1</version>
-				<configuration>
-					<preparationGoals>compile</preparationGoals>
-					<finalName>graal-converter-${project.parent.version}</finalName>
-					<archive>
-						<manifest>
-							<addClasspath>true</addClasspath>
-							<mainClass>fr.lirmm.graphik.graal.apps.GraalConverter</mainClass>
-						</manifest>
-					</archive>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 
 </project>

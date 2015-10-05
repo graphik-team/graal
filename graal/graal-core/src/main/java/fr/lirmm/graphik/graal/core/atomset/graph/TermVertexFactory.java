@@ -48,12 +48,12 @@ package fr.lirmm.graphik.graal.core.atomset.graph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.core.term.Constant;
+import fr.lirmm.graphik.graal.api.core.Constant;
+import fr.lirmm.graphik.graal.api.core.Literal;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.graal.api.factory.TermFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
-import fr.lirmm.graphik.graal.core.term.Literal;
-import fr.lirmm.graphik.graal.core.term.Term;
-import fr.lirmm.graphik.graal.core.term.TermFactory;
-import fr.lirmm.graphik.graal.core.term.Variable;
 import fr.lirmm.graphik.util.URI;
 
 /**

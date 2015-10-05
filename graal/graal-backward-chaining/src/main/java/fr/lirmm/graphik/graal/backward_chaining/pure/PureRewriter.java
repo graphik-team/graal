@@ -47,9 +47,9 @@ package fr.lirmm.graphik.graal.backward_chaining.pure;
 
 import java.util.Iterator;
 
-import fr.lirmm.graphik.graal.backward_chaining.AbstractBackwardChainer;
-import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.api.backward_chaining.AbstractBackwardChainer;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.core.RuleUtils;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByHeadPredicatesRuleSet;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;

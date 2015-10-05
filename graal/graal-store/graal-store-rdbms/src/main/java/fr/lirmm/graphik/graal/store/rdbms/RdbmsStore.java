@@ -44,12 +44,12 @@
 
 import java.util.Iterator;
 
-import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.VariableGenerator;
-import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
-import fr.lirmm.graphik.graal.core.term.Term;
-import fr.lirmm.graphik.graal.store.Store;
+import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.VariableGenerator;
+import fr.lirmm.graphik.graal.api.store.Store;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
 
 /**

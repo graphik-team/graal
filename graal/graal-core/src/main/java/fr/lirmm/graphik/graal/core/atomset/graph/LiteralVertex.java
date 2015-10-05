@@ -45,7 +45,7 @@
  */
 package fr.lirmm.graphik.graal.core.atomset.graph;
 
-import fr.lirmm.graphik.graal.core.term.Literal;
+import fr.lirmm.graphik.graal.api.core.Literal;
 import fr.lirmm.graphik.util.URI;
 
 /**

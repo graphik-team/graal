@@ -50,7 +50,9 @@ import java.util.Collection;
 import org.junit.Assert;
 import org.junit.Test;
 
-import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
 import fr.lirmm.graphik.graal.core.factory.RuleFactory;
 

@@ -47,9 +47,10 @@ import java.util.Arrays;
 import org.junit.Assert;
 import org.junit.Test;
 
-import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.core.impl.DefaultAtom;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.core.DefaultAtom;
 
 public class AtomTest {
 

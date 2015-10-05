@@ -58,16 +58,17 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.core.Query;
-import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.core.term.Literal;
-import fr.lirmm.graphik.graal.core.term.Term;
-import fr.lirmm.graphik.graal.core.term.Term.Type;
-import fr.lirmm.graphik.graal.io.AbstractGraalWriter;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.Literal;
+import fr.lirmm.graphik.graal.api.core.NegativeConstraint;
+import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Term.Type;
+import fr.lirmm.graphik.graal.api.io.AbstractGraalWriter;
+import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
 import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.URI;
 
@@ -89,7 +90,7 @@ public class RuleMLWriter extends AbstractGraalWriter {
 	// /////////////////////////////////////////////////////////////////////////
 
 	public RuleMLWriter(Writer out) {
-		super(out);
+		super(out, DefaultAtomFactory.instance());
 		indentStyle = "  ";
 		init();
 	}
@@ -128,32 +129,38 @@ public class RuleMLWriter extends AbstractGraalWriter {
 	// /////////////////////////////////////////////////////////////////////////
 	
 	@Override
-	public void writeComment(String str) throws IOException {
+	public RuleMLWriter writeComment(String str) throws IOException {
 		this.write("\n\n<!-- ");
 		this.write(str);
 		this.writeln(" -->");
+
+		return this;
 	}
 
 	@Override
-	public void write(Atom atom) throws IOException {
+	public RuleMLWriter write(Atom atom) throws IOException {
 		this.openBalise("Assert");
 		this.inFact = true;
 		this.writeAtom(atom);
 		this.inFact = false;
 		this.closeBaliseWithReturnLine("Assert");
+
+		return this;
 	}
 
 	@Override
-	public void write(AtomSet atomset) throws IOException {
+	public RuleMLWriter write(AtomSet atomset) throws IOException {
 		this.openBalise("Assert");
 		this.inFact = true;
 		this.writeAtomSet(atomset);
 		this.inFact = false;
 		this.closeBaliseWithReturnLine("Assert");
+
+		return this;
 	}
 	
 	@Override
-	public void write(Rule rule) throws IOException {
+	public RuleMLWriter write(Rule rule) throws IOException {
 		Set<Term> existVar = rule.getExistentials();
 		Set<Term> universalVar = rule.getTerms(Type.VARIABLE);
 		universalVar.removeAll(existVar);
@@ -197,23 +204,12 @@ public class RuleMLWriter extends AbstractGraalWriter {
 		this.closeBaliseWithReturnLine("Implies");
 		this.closeBaliseWithReturnLine("Forall");
 		this.closeBaliseWithReturnLine("Assert");
-	}
 
-	public void write(Query query) throws IOException {
-		if (query instanceof ConjunctiveQuery) {
-			this.write((ConjunctiveQuery)query);
-		}
-		else if (query instanceof Iterable) {
-			for (Object q : (Iterable<?>)query) {
-				if (q instanceof ConjunctiveQuery) {
-					this.write((ConjunctiveQuery)q);
-				}
-			}
-		}
+		return this;
 	}
 	
 	@Override
-	public void write(ConjunctiveQuery query) throws IOException {
+	public RuleMLWriter write(ConjunctiveQuery query) throws IOException {
 		Set<Term> existVar = query.getAtomSet().getTerms(Term.Type.VARIABLE);
 		existVar.removeAll(query.getAnswerVariables());
 
@@ -230,15 +226,22 @@ public class RuleMLWriter extends AbstractGraalWriter {
 		this.closeBaliseWithReturnLine("And");
 		this.closeBaliseWithReturnLine("Exists");
 		this.closeBaliseWithReturnLine("Query");
+
+		return this;
 	}
 	
 	@Override
-	public void write(Prefix prefix) throws IOException {
-		// this.writer.write("@prefix ");
-		// this.writer.write(prefix.getPrefixName());
-		// this.writer.write(" <");
-		// this.writer.write(prefix.getPrefix());
-		// this.writer.write(">\n");
+	public RuleMLWriter write(Prefix prefix) throws IOException {
+		LOGGER.warn("Prefix not supported: " + prefix.toString());
+
+		return this;
+	}
+
+	@Override
+	public RuleMLWriter write(NegativeConstraint constraint) throws IOException {
+		LOGGER.warn("NegativeConstraint not yet implemented");
+
+		return this;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

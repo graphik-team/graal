@@ -48,8 +48,8 @@ package fr.lirmm.graphik.graal.backward_chaining.pure;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByHeadPredicatesRuleSet;
 
 /**

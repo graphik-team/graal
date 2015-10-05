@@ -49,12 +49,12 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
-import fr.lirmm.graphik.graal.forward_chaining.Chase;
-import fr.lirmm.graphik.graal.forward_chaining.ChaseException;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.forward_chaining.Chase;
+import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.forward_chaining.NaiveChase;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;

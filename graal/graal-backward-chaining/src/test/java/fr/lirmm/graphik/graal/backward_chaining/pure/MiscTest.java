@@ -51,7 +51,7 @@ import java.lang.management.ThreadMXBean;
 import org.junit.Assert;
 import org.junit.Test;
 
-import fr.lirmm.graphik.graal.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.core.factory.RuleFactory;
 
 /**

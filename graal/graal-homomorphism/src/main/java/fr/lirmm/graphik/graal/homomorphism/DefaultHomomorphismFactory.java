@@ -48,12 +48,14 @@ package fr.lirmm.graphik.graal.homomorphism;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import fr.lirmm.graphik.graal.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.Query;
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.Query;
+import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismChecker;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactory;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.homomorphism.checker.DefaultUnionConjunctiveQueriesChecker;
-import fr.lirmm.graphik.graal.homomorphism.checker.HomomorphismChecker;
 import fr.lirmm.graphik.graal.homomorphism.checker.RecursiveBacktrackChecker;
 
 /**

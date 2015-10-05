@@ -5,24 +5,12 @@
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
 		<artifactId>graal-apps</artifactId>
-		<version>0.9.0 </version>
+		<version>1.0.0 </version>
 	</parent>
 
 	<artifactId>graal-cqa</artifactId>
-	<name>Graal CQA</name>
+	<name>fr.lirmm.graphik:graal-cqa</name>
 	<packaging>jar</packaging>
-
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jdk.version>1.6</jdk.version>
-	</properties>
-
-	<inceptionYear>2014</inceptionYear>
-
-	<organization>
-		<name>INRIA</name>
-		<url>http://www.inria.fr/</url>
-	</organization>
 
 	<developers>
 		<developer>
@@ -67,7 +55,7 @@
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>1.1.1</version>
+			<version>1.1.3</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.code.findbugs</groupId>
@@ -75,38 +63,5 @@
 			<version>2.0.3</version>
 		</dependency>
 	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
-				<configuration>
-					<source>${jdk.version}</source>
-					<target>${jdk.version}</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-release-plugin</artifactId>
-				<version>2.1</version>
-				<configuration>
-					<preparationGoals>clean install</preparationGoals>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-pmd-plugin</artifactId>
-				<version>3.3</version>
-				<configuration>
-					<minimumPriority>0</minimumPriority>
-					<failurePriority>0</failurePriority>
-					<rulesets>
-						<ruleset>${project.basedir}/pmd-rulesets/empty.xml</ruleset>
-					</rulesets>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 
 </project>

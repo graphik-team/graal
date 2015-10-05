@@ -64,14 +64,14 @@ import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.core.atomset.AtomSetException;
-import fr.lirmm.graphik.graal.core.impl.DefaultAtom;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Term.Type;
+import fr.lirmm.graphik.graal.api.store.GraphDBStore;
+import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
-import fr.lirmm.graphik.graal.core.term.Term;
-import fr.lirmm.graphik.graal.core.term.Term.Type;
-import fr.lirmm.graphik.graal.store.GraphDBStore;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}

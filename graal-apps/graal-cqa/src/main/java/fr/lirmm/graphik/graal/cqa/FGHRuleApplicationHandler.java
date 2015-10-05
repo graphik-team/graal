@@ -44,14 +44,14 @@
 
 import java.util.LinkedList;
 
-import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.Query;
-import fr.lirmm.graphik.graal.core.Substitution;
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.core.impl.DefaultConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.term.Term;
-import fr.lirmm.graphik.graal.forward_chaining.rule_applier.RuleApplicationHandler;
-import fr.lirmm.graphik.graal.homomorphism.Homomorphism;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.Query;
+import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplicationHandler;
+import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
+import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 
 public class FGHRuleApplicationHandler implements RuleApplicationHandler {
 

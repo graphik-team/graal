@@ -47,6 +47,9 @@ package fr.lirmm.graphik.graal.core.term;
 
 import org.apache.commons.lang3.StringUtils;
 
+import fr.lirmm.graphik.graal.api.core.AbstractTerm;
+import fr.lirmm.graphik.graal.api.core.Literal;
+import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.util.URI;
 import fr.lirmm.graphik.util.URIUtils;
 

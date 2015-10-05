@@ -5,12 +5,12 @@
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
 		<artifactId>graal-io</artifactId>
-		<version>0.9.0</version>
+		<version>1.0.0</version>
 	</parent>
 
 	<artifactId>graal-io-ruleml</artifactId>
 	<packaging>jar</packaging>
-	<name>graal-io-ruleml</name>
+	<name>fr.lirmm.graphik:graal-io-ruleml</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -45,13 +45,13 @@
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-io-api</artifactId>
+			<artifactId>graal-api</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.7.6</version>
+			<version>1.7.7</version>
 		</dependency>
 	</dependencies>
 

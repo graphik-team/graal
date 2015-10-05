@@ -45,11 +45,12 @@
  */
 package fr.lirmm.graphik.graal.homomorphism.checker;
 
-import fr.lirmm.graphik.graal.core.Query;
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.core.impl.UnionConjunctiveQueries;
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.Query;
+import fr.lirmm.graphik.graal.api.homomorphism.AbstractChecker;
+import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
+import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.homomorphism.DefaultUnionConjunctiveQueriesHomomorphism;
-import fr.lirmm.graphik.graal.homomorphism.Homomorphism;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}

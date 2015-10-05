@@ -5,53 +5,28 @@
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
 		<artifactId>graal-main-project</artifactId>
-		<version>0.9.0</version>
+		<version>1.0.0</version>
 	</parent>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jdk.version>1.6</jdk.version>
-	</properties>
-
 	<artifactId>graal-distro</artifactId>
-	<name>graal-distro</name>
+	<name>fr.lirmm.graphik:graal-distro</name>
 
 	<dependencies>
+		<dependency>
+			<artifactId>graal-util</artifactId>
+			<groupId>fr.lirmm.graphik</groupId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<artifactId>graal-api</artifactId>
+			<groupId>fr.lirmm.graphik</groupId>
+			<version>${project.parent.version}</version>
+		</dependency>
 		<dependency>
 			<artifactId>graal-core</artifactId>
 			<groupId>fr.lirmm.graphik</groupId>
 			<version>${project.parent.version}</version>
 		</dependency>
-		<dependency>
-			<artifactId>graal-io-api</artifactId>
-			<groupId>fr.lirmm.graphik</groupId>
-			<version>${project.parent.version}</version>
-		</dependency>
-                <dependency>
-                  	<artifactId>graal-io-dlgp</artifactId>
-			<groupId>fr.lirmm.graphik</groupId>
-			<version>${project.parent.version}</version>
-                </dependency>
-                <dependency>
-                  	<artifactId>graal-io-rdf</artifactId>
-			<groupId>fr.lirmm.graphik</groupId>
-			<version>${project.parent.version}</version>
-                </dependency>
-		<dependency>
-			<artifactId>graal-io-owl</artifactId>
-			<groupId>fr.lirmm.graphik</groupId>
-			<version>${project.parent.version}</version>
-		</dependency>
-                <dependency>
-                  	<artifactId>graal-io-ruleml</artifactId>
-			<groupId>fr.lirmm.graphik</groupId>
-			<version>${project.parent.version}</version>
-                </dependency>
-                <dependency>
-                  	<artifactId>graal-io-sparql</artifactId>
-			<groupId>fr.lirmm.graphik</groupId>
-			<version>${project.parent.version}</version>
-                </dependency>
 		<dependency>
 			<artifactId>graal-homomorphism</artifactId>
 			<groupId>fr.lirmm.graphik</groupId>
@@ -68,58 +43,64 @@
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
-			<artifactId>graal-store-api</artifactId>
+			<artifactId>graal-rules-analyser</artifactId>
 			<groupId>fr.lirmm.graphik</groupId>
 			<version>${project.parent.version}</version>
 		</dependency>
-                <dependency>
+		<dependency>
+			<artifactId>graal-io-dlgp</artifactId>
+			<groupId>fr.lirmm.graphik</groupId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<artifactId>graal-io-owl</artifactId>
+			<groupId>fr.lirmm.graphik</groupId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<artifactId>graal-io-ruleml</artifactId>
+			<groupId>fr.lirmm.graphik</groupId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<artifactId>graal-io-sparql</artifactId>
+			<groupId>fr.lirmm.graphik</groupId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
 			<artifactId>graal-store-rdbms</artifactId>
 			<groupId>fr.lirmm.graphik</groupId>
 			<version>${project.parent.version}</version>
 		</dependency>
-                <dependency>
+		<dependency>
 			<artifactId>graal-store-blueprints</artifactId>
 			<groupId>fr.lirmm.graphik</groupId>
 			<version>${project.parent.version}</version>
 		</dependency>
-                <dependency>
+		<dependency>
 			<artifactId>graal-store-jenaTDB</artifactId>
 			<groupId>fr.lirmm.graphik</groupId>
 			<version>${project.parent.version}</version>
-		</dependency>
-                <dependency>
+		</dependency> 
+		<dependency>
 			<artifactId>graal-store-neo4j</artifactId>
 			<groupId>fr.lirmm.graphik</groupId>
 			<version>${project.parent.version}</version>
 		</dependency>
-                <dependency>
+		<dependency>
 			<artifactId>graal-store-openrdf</artifactId>
 			<groupId>fr.lirmm.graphik</groupId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
-			<artifactId>graal-rules-analyser</artifactId>
-			<groupId>fr.lirmm.graphik</groupId>
-			<version>${project.parent.version}</version>
-		</dependency>
-                <dependency>
-			<artifactId>graal-util</artifactId>
-			<groupId>fr.lirmm.graphik</groupId>
-			<version>${project.parent.version}</version>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.1.3</version>
 		</dependency>
 	</dependencies>
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.2</version>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
-			</plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.5</version>

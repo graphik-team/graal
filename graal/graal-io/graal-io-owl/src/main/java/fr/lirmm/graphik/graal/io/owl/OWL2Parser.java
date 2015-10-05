@@ -71,19 +71,20 @@ import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.core.Atom;
-import fr.lirmm.graphik.graal.core.Predicate;
-import fr.lirmm.graphik.graal.core.Rule;
-import fr.lirmm.graphik.graal.core.Substitution;
-import fr.lirmm.graphik.graal.core.atomset.AtomSet;
-import fr.lirmm.graphik.graal.core.atomset.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.io.AbstractParser;
+import fr.lirmm.graphik.graal.core.DefaultNegativeConstraint;
+import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
+import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
 import fr.lirmm.graphik.graal.core.factory.RuleFactory;
-import fr.lirmm.graphik.graal.core.impl.DefaultNegativeConstraint;
-import fr.lirmm.graphik.graal.core.impl.TreeMapSubstitution;
-import fr.lirmm.graphik.graal.core.term.Term;
-import fr.lirmm.graphik.graal.io.AbstractParser;
 import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.stream.ArrayBlockingStream;
 import fr.lirmm.graphik.util.stream.transformator.Transformator;
@@ -99,7 +100,8 @@ public class OWL2Parser extends AbstractParser<Object> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(OWL2Parser.class);
 	private static final RuleTransformator RULE_TRANSFO = new RuleTransformator();
-	private static final InMemoryAtomSet BOTTOM_ATOMSET = new LinkedListAtomSet(Atom.BOTTOM);
+	private static final InMemoryAtomSet BOTTOM_ATOMSET = new LinkedListAtomSet(DefaultAtomFactory.instance()
+	        .getBottom());
 
 	private ArrayBlockingStream<Object> buffer = new ArrayBlockingStream<Object>(512);
 
