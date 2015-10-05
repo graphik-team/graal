@@ -9,9 +9,8 @@ echo '
 <!DOCTYPE html>
 <html>
   [%- PROCESS config.tt -%]
-  [%- title = "'$title'" 
-      config.basedir="../"
-  -%]  
+  [%- config.basedir="../" -%]
+  [%- title = "'$title'"  -%]  
   [%- INCLUDE header.tt -%]
   
   <body>
