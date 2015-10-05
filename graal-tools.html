@@ -2,19 +2,19 @@
 <html>
   <head>
     <meta charset='utf-8'/>
-    <meta name="description" content="Translator from Dlgp to RuleML"/>
-    <meta name="keywords" content="dlgp, ruleml, translator, rule, format, existential rules,
-  datalog+"/>
+    <meta name="description" content="Graal tools is a set of utils to manage rules."/>
+    <meta name="keywords" content="Tools, rules, utils, atomic-head, singlepiece-head,
+  singlepiece, atomic rule, datalog+"/>
     <link rel="stylesheet" type="text/css" media="screen" href="./stylesheets/stylesheet.css"/>
     <link rel="stylesheet" type="text/css" media="screen" href="./stylesheets/table.css"/>
     <script type="text/javascript" src="./js/main.js"></script>
-    <title>Dlgp to RuleML</title>
-  </head>
+    <title>Graal tools</title>
+  </head><html>
   <body>
     <!-- HEADER -->
     <div id="header_wrap" class="outer">
         <header class="inner">
-          <h1 id="project_title">Dlgp to RuleML</h1>
+          <h1 id="project_title">Graal tools</h1>
         </header>        <div id="menu" class="outer">
           <nav class="inner">
             <a href="./">Home</a>
@@ -39,36 +39,26 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <p>The <em>dlgp2ruleml</em> program
-          translates <a href="http://graphik-team.github.io/graal/papers/datalog+_v2.0_en.pdf"><em>dlgp</em></a>
-          to the Datalog+ fragment of <a href="http://wiki.ruleml.org/index.php/Specification_of_Deliberation_RuleML_1.01">Deliberation RuleML 1.01</a>. This sublanguage includes:</p>
-        <ul>
-          <li>positive facts,</li>
-          <li>universally quantified implications,</li>
-          <li>existentials in the heads of implications,</li>
-          <li>equality,</li>
-          <li>falsity in the heads of implications,</li>
-          <li>conjunctions in the heads of implications.</li>
-        </ul>
-        <p>The translation from dlgp to this sublanguage is quite
-        direct. Since existential quantification in facts is not
-        allowed in this sublanguage, the tool translates each existential variable in facts by a new constant. </p>
+        <p>The graal-tools program is a set of utilities to manage
+          rules. It currently has three features:</p>
+        <dl>
+          <dt>atomic-head</dt><dd>transform a rule set into a set
+          of atomic-head rules.</dd>
+          <dt>singlepiece-head</dt><dd>transform a rule set into a
+          set of singlepiece-head rules.</dd>
+          <dt>labeler</dt><dd>add a label to each rule.</dd>
+        </dl>
         <h2>Getting started</h2>
         <ul>
-          <li>Download <a href="./dl/dlgp2ruleml-1.0.beta1.jar">dlgp2ruleml</a></li>
-          <li>Download <a href="./dl/example2.dlp">example2.dlp</a>
-          and its translation <a href="./dl/example2.ruleml">example2.ruleml</a></li>
+            <li>Download <a href="./dl/graal-tools-1.0.0.jar">graal-tools</a></li>
+            <li>Download <a href="./dl/example1.dlp">example1.dlp</a></li>
         </ul>
-         <ul>
-          <li>
-            Translate from an <em>dlgp</em> file to a RuleML file: <br/>
-            <code>java -jar dlgp2ruleml*.jar -f ./example2.dlp -o ./example.ruleml</code>
-          </li>
-          <li>
-            Translate from the standard input (dlgp) to the standard output (RuleML): <br/>
-            <code>java -jar dlgp2ruleml*.jar < ./example2.dlp > ./example.ruleml</code>
-          </li>
-        </ul>
+        <h3> Compute atomic-head </h3>
+        <code>java -jar graal-tools-*.jar -a < ./example1.dlp </code>
+        <h3> Compute singlepiece-head </h3>
+        <code>java -jar graal-tools-*.jar -p < ./example1.dlp </code>
+        <h3> Labels rules </h3>
+        <code>java -jar graal-tools-*.jar -l < ./example1.dlp</code>
       </section>
     </div>
     <!-- FOOTER -->
