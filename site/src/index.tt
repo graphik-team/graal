@@ -98,6 +98,7 @@ reasoning, data engineering, java, semantic web, description logics" -%]
                <li><a href="./owl2dlgp">Translator from OWL 2 to DLGP v2</a></li>
                <li><a href="./dlgp2ruleml">Translator from DLGP v2 to RuleML</a></li>
                <li><a href="./kiabora">Kiabora</a></li>
+               <li><a href="./graal-tools">Utility tools</a></li>
              </ul>
 
          <h2>Keep me informed</h2>

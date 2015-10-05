@@ -30,8 +30,30 @@
           <dt>atomic-head</dt><dd>transform a rule set into a set
           of atomic-head rules.</dd>
           <dt>singlepiece-head</dt><dd>transform a rule set into a
-          set of singlepiece-head rules.</dd>
-          <dt>labeler</dt><dd>add a label to each rule.</dd>
+          set of single-piece head rules.</dd>
+          <dt>labeler</dt><dd>add a label to each rule:
+          </dd>
+        </dl>
+
+        <h2> List of labels </h2>
+        <dl>
+          <dt>CI</dt><dd>Concept Inclusion - <em>A(x) -> B(x)</em></dd>
+          <dt>RI</dt><dd>Role Inclusion - <em>p(x,y) -> r(x,y)</em></dd>
+          <dt>Inv</dt><dd>Inverse Role - <em>p(x,y) -> r(y,x)</em></dd>
+          <dt>Dom</dt><dd>Domain - <em> p(x,y) -> A(x)</em></dd>
+          <dt>Rng</dt><dd>Range - <em>p(x,y) -> A(y)</em></dd>
+          <dt>MR</dt><dd>Mandatory Role - <em>A(x) -> p(x,y)</em></dd>
+          <dt>IMR</dt><dd>Inverse Mandatory Role - <em>A(y) -> p(x,y)</em></dd>
+          <dt>ERC</dt><dd>Existential quantification in rule
+            heads - <em>A(x) -> p(x,y), B(y)</em></dd>
+          <dt>IERC</dt><dd>ERC with Inverse role - <em>A(x) -> p(y,x), B(y)</em></dd>
+          <dt>Trans</dt><dd>Transitivity - <em>p(x,y),p(y,z) -> p(x,z)</em></dd>
+          <dt>RC</dt><dd>Role Composition - <em> p(x,y),r(y,z) -> s(x,z)</em></dd>
+          <dt>Func</dt><dd>Functional dependency - <em> BODY -> x = y</em></dd>
+          <dt>DC</dt><dd>Disjoint Concept - <em>! A(x), B(x)</em></dd>
+          <dt>DR</dt><dd>Disjoint Role - <em>!
+              p(x,y),r(x,y)</em></dd>
+          <dt>NC</dt><dd>Negative Constraint - <em> ! BODY </em></dd>
         </dl>
         
         <h2>Getting started</h2>
@@ -41,17 +63,17 @@
             <li>Download <a href="./dl/example1.dlp">example1.dlp</a></li>
         </ul>
 
-        <h3> Compute atomic-head </h3>
+        <h3> Compute atomic head rules </h3>
 
         <code>java -jar graal-tools-*.jar -a < ./example1.dlp </code>
      
 
-        <h3> Compute singlepiece-head </h3>
+        <h3> Compute single-piece head rules </h3>
 
         <code>java -jar graal-tools-*.jar -p < ./example1.dlp </code>
    
 
-        <h3> Labels rules </h3>
+        <h3> Label rules </h3>
         
         <code>java -jar graal-tools-*.jar -l < ./example1.dlp</code>
         
