@@ -18,11 +18,13 @@
 
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
+      	<section id="main_content" class="inner">
+
     	<p>
 		A little example of Kiabora's capabilities.
 		</p>
-		<section id="main_content" class="inner">
-			The input file contains the following:
+
+        <h2>Input file:</h2>
 			<pre>p(X,Z) :- p(X,Y), p(Y,Z).
 p(Y,X), q(X,Y,X) :- p(X,Y).
 q(X,Z,T) :- r(X,Y).
@@ -30,7 +32,7 @@ r(Z,T) :- q(X,Y,Z).
 s(Z,Z,Z) :- p(X,X), r(Y,U), s(T,Y,X).
 s(Z,X,Y) :- s(X,X,X), s(Y,Y,Y).</pre>
 
-			Kiabora (with all options turned on) outputs:
+			<h2>Output (all options turned on): </h2>
 			<pre>
 ====== RULE SET ======
 [R0] p(X, Z) :- p(X, Y), p(Y, Z).

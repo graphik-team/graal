@@ -19,7 +19,7 @@ dest/publications.html\
 dest/pure.html\
 dest/kiabora.html\
 dest/kiabora-example.html\
-dest/graal-tools.html\
+dest/utility-tools.html\
 dest/ruleclasses.html\
 dest/getting-started.html\
 dest/getting-started-maven.html\
