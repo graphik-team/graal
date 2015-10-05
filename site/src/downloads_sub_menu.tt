@@ -5,5 +5,6 @@
             <a href="[% config.basedir %]owl2dlgp">OWL2DLGP</a>
             <a href="[% config.basedir %]dlgp2ruleml">DLGP2RuleML</a>
             <a href="[% config.basedir %]kiabora">Kiabora</a>
+            <a href="[% config.basedir %]graal-tools">Graal-tools</a>
           </nav>
         </div>        

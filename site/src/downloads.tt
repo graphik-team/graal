@@ -28,17 +28,16 @@
           <li><a href="[% config.graalVersion _ '/graal-' _
           config.graalVersion _ '-jar-with-dependencies.jar' %]">All Graal modules and dependencies in one jar</a></li>
 
+          <li><a href="./modules/graal-api">graal-api</a></li>
           <li><a href="./modules/graal-util">graal-util</a></li>
           <li><a href="./modules/graal-core">graal-core</a></li>
           <li><a href="./modules/graal-backward-chaining">graal-backward-chaining</a></li>
           <li><a href="./modules/graal-forward-chaining">graal-forward-chaining</a></li>
           <li><a href="./modules/graal-homomorphism">graal-homomorphism</a></li>
-          <li><a href="./modules/graal-io-api">graal-io-api</a></li>
           <li><a href="./modules/graal-io-dlgp">graal-io-dlgp</a></li>
           <li><a href="./modules/graal-io-owl">graal-io-owl</a></li>
           <li><a href="./modules/graal-io-ruleml">graal-io-ruleml</a></li>
           <li><a href="./modules/graal-io-sparql">graal-io-sparql</a></li>
-          <li><a href="./modules/graal-store-api">graal-store-api</a></li>
           <li><a href="./modules/graal-store-rdbms">graal-store-rdbms</a></li>
         </ul>
 
