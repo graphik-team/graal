@@ -44,17 +44,22 @@ Specific Styles
 *******************************************************************************/
 
 #menu {
-  color: #ccc;
-  background-color: #222;
+  color: #fff;
+  background-color: #4682B4;
+  box-shadow: 0px 0px 10px #36648B inset;
 }
 
 #menu a {
-  color: #ccc;
+  color: #fff;
 }
 
 
 #sub_menu {
-  background-color: #eee;
+    background-color: #eee;
+}
+
+#sub_menu a {
+    color: #36648B;
 }
 
 #toc li, #rc li {
@@ -69,7 +74,7 @@ Theme Styles
 body {
   box-sizing: border-box;
   color:#373737;
-  background: #212121;
+  background: #4682B4;
   font-size: 16px;
   font-family: 'Myriad Pro', Calibri, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -84,7 +89,7 @@ nav {
 h1, h2, h3, h4, h5, h6 {
   margin: 10px 0;
   font-weight: 700;
-  color:#222222;
+  color: #36648B;
   font-family: 'Lucida Grande', 'Calibri', Helvetica, Arial, sans-serif;
   letter-spacing: -1px;
 }
@@ -154,7 +159,8 @@ em {
 }
 
 strong {
-  font-weight: bold;
+    font-weight: bold;
+    color: #36648B;
 }
 
 img {
@@ -221,7 +227,8 @@ ol {
 }
 
 dl dt {
-  font-weight: bold;
+    font-weight: bold;
+    color: #36648B;
 }
 
 dl dd {
@@ -285,14 +292,15 @@ Full-Width Styles
 }
 
 #header_wrap {
-  background: #F5F5F5;
+    background: #F5F5F5;
 }
 
 #project_title {
   margin: 0;
-  color: #373737;
+  color: #36648B;
   font-size: 42px;
   font-weight: 700;
+  text-shadow: -1px -1px 3px #777; 
 }
 
 #project_tagline {
@@ -351,7 +359,7 @@ Full-Width Styles
 }
 
 #footer_wrap {
-  background: #212121;
+   box-shadow: 0px 0px 10px #36648B inset;
 }
 
 
