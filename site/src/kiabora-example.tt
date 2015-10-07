@@ -126,9 +126,13 @@ And the SCC properties can also be displayed (used for the combine steps) with -
 +---------------------------------------------------------------------------------------------------------------+
 </pre>
 
-<p>Finally, Kiabora tries to find some combined approach for finite reasonning.
+<p>Finally, Kiabora tries to find some combined approach for finite reasoning.
 First by maximising the number of components to be treated in forward chaining, then by
 maximising the backward chaining.
+Note that in this example, no property ensuring
+decidability have been found on the whole rule
+set, however, by using some combined approach,
+we can ensure a finite time reasoning.
 </p>
 <pre>
 === COMBINE (FES) ====
