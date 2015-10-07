@@ -33,6 +33,8 @@ s(Z,Z,Z) :- p(X,X), r(Y,U), s(T,Y,X).
 s(Z,X,Y) :- s(X,X,X), s(Y,Y,Y).</pre>
 
 			<h2>Output (all options turned on): </h2>
+
+<p>The '-r' option can be used to display the rule set.</p>
 			<pre>
 ====== RULE SET ======
 [R0] p(X, Z) :- p(X, Y), p(Y, Z).
@@ -41,7 +43,11 @@ s(Z,X,Y) :- s(X,X,X), s(Y,Y,Y).</pre>
 [R3] r(Z, T) :- q(X, Y, Z).
 [R4] s(Z, Z, Z) :- p(X, X), r(Y, U), s(T, Y, X).
 [R5] s(Z, X, Y) :- s(X, X, X), s(Y, Y, Y).
+</pre>
 
+<p>The '-g' option can be used to display the graph of rule dependencies.
+Here the '-u' option has been used, thus, unifiers also appear.</p>
+<pre>
 ======== GRD =========
 R0--{R::Y->D::Z,R::X->D::X}{R::Y->D::X,R::Z->D::Z}-->R0
 R0--{R::Y->D::Z,R::X->D::X}-->R1
@@ -55,20 +61,34 @@ R3--{R::Y->D::T,R::X->D::Z}-->R2
 R3--{R::Y->D::Z,R::U->D::T}-->R4
 R4--{R::X->D::Z}{R::Y->D::Z}-->R5
 R5--{R::T->D::Z,R::Y->D::X,R::X->D::Y}-->R4
+</pre>
 
-
+<p>With the '-s' option, Kiabora displays the strongly connected component of the
+graph of rule dependencies.
+<pre>
 ======== SCC =========
 C0 = {R1, R0}
 C1 = {R2, R3}
 C2 = {R4, R5}
+</pre>
 
 
+<p>
+And with '-G', Kiabora also displays the graph
+of the SCC.
+</p>
+<pre>
 ===== SCC GRAPH ======
 C0 ---> C1, C2
 C1 ---> C2
 C2
+</pre>
 
-
+<p>
+Rule properties are printed for each rule,
+thanks to the '-P' switch.
+</p>
+<pre>
 == RULE PROPERTIES ===
 +---------------------------------------------------------------------------------------------------------------+
 |  -   |  X   |  -   |  -   |  X   |  -   |  -   |  ?   |  X   |  -   |  X   |  -   |  X   |  X   |  X   |  X   |  R0  
@@ -80,14 +100,22 @@ C2
 +---------------------------------------------------------------------------------------------------------------+
 | aGRD | bts  | disc |  dr  | fes  |  fg  | fr1  | fus  | gbts | lin  |  rr  |  s   |  wa  | wfg  |  wg  |  ws  |
 +---------------------------------------------------------------------------------------------------------------+
+</pre>
 
+<p>Then, the rule set properties are checked against the full rule set (-R).</p>
+<pre>
 ===== PROPERTIES =====
 +---------------------------------------------------------------------------------------------------------------+
 |  -   |  ?   |  -   |  -   |  ?   |  -   |  -   |  ?   |  ?   |  -   |  -   |  -   |  -   |  -   |  -   |  -   |
 +---------------------------------------------------------------------------------------------------------------+
 | aGRD | bts  | disc |  dr  | fes  |  fg  | fr1  | fus  | gbts | lin  |  rr  |  s   |  wa  | wfg  |  wg  |  ws  |
 +---------------------------------------------------------------------------------------------------------------+
+</pre>
 
+<p>
+And the SCC properties can also be displayed (used for the combine steps) with -S.
+</p>
+<pre>
 === SCC PROPERTIES ===
 +---------------------------------------------------------------------------------------------------------------+
 |  -   |  X   |  -   |  -   |  X   |  -   |  -   |  ?   |  X   |  -   |  X   |  -   |  X   |  X   |  X   |  X   |  C0  
@@ -96,7 +124,13 @@ C2
 +---------------------------------------------------------------------------------------------------------------+
 | aGRD | bts  | disc |  dr  | fes  |  fg  | fr1  | fus  | gbts | lin  |  rr  |  s   |  wa  | wfg  |  wg  |  ws  |
 +---------------------------------------------------------------------------------------------------------------+
+</pre>
 
+<p>Finally, Kiabora tries to find some combined approach for finite reasonning.
+First by maximising the number of components to be treated in forward chaining, then by
+maximising the backward chaining.
+</p>
+<pre>
 === COMBINE (FES) ====
 C0: FES
 C1: FUS
@@ -107,9 +141,7 @@ C2: FUS
 C0: FES
 C1: FUS
 C2: FUS
-
-
-			</pre>
+</pre>
 		</section>
     </div>
 
