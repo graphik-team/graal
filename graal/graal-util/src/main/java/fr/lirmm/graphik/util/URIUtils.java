@@ -52,6 +52,7 @@ import java.net.URISyntaxException;
 public final class URIUtils {
 	
 	public static final URI RDF_TYPE = URIUtils.createURI(Prefix.RDF, "type");
+	public static final URI RDF_LANG_STRING = URIUtils.createURI(Prefix.RDF, "langString");
 
 	// PRIMITIVE XSD DATATYPES
 	public static final URI XSD_STRING = URIUtils.createURI(Prefix.XSD, "string");

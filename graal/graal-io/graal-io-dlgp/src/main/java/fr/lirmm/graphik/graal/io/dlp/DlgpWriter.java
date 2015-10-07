@@ -68,6 +68,7 @@ import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
 import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.PrefixManager;
 import fr.lirmm.graphik.util.URI;
+import fr.lirmm.graphik.util.URIUtils;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -296,7 +297,37 @@ public class DlgpWriter extends AbstractGraalWriter {
 		} else if(Type.CONSTANT.equals(t.getType())) {
 			this.writeLowerIdentifier(t.getIdentifier());
 		} else { // LITERAL
-			Literal l = (Literal) t;
+			this.writeLiteral((Literal) t);
+		}
+	}
+
+	protected void writeLiteral(Literal l) throws IOException {
+		if(URIUtils.XSD_STRING.equals(l.getDatatype())) {
+			this.write('"');
+			this.write(l.getValue());
+			this.write('"');
+		} else if (URIUtils.RDF_LANG_STRING.equals(l.getDatatype())) {
+			String value = l.getValue().toString();
+			int delim = value.lastIndexOf('@');
+			if (delim > 0) {
+				this.write('"');
+				this.write(value.substring(0, delim));
+				this.write("\"@");
+				this.write(value.substring(delim + 1));
+			} else {
+				this.write('"');
+				this.write(value);
+				this.write('"');
+			}
+		} else if (URIUtils.XSD_INTEGER.equals(l.getDatatype())) {
+			this.write(l.getValue().toString());
+		} else if (URIUtils.XSD_DECIMAL.equals(l.getDatatype())) {
+			this.write(l.getValue().toString());
+		} else if (URIUtils.XSD_DOUBLE.equals(l.getDatatype())) {
+			this.write(l.getValue().toString()); // FIXME
+		} else if (URIUtils.XSD_BOOLEAN.equals(l.getDatatype())) {
+			this.write(l.getValue().toString());
+		} else {
 			this.write('"');
 			this.write(l.getValue().toString());
 			this.write("\"^^<");
