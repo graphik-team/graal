@@ -53,16 +53,19 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetUtils;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
 import fr.lirmm.graphik.graal.core.factory.RuleFactory;
@@ -563,4 +566,59 @@ public final class RuleUtils {
 
 	}
 
-}
+
+	public static InMemoryAtomSet criticalInstance(final RuleSet rules) {
+		InMemoryAtomSet A = new LinkedListAtomSet();
+		criticalInstance(rules,A);
+		return A;
+	}
+
+	public static void criticalInstance(final RuleSet rules, AtomSet A) {
+		// get all constants
+		// add a single variable
+		// for each of them add everything there is
+		Set<Term> terms = new TreeSet<Term>();
+		//TermSet terms = rules.getTerms(Term.Type.CONSTANT);
+		terms.add(DefaultTermFactory.instance().createTerm("*",Term.Type.VARIABLE));
+		// now get all predicates
+		Set<Predicate> predicates = new TreeSet<Predicate>();
+		for (Rule r : rules) {
+			for (Atom b : r.getBody()) {
+				predicates.add(b.getPredicate());
+				for (Term t : b.getTerms())
+					if (t.getType() == Term.Type.CONSTANT)
+						terms.add(t);
+			}
+			for (Atom b : r.getHead()) { // actually, it should not be needed TODO: check the Critical Instance def
+		//		predicates.add(b.getPredicate());
+				for (Term t : b.getTerms())
+					if (t.getType() == Term.Type.CONSTANT)
+						terms.add(t);
+			}
+		}
+
+
+		// now for each predicate, add all possible constants
+		for (Predicate p : predicates) {
+			generateCriticalInstance(A,terms,p,0,new DefaultAtom(p));
+		}
+	}
+
+	private static void generateCriticalInstance(AtomSet A, Set<Term> terms, Predicate p, int position, DefaultAtom a) {
+		if (position >= p.getArity()) {
+			try { A.add(a); }
+			catch (Exception e) {
+				// TODO
+			}
+			return;
+		}
+
+		for (Term t : terms) {
+			DefaultAtom a2 = new DefaultAtom(a);
+			a2.setTerm(position,t);
+			generateCriticalInstance(A,terms,p,position+1,a2);
+		}
+	}
+
+};
+
