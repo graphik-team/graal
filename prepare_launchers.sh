@@ -77,7 +77,7 @@ echo "GRAAL_DIR=\"${GRAAL_DIR}\"" >> "${GRAAL_RULETOOLS_FILE}";
 echo "GRAAL_RELEASE=\"\${GRAAL_DIR}/target/release/graal.jar/\"" >> "${GRAAL_RULETOOLS_FILE}";
 echo "" >> "${GRAAL_RULETOOLS_FILE}";
 echo "GRAAL_CP=\"${LIBS}\"" >> "${GRAAL_RULETOOLS_FILE}";
-echo "java -cp \${GRAAL_CP}:\${GRAAL_RELEASE} fr.lirmm.graphik.graal.apps.RuleSetTools \"\$@\"" >> "${GRAAL_RULETOOLS_FILE}";
+echo "java -cp \${GRAAL_CP}:\${GRAAL_RELEASE} fr.lirmm.graphik.graal.apps.GraalTools \"\$@\"" >> "${GRAAL_RULETOOLS_FILE}";
 chmod +x "${GRAAL_RULETOOLS_FILE}"
 
 

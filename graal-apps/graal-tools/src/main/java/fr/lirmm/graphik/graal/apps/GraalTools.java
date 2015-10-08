@@ -8,6 +8,7 @@ import java.util.Iterator;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
+import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.core.RuleUtils;
@@ -17,6 +18,11 @@ import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 import fr.lirmm.graphik.util.Prefix;
 
+// TODO
+// Probably, if labels are required, since now it's a single program
+// they should be added to atomic head or single piece head if all
+// options are on.
+// And nothing without label should be printed.
 public class GraalTools {
 	public static final String   PROGRAM_NAME   = "ruleset-tools";
 
@@ -107,6 +113,14 @@ public class GraalTools {
 				System.err.println("Done!");
 		}
 
+		if (options.critical_instance) {
+			if (options.verbose)
+				System.err.println("Building critical instance...");
+			writer.write(RuleUtils.criticalInstance(rules));
+			if (options.verbose)
+				System.err.println("Building critical instance...");
+		}
+
 		writer.write('\n');
 		writer.close();
 
@@ -134,6 +148,10 @@ public class GraalTools {
 	@Parameter(names = { "-o", "--output-file" },
 	           description = "Output file (use '-' for stdout)")
 	private String output_file = "-";
+
+	@Parameter(names = { "-c", "--critical-instance" },
+	           description = "Print the critical instance")
+	private boolean critical_instance = false;
 
 	@Parameter(names = { "-h", "--help" },
 	           description = "Print this message.")

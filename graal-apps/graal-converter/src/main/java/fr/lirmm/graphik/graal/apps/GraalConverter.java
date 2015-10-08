@@ -102,7 +102,7 @@ public class GraalConverter {
 			case "ruleml":
 				writer = new RuleMLWriter(out);
 				break;
-		case "iris-dtg":
+			case "iris-dtg":
 				writer = new IrisDtgWriter(out);
 				break;
 			default:
