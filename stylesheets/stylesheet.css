@@ -187,6 +187,12 @@ img {
     border: medium none;
 }
 
+#rc > p > img.right {
+    margin: 5px;
+    float: right;
+    width: 400px;
+}
+
 pre, code {
   font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
   font-size: 14px;

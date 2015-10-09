@@ -138,11 +138,13 @@
         <a name="rc"></a>
 		<h2>Rule Classes</h2>
         <p>
+           <img src="./images/rc_inclusion.png" class="right" />
 		The rule classes are divided into two types: <i>abstract</i> classes, which ensure
 		 decidability but are not recognizable, i.e., one cannot always determine if a set for rules belongs to such a class,
 		 and <i>concrete</i> classes, which may specialize one or
 		several abstract classes and are recognizable by syntactic properties.
 		</p>
+        <p>
 		In the figure on the right side, rule classes are ordered by inclusion:
 		an edge between two classes means that the above one includes the one below.
 		If there is no edge between two classes, it means there are incomparable.
@@ -151,9 +153,10 @@
 		<i>fes</i>, <i>fus</i> and <i>gbts</i>, and are a specialization of
 		<i>domain-restricted</i>, <i>weakly-acyclic</i> and <i>frontier-guarded</i>
 		rules.
-		<br>
+		</p>
+        <p>
 		Finally, some classes present in this figure are not implemented for now in the
-		analyzer, hence they are not described below. These classes are the following:
+		analyzer, hence they are not described below. These classes are the following:</p>
 		<ul>
 			<li>weakly-sticky-join (w-sticky-j)</li>
 			<li>sticky-join (sticky-j)</li>
