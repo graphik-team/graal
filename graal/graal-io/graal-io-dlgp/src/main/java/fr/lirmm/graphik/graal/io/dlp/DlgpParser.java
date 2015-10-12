@@ -53,6 +53,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Iterator;
 
 import org.slf4j.Logger;
@@ -210,13 +211,14 @@ public final class DlgpParser extends AbstractParser<Object> {
 	
 	private Reader reader = null;
 
+	private UncaughtExceptionHandler exceptionHandler;
+
 	/**
 	 * Constructor for parsing from the given reader.
 	 * @param reader
 	 */
 	public DlgpParser(Reader reader) {
-		this.reader = reader;
-		new Thread(new Producer(reader,buffer)).start();
+		this(reader, null);
 	}
 	
 	/**
@@ -251,6 +253,46 @@ public final class DlgpParser extends AbstractParser<Object> {
 		this(new InputStreamReader(in));
 	}
 	
+	/**
+	 * Constructor for parsing from the given reader.
+	 * 
+	 * @param reader
+	 */
+	public DlgpParser(Reader reader, Thread.UncaughtExceptionHandler exceptionHandler) {
+		this.reader = reader;
+		Thread t = new Thread(new Producer(reader, buffer));
+		t.setUncaughtExceptionHandler(exceptionHandler);
+		t.start();
+	}
+
+	/**
+	 * Constructor for parsing from the given file.
+	 * 
+	 * @param file
+	 * @throws FileNotFoundException
+	 */
+	public DlgpParser(File file, Thread.UncaughtExceptionHandler exceptionHandler) throws FileNotFoundException {
+		this(new FileReader(file), exceptionHandler);
+	}
+
+	/**
+	 * Constructor for parsing the content of the string s as DLGP content.
+	 * 
+	 * @param s
+	 */
+	public DlgpParser(String s, Thread.UncaughtExceptionHandler exceptionHandler) {
+		this(new StringReader(s), exceptionHandler);
+	}
+
+	/**
+	 * Constructor for parsing the given InputStream.
+	 * 
+	 * @param in
+	 */
+	public DlgpParser(InputStream in, Thread.UncaughtExceptionHandler exceptionHandler) {
+		this(new InputStreamReader(in), exceptionHandler);
+	}
+
 	@Override
 	protected void finalize() throws Throwable {
 		this.close();
