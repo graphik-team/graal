@@ -149,6 +149,8 @@ public final class MSAProperty extends RuleSetProperty.Default {
 
 		R.add(rule);
 
+		s = new DefaultAtom(S);
+		d = new DefaultAtom(D);
 		Atom d2 = new DefaultAtom(D);
 		d.setTerm(0,DefaultTermFactory.instance().createTerm("X1",Term.Type.VARIABLE));
 		d.setTerm(1,DefaultTermFactory.instance().createTerm("X2",Term.Type.VARIABLE));
