@@ -1,0 +1,225 @@
+/*
+ * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
+ * (Université de Montpellier & CNRS) (2014 - 2015)
+ *
+ * Contributors :
+ *
+ * Clément SIPIETER <clement.sipieter@inria.fr>
+ * Mélanie KÖNIG
+ * Swan ROCHER
+ * Jean-François BAGET
+ * Michel LECLÈRE
+ * Marie-Laure MUGNIER <mugnier@lirmm.fr>
+ *
+ *
+ * This file is part of Graal <https://graphik-team.github.io/graal/>.
+ *
+ * This software is governed by the CeCILL  license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * "http://www.cecill.info".
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL license and that you accept its terms.
+ */
+ /**
+ * 
+ */
+package fr.lirmm.graphik.graal.rulesetanalyser.property;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import fr.lirmm.graphik.graal.GraalConstant;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.core.DefaultAtom;
+import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.core.DefaultAtom;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.core.DefaultRule;
+import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
+import fr.lirmm.graphik.graal.api.core.RuleSet;
+import fr.lirmm.graphik.graal.api.core.Query;
+import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
+import fr.lirmm.graphik.graal.forward_chaining.StaticChase;
+import fr.lirmm.graphik.graal.homomorphism.RecursiveBacktrackHomomorphism;
+
+import fr.lirmm.graphik.graal.core.RuleUtils;
+
+import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
+
+/**
+ * There is no cycle of functional symbol during the skolem chase 
+ * executed on the critical instance.
+ */
+public final class MSAProperty extends RuleSetProperty.Default {
+
+	private static MSAProperty instance = null;
+
+	private MSAProperty() { }
+
+	public static synchronized MSAProperty instance() {
+		if (instance == null) {
+			instance = new MSAProperty();
+		}
+		return instance;
+	}
+
+	@Override
+	public int check(AnalyserRuleSet ruleSet) {
+		RuleSet R = translateToMSA(ruleSet);
+		AtomSet A = RuleUtils.criticalInstance(R);
+		for (Rule rrr : R) {
+			System.out.println(rrr);
+		}
+
+		try { StaticChase.executeChase(A,R); }
+		catch (Exception e) {
+			System.err.println("TODO: something to do about it: " +e);
+			return 0;
+		}
+
+		DefaultConjunctiveQuery Q = new DefaultConjunctiveQuery();
+		DefaultAtom q = new DefaultAtom(C);
+		q.setTerm(0,FAKE);
+		Q.getAtomSet().add(q);
+
+		try { 
+			if (RecursiveBacktrackHomomorphism.instance().exist(Q.getAtomSet(),A))
+				return -1;
+			return 1;
+		}
+		catch (Exception e) {
+			System.err.println("TODO: something to do about it: " +e);
+			return 0;
+		}
+	}
+
+	@Override
+	public String getLabel() {
+		return "msa";
+	}
+
+	@Override
+	public Iterable<RuleSetProperty> getGeneralisations() {
+		List<RuleSetProperty> gen = new LinkedList<RuleSetProperty>();
+		gen.add(FESProperty.instance());
+		gen.add(BTSProperty.instance());
+		return gen;
+	}
+
+	public static RuleSet translateToMSA(Iterable<Rule> rules) {
+		RuleSet R = new LinkedListRuleSet();
+		for (Rule r : rules) {
+			for (Rule r2 : translateRuleToMSA(r))
+				R.add(r2);
+		}
+		DefaultRule rule = new DefaultRule();
+		Atom s = new DefaultAtom(S);
+		s.setTerm(0,DefaultTermFactory.instance().createTerm("X1",Term.Type.VARIABLE));
+		s.setTerm(1,DefaultTermFactory.instance().createTerm("X2",Term.Type.VARIABLE));
+		Atom d = new DefaultAtom(D);
+		d.setTerm(0,DefaultTermFactory.instance().createTerm("X1",Term.Type.VARIABLE));
+		d.setTerm(1,DefaultTermFactory.instance().createTerm("X2",Term.Type.VARIABLE));
+		rule.getBody().add(s);
+		rule.getHead().add(d);
+
+		R.add(rule);
+
+		Atom d2 = new DefaultAtom(D);
+		d.setTerm(0,DefaultTermFactory.instance().createTerm("X1",Term.Type.VARIABLE));
+		d.setTerm(1,DefaultTermFactory.instance().createTerm("X2",Term.Type.VARIABLE));
+		s.setTerm(0,DefaultTermFactory.instance().createTerm("X2",Term.Type.VARIABLE));
+		s.setTerm(1,DefaultTermFactory.instance().createTerm("X3",Term.Type.VARIABLE));
+		d2.setTerm(0,DefaultTermFactory.instance().createTerm("X1",Term.Type.VARIABLE));
+		d2.setTerm(1,DefaultTermFactory.instance().createTerm("X3",Term.Type.VARIABLE));
+		rule = new DefaultRule();
+		rule.getBody().add(d);
+		rule.getBody().add(s);
+		rule.getHead().add(d2);
+
+		R.add(rule);
+
+		return R;
+	}
+
+	public static List<Rule> translateRuleToMSA(final Rule r) {
+		List<Rule> result = new LinkedList<Rule>();
+		Substitution s = buildMSASubstitution(r);
+		DefaultRule r2 = new DefaultRule();
+		r2.setBody(r.getBody());
+		r2.setHead(r.getHead());
+		for (Term yi : r2.getExistentials()) {
+			Predicate Fir = GraalConstant.freshPredicate(1);
+			DefaultAtom f = new DefaultAtom(Fir);
+			f.setTerm(0,yi);
+			r2.getHead().add(f);
+			for (Term xj : r2.getFrontier()) {
+				DefaultAtom ss = new DefaultAtom(S);
+				ss.setTerm(0,xj);
+				ss.setTerm(1,yi);
+				r2.getHead().add(ss);
+			}
+
+			DefaultRule r3 = new DefaultRule();
+			DefaultAtom f1 = new DefaultAtom(Fir);
+			f1.setTerm(0,DefaultTermFactory.instance().createTerm("X1",Term.Type.VARIABLE));
+			DefaultAtom f2 = new DefaultAtom(Fir);
+			f2.setTerm(0,DefaultTermFactory.instance().createTerm("X2",Term.Type.VARIABLE));
+			DefaultAtom d = new DefaultAtom(D);
+			d.setTerm(0,DefaultTermFactory.instance().createTerm("X1",Term.Type.VARIABLE));
+			d.setTerm(1,DefaultTermFactory.instance().createTerm("X2",Term.Type.VARIABLE));
+
+			r3.getBody().add(f1);
+			r3.getBody().add(d);
+			r3.getBody().add(f2);
+
+			DefaultAtom c = new DefaultAtom(C);
+			c.setTerm(0,FAKE);
+			r3.getHead().add(c);
+
+			result.add(r3);
+		}
+		r2.setHead(s.createImageOf(r2.getHead()));
+		result.add(r2);
+
+		return result;
+	}
+
+	public static Substitution buildMSASubstitution(final Rule r) {
+		Substitution s = new TreeMapSubstitution();
+		for (Term yi : r.getExistentials())
+			s.put(yi,GraalConstant.freshConstant());
+		return s;
+	}
+
+	private static final Predicate D = GraalConstant.freshPredicate(2);
+	private static final Predicate S = GraalConstant.freshPredicate(2);
+	private static final Predicate C = GraalConstant.freshPredicate(1);
+	private static final Term FAKE = GraalConstant.freshConstant();
+
+};
+

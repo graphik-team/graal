@@ -64,8 +64,8 @@ import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 public class DefaultRule implements Rule {
 
 	private String label;
-	private final InMemoryAtomSet body;
-	private final InMemoryAtomSet head;
+	private InMemoryAtomSet body;
+	private InMemoryAtomSet head;
 
 	private Set<Term> terms = null;
 	private Set<Term> frontier = null;
@@ -115,6 +115,10 @@ public class DefaultRule implements Rule {
 		return this.body;
 	}
 
+	public void setBody(InMemoryAtomSet b) {
+		this.body = b;
+	}
+
 	@Override
 	public String getLabel() {
 		return this.label;
@@ -128,6 +132,10 @@ public class DefaultRule implements Rule {
 	@Override
 	public InMemoryAtomSet getHead() {
 		return this.head;
+	}
+
+	public void setHead(InMemoryAtomSet h) {
+		this.head = h;
 	}
 
 	@Override
