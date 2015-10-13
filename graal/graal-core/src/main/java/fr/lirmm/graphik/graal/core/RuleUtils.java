@@ -582,13 +582,8 @@ public final class RuleUtils {
 	 * special fresh constant.
 	 */
 	public static void criticalInstance(final Iterable<Rule> rules, AtomSet A) {
-		// get all constants
-		// add a single variable
-		// for each of them add everything there is
 		Set<Term> terms = new TreeSet<Term>();
-		//TermSet terms = rules.getTerms(Term.Type.CONSTANT);
-		terms.add(GraalConstant.freshConstant());//DefaultTermFactory.instance().createTerm("*",Term.Type.VARIABLE));
-		// now get all predicates
+		terms.add(GraalConstant.freshConstant());
 		Set<Predicate> predicates = new TreeSet<Predicate>();
 		for (Rule r : rules) {
 			for (Atom b : r.getBody()) {
@@ -599,8 +594,6 @@ public final class RuleUtils {
 			}
 		}
 
-
-		// now for each predicate, add all possible constants
 		for (Predicate p : predicates) {
 			generateCriticalInstance(A,terms,p,0,new DefaultAtom(p));
 		}
