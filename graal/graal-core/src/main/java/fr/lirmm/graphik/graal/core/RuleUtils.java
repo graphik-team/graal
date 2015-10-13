@@ -574,6 +574,13 @@ public final class RuleUtils {
 		return A;
 	}
 
+	/**
+	 * The skolem  chase on the critical instance of R halts iff the skolem chase of R halts
+	 * universally.
+	 * The critical instance for a set of rules R contains all facts that can be constructed
+	 * using all predicates occuring in R, all constants occurring in the body of a rule in R, and one
+	 * special fresh constant.
+	 */
 	public static void criticalInstance(final Iterable<Rule> rules, AtomSet A) {
 		// get all constants
 		// add a single variable
@@ -586,12 +593,6 @@ public final class RuleUtils {
 		for (Rule r : rules) {
 			for (Atom b : r.getBody()) {
 				predicates.add(b.getPredicate());
-				for (Term t : b.getTerms())
-					if (t.getType() == Term.Type.CONSTANT)
-						terms.add(t);
-			}
-			for (Atom b : r.getHead()) { // actually, it should not be needed TODO: check the Critical Instance def
-		//		predicates.add(b.getPredicate());
 				for (Term t : b.getTerms())
 					if (t.getType() == Term.Type.CONSTANT)
 						terms.add(t);
