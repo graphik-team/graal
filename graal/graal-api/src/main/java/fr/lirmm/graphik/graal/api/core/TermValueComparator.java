@@ -43,23 +43,26 @@
  /**
  * 
  */
-package fr.lirmm.graphik;
+package fr.lirmm.graphik.graal.api.core;
 
-import java.io.File;
-
-import org.junit.Test;
-
-import fr.lirmm.graphik.graal.io.grd.GRDParser;
+import java.io.Serializable;
+import java.util.Comparator;
 
 /**
- * @author clement
+ * 
+ * This class implements a comparator of Term that doesn't make difference
+ * on Term Type.
+ *
+ * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class GrdTest {
-	
-	 @Test
-	 public void grdTest() throws Exception {
-		GRDParser.getInstance().parse(new File("./src/test/resources/univ-bench.grd"));
-		return;
-	 }
-}
+public class TermValueComparator implements Comparator<Term>, Serializable {
+
+	private static final long serialVersionUID = -4231328676676157296L;
+
+	@Override
+	public int compare(Term term0, Term term1) {
+		return term0.getIdentifier().toString().compareTo(term1.getIdentifier().toString());
+	}
+};
+

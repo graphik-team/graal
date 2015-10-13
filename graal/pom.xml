@@ -21,6 +21,7 @@
 		<module>graal-backward-chaining</module>
 		<module>graal-rules-analyser</module>
 		<module>graal-util</module>
+		<module>graal-test</module>
 	</modules>
 
 </project>

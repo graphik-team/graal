@@ -49,6 +49,7 @@ import java.util.Iterator;
 
 import fr.lirmm.graphik.graal.api.core.AbstractAtomSet;
 import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
@@ -58,6 +59,15 @@ import fr.lirmm.graphik.graal.api.core.Term;
  *
  */
 public abstract class AbstractInMemoryAtomSet extends AbstractAtomSet implements InMemoryAtomSet {
+
+	@Override
+	public boolean contains(Atom atom) {
+		try {
+			return super.contains(atom);
+		} catch (AtomSetException e) {
+			throw new Error("It should never happen.");
+		}
+	}
 
 	@Override
 	public boolean addAll(Iterator<? extends Atom> atoms) {

@@ -192,14 +192,9 @@ public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements
 	@Override
 	public boolean contains(Object o) {
 		if (o instanceof Atom)
-			this.linkedList.contains((Atom) o);
+			this.contains((Atom) o);
 
 		return false;
-	}
-
-	@Override
-	public boolean contains(Atom atom) {
-		return this.linkedList.contains(atom);
 	}
 
 	@Override

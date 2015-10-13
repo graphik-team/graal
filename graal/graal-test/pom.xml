@@ -1,28 +1,21 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
+	
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
 		<artifactId>graal</artifactId>
-		<version>1.0.1-SNAPSHOT </version>
+		<version>1.0.1-SNAPSHOT</version>
 	</parent>
-
-	<artifactId>graal-rules-analyser</artifactId>
-	<name>fr.lirmm.graphik:graal-rules-analyser</name>
+	
+	<artifactId>graal-test</artifactId>
+	<name>fr.lirmm.graphik:graal-test</name>
 	<packaging>jar</packaging>
-	<description>This module is dedicated to the analysis of a set of existential rules. 
-	It can check if this set belongs to a known decidable class of rules, 
-	either directly or by means of its Graph of Rule Dependencies (GRD). 
-	This module allows to analyze the properties of the strongly connected components in the GRD, 
-	which allows to determine properties of the rule set with respect to decidability 
-	as well as the kind of paradigm (forward or backward chaining) ensuring decidability.
-	</description>
+
+	<properties>
+		<jdk.version>1.7</jdk.version>
+	</properties>
 
 	<developers>
-		<developer>
-			<name>Swan ROCHER</name>
-			<organization>INRIA</organization>
-		</developer>
 		<developer>
 			<name>Clément SIPIETER</name>
 			<email>clement@6pi.fr</email>
@@ -33,35 +26,33 @@
 	<dependencies>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-util</artifactId>
+			<artifactId>graal-core</artifactId>
 			<version>${project.parent.version}</version>
+            <scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-core</artifactId>
+			<artifactId>graal-api</artifactId>
 			<version>${project.parent.version}</version>
+            <scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>fr.lirmm.graphik</groupId>
+			<artifactId>graal-io-dlgp</artifactId>
+			<version>${project.parent.version}</version>
+            <scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-forward-chaining</artifactId>
 			<version>${project.parent.version}</version>
+            <scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.jgrapht</groupId>
-			<artifactId>jgrapht-core</artifactId>
-			<version>0.9.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.3.2</version>
-		</dependency>
-		<!-- Test -->
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-io-dlgp</artifactId>
+			<artifactId>graal-homomorphism</artifactId>
 			<version>${project.parent.version}</version>
-			<scope>test</scope>
+            <scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
