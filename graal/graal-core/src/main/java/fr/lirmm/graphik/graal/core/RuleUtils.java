@@ -568,13 +568,13 @@ public final class RuleUtils {
 	}
 
 
-	public static InMemoryAtomSet criticalInstance(final RuleSet rules) {
+	public static InMemoryAtomSet criticalInstance(final Iterable<Rule> rules) {
 		InMemoryAtomSet A = new LinkedListAtomSet();
 		criticalInstance(rules,A);
 		return A;
 	}
 
-	public static void criticalInstance(final RuleSet rules, AtomSet A) {
+	public static void criticalInstance(final Iterable<Rule> rules, AtomSet A) {
 		// get all constants
 		// add a single variable
 		// for each of them add everything there is
