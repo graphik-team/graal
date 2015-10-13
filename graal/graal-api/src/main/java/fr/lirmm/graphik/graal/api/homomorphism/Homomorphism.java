@@ -54,6 +54,15 @@ import fr.lirmm.graphik.graal.api.core.stream.SubstitutionReader;
  */
 public interface Homomorphism<T1 extends Object, T2 extends AtomSet> {
 
+	/**
+	 * Look for the homomorphisms of the specified object into the specified
+	 * atomset.
+	 * 
+	 * @param q
+	 * @param a
+	 * @return
+	 * @throws HomomorphismException
+	 */
 	<U1 extends T1, U2 extends T2> SubstitutionReader execute(U1 q, U2 a)
 			throws HomomorphismException;
 
