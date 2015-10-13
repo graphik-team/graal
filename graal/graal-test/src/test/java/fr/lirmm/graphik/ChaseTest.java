@@ -72,7 +72,9 @@ import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseWithGRDAndUnfiers;
 import fr.lirmm.graphik.graal.forward_chaining.NaiveChase;
 import fr.lirmm.graphik.graal.forward_chaining.StaticChase;
+import fr.lirmm.graphik.graal.forward_chaining.halting_condition.CoreChaseStopCondition;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
+import fr.lirmm.graphik.graal.homomorphism.RecursiveBacktrackHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 
@@ -146,6 +148,43 @@ public class ChaseTest {
 		Assert.assertEquals(4, size);
 	}
 	
+	@Theory
+	public void coreChaseTest(AtomSet atomSet) throws AtomSetException, HomomorphismFactoryException,
+	                                          HomomorphismException, ChaseException {
+		atomSet.addAll(DlgpParser.parseAtomSet("e(X,Y), e(Y,X)."));
+
+		LinkedList<Rule> ruleSet = new LinkedList<Rule>();
+		ruleSet.add(DlgpParser.parseRule("e(Z,Z) :- e(X,Y), e(Y,X)."));
+		ruleSet.add(DlgpParser.parseRule("e(X,Z), e(Z,Y) :- e(X,Y)."));
+
+		Chase chase = new NaiveChase(ruleSet, atomSet, RecursiveBacktrackHomomorphism.instance(),
+		        new CoreChaseStopCondition());
+		chase.execute();
+
+		int size = 0;
+		for (Iterator<Atom> it = atomSet.iterator(); it.hasNext(); it.next()) {
+			++size;
+		}
+
+		Assert.assertTrue(true);
+	}
+
+	@Theory
+	public void coreChaseTest2(AtomSet atomSet) throws AtomSetException, HomomorphismFactoryException,
+	                                           HomomorphismException, ChaseException {
+		atomSet.addAll(DlgpParser.parseAtomSet("e(X,Y), e(Y,Z)."));
+
+		LinkedList<Rule> ruleSet = new LinkedList<Rule>();
+		ruleSet.add(DlgpParser.parseRule("e(X,Z) :- e(X,Y), e(Y,Z)."));
+
+		Chase chase = new NaiveChase(ruleSet, atomSet, RecursiveBacktrackHomomorphism.instance(),
+		        new CoreChaseStopCondition());
+		chase.execute();
+
+		Query query = DlgpParser.parseQuery("? :- e(X,Y),e(Y,Z),e(X,Z).");
+		Assert.assertTrue(StaticHomomorphism.executeQuery(query, atomSet).hasNext());
+	}
+
 	@Theory
 	public void test2(InMemoryAtomSet atomSet) throws ChaseException, HomomorphismFactoryException, HomomorphismException {
 

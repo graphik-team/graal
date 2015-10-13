@@ -48,13 +48,11 @@ package fr.lirmm.graphik.graal.forward_chaining;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Rule;
-import fr.lirmm.graphik.graal.api.core.VariableGenerator;
 import fr.lirmm.graphik.graal.api.forward_chaining.AbstractChase;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
 import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
-import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.util.Verbosable;
@@ -81,11 +79,6 @@ public class NaiveChase extends AbstractChase implements Verbosable {
 	// /////////////////////////////////////////////////////////////////////////
 	
 	public NaiveChase(Iterable<Rule> ruleSet, AtomSet atomSet) {
-		this(ruleSet, atomSet, new DefaultVariableGenerator("E"));
-	}
-
-	public NaiveChase(Iterable<Rule> ruleSet, AtomSet atomSet,
-			VariableGenerator existentialGen) {
 		super(new DefaultRuleApplier<AtomSet>(StaticHomomorphism
 				.getSolverFactory().getConjunctiveQuerySolver(atomSet)));
 		this.ruleSet = ruleSet;
@@ -98,18 +91,17 @@ public class NaiveChase extends AbstractChase implements Verbosable {
 		this.ruleSet = ruleSet;
 		this.atomSet = atomSet;
 	}
-
+	
 	public NaiveChase(Iterable<Rule> ruleSet, AtomSet atomSet,
-			VariableGenerator existentialGen,
 			Homomorphism<ConjunctiveQuery, AtomSet> solver) {
 		super(new DefaultRuleApplier<AtomSet>(solver));
 		this.ruleSet = ruleSet;
 		this.atomSet = atomSet;
 	}
-	
-	public NaiveChase(Iterable<Rule> ruleSet, AtomSet atomSet,
-			Homomorphism<ConjunctiveQuery, AtomSet> solver) {
-		super(new DefaultRuleApplier<AtomSet>(solver));
+
+	public NaiveChase(Iterable<Rule> ruleSet, AtomSet atomSet, ChaseHaltingCondition haltingCondition) {
+		super(new DefaultRuleApplier<AtomSet>(StaticHomomorphism.getSolverFactory().getConjunctiveQuerySolver(atomSet),
+		        haltingCondition));
 		this.ruleSet = ruleSet;
 		this.atomSet = atomSet;
 	}
