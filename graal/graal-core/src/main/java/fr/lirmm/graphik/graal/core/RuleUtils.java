@@ -63,6 +63,7 @@ import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
+import fr.lirmm.graphik.graal.GraalConstant;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetUtils;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
@@ -579,7 +580,7 @@ public final class RuleUtils {
 		// for each of them add everything there is
 		Set<Term> terms = new TreeSet<Term>();
 		//TermSet terms = rules.getTerms(Term.Type.CONSTANT);
-		terms.add(DefaultTermFactory.instance().createTerm("*",Term.Type.VARIABLE));
+		terms.add(GraalConstant.freshConstant());//DefaultTermFactory.instance().createTerm("*",Term.Type.VARIABLE));
 		// now get all predicates
 		Set<Predicate> predicates = new TreeSet<Predicate>();
 		for (Rule r : rules) {
