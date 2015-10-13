@@ -43,14 +43,18 @@
  package fr.lirmm.graphik.graal.api.forward_chaining;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 
 public interface RuleApplicationHandler {
 
-	public boolean onRuleApplication(AtomSet from, AtomSet atomSet, AtomSet base);
+	public boolean onRuleApplication(Rule rule, Substitution substitution, AtomSet data);
 
 	public static RuleApplicationHandler DEFAULT = new RuleApplicationHandler() {
 		@Override
-		public boolean onRuleApplication(AtomSet from, AtomSet atomSet, AtomSet base) { return true; }
+		public boolean onRuleApplication(Rule rule, Substitution substitution, AtomSet data) {
+			return true;
+		}
 	};
 
 };

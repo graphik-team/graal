@@ -40,22 +40,29 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
+/**
  * 
  */
 package fr.lirmm.graphik.graal.forward_chaining.halting_condition;
 
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.Query;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.VariableGenerator;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
+import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 
 /**
@@ -64,20 +71,31 @@ import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
  */
 public class RestrictedChaseStopCondition implements ChaseHaltingCondition {
 
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(RestrictedChaseStopCondition.class);
-	
+	private static final Logger LOGGER = LoggerFactory.getLogger(RestrictedChaseStopCondition.class);
+	private VariableGenerator existentialGen = new DefaultVariableGenerator("E");
+
 	@Override
-	public boolean canIAdd(AtomSet atomSet, Set<Term> fixedTerms, AtomSet from, AtomSet base) throws HomomorphismFactoryException, HomomorphismException {
-		
-		Query query = new ConjunctiveQueryWithFixedVariables(atomSet, fixedTerms);
-		if(LOGGER.isDebugEnabled()) {
+	public Iterator<Atom> apply(Rule rule, Substitution substitution, AtomSet data)
+	                                                                                 throws HomomorphismFactoryException,
+	                                                                                 HomomorphismException {
+		Set<Term> fixedVars = substitution.getValues();
+
+		// Generate new existential variables
+		for (Term t : rule.getExistentials()) {
+			substitution.put(t, existentialGen.getFreshVar());
+		}
+
+		AtomSet newFacts = substitution.createImageOf(rule.getHead());
+		Query query = new ConjunctiveQueryWithFixedVariables(newFacts, fixedVars);
+
+		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Fixed Query:" + query);
 		}
-		if (StaticHomomorphism.executeQuery(query, base).hasNext()) {
-			return false;
+		if (StaticHomomorphism.executeQuery(query, data).hasNext()) {
+			return Collections.<Atom> emptyList().iterator();
 		}
-		return true;
+
+		return newFacts.iterator();
 	}
 
 }

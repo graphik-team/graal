@@ -47,6 +47,7 @@ import java.util.LinkedList;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.Query;
+import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplicationHandler;
@@ -61,7 +62,9 @@ public class FGHRuleApplicationHandler implements RuleApplicationHandler {
 	}
 
 	@Override
-	public boolean onRuleApplication(AtomSet from, AtomSet atomSet, AtomSet base) {
+	public boolean onRuleApplication(Rule rule, Substitution substitution, AtomSet base) {
+		AtomSet from = substitution.createImageOf(rule.getBody());
+		AtomSet atomSet = substitution.createImageOf(rule.getHead());
 
 		try {
 		Query q = new DefaultConjunctiveQuery(from,from.getTerms(Term.Type.VARIABLE));

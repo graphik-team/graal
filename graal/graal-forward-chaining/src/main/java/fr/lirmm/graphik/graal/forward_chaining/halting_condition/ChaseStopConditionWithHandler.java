@@ -42,10 +42,13 @@
  */
  package fr.lirmm.graphik.graal.forward_chaining.halting_condition;
 
-import java.util.Set;
+import java.util.Collections;
+import java.util.Iterator;
 
+import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
 import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplicationHandler;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
@@ -63,22 +66,14 @@ public class ChaseStopConditionWithHandler implements ChaseHaltingCondition {
 		this.handler = RuleApplicationHandler.DEFAULT;
 	}
 
-	/**
-	 * @param atomSet
-	 * @param fixedTerm
-	 * @param base
-	 * @return
-	 * @throws HomomorphismFactoryException
-	 * @throws HomomorphismException
-	 */
 	@Override
-	public boolean canIAdd(AtomSet atomSet, Set<Term> fixedTerm,
-	                       AtomSet from, AtomSet base) 
-		throws HomomorphismFactoryException, HomomorphismException {
-		if (this.handler.onRuleApplication(from,atomSet,base)) {
-			return this.realHaltingCondition.canIAdd(atomSet,fixedTerm,from,base);
+	public Iterator<Atom> apply(Rule rule, Substitution substitution, AtomSet data)
+	                                                                                 throws HomomorphismFactoryException,
+	                                                                                 HomomorphismException {
+		if (this.handler.onRuleApplication(rule, substitution, data)) {
+			return this.realHaltingCondition.apply(rule, substitution, data);
 		}
-		return false;
+		return Collections.<Atom> emptyList().iterator();
 	}
 
 	public void setHandler(RuleApplicationHandler h) {
@@ -90,6 +85,7 @@ public class ChaseStopConditionWithHandler implements ChaseHaltingCondition {
 
 	private ChaseHaltingCondition realHaltingCondition;
 	private RuleApplicationHandler handler;
+
 
 };
 

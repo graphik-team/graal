@@ -40,34 +40,43 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
+/**
  * 
  */
 package fr.lirmm.graphik.graal.api.forward_chaining;
 
-import java.util.Set;
+import java.util.Iterator;
 
+import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 
 /**
+ * The ChaseHaltingCondition interface provides a way to control when a
+ * saturation process will stop.
+ * 
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
 public interface ChaseHaltingCondition {
 
-
 	/**
-	 * @param atomSet
-	 * @param fixedTerm
-	 * @param base
-	 * @return
+	 * This method should return the atoms to actually add.
+	 * 
+	 * @param rule
+	 *            The rule which is triggered
+	 * @param substitution
+	 *            A homomorphism of the rule body found.
+	 * @param data
+	 *            The data over which this rule is applied.
+	 * @return The atoms to actually add, if the application is redundant.
+	 * 
 	 * @throws HomomorphismFactoryException
 	 * @throws HomomorphismException
 	 */
-	boolean canIAdd(AtomSet atomSet, Set<Term> fixedTerm, 
-	                AtomSet from, AtomSet base)
-		throws HomomorphismFactoryException, HomomorphismException;
+	Iterator<Atom> apply(Rule rule, Substitution substitution, AtomSet data) throws HomomorphismFactoryException,
+	                                                                          HomomorphismException;
 }

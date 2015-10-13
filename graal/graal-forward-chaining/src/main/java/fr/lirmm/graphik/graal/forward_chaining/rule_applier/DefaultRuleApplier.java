@@ -45,11 +45,12 @@
  */
 package fr.lirmm.graphik.graal.forward_chaining.rule_applier;
 
-import java.util.Set;
+import java.util.Iterator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
@@ -143,22 +144,10 @@ public class DefaultRuleApplier<T extends AtomSet> implements
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("-- Found homomorphism: " + substitution);
 				}
-				Set<Term> fixedVars = substitution.getValues();
 
-				// Generate new existential variables
-				for (Term t : rule.getExistentials()) {
-					substitution.put(t, this.getFreeVar());
-				}
-
-				// the atom set produced by the rule application
-				AtomSet deductedAtomSet = substitution.createImageOf(rule
-						.getHead());
-				AtomSet bodyAtomSet = substitution
-						.createImageOf(rule.getBody());
-
-				if (this.getHaltingCondition().canIAdd(deductedAtomSet,
-						fixedVars, bodyAtomSet, atomSet)) {
-					atomSet.addAll(deductedAtomSet);
+				Iterator<Atom> it = this.getHaltingCondition().apply(rule, substitution, atomSet);
+				if (it.hasNext()) {
+					atomSet.addAll(it);
 					isChanged = true;
 				}
 			}
