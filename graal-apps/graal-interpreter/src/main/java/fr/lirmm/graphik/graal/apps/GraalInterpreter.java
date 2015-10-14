@@ -95,35 +95,37 @@ public class GraalInterpreter {
 				line += scan.nextLine();
 			}
 
-			if ("quit.".equals(line) || "exit.".equals(line)) {
+			switch (line) {
+			case "quit.":
+			case "exit.":
 				break;
-			}
-
-			try {
-				parser = new DlgpParser(line, new ExceptionHandler(writer));
-				for (Object o : parser) {
-					if (o instanceof Rule)
-						ruleSet.add((Rule) o);
-					else if (o instanceof Atom)
-						atomSet.add((Atom) o);
-					else if (o instanceof ConjunctiveQuery) {
-						StaticChase.executeChase(atomSet, ruleSet);
-
-						ConjunctiveQuery query = (ConjunctiveQuery) o;
-						for (Substitution s : StaticHomomorphism.executeQuery(query, atomSet)) {
-							writer.write(s.toString());
-							writer.write("\n");
-						}
-						writer.flush();
-					}
-
-				}
-				parser.close();
-
-			} catch (Throwable e) {
-				writer.write("Syntax error\n");
+			case "facts.":
+			case "data.":
+				writer.write(atomSet);
 				writer.flush();
+				continue;
 			}
+
+
+			parser = new DlgpParser(line, new ExceptionHandler(writer));
+			for (Object o : parser) {
+				if (o instanceof Rule)
+					ruleSet.add((Rule) o);
+				else if (o instanceof Atom)
+					atomSet.add((Atom) o);
+				else if (o instanceof ConjunctiveQuery) {
+					StaticChase.executeChase(atomSet, ruleSet);
+
+					ConjunctiveQuery query = (ConjunctiveQuery) o;
+					for (Substitution s : StaticHomomorphism.executeQuery(query, atomSet)) {
+						writer.write(s.toString());
+						writer.write("\n");
+					}
+					writer.flush();
+				}
+
+			}
+			parser.close();
 
 			writer.write("> ");
 			writer.flush();
