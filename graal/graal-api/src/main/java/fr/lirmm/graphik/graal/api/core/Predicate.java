@@ -155,3 +155,4 @@ public class Predicate implements Comparable<Predicate>, Serializable, Appendabl
 	}
 
 };
+

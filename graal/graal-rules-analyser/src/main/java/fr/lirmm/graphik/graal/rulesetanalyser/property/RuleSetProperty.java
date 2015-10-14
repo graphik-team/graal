@@ -12,14 +12,14 @@ import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
  * is a local property (meaning that the union of two rule sets
  * satisfying the property, satisfies the property), or not.
  * If it is, you should extend RuleSetProperty.Local, and override
- * the @code{int check(Rule)} method.
+ * the {@code int check(Rule)} method.
  * Otherwise you should extend RuleSetProperty.Default and override
- * the @code{int check(AnalyserRuleSet)} method.
- * An instance of @code{AnalyserRuleSet} provides various data
+ * the {@code int check(AnalyserRuleSet)} method.
+ * An instance of {@code AnalyserRuleSet} provides various data
  * structures used by others rule properties.
  * 
  * Then, you should also override the
- * @code{getSpecialisations()} and @code{getGeneralisations}
+ * {@code getSpecialisations()} and {@code getGeneralisations}
  * methods.
  * These allow the analyser to not check all rule properties if a
  * more specific one is already satisfied,

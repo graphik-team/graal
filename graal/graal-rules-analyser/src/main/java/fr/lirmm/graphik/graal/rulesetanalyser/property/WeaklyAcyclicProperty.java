@@ -91,6 +91,7 @@ public final class WeaklyAcyclicProperty extends RuleSetProperty.Default {
 		gen.add(WeaklyStickyProperty.instance());
 		gen.add(FESProperty.instance());
 		gen.add(BTSProperty.instance());
+		gen.add(MSAProperty.instance());
 		return gen;
 	}
 

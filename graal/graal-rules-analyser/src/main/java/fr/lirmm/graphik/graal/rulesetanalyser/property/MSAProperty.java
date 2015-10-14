@@ -87,10 +87,7 @@ public final class MSAProperty extends RuleSetProperty.Default {
 	@Override
 	public int check(AnalyserRuleSet ruleSet) {
 		RuleSet R = translateToMSA(ruleSet);
-		AtomSet A = RuleUtils.criticalInstance(R);
-		for (Rule rrr : R) {
-			System.out.println(rrr);
-		}
+		AtomSet A = RuleUtils.criticalInstance(ruleSet);
 
 		try { StaticChase.executeChase(A,R); }
 		catch (Exception e) {
