@@ -48,13 +48,30 @@ package fr.lirmm.graphik.graal.rulesetanalyser.property;
 import java.util.LinkedList;
 import java.util.List;
 
+import fr.lirmm.graphik.graal.GraalConstant;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.RuleSet;
+import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.core.DefaultAtom;
+import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
+import fr.lirmm.graphik.graal.core.DefaultRule;
+import fr.lirmm.graphik.graal.core.RuleUtils;
+import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
+import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.forward_chaining.NaiveChase;
+import fr.lirmm.graphik.graal.forward_chaining.halting_condition.FrontierRestrictedChaseHaltingCondition;
+import fr.lirmm.graphik.graal.homomorphism.RecursiveBacktrackHomomorphism;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
 
 /**
  * There is no cycle of functional symbol during the skolem chase 
  * executed on the critical instance.
  */
-/*
 public final class MFAProperty extends RuleSetProperty.Default {
 
 	private static MFAProperty instance = null;
@@ -70,18 +87,29 @@ public final class MFAProperty extends RuleSetProperty.Default {
 
 	@Override
 	public int check(AnalyserRuleSet ruleSet) {
-		// first rewrite the rules
-		// then call the skolem chase
-		// then see if it halts
-		// 
-		// I think that for now, we don't have an easy way to have
-		// the semi-decidability.
-		// It should be added somewhere.
-		// (perhaps a class 'Reasoner' that takes all the knowledge
-		// base and effectively computes forward chaining but
-		// halts if there is an answer (if the query is boolean),
-		// or when all answers are found (if it is not))
-		return 0;
+		RuleSet R = translateToMFA(ruleSet);
+		AtomSet A = RuleUtils.criticalInstance(ruleSet);
+		NaiveChase chase = new NaiveChase(R,A,new FrontierRestrictedChaseHaltingCondition());
+
+		DefaultConjunctiveQuery Q = new DefaultConjunctiveQuery();
+		DefaultAtom q = new DefaultAtom(C);
+		q.setTerm(0,FAKE);
+		Q.getAtomSet().add(q);
+
+		try {
+			while (chase.hasNext()) {
+				chase.next();
+				if (RecursiveBacktrackHomomorphism.instance().exist(Q.getAtomSet(),A)) {
+					return -1;
+				}
+			}
+		}
+		catch (Exception e) {
+			System.err.println("TODO: something to do about it: " +e);
+			return 0;
+		}
+
+		return 1;
 	}
 
 	@Override
@@ -97,5 +125,88 @@ public final class MFAProperty extends RuleSetProperty.Default {
 		return gen;
 	}
 
-};*/
+	public static RuleSet translateToMFA(Iterable<Rule> rules) {
+		RuleSet R = new LinkedListRuleSet();
+		for (Rule r : rules) {
+			for (Rule r2 : translateRuleToMFA(r))
+				R.add(r2);
+		}
+		DefaultRule rule = new DefaultRule();
+		Atom s = new DefaultAtom(S);
+		s.setTerm(0,DefaultTermFactory.instance().createTerm("X1",Term.Type.VARIABLE));
+		s.setTerm(1,DefaultTermFactory.instance().createTerm("X2",Term.Type.VARIABLE));
+		Atom d = new DefaultAtom(D);
+		d.setTerm(0,DefaultTermFactory.instance().createTerm("X1",Term.Type.VARIABLE));
+		d.setTerm(1,DefaultTermFactory.instance().createTerm("X2",Term.Type.VARIABLE));
+		rule.getBody().add(s);
+		rule.getHead().add(d);
+
+		R.add(rule);
+
+		s = new DefaultAtom(S);
+		d = new DefaultAtom(D);
+		Atom d2 = new DefaultAtom(D);
+		d.setTerm(0,DefaultTermFactory.instance().createTerm("X1",Term.Type.VARIABLE));
+		d.setTerm(1,DefaultTermFactory.instance().createTerm("X2",Term.Type.VARIABLE));
+		s.setTerm(0,DefaultTermFactory.instance().createTerm("X2",Term.Type.VARIABLE));
+		s.setTerm(1,DefaultTermFactory.instance().createTerm("X3",Term.Type.VARIABLE));
+		d2.setTerm(0,DefaultTermFactory.instance().createTerm("X1",Term.Type.VARIABLE));
+		d2.setTerm(1,DefaultTermFactory.instance().createTerm("X3",Term.Type.VARIABLE));
+		rule = new DefaultRule();
+		rule.getBody().add(d);
+		rule.getBody().add(s);
+		rule.getHead().add(d2);
+
+		R.add(rule);
+
+		return R;
+	}
+
+	public static List<Rule> translateRuleToMFA(final Rule r) {
+		List<Rule> result = new LinkedList<Rule>();
+		DefaultRule r2 = new DefaultRule();
+		r2.setBody(r.getBody());
+		r2.setHead(r.getHead());
+		for (Term yi : r2.getExistentials()) {
+			Predicate Fir = GraalConstant.freshPredicate(1);
+			DefaultAtom f = new DefaultAtom(Fir);
+			f.setTerm(0,yi);
+			r2.getHead().add(f);
+			for (Term xj : r2.getFrontier()) {
+				DefaultAtom ss = new DefaultAtom(S);
+				ss.setTerm(0,xj);
+				ss.setTerm(1,yi);
+				r2.getHead().add(ss);
+			}
+
+			DefaultRule r3 = new DefaultRule();
+			DefaultAtom f1 = new DefaultAtom(Fir);
+			f1.setTerm(0,DefaultTermFactory.instance().createTerm("X1",Term.Type.VARIABLE));
+			DefaultAtom f2 = new DefaultAtom(Fir);
+			f2.setTerm(0,DefaultTermFactory.instance().createTerm("X2",Term.Type.VARIABLE));
+			DefaultAtom d = new DefaultAtom(D);
+			d.setTerm(0,DefaultTermFactory.instance().createTerm("X1",Term.Type.VARIABLE));
+			d.setTerm(1,DefaultTermFactory.instance().createTerm("X2",Term.Type.VARIABLE));
+
+			r3.getBody().add(f1);
+			r3.getBody().add(d);
+			r3.getBody().add(f2);
+
+			DefaultAtom c = new DefaultAtom(C);
+			c.setTerm(0,FAKE);
+			r3.getHead().add(c);
+
+			result.add(r3);
+		}
+		result.add(r2);
+
+		return result;
+	}
+
+	private static final Predicate D = GraalConstant.freshPredicate(2);
+	private static final Predicate S = GraalConstant.freshPredicate(2);
+	private static final Predicate C = GraalConstant.freshPredicate(1);
+	private static final Term FAKE = GraalConstant.freshConstant();
+
+};
 

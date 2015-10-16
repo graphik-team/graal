@@ -1,21 +1,6 @@
 Rule Analyser TODO List
 =======================
 
-This package needs a heavy refactoring.
-Don't worry: I'll take care of it whenever I have some spare time.
-
-* RuleProperty should only impose a single method
-
-* RuleAnalyser is a mess
-
-* The rule hierarchy is not correctly handled (because of the use of
-the rule classes provided as static instances, instead of the ones
-provided in the initial collection)
-
-* The output is buggy (see corresponding issue)
-
-* aGRD property will probably not work as intended
-
 * And we still need to implement a servlet (and get rid of the old
 kiabora)
 

@@ -89,6 +89,8 @@ public final class RangeRestrictedProperty extends RuleSetProperty.Local {
 		gen.add(FESProperty.instance());
 		gen.add(GBTSProperty.instance());
 		gen.add(BTSProperty.instance());
+		gen.add(MFAProperty.instance());
+		gen.add(MSAProperty.instance());
 		return gen;
 	}
 

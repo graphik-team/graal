@@ -121,6 +121,7 @@ public final class MSAProperty extends RuleSetProperty.Default {
 		List<RuleSetProperty> gen = new LinkedList<RuleSetProperty>();
 		gen.add(FESProperty.instance());
 		gen.add(BTSProperty.instance());
+		gen.add(MFAProperty.instance());
 		return gen;
 	}
 
