@@ -54,6 +54,7 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplicationHandler;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 public class FGHRuleApplicationHandler implements RuleApplicationHandler {
 
@@ -70,20 +71,21 @@ public class FGHRuleApplicationHandler implements RuleApplicationHandler {
 		try {
 			ConjunctiveQuery q = new DefaultConjunctiveQuery(from, new LinkedList<Term>(
 			        from.getTerms(Term.Type.VARIABLE)));
-			for (Substitution s : this.solver.<ConjunctiveQuery, AtomSet> execute(q, base)) {
+			CloseableIterator<Substitution> it = this.solver.<ConjunctiveQuery, AtomSet> execute(q, base);
 
 			//AtomSet from2 = s.getSubstitut(from);
-
-			LinkedList causes = new LinkedList<Integer>();
-			for (Atom a : from) {
-				causes.add(new Integer(this.index.get(s.createImageOf(a))));
+			while (it.hasNext()) {
+				Substitution s = it.next();
+				LinkedList causes = new LinkedList<Integer>();
+				for (Atom a : from) {
+					causes.add(new Integer(this.index.get(s.createImageOf(a))));
+				}
+				for (Atom a : atomSet) {
+					this.fgh.add(causes, this.index.get(a));
+				}
 			}
-			for (Atom a : atomSet) {
-				this.fgh.add(causes,this.index.get(a));
-			}
-		}
 
-		return true;
+			return true;
 		}
 		catch (Exception e) {
 			System.err.println(e);
