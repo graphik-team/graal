@@ -62,6 +62,7 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.util.stream.AbstractIterator;
+import fr.lirmm.graphik.util.stream.ArrayBlockingQueueToCloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
@@ -78,7 +79,7 @@ public class BacktrackHomomorphism implements Homomorphism<InMemoryAtomSet, Atom
 	@Override
 	public <U1 extends InMemoryAtomSet, U2 extends AtomSet> CloseableIterator<Substitution> execute(U1 q, U2 a)
 	                                                                                                throws HomomorphismException {
-		return new BT(q, a);
+		return new ArrayBlockingQueueToCloseableIteratorAdapter<Substitution>(new BT(q, a));
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -245,7 +246,7 @@ public class BacktrackHomomorphism implements Homomorphism<InMemoryAtomSet, Atom
 
 		private boolean hasMoreValues(Var var, int[] images, AtomSet g) throws AtomSetException {
 			int i = images[var.level];
-			while (++i < images.length) {
+			while (++i < domain.length) {
 				images[var.level] = i;
 				if (isHomomorphism(var.preAtoms, g, images)) {
 					return true;
@@ -256,7 +257,7 @@ public class BacktrackHomomorphism implements Homomorphism<InMemoryAtomSet, Atom
 
 		private boolean getFirstValue(Var var, int[] images, AtomSet g) throws AtomSetException {
 			int i = -1;
-			while (++i < images.length) {
+			while (++i < domain.length) {
 				images[var.level] = i;
 				if (isHomomorphism(var.preAtoms, g, images)) {
 					return true;
