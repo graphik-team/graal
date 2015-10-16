@@ -68,8 +68,8 @@ import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.KnowledgeBase;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.VariableGenerator;
-import fr.lirmm.graphik.graal.api.io.AbstractParser;
 import fr.lirmm.graphik.graal.api.io.ParseError;
+import fr.lirmm.graphik.graal.api.io.Parser;
 import fr.lirmm.graphik.graal.core.DefaultNegativeConstraint;
 import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.core.FreshVarSubstitution;
@@ -78,6 +78,7 @@ import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.DefaultURI;
 import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.URI;
+import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.ArrayBlockingStream;
 import fr.lirmm.graphik.util.stream.GIterator;
 
@@ -86,7 +87,7 @@ import fr.lirmm.graphik.util.stream.GIterator;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public final class DlgpParser extends AbstractParser<Object> {
+public final class DlgpParser extends AbstractCloseableIterator<Object> implements Parser<Object> {
 	
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(DlgpParser.class);
@@ -364,14 +365,15 @@ public final class DlgpParser extends AbstractParser<Object> {
 	 */
 	public static void parseKnowledgeBase(Reader src, KnowledgeBase target) throws AtomSetException {
 		DlgpParser parser = new DlgpParser(src);
-
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (o instanceof Rule) {
 				target.getOntology().add((Rule) o);
 			} else if (o instanceof Atom) {
 				target.getFacts().add((Atom) o);
 			}
 		}
+		parser.close();
 	}
 
 };

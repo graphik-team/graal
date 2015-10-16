@@ -91,7 +91,8 @@ public class RuleVariableRenamer {
 		int objectNumber = 0;
 		
 		try{
-			for(Object o : parser) {
+			while (parser.hasNext()) {
+				Object o = parser.next();
 				if(o instanceof Rule) {
 					Rule rule = (Rule)o;
 					Set<Term> vars = rule.getBody().getTerms(Term.Type.VARIABLE);

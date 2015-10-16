@@ -46,13 +46,14 @@
 package fr.lirmm.graphik.util.stream;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public class ArrayBlockingStream<T> extends AbstractIterator<T> implements
-		ObjectWriter<T> {
+public class ArrayBlockingStream<T> extends AbstractCloseableIterator<T> implements
+		Writer<T> {
 
 	final int MIN_QUEUE;
 	private final Object[] buffer;
@@ -79,7 +80,8 @@ public class ArrayBlockingStream<T> extends AbstractIterator<T> implements
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public void write(T object) {
+	@Override
+    public void write(T object) {
 		synchronized(lock) {
     		while (this.isOpen && this.size == this.buffer.length) {
     			try {
@@ -99,7 +101,8 @@ public class ArrayBlockingStream<T> extends AbstractIterator<T> implements
 	 * 
 	 * @see fr.lirmm.graphik.kb.stream.AtomReader#hasNext()
 	 */
-	public boolean hasNext() {
+	@Override
+    public boolean hasNext() {
 		synchronized(lock) {
     		while (this.isOpen && this.size == 0) {
     			try {
@@ -117,7 +120,8 @@ public class ArrayBlockingStream<T> extends AbstractIterator<T> implements
 	 * 
 	 * @see fr.lirmm.graphik.kb.stream.AtomReader#next()
 	 */
-	@SuppressWarnings("unchecked")
+	@Override
+    @SuppressWarnings("unchecked")
 	public T next() {
 		synchronized(lock) {
     		this.hasNext();
@@ -133,24 +137,18 @@ public class ArrayBlockingStream<T> extends AbstractIterator<T> implements
 		}
 	}
 
-	public void close() {
+	@Override
+    public void close() {
 		synchronized(lock) {
     		this.isOpen = false;
     		lock.notifyAll();
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.lirmm.graphik.kb.stream.AtomWriter#write(fr.lirmm.graphik.kb.stream
-	 * .AtomReader)
-	 */
 	@Override
-	public void write(GIterable<T> inputStream) throws IOException {
-		for (T object : inputStream)
-			this.write(object);
+	public void write(Iterator<T> it) throws IOException {
+		while (it.hasNext())
+			this.write(it.next());
 	}
 	
 

@@ -58,8 +58,8 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.homomorphism.DefaultHomomorphismFactory;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
-import fr.lirmm.graphik.util.stream.IteratorAdapter;
 import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.IteratorAdapter;
 
 public class TransformAtomSet extends AbstractAtomSet implements AtomSet {
 
@@ -103,7 +103,7 @@ public class TransformAtomSet extends AbstractAtomSet implements AtomSet {
 
 	@Override
 	public GIterator<Atom> iterator() {
-		return this.transformator.transform(this.store.iterator()).iterator();
+		return this.transformator.transform(this.store.iterator());
 	}
 
 	@Override

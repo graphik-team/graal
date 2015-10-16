@@ -78,7 +78,7 @@ import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.io.AbstractParser;
+import fr.lirmm.graphik.graal.api.io.Parser;
 import fr.lirmm.graphik.graal.core.DefaultNegativeConstraint;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
@@ -86,6 +86,7 @@ import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
 import fr.lirmm.graphik.graal.core.factory.RuleFactory;
 import fr.lirmm.graphik.util.Prefix;
+import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.ArrayBlockingStream;
 import fr.lirmm.graphik.util.stream.transformator.Transformator;
 
@@ -96,7 +97,7 @@ import fr.lirmm.graphik.util.stream.transformator.Transformator;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class OWL2Parser extends AbstractParser<Object> {
+public class OWL2Parser extends AbstractCloseableIterator<Object> implements Parser<Object> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(OWL2Parser.class);
 	private static final RuleTransformator RULE_TRANSFO = new RuleTransformator();

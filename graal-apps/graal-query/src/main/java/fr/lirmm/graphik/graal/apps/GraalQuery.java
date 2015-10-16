@@ -153,7 +153,8 @@ public class GraalQuery {
 
 		DlgpParser parser = new DlgpParser(new File(options.file));
 		UnionConjunctiveQueries ucq = new UnionConjunctiveQueries();
-		for(Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if(o instanceof ConjunctiveQuery) {
 				ucq.add((ConjunctiveQuery)o);
 			}
@@ -175,9 +176,9 @@ public class GraalQuery {
 		}
 
 		int i = 0;
-		for(Substitution sub : subr) {
+		while (subr.hasNext()) {
 			++i;
-			WRITER.writeComment(sub.toString());
+			WRITER.writeComment(subr.next().toString());
 		}
 		
 		if (options.verbose) {

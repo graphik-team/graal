@@ -66,7 +66,8 @@ public class DlgpParserExample {
 		DlgpParser parser = new DlgpParser(new BufferedReader(new FileReader("./src/main/resources/example.dlp")));
 
 		DlgpWriter writer = new DlgpWriter();
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (o instanceof NegativeConstraint)
 				writer.write((NegativeConstraint) o);
 			else if (o instanceof Rule)

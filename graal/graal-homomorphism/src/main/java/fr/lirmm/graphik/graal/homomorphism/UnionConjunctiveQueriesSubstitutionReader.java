@@ -115,12 +115,6 @@ public class UnionConjunctiveQueriesSubstitutionReader implements CloseableItera
         return this.tmpReader.next();
     }
 
-
-    @Override
-    public GIterator<Substitution> iterator() {
-        return this;
-    }
-
     @Override
     public void close() {
 		this.tmpReader.close();

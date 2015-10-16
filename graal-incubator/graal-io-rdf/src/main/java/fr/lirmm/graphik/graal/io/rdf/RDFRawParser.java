@@ -58,16 +58,17 @@ import org.openrdf.rio.RDFParseException;
 import org.openrdf.rio.Rio;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.io.AbstractAtomParser;
 import fr.lirmm.graphik.graal.api.io.ParseError;
+import fr.lirmm.graphik.graal.api.io.Parser;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
+import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.ArrayBlockingStream;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public final class RDFRawParser extends AbstractAtomParser {
+public final class RDFRawParser extends AbstractCloseableIterator<Atom> implements Parser<Atom> {
 
 	private ArrayBlockingStream<Atom> buffer = new ArrayBlockingStream<Atom>(
 			512);

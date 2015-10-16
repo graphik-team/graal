@@ -72,7 +72,8 @@ public class RDFParserExample {
 		RDFParser parser = new RDFParser(url, RDFFormat.RDFXML);
 		System.out.println();
 		int i = 0;
-		for(Atom a : parser) {
+		while (parser.hasNext()) {
+			Atom a = parser.next();
 			System.out.println(++i);
 			System.out.println(a.toString());
 			writer.write(a);

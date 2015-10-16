@@ -50,7 +50,6 @@ import java.util.Iterator;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.stream.AbstractIterator;
-import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -105,11 +104,6 @@ public class TransformatorIterator extends AbstractIterator<Atom> {
         this.hasNextCallDone = false;
 
         return this.tmpIterator.next();
-    }
-
-    @Override
-    public GIterator<Atom> iterator() {
-        return this;
     }
 
 }

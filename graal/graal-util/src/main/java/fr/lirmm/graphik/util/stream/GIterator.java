@@ -48,15 +48,12 @@ package fr.lirmm.graphik.util.stream;
  *
  * @param <T>
  */
-public interface GIterator<T> extends java.util.Iterator<T>, java.lang.Iterable<T> {
+public interface GIterator<T> extends java.util.Iterator<T> {
 
 	@Override
 	boolean hasNext();
 
 	@Override
 	T next();
-
-	@Override
-	GIterator<T> iterator();
 
 }

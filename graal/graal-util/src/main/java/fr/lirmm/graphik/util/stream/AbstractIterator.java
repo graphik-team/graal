@@ -56,10 +56,5 @@ public abstract class AbstractIterator<T> implements GIterator<T> {
     public void remove() {
         throw new UnsupportedOperationException();
     }
-    
-    @Override
-	public GIterator<T> iterator() {
-        return this;
-    }
 
 }

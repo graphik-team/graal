@@ -64,6 +64,7 @@ import fr.lirmm.graphik.graal.forward_chaining.StaticChase;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -108,7 +109,8 @@ public class GraalInterpreter {
 
 
 			parser = new DlgpParser(line, new ExceptionHandler(writer));
-			for (Object o : parser) {
+			while (parser.hasNext()) {
+				Object o = parser.next();
 				if (o instanceof Rule)
 					ruleSet.add((Rule) o);
 				else if (o instanceof Atom)
@@ -117,7 +119,9 @@ public class GraalInterpreter {
 					StaticChase.executeChase(atomSet, ruleSet);
 
 					ConjunctiveQuery query = (ConjunctiveQuery) o;
-					for (Substitution s : StaticHomomorphism.executeQuery(query, atomSet)) {
+					CloseableIterator<Substitution> execute = StaticHomomorphism.executeQuery(query, atomSet);
+					while (execute.hasNext()) {
+						Substitution s = execute.next();
 						writer.write(s.toString());
 						writer.write("\n");
 					}

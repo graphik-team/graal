@@ -43,11 +43,11 @@
  package fr.lirmm.graphik.util.stream;
 
 import java.io.IOException;
+import java.util.Iterator;
 
-@Deprecated
-public interface ObjectWriter<T> {
+public interface Writer<T> {
     
     void write(T object) throws IOException;
 	
-	void write(GIterable<T> objects) throws IOException;
+	void write(Iterator<T> objects) throws IOException;
 }

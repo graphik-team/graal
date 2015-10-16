@@ -68,6 +68,7 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.RestrictedChaseStopCondition;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
@@ -142,7 +143,9 @@ public class DefaultRuleApplier<T extends AtomSet> implements
 		}
 
 		try {
-			for (Substitution substitution : this.executeQuery(query, atomSet)) {
+			CloseableIterator<Substitution> subIt = this.executeQuery(query, atomSet);
+			while (subIt.hasNext()) {
+				Substitution substitution = subIt.next();
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("-- Found homomorphism: " + substitution);
 				}
@@ -153,6 +156,7 @@ public class DefaultRuleApplier<T extends AtomSet> implements
 					isChanged = true;
 				}
 			}
+			subIt.close();
 		} catch (HomomorphismFactoryException e) {
 			throw new RuleApplicationException("Error during rule application",
 					e);
@@ -175,7 +179,7 @@ public class DefaultRuleApplier<T extends AtomSet> implements
 		return this.haltingCondition;
 	}
 
-	protected Iterable<Substitution> executeQuery(ConjunctiveQuery query,
+	protected CloseableIterator<Substitution> executeQuery(ConjunctiveQuery query,
 			T atomSet) throws HomomorphismFactoryException,
 			HomomorphismException {
 		return this.solver.execute(query, atomSet);

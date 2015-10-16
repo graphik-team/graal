@@ -42,13 +42,17 @@
  */
 package fr.lirmm.graphik.util.stream;
 
+import java.io.Closeable;
+
+
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface CloseableIterator<T> extends GIterator<T> {
+public interface CloseableIterator<T> extends GIterator<T>, Closeable {
 
-	public void close();
+	@Override
+    public void close();
 
 }

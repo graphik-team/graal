@@ -74,6 +74,7 @@ import fr.lirmm.graphik.graal.store.rdbms.AbstractRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.SqlHomomorphism;
 import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 public class CLI {
 
@@ -161,7 +162,9 @@ public class CLI {
 			for (Query q : queries) {
 				try {
 					writer.write(q);
-					for (Substitution s : StaticHomomorphism.executeQuery(q,atomset)) System.out.println(s);
+					CloseableIterator<Substitution> executeQuery = StaticHomomorphism.executeQuery(q, atomset);
+					while (executeQuery.hasNext())
+						System.out.println(executeQuery.next());
 				}
 				catch (Exception e) {
 					error |= ERROR_QUERY;
@@ -228,7 +231,8 @@ public class CLI {
 					reader = new FileReader(inputFile);
 				}
 				DlgpParser parser = new DlgpParser(reader);
-				for (Object o : parser) {
+				while (parser.hasNext()) {
+					Object o = parser.next();
 					if (o instanceof Atom) {
 						if (verbose) System.out.println("Adding atom " + (Atom)o);
 						atomset.addUnbatched((Atom)o);
@@ -262,7 +266,8 @@ public class CLI {
 			if (verbose) System.out.println("Opening UCQ file "+ucqFile+"...");
 			try {
 				DlgpParser parser = new DlgpParser(new FileReader(ucqFile));
-				for (Object o : parser) {
+				while (parser.hasNext()) {
+					Object o = parser.next();
 					if (o instanceof ConjunctiveQuery) {
 						if (verbose) System.out.println("Adding query to union " + (Query)o);
 						ucq.add((ConjunctiveQuery)o);
@@ -293,7 +298,8 @@ public class CLI {
 			if (verbose) System.out.println("Reading UCQ string "+ucqString+"...");
 			try {
 				DlgpParser parser = new DlgpParser(new StringReader(ucqString));
-				for (Object o : parser) {
+				while (parser.hasNext()) {
+					Object o = parser.next();
 					if (o instanceof ConjunctiveQuery) {
 						if (verbose) System.out.println("Adding query to union " + (Query)o);
 						ucq.add(prepareConjunctiveQuery((ConjunctiveQuery)o));

@@ -55,7 +55,7 @@ import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactory;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -80,7 +80,7 @@ public class StaticHomomorphism {
 	 * @throws HomomorphismFactoryException
 	 * @throws HomomorphismException
 	 */
-	public static GIterator<Substitution> executeQuery(Query query,
+	public static CloseableIterator<Substitution> executeQuery(Query query,
 			AtomSet atomSet) throws HomomorphismFactoryException,
 			HomomorphismException {
 		if (LOGGER.isDebugEnabled())

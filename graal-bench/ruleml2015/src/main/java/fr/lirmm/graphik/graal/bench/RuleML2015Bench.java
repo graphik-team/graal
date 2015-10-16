@@ -167,7 +167,7 @@ public class RuleML2015Bench {
 					
 					writer.write("load " + f.getName() + "\n");
 					Parser<Object> parser = new OWL2Parser(f);
-					store_unsat.addAll(new AtomFilterIterator(parser.iterator()));
+					store_unsat.addAll(new AtomFilterIterator(parser));
 					parser.close();
 					
 				} 
@@ -269,7 +269,8 @@ public class RuleML2015Bench {
 		File f = new File(options.queries_file);
 		DlgpParser parser = new DlgpParser(f);
 		LinkedList<ConjunctiveQuery> queries = new LinkedList<ConjunctiveQuery>();
-		for(Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if(o instanceof ConjunctiveQuery) {
 				// patch for dlp2
 				ConjunctiveQuery query = (ConjunctiveQuery) o;
@@ -312,7 +313,8 @@ public class RuleML2015Bench {
 		File f = new File(options.onto_file);
 		Parser parser = new OWL2Parser(f);
 		List<Rule> rules = new LinkedList<Rule>();
-		for(Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if(o instanceof Rule) {
 				Rule r = (Rule) o;
 				for(Atom a : r.getHead()) {

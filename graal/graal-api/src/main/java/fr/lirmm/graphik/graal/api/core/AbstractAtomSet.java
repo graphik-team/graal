@@ -100,8 +100,9 @@ public abstract class AbstractAtomSet implements AtomSet {
 	@Override
 	public Set<Term> getTerms() throws AtomSetException {
 		Set<Term> terms = new TreeSet<Term>();
-		for (Term t : this.termsIterator()) {
-			terms.add(t);
+		Iterator<Term> it = this.termsIterator();
+		while (it.hasNext()) {
+			terms.add(it.next());
 		}
 		return terms;
 	}
@@ -109,8 +110,9 @@ public abstract class AbstractAtomSet implements AtomSet {
 	@Override
 	public Set<Term> getTerms(Type type) throws AtomSetException {
 		Set<Term> terms = new TreeSet<Term>();
-		for (Term t : this.termsIterator(type)) {
-			terms.add(t);
+		Iterator<Term> it = this.termsIterator(type);
+		while (it.hasNext()) {
+			terms.add(it.next());
 		}
 		return terms;
 	}
@@ -118,8 +120,9 @@ public abstract class AbstractAtomSet implements AtomSet {
 	@Override
 	public Set<Predicate> getPredicates() throws AtomSetException {
 		Set<Predicate> predicates = new TreeSet<Predicate>();
-		for (Predicate p : this.predicatesIterator()) {
-			predicates.add(p);
+		Iterator<Predicate> it = this.predicatesIterator();
+		while (it.hasNext()) {
+			predicates.add(it.next());
 		}
 		return predicates;
 	}

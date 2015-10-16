@@ -73,7 +73,7 @@ import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.DriverException;
 import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;
 import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * 
@@ -103,13 +103,14 @@ public class MelanieQueryTest {
 		for(Query query : queries) { 
 			System.out.println(query);
 			time = System.currentTimeMillis();
-			GIterator<Substitution> subR = StaticHomomorphism.executeQuery(query, atomSet);
+			CloseableIterator<Substitution> subR = StaticHomomorphism.executeQuery(query, atomSet);
 			time2 = System.currentTimeMillis();
 			
 			int i = 0;
-			for(GIterator<Substitution> it = subR.iterator(); it.hasNext(); it.next())
+			for (; subR.hasNext(); subR.next())
 				++i;
 			
+			subR.close();
 			System.out.println(i + " results in " + (time2 - time) + "ms");
 		}
 			
@@ -226,7 +227,8 @@ public class MelanieQueryTest {
 	public static void lowerCaseFact() throws AtomSetException, IOException {
 		DlgpParser parser = new DlgpParser(new FileReader("./src/test/resources/u/University0_0.dlp"));
 		DlgpWriter writer = new DlgpWriter(new File("./src/test/resources/u/University0_0_lowercase.dlp"));
-		for(Object o: parser) {
+		while(parser.hasNext()) {
+			Object o = parser.next();
 			if(o instanceof Atom) {
 				Atom atom = (Atom)o;
 				Predicate p = new Predicate(atom.getPredicate().toString().toLowerCase(), atom.getPredicate().getArity());

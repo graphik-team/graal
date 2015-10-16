@@ -60,6 +60,7 @@ import fr.lirmm.graphik.graal.forward_chaining.StaticChase;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -107,10 +108,11 @@ public class DefaultUseCaseExample {
 		// /////////////////////////////////////////////////////////////////////
 		// execute query
 		Query query = DlgpParser.parseQuery("?(X,Y) :- s(X, Y), p(X), q(Y).");
-		Iterable<Substitution> subReader = StaticHomomorphism.executeQuery(query, atomSet);
-		for(Substitution s : subReader) {
-			System.out.println(s);
+		CloseableIterator<Substitution> subReader = StaticHomomorphism.executeQuery(query, atomSet);
+		while (subReader.hasNext()) {
+			System.out.println(subReader.next());
 		}
+		subReader.close();
 				
 	}
 }

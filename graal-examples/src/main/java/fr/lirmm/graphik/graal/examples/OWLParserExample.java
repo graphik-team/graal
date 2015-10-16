@@ -67,7 +67,8 @@ public class OWLParserExample {
 		File f = new File("/tmp/example.owl");
 
 		OWL2Parser parser = new OWL2Parser(f);
-		for(Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			writer.write(o);
 			writer.flush();
 		}

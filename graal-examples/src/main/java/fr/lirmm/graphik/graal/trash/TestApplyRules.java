@@ -60,6 +60,7 @@ import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.forward_chaining.StaticChase;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.GIterator;
 
 
@@ -102,8 +103,9 @@ public class TestApplyRules {
 	public static void applyRule(Rule rule, AtomSet atomSet) throws AtomSetException, HomomorphismFactoryException, HomomorphismException {
 		Query query = ConjunctiveQueryFactory.instance().create(rule.getBody().iterator(),
 		        rule.getFrontier().iterator());
-		GIterator<Substitution> reader = StaticHomomorphism.executeQuery(query, atomSet);
-		for(Substitution s : reader) {
+		CloseableIterator<Substitution> reader = StaticHomomorphism.executeQuery(query, atomSet);
+		while (reader.hasNext()) {
+			Substitution s = reader.next();
 			System.out.print(s);
 			AtomSet tmp = substitute(s, rule.getHead());
 			System.out.println(" -> " + tmp);
