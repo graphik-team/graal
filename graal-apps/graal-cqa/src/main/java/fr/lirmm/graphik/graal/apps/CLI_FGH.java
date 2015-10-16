@@ -74,8 +74,8 @@ import fr.lirmm.graphik.graal.forward_chaining.halting_condition.RestrictedChase
 import fr.lirmm.graphik.graal.homomorphism.ComplexHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
+import fr.lirmm.graphik.graal.store.rdbms.SqlHomomorphism;
 import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
-import fr.lirmm.graphik.graal.store.rdbms.homomorphism.SqlHomomorphism;
 
 public class CLI_FGH {
 
@@ -105,7 +105,7 @@ public class CLI_FGH {
 
 			FGH fgh = new FGH();
 
-			Homomorphism solver = new ComplexHomomorphism(SqlHomomorphism.instance());
+			Homomorphism<ConjunctiveQuery, AtomSet> solver = new ComplexHomomorphism(SqlHomomorphism.instance());
 
 			FGHRuleApplicationHandler onRule = new FGHRuleApplicationHandler(index,fgh);
 			onRule.setSolver(solver);
@@ -197,7 +197,7 @@ public class CLI_FGH {
 				for (ConjunctiveQuery constraint : constraints) {
 					DefaultConjunctiveQuery q = new DefaultConjunctiveQuery(constraint);
 					q.setAnswerVariables(new LinkedList<Term>(q.getAtomSet().getTerms()));
-					for (Substitution s : solver.execute(q,atomset)) {
+					for (Substitution s : solver.execute(q, atomset)) {
 						AtomSet conflict = s.createImageOf(q.getAtomSet());
 						int conflict_size = 0;
 						for (Atom a : conflict)

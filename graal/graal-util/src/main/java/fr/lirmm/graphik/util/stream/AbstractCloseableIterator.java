@@ -40,36 +40,18 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.store.rdbms.homomorphism;
-
-import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.api.core.Query;
-import fr.lirmm.graphik.graal.api.homomorphism.AbstractChecker;
-import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
+package fr.lirmm.graphik.util.stream;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class SqlHomomorphismChecker extends AbstractChecker {
+public abstract class AbstractCloseableIterator<E> extends AbstractIterator<E> implements CloseableIterator<E> {
 
 	@Override
-	public boolean check(Query query, AtomSet atomset) {
-		 return query instanceof ConjunctiveQuery && atomset instanceof RdbmsStore;
-	}
-
-	@Override
-	public SqlHomomorphism getSolver() {
-         return SqlHomomorphism.instance();
-	}
-
-	@Override
-	public int getDefaultPriority() {
-		return 100;
+	protected void finalize() throws Throwable {
+		this.close();
+		super.finalize();
 	}
 
 }

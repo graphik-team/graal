@@ -53,7 +53,7 @@ import java.util.Queue;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class LinkedBlockingStream<T> extends AbstractReader<T> implements ObjectWriter<T> {
+public class LinkedBlockingStream<T> extends AbstractIterator<T> implements ObjectWriter<T> {
 
     final int MAX_QUEUE;
     final int MIN_QUEUE;
@@ -131,7 +131,7 @@ public class LinkedBlockingStream<T> extends AbstractReader<T> implements Object
      * @see fr.lirmm.graphik.kb.stream.AtomWriter#write(fr.lirmm.graphik.kb.stream.AtomReader)
      */
     @Override
-    public void write(Iterable<T> inputStream) throws IOException {
+    public void write(GIterable<T> inputStream) throws IOException {
        for(T object : inputStream)
            this.write(object);
     }

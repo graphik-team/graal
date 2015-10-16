@@ -49,5 +49,5 @@ public interface ObjectWriter<T> {
     
     void write(T object) throws IOException;
 	
-	void write(Iterable<T> objects) throws IOException;
+	void write(GIterable<T> objects) throws IOException;
 }

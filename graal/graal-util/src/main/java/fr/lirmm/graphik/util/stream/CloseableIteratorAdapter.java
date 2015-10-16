@@ -40,43 +40,20 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
 package fr.lirmm.graphik.util.stream;
 
-import java.io.IOException;
-import java.util.Iterator;
-
 /**
- * @author Clément Sipieter (INRIA) <clement@6pi.fr>
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-@Deprecated
-public abstract class AbstractReader<T> implements ObjectReader<T> {
+public class CloseableIteratorAdapter<T> extends IteratorAdapter<T> implements CloseableIterator<T> {
 
-    /* (non-Javadoc)
-     * @see java.util.Iterator#remove()
-     */
-    @Override
-    public void remove() {
-        throw new UnsupportedOperationException();
-    }
-    
-    /* (non-Javadoc)
-     * @see fr.lirmm.graphik.kb.stream.IAtomReader#iterator()
-     */
-    @Override
-    public Iterator<T> iterator() {
-        return this;
-    }
+	public CloseableIteratorAdapter(java.util.Iterator<T> iterator) {
+		super(iterator);
+	}
 
-    /* (non-Javadoc)
-     * @see fr.lirmm.graphik.kb.stream.AtomReader#read(fr.lirmm.graphik.kb.stream.AtomWriter)
-     */
-    @Override
-    public void read(ObjectWriter<T> writer) throws IOException {
-        for(T object : this)
-            writer.write(object);
-    }
+	@Override
+	public void close() {
+	}
+
 }

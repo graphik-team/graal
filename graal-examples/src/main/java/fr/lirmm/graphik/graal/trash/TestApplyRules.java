@@ -51,7 +51,6 @@ import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.graal.api.core.stream.SubstitutionReader;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
@@ -61,6 +60,7 @@ import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.forward_chaining.StaticChase;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
+import fr.lirmm.graphik.util.stream.GIterator;
 
 
 
@@ -89,7 +89,7 @@ public class TestApplyRules {
 
 		Query query = DlgpParser.parseQuery("?(X) :- p(X,Y),q(X,Y).");
 		
-		SubstitutionReader sub = StaticHomomorphism.executeQuery(query, atomSet);
+		GIterator<Substitution> sub = StaticHomomorphism.executeQuery(query, atomSet);
 		if(sub.hasNext()) {
 			sub.next();
 			System.out.println("ok");
@@ -100,8 +100,9 @@ public class TestApplyRules {
 	}
 	
 	public static void applyRule(Rule rule, AtomSet atomSet) throws AtomSetException, HomomorphismFactoryException, HomomorphismException {
-		Query query = ConjunctiveQueryFactory.instance().create(rule.getBody(), rule.getFrontier());
-		SubstitutionReader reader = StaticHomomorphism.executeQuery(query, atomSet);
+		Query query = ConjunctiveQueryFactory.instance().create(rule.getBody().iterator(),
+		        rule.getFrontier().iterator());
+		GIterator<Substitution> reader = StaticHomomorphism.executeQuery(query, atomSet);
 		for(Substitution s : reader) {
 			System.out.print(s);
 			AtomSet tmp = substitute(s, rule.getHead());

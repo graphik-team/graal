@@ -40,63 +40,83 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-/**
+ /**
  * 
  */
-package fr.lirmm.graphik.graal.forward_chaining.halting_condition;
+package fr.lirmm.graphik.graal.store.rdbms;
 
-import java.util.Collections;
+import java.util.Iterator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
-import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.VariableGenerator;
-import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
-import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
-import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
-import fr.lirmm.graphik.util.stream.GIterator;
-import fr.lirmm.graphik.util.stream.IteratorAdapter;
+import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
+import fr.lirmm.graphik.graal.homomorphism.UnionConjunctiveQueriesHomomorphism;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
+ * SQL homomorphism for Union Conjunctive Queries
+ * 
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
- *
+ * 
  */
-public class CoreChaseStopCondition implements ChaseHaltingCondition {
+public final class SqlUCQHomomorphism implements UnionConjunctiveQueriesHomomorphism<RdbmsStore> {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(CoreChaseStopCondition.class);
-	private VariableGenerator existentialGen = new DefaultVariableGenerator("E");
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(SqlUCQHomomorphism.class);
+	
+	private static SqlUCQHomomorphism instance;
+
+	private SqlUCQHomomorphism() {
+	}
+	
+	public static synchronized SqlUCQHomomorphism instance() {
+		if(instance == null)
+			instance = new SqlUCQHomomorphism();
+		
+		return instance;
+	}
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public GIterator<Atom> apply(Rule rule, Substitution substitution, AtomSet data)
-	                                                                                 throws HomomorphismFactoryException,
-	                                                                                 HomomorphismException {
-		// Generate new existential variables
-		for (Term t : rule.getExistentials()) {
-			substitution.put(t, existentialGen.getFreshVar());
+	public CloseableIterator<Substitution> execute(UnionConjunctiveQueries queries,
+			RdbmsStore store) throws HomomorphismException {
+		String sqlQuery = preprocessing(queries, store);
+		try {
+			if(LOGGER.isDebugEnabled()) {
+				LOGGER.debug(sqlQuery);
+			}
+			return new ResultSetSubstitutionIterator(store, sqlQuery.toString(), queries.isBoolean());
+		} catch (Exception e) {
+			throw new HomomorphismException(e.getMessage(), e);
 		}
-
-		InMemoryAtomSet newFacts = substitution.createImageOf(rule.getHead());
-
-		DefaultConjunctiveQuery query = new DefaultConjunctiveQuery(newFacts);
-		query.getAtomSet().addAll(substitution.createImageOf(rule.getBody()));
-
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Query:" + query);
-		}
-		if (StaticHomomorphism.executeQuery(query, data).hasNext()) {
-			return new IteratorAdapter<Atom>(Collections.<Atom> emptyList().iterator());
-		}
-
-		return newFacts.iterator();
 	}
 
+	private static String preprocessing(UnionConjunctiveQueries queries, RdbmsStore store) throws HomomorphismException {
+		Iterator<ConjunctiveQuery> it = queries.iterator();
+		StringBuilder sqlQuery = new StringBuilder();
+		try {
+			if (it.hasNext()) {
+				sqlQuery.append(store.transformToSQL(it.next()));
+				sqlQuery.setLength(sqlQuery.length() - 1);
+
+				while (it.hasNext()) {
+					sqlQuery.append(" UNION ");
+					sqlQuery.append(store.transformToSQL(it.next()));
+					sqlQuery.setLength(sqlQuery.length() - 1);
+				}
+			}
+			sqlQuery.append(';');
+		} catch (Exception e) {
+			throw new HomomorphismException("Error during query translation to SQL",
+					e);
+		}
+		return sqlQuery.toString();
+	}
 }

@@ -58,6 +58,8 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.homomorphism.DefaultHomomorphismFactory;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
+import fr.lirmm.graphik.util.stream.IteratorAdapter;
+import fr.lirmm.graphik.util.stream.GIterator;
 
 public class TransformAtomSet extends AbstractAtomSet implements AtomSet {
 
@@ -100,8 +102,8 @@ public class TransformAtomSet extends AbstractAtomSet implements AtomSet {
 	}
 
 	@Override
-	public Iterator<Atom> iterator() {
-		return this.transformator.transform(this.store).iterator();
+	public GIterator<Atom> iterator() {
+		return this.transformator.transform(this.store.iterator()).iterator();
 	}
 
 	@Override
@@ -110,8 +112,18 @@ public class TransformAtomSet extends AbstractAtomSet implements AtomSet {
 	}
 
 	@Override
+	public GIterator<Term> termsIterator() throws AtomSetException {
+		return new IteratorAdapter<Term>(this.getTerms().iterator());
+	}
+
+	@Override
 	public Set<Term> getTerms(Type type) throws AtomSetException {
 		return this.store.getTerms(type);
+	}
+
+	@Override
+	public GIterator<Term> termsIterator(Term.Type type) throws AtomSetException {
+		return new IteratorAdapter<Term>(this.getTerms(type).iterator());
 	}
 
 	@Override
@@ -132,14 +144,14 @@ public class TransformAtomSet extends AbstractAtomSet implements AtomSet {
 	}
 
 	@Override
-	public boolean addAll(Iterable<? extends Atom> atoms)
+	public boolean addAll(Iterator<? extends Atom> atoms)
 			throws AtomSetException {
 		return this.getStore().addAll(
 				this.getAtomTransformator().transform(atoms));
 	}
 
 	@Override
-	public boolean removeAll(Iterable<? extends Atom> stream)
+	public boolean removeAll(Iterator<? extends Atom> stream)
 			throws AtomSetException {
 		return this.getStore().removeAll(
 				this.getAtomTransformator().transform(stream));
@@ -153,6 +165,11 @@ public class TransformAtomSet extends AbstractAtomSet implements AtomSet {
 	@Override
 	public Set<Predicate> getPredicates() throws AtomSetException {
 		return this.getStore().getPredicates();
+	}
+
+	@Override
+	public GIterator<Predicate> predicatesIterator() throws AtomSetException {
+		return new IteratorAdapter<Predicate>(this.getPredicates().iterator());
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

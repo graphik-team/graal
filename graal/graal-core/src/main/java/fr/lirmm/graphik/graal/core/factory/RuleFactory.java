@@ -49,6 +49,7 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.core.DefaultRule;
+import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -70,11 +71,19 @@ public final class RuleFactory {
 		return new DefaultRule();
 	}
 
-	public Rule create(Iterable<Atom> body, Iterable<Atom> head) {
+	public Rule create(GIterator<Atom> body, GIterator<Atom> head) {
 		return new DefaultRule(body, head);
 	}
 
-	public Rule create(String label, Iterable<Atom> body, Iterable<Atom> head) {
+	public Rule create(String label, GIterator<Atom> body, GIterator<Atom> head) {
+		return new DefaultRule(label, body, head);
+	}
+	
+	public Rule create(InMemoryAtomSet body, InMemoryAtomSet head) {
+		return new DefaultRule(body, head);
+	}
+	
+	public Rule create(String label, InMemoryAtomSet body, InMemoryAtomSet head) {
 		return new DefaultRule(label, body, head);
 	}
 

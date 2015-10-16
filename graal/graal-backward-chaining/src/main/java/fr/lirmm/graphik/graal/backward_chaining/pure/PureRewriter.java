@@ -45,8 +45,6 @@
  */
 package fr.lirmm.graphik.graal.backward_chaining.pure;
 
-import java.util.Iterator;
-
 import fr.lirmm.graphik.graal.api.backward_chaining.AbstractBackwardChainer;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Rule;
@@ -54,6 +52,8 @@ import fr.lirmm.graphik.graal.core.RuleUtils;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByHeadPredicatesRuleSet;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.util.Verbosable;
+import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.IteratorAdapter;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -64,7 +64,7 @@ public class PureRewriter extends AbstractBackwardChainer implements Verbosable 
 	private PureQuery pquery;
 	private LinkedListRuleSet ruleset;
 	private RulesCompilation compilation;
-	private Iterator<ConjunctiveQuery> rewrites = null;
+	private GIterator<ConjunctiveQuery> rewrites = null;
 	
 	private boolean verbose;
 	private boolean isUnfoldingEnable = true;
@@ -159,7 +159,7 @@ public class PureRewriter extends AbstractBackwardChainer implements Verbosable 
 			queries = this.compilation.unfold(queries);
 		}
 		
-		this.rewrites = queries.iterator();
+		this.rewrites = new IteratorAdapter<ConjunctiveQuery>(queries.iterator());
 	}
 
 }

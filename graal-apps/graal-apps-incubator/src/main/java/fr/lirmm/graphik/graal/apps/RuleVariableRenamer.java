@@ -52,7 +52,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
@@ -103,8 +103,8 @@ public class RuleVariableRenamer {
 								DefaultTermFactory.instance().createVariable(
 										var.toString() + "_" + objectNumber));
 					}
-					AtomSet body = substitution.createImageOf(rule.getBody());
-					AtomSet head = substitution.createImageOf(rule.getHead());
+					InMemoryAtomSet body = substitution.createImageOf(rule.getBody());
+					InMemoryAtomSet head = substitution.createImageOf(rule.getHead());
 					String label = rule.getLabel();
 					if(label.isEmpty()) {
 						label = "R"+objectNumber;

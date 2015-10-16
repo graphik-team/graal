@@ -46,9 +46,10 @@
 package fr.lirmm.graphik.graal.homomorphism;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.stream.SubstitutionReader;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -73,7 +74,7 @@ public final class DefaultUnionConjunctiveQueriesHomomorphism implements UnionCo
     }
 
 	@Override
-	public SubstitutionReader execute(UnionConjunctiveQueries queries,
+	public CloseableIterator<Substitution> execute(UnionConjunctiveQueries queries,
 			AtomSet atomset) throws HomomorphismException {
         return new UnionConjunctiveQueriesSubstitutionReader(queries, atomset);
 	}

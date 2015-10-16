@@ -40,39 +40,35 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- package fr.lirmm.graphik.graal.core.stream;
+ /**
+ * 
+ */
+package fr.lirmm.graphik.graal.store.rdbms;
 
-import java.util.Iterator;
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.Query;
+import fr.lirmm.graphik.graal.api.homomorphism.AbstractChecker;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.util.stream.AbstractReader;
+/**
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+ *
+ */
+public class SqlHomomorphismChecker extends AbstractChecker {
 
-public class IteratorAtomReader extends AbstractReader<Atom> {
-	
-	private Iterator<Atom> iterator;
-	
-	public IteratorAtomReader(Iterator<Atom>  iterator) {
-		this.iterator = iterator;
+	@Override
+	public boolean check(Query query, AtomSet atomset) {
+		 return query instanceof ConjunctiveQuery && atomset instanceof RdbmsStore;
 	}
 
 	@Override
-	public void remove() {
-		this.iterator.remove();
+	public SqlHomomorphism getSolver() {
+         return SqlHomomorphism.instance();
 	}
 
 	@Override
-	public boolean hasNext() {
-		return this.iterator.hasNext();
-	}
-
-	@Override
-	public Atom next() {
-		return this.iterator.next();
-	}
-
-	@Override
-	public Iterator<Atom> iterator() {
-		return this;
+	public int getDefaultPriority() {
+		return 100;
 	}
 
 }

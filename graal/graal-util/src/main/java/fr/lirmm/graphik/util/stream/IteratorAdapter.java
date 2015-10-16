@@ -40,16 +40,14 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- package fr.lirmm.graphik.graal.core.stream;
+ package fr.lirmm.graphik.util.stream;
 
-import java.util.Iterator;
 
-import fr.lirmm.graphik.graal.api.core.Rule;
-import fr.lirmm.graphik.util.stream.AbstractReader;
-
-public class IteratorRuleReader extends AbstractReader<Rule> {
+public class IteratorAdapter<T> extends AbstractIterator<T> {
 	
-	public IteratorRuleReader(Iterator<Rule>  iterator) {
+	private java.util.Iterator<T> iterator;
+	
+	public IteratorAdapter(java.util.Iterator<T> iterator) {
 		this.iterator = iterator;
 	}
 
@@ -64,15 +62,8 @@ public class IteratorRuleReader extends AbstractReader<Rule> {
 	}
 
 	@Override
-	public Rule next() {
+	public T next() {
 		return this.iterator.next();
 	}
-
-	@Override
-	public Iterator<Rule> iterator() {
-		return this;
-	}
-
-	private Iterator<Rule> iterator;
 
 }

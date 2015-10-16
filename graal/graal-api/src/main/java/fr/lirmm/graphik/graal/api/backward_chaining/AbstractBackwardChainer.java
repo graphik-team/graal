@@ -45,13 +45,15 @@
  */
 package fr.lirmm.graphik.graal.api.backward_chaining;
 
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.util.Profiler;
+import fr.lirmm.graphik.util.stream.AbstractIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */
-public abstract class AbstractBackwardChainer implements BackwardChainer {
+public abstract class AbstractBackwardChainer extends AbstractIterator<ConjunctiveQuery> implements BackwardChainer {
 
 	private Profiler profiler;
 

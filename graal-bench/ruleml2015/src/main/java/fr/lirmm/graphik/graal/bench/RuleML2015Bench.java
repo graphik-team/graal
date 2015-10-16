@@ -61,7 +61,6 @@ import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.stream.SubstitutionReader;
 import fr.lirmm.graphik.graal.api.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
@@ -251,16 +250,15 @@ public class RuleML2015Bench {
 	
 	public static void executeQueries(Store store, UnionConjunctiveQueries ucq) throws HomomorphismFactoryException, HomomorphismException, IOException {
 		profiler.start(ucq.getLabel() + " answering time");
-		SubstitutionReader results = StaticHomomorphism.executeQuery(ucq, store);
+		Iterator<Substitution> results = StaticHomomorphism.executeQuery(ucq, store);
 		profiler.stop(ucq.getLabel() + " answering time");
 		int i = 0;
-		Iterator<Substitution> it = results.iterator();
-		while(it.hasNext()) {
+		while (results.hasNext()) {
 			++i;
 			if(showResults) {
-				writer.write(it.next().toString());
+				writer.write(results.next().toString());
 			} else {
-				it.next();
+				results.next();
 			}
 			//writer.write(s.toString());
 		}

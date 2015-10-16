@@ -47,6 +47,11 @@ package fr.lirmm.graphik.graal.api.core;
 
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.Set;
+import java.util.TreeSet;
+
+import fr.lirmm.graphik.graal.api.core.Term.Type;
+import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -65,34 +70,60 @@ public abstract class AbstractAtomSet implements AtomSet {
 	}
 
 	@Override
-	public boolean addAll(Iterator<? extends Atom> atoms) throws AtomSetException {
+	public boolean addAll(Iterator<? extends Atom> it) throws AtomSetException {
 		boolean isChanged = false;
-		while(atoms.hasNext()) {
-			isChanged = this.add(atoms.next()) || isChanged;
+		while (it.hasNext()) {
+			isChanged = this.add(it.next()) || isChanged;
 		}
 		return isChanged;
 	}
-	
 
 	@Override
-	public boolean addAll(Iterable<? extends Atom> atoms) throws AtomSetException {
-		return this.addAll(atoms.iterator());
+	public boolean addAll(AtomSet atomset) throws AtomSetException {
+		return this.addAll(atomset.iterator());
 	}
-	
+
 	@Override
-	public boolean removeAll(Iterator<? extends Atom> atoms) throws AtomSetException {
+	public boolean removeAll(Iterator<? extends Atom> it) throws AtomSetException {
 		boolean isChanged = false;
-		while(atoms.hasNext()) {
-			isChanged = this.remove(atoms.next()) || isChanged;
+		while (it.hasNext()) {
+			isChanged = this.remove(it.next()) || isChanged;
 		}
 		return isChanged;
 	}
 	
 	@Override
-	public boolean removeAll(Iterable<? extends Atom> atoms) throws AtomSetException {
-		return this.removeAll(atoms.iterator());
+	public boolean removeAll(AtomSet atomset) throws AtomSetException {
+		return this.removeAll(atomset.iterator());
 	}
-	
+
+	@Override
+	public Set<Term> getTerms() throws AtomSetException {
+		Set<Term> terms = new TreeSet<Term>();
+		for (Term t : this.termsIterator()) {
+			terms.add(t);
+		}
+		return terms;
+	}
+
+	@Override
+	public Set<Term> getTerms(Type type) throws AtomSetException {
+		Set<Term> terms = new TreeSet<Term>();
+		for (Term t : this.termsIterator(type)) {
+			terms.add(t);
+		}
+		return terms;
+	}
+
+	@Override
+	public Set<Predicate> getPredicates() throws AtomSetException {
+		Set<Predicate> predicates = new TreeSet<Predicate>();
+		for (Predicate p : this.predicatesIterator()) {
+			predicates.add(p);
+		}
+		return predicates;
+	}
+
 	@Override
 	public boolean isSubSetOf(AtomSet atomset) {
 		for (Atom a : this) {
@@ -112,6 +143,10 @@ public abstract class AbstractAtomSet implements AtomSet {
 		return !this.iterator().hasNext();
 	}
 	
+	// /////////////////////////////////////////////////////////////////////////
+	//
+	// /////////////////////////////////////////////////////////////////////////
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -149,7 +184,7 @@ public abstract class AbstractAtomSet implements AtomSet {
 		StringBuilder s = new StringBuilder();
 		s.append('[');
 
-		Iterator<Atom> it = this.iterator();
+		GIterator<Atom> it = this.iterator();
 		if (it.hasNext()) {
 			s.append(it.next().toString());
 		}
@@ -161,21 +196,5 @@ public abstract class AbstractAtomSet implements AtomSet {
 
 		return s.toString();
 	}
-	
-	@Override
-	public Iterator<Predicate> predicatesIterator() throws AtomSetException {
-		return this.getPredicates().iterator();
-	}
-	
-	@Override
-	public Iterator<Term> termsIterator() throws AtomSetException {
-		return this.getTerms().iterator();
-	}
-	
-	@Override
-	public Iterator<Term> termsIterator(Term.Type type) throws AtomSetException {
-		return this.getTerms(type).iterator();
-	}
-	
 
 }

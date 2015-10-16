@@ -45,8 +45,11 @@
  */
 package fr.lirmm.graphik.graal.transformation;
 
+import java.util.Iterator;
+
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.util.stream.GIterator;
 import fr.lirmm.graphik.util.stream.transformator.Transformator;
 
 /**
@@ -61,6 +64,7 @@ public interface AtomTransformator extends Transformator<Atom, InMemoryAtomSet> 
      * @param atom
      * @return
      */
+    @Override
     InMemoryAtomSet transform(Atom atom);
     
     /**
@@ -69,6 +73,6 @@ public interface AtomTransformator extends Transformator<Atom, InMemoryAtomSet> 
      * @param atoms
      * @return 
      */
-    Iterable<Atom> transform(Iterable<? extends Atom> atoms);
+	GIterator<Atom> transform(Iterator<? extends Atom> atoms);
 
 }

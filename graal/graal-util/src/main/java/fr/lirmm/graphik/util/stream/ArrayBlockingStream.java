@@ -51,7 +51,7 @@ import java.io.IOException;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public class ArrayBlockingStream<T> extends AbstractReader<T> implements
+public class ArrayBlockingStream<T> extends AbstractIterator<T> implements
 		ObjectWriter<T> {
 
 	final int MIN_QUEUE;
@@ -148,7 +148,7 @@ public class ArrayBlockingStream<T> extends AbstractReader<T> implements
 	 * .AtomReader)
 	 */
 	@Override
-	public void write(Iterable<T> inputStream) throws IOException {
+	public void write(GIterable<T> inputStream) throws IOException {
 		for (T object : inputStream)
 			this.write(object);
 	}

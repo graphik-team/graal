@@ -45,51 +45,52 @@
  */
 package fr.lirmm.graphik.graal.store.rdbms;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
-import fr.lirmm.graphik.graal.store.rdbms.driver.DriverException;
-import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
-import fr.lirmm.graphik.util.stream.AbstractReader;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.core.DefaultAtom;
+import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
+import fr.lirmm.graphik.graal.core.stream.SubstitutionIterator2AtomIterator;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.util.stream.AbstractIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-class DefaultRdbmsPredicateReader extends AbstractReader<Predicate> {
+class DefaultRdbmsAtomIterator extends AbstractIterator<Atom> implements CloseableIterator<Atom> {
 
 	private static final Logger LOGGER = LoggerFactory
-			.getLogger(DefaultRdbmsPredicateReader.class);
+			.getLogger(DefaultRdbmsAtomIterator.class);
 	
-	private static final String GET_ALL_PREDICATES_QUERY = "SELECT * FROM "
-														+ DefaultRdbmsStore.PREDICATE_TABLE_NAME
-														+ ";";
+	private RdbmsStore store;
 	private boolean hasNextCallDone = false;
-	private boolean hasNext; 
-
-	private ResultSet results;
+	private CloseableIterator<Predicate> predicateIt;
+	private CloseableIterator<Atom> atomIt;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 
-	DefaultRdbmsPredicateReader(RdbmsDriver driver) throws AtomSetException {
-		Statement stat;
-		try {
-			stat = driver.createStatement();
-			results = stat.executeQuery(GET_ALL_PREDICATES_QUERY);
-		} catch (SQLException e) {
-			throw new AtomSetException(e);
-		} catch (DriverException e) {
-			throw new AtomSetException(e);
-		}
-		
+	DefaultRdbmsAtomIterator(RdbmsStore store) throws AtomSetException {
+		this.store = store;
+		this.init();
+	}
+
+	private void init() throws AtomSetException {
+		this.predicateIt = store.predicatesIterator();
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -100,36 +101,46 @@ class DefaultRdbmsPredicateReader extends AbstractReader<Predicate> {
 	public boolean hasNext() {
 		if (!this.hasNextCallDone) {
 			this.hasNextCallDone = true;
-			try {
-				this.hasNext = this.results.next();
-			} catch (SQLException e) {
-				LOGGER.error(e.getMessage(), e);
-				this.hasNext = false;
+			while (this.predicateIt.hasNext()
+				   && (this.atomIt == null || !this.atomIt.hasNext())) {
+				Predicate p = predicateIt.next();
+				List<Term> terms = new LinkedList<Term>();
+				for(int i=0; i<p.getArity(); ++i) {
+					terms.add(DefaultTermFactory.instance().createVariable(
+							"X" + i));
+				}
+				
+				InMemoryAtomSet atomSet = new LinkedListAtomSet();
+				Atom atom = new DefaultAtom(p, terms);
+				atomSet.add(atom);
+				
+				ConjunctiveQuery query = ConjunctiveQueryFactory.instance().create(atomSet);
+				
+				SqlHomomorphism solver = SqlHomomorphism.instance();
+				try {
+					this.atomIt = new SubstitutionIterator2AtomIterator(atom, solver.execute(query, this.store));
+				} catch (HomomorphismException e) {
+					LOGGER.error(e.getMessage(), e);
+					return false;
+				}
 			}
 		}
-		return this.hasNext;
+		return this.atomIt != null && this.atomIt.hasNext();
 	}
 
 	@Override
-	public Predicate next() {
+	public Atom next() {
 		if (!this.hasNextCallDone)
 			this.hasNext();
 		this.hasNextCallDone = false;
-		try {
-			return this.readPredicate(this.results);
-		} catch (SQLException e) {
-			LOGGER.error(e.getMessage(), e);
-			return null;
-		}
+
+		return this.atomIt.next();
 	}
 
-	/**
-	 * @param results2
-	 * @return
-	 * @throws SQLException 
-	 */
-	private Predicate readPredicate(ResultSet results2) throws SQLException {
-		return new Predicate(results.getString(1), results.getInt(2));
-	}
+	@Override
+    public void close() {
+		this.predicateIt.close();
+		this.atomIt.close();
+    }
 
 }

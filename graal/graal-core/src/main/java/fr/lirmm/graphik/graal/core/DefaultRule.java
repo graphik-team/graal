@@ -46,7 +46,6 @@
 package fr.lirmm.graphik.graal.core;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -56,6 +55,7 @@ import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -79,31 +79,27 @@ public class DefaultRule implements Rule {
 		this("", new LinkedListAtomSet(), new LinkedListAtomSet());
 	}
 
-	public DefaultRule(Iterator<Atom> body, Iterator<Atom> head) {
-		this("", new LinkedListAtomSet(body), new LinkedListAtomSet(head));
-
-	}
-
-	public DefaultRule(Iterable<Atom> body, Iterable<Atom> head) {
+	public DefaultRule(GIterator<Atom> body, GIterator<Atom> head) {
 		this("", body, head);
 	}
 
-	public DefaultRule(String label, Iterable<Atom> body, Iterable<Atom> head) {
+	public DefaultRule(String label, GIterator<Atom> body, GIterator<Atom> head) {
+		this(label, new LinkedListAtomSet(body), new LinkedListAtomSet(head));
+	}
+
+	public DefaultRule(InMemoryAtomSet body, InMemoryAtomSet head) {
+		this("", body, head);
+	}
+
+	public DefaultRule(String label, InMemoryAtomSet body, InMemoryAtomSet head) {
 		this.label = label;
-		LinkedListAtomSet atomSet = new LinkedListAtomSet();
-		atomSet.addAll(body);
-		this.body = atomSet;
-
-		atomSet = new LinkedListAtomSet();
-		atomSet.addAll(head);
-
-		this.head = atomSet;
+		this.body = body;
+		this.head = head;
 	}
 
 	// copy constructor
 	public DefaultRule(Rule rule) {
-		this(rule.getLabel(), new LinkedListAtomSet(rule.getBody()),
-				new LinkedListAtomSet(rule.getHead()));
+		this(rule.getLabel(), rule.getBody().iterator(), rule.getHead().iterator());
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

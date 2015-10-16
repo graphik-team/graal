@@ -46,7 +46,8 @@ import java.util.LinkedList;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.Query;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
@@ -63,12 +64,13 @@ public class FGHRuleApplicationHandler implements RuleApplicationHandler {
 
 	@Override
 	public boolean onRuleApplication(Rule rule, Substitution substitution, AtomSet base) {
-		AtomSet from = substitution.createImageOf(rule.getBody());
-		AtomSet atomSet = substitution.createImageOf(rule.getHead());
+		InMemoryAtomSet from = substitution.createImageOf(rule.getBody());
+		InMemoryAtomSet atomSet = substitution.createImageOf(rule.getHead());
 
 		try {
-		Query q = new DefaultConjunctiveQuery(from,from.getTerms(Term.Type.VARIABLE));
-		for (Substitution s : this.solver.execute(q,base)) {
+			ConjunctiveQuery q = new DefaultConjunctiveQuery(from, new LinkedList<Term>(
+			        from.getTerms(Term.Type.VARIABLE)));
+			for (Substitution s : this.solver.<ConjunctiveQuery, AtomSet> execute(q, base)) {
 
 			//AtomSet from2 = s.getSubstitut(from);
 
@@ -94,7 +96,7 @@ public class FGHRuleApplicationHandler implements RuleApplicationHandler {
 		this.solver = solver;
 	}
 
-	private Homomorphism solver;
+	private Homomorphism<ConjunctiveQuery, AtomSet> solver;
 	private AtomIndex   index;
 	private FGH         fgh;
 

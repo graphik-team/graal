@@ -43,42 +43,48 @@
  /**
  * 
  */
-package fr.lirmm.graphik.graal.transformation;
+package fr.lirmm.graphik.graal.core.stream;
 
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
-import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.util.MethodNotImplementedError;
+import fr.lirmm.graphik.util.stream.AbstractIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
- *
+ * 
  */
-public final class TransformatorSolver implements Homomorphism<ConjunctiveQuery, TransformAtomSet> {
+public class SubstitutionIterator2AtomIterator extends AbstractIterator<Atom> implements CloseableIterator<Atom> {
 
-	private static TransformatorSolver instance;
+	private Atom atom;
+	private CloseableIterator<Substitution> iterator;
 
-	private TransformatorSolver() {
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTOR
+	// /////////////////////////////////////////////////////////////////////////
+
+	public SubstitutionIterator2AtomIterator(Atom atom, CloseableIterator<Substitution> it) {
+		this.iterator = it;
+		this.atom = atom;
 	}
 
-	public static synchronized TransformatorSolver getInstance() {
-		if (instance == null)
-			instance = new TransformatorSolver();
-
-		return instance;
-	}
-	
 	// /////////////////////////////////////////////////////////////////////////
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public CloseableIterator<Substitution> execute(ConjunctiveQuery query, TransformAtomSet atomSet)
-	                                                                                       throws HomomorphismException {
-		//TODO transform query and pass it to encapsulated atomSet
-		throw new MethodNotImplementedError();
+	public boolean hasNext() {
+		return this.iterator.hasNext();
+	}
+
+	@Override
+	public Atom next() {
+		return this.iterator.next().createImageOf(atom);
+	}
+
+	@Override
+	public void close() {
+		this.iterator.close();
 	}
 
 }

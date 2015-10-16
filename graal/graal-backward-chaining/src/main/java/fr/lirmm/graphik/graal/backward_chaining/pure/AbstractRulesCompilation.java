@@ -114,9 +114,9 @@ public abstract class AbstractRulesCompilation implements RulesCompilation {
 	private Collection<ConjunctiveQuery> developpRewriting(
 			Iterable<ConjunctiveQuery> rewritingSet) {
 		Collection<ConjunctiveQuery> unfoldingRewritingSet = new LinkedList<ConjunctiveQuery>();
-		LinkedList<AtomSet> newQueriesBefore = new LinkedList<AtomSet>();
-		LinkedList<AtomSet> newQueriesAfter = new LinkedList<AtomSet>();
-		LinkedList<AtomSet> newQueriesTmp;
+		LinkedList<InMemoryAtomSet> newQueriesBefore = new LinkedList<InMemoryAtomSet>();
+		LinkedList<InMemoryAtomSet> newQueriesAfter = new LinkedList<InMemoryAtomSet>();
+		LinkedList<InMemoryAtomSet> newQueriesTmp;
 		Iterable<Atom> atomsRewritings;
 		InMemoryAtomSet copy;
 
@@ -137,7 +137,7 @@ public abstract class AbstractRulesCompilation implements RulesCompilation {
 					// for each possible atom at the next position clone the
 					// query and add the atom
 					for (Atom atom : atomsRewritings) {//
-						copy = new LinkedListAtomSet((Iterable<Atom>) q);
+						copy = new LinkedListAtomSet(q);
 						copy.add(atom);
 						newQueriesAfter.add(copy);
 					}
@@ -149,7 +149,7 @@ public abstract class AbstractRulesCompilation implements RulesCompilation {
 				newQueriesAfter = newQueriesTmp;
 				newQueriesAfter.clear();
 			}
-			for (AtomSet a : newQueriesBefore) {
+			for (InMemoryAtomSet a : newQueriesBefore) {
 				unfoldingRewritingSet.add(ConjunctiveQueryFactory.instance().create(a,
 						originalQuery.getAnswerVariables()));
 			}
@@ -159,8 +159,8 @@ public abstract class AbstractRulesCompilation implements RulesCompilation {
 	}
 
 	@Override
-	public AtomSet getIrredondant(AtomSet atomSet) {
-		AtomSet irr = new LinkedListAtomSet(atomSet);
+	public InMemoryAtomSet getIrredondant(AtomSet atomSet) {
+		InMemoryAtomSet irr = new LinkedListAtomSet(atomSet);
 		Iterator<Atom> i = irr.iterator();
 		Iterator<Atom> j;
 		Atom origin;

@@ -45,26 +45,26 @@
  */
 package fr.lirmm.graphik.graal.homomorphism;
 
-import java.util.Iterator;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.graal.api.core.stream.SubstitutionReader;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class UnionConjunctiveQueriesSubstitutionReader implements SubstitutionReader {
+public class UnionConjunctiveQueriesSubstitutionReader implements CloseableIterator<Substitution> {
 
     private AtomSet atomSet;
-    private Iterator<ConjunctiveQuery> cqueryIterator;
-    private SubstitutionReader tmpReader;
+	private GIterator<ConjunctiveQuery> cqueryIterator;
+	private CloseableIterator<Substitution> tmpReader;
     private boolean hasNextCallDone = false;
     
     /**
@@ -85,6 +85,9 @@ public class UnionConjunctiveQueriesSubstitutionReader implements SubstitutionRe
 
             while ((this.tmpReader == null || !this.tmpReader.hasNext())
                     && this.cqueryIterator.hasNext()) {
+				if (!this.tmpReader.hasNext()) {
+					this.tmpReader.close();
+				}
                 Query q = this.cqueryIterator.next();
                 Homomorphism solver;
                 try {
@@ -114,12 +117,13 @@ public class UnionConjunctiveQueriesSubstitutionReader implements SubstitutionRe
 
 
     @Override
-    public Iterator<Substitution> iterator() {
+    public GIterator<Substitution> iterator() {
         return this;
     }
 
     @Override
     public void close() {
+		this.tmpReader.close();
     }
 
     @Override

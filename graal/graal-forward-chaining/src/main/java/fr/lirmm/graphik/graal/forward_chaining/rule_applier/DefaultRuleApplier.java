@@ -45,7 +45,8 @@
  */
 package fr.lirmm.graphik.graal.forward_chaining.rule_applier;
 
-import java.util.Iterator;
+
+import java.util.LinkedList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,6 +68,7 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.RestrictedChaseStopCondition;
+import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -133,7 +135,7 @@ public class DefaultRuleApplier<T extends AtomSet> implements
 			throws RuleApplicationException {
 		boolean isChanged = false;
 		ConjunctiveQuery query = ConjunctiveQueryFactory.instance().create(rule.getBody(),
-				rule.getFrontier());
+		        new LinkedList<Term>(rule.getFrontier()));
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Rule to execute: " + rule);
 			LOGGER.debug("       -- Query: " + query);
@@ -145,7 +147,7 @@ public class DefaultRuleApplier<T extends AtomSet> implements
 					LOGGER.debug("-- Found homomorphism: " + substitution);
 				}
 
-				Iterator<Atom> it = this.getHaltingCondition().apply(rule, substitution, atomSet);
+				GIterator<Atom> it = this.getHaltingCondition().apply(rule, substitution, atomSet);
 				if (it.hasNext()) {
 					atomSet.addAll(it);
 					isChanged = true;

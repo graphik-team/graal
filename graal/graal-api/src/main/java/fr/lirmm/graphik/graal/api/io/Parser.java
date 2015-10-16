@@ -45,20 +45,13 @@
  */
 package fr.lirmm.graphik.graal.api.io;
 
-import java.util.Iterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface Parser<T> extends Iterator<T>, Iterable<T> {
-	
-	@Override
-	boolean hasNext();
-
-	@Override
-	T next();
-
-	void close();
+public interface Parser<T> extends CloseableIterator<T> {
 	
 }

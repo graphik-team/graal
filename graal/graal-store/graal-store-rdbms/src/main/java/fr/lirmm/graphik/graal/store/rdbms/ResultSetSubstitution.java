@@ -40,21 +40,34 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- package fr.lirmm.graphik.graal.api.core.stream;
+package fr.lirmm.graphik.graal.store.rdbms;
 
-import java.util.Iterator;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 
-import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 
-public interface SubstitutionReader extends Iterator<Substitution>,
-        Iterable<Substitution> {
+/**
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+ *
+ */
+class ResultSetSubstitution extends TreeMapSubstitution {
 
-    boolean hasNext();
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
 
-    Substitution next();
+	public ResultSetSubstitution(RdbmsStore store, ResultSet results, ResultSetMetaData metaData) {
+		try {
+			for (int i = 1; i <= metaData.getColumnCount(); ++i) {
 
-    Iterator<Substitution> iterator();
-
-    void close();
-
+				Term term = DefaultTermFactory.instance().createVariable(metaData.getColumnLabel(i));
+				Term substitut = store.getTerm(results.getString(i));
+				this.put(term, substitut);
+			}
+		} catch (Exception e) {
+		}
+	}
 }

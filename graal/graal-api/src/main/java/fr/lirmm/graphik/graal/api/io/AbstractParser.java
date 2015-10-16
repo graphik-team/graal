@@ -45,23 +45,13 @@
  */
 package fr.lirmm.graphik.graal.api.io;
 
-import java.util.Iterator;
+import fr.lirmm.graphik.util.stream.AbstractIterator;
 
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public abstract class AbstractParser<T> implements Parser<T> {
-
-	@Override
-	public void remove() {
-		throw new UnsupportedOperationException();
-	}
-	
-	@Override
-	public Iterator<T> iterator() {
-		return this;
-	}
+public abstract class AbstractParser<T> extends AbstractIterator<T> implements Parser<T> {
 
 }

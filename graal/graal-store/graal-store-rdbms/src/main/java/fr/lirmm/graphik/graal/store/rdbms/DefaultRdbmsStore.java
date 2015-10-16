@@ -76,6 +76,7 @@ import fr.lirmm.graphik.graal.api.core.VariableGenerator;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -103,6 +104,10 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	static final String PREFIX_TERM_FIELD = "term";
 
 	// queries
+	private static final String GET_ALL_PREDICATES_QUERY = "SELECT * FROM "
+	                                                       + DefaultRdbmsStore.PREDICATE_TABLE_NAME
+	                                                       + ";";
+
 	private static final String GET_PREDICATE_QUERY = "SELECT * FROM "
 													+ PREDICATE_TABLE_NAME
 													+ " WHERE predicate_label = ? " 
@@ -318,9 +323,9 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public Iterator<Atom> iterator() {
+	public CloseableIterator<Atom> iterator() {
 		try {
-			return new DefaultRdbmsIterator(this);
+			return new DefaultRdbmsAtomIterator(this);
 		} catch (AtomSetException e) {
 			if(LOGGER.isErrorEnabled()) {
 				LOGGER.error(e.getMessage(), e);
@@ -394,60 +399,6 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		return res;
 	}
 
-	@Override
-	public Set<Term> getTerms() throws AtomSetException {
-		Statement statement = this.createStatement();
-		ResultSet results = null;
-		Set<Term> terms;
-		
-		try {
-			results = statement.executeQuery(GET_ALL_TERMS_QUERY);
-			terms = new TreeSet<Term>();
-
-			while (results.next()) {
-				terms.add(DefaultTermFactory.instance().createTerm(
-						results.getString(1),
-						Term.Type
-						.valueOf(results.getString(2))));
-			}
-			
-			results.close();
-		} catch (SQLException e) {
-			throw new AtomSetException(e);
-		} finally {
-			if(statement != null) {
-				try {
-					statement.close();
-				} catch (SQLException e) {
-					throw new AtomSetException(e);
-				}
-			}
-		}
-		
-		
-		
-		return terms;
-	}
-
-	@Override
-	public Set<Term> getTerms(Type type) throws AtomSetException {
-		ResultSet results = null;
-		Set<Term> terms = new TreeSet<Term>();
-
-		try {
-			this.getTermsByTypeStatement.setString(1, type.toString());
-			results = this.getTermsByTypeStatement.executeQuery();
-			while (results.next()) {
-				terms.add(DefaultTermFactory.instance().createTerm(
-						results.getString(1), type));
-			}
-			results.close();
-		} catch (SQLException e) {
-			throw new AtomSetException(e);
-		}
-		return terms;
-	}
-
 	/**
 	 * Get a term by its label
 	 * 
@@ -475,6 +426,25 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		}
 		return term;
 
+	}
+
+	@Override
+	public CloseableIterator<Term> termsIterator() throws AtomSetException {
+		try {
+			return new ResultSetTermIterator(this, GET_ALL_TERMS_QUERY);
+		} catch (SQLException e) {
+			throw new AtomSetException("SQLException: ", e);
+		}
+	}
+
+	@Override
+	public CloseableIterator<Term> termsIterator(Type type) throws AtomSetException {
+		try {
+			this.getTermsByTypeStatement.setString(1, type.toString());
+			return new ResultSetTermIterator(this, this.getTermsByTypeStatement);
+		} catch (SQLException e) {
+			throw new AtomSetException("SQLException: ", e);
+		}
 	}
 
 	/**
@@ -845,8 +815,12 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	}
 
 	@Override
-	public Iterator<Predicate> predicatesIterator() throws AtomSetException {
-		return new DefaultRdbmsPredicateReader(this.getDriver());
+	public CloseableIterator<Predicate> predicatesIterator() throws AtomSetException {
+		try {
+			return new ResultSetPredicateIterator(this, GET_ALL_PREDICATES_QUERY);
+		} catch (SQLException e) {
+			throw new AtomSetException("Untreated exception", e);
+		}
 	}
 	
 	@Override
@@ -887,7 +861,10 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 
 	@Override
 	public void clear() throws AtomSetException {
-		this.removeAll(this.iterator());
+		CloseableIterator<Atom> it = this.iterator();
+		this.removeAll(it);
+		it.close();
 	}
+
 
 }

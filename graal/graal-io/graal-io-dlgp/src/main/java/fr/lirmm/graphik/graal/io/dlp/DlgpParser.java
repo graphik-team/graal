@@ -54,7 +54,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.lang.Thread.UncaughtExceptionHandler;
-import java.util.Iterator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,6 +79,7 @@ import fr.lirmm.graphik.util.DefaultURI;
 import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.URI;
 import fr.lirmm.graphik.util.stream.ArrayBlockingStream;
+import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
  * 
@@ -343,7 +343,7 @@ public final class DlgpParser extends AbstractParser<Object> {
 		return (Atom) new DlgpParser(s).next();
 	}
 	
-	public static Iterator<Atom> parseAtomSet(String s) {
+	public static GIterator<Atom> parseAtomSet(String s) {
 		return new AtomFilterIterator(new DlgpParser(s));
 	}
 	

@@ -50,11 +50,12 @@ import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.Query;
-import fr.lirmm.graphik.graal.api.core.stream.SubstitutionReader;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactory;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
+import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -79,7 +80,7 @@ public class StaticHomomorphism {
 	 * @throws HomomorphismFactoryException
 	 * @throws HomomorphismException
 	 */
-	public static SubstitutionReader executeQuery(Query query,
+	public static GIterator<Substitution> executeQuery(Query query,
 			AtomSet atomSet) throws HomomorphismFactoryException,
 			HomomorphismException {
 		if (LOGGER.isDebugEnabled())

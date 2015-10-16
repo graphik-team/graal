@@ -43,17 +43,19 @@
  package fr.lirmm.graphik.graal.backward_chaining.pure;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 
 class MarkedQuery extends DefaultConjunctiveQuery {
 
-	private ArrayList<Atom> markedAtoms;
+	private List<Atom> markedAtoms;
 
 	public MarkedQuery() {
 		super();
@@ -66,9 +68,9 @@ class MarkedQuery extends DefaultConjunctiveQuery {
 	 * 
 	 * @param f
 	 */
-	public MarkedQuery(AtomSet atomset, ArrayList<Term> answerVariable) {
+	public MarkedQuery(InMemoryAtomSet atomset, List<Term> answerVariable) {
 		super(atomset, answerVariable);
-		markedAtoms = new ArrayList<Atom>();
+		markedAtoms = new LinkedList<Atom>();
 	}
 
 	/**
@@ -77,7 +79,7 @@ class MarkedQuery extends DefaultConjunctiveQuery {
 	 * 
 	 * @param f
 	 */
-	public MarkedQuery(ConjunctiveQuery query, ArrayList<Atom> markedAtoms) {
+	public MarkedQuery(ConjunctiveQuery query, List<Atom> markedAtoms) {
 		super(query);
 		this.markedAtoms = markedAtoms;
 	}
@@ -100,7 +102,7 @@ class MarkedQuery extends DefaultConjunctiveQuery {
 	/**
 	 * return the atoms of this fact that are marked
 	 */
-	public ArrayList<Atom> getMarkedAtom() {
+	public List<Atom> getMarkedAtom() {
 		return markedAtoms;
 	}
 

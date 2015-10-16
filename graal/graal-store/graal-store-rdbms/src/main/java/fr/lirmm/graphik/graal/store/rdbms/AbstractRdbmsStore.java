@@ -48,6 +48,7 @@ package fr.lirmm.graphik.graal.store.rdbms;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Iterator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,8 +59,6 @@ import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.homomorphism.DefaultHomomorphismFactory;
 import fr.lirmm.graphik.graal.store.rdbms.driver.DriverException;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
-import fr.lirmm.graphik.graal.store.rdbms.homomorphism.SqlHomomorphismChecker;
-import fr.lirmm.graphik.graal.store.rdbms.homomorphism.SqlUCQHomomorphismChecker;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -211,13 +210,13 @@ public abstract class AbstractRdbmsStore extends AbstractAtomSet implements
 	}
 
 	@Override
-	public boolean addAll(Iterable<? extends Atom> stream) throws AtomSetException {
+	public boolean addAll(Iterator<? extends Atom> stream) throws AtomSetException {
 		try {
 			int c = 0;
 			Statement statement = this.createStatement();
 
-			for (Atom a : stream) {
-				this.add(statement, a);
+			while (stream.hasNext()) {
+				this.add(statement, stream.next());
 				if (++c % MAX_BATCH_SIZE == 0) {
 					if (LOGGER.isDebugEnabled()) {
 						LOGGER.debug("batch commit, size=" + MAX_BATCH_SIZE);
@@ -241,12 +240,12 @@ public abstract class AbstractRdbmsStore extends AbstractAtomSet implements
 	}
 
 	@Override
-	public boolean removeAll(Iterable<? extends Atom> stream) throws AtomSetException {
+	public boolean removeAll(Iterator<? extends Atom> stream) throws AtomSetException {
 		try {
 			int c = 0;
 			Statement statement = this.createStatement();
-			for (Atom a : stream) {
-				this.remove(statement, a);
+			while (stream.hasNext()) {
+				this.remove(statement, stream.next());
 				if (++c % MAX_BATCH_SIZE == 0) {
 					if (LOGGER.isDebugEnabled()) {
 						LOGGER.debug("batch commit, size=" + MAX_BATCH_SIZE);

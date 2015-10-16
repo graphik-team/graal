@@ -40,7 +40,7 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
+/**
  * 
  */
 package fr.lirmm.graphik.graal.store.triplestore;
@@ -77,6 +77,8 @@ import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.store.AbstractTripleStore;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -84,12 +86,11 @@ import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
  */
 public class SailStore extends AbstractTripleStore {
 
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(SailStore.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(SailStore.class);
 
 	private RepositoryConnection connection;
 	private ValueFactory valueFactory;
-	
+
 	private TupleQuery predicatesQuery;
 	private TupleQuery termsQuery;
 
@@ -101,9 +102,9 @@ public class SailStore extends AbstractTripleStore {
 		} catch (RepositoryException e) {
 			throw new AtomSetException("Error while creating SailStore", e);
 		}
-		
+
 		this.valueFactory = repo.getValueFactory();
-		
+
 	}
 
 	@Override
@@ -122,9 +123,7 @@ public class SailStore extends AbstractTripleStore {
 			this.connection.close();
 		} catch (RepositoryException e) {
 			if (LOGGER.isErrorEnabled()) {
-				LOGGER.error(
-						"Error while trying to close sail repository connection.",
-						e);
+				LOGGER.error("Error while trying to close sail repository connection.", e);
 			}
 		}
 	}
@@ -140,8 +139,7 @@ public class SailStore extends AbstractTripleStore {
 	}
 
 	@Override
-	public boolean addAll(Iterator<? extends Atom> atom)
-			throws AtomSetException {
+	public boolean addAll(Iterator<? extends Atom> atom) throws AtomSetException {
 		try {
 			this.connection.add(new StatementIterator(atom));
 		} catch (RepositoryException e) {
@@ -167,8 +165,7 @@ public class SailStore extends AbstractTripleStore {
 	}
 
 	@Override
-	public boolean removeAll(Iterator<? extends Atom> atom)
-			throws AtomSetException {
+	public boolean removeAll(Iterator<? extends Atom> atom) throws AtomSetException {
 		try {
 			this.connection.remove(new StatementIterator(atom));
 		} catch (RepositoryException e) {
@@ -188,21 +185,21 @@ public class SailStore extends AbstractTripleStore {
 	}
 
 	@Override
-	public Iterator<Predicate> predicatesIterator() throws AtomSetException {
+	public CloseableIterator<Predicate> predicatesIterator() throws AtomSetException {
 		TupleQueryResult result;
 		try {
 			result = this.getPredicatesQuery().evaluate();
 			return new PredicatesIterator(result);
 		} catch (QueryEvaluationException e) {
 			throw new AtomSetException(e);
-		}	
+		}
 	}
-	
-	@Override 
-	public Set<Predicate> getPredicates() throws AtomSetException{
+
+	@Override
+	public Set<Predicate> getPredicates() throws AtomSetException {
 		TreeSet<Predicate> set = new TreeSet<Predicate>();
 		Iterator<Predicate> it = this.predicatesIterator();
-		while(it.hasNext()) {
+		while (it.hasNext()) {
 			set.add(it.next());
 		}
 		return set;
@@ -211,8 +208,7 @@ public class SailStore extends AbstractTripleStore {
 	private TupleQuery getPredicatesQuery() throws AtomSetException {
 		if (this.predicatesQuery == null) {
 			try {
-				this.predicatesQuery= this.connection.prepareTupleQuery(
-						QueryLanguage.SPARQL, SELECT_PREDICATES_QUERY);
+				this.predicatesQuery = this.connection.prepareTupleQuery(QueryLanguage.SPARQL, SELECT_PREDICATES_QUERY);
 			} catch (RepositoryException e) {
 				throw new AtomSetException(e);
 			} catch (MalformedQueryException e) {
@@ -223,9 +219,9 @@ public class SailStore extends AbstractTripleStore {
 		}
 		return this.predicatesQuery;
 	}
-	
+
 	@Override
-	public Iterator<Term> termsIterator() throws AtomSetException {
+	public CloseableIterator<Term> termsIterator() throws AtomSetException {
 		TupleQueryResult result;
 		try {
 			result = this.getTermsQuery().evaluate();
@@ -239,29 +235,28 @@ public class SailStore extends AbstractTripleStore {
 	public Set<Term> getTerms() throws AtomSetException {
 		TreeSet<Term> set = new TreeSet<Term>();
 		Iterator<Term> it = this.termsIterator();
-		while(it.hasNext()) {
+		while (it.hasNext()) {
 			set.add(it.next());
 		}
 		return set;
 	}
 
 	@Override
-	public Iterator<Term> termsIterator(Type type) throws AtomSetException {
+	public CloseableIterator<Term> termsIterator(Type type) throws AtomSetException {
 		// TODO implements other type
 		return this.termsIterator();
 	}
-	
+
 	@Override
 	public Set<Term> getTerms(Type type) throws AtomSetException {
 		// TODO implements other type
 		return this.getTerms();
 	}
-	
+
 	private TupleQuery getTermsQuery() throws AtomSetException {
 		if (this.termsQuery == null) {
 			try {
-				this.termsQuery = this.connection.prepareTupleQuery(
-						QueryLanguage.SPARQL, SELECT_TERMS_QUERY);
+				this.termsQuery = this.connection.prepareTupleQuery(QueryLanguage.SPARQL, SELECT_TERMS_QUERY);
 			} catch (RepositoryException e) {
 				throw new AtomSetException(e);
 			} catch (MalformedQueryException e) {
@@ -283,10 +278,9 @@ public class SailStore extends AbstractTripleStore {
 	}
 
 	@Override
-	public Iterator<Atom> iterator() {
+	public CloseableIterator<Atom> iterator() {
 		try {
-			return new AtomIterator(this.connection.getStatements(null, null,
-					null, false));
+			return new AtomIterator(this.connection.getStatements(null, null, null, false));
 		} catch (RepositoryException e) {
 			if (LOGGER.isErrorEnabled()) {
 				LOGGER.error("Error during iterator creation", e);
@@ -300,18 +294,15 @@ public class SailStore extends AbstractTripleStore {
 	// //////////////////////////////////////////////////////////////////////////
 
 	private Statement atomToStatement(Atom atom) {
-		URI predicate = this.createURI(atom.getPredicate().getIdentifier()
-				.toString());
-		URI term0 = this.createURI(atom.getTerm(0).getIdentifier()
-				.toString());
-		URI term1 = this.createURI(atom.getTerm(1).getIdentifier()
-				.toString());
+		URI predicate = this.createURI(atom.getPredicate().getIdentifier().toString());
+		URI term0 = this.createURI(atom.getTerm(0).getIdentifier().toString());
+		URI term1 = this.createURI(atom.getTerm(1).getIdentifier().toString());
 		return valueFactory.createStatement(term0, predicate, term1);
 	}
-	
+
 	/**
-	 * Create URI from string. If the specified string is not a valid URI,
-	 * the method add a default prefix to the string.
+	 * Create URI from string. If the specified string is not a valid URI, the
+	 * method add a default prefix to the string.
 	 */
 	private URI createURI(String string) {
 		return valueFactory.createURI(string);
@@ -319,17 +310,15 @@ public class SailStore extends AbstractTripleStore {
 
 	private static Atom statementToAtom(Statement stat) {
 		Predicate predicate = valueToPredicate(stat.getPredicate());
-		Term term0 = DefaultTermFactory.instance().createConstant(
-				stat.getSubject().toString());
-		Term term1 = DefaultTermFactory.instance().createConstant(
-				stat.getObject().toString());
+		Term term0 = DefaultTermFactory.instance().createConstant(stat.getSubject().toString());
+		Term term1 = DefaultTermFactory.instance().createConstant(stat.getObject().toString());
 		return new DefaultAtom(predicate, term0, term1);
 	}
 
 	private static Predicate valueToPredicate(Value value) {
 		return new Predicate(value.toString(), 2);
 	}
-	
+
 	private static Term valueToTerm(Value value) {
 		return DefaultTermFactory.instance().createConstant(value.toString());
 	}
@@ -338,8 +327,7 @@ public class SailStore extends AbstractTripleStore {
 	// PRIVATE CLASSES
 	// //////////////////////////////////////////////////////////////////////////
 
-	private class StatementIterator implements
-			Iteration<Statement, RepositoryException> {
+	private class StatementIterator implements Iteration<Statement, RepositoryException> {
 
 		private Iterator<? extends Atom> it;
 
@@ -364,17 +352,11 @@ public class SailStore extends AbstractTripleStore {
 
 	}
 
-	private class AtomIterator implements Iterator<Atom> {
+	private class AtomIterator extends AbstractCloseableIterator<Atom> {
 		RepositoryResult<Statement> it;
 
 		AtomIterator(RepositoryResult<Statement> it) {
 			this.it = it;
-		}
-
-		@Override
-		protected void finalize() throws Throwable {
-			this.close();
-			super.finalize();
 		}
 
 		public void close() {
@@ -423,16 +405,11 @@ public class SailStore extends AbstractTripleStore {
 		}
 	}
 
-	private abstract class TupleQueryResultIterator<E> implements Iterator<E> {
+	private abstract class TupleQueryResultIterator<E> extends AbstractCloseableIterator<E> {
 
 		protected TupleQueryResult it;
 
 		@Override
-		protected void finalize() throws Throwable {
-			this.close();
-			super.finalize();
-		}
-
 		public void close() {
 			try {
 				this.it.close();
@@ -475,7 +452,7 @@ public class SailStore extends AbstractTripleStore {
 		PredicatesIterator(TupleQueryResult results) {
 			super.it = results;
 		}
-		
+
 		@Override
 		public Predicate next() {
 			try {
@@ -488,16 +465,15 @@ public class SailStore extends AbstractTripleStore {
 			}
 			return null;
 		}
-		
-		
+
 	}
-	
+
 	private class TermsIterator extends TupleQueryResultIterator<Term> {
 
 		TermsIterator(TupleQueryResult results) {
 			super.it = results;
 		}
-		
+
 		@Override
 		public Term next() {
 			try {
@@ -510,7 +486,6 @@ public class SailStore extends AbstractTripleStore {
 			}
 			return null;
 		}
-		
-		
+
 	}
 }

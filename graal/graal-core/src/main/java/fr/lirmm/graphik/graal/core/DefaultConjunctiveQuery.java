@@ -52,6 +52,7 @@ import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
+import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
  * Class representing a conjunctive query. A conjunctive query is composed of a
@@ -83,12 +84,12 @@ public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 		this("", atomSet, ans);
 	}
 
-	public DefaultConjunctiveQuery(Iterable<Atom> atomSet, Iterable<Term> answerVariables) {
+	public DefaultConjunctiveQuery(Iterator<Atom> atomSet, Iterator<Term> answerVariables) {
 		this.label = "";
 		this.atomSet = new LinkedListAtomSet(atomSet);
 		this.responseVariables = new LinkedList<Term>();
-		for (Term t : answerVariables) {
-			this.responseVariables.add(t);
+		while (answerVariables.hasNext()) {
+			this.responseVariables.add(answerVariables.next());
 		}
 	}
 
@@ -158,7 +159,7 @@ public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public Iterator<Atom> iterator() {
+	public GIterator<Atom> iterator() {
 		return getAtomSet().iterator();
 	}
 

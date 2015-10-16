@@ -45,40 +45,71 @@
  */
 package fr.lirmm.graphik.graal.transformation;
 
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
-import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
+import java.util.Iterator;
+
+import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.AbstractIterator;
+import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
- *
+ * 
  */
-public final class TransformatorSolver implements Homomorphism<ConjunctiveQuery, TransformAtomSet> {
+public class TransformatorIterator extends AbstractIterator<Atom> {
 
-	private static TransformatorSolver instance;
+    private boolean hasNextCallDone;
+    private AtomTransformator transformator;
+	private Iterator<? extends Atom> atomIterator;
+	private Iterator<Atom> tmpIterator;
 
-	private TransformatorSolver() {
-	}
+    // /////////////////////////////////////////////////////////////////////////
+    // CONSTRUCTOR
+    // /////////////////////////////////////////////////////////////////////////
 
-	public static synchronized TransformatorSolver getInstance() {
-		if (instance == null)
-			instance = new TransformatorSolver();
+	public TransformatorIterator(Iterator<? extends Atom> atoms,
+            AtomTransformator transformator) {
+		this.atomIterator = atoms;
+        this.transformator = transformator;
+        this.tmpIterator = null;
+    }
 
-		return instance;
-	}
-	
-	// /////////////////////////////////////////////////////////////////////////
-	// METHODS
-	// /////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
+    // METHODS
+    // /////////////////////////////////////////////////////////////////////////
 
-	@Override
-	public CloseableIterator<Substitution> execute(ConjunctiveQuery query, TransformAtomSet atomSet)
-	                                                                                       throws HomomorphismException {
-		//TODO transform query and pass it to encapsulated atomSet
-		throw new MethodNotImplementedError();
-	}
+    @Override
+    public void remove() {
+        // TODO implement this method
+        throw new MethodNotImplementedError();
+    }
+
+    @Override
+    public boolean hasNext() {
+        if (!this.hasNextCallDone) {
+            this.hasNextCallDone = true;
+
+            while ((this.tmpIterator == null || !this.tmpIterator.hasNext())
+                    && this.atomIterator.hasNext())
+                this.tmpIterator = this.transformator
+                        .transform(atomIterator.next()).iterator();
+        }
+        return this.tmpIterator != null && this.tmpIterator.hasNext();
+    }
+
+    @Override
+    public Atom next() {
+        if (!this.hasNextCallDone)
+            this.hasNext();
+
+        this.hasNextCallDone = false;
+
+        return this.tmpIterator.next();
+    }
+
+    @Override
+    public GIterator<Atom> iterator() {
+        return this;
+    }
 
 }

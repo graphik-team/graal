@@ -58,7 +58,7 @@ public interface RdbmsDriver {
 	Connection getConnection();
 	Statement createStatement() throws DriverException;
 	void close();
-	
+
 	/**
 	 * Generate an INSERT OR IGNORE SQL statement.
 	 * 

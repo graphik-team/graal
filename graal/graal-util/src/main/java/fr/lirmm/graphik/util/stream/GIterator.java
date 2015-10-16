@@ -40,55 +40,23 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.core.stream;
-
-import java.util.Iterator;
-
-import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.graal.api.core.stream.SubstitutionReader;
+package fr.lirmm.graphik.util.stream;
 
 /**
- * @author Clément Sipieter (INRIA) <clement@6pi.fr>
+ * 
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
+ * @param <T>
  */
-public class IteratorSubstitutionReader implements SubstitutionReader {
-    
-    private Iterator<Substitution> iterator;
-    
-    public IteratorSubstitutionReader(Iterator<Substitution>  iterator) {
-        this.iterator = iterator;
-    }
+public interface GIterator<T> extends java.util.Iterator<T>, java.lang.Iterable<T> {
 
-    @Override
-    public void remove() {
-        this.iterator.remove();
-    }
+	@Override
+	boolean hasNext();
 
-    @Override
-    public boolean hasNext() {
-        return this.iterator.hasNext();
-    }
+	@Override
+	T next();
 
-    @Override
-    public Substitution next() {
-        return this.iterator.next();
-    }
-
-    @Override
-    public Iterator<Substitution> iterator() {
-        return this;
-    }
-
-    /* (non-Javadoc)
-     * @see fr.lirmm.graphik.kb.stream.ISubstitutionReader#close()
-     */
-    @Override
-    public void close() {
-    }
-    
-    
+	@Override
+	GIterator<T> iterator();
 
 }

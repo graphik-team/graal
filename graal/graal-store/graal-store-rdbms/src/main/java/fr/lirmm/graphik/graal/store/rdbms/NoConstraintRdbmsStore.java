@@ -49,8 +49,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
@@ -58,10 +56,11 @@ import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.VariableGenerator;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
+import fr.lirmm.graphik.graal.api.core.VariableGenerator;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -85,7 +84,7 @@ public class NoConstraintRdbmsStore extends AbstractRdbmsStore {
 	}
 
 	@Override
-	public Iterator<Atom> iterator() {
+	public CloseableIterator<Atom> iterator() {
 		// TODO implement this method
 		throw new MethodNotImplementedError("This method isn't implemented");
 	}
@@ -98,18 +97,6 @@ public class NoConstraintRdbmsStore extends AbstractRdbmsStore {
 
 	@Override
 	public boolean contains(Atom atom) {
-		// TODO implement this method
-		throw new MethodNotImplementedError("This method isn't implemented");
-	}
-
-	@Override
-	public Set<Term> getTerms() {
-		// TODO implement this method
-		throw new MethodNotImplementedError("This method isn't implemented");
-	}
-
-	@Override
-	public Set<Term> getTerms(Type type) {
 		// TODO implement this method
 		throw new MethodNotImplementedError("This method isn't implemented");
 	}
@@ -171,22 +158,6 @@ public class NoConstraintRdbmsStore extends AbstractRdbmsStore {
 	}
 
 	@Override
-	public Iterator<Predicate> predicatesIterator() {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
-	}
-	
-	@Override
-	public Set<Predicate> getPredicates() throws AtomSetException {
-		TreeSet<Predicate> set = new TreeSet<Predicate>();
-		Iterator<Predicate> it = this.predicatesIterator();
-		while(it.hasNext()) {
-			set.add(it.next());
-		}
-		return set;
-	}
-
-	@Override
 	public Term getTerm(String label) throws AtomSetException {
 		// TODO implement this method
 		throw new Error("This method isn't implemented");
@@ -208,6 +179,24 @@ public class NoConstraintRdbmsStore extends AbstractRdbmsStore {
 	@Override
 	public Iterator<String> transformToSQL(Rule rangeRestrictedRule)
 			throws AtomSetException {
+		// TODO implement this method
+		throw new MethodNotImplementedError();
+	}
+
+	@Override
+	public CloseableIterator<Predicate> predicatesIterator() throws AtomSetException {
+		// TODO implement this method
+		throw new MethodNotImplementedError();
+	}
+
+	@Override
+	public CloseableIterator<Term> termsIterator() throws AtomSetException {
+		// TODO implement this method
+		throw new MethodNotImplementedError();
+	}
+
+	@Override
+	public CloseableIterator<Term> termsIterator(Type type) throws AtomSetException {
 		// TODO implement this method
 		throw new MethodNotImplementedError();
 	}

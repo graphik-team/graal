@@ -43,35 +43,44 @@
  /**
  * 
  */
-package fr.lirmm.graphik.graal.store.rdbms.homomorphism;
+package fr.lirmm.graphik.graal.store.rdbms;
 
-import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.Query;
-import fr.lirmm.graphik.graal.api.homomorphism.AbstractChecker;
-import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
-import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
+import java.sql.SQLException;
+
+import fr.lirmm.graphik.graal.api.core.Predicate;
 
 /**
- * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+ * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public class SqlUCQHomomorphismChecker extends
-		AbstractChecker {
+class ResultSetPredicateIterator extends AbstractResultSetIterator<Predicate> {
 
-	@Override
-	public boolean check(Query query, AtomSet atomset) {
-		return query instanceof UnionConjunctiveQueries
-				&& atomset instanceof RdbmsStore;
+
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTOR
+	// /////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * @param store
+	 * @param sqlQuery
+	 * @throws SQLException
+	 * @throws StoreException
+	 */
+	public ResultSetPredicateIterator(RdbmsStore store, String sqlQuery) throws SQLException {
+		super(store, sqlQuery);
 	}
 
-	@Override
-	public SqlUCQHomomorphism getSolver() {
-		return SqlUCQHomomorphism.instance();
-	}
+	// /////////////////////////////////////////////////////////////////////////
+	// METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
+	/**
+	 * @return
+	 * @throws SQLException 
+	 */
 	@Override
-	public int getDefaultPriority() {
-		return 100;
+	protected Predicate computeNext() throws SQLException {
+		return new Predicate(results.getString(1), results.getInt(2));
 	}
 
 }

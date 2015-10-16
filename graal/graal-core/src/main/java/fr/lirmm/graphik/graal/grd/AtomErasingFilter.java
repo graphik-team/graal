@@ -58,9 +58,9 @@ public class AtomErasingFilter extends GraphOfRuleDependencies.DependencyChecker
 		InMemoryAtomSet h2 = s.createImageOf(r2.getHead());
 
 		InMemoryAtomSet f = new LinkedListAtomSet();
-		f.addAll(b1);
-		f.addAll(h1);
-		f.addAll(b2);
+		f.addAll(b1.iterator());
+		f.addAll(h1.iterator());
+		f.addAll(b2.iterator());
 
 		// mu(B2) not subset of mu(B1) 
 		// (R2 could not be applied on F)
