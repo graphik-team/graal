@@ -1,0 +1,18 @@
+      <h2>What does this example do?</h2>
+        <ol>
+          <li>Create a relational database store with HSQLDB (an
+            InMemory Java database system),</li>
+          <li>Parse Animals.dlp (a <em>Dlgp</em> file with rules and
+            facts),</li>
+          <li>Print the set of rules in <em>Dlgp</em> format,</li>
+          <li>Print the set of facts in <em>Dlgp</em> format,</li>
+          <li>Parse a query from the code and print it,</li>
+          <li>Query the store without rule reasoning,</li>
+          <li>Backward chaining (based on query rewriting),</li>
+          <li>Forward chaining (based on fact saturation).</li>
+        </ol>
+
+        <h2>To continue</h2>
+
+        <p>More examples are available <a href="https://github.com/graphik-team/graal/tree/master/graal-examples/src/main/java/fr/lirmm/graphik/graal/examples">here</a> and will soon be
+        discussed here.</p>

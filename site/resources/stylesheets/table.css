@@ -1,0 +1,45 @@
+
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  border: 1px solid #373737;
+  margin: 0px auto 20px auto;
+  text-align: center;
+}
+
+tbody {
+    margin-top: 2px;
+}
+
+tr {
+  border-top: 1px solid #373737;
+}
+
+th, td {
+  line-height: 1em;
+  padding: 10px;
+  border-left: 1px solid #373737;
+  border-right: 1px solid #373737;
+}
+
+th {
+}
+
+td.slim {
+    width: 80px;
+}
+
+/* noborder */
+
+tr.noborder {
+    border: none;
+}
+
+tr.noborder > td {
+    padding-top: 0px;
+}
+
+tr.sep {
+    border-top: double;
+}

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  [%- PROCESS config.tt -%]
+  [%- title = "Pure rewriter" -%]  
+  [%- INCLUDE header.tt
+  desc="Pure is a compilation based query rewriter dedicated to the
+  datalog+ framework."
+  keywords="Pure, conjunctive query, rewriter, existential rules,
+  ontology, datalog+"
+  -%]<html>
+  
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <h1 id="project_title">[% title %]</h1>
+        </header>
+        [%- INCLUDE nav.tt -%]
+    </div>
+
+    [%- INCLUDE downloads_sub_menu.tt -%]
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+
+        <h2>Associated publications</h2>
+            <p>See <a href="./publications#SWJ2015">SWJ 2015</a> for Pure (basic query rewriting), <a href="./publications#IJCAI2015">IJCAI 2015</a> and <a href="./publications#RuleML2015">RuleML 2015</a> for Pure<sub>C</sub> (compilation based query rewriting).</p>
+        
+        <h2>Getting started</h2>
+            The following program (Pure-rewriter) includes both the basic and the compilation-based versions of Pure.
+
+        <ul>
+            <li>Download <a href="./dl/pure-rewriter-1.0.beta6.jar">pure-rewriter</a></li>
+            <li>Download <a href="./dl/example.dlp">example.dlp</a>
+            (example from <a href="./publications#RuleML2015">the paper on Graal at RuleML
+            2015</a>)</li>
+        </ul>
+
+            
+            <p>There are three options for compilation:</p>
+            <ul>
+              <li>NONE: no compilation</li>
+              <li>H: compilation of hierarchical rules</li>
+              <li>ID: compilation of all compilable rules</li>
+            </ul>
+
+
+            <h3> Rewrite with ID compilation </h3>
+
+            <ul>
+              <li>
+                Compile ontology into ./example.idc: <br/>
+                <code>java -jar pure-rewriter-*.jar compile ./example.dlp -f ./example.idc </code>
+              </li>
+
+              <li>
+                Rewrite the query using the compiled ontology file: <br/>
+                <code>java -jar pure-rewriter-*.jar rewrite ./example.dlp -q "?(X):- criticalManager(X),woman(X)." -c ./example.idc > ./pivotal.dlp </code>
+              </li>
+
+              <li>Unfold the pivotal query: <br/>
+
+              <code>java -jar pure-rewriter-*.jar unfold -c ./example.idc -q ./pivotal.dlp </code></li>
+              </ul>
+
+
+            <h3> Without compilation </h3>
+             <ul>
+              <li>
+                <code>java -jar pure-rewriter-*.jar rewrite ./example.dlp -q "?(X):- criticalManager(X),woman(X)." -c NONE </code>
+              </li>
+             </ul>
+
+            <h3> Other useful options </h3>
+            <ul>
+              <li>
+                Verbose mode, print informations like time, number of rewritings...
+                <code>java -jar pure-rewriter-*.jar -v compile ./example.dlp -f ./example.idc</code>
+              <li>
+                One line rewriting with compilation and unfolding:
+                <code>java -jar pure-rewriter-*.jar rewrite ./example.dlp -q "?(X):- criticalManager(X),woman(X)." -u </code>
+              </li>
+              <li>
+                Rewrite multiple queries from a file
+                <code>java -jar pure-rewriter-*.jar rewrite ./example.dlp -q ./queries.dlp </code>
+              </li>
+              <li>
+                More options:
+                <code>java -jar pure-rewriter-*.jar --help</code>
+            </ul>
+      </section>
+    </div>
+
+  [%- INCLUDE footer.tt -%]
+
+  </body>
+</html>

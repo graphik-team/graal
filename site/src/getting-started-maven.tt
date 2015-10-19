@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  [%- PROCESS config.tt -%]
+  [%- title = "Getting Started using Maven" -%]  
+  [%- INCLUDE header.tt -%]
+  
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <h1 id="project_title">[% title %]</h1>
+        </header>
+        [%- INCLUDE nav.tt -%]
+    </div>
+
+    [% INCLUDE documentation_sub_menu.tt %]
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        This example shows how to build and run a simple Graal project
+        using the Maven build tool. If you prefer, you can
+        build and run this example <a href="./getting-started">without any build tool</a>.
+        <h2>Requirements</h2>
+
+        <ul>
+          <li>Graal requires Java 7 or newer.</li>
+          <li><a href="https://maven.apache.org/download.cgi">Download</a>
+        and <a href="https://maven.apache.org/install.html">install</a>
+        Maven.</li>
+          <li>Download the
+          project <a href="./dl/examples/graal-getting-started.zip">graal-getting-started.zip</a> and
+          extract it where you want.</li>
+        </ul>
+
+        <h2>Build</h2>
+
+          <p>Open a terminal and go to the graal-getting-started
+          folder. Then, execute the command below:</p>
+          
+          <code>mvn package</code>
+
+          <h2>Run the example</h2>
+
+         <p>Execute the project:</p>
+         <code>java -jar target/getting-started-1.0-SNAPSHOT.jar src/main/resources/animals.dlp</code>
+         
+
+         [%- INCLUDE getting_started_inc.tt -%]
+         
+      </section>
+    </div>
+
+[% INCLUDE footer.tt %]
+  </body>
+</html>
