@@ -594,6 +594,10 @@ public final class RuleUtils {
 			}
 		}
 
+		// TODO: In the definition of CI, we need to add all
+		// predicates in rule head. But why? This doesn't make any
+		// sense...
+
 		for (Predicate p : predicates) {
 			generateCriticalInstance(A,terms,p,0,new DefaultAtom(p));
 		}
