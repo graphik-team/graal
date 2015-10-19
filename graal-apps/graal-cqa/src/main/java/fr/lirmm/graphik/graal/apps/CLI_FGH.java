@@ -74,8 +74,9 @@ import fr.lirmm.graphik.graal.forward_chaining.halting_condition.RestrictedChase
 import fr.lirmm.graphik.graal.homomorphism.ComplexHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
+import fr.lirmm.graphik.graal.store.rdbms.SqlHomomorphism;
 import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
-import fr.lirmm.graphik.graal.store.rdbms.homomorphism.SqlHomomorphism;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 public class CLI_FGH {
 
@@ -105,7 +106,7 @@ public class CLI_FGH {
 
 			FGH fgh = new FGH();
 
-			Homomorphism solver = new ComplexHomomorphism(SqlHomomorphism.instance());
+			Homomorphism<ConjunctiveQuery, AtomSet> solver = new ComplexHomomorphism(SqlHomomorphism.instance());
 
 			FGHRuleApplicationHandler onRule = new FGHRuleApplicationHandler(index,fgh);
 			onRule.setSolver(solver);
@@ -120,8 +121,8 @@ public class CLI_FGH {
 				else reader = new FileReader(options.input_file);
 
 				DlgpParser parser = new DlgpParser(reader);
-
-				for (Object o : parser) {
+				while (parser.hasNext()) {
+					Object o = parser.next();
 					if (o instanceof Atom)
 						//atomset.addUnbatched((Atom)o); TODO
 						atomset.add((Atom)o);
@@ -197,7 +198,9 @@ public class CLI_FGH {
 				for (ConjunctiveQuery constraint : constraints) {
 					DefaultConjunctiveQuery q = new DefaultConjunctiveQuery(constraint);
 					q.setAnswerVariables(new LinkedList<Term>(q.getAtomSet().getTerms()));
-					for (Substitution s : solver.execute(q,atomset)) {
+					CloseableIterator<Substitution> execute = solver.execute(q, atomset);
+					while (execute.hasNext()) {
+						Substitution s = execute.next();
 						AtomSet conflict = s.createImageOf(q.getAtomSet());
 						int conflict_size = 0;
 						for (Atom a : conflict)
@@ -218,7 +221,9 @@ public class CLI_FGH {
 				for (ConjunctiveQuery constraint : constraints) {
 					DefaultConjunctiveQuery q = new DefaultConjunctiveQuery(constraint);
 					q.setAnswerVariables(new LinkedList<Term>(q.getAtomSet().getTerms()));
-					for (Substitution s : solver.execute(q,atomset)) {
+					CloseableIterator<Substitution> execute = solver.execute(q, atomset);
+					while (execute.hasNext()) {
+						Substitution s = execute.next();
 						AtomSet conflict = s.createImageOf(q.getAtomSet());
 						int conflict_size = 0;
 						for (Atom a : conflict)

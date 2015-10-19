@@ -40,106 +40,118 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
 package fr.lirmm.graphik.graal.store.rdbms;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.AtomSetException;
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
-import fr.lirmm.graphik.graal.api.core.Predicate;
-import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.core.DefaultAtom;
-import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
-import fr.lirmm.graphik.graal.core.stream.SubstitutionReader2AtomReader;
-import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
-import fr.lirmm.graphik.graal.store.rdbms.homomorphism.SqlHomomorphism;
+import fr.lirmm.graphik.util.stream.AbstractIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
- * @author Clément Sipieter (INRIA) <clement@6pi.fr>
- * 
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+ *
  */
-class DefaultRdbmsIterator implements Iterator<Atom> {
+abstract class AbstractResultSetIterator<T> extends AbstractIterator<T> implements CloseableIterator<T> {
 
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(DefaultRdbmsIterator.class);
-	
-	private RdbmsStore store;
-	private boolean hasNextCallDone = false;
-	private Iterator<Predicate> predicateStream;
-	private Iterator<Atom> atomReader;
+	protected ResultSetMetaData metaData;
+	private Statement statement;
+	protected RdbmsStore store;
+
+	protected boolean hasNextCallDone = false;
+	protected boolean hasNext;
+	protected ResultSet results;
 
 	// /////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTOR
+	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
-	DefaultRdbmsIterator(RdbmsStore store) throws AtomSetException {
+	/**
+	 * @param store
+	 * @param sqlQuery
+	 * @throws SQLException
+	 * @throws StoreException
+	 */
+	public AbstractResultSetIterator(RdbmsStore store, String sqlQuery) throws SQLException {
 		this.store = store;
-		this.init();
+		this.statement = store.getDriver().getConnection().createStatement();
+		this.results = statement.executeQuery(sqlQuery);
+		this.metaData = results.getMetaData();
 	}
 
-	private void init() throws AtomSetException {
-		this.predicateStream = store.predicatesIterator();
+	public AbstractResultSetIterator(RdbmsStore store, PreparedStatement st) throws SQLException {
+		this.store = store;
+		this.results = st.executeQuery();
+		this.metaData = results.getMetaData();
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
-	// METHODS
+	// ABSTRACT METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	protected abstract T computeNext() throws Exception;
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
 	public boolean hasNext() {
 		if (!this.hasNextCallDone) {
 			this.hasNextCallDone = true;
-			while (this.predicateStream.hasNext()
-				   && (this.atomReader == null || !this.atomReader.hasNext())) {
-				Predicate p = predicateStream.next();
-				List<Term> terms = new LinkedList<Term>();
-				for(int i=0; i<p.getArity(); ++i) {
-					terms.add(DefaultTermFactory.instance().createVariable(
-							"X" + i));
-				}
-				
-				InMemoryAtomSet atomSet = new LinkedListAtomSet();
-				Atom atom = new DefaultAtom(p, terms);
-				atomSet.add(atom);
-				
-				ConjunctiveQuery query = ConjunctiveQueryFactory.instance().create(atomSet);
-				
-				SqlHomomorphism solver = SqlHomomorphism.instance();
-				try {
-					this.atomReader = new SubstitutionReader2AtomReader(atom, solver.execute(query, this.store));
-				} catch (HomomorphismException e) {
-					LOGGER.error(e.getMessage(), e);
-					return false;
-				}
+
+			try {
+				this.hasNext = this.results.next();
+			} catch (SQLException e) {
+				// TODO
 			}
 		}
-		return this.atomReader != null && this.atomReader.hasNext();
+
+		return this.hasNext;
 	}
 
 	@Override
-	public Atom next() {
+	public T next() {
 		if (!this.hasNextCallDone)
 			this.hasNext();
+
 		this.hasNextCallDone = false;
 
-		return this.atomReader.next();
+		try {
+			return computeNext();
+
+		} catch (Exception e) {
+			// TODO
+			return null;
+		}
 	}
 
 	@Override
-	public void remove() {
-		throw new UnsupportedOperationException();
+	public void close() {
+		try {
+			this.results.close();
+			if (statement != null)
+				this.statement.close();
+		} catch (SQLException e) {
+			throw new Error("Untreated exception");
+		}
 	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// OBJECT OVERRIDE METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	@Override
+	protected void finalize() throws Throwable {
+		this.close();
+		super.finalize();
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
 }

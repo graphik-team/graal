@@ -40,17 +40,14 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.api.io;
+ package fr.lirmm.graphik.util.stream;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
+import java.io.IOException;
+import java.util.Iterator;
 
-/**
- * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- *
- */
-public interface AtomParser extends Parser<Atom> {
-
+public interface Writer<T> {
+    
+    void write(T object) throws IOException;
+	
+	void write(Iterator<T> objects) throws IOException;
 }

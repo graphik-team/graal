@@ -43,6 +43,7 @@
 package fr.lirmm.graphik.graal.homomorphism;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -56,11 +57,11 @@ import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.stream.SubstitutionReader;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.HashMapSubstitution;
-import fr.lirmm.graphik.graal.core.stream.IteratorSubstitutionReader;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 
 /**
  * Implementation of a backtrack solving algorithm.
@@ -99,7 +100,7 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
 	 * @throws AtomSetException
 	 */
 	@Override
-	public SubstitutionReader execute(ConjunctiveQuery query, AtomSet facts) throws HomomorphismException {
+	public CloseableIterator<Substitution> execute(ConjunctiveQuery query, AtomSet facts) throws HomomorphismException {
 		if (LOGGER.isTraceEnabled()) {
 			LOGGER.trace(query.toString());
 		}
@@ -110,11 +111,11 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
 			this.domain = facts.getTerms();
 
 			if (isHomomorphism(queryAtomRanked[0], facts, new HashMapSubstitution())) {
-				return new IteratorSubstitutionReader(homomorphism(query, queryAtomRanked, facts,
+				return new CloseableIteratorAdapter<Substitution>(homomorphism(query, queryAtomRanked, facts,
 						new HashMapSubstitution(), orderedVars, 1).iterator());
 			} else {
 				// return false
-				return new IteratorSubstitutionReader(new LinkedList<Substitution>().iterator());
+				return new CloseableIteratorAdapter<Substitution>(Collections.<Substitution> emptyList().iterator());
 			}
 		} catch (Exception e) {
 			throw new HomomorphismException(e.getMessage(), e);

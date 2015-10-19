@@ -45,7 +45,8 @@
  */
 package fr.lirmm.graphik.graal.forward_chaining.rule_applier;
 
-import java.util.Iterator;
+
+import java.util.LinkedList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,6 +68,8 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.RestrictedChaseStopCondition;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -133,24 +136,27 @@ public class DefaultRuleApplier<T extends AtomSet> implements
 			throws RuleApplicationException {
 		boolean isChanged = false;
 		ConjunctiveQuery query = ConjunctiveQueryFactory.instance().create(rule.getBody(),
-				rule.getFrontier());
+		        new LinkedList<Term>(rule.getFrontier()));
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Rule to execute: " + rule);
 			LOGGER.debug("       -- Query: " + query);
 		}
 
 		try {
-			for (Substitution substitution : this.executeQuery(query, atomSet)) {
+			CloseableIterator<Substitution> subIt = this.executeQuery(query, atomSet);
+			while (subIt.hasNext()) {
+				Substitution substitution = subIt.next();
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("-- Found homomorphism: " + substitution);
 				}
 
-				Iterator<Atom> it = this.getHaltingCondition().apply(rule, substitution, atomSet);
+				GIterator<Atom> it = this.getHaltingCondition().apply(rule, substitution, atomSet);
 				if (it.hasNext()) {
 					atomSet.addAll(it);
 					isChanged = true;
 				}
 			}
+			subIt.close();
 		} catch (HomomorphismFactoryException e) {
 			throw new RuleApplicationException("Error during rule application",
 					e);
@@ -173,7 +179,7 @@ public class DefaultRuleApplier<T extends AtomSet> implements
 		return this.haltingCondition;
 	}
 
-	protected Iterable<Substitution> executeQuery(ConjunctiveQuery query,
+	protected CloseableIterator<Substitution> executeQuery(ConjunctiveQuery query,
 			T atomSet) throws HomomorphismFactoryException,
 			HomomorphismException {
 		return this.solver.execute(query, atomSet);

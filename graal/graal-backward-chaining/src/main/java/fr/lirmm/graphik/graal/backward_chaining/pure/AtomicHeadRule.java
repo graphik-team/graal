@@ -45,7 +45,6 @@
 import java.util.Set;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
@@ -71,7 +70,7 @@ class AtomicHeadRule implements Rule {
 	 *            must be an AtomicFact
 	 * @throws Exception
 	 */
-	public AtomicHeadRule(AtomSet b, Atom h) {
+	public AtomicHeadRule(InMemoryAtomSet b, Atom h) {
 		this.rule = RuleFactory.instance().create(b, new AtomicAtomSet(h));
 	}
 

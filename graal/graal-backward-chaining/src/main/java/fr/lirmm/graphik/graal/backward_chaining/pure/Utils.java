@@ -47,6 +47,8 @@ package fr.lirmm.graphik.graal.backward_chaining.pure;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -99,8 +101,8 @@ final class Utils {
 				u.getPiece()));
 		ConjunctiveQuery rew = null;
 		if (ajout != null && restant != null) { // FIXME
-			AtomSet res = AtomSetUtils.union(ajout, restant);
-			ArrayList<Term> ansVar = new ArrayList<Term>();
+			InMemoryAtomSet res = AtomSetUtils.union(ajout, restant);
+			List<Term> ansVar = new LinkedList<Term>();
 			ansVar.addAll(q.getAnswerVariables());
 			rew = ConjunctiveQueryFactory.instance().create(res, ansVar);
 		}
@@ -127,8 +129,8 @@ final class Utils {
 				u.getPiece()));
 		MarkedQuery rew = null;
 		if (ajout != null && restant != null) { // FIXME
-			AtomSet res = AtomSetUtils.union(ajout, restant);
-			ArrayList<Term> ansVar = new ArrayList<Term>();
+			InMemoryAtomSet res = AtomSetUtils.union(ajout, restant);
+			List<Term> ansVar = new LinkedList<Term>();
 			ansVar.addAll(q.getAnswerVariables());
 			rew = new MarkedQuery(res, ansVar);
 

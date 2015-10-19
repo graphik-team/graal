@@ -46,13 +46,15 @@ import java.util.LinkedList;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.Query;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplicationHandler;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 public class FGHRuleApplicationHandler implements RuleApplicationHandler {
 
@@ -63,25 +65,27 @@ public class FGHRuleApplicationHandler implements RuleApplicationHandler {
 
 	@Override
 	public boolean onRuleApplication(Rule rule, Substitution substitution, AtomSet base) {
-		AtomSet from = substitution.createImageOf(rule.getBody());
-		AtomSet atomSet = substitution.createImageOf(rule.getHead());
+		InMemoryAtomSet from = substitution.createImageOf(rule.getBody());
+		InMemoryAtomSet atomSet = substitution.createImageOf(rule.getHead());
 
 		try {
-		Query q = new DefaultConjunctiveQuery(from,from.getTerms(Term.Type.VARIABLE));
-		for (Substitution s : this.solver.execute(q,base)) {
+			ConjunctiveQuery q = new DefaultConjunctiveQuery(from, new LinkedList<Term>(
+			        from.getTerms(Term.Type.VARIABLE)));
+			CloseableIterator<Substitution> it = this.solver.<ConjunctiveQuery, AtomSet> execute(q, base);
 
 			//AtomSet from2 = s.getSubstitut(from);
-
-			LinkedList causes = new LinkedList<Integer>();
-			for (Atom a : from) {
-				causes.add(new Integer(this.index.get(s.createImageOf(a))));
+			while (it.hasNext()) {
+				Substitution s = it.next();
+				LinkedList causes = new LinkedList<Integer>();
+				for (Atom a : from) {
+					causes.add(new Integer(this.index.get(s.createImageOf(a))));
+				}
+				for (Atom a : atomSet) {
+					this.fgh.add(causes, this.index.get(a));
+				}
 			}
-			for (Atom a : atomSet) {
-				this.fgh.add(causes,this.index.get(a));
-			}
-		}
 
-		return true;
+			return true;
 		}
 		catch (Exception e) {
 			System.err.println(e);
@@ -94,7 +98,7 @@ public class FGHRuleApplicationHandler implements RuleApplicationHandler {
 		this.solver = solver;
 	}
 
-	private Homomorphism solver;
+	private Homomorphism<ConjunctiveQuery, AtomSet> solver;
 	private AtomIndex   index;
 	private FGH         fgh;
 

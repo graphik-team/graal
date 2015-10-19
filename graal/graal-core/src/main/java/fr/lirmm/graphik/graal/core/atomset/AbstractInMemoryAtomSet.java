@@ -40,19 +40,22 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
+/**
  * 
  */
 package fr.lirmm.graphik.graal.core.atomset;
 
 import java.util.Iterator;
+import java.util.Set;
 
 import fr.lirmm.graphik.graal.api.core.AbstractAtomSet;
 import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Term.Type;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -71,44 +74,65 @@ public abstract class AbstractInMemoryAtomSet extends AbstractAtomSet implements
 
 	@Override
 	public boolean addAll(Iterator<? extends Atom> atoms) {
-		boolean isChanged = false;
-		while(atoms.hasNext()) {
-			isChanged = this.add(atoms.next()) || isChanged;
+		try {
+			return super.addAll(atoms);
+		} catch (AtomSetException e) {
+			throw new Error("It should never happen.");
 		}
-		return isChanged;
 	}
 
 	@Override
-	public boolean addAll(Iterable<? extends Atom> atoms) {
-		return this.addAll(atoms.iterator());
+	public boolean addAll(AtomSet atoms) {
+		try {
+			return super.addAll(atoms);
+		} catch (AtomSetException e) {
+			throw new Error("It should never happen.");
+		}
 	}
-	
+
 	@Override
 	public boolean removeAll(Iterator<? extends Atom> atoms) {
-		boolean isChanged = false;
-		while(atoms.hasNext()) {
-			isChanged = this.remove(atoms.next()) || isChanged;
+		try {
+			return super.removeAll(atoms);
+		} catch (AtomSetException e) {
+			throw new Error("It should never happen.");
 		}
-		return isChanged;
 	}
-	
+
 	@Override
-	public boolean removeAll(Iterable<? extends Atom> atoms) {
-		return this.removeAll(atoms.iterator());
+	public boolean removeAll(AtomSet atoms) {
+		try {
+			return super.removeAll(atoms);
+		} catch (AtomSetException e) {
+			throw new Error("It should never happen.");
+		}
 	}
-	
+
 	@Override
-	public Iterator<Predicate> predicatesIterator() {
-		return this.getPredicates().iterator();
+	public Set<Term> getTerms() {
+		try {
+			return super.getTerms();
+		} catch (AtomSetException e) {
+			throw new Error("It should never happen.");
+		}
 	}
-	
+
 	@Override
-	public Iterator<Term> termsIterator() {
-		return this.getTerms().iterator();
+	public Set<Term> getTerms(Type type) {
+		try {
+			return super.getTerms(type);
+		} catch (AtomSetException e) {
+			throw new Error("It should never happen.");
+		}
 	}
-	
+
 	@Override
-	public Iterator<Term> termsIterator(Term.Type type) {
-		return this.getTerms(type).iterator();
+	public Set<Predicate> getPredicates() {
+		try {
+			return super.getPredicates();
+		} catch (AtomSetException e) {
+			throw new Error("It should never happen.");
+		}
 	}
+
 }

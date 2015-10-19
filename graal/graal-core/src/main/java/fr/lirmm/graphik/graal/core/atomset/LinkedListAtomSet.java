@@ -54,7 +54,8 @@ import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
-import fr.lirmm.graphik.graal.core.stream.IteratorAtomReader;
+import fr.lirmm.graphik.util.stream.IteratorAdapter;
+import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
  * 
@@ -83,11 +84,6 @@ public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements
 			this.linkedList.add(a);
 	}
 
-	public LinkedListAtomSet(Iterable<Atom> it) {
-		this();
-		for (Atom a : it)
-			this.linkedList.add(a);
-	}
 
 	public LinkedListAtomSet(Iterator<Atom> it) {
 		this();
@@ -120,6 +116,11 @@ public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements
 	}
 
 	@Override
+	public GIterator<Predicate> predicatesIterator() {
+		return new IteratorAdapter<Predicate>(this.getPredicates().iterator());
+	}
+
+	@Override
 	public boolean add(Atom atom) {
 		if (this.linkedList.contains(atom))
 			return false;
@@ -129,7 +130,7 @@ public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements
 
 	@Override
 	public boolean addAll(Collection<? extends Atom> c) {
-		return this.addAll((Iterable<? extends Atom>) c);
+		return this.addAll(new IteratorAdapter(c.iterator()));
 	}
 
 	@Override
@@ -142,6 +143,11 @@ public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements
 	}
 
 	@Override
+	public GIterator<Term> termsIterator() {
+		return new IteratorAdapter<Term>(this.getTerms().iterator());
+	}
+
+	@Override
 	public Set<Term> getTerms(Term.Type type) {
 		Set<Term> terms = new TreeSet<Term>();
 		for (Atom a : this.linkedList) {
@@ -151,22 +157,18 @@ public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements
 	}
 
 	@Override
+	public GIterator<Term> termsIterator(Term.Type type) {
+		return new IteratorAdapter<Term>(this.getTerms(type).iterator());
+	}
+
+	@Override
 	public boolean remove(Atom atom) {
 		return this.linkedList.remove(atom);
 	}
 
 	@Override
-	public boolean removeAll(Iterable<? extends Atom> atoms) {
-		boolean isChanged = false;
-		for (Atom a : atoms) {
-			isChanged = this.linkedList.remove(a) || isChanged;
-		}
-		return isChanged;
-	}
-
-	@Override
-	public Iterator<Atom> iterator() {
-		return new IteratorAtomReader(this.linkedList.iterator());
+	public GIterator<Atom> iterator() {
+		return new IteratorAdapter<Atom>(this.linkedList.iterator());
 	}
 
 	@Override

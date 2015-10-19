@@ -67,6 +67,7 @@ import fr.lirmm.graphik.graal.forward_chaining.NaiveChase;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -104,17 +105,18 @@ public class AnimalsExample {
 		waitEntry();
 
 		writer.write("\n= Answers =\n");
-		Iterable<Substitution> results = StaticHomomorphism.executeQuery(query,
+		CloseableIterator<Substitution> results = StaticHomomorphism.executeQuery(query,
 				kb.getFacts());
-		if (results.iterator().hasNext()) {
-			for (Substitution s : results) {
-				writer.write(s.toString());
+		if (results.hasNext()) {
+			while (results.hasNext()) {
+				writer.write(results.next().toString());
 				writer.write("\n");
 			}
 		} else {
 			writer.write("No answer");
 			writer.write("\n");
 		}
+		results.close();
 		writer.flush();
 		waitEntry();
 
@@ -151,10 +153,11 @@ public class AnimalsExample {
 		// Backward Chaining Query
 		writer.write("\n= Answers =\n");
 		results = StaticHomomorphism.executeQuery(ucq, kb.getFacts());
-		for (Substitution s : results) {
-			writer.write(s.toString());
+		while (results.hasNext()) {
+			writer.write(results.next().toString());
 			writer.write("\n");
 		}
+		results.close();
 		writer.flush();
 		waitEntry();
 
@@ -185,10 +188,11 @@ public class AnimalsExample {
 		// Forward Chaining Query
 		writer.write("\n= Answers =\n");
 		results = StaticHomomorphism.executeQuery(query, kb.getFacts());
-		for (Substitution s : results) {
-			writer.write(s.toString());
+		while (results.hasNext()) {
+			writer.write(results.next().toString());
 			writer.write("\n");
 		}
+		results.close();
 
 		writer.close();
 	}

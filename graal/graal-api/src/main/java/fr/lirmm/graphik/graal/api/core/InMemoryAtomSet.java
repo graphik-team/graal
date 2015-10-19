@@ -45,6 +45,8 @@
 import java.util.Iterator;
 import java.util.Set;
 
+import fr.lirmm.graphik.util.stream.GIterator;
+
 public interface InMemoryAtomSet extends AtomSet {
 	
 	@Override
@@ -54,19 +56,19 @@ public interface InMemoryAtomSet extends AtomSet {
 	Set<Predicate> getPredicates();
 
 	@Override
-	Iterator<Predicate> predicatesIterator();
+	GIterator<Predicate> predicatesIterator();
 
 	@Override
 	Set<Term> getTerms();
 
 	@Override
-	Iterator<Term> termsIterator();
+	GIterator<Term> termsIterator();
 	
 	@Override
 	Set<Term> getTerms(Term.Type type);
 
 	@Override
-	Iterator<Term> termsIterator(Term.Type type);
+	GIterator<Term> termsIterator(Term.Type type);
 
 	@Override
 	@Deprecated
@@ -79,13 +81,19 @@ public interface InMemoryAtomSet extends AtomSet {
 	boolean add(Atom atom);
 
 	@Override
-	boolean addAll(Iterable<? extends Atom> atoms);
+	boolean addAll(Iterator<? extends Atom> atoms);
+
+	@Override
+	boolean addAll(AtomSet atoms);
 
 	@Override
 	boolean remove(Atom atom);
 
 	@Override
-	boolean removeAll(Iterable<? extends Atom> atoms);
+	boolean removeAll(Iterator<? extends Atom> atoms);
+
+	@Override
+	boolean removeAll(AtomSet atoms);
 
 	@Override
 	void clear();

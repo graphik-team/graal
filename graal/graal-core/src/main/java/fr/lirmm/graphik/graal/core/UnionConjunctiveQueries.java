@@ -51,6 +51,8 @@ import java.util.LinkedList;
 
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Query;
+import fr.lirmm.graphik.util.stream.IteratorAdapter;
+import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
  * This class represents query which is the union of conjunctive queries.
@@ -109,8 +111,8 @@ public class UnionConjunctiveQueries implements Query,
 	}
 
 	@Override
-	public Iterator<ConjunctiveQuery> iterator() {
-		return this.queries.iterator();
+	public GIterator<ConjunctiveQuery> iterator() {
+		return new IteratorAdapter<ConjunctiveQuery>(this.queries.iterator());
 	}
 
 	@Override

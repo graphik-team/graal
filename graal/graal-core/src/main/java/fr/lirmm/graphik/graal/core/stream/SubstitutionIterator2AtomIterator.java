@@ -40,25 +40,37 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- package fr.lirmm.graphik.graal.core.stream;
-
-import java.util.Iterator;
+ /**
+ * 
+ */
+package fr.lirmm.graphik.graal.core.stream;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.util.stream.AbstractReader;
+import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.util.stream.AbstractIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
-public class IteratorAtomReader extends AbstractReader<Atom> {
-	
-	private Iterator<Atom> iterator;
-	
-	public IteratorAtomReader(Iterator<Atom>  iterator) {
-		this.iterator = iterator;
+/**
+ * @author Clément Sipieter (INRIA) <clement@6pi.fr>
+ * 
+ */
+public class SubstitutionIterator2AtomIterator extends AbstractIterator<Atom> implements CloseableIterator<Atom> {
+
+	private Atom atom;
+	private CloseableIterator<Substitution> iterator;
+
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTOR
+	// /////////////////////////////////////////////////////////////////////////
+
+	public SubstitutionIterator2AtomIterator(Atom atom, CloseableIterator<Substitution> it) {
+		this.iterator = it;
+		this.atom = atom;
 	}
 
-	@Override
-	public void remove() {
-		this.iterator.remove();
-	}
+	// /////////////////////////////////////////////////////////////////////////
+	// METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
 	public boolean hasNext() {
@@ -67,12 +79,12 @@ public class IteratorAtomReader extends AbstractReader<Atom> {
 
 	@Override
 	public Atom next() {
-		return this.iterator.next();
+		return this.iterator.next().createImageOf(atom);
 	}
 
 	@Override
-	public Iterator<Atom> iterator() {
-		return this;
+	public void close() {
+		this.iterator.close();
 	}
 
 }

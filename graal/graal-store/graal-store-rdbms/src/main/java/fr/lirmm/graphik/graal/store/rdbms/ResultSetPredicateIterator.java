@@ -43,52 +43,44 @@
  /**
  * 
  */
-package fr.lirmm.graphik.graal.core.stream;
+package fr.lirmm.graphik.graal.store.rdbms;
 
-import java.util.Iterator;
+import java.sql.SQLException;
 
-import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.graal.api.core.stream.SubstitutionReader;
+import fr.lirmm.graphik.graal.api.core.Predicate;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
- *
+ * 
  */
-public class IteratorSubstitutionReader implements SubstitutionReader {
-    
-    private Iterator<Substitution> iterator;
-    
-    public IteratorSubstitutionReader(Iterator<Substitution>  iterator) {
-        this.iterator = iterator;
-    }
+class ResultSetPredicateIterator extends AbstractResultSetIterator<Predicate> {
 
-    @Override
-    public void remove() {
-        this.iterator.remove();
-    }
 
-    @Override
-    public boolean hasNext() {
-        return this.iterator.hasNext();
-    }
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTOR
+	// /////////////////////////////////////////////////////////////////////////
 
-    @Override
-    public Substitution next() {
-        return this.iterator.next();
-    }
+	/**
+	 * @param store
+	 * @param sqlQuery
+	 * @throws SQLException
+	 * @throws StoreException
+	 */
+	public ResultSetPredicateIterator(RdbmsStore store, String sqlQuery) throws SQLException {
+		super(store, sqlQuery);
+	}
 
-    @Override
-    public Iterator<Substitution> iterator() {
-        return this;
-    }
+	// /////////////////////////////////////////////////////////////////////////
+	// METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
-    /* (non-Javadoc)
-     * @see fr.lirmm.graphik.kb.stream.ISubstitutionReader#close()
-     */
-    @Override
-    public void close() {
-    }
-    
-    
+	/**
+	 * @return
+	 * @throws SQLException 
+	 */
+	@Override
+	protected Predicate computeNext() throws SQLException {
+		return new Predicate(results.getString(1), results.getInt(2));
+	}
 
 }

@@ -40,21 +40,20 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- package fr.lirmm.graphik.graal.api.core.stream;
+package fr.lirmm.graphik.util.stream;
 
-import java.util.Iterator;
+/**
+ * 
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+ *
+ * @param <T>
+ */
+public interface GIterator<T> extends java.util.Iterator<T> {
 
-import fr.lirmm.graphik.graal.api.core.Substitution;
+	@Override
+	boolean hasNext();
 
-public interface SubstitutionReader extends Iterator<Substitution>,
-        Iterable<Substitution> {
-
-    boolean hasNext();
-
-    Substitution next();
-
-    Iterator<Substitution> iterator();
-
-    void close();
+	@Override
+	T next();
 
 }

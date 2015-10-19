@@ -60,8 +60,8 @@ import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.UnionConjunctiveQueriesHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
+import fr.lirmm.graphik.graal.store.rdbms.SqlHomomorphism;
 import fr.lirmm.graphik.graal.store.rdbms.driver.DriverException;
-import fr.lirmm.graphik.graal.store.rdbms.homomorphism.SqlHomomorphism;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}

@@ -47,13 +47,13 @@ package fr.lirmm.graphik.graal.trash;
 
 import java.util.Iterator;
 
-import fr.lirmm.graphik.util.stream.AbstractReader;
+import fr.lirmm.graphik.util.stream.AbstractIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class Counter<T> extends AbstractReader<T> {
+public class Counter<T> extends AbstractIterator<T> {
 	
 	//private final Object lock = new Object();
 	private Iterator<T> objects;

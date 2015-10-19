@@ -49,26 +49,26 @@ import java.util.Iterator;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
-import fr.lirmm.graphik.util.stream.AbstractReader;
+import fr.lirmm.graphik.util.stream.AbstractIterator;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public class TransformatorReader extends AbstractReader<Atom> {
+public class TransformatorIterator extends AbstractIterator<Atom> {
 
     private boolean hasNextCallDone;
     private AtomTransformator transformator;
-    private Iterator<? extends Atom> atomIterator;
-    private Iterator<Atom> tmpIterator;
+	private Iterator<? extends Atom> atomIterator;
+	private Iterator<Atom> tmpIterator;
 
     // /////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR
     // /////////////////////////////////////////////////////////////////////////
 
-    public TransformatorReader(Iterable<? extends Atom> atoms,
+	public TransformatorIterator(Iterator<? extends Atom> atoms,
             AtomTransformator transformator) {
-        this.atomIterator = atoms.iterator();
+		this.atomIterator = atoms;
         this.transformator = transformator;
         this.tmpIterator = null;
     }
@@ -104,11 +104,6 @@ public class TransformatorReader extends AbstractReader<Atom> {
         this.hasNextCallDone = false;
 
         return this.tmpIterator.next();
-    }
-
-    @Override
-    public Iterator<Atom> iterator() {
-        return this;
     }
 
 }

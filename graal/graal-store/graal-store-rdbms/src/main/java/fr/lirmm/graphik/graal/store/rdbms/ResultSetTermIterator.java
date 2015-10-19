@@ -40,76 +40,49 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
+/**
  * 
  */
-package fr.lirmm.graphik.graal.store.rdbms.homomorphism;
+package fr.lirmm.graphik.graal.store.rdbms;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.api.core.stream.SubstitutionReader;
-import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
-import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
-import fr.lirmm.graphik.graal.store.rdbms.ResultSetSubstitutionReader;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public final class SqlHomomorphism implements Homomorphism<ConjunctiveQuery, RdbmsStore> {
-	
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(SqlHomomorphism.class);
-    
-    private static SqlHomomorphism instance;
+class ResultSetTermIterator extends AbstractResultSetIterator<Term> {
 
-	private SqlHomomorphism() {
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * @param store
+	 * @param sqlQuery
+	 * @throws SQLException
+	 * @throws StoreException
+	 */
+	public ResultSetTermIterator(RdbmsStore store, String sqlQuery) throws SQLException {
+		super(store, sqlQuery);
 	}
 
-	public static synchronized SqlHomomorphism instance() {
-		if (instance == null)
-			instance = new SqlHomomorphism();
-
-		return instance;
+	public ResultSetTermIterator(RdbmsStore store, PreparedStatement st) throws SQLException {
+		super(store, st);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
-	
-    /*
-     * (non-Javadoc)
-     * 
-     * @see fr.lirmm.graphik.alaska.solver.ISolver#execute()
-     */
-    @Override
-    public SubstitutionReader execute(ConjunctiveQuery query, RdbmsStore store) throws HomomorphismException {
-        String sqlQuery = preprocessing(query, store);
-        try {
-            return new ResultSetSubstitutionReader(store, sqlQuery, query.isBoolean());
-        } catch (Exception e) {
-            throw new HomomorphismException(e.getMessage(), e);
-        }
-    }
-    
-    // /////////////////////////////////////////////////////////////////////////
-    //	PRIVATE METHODS
-    // /////////////////////////////////////////////////////////////////////////
 
-    private static String preprocessing(ConjunctiveQuery query, RdbmsStore store) throws HomomorphismException {
-    	String sqlQuery = null;
-        try {
-            sqlQuery = store.transformToSQL(query);
-            if(LOGGER.isDebugEnabled())
-            	LOGGER.debug("GENERATED SQL QUERY: \n" + query + "\n" + sqlQuery);
-        } catch (Exception e) {
-            throw new HomomorphismException("Error during query translation to SQL",
-                    e);
-        }
-        return sqlQuery;
-    }
+	@Override
+	protected Term computeNext() throws Exception {
+		return DefaultTermFactory.instance().createTerm(results.getString(1), Term.Type.valueOf(results.getString(2)));
+
+	}
 
 }

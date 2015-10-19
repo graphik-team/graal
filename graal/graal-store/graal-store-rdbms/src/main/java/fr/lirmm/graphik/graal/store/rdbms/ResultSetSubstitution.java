@@ -40,14 +40,34 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- package fr.lirmm.graphik.util.stream;
+package fr.lirmm.graphik.graal.store.rdbms;
 
-import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 
-@Deprecated
-public interface ObjectWriter<T> {
-    
-    void write(T object) throws IOException;
-	
-	void write(Iterable<T> objects) throws IOException;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+
+/**
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+ *
+ */
+class ResultSetSubstitution extends TreeMapSubstitution {
+
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
+
+	public ResultSetSubstitution(RdbmsStore store, ResultSet results, ResultSetMetaData metaData) {
+		try {
+			for (int i = 1; i <= metaData.getColumnCount(); ++i) {
+
+				Term term = DefaultTermFactory.instance().createVariable(metaData.getColumnLabel(i));
+				Term substitut = store.getTerm(results.getString(i));
+				this.put(term, substitut);
+			}
+		} catch (Exception e) {
+		}
+	}
 }

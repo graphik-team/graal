@@ -61,7 +61,6 @@ import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.stream.SubstitutionReader;
 import fr.lirmm.graphik.graal.api.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
@@ -168,7 +167,7 @@ public class RuleML2015Bench {
 					
 					writer.write("load " + f.getName() + "\n");
 					Parser<Object> parser = new OWL2Parser(f);
-					store_unsat.addAll(new AtomFilterIterator(parser.iterator()));
+					store_unsat.addAll(new AtomFilterIterator(parser));
 					parser.close();
 					
 				} 
@@ -251,16 +250,15 @@ public class RuleML2015Bench {
 	
 	public static void executeQueries(Store store, UnionConjunctiveQueries ucq) throws HomomorphismFactoryException, HomomorphismException, IOException {
 		profiler.start(ucq.getLabel() + " answering time");
-		SubstitutionReader results = StaticHomomorphism.executeQuery(ucq, store);
+		Iterator<Substitution> results = StaticHomomorphism.executeQuery(ucq, store);
 		profiler.stop(ucq.getLabel() + " answering time");
 		int i = 0;
-		Iterator<Substitution> it = results.iterator();
-		while(it.hasNext()) {
+		while (results.hasNext()) {
 			++i;
 			if(showResults) {
-				writer.write(it.next().toString());
+				writer.write(results.next().toString());
 			} else {
-				it.next();
+				results.next();
 			}
 			//writer.write(s.toString());
 		}
@@ -271,7 +269,8 @@ public class RuleML2015Bench {
 		File f = new File(options.queries_file);
 		DlgpParser parser = new DlgpParser(f);
 		LinkedList<ConjunctiveQuery> queries = new LinkedList<ConjunctiveQuery>();
-		for(Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if(o instanceof ConjunctiveQuery) {
 				// patch for dlp2
 				ConjunctiveQuery query = (ConjunctiveQuery) o;
@@ -314,7 +313,8 @@ public class RuleML2015Bench {
 		File f = new File(options.onto_file);
 		Parser parser = new OWL2Parser(f);
 		List<Rule> rules = new LinkedList<Rule>();
-		for(Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if(o instanceof Rule) {
 				Rule r = (Rule) o;
 				for(Atom a : r.getHead()) {

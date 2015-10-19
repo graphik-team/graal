@@ -58,10 +58,11 @@ import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.stream.SubstitutionReader;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * A simple implementation of an algorithm to find if there exist an
@@ -95,7 +96,7 @@ public class PureHomomorphism implements
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public SubstitutionReader execute(AtomSet source,
+	public CloseableIterator<Substitution> execute(AtomSet source,
 			AtomSet target) throws HomomorphismException {
 		return null;
 	}

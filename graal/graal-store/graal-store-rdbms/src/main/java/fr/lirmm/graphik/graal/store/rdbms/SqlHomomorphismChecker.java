@@ -43,30 +43,27 @@
  /**
  * 
  */
-package fr.lirmm.graphik.graal.store.rdbms.homomorphism;
+package fr.lirmm.graphik.graal.store.rdbms;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.homomorphism.AbstractChecker;
-import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
-import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- * 
+ *
  */
-public class SqlUCQHomomorphismChecker extends
-		AbstractChecker {
+public class SqlHomomorphismChecker extends AbstractChecker {
 
 	@Override
 	public boolean check(Query query, AtomSet atomset) {
-		return query instanceof UnionConjunctiveQueries
-				&& atomset instanceof RdbmsStore;
+		 return query instanceof ConjunctiveQuery && atomset instanceof RdbmsStore;
 	}
 
 	@Override
-	public SqlUCQHomomorphism getSolver() {
-		return SqlUCQHomomorphism.instance();
+	public SqlHomomorphism getSolver() {
+         return SqlHomomorphism.instance();
 	}
 
 	@Override

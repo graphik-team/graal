@@ -42,7 +42,6 @@
  */
  package fr.lirmm.graphik.graal.core.atomset.graph;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -53,11 +52,12 @@ import fr.lirmm.graphik.graal.api.core.AtomComparator;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.TermValueComparator;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
+import fr.lirmm.graphik.graal.api.core.TermValueComparator;
 import fr.lirmm.graphik.graal.core.atomset.AbstractInMemoryAtomSet;
-import fr.lirmm.graphik.graal.core.stream.IteratorAtomReader;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
+import fr.lirmm.graphik.util.stream.IteratorAdapter;
+import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
  * Implementation of a graph in memory. Inherits directly from Fact.
@@ -83,13 +83,13 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
     // /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public Iterator<AtomEdge> getAtoms(Predicate p) {
+	public GIterator<AtomEdge> getAtoms(Predicate p) {
 		// TODO
 		throw new MethodNotImplementedError();
 	}
 
 	@Override
-	public Iterator<AtomEdge> getAtoms(Term t) {
+	public GIterator<AtomEdge> getAtoms(Term t) {
 		// TODO
 		throw new MethodNotImplementedError();
 	}
@@ -103,26 +103,20 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 		return predicates;
 	}
     
+	@Override
+	public GIterator<Predicate> predicatesIterator() {
+		return new IteratorAdapter<Predicate>(this.getPredicates().iterator());
+	}
+
     @Override
-    public Iterator<Atom> iterator() {
-        return new IteratorAtomReader(new TreeSet<Atom>(this.atoms).iterator());
+    public GIterator<Atom> iterator() {
+		return new IteratorAdapter<Atom>(new TreeSet<Atom>(this.atoms).iterator());
     }
 
-    /**
-     * (super-Javadoc)
-     * 
-     * @see fr.lirmm.graphik.kb.core.IWriteableAtomSet#remove(fr.lirmm.graphik.kb.core.IAtom)
-     */
     @Override
     public boolean remove(Atom atom) {
         // TODO implement this method
         throw new Error("This method isn't implemented");
-    }
-
-    @Override
-    public boolean removeAll(Iterable<? extends Atom> atoms) {
-        // TODO implement this method
-        throw new MethodNotImplementedError();
     }
 
     @Override
@@ -135,6 +129,11 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
         return new TreeSet<Term>(this.terms);
     }
 
+	@Override
+	public GIterator<Term> termsIterator() {
+		return new IteratorAdapter<Term>(this.getTerms().iterator());
+	}
+
     @Override
     public Set<Term> getTerms(Type type) {
         TreeSet<Term> set = new TreeSet<Term>();
@@ -145,14 +144,11 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
         return set;
     }
 
-    @Override
-    public boolean addAll(Iterable<? extends Atom> atoms)  {
-    	boolean isChanged = false;
-        for (Atom a : atoms) {
-            isChanged = this.add(a) || isChanged ;
-        }
-        return isChanged;
-    }
+	@Override
+	public GIterator<Term> termsIterator(Term.Type type) {
+		return new IteratorAdapter<Term>(this.getTerms(type).iterator());
+	}
+
 
     /**
      * @see fr.lirmm.graphik.alaska.store.Store#write(fr.lirmm.graphik.kb.core.IAtom)

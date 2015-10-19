@@ -42,7 +42,6 @@
  */
  package fr.lirmm.graphik.graal.homomorphism;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
@@ -51,12 +50,13 @@ import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.stream.SubstitutionReader;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.BuiltInPredicate;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
+import fr.lirmm.graphik.util.stream.AbstractIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 
 public class ComplexHomomorphism<Q extends ConjunctiveQuery, F extends AtomSet> implements Homomorphism<Q,F> {
@@ -69,7 +69,7 @@ public class ComplexHomomorphism<Q extends ConjunctiveQuery, F extends AtomSet> 
 	}
 
 	@Override
-	public <U1 extends Q, U2 extends F> SubstitutionReader execute(U1 q, U2 f)
+	public <U1 extends Q, U2 extends F> CloseableIterator<Substitution> execute(U1 q, U2 f)
 			throws HomomorphismException {
     	InMemoryAtomSet rawAtoms = new LinkedListAtomSet();
 		this.builtInAtoms = new LinkedList<Atom>();
@@ -83,12 +83,13 @@ public class ComplexHomomorphism<Q extends ConjunctiveQuery, F extends AtomSet> 
 		}
 		ConjunctiveQuery rawQuery = ConjunctiveQueryFactory.instance().create(rawAtoms);
 		rawQuery.setAnswerVariables(q.getAnswerVariables());
-		return new BuiltInSubstitutionReader(this.rawSolver.execute(rawQuery,f));
+		return new BuiltInSubstitutionIterator(this.rawSolver.execute(rawQuery,f));
 	}
 
-	protected class BuiltInSubstitutionReader implements SubstitutionReader {
+	protected class BuiltInSubstitutionIterator extends AbstractIterator<Substitution> implements
+	        CloseableIterator<Substitution> {
 
-		public BuiltInSubstitutionReader(SubstitutionReader reader) {
+		public BuiltInSubstitutionIterator(CloseableIterator<Substitution> reader) {
 			this.rawReader = reader;
 		}
 
@@ -100,7 +101,7 @@ public class ComplexHomomorphism<Q extends ConjunctiveQuery, F extends AtomSet> 
 		}
 
 		@Override
-    	public Substitution next() {
+		public Substitution next() {
 			hasNext();
 			Substitution res = this.next;
 			this.next = null;
@@ -133,16 +134,12 @@ public class ComplexHomomorphism<Q extends ConjunctiveQuery, F extends AtomSet> 
 		}
 
 		@Override
-		public void remove() { }
-
-		@Override
-    	public Iterator<Substitution> iterator() { return this; }
-
-		@Override
-		public void close() { this.rawReader.close(); this.rawReader = null; }
+		public void close() {
+			this.rawReader.close();
+		}
 
 		private Substitution next;
-		private SubstitutionReader rawReader;
+		private CloseableIterator<Substitution> rawReader;
 
 	};
 };

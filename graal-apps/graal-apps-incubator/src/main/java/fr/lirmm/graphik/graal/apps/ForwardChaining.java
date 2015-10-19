@@ -121,7 +121,8 @@ public class ForwardChaining {
 		} else {
 			DlgpParser parser = new DlgpParser(new File(options.file));
 			LinkedList<Rule> rules = new LinkedList<Rule>();
-			for(Object o : parser) {
+			while (parser.hasNext()) {
+				Object o = parser.next();
 				if(o instanceof Rule) {
 					rules.add((Rule)o);
 				}

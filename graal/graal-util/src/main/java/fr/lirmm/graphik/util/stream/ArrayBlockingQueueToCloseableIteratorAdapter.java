@@ -40,55 +40,81 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.core.stream;
+package fr.lirmm.graphik.util.stream;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.stream.SubstitutionReader;
-import fr.lirmm.graphik.util.stream.AbstractReader;
+import java.io.IOException;
 
 /**
- * @author Clément Sipieter (INRIA) <clement@6pi.fr>
- * 
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+ *
  */
-public class SubstitutionReader2AtomReader extends AbstractReader<Atom> {
+public class ArrayBlockingQueueToCloseableIteratorAdapter<T> extends AbstractCloseableIterator<T> {
 
-	private Atom atom;
-	private SubstitutionReader reader;
+	private ArrayBlockingStream<T> buffer = new ArrayBlockingStream<T>(512);
 
 	// /////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTOR
+	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public SubstitutionReader2AtomReader(Atom atom, SubstitutionReader reader) {
-		this.reader = reader;
-		this.atom = atom;
+	public ArrayBlockingQueueToCloseableIteratorAdapter(CloseableIterator<T> it) {
+		this(it, 128);
+	}
+
+	public ArrayBlockingQueueToCloseableIteratorAdapter(CloseableIterator<T> it, int bufferSize) {
+		this.buffer = new ArrayBlockingStream<T>(bufferSize);
+		Thread t = new Thread(new Producer(it, buffer));
+		t.start();
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
-	// METHODS
+	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.lirmm.graphik.util.stream.ObjectReader#hasNext()
-	 */
+	@Override
+	public void close() {
+		this.buffer.close();
+	}
+
 	@Override
 	public boolean hasNext() {
-		return this.reader.hasNext();
+		return this.buffer.hasNext();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.lirmm.graphik.util.stream.ObjectReader#next()
-	 */
 	@Override
-	public Atom next() {
-		return this.reader.next().createImageOf(atom);
+	public T next() {
+		return this.buffer.next();
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// OBJECT OVERRIDE METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE
+	// /////////////////////////////////////////////////////////////////////////
+
+	private class Producer implements Runnable {
+
+		private CloseableIterator<T> it;
+		private ArrayBlockingStream<T> buffer;
+
+		Producer(CloseableIterator<T> it, ArrayBlockingStream<T> buffer) {
+			this.it = it;
+			this.buffer = buffer;
+		}
+
+		@Override
+		public void run() {
+			try {
+				this.buffer.write(it);
+			} catch (IOException e) {
+				throw new Error("Untreated exception");
+			} finally {
+				System.out.println("close Adapter");
+				it.close();
+				buffer.close();
+			}
+		}
 	}
 
 }

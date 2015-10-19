@@ -46,7 +46,6 @@
 package fr.lirmm.graphik.graal.forward_chaining.halting_condition;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -64,6 +63,8 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
+import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.IteratorAdapter;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -75,7 +76,7 @@ public class RestrictedChaseStopCondition implements ChaseHaltingCondition {
 	private VariableGenerator existentialGen = new DefaultVariableGenerator("E");
 
 	@Override
-	public Iterator<Atom> apply(Rule rule, Substitution substitution, AtomSet data)
+	public GIterator<Atom> apply(Rule rule, Substitution substitution, AtomSet data)
 	                                                                                 throws HomomorphismFactoryException,
 	                                                                                 HomomorphismException {
 		Set<Term> fixedVars = substitution.getValues();
@@ -92,7 +93,7 @@ public class RestrictedChaseStopCondition implements ChaseHaltingCondition {
 			LOGGER.debug("Fixed Query:" + query);
 		}
 		if (StaticHomomorphism.executeQuery(query, data).hasNext()) {
-			return Collections.<Atom> emptyList().iterator();
+			return new IteratorAdapter<Atom>(Collections.<Atom> emptyList().iterator());
 		}
 
 		return newFacts.iterator();

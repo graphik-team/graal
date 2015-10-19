@@ -40,17 +40,37 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- package fr.lirmm.graphik.util.stream;
+ /**
+ * 
+ */
+package fr.lirmm.graphik.graal.store.rdbms;
 
-import java.io.IOException;
-import java.util.Iterator;
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.Query;
+import fr.lirmm.graphik.graal.api.homomorphism.AbstractChecker;
+import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 
-@Deprecated
-public interface ObjectReader<T> extends Iterator<T>, Iterable<T> {
+/**
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+ * 
+ */
+public class SqlUCQHomomorphismChecker extends
+		AbstractChecker {
 
-	boolean hasNext();
-	T next();
-	Iterator<T> iterator();
-	void read(ObjectWriter<T> writer) throws IOException;
-	
+	@Override
+	public boolean check(Query query, AtomSet atomset) {
+		return query instanceof UnionConjunctiveQueries
+				&& atomset instanceof RdbmsStore;
+	}
+
+	@Override
+	public SqlUCQHomomorphism getSolver() {
+		return SqlUCQHomomorphism.instance();
+	}
+
+	@Override
+	public int getDefaultPriority() {
+		return 100;
+	}
+
 }

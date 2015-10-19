@@ -40,17 +40,18 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.api.io;
-
-import fr.lirmm.graphik.graal.api.core.Atom;
+package fr.lirmm.graphik.util.stream;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public abstract class AbstractAtomParser extends AbstractParser<Atom> implements AtomParser {
+public abstract class AbstractCloseableIterator<E> extends AbstractIterator<E> implements CloseableIterator<E> {
+
+	@Override
+	protected void finalize() throws Throwable {
+		this.close();
+		super.finalize();
+	}
 
 }

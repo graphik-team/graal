@@ -45,6 +45,7 @@
  */
 package fr.lirmm.graphik.graal.core.factory;
 
+import java.util.Iterator;
 import java.util.List;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
@@ -127,7 +128,7 @@ public class ConjunctiveQueryFactory {
 	 * @param answerVariables
 	 * @return
 	 */
-	public ConjunctiveQuery create(Iterable<Atom> atomSet, Iterable<Term> answerVariables) {
+	public ConjunctiveQuery create(Iterator<Atom> atomSet, Iterator<Term> answerVariables) {
 		return new DefaultConjunctiveQuery(atomSet, answerVariables);
 	}
 

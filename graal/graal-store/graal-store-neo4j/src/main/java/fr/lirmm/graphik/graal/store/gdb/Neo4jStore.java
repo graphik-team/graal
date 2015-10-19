@@ -72,6 +72,8 @@ import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.store.GraphDBStore;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -230,14 +232,14 @@ public class Neo4jStore extends GraphDBStore {
 	}
 
 	@Override
-	public Iterator<Atom> iterator() {
+	public CloseableIterator<Atom> iterator() {
 		Transaction transaction = graph.beginTx();
 		return new Neo4jAtomIterator(transaction, this.cypherEngine.execute(
 				"match (atom:ATOM) return atom").iterator());
 	}
 
 	@Override
-	public Iterator<Term> termsIterator() throws AtomSetException {
+	public CloseableIterator<Term> termsIterator() throws AtomSetException {
 		Transaction transaction = graph.beginTx();
 		return new Neo4jTermIterator(transaction, this.cypherEngine.execute(
 				"match (term:TERM) return term").iterator());
@@ -254,7 +256,7 @@ public class Neo4jStore extends GraphDBStore {
 	}
 
 	@Override
-	public Iterator<Term> termsIterator(Type type) throws AtomSetException {
+	public CloseableIterator<Term> termsIterator(Type type) throws AtomSetException {
 		Map<String, Object> params = new TreeMap<String, Object>();
 		params.put("type", type.toString());
 		Transaction transaction = graph.beginTx();
@@ -275,7 +277,7 @@ public class Neo4jStore extends GraphDBStore {
 	}
 
 	@Override
-	public Iterator<Predicate> predicatesIterator() throws AtomSetException {
+	public CloseableIterator<Predicate> predicatesIterator() throws AtomSetException {
 		Transaction transaction = graph.beginTx();
 		return new Neo4jPredicateIterator(transaction, this.cypherEngine
 				.execute("match (predicate:PREDICATE) return predicate")
@@ -459,8 +461,7 @@ public class Neo4jStore extends GraphDBStore {
 	// PRIVATE STATIC CLASS
 	// //////////////////////////////////////////////////////////////////////////
 
-	private static abstract class Neo4jElementIterator<E> implements
-			Iterator<E> {
+	private static abstract class Neo4jElementIterator<E> extends AbstractCloseableIterator<E> {
 		ResourceIterator<Map<String, Object>> iterator;
 		Transaction transaction;
 
@@ -474,12 +475,7 @@ public class Neo4jStore extends GraphDBStore {
 		}
 
 		@Override
-		protected void finalize() throws Throwable {
-			this.close();
-			super.finalize();
-		}
-
-		private void close() {
+		public void close() {
 			this.iterator.close();
 			this.transaction.success();
 			this.transaction.close();

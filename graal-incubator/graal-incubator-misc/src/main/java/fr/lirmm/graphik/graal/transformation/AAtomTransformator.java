@@ -42,7 +42,10 @@
  */
  package fr.lirmm.graphik.graal.transformation;
 
+import java.util.Iterator;
+
 import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -56,8 +59,8 @@ public abstract class AAtomTransformator implements AtomTransformator {
      * @param atoms
      * @return 
      */
-    public Iterable<Atom> transform(Iterable<? extends Atom> atoms) {
-        return new TransformatorReader(atoms, this);
+	public GIterator<Atom> transform(Iterator<? extends Atom> atoms) {
+        return new TransformatorIterator(atoms, this);
     }
 
 }

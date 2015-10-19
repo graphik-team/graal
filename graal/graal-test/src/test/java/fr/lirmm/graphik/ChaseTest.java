@@ -77,6 +77,7 @@ import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.homomorphism.RecursiveBacktrackHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -210,8 +211,8 @@ public class ChaseTest {
 		// /////////////////////////////////////////////////////////////////////
 		// execute query
 		Query query = DlgpParser.parseQuery("?(X,Y) :- s(X, Y), p(X), q(Y).");
-		Iterable<Substitution> subReader = StaticHomomorphism.executeQuery(query, atomSet);
-		Assert.assertTrue(subReader.iterator().hasNext());
+		CloseableIterator<Substitution> subReader = StaticHomomorphism.executeQuery(query, atomSet);
+		Assert.assertTrue(subReader.hasNext());
 	}
 	
 //	@Theory

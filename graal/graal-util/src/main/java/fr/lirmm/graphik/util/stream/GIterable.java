@@ -40,28 +40,15 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.api.io;
-
-import java.util.Iterator;
-
+package fr.lirmm.graphik.util.stream;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public abstract class AbstractParser<T> implements Parser<T> {
+public interface GIterable<T> extends java.lang.Iterable<T> {
 
 	@Override
-	public void remove() {
-		throw new UnsupportedOperationException();
-	}
-	
-	@Override
-	public Iterator<T> iterator() {
-		return this;
-	}
+	GIterator<T> iterator();
 
 }

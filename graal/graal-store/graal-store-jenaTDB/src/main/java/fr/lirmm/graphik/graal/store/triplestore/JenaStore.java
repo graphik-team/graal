@@ -76,6 +76,9 @@ import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.store.AbstractTripleStore;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -131,14 +134,14 @@ public class JenaStore extends AbstractTripleStore {
 	}
 	
 	@Override
-	public boolean addAll(Iterable<? extends Atom> atoms)
+	public boolean addAll(Iterator<? extends Atom> atoms)
 			throws AtomSetException {
 		dataset.begin(ReadWrite.WRITE);
 		try {
 			GraphStore graphStore = GraphStoreFactory.create(dataset);
 			UpdateRequest request = UpdateFactory.create();
-			for (Atom atom : atoms) {
-				add(request, atom);
+			while (atoms.hasNext()) {
+				add(request, atoms.next());
 			}
 			UpdateProcessor proc = UpdateExecutionFactory.create(request,
 					graphStore);
@@ -180,14 +183,14 @@ public class JenaStore extends AbstractTripleStore {
 	}
 
 	@Override
-	public boolean removeAll(Iterable<? extends Atom> atoms)
+	public boolean removeAll(Iterator<? extends Atom> atoms)
 			throws AtomSetException {
 		dataset.begin(ReadWrite.WRITE);
 		try {
 			GraphStore graphStore = GraphStoreFactory.create(dataset);
 			UpdateRequest request = UpdateFactory.create();
-			for (Atom atom : atoms) {
-				remove(request, atom);
+			while (atoms.hasNext()) {
+				remove(request, atoms.next());
 			}
 			UpdateProcessor proc = UpdateExecutionFactory.create(request,
 					graphStore);
@@ -229,7 +232,7 @@ public class JenaStore extends AbstractTripleStore {
 	}
 
 	@Override
-	public Iterator<Atom> iterator() {
+	public CloseableIterator<Atom> iterator() {
 		return new AtomIterator(this.directory);
 	}
 
@@ -279,6 +282,12 @@ public class JenaStore extends AbstractTripleStore {
 	}
 
 	@Override
+	public CloseableIterator<Term> termsIterator() {
+		// TODO use a ResultSetIterator
+		return new CloseableIteratorAdapter<Term>(this.getTerms().iterator());
+	}
+
+	@Override
 	public Set<Term> getTerms(Type type) {
 		Set<Term> terms = this.getTerms();
 		Iterator<Term> it = terms.iterator();
@@ -289,6 +298,12 @@ public class JenaStore extends AbstractTripleStore {
 			}
 		}
 		return terms;
+	}
+
+	@Override
+	public CloseableIterator<Term> termsIterator(Term.Type type) {
+		// TODO use a ResultSetIterator
+		return new CloseableIteratorAdapter<Term>(this.getTerms(type).iterator());
 	}
 
 	@Override
@@ -313,6 +328,11 @@ public class JenaStore extends AbstractTripleStore {
 	}
 
 	@Override
+	public CloseableIterator<Predicate> predicatesIterator() {
+		return new CloseableIteratorAdapter<Predicate>(this.getPredicates().iterator());
+	}
+
+	@Override
 	public void clear() {
 		dataset.begin(ReadWrite.WRITE);
 		try {
@@ -331,7 +351,7 @@ public class JenaStore extends AbstractTripleStore {
 	// PRIVATE CLASS
 	// /////////////////////////////////////////////////////////////////////////
 
-	private static class AtomIterator implements Iterator<Atom> {
+	private static class AtomIterator extends AbstractCloseableIterator<Atom> {
 
 		Dataset dataset;
 		static final String SELECT = "PREFIX graal: <http://team.inria.fr/graphik/graal/> "
@@ -353,17 +373,12 @@ public class JenaStore extends AbstractTripleStore {
 			this.rs = qExec.execSelect();
 		}
 
-		@Override
-		protected void finalize() throws Throwable {
-			this.close();
-			super.finalize();
-		}
-
 		// /////////////////////////////////////////////////////////////////////////
 		// METHODS
 		// /////////////////////////////////////////////////////////////////////////
 
-		public void close() {
+		@Override
+        public void close() {
 			if (this.qExec != null) {
 				this.qExec.close();
 			}

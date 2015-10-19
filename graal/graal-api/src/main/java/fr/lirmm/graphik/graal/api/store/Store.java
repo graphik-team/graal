@@ -45,7 +45,12 @@
  */
 package fr.lirmm.graphik.graal.api.store;
 
+import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -53,6 +58,18 @@ import fr.lirmm.graphik.graal.api.core.AtomSet;
  */
 public interface Store extends AtomSet {
 	
-	public void close();
+	@Override
+	CloseableIterator<Atom> iterator();
+
+	@Override
+	CloseableIterator<Predicate> predicatesIterator() throws AtomSetException;
+
+	@Override
+	CloseableIterator<Term> termsIterator() throws AtomSetException;
+
+	@Override
+	CloseableIterator<Term> termsIterator(Term.Type type) throws AtomSetException;
+
+	void close();
 
 }

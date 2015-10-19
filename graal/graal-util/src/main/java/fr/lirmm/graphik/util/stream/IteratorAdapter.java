@@ -40,15 +40,30 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- package fr.lirmm.graphik.graal.core.stream;
+ package fr.lirmm.graphik.util.stream;
 
-import java.util.Iterator;
 
-import fr.lirmm.graphik.graal.api.core.Predicate;
-
-public interface PredicateReader extends Iterable<Predicate>, Iterator<Predicate> {
+public class IteratorAdapter<T> extends AbstractIterator<T> {
 	
-	boolean hasNext();
-	Predicate next();
-	Iterator<Predicate> iterator();
+	private java.util.Iterator<T> iterator;
+	
+	public IteratorAdapter(java.util.Iterator<T> iterator) {
+		this.iterator = iterator;
+	}
+
+	@Override
+	public void remove() {
+		this.iterator.remove();
+	}
+
+	@Override
+	public boolean hasNext() {
+		return this.iterator.hasNext();
+	}
+
+	@Override
+	public T next() {
+		return this.iterator.next();
+	}
+
 }
