@@ -64,7 +64,7 @@ import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-class ConjunctiveQueryWithFixedVariables implements ConjunctiveQuery {
+public class ConjunctiveQueryWithFixedVariables implements ConjunctiveQuery {
 
 	private InMemoryAtomSet atomSet;
 	private List<Term> answerVariables;
