@@ -8,7 +8,6 @@ import java.util.Iterator;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.core.RuleUtils;
@@ -18,11 +17,6 @@ import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 import fr.lirmm.graphik.util.Prefix;
 
-// TODO
-// Probably, if labels are required, since now it's a single program
-// they should be added to atomic head or single piece head if all
-// options are on.
-// And nothing without label should be printed.
 public class GraalTools {
 	public static final String   PROGRAM_NAME   = "ruleset-tools";
 
@@ -86,31 +80,33 @@ public class GraalTools {
 			}
 		}
 
-		if (options.singlepiece) {
+		if (options.atomic) {
+			Rule r;
+			System.out.println("%%%%% ATOMIC HEAD %%%%");
+			Iterator<Rule> it = RuleUtils.computeAtomicHead(rules.iterator());
+			while (it.hasNext()) {
+				r = it.next();
+				if (options.labeler) {
+					r.setLabel(computeLabel(r));
+				}
+				writer.write(r);
+			}
+		} else if (options.singlepiece) {
+			Rule r;
 			System.out.println("%%%% SINGLE PIECE %%%%");
 			Iterator<Rule> it = RuleUtils.computeSinglePiece(rules.iterator());
 			while (it.hasNext()) {
-				writer.write(it.next());
+				r = it.next();
+				if (options.labeler) {
+					r.setLabel(computeLabel(r));
+				}
+				writer.write(r);
 			}
-		}
-
-		if (options.atomic) {
-			System.out.println("%%%%% ATOMIC HEAD %%%%");
-			Iterator<Rule> it = RuleUtils.computeAtomicHead(RuleUtils.computeSinglePiece(rules.iterator()));
-			while (it.hasNext()) {
-				writer.write(it.next());
-			}
-		}
-
-		if (options.labeler) {
-			if (options.verbose)
-				System.err.println("Start analysing rules...");
+		} else if (options.labeler) {
 			for (Rule r : rules) {
 				r.setLabel(computeLabel(r));
 				writer.write(r);
 			}
-			if (options.verbose)
-				System.err.println("Done!");
 		}
 
 		if (options.critical_instance) {
@@ -130,7 +126,8 @@ public class GraalTools {
 	private boolean verbose = false;
 
 	@Parameter(names = { "-l", "--labeler" }, 
-	           description = "Add label on rules")
+	           description = "Add annotations into the label of each rule "
+	             + "(see https://graphik-team.github.io/graal/utility-tools for details)")
 	private boolean labeler = false;
 
 	@Parameter(names = { "-p", "--singlepiece-head" },
@@ -159,10 +156,8 @@ public class GraalTools {
 
 	private GraalTools() { }
 
-	private static int currentRuleID = 0;
-
 	public static String computeLabel(final Rule r) {
-		return RuleLabeler.computeBaseLabel(r) + "r" + (currentRuleID++);
+		return "" + r.getLabel() + RuleLabeler.computeBaseLabel(r);
 	}
 
 };

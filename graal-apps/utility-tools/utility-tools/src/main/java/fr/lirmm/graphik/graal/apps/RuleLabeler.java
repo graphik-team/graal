@@ -47,8 +47,8 @@ import fr.lirmm.graphik.graal.core.RuleUtils;
 
 public final class RuleLabeler {
 
-	public static final String LABEL_PREFIX                 = "";
-	public static final String LABEL_SUFFIX                 = "_";
+	public static final String LABEL_PREFIX                 = "_";
+	public static final String LABEL_SUFFIX                 = "";
 	public static final String LABEL_SEPARATOR              = "-";
 
 	// A(x) -> B(x)

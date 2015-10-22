@@ -195,7 +195,7 @@ public final class RuleUtils {
 	 * @return The equivalent set of atomic head rules.
 	 */
 	public static Iterator<Rule> computeAtomicHead(Iterator<Rule> rules) {
-		return new AtomicHeadIterator(rules);
+		return new AtomicHeadIterator(new SinglePieceRulesIterator(rules));
 	}
 
 

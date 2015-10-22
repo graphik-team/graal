@@ -8,8 +8,8 @@
 		<version>1.0.2-SNAPSHOT</version>
 	</parent>
 	
-	<artifactId>graal-tools</artifactId>
-	<name>fr.lirmm.graphik:graal-tools</name>
+	<artifactId>utility-tools</artifactId>
+	<name>fr.lirmm.graphik:utility-tools</name>
 	<packaging>jar</packaging>
 
 	<properties>
