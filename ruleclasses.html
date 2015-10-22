@@ -55,7 +55,7 @@
 						<li><a href='#fg'>Frontier-guarded</a></li>
 						<li><a href='#fr1'>Frontier-one</a></li>
 						<li><a href='#g'>Guarded</a></li>
-						<li><a href='#lin'>Linear</a></li>
+						<li><a href='#lin'>Linear or atomic-body</a></li>
 						<li><a href='#rr'>Range-restricted</a></li>
 						<li><a href='#s'>Sticky</a></li>
 						<li><a href='#wa'>Weakly-acyclic</a></li>
@@ -159,10 +159,9 @@
 		analyzer, hence they are not described below. These classes are the following:</p>
 		<ul>
 			<li>weakly-sticky-join (w-sticky-j)</li>
-			<li>sticky-join (sticky-j)</li>
-			<li>glut-frontier-guarded (glut-fg)</li>
-			<li>jointly-frontier-guarded (j-fg)</li>
-			<li>jointly-acyclic (ja).</li>
+			<li>sticky-join</li>
+			<li>jointly-frontier-guarded (jointly-fg)</li>
+			<li>jointly-acyclic</li>
 		</ul>
         <a name="abstract"></a>
 		<h3>Abstract Rule Classes</h3>
@@ -193,8 +192,7 @@ the facts.</p>
 although there is currently no algorithm available for this class.
 However, <em>Greedy Bounded Treewidth Set (GBTS)</em> is an
 expressive subclass of BTS that is provided with a forward chaining
-like halting algorithm. Note that, except for <em>glut-fg</em>
-(cf. Figure), all currently known BTS but not FES classes are GBTS.</p>
+like halting algorithm. Almost all currently known BTS but not FES classes are GBTS.</p>
         <a name="concrete"></a>
 		<h3>Concrete Rule Classes</h3>
 		<p>
@@ -283,7 +281,7 @@ frontier.</p>
 				<p>At least one atom in the body (called a <em>guard</em>) contains
 all the variable from the body.</p>
             <a name="lin"></a>
-			<h4>Linear (lin)</h4>
+			<h4>Linear or atomic-body (lin)</h4>
 				<p>This rule class property is a local property.<br/>
 				Ensures:
 				<ul>
@@ -291,7 +289,7 @@ all the variable from the body.</p>
 						<li>gbts</li>
 				</ul>
 				</p>
-				<p>The body contains only a single atom.</p>
+				<p>The body contains a single atom.</p>
             <a name="rr"></a>
 			<h4>Range-restricted (rr)</h4>
 				<p>This rule class property is a local property.<br/>
@@ -322,7 +320,7 @@ href='#marked'>marked variable set</a>).</p>
 				</ul>
 				</p>
 				<p>All predicate positions in the <a href='#gp'>graph of position
-dependencies</a> have finite rank (i.e., there is no circuit with
+dependencies</a> have finite rank (i.e., there is no circuit with a
 special edge).</p>
             <a name="wfg"></a>
 			<h4>Weakly-frontier-guarded (wfg)</h4>
