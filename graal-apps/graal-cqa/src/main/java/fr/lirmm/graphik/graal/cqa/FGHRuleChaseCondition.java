@@ -43,13 +43,11 @@
 /**
  * 
  */
-package fr.lirmm.graphik.graal.forward_chaining.halting_condition;
+package fr.lirmm.graphik.graal.cqa;
 
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
@@ -62,7 +60,9 @@ import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
+import fr.lirmm.graphik.graal.forward_chaining.halting_condition.ConjunctiveQueryWithFixedVariables;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.GIterator;
 import fr.lirmm.graphik.util.stream.IteratorAdapter;
 
@@ -70,23 +70,24 @@ import fr.lirmm.graphik.util.stream.IteratorAdapter;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class RestrictedChaseStopCondition implements ChaseHaltingCondition {
+public class FGHRuleChaseCondition implements ChaseHaltingCondition {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(RestrictedChaseStopCondition.class);
-	private VariableGenerator existentialGen;
-
-	public RestrictedChaseStopCondition() {
+	public FGHRuleChaseCondition(AtomIndex index, FGH fgh) {
+		this.index = index;
+		this.fgh = fgh;
 		this.existentialGen = new DefaultVariableGenerator("EE");
 	}
 
-	public RestrictedChaseStopCondition(VariableGenerator existentialGen) {
+	public FGHRuleChaseCondition(AtomIndex index, FGH fgh, VariableGenerator existentialGen) {
+		this.index = index;
+		this.fgh = fgh;
 		this.existentialGen = existentialGen;
 	}
 
 	@Override
 	public GIterator<Atom> apply(Rule rule, Substitution substitution, AtomSet data)
-	                                                                                 throws HomomorphismFactoryException,
-	                                                                                 HomomorphismException {
+	                                                                                throws HomomorphismFactoryException,
+	                                                                                HomomorphismException {
 		Set<Term> fixedVars = substitution.getValues();
 
 		// Generate new existential variables
@@ -97,14 +98,31 @@ public class RestrictedChaseStopCondition implements ChaseHaltingCondition {
 		AtomSet newFacts = substitution.createImageOf(rule.getHead());
 		Query query = new ConjunctiveQueryWithFixedVariables(newFacts, fixedVars);
 
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Fixed Query:" + query);
-		}
-		if (StaticHomomorphism.executeQuery(query, data).hasNext()) {
-			return new IteratorAdapter<Atom>(Collections.<Atom> emptyList().iterator());
+		LinkedList<Integer> causes = new LinkedList<Integer>();
+		for (Atom a : substitution.createImageOf(rule.getBody())) {
+			causes.add(new Integer(this.index.get(a)));
 		}
 
-		return newFacts.iterator();
+		CloseableIterator<Substitution> executeQuery = StaticHomomorphism.executeQuery(query, data);
+		if (executeQuery.hasNext()) {
+			while (executeQuery.hasNext()) {
+				Substitution next = executeQuery.next();
+				for (Atom a : rule.getHead()) {
+					this.fgh.add(causes, this.index.get(next.createImageOf(a)));
+				}
+			}
+			return new IteratorAdapter<Atom>(Collections.<Atom> emptyList().iterator());
+		} else {
+			for (Atom a : newFacts) {
+				this.fgh.add(causes, this.index.get(a));
+			}
+			return newFacts.iterator();
+		}
+
 	}
+
+	private AtomIndex index;
+	private FGH fgh;
+	private VariableGenerator existentialGen;
 
 }

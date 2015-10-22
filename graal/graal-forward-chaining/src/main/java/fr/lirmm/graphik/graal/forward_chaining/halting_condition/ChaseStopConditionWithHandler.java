@@ -71,8 +71,11 @@ public class ChaseStopConditionWithHandler implements ChaseHaltingCondition {
 	public GIterator<Atom> apply(Rule rule, Substitution substitution, AtomSet data)
 	                                                                                 throws HomomorphismFactoryException,
 	                                                                                 HomomorphismException {
-		if (this.handler.onRuleApplication(rule, substitution, data)) {
-			return this.realHaltingCondition.apply(rule, substitution, data);
+		if (this.handler.preRuleApplication(rule, substitution, data)) {
+			GIterator<Atom> atomsToAdd = this.realHaltingCondition.apply(rule, substitution, data);
+			if (atomsToAdd.hasNext()) {
+				return this.handler.postRuleApplication(rule, substitution, data, atomsToAdd);
+			}
 		}
 		return new IteratorAdapter<Atom>(Collections.<Atom> emptyList().iterator());
 	}

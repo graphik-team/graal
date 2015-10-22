@@ -71,15 +71,16 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
- * This Applier executes a call to the chaseStopCondition for all unique
- * homomorphisms of frontier variables.
+ * This Applier executes a call to the chaseStopCondition for all homomorphisms
+ * of the rule body found. And not only for homomorphisms which are unique
+ * projected on frontier variables.
  * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class DefaultRuleApplier<T extends AtomSet> implements RuleApplier<Rule, T> {
+public class ExhaustiveRuleApplier<T extends AtomSet> implements RuleApplier<Rule, T> {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultRuleApplier.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ExhaustiveRuleApplier.class);
 
 	private ChaseHaltingCondition haltingCondition;
 	private Homomorphism<ConjunctiveQuery, T> solver;
@@ -93,7 +94,7 @@ public class DefaultRuleApplier<T extends AtomSet> implements RuleApplier<Rule, 
 	 * Construct a DefaultRuleApplier with a RestrictedChaseStopCondition and
 	 * the given homomorphism solver.
 	 */
-	public DefaultRuleApplier(Homomorphism<ConjunctiveQuery, T> homomorphismSolver) {
+	public ExhaustiveRuleApplier(Homomorphism<ConjunctiveQuery, T> homomorphismSolver) {
 		this(homomorphismSolver, new RestrictedChaseStopCondition());
 	}
 
@@ -102,7 +103,7 @@ public class DefaultRuleApplier<T extends AtomSet> implements RuleApplier<Rule, 
 	 * 
 	 * @param haltingCondition
 	 */
-	public DefaultRuleApplier(Homomorphism<ConjunctiveQuery, T> homomorphismSolver,
+	public ExhaustiveRuleApplier(Homomorphism<ConjunctiveQuery, T> homomorphismSolver,
 	        ChaseHaltingCondition haltingCondition) {
 		this(homomorphismSolver, haltingCondition, new DefaultVariableGenerator("E"));
 	}
@@ -116,7 +117,7 @@ public class DefaultRuleApplier<T extends AtomSet> implements RuleApplier<Rule, 
 	 * @param homomorphismSolver
 	 * @param existentialVarGenerator
 	 */
-	public DefaultRuleApplier(Homomorphism<ConjunctiveQuery, T> homomorphismSolver,
+	public ExhaustiveRuleApplier(Homomorphism<ConjunctiveQuery, T> homomorphismSolver,
 	        ChaseHaltingCondition haltingCondition, VariableGenerator existentialVarGenerator) {
 		this.haltingCondition = haltingCondition;
 		this.solver = homomorphismSolver;
@@ -172,7 +173,8 @@ public class DefaultRuleApplier<T extends AtomSet> implements RuleApplier<Rule, 
 	}
 
 	protected CloseableIterator<Substitution> executeQuery(ConjunctiveQuery query, T atomSet)
-	    throws HomomorphismFactoryException, HomomorphismException {
+	                                                                                         throws HomomorphismFactoryException,
+	                                                                                         HomomorphismException {
 		return this.solver.execute(query, atomSet);
 	}
 
