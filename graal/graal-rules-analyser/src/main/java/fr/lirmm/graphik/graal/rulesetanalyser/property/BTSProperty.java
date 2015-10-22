@@ -64,6 +64,11 @@ public final class BTSProperty extends RuleSetProperty.Default {
 
 		return instance;
 	}
+
+	@Override
+	public String getDescription() {
+		return "The saturated fact has bounded treewidth.";
+	}
 	
 	@Override
 	public String getLabel() {

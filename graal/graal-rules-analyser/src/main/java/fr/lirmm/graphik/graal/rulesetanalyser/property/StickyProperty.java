@@ -75,6 +75,11 @@ public final class StickyProperty extends RuleSetProperty.Default {
 		}
 		return instance;
 	}
+
+	@Override
+	public String getDescription() {
+		return "Each marked variable occurs at most once in a rule body.";
+	}
 	
 
 	// /////////////////////////////////////////////////////////////////////////

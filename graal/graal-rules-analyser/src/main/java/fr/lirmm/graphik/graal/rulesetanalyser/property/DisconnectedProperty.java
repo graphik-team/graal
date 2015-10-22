@@ -67,6 +67,11 @@ public final class DisconnectedProperty extends RuleSetProperty.Local {
 		}
 		return instance;	
 	}
+
+	@Override
+	public String getDescription() {
+		return "The rule frontier is empty.";
+	}
 	
 	@Override
 	public int check(Rule rule) {

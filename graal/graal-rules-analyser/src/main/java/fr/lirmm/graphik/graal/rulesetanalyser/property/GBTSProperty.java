@@ -67,6 +67,11 @@ public final class GBTSProperty extends RuleSetProperty.Default {
 
 		return instance;
 	}
+
+	@Override
+	public String getDescription() {
+		return "A tree decomposition of the saturated fact can be computed greedily.";
+	}
 	
 	@Override
 	public String getLabel() {

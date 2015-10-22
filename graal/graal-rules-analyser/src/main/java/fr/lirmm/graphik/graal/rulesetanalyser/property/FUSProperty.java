@@ -64,6 +64,11 @@ public final class FUSProperty extends RuleSetProperty.Default {
 
 		return instance;
 	}
+
+	@Override
+	public String getDescription() {
+		return "Any query can be finitely rewritten.";
+	}
 	
 	@Override
 	public String getLabel() {

@@ -86,6 +86,11 @@ public final class MFAProperty extends RuleSetProperty.Default {
 	}
 
 	@Override
+	public String getDescription() {
+		return "There is no cycle of functional symbol during the skolem chase executed on the critical instance.";
+	}
+
+	@Override
 	public int check(AnalyserRuleSet ruleSet) {
 		RuleSet R = translateToMFA(ruleSet);
 		AtomSet A = RuleUtils.criticalInstance(ruleSet);

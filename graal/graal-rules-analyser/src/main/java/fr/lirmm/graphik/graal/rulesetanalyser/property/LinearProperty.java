@@ -68,6 +68,11 @@ public final class LinearProperty extends RuleSetProperty.Local {
 		}
 		return instance;	
 	}
+
+	@Override
+	public String getDescription() {
+		return "The body contains only a single atom.";
+	}
 	
 	@Override
 	public int check(Rule rule) {

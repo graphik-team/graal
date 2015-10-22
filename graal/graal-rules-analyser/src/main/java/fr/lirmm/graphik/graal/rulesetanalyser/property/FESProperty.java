@@ -67,6 +67,11 @@ public final class FESProperty extends RuleSetProperty.Default {
 
 		return instance;
 	}
+
+	@Override
+	public String getDescription() {
+		return "The core chase halts on any fact.";
+	}
 	
 	@Override
 	public String getLabel() {
