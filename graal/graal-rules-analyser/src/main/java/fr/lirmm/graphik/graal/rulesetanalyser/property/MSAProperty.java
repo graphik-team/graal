@@ -67,10 +67,6 @@ import fr.lirmm.graphik.graal.forward_chaining.StaticChase;
 import fr.lirmm.graphik.graal.homomorphism.RecursiveBacktrackHomomorphism;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
 
-/**
- * There is no cycle of functional symbol during the skolem chase 
- * executed on the critical instance.
- */
 public final class MSAProperty extends RuleSetProperty.Default {
 
 	private static MSAProperty instance = null;
@@ -82,6 +78,11 @@ public final class MSAProperty extends RuleSetProperty.Default {
 			instance = new MSAProperty();
 		}
 		return instance;
+	}
+
+	@Override
+	public String getDescription() {
+		return "Approximates MFA with a lower complexity cost.";
 	}
 
 	@Override

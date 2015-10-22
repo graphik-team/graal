@@ -81,6 +81,11 @@ public final class WeaklyAcyclicProperty extends RuleSetProperty.Default {
 	}
 
 	@Override
+	public String getDescription() {
+		return "All predicate positions in the graph of position dependencies have finite rank.";
+	}
+
+	@Override
 	public String getLabel() {
 		return "wa";
 	}

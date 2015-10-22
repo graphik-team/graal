@@ -68,6 +68,11 @@ public final class FrontierOneProperty extends RuleSetProperty.Local {
 	}
 
 	@Override
+	public String getDescription() {
+		return "The frontier contains only one variable.";
+	}
+
+	@Override
 	public int check(Rule rule) {
 		if (rule.getFrontier().size() == 1)
 			return 1;

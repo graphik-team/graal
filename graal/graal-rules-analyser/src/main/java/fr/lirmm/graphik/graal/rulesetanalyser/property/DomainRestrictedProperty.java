@@ -69,6 +69,12 @@ public class DomainRestrictedProperty extends RuleSetProperty.Local {
 		}
 		return instance;	
 	}
+
+	@Override
+	public String getDescription() {
+		return "All atoms in the head contain either all or none variables from the body.";
+	}
+	
 	
 	@Override
 	public int check(Rule rule) {

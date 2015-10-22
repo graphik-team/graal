@@ -84,6 +84,11 @@ public final class WeaklyStickyProperty extends RuleSetProperty.Default {
 		if (this.check(ruleSet.getMarkedVariableSet(), ruleSet.getGraphPositionDependencies())) return 1;
 		return -1;
 	}
+
+	@Override
+	public String getDescription() {
+		return "All marked variables that occur more than once in a rule body appear at some position of finite rank.";
+	}
 	
 	@Override
 	public String getLabel() {

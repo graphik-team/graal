@@ -69,6 +69,11 @@ public final class RangeRestrictedProperty extends RuleSetProperty.Local {
 		}
 		return instance;	
 	}
+
+	@Override
+	public String getDescription() {
+		return "All variables that appear in the head also occur in the body.";
+	}
 	
 	@Override
 	public int check(Rule rule) {

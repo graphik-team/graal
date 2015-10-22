@@ -76,6 +76,11 @@ public final class WeaklyFrontierGuardedSetProperty extends RuleSetProperty.Defa
 	}
 
 	@Override
+	public String getDescription() {
+		return "At least one atom in te body of each rule contains all affected variable from the frontier.";
+	}
+
+	@Override
 	public int check(AnalyserRuleSet ruleSet) {
 		if (this.check(ruleSet.getAffectedPositionSet())) return 1;
 		return -1;

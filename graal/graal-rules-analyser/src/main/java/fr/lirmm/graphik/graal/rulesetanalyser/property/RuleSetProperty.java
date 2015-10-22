@@ -51,6 +51,8 @@ public interface RuleSetProperty {
 	 */
 	public String getLabel();
 
+	public String getDescription();
+
 	public Iterable<RuleSetProperty> getSpecialisations();
 	public Iterable<RuleSetProperty> getGeneralisations();
 
