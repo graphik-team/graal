@@ -95,15 +95,15 @@ public class FGHRuleChaseCondition implements ChaseHaltingCondition {
 			substitution.put(t, existentialGen.getFreshVar());
 		}
 
-		AtomSet newFacts = substitution.createImageOf(rule.getHead());
-		Query query = new ConjunctiveQueryWithFixedVariables(newFacts, fixedVars);
-
 		LinkedList<Integer> causes = new LinkedList<Integer>();
 		for (Atom a : substitution.createImageOf(rule.getBody())) {
 			causes.add(new Integer(this.index.get(a)));
 		}
 
+		AtomSet newFacts = substitution.createImageOf(rule.getHead());
+		Query query = new ConjunctiveQueryWithFixedVariables(newFacts, fixedVars);
 		CloseableIterator<Substitution> executeQuery = StaticHomomorphism.executeQuery(query, data);
+
 		if (executeQuery.hasNext()) {
 			while (executeQuery.hasNext()) {
 				Substitution next = executeQuery.next();
