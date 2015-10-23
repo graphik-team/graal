@@ -45,8 +45,6 @@
  */
 package fr.lirmm.graphik.graal.forward_chaining.rule_applier;
 
-import java.util.LinkedList;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -131,8 +129,7 @@ public class ExhaustiveRuleApplier<T extends AtomSet> implements RuleApplier<Rul
 	@Override
 	public boolean apply(Rule rule, T atomSet) throws RuleApplicationException {
 		boolean isChanged = false;
-		ConjunctiveQuery query = ConjunctiveQueryFactory.instance().create(rule.getBody(),
-		        new LinkedList<Term>(rule.getFrontier()));
+		ConjunctiveQuery query = ConjunctiveQueryFactory.instance().create(rule.getBody());
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Rule to execute: " + rule);
 			LOGGER.debug("       -- Query: " + query);
