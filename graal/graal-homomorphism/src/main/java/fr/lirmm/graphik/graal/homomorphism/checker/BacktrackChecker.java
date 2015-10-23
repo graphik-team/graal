@@ -49,17 +49,17 @@ import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.homomorphism.AbstractChecker;
-import fr.lirmm.graphik.graal.homomorphism.RecursiveBacktrackHomomorphism;
+import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphism;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class RecursiveBacktrackChecker extends AbstractChecker {
+public class BacktrackChecker extends AbstractChecker {
 	
 	@Override
-	public RecursiveBacktrackHomomorphism getSolver() {
-		return RecursiveBacktrackHomomorphism.instance();
+	public BacktrackHomomorphism getSolver() {
+		return BacktrackHomomorphism.instance();
 	}
 	
 	@Override

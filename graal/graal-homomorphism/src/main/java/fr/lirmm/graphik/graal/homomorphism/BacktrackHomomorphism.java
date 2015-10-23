@@ -53,6 +53,7 @@ import java.util.TreeMap;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
@@ -75,13 +76,30 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class BacktrackHomomorphism implements Homomorphism<InMemoryAtomSet, AtomSet> {
+public class BacktrackHomomorphism implements Homomorphism<ConjunctiveQuery, AtomSet> {
+
+	private static BacktrackHomomorphism instance;
+
+	protected BacktrackHomomorphism() {
+		super();
+	}
+
+	public static synchronized BacktrackHomomorphism instance() {
+		if (instance == null)
+			instance = new BacktrackHomomorphism();
+
+		return instance;
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	//
+	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public <U1 extends InMemoryAtomSet, U2 extends AtomSet> CloseableIterator<Substitution> execute(U1 q, U2 a)
+	public <U1 extends ConjunctiveQuery, U2 extends AtomSet> CloseableIterator<Substitution> execute(U1 q, U2 a)
 	                                                                                                throws HomomorphismException {
-		return new ArrayBlockingQueueToCloseableIteratorAdapter<Substitution>(new BT(q, a, new LinkedList(
-		        q.getTerms(Type.VARIABLE))));
+		return new ArrayBlockingQueueToCloseableIteratorAdapter<Substitution>(new BT(q.getAtomSet(), a,
+		                                                                             q.getAnswerVariables()));
 	}
 
 	public <U1 extends InMemoryAtomSet, U2 extends AtomSet> CloseableIterator<Substitution> execute(
