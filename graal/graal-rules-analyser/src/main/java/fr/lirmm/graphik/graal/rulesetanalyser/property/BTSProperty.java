@@ -45,7 +45,6 @@
  */
 package fr.lirmm.graphik.graal.rulesetanalyser.property;
 
-import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
 
 /**
@@ -67,9 +66,14 @@ public final class BTSProperty extends RuleSetProperty.Default {
 
 	@Override
 	public String getDescription() {
-		return "The saturated fact has bounded treewidth.";
+		return "The saturated fact base has bounded treewidth.";
 	}
 	
+	@Override
+	public String getFullName() {
+		return "Bounded treewidth set";
+	}
+
 	@Override
 	public String getLabel() {
 		return "bts";

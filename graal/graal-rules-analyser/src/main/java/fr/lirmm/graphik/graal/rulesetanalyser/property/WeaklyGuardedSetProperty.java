@@ -76,6 +76,11 @@ public final class WeaklyGuardedSetProperty extends RuleSetProperty.Default {
 	}
 
 	@Override
+	public String getFullName() {
+		return "Weakly guarded";
+	}
+
+	@Override
 	public String getDescription() {
 		return "At least one atom in the body of each rule contains all affected variables from the body.";
 	}

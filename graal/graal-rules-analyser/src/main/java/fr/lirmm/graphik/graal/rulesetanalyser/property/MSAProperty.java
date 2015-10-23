@@ -81,6 +81,11 @@ public final class MSAProperty extends RuleSetProperty.Default {
 	}
 
 	@Override
+	public String getFullName() {
+		return "MSA";
+	}
+
+	@Override
 	public String getDescription() {
 		return "Approximates MFA with a lower complexity cost.";
 	}

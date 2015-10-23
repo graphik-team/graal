@@ -42,9 +42,9 @@
  */
  package fr.lirmm.graphik.graal.rulesetanalyser.property;
 
-import java.util.Set;
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Rule;
@@ -68,6 +68,11 @@ public class DomainRestrictedProperty extends RuleSetProperty.Local {
 			instance = new DomainRestrictedProperty();
 		}
 		return instance;	
+	}
+
+	@Override
+	public String getFullName() {
+		return "Domain restricted";
 	}
 
 	@Override

@@ -42,8 +42,8 @@
  */
  package fr.lirmm.graphik.graal.rulesetanalyser.property;
 
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
 
 import fr.lirmm.graphik.graal.api.core.Rule;
 
@@ -66,6 +66,11 @@ public final class DisconnectedProperty extends RuleSetProperty.Local {
 			instance = new DisconnectedProperty();
 		}
 		return instance;	
+	}
+
+	@Override
+	public String getFullName() {
+		return "Disconnected";
 	}
 
 	@Override

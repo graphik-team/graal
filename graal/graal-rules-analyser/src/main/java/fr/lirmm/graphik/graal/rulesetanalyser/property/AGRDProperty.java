@@ -62,6 +62,11 @@ public final class AGRDProperty extends RuleSetProperty.Default {
 	}
 
 	@Override
+	public String getFullName() {
+		return "Acyclic graph of rule dependencies";
+	}
+
+	@Override
 	public String getDescription() {
 		return "The graph of rule dependencies is ayclic.";
 	}

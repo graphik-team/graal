@@ -45,7 +45,6 @@
  */
 package fr.lirmm.graphik.graal.rulesetanalyser.property;
 
-import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
 
 /**
@@ -63,6 +62,11 @@ public final class FUSProperty extends RuleSetProperty.Default {
 			instance = new FUSProperty();
 
 		return instance;
+	}
+
+	@Override
+	public String getFullName() {
+		return "Finite unification set";
 	}
 
 	@Override

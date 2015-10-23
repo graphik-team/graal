@@ -45,10 +45,7 @@
  */
 package fr.lirmm.graphik.graal.rulesetanalyser.property;
 
-import java.util.LinkedList;
-
 import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.GraphPositionDependencies;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.MarkedVariableSet;
@@ -80,9 +77,15 @@ public final class WeaklyStickyProperty extends RuleSetProperty.Default {
 		return instance;
 	}
 
-	public int check(AnalyserRuleSet ruleSet) {
+	@Override
+    public int check(AnalyserRuleSet ruleSet) {
 		if (this.check(ruleSet.getMarkedVariableSet(), ruleSet.getGraphPositionDependencies())) return 1;
 		return -1;
+	}
+
+	@Override
+	public String getFullName() {
+		return "Weakly sticky";
 	}
 
 	@Override

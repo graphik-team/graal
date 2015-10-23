@@ -48,7 +48,6 @@ package fr.lirmm.graphik.graal.rulesetanalyser.property;
 import java.util.LinkedList;
 import java.util.List;
 
-import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.GraphPositionDependencies;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
 
@@ -81,8 +80,14 @@ public final class WeaklyAcyclicProperty extends RuleSetProperty.Default {
 	}
 
 	@Override
+	public String getFullName() {
+		return "Weakly acyclic";
+	}
+
+	@Override
 	public String getDescription() {
-		return "All predicate positions in the graph of position dependencies have finite rank.";
+		return "All predicate positions in the graph of position dependencies have finite rank"
+		       + " (i.e., there is no circuit with a special edge).";
 	}
 
 	@Override

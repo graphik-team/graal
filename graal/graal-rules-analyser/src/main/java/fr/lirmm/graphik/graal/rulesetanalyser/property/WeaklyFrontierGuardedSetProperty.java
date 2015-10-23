@@ -76,6 +76,11 @@ public final class WeaklyFrontierGuardedSetProperty extends RuleSetProperty.Defa
 	}
 
 	@Override
+	public String getFullName() {
+		return "Weakly frontier guarded";
+	}
+
+	@Override
 	public String getDescription() {
 		return "At least one atom in te body of each rule contains all affected variable from the frontier.";
 	}
