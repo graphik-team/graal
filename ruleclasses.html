@@ -49,13 +49,16 @@
 				<li><a href='#concrete'>Concrete rule classes</a>
 				<ul>
 						<li><a href='#agrd'>Acyclic graph of rule dependencies</a></li>
+						<li><a href='#ab'>Atomic-body</a></li>
 						<li><a href='#dlg'>Datalog</a></li>
 						<li><a href='#disc'>Disconnected</a></li>
 						<li><a href='#dr'>Domain-restricted</a></li>
 						<li><a href='#fg'>Frontier-guarded</a></li>
 						<li><a href='#fr1'>Frontier-one</a></li>
 						<li><a href='#g'>Guarded</a></li>
-						<li><a href='#lin'>Linear or atomic-body</a></li>
+						<li><a href='#lin'>Linear</a></li>
+						<li><a href='#mfa'>Model-faithful acyclicity</a></li>
+						<li><a href='#msa'>Model-summarising acyclicity</a></li>
 						<li><a href='#rr'>Range-restricted</a></li>
 						<li><a href='#s'>Sticky</a></li>
 						<li><a href='#wa'>Weakly-acyclic</a></li>
@@ -226,6 +229,9 @@ like halting algorithm. Almost all currently known BTS but not FES classes are G
 				</p>
 				<p>The associated <a href='#grd'>graph of rule dependencies</a> does
 not contain any circuit.</p>
+            <a name="ab"></a>
+			<h4>Atomic-body (ab)</h4>
+				See <a ref='#lin'>Linear</a>.
             <a name="dlg"></a>
 			<h4>Datalog (dlg)</h4>
 				See <a ref='#rr'>Range-restricted</a>.
@@ -281,7 +287,7 @@ frontier.</p>
 				<p>At least one atom in the body (called a <em>guard</em>) contains
 all the variable from the body.</p>
             <a name="lin"></a>
-			<h4>Linear or atomic-body (lin)</h4>
+			<h4>Linear (lin)</h4>
 				<p>This rule class property is a local property.<br/>
 				Ensures:
 				<ul>
@@ -290,6 +296,27 @@ all the variable from the body.</p>
 				</ul>
 				</p>
 				<p>The body contains a single atom.</p>
+            <a name="mfa"></a>
+			<h4>Model-faithful acyclicity (mfa)</h4>
+				<p>This rule class property is a global property.<br/>
+				Ensures:
+				<ul>
+						<li>fes</li>
+						<li>bts</li>
+				</ul>
+				</p>
+				<p>There is no cycle of functional symbol during the skolem chase executed on the critical instance.</p>
+            <a name="msa"></a>
+			<h4>Model-summarising acyclicity (msa)</h4>
+				<p>This rule class property is a global property.<br/>
+				Ensures:
+				<ul>
+						<li>fes</li>
+						<li>bts</li>
+						<li>mfa</li>
+				</ul>
+				</p>
+				<p>Approximates MFA with a lower complexity cost.</p>
             <a name="rr"></a>
 			<h4>Range-restricted (rr)</h4>
 				<p>This rule class property is a local property.<br/>
