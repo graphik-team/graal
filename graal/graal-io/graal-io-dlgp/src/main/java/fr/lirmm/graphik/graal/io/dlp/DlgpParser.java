@@ -92,13 +92,14 @@ public final class DlgpParser extends AbstractCloseableIterator<Object> implemen
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(DlgpParser.class);
 
+	private static VariableGenerator    freeVarGen = new DefaultVariableGenerator("I");
+
 	private ArrayBlockingStream<Object> buffer = new ArrayBlockingStream<Object>(
 			512);
 
 	private static class DlgpListener extends AbstractDlgpListener {
 
 		private ArrayBlockingStream<Object> set;
-		private VariableGenerator freeVarGen = new DefaultVariableGenerator("i");
 
 		DlgpListener(ArrayBlockingStream<Object> buffer) {
 			this.set = buffer;
