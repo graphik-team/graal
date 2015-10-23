@@ -107,7 +107,7 @@ public class FGHRuleChaseCondition implements ChaseHaltingCondition {
 		if (executeQuery.hasNext()) {
 			while (executeQuery.hasNext()) {
 				Substitution next = executeQuery.next();
-				for (Atom a : rule.getHead()) {
+				for (Atom a : newFacts) {
 					this.fgh.add(causes, this.index.get(next.createImageOf(a)));
 				}
 			}
