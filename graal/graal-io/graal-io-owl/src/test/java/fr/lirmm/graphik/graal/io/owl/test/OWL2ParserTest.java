@@ -191,7 +191,6 @@ public class OWL2ParserTest {
 			Object o = parser.next();
 			if (o instanceof DefaultNegativeConstraint) {
 				++nbNegativeConstraint;
-				System.out.println(o);
 				DefaultNegativeConstraint r = (DefaultNegativeConstraint) o;
 				Iterator<Atom> bodyIt = r.getBody().iterator();
 				Assert.assertTrue(bodyIt.hasNext());
@@ -260,7 +259,7 @@ public class OWL2ParserTest {
 	@Test
 	public void objectSomeValuesFrom() throws OWL2ParserException {
 		OWL2Parser parser = new OWL2Parser(PREFIXES + ":A rdf:type owl:Class . "
-				+ ":B rdf:type owl:Class . " + ":p rdf:type owl:Property . "
+				+ ":B rdf:type owl:Class . " + ":p rdf:type owl:ObjectProperty . "
 				+ "	[rdf:type owl:Restriction ;	owl:onProperty :p ;"
 				+ "			owl:someValuesFrom :A]" + "	rdfs:subClassOf :B . ");
 
@@ -303,7 +302,7 @@ public class OWL2ParserTest {
 	@Test
 	public void objectHasValue() throws OWL2ParserException {
 		OWL2Parser parser = new OWL2Parser(PREFIXES + ":A rdf:type owl:Class . "
-				+ ":p rdf:type owl:Property . "
+				+ ":p rdf:type owl:ObjectProperty . "
 				+ "	[rdf:type owl:Restriction ;	owl:onProperty :p ;"
 				+ "			owl:hasValue :i1]" + "	rdfs:subClassOf :A . ");
 
@@ -340,7 +339,7 @@ public class OWL2ParserTest {
 	@Test
 	public void objectHasSelf() throws OWL2ParserException {
 		OWL2Parser parser = new OWL2Parser(PREFIXES + ":A rdf:type owl:Class . "
-				+ ":p rdf:type owl:Property . "
+		                                   + ":p rdf:type owl:ObjectProperty . "
 				+ "	[rdf:type owl:Restriction ;	owl:onProperty :p ;"
 				+ "			owl:hasSelf \"true\"^^xsd:boolean]"
 				+ "	rdfs:subClassOf :A . ");
@@ -691,7 +690,8 @@ public class OWL2ParserTest {
 	@Test
 	public void objectAllValuesFrom() throws OWL2ParserException {
 		OWL2Parser parser = new OWL2Parser(PREFIXES + ":A rdf:type owl:Class . "
-				+ ":B rdf:type owl:Class . " + ":p rdf:type owl:Property . "
+		                                   + ":B rdf:type owl:Class . "
+		                                   + ":p rdf:type owl:ObjectProperty . "
 				+ ":A rdfs:subClassOf [ rdf:type owl:Restriction ;"
 				+ "							owl:onProperty :p ;"
 										   + "	                        owl:allValuesFrom :B ]. ");
@@ -804,7 +804,8 @@ public class OWL2ParserTest {
 		OWL2Parser parser = new OWL2Parser(PREFIXES + ":A rdf:type owl:Class . "
 				+ ":B rdf:type owl:Class . " + ":C rdf:type owl:Class . "
 				+ ":D rdf:type owl:Class . " + ":E rdf:type owl:Class . "
-				+ ":p rdf:type owl:Property . " + "[ owl:intersectionOf ( "
+		                                   + ":p rdf:type owl:ObjectProperty . "
+		                                   + "[ owl:intersectionOf ( "
 				+ "		:B [ owl:unionOf ( "
 				+ "				:E [rdf:type owl:Restriction ;	"
 				+ "					owl:onProperty :p ;" + "					owl:someValuesFrom ["
@@ -994,7 +995,6 @@ public class OWL2ParserTest {
 		while (parser.hasNext()) {
 			Object o = parser.next();
 			if (!(o instanceof Prefix)) {
-				System.out.println(o);
 				Assert.assertTrue(o instanceof Rule);
 				++nbAssertions;
 			}
@@ -1825,7 +1825,6 @@ public class OWL2ParserTest {
 			if (!(o instanceof Prefix)) {
 				Assert.assertTrue(o instanceof Rule);
 				Rule r = (Rule) o;
-				System.out.println(o);
 				++nbAssertions;
 
 			}
@@ -1876,7 +1875,6 @@ public class OWL2ParserTest {
 			if (!(o instanceof Prefix)) {
 				Assert.assertTrue(o instanceof Rule);
 				Rule r = (Rule) o;
-				System.out.println(o);
 				++nbAssertions;
 
 			}
@@ -1954,7 +1952,6 @@ public class OWL2ParserTest {
 		while (parser.hasNext()) {
 			Object o = parser.next();
 			if (o instanceof Rule) {
-				System.out.println(o);
 				++nbRules;
 				Rule r = (Rule) o;
 				Iterator<Atom> it = r.getBody().iterator();
