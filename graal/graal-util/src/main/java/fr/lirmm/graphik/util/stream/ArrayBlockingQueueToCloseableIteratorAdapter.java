@@ -50,7 +50,7 @@ import java.io.IOException;
  */
 public class ArrayBlockingQueueToCloseableIteratorAdapter<T> extends AbstractCloseableIterator<T> {
 
-	private ArrayBlockingStream<T> buffer = new ArrayBlockingStream<T>(512);
+	private ArrayBlockingStream<T> buffer;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -110,7 +110,6 @@ public class ArrayBlockingQueueToCloseableIteratorAdapter<T> extends AbstractClo
 			} catch (IOException e) {
 				throw new Error("Untreated exception");
 			} finally {
-				System.out.println("close Adapter");
 				it.close();
 				buffer.close();
 			}
