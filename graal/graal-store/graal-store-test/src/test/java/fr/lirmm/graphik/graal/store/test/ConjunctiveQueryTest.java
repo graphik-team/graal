@@ -60,7 +60,7 @@ import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -83,7 +83,7 @@ public class ConjunctiveQueryTest {
 			InMemoryAtomSet queryAtomSet = new LinkedListAtomSet();
 			ConjunctiveQuery query = ConjunctiveQueryFactory.instance().create(queryAtomSet);
 
-			GIterator<Substitution> subReader;
+			CloseableIterator<Substitution> subReader;
 			Substitution sub;
 
 			subReader = StaticHomomorphism.executeQuery(query, store);
@@ -93,7 +93,7 @@ public class ConjunctiveQueryTest {
 			Assert.assertEquals(0, sub.getTerms().size());
 
 			Assert.assertFalse(subReader.hasNext());
-
+			subReader.close();
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);
 		}
@@ -110,7 +110,7 @@ public class ConjunctiveQueryTest {
 			InMemoryAtomSet queryAtomSet = new LinkedListAtomSet();
 			ConjunctiveQuery query = ConjunctiveQueryFactory.instance().create(queryAtomSet);
 
-			GIterator<Substitution> subReader;
+			CloseableIterator<Substitution> subReader;
 			Substitution sub;
 
 			subReader = StaticHomomorphism.executeQuery(query, store);
@@ -120,7 +120,7 @@ public class ConjunctiveQueryTest {
 			Assert.assertEquals(0, sub.getTerms().size());
 
 			Assert.assertFalse(subReader.hasNext());
-
+			subReader.close();
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);
 		}
@@ -136,10 +136,11 @@ public class ConjunctiveQueryTest {
 
 			ConjunctiveQuery query = DlgpParser.parseQuery("?(X) :- p(c,X).");
 
-			GIterator<Substitution> subReader;
+			CloseableIterator<Substitution> subReader;
 
 			subReader = StaticHomomorphism.executeQuery(query, store);
 			Assert.assertFalse(subReader.hasNext());
+			subReader.close();
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);
 		}
@@ -153,10 +154,11 @@ public class ConjunctiveQueryTest {
 		try {
 			ConjunctiveQuery query = DlgpParser.parseQuery("?(Y,X) :- p(Y,X).");
 
-			GIterator<Substitution> subReader;
+			CloseableIterator<Substitution> subReader;
 
 			subReader = StaticHomomorphism.executeQuery(query, store);
 			Assert.assertFalse(subReader.hasNext());
+			subReader.close();
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);
 		}
@@ -171,10 +173,11 @@ public class ConjunctiveQueryTest {
 			store.addAll(DlgpParser.parseAtomSet("p(a,b), r(c,c)."));
 			ConjunctiveQuery query = DlgpParser.parseQuery("?(Y,X) :- p(a,X), q(X,Y).");
 
-			GIterator<Substitution> subReader;
+			CloseableIterator<Substitution> subReader;
 
 			subReader = StaticHomomorphism.executeQuery(query, store);
 			Assert.assertFalse(subReader.hasNext());
+			subReader.close();
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);
 		}
@@ -194,7 +197,7 @@ public class ConjunctiveQueryTest {
 			queryAtomSet.add(DlgpParser.parseAtom("q(a,c,d)."));
 			ConjunctiveQuery query = ConjunctiveQueryFactory.instance().create(queryAtomSet);
 
-			GIterator<Substitution> subReader;
+			CloseableIterator<Substitution> subReader;
 			Substitution sub;
 
 			subReader = StaticHomomorphism.executeQuery(query, store);
@@ -204,6 +207,7 @@ public class ConjunctiveQueryTest {
 			Assert.assertEquals(0, sub.getTerms().size());
 
 			Assert.assertFalse(subReader.hasNext());
+			subReader.close();
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);
 		}
@@ -219,12 +223,13 @@ public class ConjunctiveQueryTest {
 			queryAtomSet.add(DlgpParser.parseAtom("q(a,c,d)."));
 			ConjunctiveQuery query = ConjunctiveQueryFactory.instance().create(queryAtomSet);
 
-			GIterator<Substitution> subReader;
+			CloseableIterator<Substitution> subReader;
 			Substitution sub;
 
 			subReader = StaticHomomorphism.executeQuery(query, store);
 
 			Assert.assertFalse(subReader.hasNext());
+			subReader.close();
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);
 		}
@@ -237,7 +242,7 @@ public class ConjunctiveQueryTest {
 
 			ConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y) :- p(X,Y),p(Y,c).");
 
-			GIterator<Substitution> subReader;
+			CloseableIterator<Substitution> subReader;
 			Substitution sub;
 
 			subReader = StaticHomomorphism.executeQuery(query, store);
@@ -255,7 +260,7 @@ sub.createImageOf(DefaultTermFactory.instance()
 					.createConstant("b"));
 
 			Assert.assertFalse(subReader.hasNext());
-
+			subReader.close();
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);
 		}
@@ -267,7 +272,7 @@ sub.createImageOf(DefaultTermFactory.instance()
 
 			ConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y) :- p(a,X),q(X,Y),q(Y,X).");
 
-			GIterator<Substitution> subReader;
+			CloseableIterator<Substitution> subReader;
 			Substitution sub;
 
 			subReader = StaticHomomorphism.executeQuery(query, store);
@@ -285,7 +290,7 @@ sub.createImageOf(DefaultTermFactory.instance()
 					.createConstant("b"));
 
 			Assert.assertFalse(subReader.hasNext());
-
+			subReader.close();
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);
 		}
@@ -302,7 +307,7 @@ sub.createImageOf(DefaultTermFactory.instance()
 
 			ConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y) :- q(a,c,d),p(X,Y).");
 
-			GIterator<Substitution> subReader;
+			CloseableIterator<Substitution> subReader;
 			Substitution sub;
 
 			subReader = StaticHomomorphism.executeQuery(query, store);
@@ -320,6 +325,7 @@ sub.createImageOf(DefaultTermFactory.instance()
 					.createConstant("b"));
 
 			Assert.assertFalse(subReader.hasNext());
+			subReader.close();
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);
 		}
@@ -335,9 +341,10 @@ sub.createImageOf(DefaultTermFactory.instance()
 
 			ConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y) :- q(a,f,d),p(X,Y).");
 
-			GIterator<Substitution> subReader;
+			CloseableIterator<Substitution> subReader;
 			subReader = StaticHomomorphism.executeQuery(query, store);
 			Assert.assertFalse(subReader.hasNext());
+			subReader.close();
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);
 		}
@@ -353,7 +360,7 @@ sub.createImageOf(DefaultTermFactory.instance()
 
 			ConjunctiveQuery query = DlgpParser.parseQuery("?(X) :- p(X,Y).");
 
-			GIterator<Substitution> subReader;
+			CloseableIterator<Substitution> subReader;
 			Substitution sub;
 
 			subReader = StaticHomomorphism.executeQuery(query, store);
@@ -365,6 +372,7 @@ sub.createImageOf(DefaultTermFactory.instance()
 					DefaultTermFactory.instance().createConstant("a"), sub
 							.createImageOf(DefaultTermFactory.instance()
 									.createVariable("X")));
+			subReader.close();
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);
 		}
@@ -377,9 +385,10 @@ sub.createImageOf(DefaultTermFactory.instance()
 
 			ConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y) :- q(X,Y).");
 
-			GIterator<Substitution> subReader;
+			CloseableIterator<Substitution> subReader;
 			subReader = StaticHomomorphism.executeQuery(query, store);
 			Assert.assertFalse(subReader.hasNext());
+			subReader.close();
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);
 		}
@@ -391,9 +400,10 @@ sub.createImageOf(DefaultTermFactory.instance()
 			atomset.add(DlgpParser.parseAtom("p(a,b)."));
 			ConjunctiveQuery query = DlgpParser.parseQuery("? :- p(X).");
 	
-			GIterator<Substitution> subReader;
+			CloseableIterator<Substitution> subReader;
 			subReader = StaticHomomorphism.executeQuery(query, atomset);
 			Assert.assertFalse(subReader.hasNext());
+			subReader.close();
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);
 		}
@@ -405,9 +415,10 @@ sub.createImageOf(DefaultTermFactory.instance()
 			atomset.add(DlgpParser.parseAtom("p(a,b)."));
 			ConjunctiveQuery query = DlgpParser.parseQuery("? :- p(X,Y,Z).");
 	
-			GIterator<Substitution> subReader;
+			CloseableIterator<Substitution> subReader;
 			subReader = StaticHomomorphism.executeQuery(query, atomset);
 			Assert.assertFalse(subReader.hasNext());
+			subReader.close();
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);
 		}
@@ -419,9 +430,10 @@ sub.createImageOf(DefaultTermFactory.instance()
 			atomset.add(DlgpParser.parseAtom("p(\"literal\")."));
 			ConjunctiveQuery query = DlgpParser.parseQuery("? :- p(\"otherLiteral\").");
 	
-			GIterator<Substitution> subReader;
+			CloseableIterator<Substitution> subReader;
 			subReader = StaticHomomorphism.executeQuery(query, atomset);
 			Assert.assertFalse("Error on " + atomset.getClass() ,subReader.hasNext());
+			subReader.close();
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);
 		}
@@ -433,9 +445,10 @@ sub.createImageOf(DefaultTermFactory.instance()
 			atomset.add(DlgpParser.parseAtom("p(\"literal\")."));
 			ConjunctiveQuery query = DlgpParser.parseQuery("? :- p(\"literal\").");
 	
-			GIterator<Substitution> subReader;
+			CloseableIterator<Substitution> subReader;
 			subReader = StaticHomomorphism.executeQuery(query, atomset);
 			Assert.assertTrue("Error on " + atomset.getClass() ,subReader.hasNext());
+			subReader.close();
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);
 		}
