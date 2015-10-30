@@ -98,6 +98,7 @@ public class BacktrackHomomorphism implements Homomorphism<ConjunctiveQuery, Ato
 	@Override
 	public <U1 extends ConjunctiveQuery, U2 extends AtomSet> CloseableIterator<Substitution> execute(U1 q, U2 a)
 	                                                                                                throws HomomorphismException {
+		// return new BT(q.getAtomSet(), a, q.getAnswerVariables());
 		return new ArrayBlockingQueueToCloseableIteratorAdapter<Substitution>(new BT(q.getAtomSet(), a,
 		                                                                             q.getAnswerVariables()));
 	}
@@ -172,7 +173,7 @@ public class BacktrackHomomorphism implements Homomorphism<ConjunctiveQuery, Ato
 
 			currentVar = null;
 			levelMax = vars.length - 1;
-			level = 1;
+			level = 0;
 			goBack = false;
 
 		}
@@ -209,11 +210,19 @@ public class BacktrackHomomorphism implements Homomorphism<ConjunctiveQuery, Ato
 		// /////////////////////////////////////////////////////////////////////////
 
 		private Substitution computeNext() throws HomomorphismException {
-			try {
-
-				if (levelMax == 0) {
-					return null;
-				} else {
+			if (level >= 0) {
+				try {
+					if (level == 0) { // first call
+						if (isHomomorphism(vars[level].preAtoms, g)) {
+							++level;
+						} else {
+							--level;
+						}
+					}
+					if (level > levelMax) { // there is no variable
+						level = -1;
+						return solutionFound(vars, ans);
+					}
 					while (level > 0) {
 						//
 						if (level > levelMax) {
@@ -241,9 +250,10 @@ public class BacktrackHomomorphism implements Homomorphism<ConjunctiveQuery, Ato
 							}
 						}
 					}
+				} catch (AtomSetException e) {
+					throw new HomomorphismException("Exception during backtracking", e);
 				}
-			} catch (AtomSetException e) {
-				throw new HomomorphismException("Exception during backtracking", e);
+				--level;
 			}
 			return null;
 		}
