@@ -63,28 +63,28 @@ final class DefaultLiteral extends AbstractTerm implements Literal {
 
 	private static final long serialVersionUID = -8168240181900479256L;
 
-	private final Object value;
-	private final URI datatype;
+	private final Object      value;
+	private final URI         datatype;
+	private final String      identifier;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
 	public DefaultLiteral(Literal lit) {
-		this.value = lit.getValue();
-		this.datatype = lit.getDatatype();
+		this(lit.getDatatype(), lit.getValue());
 	}
 
 	public DefaultLiteral(Object value) {
-		this.value = value;
-		this.datatype = URIUtils.createURI("java:"
-				+ StringUtils
-				.reverseDelimited(value.getClass().getCanonicalName(), '.'));
+		this(URIUtils.createURI("java:"
+				+ StringUtils.reverseDelimited(value.getClass().getCanonicalName(), '.')),
+		     value);
 	}
 
 	public DefaultLiteral(URI datatype, Object value) {
 		this.datatype = datatype;
 		this.value = value;
+		this.identifier = this.value.toString() + "^^<" + this.getDatatype().toString() + ">";
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -118,8 +118,7 @@ final class DefaultLiteral extends AbstractTerm implements Literal {
 
 	@Override
 	public String getIdentifier() {
-		return this.value.toString() + "^^<" + this.getDatatype().toString()
-				+ ">";
+		return this.identifier;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
