@@ -45,6 +45,9 @@
  */
 package fr.lirmm.graphik.graal.core.term;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.StringUtils;
 
 import fr.lirmm.graphik.graal.api.core.AbstractTerm;
@@ -62,6 +65,8 @@ import fr.lirmm.graphik.util.URIUtils;
 final class DefaultLiteral extends AbstractTerm implements Literal {
 
 	private static final long serialVersionUID = -8168240181900479256L;
+	private static Pattern    pattern          = Pattern.compile("\"(.*)\"\\^\\^<(.*)>");
+
 
 	private final Object      value;
 	private final URI         datatype;
@@ -76,15 +81,27 @@ final class DefaultLiteral extends AbstractTerm implements Literal {
 	}
 
 	public DefaultLiteral(Object value) {
-		this(URIUtils.createURI("java:"
-				+ StringUtils.reverseDelimited(value.getClass().getCanonicalName(), '.')),
-		     value);
+		boolean test = false;
+		Matcher m = null;
+		if(value instanceof String) {
+			m = pattern.matcher((String) value);
+			test = m.matches();
+		}
+		if (test) {
+			this.datatype = URIUtils.createURI(m.group(2));
+			this.value = m.group(1);
+		} else {
+			this.datatype = URIUtils.createURI("java:"
+				+ StringUtils.reverseDelimited(value.getClass().getCanonicalName(), '.'));
+			this.value = value;
+		}
+		this.identifier = "\"" + this.value.toString() + "\"^^<" + this.getDatatype().toString() + ">";
 	}
 
 	public DefaultLiteral(URI datatype, Object value) {
 		this.datatype = datatype;
 		this.value = value;
-		this.identifier = this.value.toString() + "^^<" + this.getDatatype().toString() + ">";
+		this.identifier = "\"" + this.value.toString() + "\"^^<" + this.getDatatype().toString() + ">";
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

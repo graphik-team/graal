@@ -51,6 +51,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
@@ -71,12 +72,15 @@ import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.Literal;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.store.AbstractTripleStore;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.util.Prefix;
+import fr.lirmm.graphik.util.URIUtils;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
@@ -87,6 +91,45 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
 public class SailStore extends AbstractTripleStore {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SailStore.class);
+	private static class URIzer {
+		private static URIzer instance;
+
+		protected URIzer() {
+			super();
+		}
+
+		public static synchronized URIzer instance() {
+			if (instance == null)
+				instance = new URIzer();
+
+			return instance;
+		}
+
+		Prefix defaultPrefix = new Prefix("jena", "file:///jena/");
+
+		/**
+		 * Add default prefix if necessary
+		 * 
+		 * @param s
+		 * @return
+		 */
+		String input(String s) {
+			return URIUtils.createURI(s, defaultPrefix).toString();
+		}
+
+		/**
+		 * Remove default prefix if it is present
+		 * 
+		 * @param s
+		 * @return
+		 */
+		String output(String s) {
+			if (s.startsWith(defaultPrefix.getPrefix())) {
+				return s.substring(defaultPrefix.getPrefix().length());
+			}
+			return s;
+		}
+	}
 
 	private RepositoryConnection connection;
 	private ValueFactory valueFactory;
@@ -296,7 +339,7 @@ public class SailStore extends AbstractTripleStore {
 	private Statement atomToStatement(Atom atom) {
 		URI predicate = this.createURI(atom.getPredicate().getIdentifier().toString());
 		URI term0 = this.createURI(atom.getTerm(0).getIdentifier().toString());
-		URI term1 = this.createURI(atom.getTerm(1).getIdentifier().toString());
+		Value term1 = this.createValue(atom.getTerm(1));
 		return valueFactory.createStatement(term0, predicate, term1);
 	}
 
@@ -305,22 +348,38 @@ public class SailStore extends AbstractTripleStore {
 	 * method add a default prefix to the string.
 	 */
 	private URI createURI(String string) {
-		return valueFactory.createURI(string);
+		return valueFactory.createURI(URIzer.instance().input(string));
+	}
+
+	private Value createValue(Term t) {
+		if(t instanceof Literal) {
+			Literal l = (Literal) t;
+			return valueFactory.createLiteral(l.getValue().toString(),
+			    valueFactory.createURI(l.getDatatype().toString()));
+		} else {
+			return createURI(t.toString());
+		}
 	}
 
 	private static Atom statementToAtom(Statement stat) {
 		Predicate predicate = valueToPredicate(stat.getPredicate());
-		Term term0 = DefaultTermFactory.instance().createConstant(stat.getSubject().toString());
-		Term term1 = DefaultTermFactory.instance().createConstant(stat.getObject().toString());
+		Term term0 = valueToTerm(stat.getSubject());
+		Term term1 = valueToTerm(stat.getObject());
 		return new DefaultAtom(predicate, term0, term1);
 	}
 
 	private static Predicate valueToPredicate(Value value) {
-		return new Predicate(value.toString(), 2);
+		return new Predicate(URIzer.instance().output(value.toString()), 2);
 	}
 
 	private static Term valueToTerm(Value value) {
-		return DefaultTermFactory.instance().createConstant(value.toString());
+		if (value instanceof Resource) {
+			return DefaultTermFactory.instance().createConstant(URIzer.instance().output(value.toString()));
+		} else { //  Literal
+			org.openrdf.model.Literal l = (org.openrdf.model.Literal) value;
+			return DefaultTermFactory.instance()
+			                  .createLiteral(URIUtils.createURI(l.getDatatype().toString()), l.getLabel());
+		}
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -359,7 +418,8 @@ public class SailStore extends AbstractTripleStore {
 			this.it = it;
 		}
 
-		public void close() {
+		@Override
+        public void close() {
 			try {
 				this.it.close();
 			} catch (RepositoryException e) {
