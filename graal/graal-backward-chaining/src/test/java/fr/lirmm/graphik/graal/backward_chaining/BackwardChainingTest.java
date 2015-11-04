@@ -58,17 +58,17 @@ import org.junit.runner.RunWith;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.backward_chaining.pure.AggregAllRulesOperator;
 import fr.lirmm.graphik.graal.backward_chaining.pure.AggregSingleRuleOperator;
 import fr.lirmm.graphik.graal.backward_chaining.pure.BasicAggregAllRulesOperator;
-import fr.lirmm.graphik.graal.backward_chaining.pure.HierarchicalCompilation;
-import fr.lirmm.graphik.graal.backward_chaining.pure.IDCompilation;
-import fr.lirmm.graphik.graal.backward_chaining.pure.NoCompilation;
 import fr.lirmm.graphik.graal.backward_chaining.pure.PureRewriter;
 import fr.lirmm.graphik.graal.backward_chaining.pure.RewritingOperator;
-import fr.lirmm.graphik.graal.backward_chaining.pure.RulesCompilation;
+import fr.lirmm.graphik.graal.core.compilation.HierarchicalCompilation;
+import fr.lirmm.graphik.graal.core.compilation.IDCompilation;
+import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.util.Iterators;
@@ -82,7 +82,7 @@ public class BackwardChainingTest {
 
 	@DataPoints
 	public static RulesCompilation[] compilations() {
-		return new RulesCompilation[] { new NoCompilation(),
+		return new RulesCompilation[] { NoCompilation.instance(),
 				new HierarchicalCompilation(), new IDCompilation() };
 	}
 	

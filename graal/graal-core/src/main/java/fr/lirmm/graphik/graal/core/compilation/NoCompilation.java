@@ -40,62 +40,96 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
+/**
  * 
  */
-package fr.lirmm.graphik.graal.backward_chaining.pure;
+package fr.lirmm.graphik.graal.core.compilation;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
-import fr.lirmm.graphik.graal.api.core.RulesCompilation;
-import fr.lirmm.graphik.graal.core.ruleset.IndexedByHeadPredicatesRuleSet;
+import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.util.Partition;
 
 /**
- * Rewriting operator SRA
- * Query rewriting engine that rewrite query using
- * aggregation by rule of most general single piece-unifiers
- * 
- * @author Mélanie KÖNIG
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+ *
  */
-public class AggregSingleRuleOperator extends AbstractRewritingOperator {
-	
+public class NoCompilation extends AbstractRulesCompilation {
+
+	private static NoCompilation instance;
+
+	protected NoCompilation() {
+		super();
+	}
+
+	public static synchronized NoCompilation instance() {
+		if (instance == null)
+			instance = new NoCompilation();
+
+		return instance;
+	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
-	
-	/**
-	 * Returns the rewrites compute from the given fact and the rule set of the
-	 * receiving object.
-	 * 
-	 * @param q
-	 *            A fact
-	 * @return the ArrayList that contains the rewrites compute from the given
-	 *         fact and the rule set of the receiving object.
-	 * @throws Exception
-	 */
+
 	@Override
-	public Collection<ConjunctiveQuery> getRewritesFrom(ConjunctiveQuery q, IndexedByHeadPredicatesRuleSet ruleSet, RulesCompilation compilation) {
-		LinkedList<ConjunctiveQuery> rewriteSet = new LinkedList<ConjunctiveQuery>();
-		Collection<QueryUnifier> unifiers = new LinkedList<QueryUnifier>();
-		for (Rule r : getUnifiableRules(q.getAtomSet().predicatesIterator(),
-				ruleSet, compilation)) {
-			unifiers.addAll(getSRUnifier(q, r, compilation));
-		}
-
-		/** compute the rewrite from the unifier **/
-		ConjunctiveQuery a;
-		for (QueryUnifier u : unifiers) {
-			a = Utils.rewrite(q, u);
-			if(a != null) {
-				rewriteSet.add(a);
-			}
-		}
-
-		return rewriteSet;
+	public void compile(Iterator<Rule> ruleset) {
 	}
-	
+
+	@Override
+	public void load(Iterator<Rule> ruleset, Iterator<Rule> compilation) {
+	}
+
+	@Override
+	public Iterable<Rule> getSaturation() {
+		return Collections.emptyList();
+	}
+
+	@Override
+	public boolean isCompilable(Rule r) {
+		return false;
+	}
+
+	@Override
+	public boolean isMappable(Predicate father, Predicate son) {
+		return son.equals(father);
+	}
+
+	@Override
+	public Collection<Substitution> getMapping(Atom father, Atom son) {
+		return Collections.emptyList();
+	}
+
+	@Override
+	public Collection<Partition<Term>> getUnification(Atom father, Atom son) {
+		LinkedList<Partition<Term>> res = new LinkedList<Partition<Term>>();
+		if (isMappable(father.getPredicate(), son.getPredicate())) {
+			res.add(new Partition<Term>(father.getTerms(), son.getTerms()));
+		}
+		return res;
+	}
+
+	@Override
+	public boolean isImplied(Atom father, Atom son) {
+		return son.equals(father);
+	}
+
+	@Override
+	public Collection<Atom> getRewritingOf(Atom father) {
+		return Collections.singleton(father);
+	}
+
+	@Override
+	public Collection<Predicate> getUnifiablePredicate(Predicate p) {
+		return Collections.singleton(p);
+	}
+
 }

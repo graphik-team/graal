@@ -43,85 +43,85 @@
  /**
  * 
  */
-package fr.lirmm.graphik.graal.backward_chaining.pure;
+package fr.lirmm.graphik.graal.core.compilation;
 
-import java.util.List;
+import java.util.Iterator;
+import java.util.LinkedList;
 
-import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
-import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
+import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.util.Profiler;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- *
+ * 
  */
-interface IDCondition {
+public abstract class AbstractRulesCompilation implements RulesCompilation {
 
-	List<Integer> getBody();
-	/**
-	 * @param body
-	 * @param head
-	 * @return true iff the body imply the head by this condition.
-	 */
-	boolean imply(List<Term> body, List<Term> head);
+	private Profiler profiler;
+
+	@Override
+	public void setProfiler(Profiler profiler) {
+		this.profiler = profiler;
+	}
+
+	@Override
+	public Profiler getProfiler() {
+		return this.profiler;
+	}
+
+	@Override
+	public InMemoryAtomSet getIrredondant(AtomSet atomSet) {
+		InMemoryAtomSet irr = new LinkedListAtomSet(atomSet);
+		Iterator<Atom> i = irr.iterator();
+		Iterator<Atom> j;
+		Atom origin;
+		Atom target;
+		boolean isSubsumed;
+		while (i.hasNext()) {
+			target = i.next();
+			j = irr.iterator();
+			isSubsumed = false;
+			while (j.hasNext() && !isSubsumed) {
+				origin = j.next();
+				if (target != origin && this.isImplied(target, origin)) {
+					isSubsumed = true;
+					i.remove();
+				}
+			}
+		}
+
+		return irr;
+	}
 
 	/**
-	 * @param head
-	 * @return true iff the given terms fulfills the condition on the head
-	 */
-	boolean checkHead(List<Term> head);
-
-	/**
-	 * 
-	 * @param body
-	 * @return true iff the given terms fulfills the condition on the body
-	 */
-	boolean checkBody(List<Term> body);
-
-	/**
-	 * Generate body according to the given terms of the head
-	 * 
-	 * @param head
-	 * @return a Term list.
-	 */
-	List<Term> generateBody(List<Term> head);
-
-	/**
-	 * Generate head
-	 * 
-	 * @param body
+	 * Remove compilable rule from ruleset and return a List of compilable
+	 * rules.
+	 *
+	 * @param ruleset
 	 * @return
 	 */
-	List<Term> generateHead();
+	protected final LinkedList<Rule> extractCompilable(Iterator<Rule> ruleSet) {
+		LinkedList<Rule> compilable = new LinkedList<Rule>();
+		Rule r;
 
-	/**
-	 * Generate the needed unification between the head and the body.
-	 * 
-	 * @param body
-	 * @param head
-	 * @return a partition that represents the unification.
-	 */
-	TermPartition generateUnification(List<Term> body, List<Term> head);
+		while (ruleSet.hasNext()) {
+			r = ruleSet.next();
+			if (this.isCompilable(r)) {
+				compilable.add(r);
+				ruleSet.remove();
+			}
+		}
 
-	/**
-	 * Compose the current IDCondition with another IDCondition. (x,y,x) ->
-	 * (x,y) with (x,x) -> (x) produce (x,x,x) -> (x) (x,y,x) -> (y,x) with
-	 * (x,y) -> (y) produce (x,y,x) -> (y)
-	 * 
-	 * @param condition2
-	 * @return a new IDCondition representing the composition.
-	 */
-	IDCondition composeWith(IDCondition condition2);
+		if (this.getProfiler() != null) {
+			this.getProfiler().add("Compiled rules", compilable.size());
+		}
 
-	/**
-	 * @param p
-	 * @param q
-	 */
-	Rule generateRule(Predicate bodyPredicate, Predicate headPredicate);
-
-	/**
-	 * @return
-	 */
-	boolean isIdentity();
+		return compilable;
+	}
 
 }

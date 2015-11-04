@@ -40,17 +40,12 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- package fr.lirmm.graphik.graal.backward_chaining.pure;
+ package fr.lirmm.graphik.graal.api.core;
 
 import java.util.Collection;
 import java.util.Iterator;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
-import fr.lirmm.graphik.graal.api.core.Predicate;
-import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.util.Partition;
 import fr.lirmm.graphik.util.Profilable;
 
 public interface RulesCompilation extends Profilable {
@@ -71,47 +66,29 @@ public interface RulesCompilation extends Profilable {
 	public Iterable<Rule> getSaturation();
 
 	/**
-	 * Unfold the pivot rewriting set with this rules compilation.
-	 * 
-	 * @param pivotRewritingSet
-	 * @return
-	 */
-	Iterable<ConjunctiveQuery> unfold(
-			Iterable<ConjunctiveQuery> pivotRewritingSet);
-
-	/**
 	 * Return true if the given rule is compilable by this kind of rules 
 	 * compilation.
 	 */
 	public boolean isCompilable(Rule r);
 
 	/**
-	 * Return true iff there is a c-homomorphism from the atom father to the
-	 * atom son i. e. there exist a fact that is implied from the atom son with
-	 * compiled rules, and s. t. the atom father can be mapped to this fact by
-	 * an homomorphism
+	 * Return true iff there is a way to rewrite an atom with the predicate
+	 * father into an atom with the predicate son.
+	 * 
 	 */
-	public boolean isMappable(Atom father, Atom son);
+	public boolean isMappable(Predicate father, Predicate son);
 
 	/**
 	 * Return the list of c-homomorphisms of the atom father to the atom son i.
 	 * e. return all the homomorphisms that map father with a fact implied from
 	 * the atom son with compiled rules
 	 */
-	// public Collection<Substitution> getMapping(Atom father, Atom son);
-
-	/**
-	 * Return true iff there is a c-unifier from the atom father to the atom son
-	 * i. e. a substitution from the variables of father and son to the terms of
-	 * father and son such that the image of son implies the image of father
-	 * with the compiled rules
-	 */
-	public boolean isUnifiable(Atom father, Atom son);
+	public Collection<Substitution> getMapping(Atom father, Atom son);
 
 	/**
 	 * Return the list of c-unifier from the atom father to the atom son
 	 */
-	public Collection<TermPartition> getUnification(Atom father, Atom son);
+	public Collection<Partition<Term>> getUnification(Atom father, Atom son);
 
 	/**
 	 * Return true iff the atom father is implied from the atom son with

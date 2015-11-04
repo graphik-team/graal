@@ -43,85 +43,90 @@
  /**
  * 
  */
-package fr.lirmm.graphik.graal.backward_chaining.pure;
+package fr.lirmm.graphik.graal.core.compilation;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.List;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.util.Partition;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class NoCompilation extends AbstractRulesCompilation {
+interface IDCondition {
 
-	@Override
-	public Iterable<ConjunctiveQuery> unfold(
-			Iterable<ConjunctiveQuery> pivotRewritingSet) {
-		return pivotRewritingSet;
-	}
-	
-	@Override
-	public void compile(Iterator<Rule> ruleset) {
-	}
+	List<Integer> getBody();
+	/**
+	 * @param body
+	 * @param head
+	 * @return true iff the body imply the head by this condition.
+	 */
+	boolean imply(List<Term> body, List<Term> head);
 
-	@Override
-	public void load(Iterator<Rule> ruleset, Iterator<Rule> compilation) {
-	}
+	/**
+	 * @param head
+	 * @return true iff the given terms fulfills the condition on the head
+	 */
+	boolean checkHead(List<Term> head);
 
-	@Override
-	public Iterable<Rule> getSaturation() {
-		return Collections.emptyList();
-	}
+	/**
+	 * 
+	 * @param body
+	 * @return true iff the given terms fulfills the condition on the body
+	 */
+	boolean checkBody(List<Term> body);
 
-	@Override
-	public boolean isCompilable(Rule r) {
-		return false;
-	}
+	/**
+	 * Generate body according to the given terms of the head
+	 * 
+	 * @param head
+	 * @return a Term list.
+	 */
+	List<Term> generateBody(List<Term> head);
 
-	@Override
-	public boolean isMappable(Atom father, Atom son) {
-		return false;
-	}
+	/**
+	 * Generate head
+	 * 
+	 * @param body
+	 * @return
+	 */
+	List<Term> generateHead();
 
-	// @Override
-	// public Collection<Substitution> getMapping(Atom father, Atom son) {
-	// return Collections.emptyList();
-	// }
+	/**
+	 * Generate the needed unification between the head and the body.
+	 * 
+	 * @param body
+	 * @param head
+	 * @return a partition that represents the unification.
+	 */
+	Partition<Term> generateUnification(List<Term> body, List<Term> head);
 
-	@Override
-	public boolean isUnifiable(Atom father, Atom son) {
-		return father.getPredicate().equals(son.getPredicate());
-	}
+	/**
+	 * Compose the current IDCondition with another IDCondition. (x,y,x) ->
+	 * (x,y) with (x,x) -> (x) produce (x,x,x) -> (x) (x,y,x) -> (y,x) with
+	 * (x,y) -> (y) produce (x,y,x) -> (y)
+	 * 
+	 * @param condition2
+	 * @return a new IDCondition representing the composition.
+	 */
+	IDCondition composeWith(IDCondition condition2);
 
-	@Override
-	public Collection<TermPartition> getUnification(Atom father, Atom son) {
-		LinkedList<TermPartition> res = new LinkedList<TermPartition>();
-		TermPartition p = TermPartition.getPartitionByPosition(father, son);
-		if (p != null)
-			res.add(p);
-		return res;
-	}
+	/**
+	 * Generate the rule corresponding to this IDCondition.
+	 * 
+	 * @param bodyPredicate
+	 *            the predicate to use in the body
+	 * @param headPredicate
+	 *            the predicate to use in the head
+	 */
+	Rule generateRule(Predicate bodyPredicate, Predicate headPredicate);
 
-	@Override
-	public boolean isImplied(Atom father, Atom son) {
-		return false;
-	}
-
-	@Override
-	public Collection<Atom> getRewritingOf(Atom father) {
-		return Collections.singleton(father);
-	}
-
-	@Override
-	public Collection<Predicate> getUnifiablePredicate(Predicate p) {
-		return Collections.singleton(p);
-	}
+	/**
+	 * @return
+	 */
+	boolean isIdentity();
 
 }

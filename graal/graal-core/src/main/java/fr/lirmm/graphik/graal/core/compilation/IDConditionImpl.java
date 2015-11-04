@@ -40,7 +40,7 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- package fr.lirmm.graphik.graal.backward_chaining.pure;
+ package fr.lirmm.graphik.graal.core.compilation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -240,8 +240,8 @@ class IDConditionImpl implements IDCondition {
 	 * according to this
 	 */
 	@Override
-	public TermPartition generateUnification(List<Term> body, List<Term> head) {
-		TermPartition res = new TermPartition();
+	public Partition<Term> generateUnification(List<Term> body, List<Term> head) {
+		Partition<Term> res = new Partition<Term>();
 		Term[] map = new Term[body.size()];
 
 		// put together term of body that must be unify according to this
