@@ -48,8 +48,9 @@ package fr.lirmm.graphik.graal.backward_chaining.pure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.homomorphism.PureHomomorphism;
 
@@ -106,12 +107,12 @@ class PureHomomorphismWithCompilation extends PureHomomorphism {
 	}
 	
 	@Override
-	protected boolean isMappable(Atom a, Atom im, PureHomomorphism.Homomorphism homomorphism) {
+	protected boolean isMappable(Predicate a, Predicate im, PureHomomorphism.Homomorphism homomorphism) {
 		if(((Homomorphism) homomorphism).compilation != null){
 			return ((Homomorphism) homomorphism).compilation.isMappable(a, im);
 		}
 		else {
-			return a.getPredicate().equals(im.getPredicate());
+			return super.isMappable(a, im, homomorphism);
 		}
 	}
 	

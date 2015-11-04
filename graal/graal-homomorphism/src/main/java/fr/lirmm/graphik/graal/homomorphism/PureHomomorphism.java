@@ -58,6 +58,7 @@ import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
@@ -283,7 +284,7 @@ public class PureHomomorphism implements
 		for (int i = 0; i < homomorphism.sourceAtoms.size(); ++i) {
 			images = new LinkedList<Atom>();
 			for (Atom im : target) {
-				if (isMappable(homomorphism.sourceAtoms.get(i), im, homomorphism)) {
+				if (isMappable(homomorphism.sourceAtoms.get(i).getPredicate(), im.getPredicate(), homomorphism)) {
 					images.add(im);
 				}
 			}
@@ -294,8 +295,8 @@ public class PureHomomorphism implements
 		return true;
 	}
 
-	protected boolean isMappable(Atom a, Atom im, Homomorphism homomorphism) {
-		return a.getPredicate().equals(im.getPredicate());
+	protected boolean isMappable(Predicate a, Predicate im, Homomorphism homomorphism) {
+		return a.equals(im);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
