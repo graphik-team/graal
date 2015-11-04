@@ -68,6 +68,7 @@ import fr.lirmm.graphik.graal.core.atomset.AtomSetUtils;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.factory.RuleFactory;
+import fr.lirmm.graphik.graal.homomorphism.PureHomomorphism;
 import fr.lirmm.graphik.util.Profiler;
 
 /**
@@ -208,7 +209,7 @@ final class Utils {
 			moreGen = true;
 		} else {
 			try {
-				moreGen = PureHomomorphismWithCompilation.instance().exist(
+				moreGen = PureHomomorphism.instance().exist(
 						h, f, compilation);
 			} catch (HomomorphismException e) {
 			}
