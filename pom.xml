@@ -130,14 +130,14 @@ algorithms, structural analysis of decidability properties of a rule set, a text
 					<failOnViolation>false</failOnViolation>
 					<minimumPriority>2</minimumPriority>
 					<rulesets>
-						<ruleset>${project.basedir}/pmd-rulesets/basic.xml</ruleset>
-						<ruleset>${project.basedir}/pmd-rulesets/finalizers.xml</ruleset>
-						<ruleset>${project.basedir}/pmd-rulesets/imports.xml</ruleset>
-						<ruleset>${project.basedir}/pmd-rulesets/strings.xml</ruleset>
-						<ruleset>${project.basedir}/pmd-rulesets/naming.xml</ruleset>
-						<ruleset>${project.basedir}/pmd-rulesets/design.xml</ruleset>
-						<ruleset>${project.basedir}/pmd-rulesets/strictexception.xml</ruleset>
-						<ruleset>${project.basedir}/pmd-rulesets/unusedcode.xml</ruleset>
+						<ruleset>${project.basedir}/config/pmd-rulesets/basic.xml</ruleset>
+						<ruleset>${project.basedir}/config/pmd-rulesets/finalizers.xml</ruleset>
+						<ruleset>${project.basedir}/config/pmd-rulesets/imports.xml</ruleset>
+						<ruleset>${project.basedir}/config/pmd-rulesets/strings.xml</ruleset>
+						<ruleset>${project.basedir}/config/pmd-rulesets/naming.xml</ruleset>
+						<ruleset>${project.basedir}/config/pmd-rulesets/design.xml</ruleset>
+						<ruleset>${project.basedir}/config/pmd-rulesets/strictexception.xml</ruleset>
+						<ruleset>${project.basedir}/config/pmd-rulesets/unusedcode.xml</ruleset>
 					</rulesets>
 				</configuration>
 			</plugin>
@@ -150,7 +150,7 @@ algorithms, structural analysis of decidability properties of a rule set, a text
 					<effort>Max</effort>
 					<threshold>Low</threshold>
 					<xmlOutput>true</xmlOutput>
-				  <excludeFilterFile>findbugs/exclude-filter.xml</excludeFilterFile>
+				  <excludeFilterFile>${project.basedir}/config/findbugs/exclude-filter.xml</excludeFilterFile>
 				</configuration>
 			</plugin>
 			<plugin>
