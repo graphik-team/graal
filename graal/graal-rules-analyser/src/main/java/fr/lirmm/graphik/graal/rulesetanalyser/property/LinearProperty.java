@@ -42,9 +42,9 @@
  */
  package fr.lirmm.graphik.graal.rulesetanalyser.property;
 
-import java.util.List;
-import java.util.LinkedList;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Rule;
@@ -67,6 +67,16 @@ public final class LinearProperty extends RuleSetProperty.Local {
 			instance = new LinearProperty();
 		}
 		return instance;	
+	}
+
+	@Override
+	public String getFullName() {
+		return "Linear";
+	}
+
+	@Override
+	public String getDescription() {
+		return "The body contains a single atom.";
 	}
 	
 	@Override

@@ -1,1 +1,0 @@
-[q15] ?(X,Z) :- "ub:Student"(X), "ub:takesCourse"(X,Y), "ub:Subj1Course"(Y), "ub:teacherOf"(Z,Y), "ub:Professor"(Z), "ub:headOf"(Z,W), "ub:Department"(W), "ub:memberOf"(X,W).

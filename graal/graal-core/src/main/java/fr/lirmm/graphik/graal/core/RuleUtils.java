@@ -195,7 +195,7 @@ public final class RuleUtils {
 	 * @return The equivalent set of atomic head rules.
 	 */
 	public static Iterator<Rule> computeAtomicHead(Iterator<Rule> rules) {
-		return new AtomicHeadIterator(rules);
+		return new AtomicHeadIterator(new SinglePieceRulesIterator(rules));
 	}
 
 
@@ -591,6 +591,10 @@ public final class RuleUtils {
 						terms.add(t);
 			}
 		}
+
+		// TODO: In the definition of CI, we need to add all
+		// predicates in rule head. But why? This doesn't make any
+		// sense...
 
 		for (Predicate p : predicates) {
 			generateCriticalInstance(A,terms,p,0,new DefaultAtom(p));

@@ -107,7 +107,7 @@ public class NaiveChase extends AbstractChase implements Verbosable {
 	}
 
 	public NaiveChase(Iterable<Rule> ruleSet, AtomSet atomSet,
-			Homomorphism<ConjunctiveQuery, AtomSet> solver,
+            Homomorphism<ConjunctiveQuery, AtomSet> solver,
 			ChaseHaltingCondition haltingCondition) {
 		super(new DefaultRuleApplier<AtomSet>(solver, haltingCondition));
 		this.ruleSet = ruleSet;

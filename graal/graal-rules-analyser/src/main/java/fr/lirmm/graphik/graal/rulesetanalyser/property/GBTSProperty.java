@@ -45,10 +45,9 @@
  */
 package fr.lirmm.graphik.graal.rulesetanalyser.property;
 
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
 
-import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
 
 /**
@@ -66,6 +65,16 @@ public final class GBTSProperty extends RuleSetProperty.Default {
 			instance = new GBTSProperty();
 
 		return instance;
+	}
+
+	@Override
+	public String getFullName() {
+		return "Greedy Bounded treewidth set";
+	}
+
+	@Override
+	public String getDescription() {
+		return "A tree decomposition of the saturated fact base can be computed greedily.";
 	}
 	
 	@Override

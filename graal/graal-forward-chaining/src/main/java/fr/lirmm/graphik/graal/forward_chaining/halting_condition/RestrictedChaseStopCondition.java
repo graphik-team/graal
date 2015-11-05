@@ -73,7 +73,15 @@ import fr.lirmm.graphik.util.stream.IteratorAdapter;
 public class RestrictedChaseStopCondition implements ChaseHaltingCondition {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RestrictedChaseStopCondition.class);
-	private VariableGenerator existentialGen = new DefaultVariableGenerator("E");
+	private VariableGenerator existentialGen;
+
+	public RestrictedChaseStopCondition() {
+		this.existentialGen = new DefaultVariableGenerator("EE");
+	}
+
+	public RestrictedChaseStopCondition(VariableGenerator existentialGen) {
+		this.existentialGen = existentialGen;
+	}
 
 	@Override
 	public GIterator<Atom> apply(Rule rule, Substitution substitution, AtomSet data)

@@ -42,8 +42,8 @@
  */
  package fr.lirmm.graphik.graal.rulesetanalyser.property;
 
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
@@ -69,6 +69,16 @@ public final class GuardedProperty extends RuleSetProperty.Local {
 			instance = new GuardedProperty();
 		}
 		return instance;	
+	}
+
+	@Override
+	public String getFullName() {
+		return "Guarded";
+	}
+
+	@Override
+	public String getDescription() {
+		return "At least one atom in the body contains all the variables from the body.";
 	}
 	
 	@Override

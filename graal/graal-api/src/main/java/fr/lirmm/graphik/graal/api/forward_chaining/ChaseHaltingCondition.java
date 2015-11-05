@@ -69,15 +69,17 @@ public interface ChaseHaltingCondition {
 	 * @param rule
 	 *            The rule which is triggered
 	 * @param substitution
-	 *            A homomorphism of the rule body found.
+	 *            A homomorphism of the rule body found. The existential
+	 *            variables are not substitued.
 	 * @param data
 	 *            The data over which this rule is applied.
-	 * @return The atoms to actually add, if the application is redundant.
+	 * @return A full substitution or null if the application is reduntant. The
+	 *         returned substitution should substitutes all variables of the
+	 *         head of the rule.
 	 * 
 	 * @throws HomomorphismFactoryException
 	 * @throws HomomorphismException
 	 */
-	GIterator<Atom> apply(Rule rule, Substitution substitution, AtomSet data)
-	                                                                                 throws HomomorphismFactoryException,
+	GIterator<Atom> apply(Rule rule, Substitution substitution, AtomSet data) throws HomomorphismFactoryException,
 	                                                                          HomomorphismException;
 }

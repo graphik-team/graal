@@ -62,16 +62,15 @@ import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
+import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.cqa.AtomIndex;
 import fr.lirmm.graphik.graal.cqa.FGH;
-import fr.lirmm.graphik.graal.cqa.FGHRuleApplicationHandler;
+import fr.lirmm.graphik.graal.cqa.FGHRuleChaseCondition;
 import fr.lirmm.graphik.graal.forward_chaining.NaiveChase;
-import fr.lirmm.graphik.graal.forward_chaining.halting_condition.ChaseStopConditionWithHandler;
-import fr.lirmm.graphik.graal.forward_chaining.halting_condition.RestrictedChaseStopCondition;
-import fr.lirmm.graphik.graal.homomorphism.ComplexHomomorphism;
+import fr.lirmm.graphik.graal.forward_chaining.rule_applier.ExhaustiveRuleApplier;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.SqlHomomorphism;
@@ -106,13 +105,12 @@ public class CLI_FGH {
 
 			FGH fgh = new FGH();
 
-			Homomorphism<ConjunctiveQuery, AtomSet> solver = new ComplexHomomorphism(SqlHomomorphism.instance());
+			Homomorphism solver = SqlHomomorphism.instance();
+			FGHRuleChaseCondition chaseCondition = new FGHRuleChaseCondition(index, fgh);
 
-			FGHRuleApplicationHandler onRule = new FGHRuleApplicationHandler(index,fgh);
-			onRule.setSolver(solver);
-
-			ChaseHaltingCondition haltCondition = new ChaseStopConditionWithHandler(new RestrictedChaseStopCondition(),onRule);
-			NaiveChase chase = new NaiveChase(rules, atomset, solver, haltCondition);
+			ChaseHaltingCondition haltCondition = chaseCondition;
+			RuleApplier applier = new ExhaustiveRuleApplier<AtomSet>(solver, haltCondition);
+			NaiveChase chase = new NaiveChase(rules, atomset, applier);
 
 			if (options.input_file != "") {
 				System.out.println("Reading data from dlp file: " + options.input_file);

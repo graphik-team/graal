@@ -45,7 +45,6 @@
  */
 package fr.lirmm.graphik.graal.api.core;
 
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
@@ -61,9 +60,8 @@ public abstract class AbstractAtomSet implements AtomSet {
 	
 	@Override
 	public boolean contains(Atom atom) throws AtomSetException {
-		Comparator<Atom> cmp = new AtomComparator();
 		for (Atom a : this) {
-			if (cmp.compare(atom, a) == 0)
+			if (AtomComparator.instance().compare(atom, a) == 0)
 				return true;
 		}
 		return false;

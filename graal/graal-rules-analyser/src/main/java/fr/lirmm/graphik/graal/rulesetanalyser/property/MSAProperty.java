@@ -67,10 +67,6 @@ import fr.lirmm.graphik.graal.forward_chaining.StaticChase;
 import fr.lirmm.graphik.graal.homomorphism.RecursiveBacktrackHomomorphism;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
 
-/**
- * There is no cycle of functional symbol during the skolem chase 
- * executed on the critical instance.
- */
 public final class MSAProperty extends RuleSetProperty.Default {
 
 	private static MSAProperty instance = null;
@@ -82,6 +78,16 @@ public final class MSAProperty extends RuleSetProperty.Default {
 			instance = new MSAProperty();
 		}
 		return instance;
+	}
+
+	@Override
+	public String getFullName() {
+		return "MSA";
+	}
+
+	@Override
+	public String getDescription() {
+		return "Approximates MFA with a lower complexity cost.";
 	}
 
 	@Override
@@ -165,9 +171,9 @@ public final class MSAProperty extends RuleSetProperty.Default {
 	public static List<Rule> translateRuleToMSA(final Rule r) {
 		List<Rule> result = new LinkedList<Rule>();
 		Substitution s = buildMSASubstitution(r);
-		DefaultRule r2 = new DefaultRule();
-		r2.setBody(r.getBody());
-		r2.setHead(r.getHead());
+		DefaultRule r2 = new DefaultRule(r);
+		/*r2.setBody(r.getBody());
+		r2.setHead(r.getHead());*/
 		for (Term yi : r2.getExistentials()) {
 			Predicate Fir = GraalConstant.freshPredicate(1);
 			DefaultAtom f = new DefaultAtom(Fir);

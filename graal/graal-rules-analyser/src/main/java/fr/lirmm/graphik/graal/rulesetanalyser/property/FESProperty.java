@@ -45,10 +45,9 @@
  */
 package fr.lirmm.graphik.graal.rulesetanalyser.property;
 
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
 
-import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
 
 /**
@@ -66,6 +65,16 @@ public final class FESProperty extends RuleSetProperty.Default {
 			instance = new FESProperty();
 
 		return instance;
+	}
+
+	@Override
+	public String getFullName() {
+		return "Finite expansion set";
+	}
+
+	@Override
+	public String getDescription() {
+		return "The core chase halts on any fact base.";
 	}
 	
 	@Override

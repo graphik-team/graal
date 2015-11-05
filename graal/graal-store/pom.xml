@@ -20,7 +20,6 @@
 	</developers>
 
 	<modules>
-		<module>graal-store-test</module>
 		<module>graal-store-rdbms</module>
 		<module>graal-store-neo4j</module>
 		<module>graal-store-openrdf</module>

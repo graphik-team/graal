@@ -45,8 +45,8 @@
  */
 package fr.lirmm.graphik.graal.rulesetanalyser.property;
 
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
 
 import fr.lirmm.graphik.graal.api.core.Rule;
 
@@ -68,6 +68,16 @@ public final class RangeRestrictedProperty extends RuleSetProperty.Local {
 			instance = new RangeRestrictedProperty();
 		}
 		return instance;	
+	}
+
+	@Override
+	public String getFullName() {
+		return "Range restricted";
+	}
+
+	@Override
+	public String getDescription() {
+		return "All variables that appear in the head also occur in the body.";
 	}
 	
 	@Override

@@ -56,7 +56,7 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismChecker;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactory;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.homomorphism.checker.DefaultUnionConjunctiveQueriesChecker;
-import fr.lirmm.graphik.graal.homomorphism.checker.RecursiveBacktrackChecker;
+import fr.lirmm.graphik.graal.homomorphism.checker.BacktrackChecker;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -75,7 +75,7 @@ public final class DefaultHomomorphismFactory implements HomomorphismFactory {
 	
 	private DefaultHomomorphismFactory(){
 		this.elements = new TreeSet<HomomorphismChecker>();
-		this.elements.add(new RecursiveBacktrackChecker());
+		this.elements.add(new BacktrackChecker());
 		this.elements.add(new DefaultUnionConjunctiveQueriesChecker());
 	}
 	

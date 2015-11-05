@@ -56,7 +56,7 @@ import fr.lirmm.graphik.graal.rulesetanalyser.graph.AffectedPositionSet;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
 
 /**
- * At least one atom in the body of each rule contains all affected variable
+ * At least one atom in the body of each rule contains all affected variables
  * from the body ({@see AffectedPositionSet}).
  * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -73,6 +73,16 @@ public final class WeaklyGuardedSetProperty extends RuleSetProperty.Default {
 			instance = new WeaklyGuardedSetProperty();
 		}
 		return instance;
+	}
+
+	@Override
+	public String getFullName() {
+		return "Weakly guarded";
+	}
+
+	@Override
+	public String getDescription() {
+		return "At least one atom in the body of each rule contains all affected variables from the body.";
 	}
 
 	@Override

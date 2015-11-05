@@ -43,6 +43,7 @@
 package fr.lirmm.graphik.graal.homomorphism;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -52,15 +53,18 @@ import java.util.TreeMap;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
+import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
 import fr.lirmm.graphik.util.stream.AbstractIterator;
 import fr.lirmm.graphik.util.stream.ArrayBlockingQueueToCloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -74,12 +78,52 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class BacktrackHomomorphism implements Homomorphism<InMemoryAtomSet, AtomSet> {
+public class BacktrackHomomorphism implements HomomorphismWithCompilation<ConjunctiveQuery, AtomSet> {
+
+	private static BacktrackHomomorphism instance;
+
+	protected BacktrackHomomorphism() {
+		super();
+	}
+
+	public static synchronized BacktrackHomomorphism instance() {
+		if (instance == null)
+			instance = new BacktrackHomomorphism();
+
+		return instance;
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	//
+	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public <U1 extends InMemoryAtomSet, U2 extends AtomSet> CloseableIterator<Substitution> execute(U1 q, U2 a)
+	public <U1 extends ConjunctiveQuery, U2 extends AtomSet> CloseableIterator<Substitution> execute(U1 q, U2 a)
 	                                                                                                throws HomomorphismException {
-		return new ArrayBlockingQueueToCloseableIteratorAdapter<Substitution>(new BT(q, a));
+		// return new
+		// ArrayBlockingQueueToCloseableIteratorAdapter<Substitution>(new
+		// BT(q.getAtomSet(), a,
+		// q.getAnswerVariables()));
+		return new BT(q.getAtomSet(), a, q.getAnswerVariables());
+	}
+
+	@Override
+	public <U1 extends ConjunctiveQuery, U2 extends AtomSet> CloseableIterator<Substitution> execute(U1 q, U2 a,
+	    RulesCompilation compilation) throws HomomorphismException {
+		// return new
+		// ArrayBlockingQueueToCloseableIteratorAdapter<Substitution>(new
+		// BT(q.getAtomSet(), a,
+		// q.getAnswerVariables(),
+		// compilation));
+		return new BT(q.getAtomSet(), a, q.getAnswerVariables(), compilation);
+
+	}
+	public <U1 extends InMemoryAtomSet, U2 extends AtomSet> CloseableIterator<Substitution> execute(
+	                                                                                                U1 q,
+	                                                                                                U2 a,
+	                                                                                                List<Term> ans)
+	                                                                                                           throws HomomorphismException {
+		return new ArrayBlockingQueueToCloseableIteratorAdapter<Substitution>(new BT(q, a, ans));
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -90,6 +134,8 @@ public class BacktrackHomomorphism implements Homomorphism<InMemoryAtomSet, Atom
 		Variable value;
 		int level;
 		Collection<Atom> preAtoms;
+		Iterator<Term> domain;
+		Term image;
 
 		Var(Variable value, int level) {
 			this.value = value;
@@ -109,18 +155,17 @@ public class BacktrackHomomorphism implements Homomorphism<InMemoryAtomSet, Atom
 
 		private InMemoryAtomSet h;
 		private AtomSet g;
+		private RulesCompilation    compilation;
 		private Substitution next = null;
 
-		private Term[] domain;
-
 		private Var[] vars;
-		Var currentVar;
-		private Map<Variable, Integer> index;
+		private Map<Variable, Var> index;
+		private Var currentVar;
 
-		int[] images;
-		int levelMax;
-		int level;
-		boolean goBack;
+		private int levelMax;
+		private int level;
+		private boolean goBack;
+		private List<Term> ans;
 
 		// /////////////////////////////////////////////////////////////////////////
 		// CONSTRUCTORS
@@ -132,35 +177,25 @@ public class BacktrackHomomorphism implements Homomorphism<InMemoryAtomSet, Atom
 		 * @param h
 		 * @param g
 		 */
-		public BT(InMemoryAtomSet h, AtomSet g) {
+		public BT(InMemoryAtomSet h, AtomSet g, List<Term> ans, RulesCompilation compilation) {
 			this.h = h;
 			this.g = g;
-
-			Set<Term> terms;
-			try {
-				terms = this.g.getTerms();
-			} catch (AtomSetException e) {
-				// TODO treat this exception
-				e.printStackTrace();
-				throw new Error("Untreated exception");
-			}
-			domain = terms.toArray(new Term[terms.size()]);
+			this.compilation = compilation;
+			this.ans = ans;
 
 			// Compute order on query variables and atoms
-			vars = this.computeOrder(this.h);
-			index = new TreeMap<Variable, Integer>();
-			for (Var v : vars) {
-				if (v.value != null)
-					index.put(v.value, v.level);
-			}
+			vars = this.computeOrder(this.h, ans);
+
 			computeAtomOrder(h, vars);
 
 			currentVar = null;
-			images = new int[vars.length];
 			levelMax = vars.length - 1;
-			level = 1;
+			level = 0;
 			goBack = false;
+		}
 
+		public BT(InMemoryAtomSet h, AtomSet g, List<Term> ans) {
+			this(h, g, ans, NoCompilation.instance());
 		}
 
 		// /////////////////////////////////////////////////////////////////////////
@@ -195,31 +230,39 @@ public class BacktrackHomomorphism implements Homomorphism<InMemoryAtomSet, Atom
 		// /////////////////////////////////////////////////////////////////////////
 
 		private Substitution computeNext() throws HomomorphismException {
-			try {
-
-				if (levelMax == 0) {
-					return null;
-				} else {
+			if (level >= 0) {
+				try {
+					if (level == 0) { // first call
+						if (isHomomorphism(vars[level].preAtoms, g)) {
+							++level;
+						} else {
+							--level;
+						}
+					}
+					if (level > levelMax) { // there is no variable
+						level = -1;
+						return solutionFound(vars, ans);
+					}
 					while (level > 0) {
 						//
 						if (level > levelMax) {
 							goBack = true;
 							--level;
-							return solutionFound(vars, domain, images);
+							return solutionFound(vars, ans);
 						} else {
 							currentVar = vars[level];
 						}
 
 						//
 						if (goBack) {
-							if (hasMoreValues(currentVar, images, g)) {
+							if (hasMoreValues(currentVar, g)) {
 								goBack = false;
 								level = nextLevel(currentVar);
 							} else {
 								level = previousLevel(currentVar);
 							}
 						} else {
-							if (getFirstValue(currentVar, images, g)) {
+							if (getFirstValue(currentVar, g)) {
 								level = nextLevel(currentVar);
 							} else {
 								goBack = true;
@@ -227,43 +270,41 @@ public class BacktrackHomomorphism implements Homomorphism<InMemoryAtomSet, Atom
 							}
 						}
 					}
+				} catch (AtomSetException e) {
+					throw new HomomorphismException("Exception during backtracking", e);
 				}
-			} catch (AtomSetException e) {
-				throw new HomomorphismException("Exception during backtracking", e);
+				--level;
 			}
 			return null;
 		}
 
-		private Substitution solutionFound(Var[] vars, Term[] domain, int[] images) {
+		private Substitution solutionFound(Var[] vars, List<Term> ans) {
 			Substitution s = new TreeMapSubstitution();
-
-			for (int i = 1; i < vars.length; ++i) {
-				s.put(vars[i].value, domain[images[vars[i].level]]);
+			for (Term t : ans) {
+				if (t instanceof Variable) {
+					Var v = this.index.get((Variable) t);
+					s.put(v.value, v.image);
+				} else {
+					s.put(t, t);
+				}
 			}
 
 			return s;
 		}
 
-		private boolean hasMoreValues(Var var, int[] images, AtomSet g) throws AtomSetException {
-			int i = images[var.level];
-			while (++i < domain.length) {
-				images[var.level] = i;
-				if (isHomomorphism(var.preAtoms, g, images)) {
+		private boolean hasMoreValues(Var var, AtomSet g) throws AtomSetException {
+			while (var.domain.hasNext()) {
+				var.image = var.domain.next();
+				if (isHomomorphism(var.preAtoms, g)) {
 					return true;
 				}
 			}
 			return false;
 		}
 
-		private boolean getFirstValue(Var var, int[] images, AtomSet g) throws AtomSetException {
-			int i = -1;
-			while (++i < domain.length) {
-				images[var.level] = i;
-				if (isHomomorphism(var.preAtoms, g, images)) {
-					return true;
-				}
-			}
-			return false;
+		private boolean getFirstValue(Var var, AtomSet g) throws AtomSetException {
+			var.domain = g.termsIterator();
+			return this.hasMoreValues(var, g);
 		}
 
 		/**
@@ -288,14 +329,28 @@ public class BacktrackHomomorphism implements Homomorphism<InMemoryAtomSet, Atom
 		 * @param h
 		 * @return
 		 */
-		private Var[] computeOrder(InMemoryAtomSet h) {
+		private Var[] computeOrder(InMemoryAtomSet h, List<Term> ans) {
 			Set<Term> terms = h.getTerms(Term.Type.VARIABLE);
 			Var[] vars = new Var[terms.size() + 1];
+			index = new TreeMap<Variable, Var>();
+
 			int i = 1;
 			vars[0] = new Var(null, 0);
+
+			for (Term t : ans) {
+				if (t instanceof Variable && index.get(t) == null) {
+					vars[i] = new Var((Variable) t, i);
+					index.put(vars[i].value, vars[i]);
+					++i;
+				}
+			}
+
 			for (Term t : terms) {
-				vars[i] = new Var((Variable) t, i);
-				++i;
+				if (index.get(t) == null) {
+					vars[i] = new Var((Variable) t, i);
+					index.put(vars[i].value, vars[i]);
+					++i;
+				}
 			}
 			return vars;
 		}
@@ -317,7 +372,7 @@ public class BacktrackHomomorphism implements Homomorphism<InMemoryAtomSet, Atom
 			for (Atom a : atomset) {
 				rank = 0;
 				for (Term t : a.getTerms(Type.VARIABLE)) {
-					tmp = indexOf((Variable) t);
+					tmp = this.index.get((Variable) t).level;
 
 					if (rank < tmp)
 						rank = tmp;
@@ -332,14 +387,21 @@ public class BacktrackHomomorphism implements Homomorphism<InMemoryAtomSet, Atom
 		 * @param var
 		 * @return
 		 */
-		private int indexOf(Variable var) {
-			return this.index.get(var);
+		private Term imageOf(Variable var) {
+			return this.index.get(var).image;
 		}
 
-		private boolean isHomomorphism(Collection<Atom> atomsFrom, AtomSet atomsTo, int[] images)
-		                                                                                         throws AtomSetException {
+		private boolean isHomomorphism(Collection<Atom> atomsFrom, AtomSet atomsTo) throws AtomSetException {
 			for (Atom atom : atomsFrom) {
-				if (!atomsTo.contains(createImageOf(atom, images)))
+				Atom image = createImageOf(atom);
+				boolean contains = false;
+				for (Atom a : atomsTo) {
+					if (this.compilation.isImplied(image, a)) {
+						contains = true;
+						break;
+					}
+				}
+				if (!contains)
 					return false;
 			}
 			return true;
@@ -350,11 +412,11 @@ public class BacktrackHomomorphism implements Homomorphism<InMemoryAtomSet, Atom
 		 * @param images
 		 * @return
 		 */
-		private Atom createImageOf(Atom atom, int[] images) {
+		private Atom createImageOf(Atom atom) {
 			List<Term> termsSubstitut = new LinkedList<Term>();
 			for (Term term : atom.getTerms()) {
 				if (term instanceof Variable) {
-					termsSubstitut.add(this.domain[images[indexOf((Variable) term)]]);
+					termsSubstitut.add(imageOf((Variable) term));
 				} else {
 					termsSubstitut.add(term);
 				}

@@ -58,10 +58,13 @@ import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
+import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
@@ -74,7 +77,7 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
  * 
  */
 public class PureHomomorphism implements
-		Homomorphism<AtomSet, AtomSet> {
+ HomomorphismWithCompilation<AtomSet, AtomSet> {
 
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(PureHomomorphism.class);
@@ -96,8 +99,13 @@ public class PureHomomorphism implements
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public CloseableIterator<Substitution> execute(AtomSet source,
-			AtomSet target) throws HomomorphismException {
+	public CloseableIterator<Substitution> execute(AtomSet source, AtomSet target) throws HomomorphismException {
+		return null;
+	}
+
+	@Override
+	public CloseableIterator<Substitution> execute(AtomSet source, AtomSet target, RulesCompilation compilation)
+	    throws HomomorphismException {
 		return null;
 	}
 
@@ -107,8 +115,17 @@ public class PureHomomorphism implements
 	 */
 	public boolean exist(AtomSet source, AtomSet target)
 			throws HomomorphismException {
+		return exist(source, target, NoCompilation.instance());
+	}
+
+	/**
+	 * return true iff exist an homomorphism from the query to the fact else
+	 * return false
+	 */
+	public boolean exist(AtomSet source, AtomSet target, RulesCompilation compilation) throws HomomorphismException {
 
 		Homomorphism homomorphism = new Homomorphism();
+		homomorphism.compilation = compilation;
 
 		// check if the query is empty
 		if (source == null || !source.iterator().hasNext()) {
@@ -283,7 +300,8 @@ public class PureHomomorphism implements
 		for (int i = 0; i < homomorphism.sourceAtoms.size(); ++i) {
 			images = new LinkedList<Atom>();
 			for (Atom im : target) {
-				if (isMappable(homomorphism.sourceAtoms.get(i), im, homomorphism)) {
+				if (isMappable(homomorphism.sourceAtoms.get(i).getPredicate(), im.getPredicate(),
+				    homomorphism.compilation)) {
 					images.add(im);
 				}
 			}
@@ -294,8 +312,12 @@ public class PureHomomorphism implements
 		return true;
 	}
 
-	protected boolean isMappable(Atom a, Atom im, Homomorphism homomorphism) {
-		return a.getPredicate().equals(im.getPredicate());
+	protected boolean isMappable(Predicate a, Predicate im, RulesCompilation compilation) {
+		if (compilation != null) {
+			return compilation.isMappable(a, im);
+		} else {
+			return a.equals(im);
+		}
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -310,6 +332,7 @@ public class PureHomomorphism implements
 		ArrayList<LinkedList<Atom>> availableImage;
 		ArrayList<Integer> currentImages;
 		Map<Term, Term> currentSubstitution = new TreeMap<Term, Term>();
+		RulesCompilation compilation;
 
 	}
 

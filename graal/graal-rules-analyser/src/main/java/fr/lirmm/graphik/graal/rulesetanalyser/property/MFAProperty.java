@@ -54,13 +54,11 @@ import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
-import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.RuleUtils;
-import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.forward_chaining.NaiveChase;
@@ -83,6 +81,16 @@ public final class MFAProperty extends RuleSetProperty.Default {
 			instance = new MFAProperty();
 		}
 		return instance;
+	}
+
+	@Override
+	public String getFullName() {
+		return "Model-faithful acyclicity";
+	}
+
+	@Override
+	public String getDescription() {
+		return "There is no cycle of functional symbol during the skolem chase executed on the critical instance.";
 	}
 
 	@Override
@@ -164,9 +172,9 @@ public final class MFAProperty extends RuleSetProperty.Default {
 
 	public static List<Rule> translateRuleToMFA(final Rule r) {
 		List<Rule> result = new LinkedList<Rule>();
-		DefaultRule r2 = new DefaultRule();
-		r2.setBody(r.getBody());
-		r2.setHead(r.getHead());
+		DefaultRule r2 = new DefaultRule(r);
+		/*r2.setBody(r.getBody());
+		r2.setHead(r.getHead());*/
 		for (Term yi : r2.getExistentials()) {
 			Predicate Fir = GraalConstant.freshPredicate(1);
 			DefaultAtom f = new DefaultAtom(Fir);

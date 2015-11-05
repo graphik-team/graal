@@ -42,11 +42,14 @@
  */
 package fr.lirmm.graphik.graal.core;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.util.Partition;
 
 /**
  * An implementation of Susbstitution using a {@link TreeMap}
@@ -66,6 +69,24 @@ public class TreeMapSubstitution extends AbstractSubstitution {
 		super();
 		for (Term term : substitution.getTerms())
 			this.map.put(term, substitution.createImageOf(term));
+	}
+
+	public TreeMapSubstitution(Partition<Term> partition) {
+		super();
+		Iterator<ArrayList<Term>> it = partition.iterator();
+		while (it.hasNext()) {
+			ArrayList<Term> a = it.next();
+			Iterator<Term> it2 = a.iterator();
+
+			Term representant = null;
+			if (it2.hasNext()) {
+				representant = it2.next();
+				while (it2.hasNext()) {
+					this.put(it2.next(), representant);
+				}
+			}
+
+		}
 	}
 
 	@Override

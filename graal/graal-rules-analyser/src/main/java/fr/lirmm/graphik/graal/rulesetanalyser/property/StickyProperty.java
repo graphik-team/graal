@@ -45,11 +45,10 @@
  */
 package fr.lirmm.graphik.graal.rulesetanalyser.property;
 
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.MarkedVariableSet;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.MarkedVariableSet.MarkedRule;
@@ -75,13 +74,24 @@ public final class StickyProperty extends RuleSetProperty.Default {
 		}
 		return instance;
 	}
+
+	@Override
+	public String getFullName() {
+		return "Sticky";
+	}
+
+	@Override
+	public String getDescription() {
+		return "Each marked variable occurs at most once in a rule body.";
+	}
 	
 
 	// /////////////////////////////////////////////////////////////////////////
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public int check(AnalyserRuleSet ruleSet) {
+	@Override
+    public int check(AnalyserRuleSet ruleSet) {
 		if (this.check(ruleSet.getMarkedVariableSet())) return 1;
 		return -1;
 	}
