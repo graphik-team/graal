@@ -65,10 +65,34 @@ public class Partition<E> implements Iterable<ArrayList<E>> {
 		this.partition = new ArrayList<ArrayList<E>>();
 	}
 
+	/**
+	 * Copy constructor
+	 * 
+	 * @param partition
+	 */
 	public Partition(Partition<E> partition) {
 		this();
 		for (Collection<E> classs : partition) {
 			this.partition.add(new ArrayList<E>(classs));
+		}
+	}
+
+	/**
+	 * Create a partition based on the position of elements in the two lists.
+	 * 
+	 * @param toUnif
+	 * @param atom
+	 */
+	public Partition(List<E> list1, List<E> list2) {
+		this();
+		Iterator<E> it1 = list1.iterator();
+		Iterator<E> it2 = list2.iterator();
+
+		while (it1.hasNext()) {
+			E e1 = it1.next();
+			if (it2.hasNext()) {
+				this.add(e1, it2.next());
+			}
 		}
 	}
 
@@ -178,7 +202,7 @@ public class Partition<E> implements Iterable<ArrayList<E>> {
 	public Partition<E> join(Partition<E> p) {
 		Partition<E> res = new Partition<E>();
 		for (ArrayList<E> cl : partition) {
-			res.partition.add(cl);
+			res.partition.add(new ArrayList<E>(cl));
 		}
 		for (ArrayList<E> cl : p.partition)
 			res.addClass(cl);

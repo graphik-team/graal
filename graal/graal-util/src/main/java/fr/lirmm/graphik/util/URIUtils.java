@@ -162,6 +162,9 @@ public final class URIUtils {
 	 */
 	public static URI createURI(String string, Prefix defaultPrefix) {
 		String prefixString = URIUtils.getPrefix(string);
+		if (prefixString.isEmpty()) {
+			prefixString = defaultPrefix.getPrefix();
+		}
 		String localname = URIUtils.getLocalName(string);
 		return new DefaultURI(prefixString, localname);
 	}

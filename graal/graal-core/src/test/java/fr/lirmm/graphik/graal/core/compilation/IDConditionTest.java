@@ -43,7 +43,7 @@
  /**
  * 
  */
-package fr.lirmm.graphik.graal.backward_chaining.pure;
+package fr.lirmm.graphik.graal.core.compilation;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -53,10 +53,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.backward_chaining.pure.IDCondition;
-import fr.lirmm.graphik.graal.backward_chaining.pure.IDConditionImpl;
-import fr.lirmm.graphik.graal.backward_chaining.pure.TermPartition;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.util.Partition;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -135,7 +133,7 @@ public class IDConditionTest {
 		List<Term> newHeadList = Arrays.asList(newHead);
 		List<Term> newBodyList = Arrays.asList(newBody);
 
-		TermPartition partition = cond.generateUnification(newBodyList,
+		Partition<Term> partition = cond.generateUnification(newBodyList,
 				newHeadList);
 		System.out.println(partition);
 		boolean isFound = false;

@@ -40,7 +40,7 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- package fr.lirmm.graphik.graal.backward_chaining.pure;
+ package fr.lirmm.graphik.graal.core.compilation;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -56,14 +56,17 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.core.RuleUtils;
+import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.factory.RuleFactory;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.util.Partition;
 import fr.lirmm.graphik.util.collections.ListComparator;
 
 public class IDCompilation extends AbstractRulesCompilation {
@@ -208,38 +211,29 @@ public class IDCompilation extends AbstractRulesCompilation {
 	 * can return true if there are not mappable
 	 */
 	@Override
-	public boolean isMappable(Atom father, Atom son) {
+	public boolean isMappable(Predicate father, Predicate son) {
+		if (son.equals(father))
+			return true;
+		else
+			return !getConditions(son, father).isEmpty();
+	}
+
+	@Override
+	public LinkedList<Substitution> getMapping(Atom father, Atom son) {
+		LinkedList<Substitution> res = new LinkedList<Substitution>();
 		Predicate predB = son.getPredicate();
 		Predicate predH = father.getPredicate();
-		if (predB.equals(predH))
-			return true;
-
-		else
-			return !getConditions(predB, predH).isEmpty();
-	}
-
-	/*
-	 * @Override public LinkedList<Substitution> getMapping(Atom father, Atom
-	 * son) { LinkedList<Substitution> res = new LinkedList<Substitution>();
-	 * Predicate predB = son.getPredicate(); Predicate predH =
-	 * father.getPredicate(); List<DCondition2> conds = getConditions(predB,
-	 * predH); for (DCondition2 cond : conds) { if
-	 * (cond.checkBody(son.getTerms()))
-	 * res.add(cond.getSubstitution(son.getTerms(), father.getTerms())); }
-	 * return res; }
-	 */
-
-	/**
-	 * can return true if there are not unifiable
-	 */
-	@Override
-	public boolean isUnifiable(Atom father, Atom son) {
-		return isMappable(father, son);
+		List<IDCondition> conds = getConditions(predB, predH);
+		for (IDCondition cond : conds) {
+			if (cond.checkBody(son.getTerms()))
+				res.add(new TreeMapSubstitution(cond.generateUnification(son.getTerms(), father.getTerms())));
+		}
+		return res;
 	}
 
 	@Override
-	public LinkedList<TermPartition> getUnification(Atom father, Atom son) {
-		LinkedList<TermPartition> res = new LinkedList<TermPartition>();
+	public LinkedList<Partition<Term>> getUnification(Atom father, Atom son) {
+		LinkedList<Partition<Term>> res = new LinkedList<Partition<Term>>();
 		Predicate predB = son.getPredicate();
 		Predicate predH = father.getPredicate();
 		List<IDCondition> conds = getConditions(predB, predH);
@@ -320,7 +314,6 @@ public class IDCompilation extends AbstractRulesCompilation {
 			IDCondition cond = new IDConditionImpl(b.getTerms(), h.getTerms());
 			addCondition(b.getPredicate(), h.getPredicate(), cond,
 					this.conditions);
-
 		}
 		if (this.getProfiler() != null) {
 			this.getProfiler().stop("Compilation create IDCondition time");

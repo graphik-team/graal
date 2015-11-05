@@ -55,14 +55,16 @@ import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
+import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
 import fr.lirmm.graphik.util.stream.AbstractIterator;
 import fr.lirmm.graphik.util.stream.ArrayBlockingQueueToCloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -76,7 +78,7 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class BacktrackHomomorphism implements Homomorphism<ConjunctiveQuery, AtomSet> {
+public class BacktrackHomomorphism implements HomomorphismWithCompilation<ConjunctiveQuery, AtomSet> {
 
 	private static BacktrackHomomorphism instance;
 
@@ -98,11 +100,24 @@ public class BacktrackHomomorphism implements Homomorphism<ConjunctiveQuery, Ato
 	@Override
 	public <U1 extends ConjunctiveQuery, U2 extends AtomSet> CloseableIterator<Substitution> execute(U1 q, U2 a)
 	                                                                                                throws HomomorphismException {
-		// return new BT(q.getAtomSet(), a, q.getAnswerVariables());
-		return new ArrayBlockingQueueToCloseableIteratorAdapter<Substitution>(new BT(q.getAtomSet(), a,
-		                                                                             q.getAnswerVariables()));
+		// return new
+		// ArrayBlockingQueueToCloseableIteratorAdapter<Substitution>(new
+		// BT(q.getAtomSet(), a,
+		// q.getAnswerVariables()));
+		return new BT(q.getAtomSet(), a, q.getAnswerVariables());
 	}
 
+	@Override
+	public <U1 extends ConjunctiveQuery, U2 extends AtomSet> CloseableIterator<Substitution> execute(U1 q, U2 a,
+	    RulesCompilation compilation) throws HomomorphismException {
+		// return new
+		// ArrayBlockingQueueToCloseableIteratorAdapter<Substitution>(new
+		// BT(q.getAtomSet(), a,
+		// q.getAnswerVariables(),
+		// compilation));
+		return new BT(q.getAtomSet(), a, q.getAnswerVariables(), compilation);
+
+	}
 	public <U1 extends InMemoryAtomSet, U2 extends AtomSet> CloseableIterator<Substitution> execute(
 	                                                                                                U1 q,
 	                                                                                                U2 a,
@@ -140,6 +155,7 @@ public class BacktrackHomomorphism implements Homomorphism<ConjunctiveQuery, Ato
 
 		private InMemoryAtomSet h;
 		private AtomSet g;
+		private RulesCompilation    compilation;
 		private Substitution next = null;
 
 		private Var[] vars;
@@ -161,9 +177,10 @@ public class BacktrackHomomorphism implements Homomorphism<ConjunctiveQuery, Ato
 		 * @param h
 		 * @param g
 		 */
-		public BT(InMemoryAtomSet h, AtomSet g, List<Term> ans) {
+		public BT(InMemoryAtomSet h, AtomSet g, List<Term> ans, RulesCompilation compilation) {
 			this.h = h;
 			this.g = g;
+			this.compilation = compilation;
 			this.ans = ans;
 
 			// Compute order on query variables and atoms
@@ -175,7 +192,10 @@ public class BacktrackHomomorphism implements Homomorphism<ConjunctiveQuery, Ato
 			levelMax = vars.length - 1;
 			level = 0;
 			goBack = false;
+		}
 
+		public BT(InMemoryAtomSet h, AtomSet g, List<Term> ans) {
+			this(h, g, ans, NoCompilation.instance());
 		}
 
 		// /////////////////////////////////////////////////////////////////////////
@@ -371,10 +391,17 @@ public class BacktrackHomomorphism implements Homomorphism<ConjunctiveQuery, Ato
 			return this.index.get(var).image;
 		}
 
-		private boolean isHomomorphism(Collection<Atom> atomsFrom, AtomSet atomsTo)
-		                                                                                         throws AtomSetException {
+		private boolean isHomomorphism(Collection<Atom> atomsFrom, AtomSet atomsTo) throws AtomSetException {
 			for (Atom atom : atomsFrom) {
-				if (!atomsTo.contains(createImageOf(atom)))
+				Atom image = createImageOf(atom);
+				boolean contains = false;
+				for (Atom a : atomsTo) {
+					if (this.compilation.isImplied(image, a)) {
+						contains = true;
+						break;
+					}
+				}
+				if (!contains)
 					return false;
 			}
 			return true;

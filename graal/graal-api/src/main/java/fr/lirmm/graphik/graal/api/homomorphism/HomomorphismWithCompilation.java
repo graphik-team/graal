@@ -43,59 +43,30 @@
  /**
  * 
  */
-package fr.lirmm.graphik.graal.backward_chaining.pure;
+package fr.lirmm.graphik.graal.api.homomorphism;
 
-import java.util.Collection;
-import java.util.LinkedList;
-
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
-import fr.lirmm.graphik.graal.core.ruleset.IndexedByHeadPredicatesRuleSet;
+import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
- * Rewriting operator SRA
- * Query rewriting engine that rewrite query using
- * aggregation by rule of most general single piece-unifiers
- * 
- * @author Mélanie KÖNIG
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+ *
  */
-public class AggregSingleRuleOperator extends AbstractRewritingOperator {
-	
+public interface HomomorphismWithCompilation<T1 extends Object, T2 extends AtomSet> extends Homomorphism<T1, T2> {
 
-	// /////////////////////////////////////////////////////////////////////////
-	// METHODS
-	// /////////////////////////////////////////////////////////////////////////
-	
 	/**
-	 * Returns the rewrites compute from the given fact and the rule set of the
-	 * receiving object.
+	 * Look for the homomorphisms of the specified object into the specified
+	 * atomset.
 	 * 
 	 * @param q
-	 *            A fact
-	 * @return the ArrayList that contains the rewrites compute from the given
-	 *         fact and the rule set of the receiving object.
-	 * @throws Exception
+	 * @param a
+	 * @return
+	 * @throws HomomorphismException
 	 */
-	@Override
-	public Collection<ConjunctiveQuery> getRewritesFrom(ConjunctiveQuery q, IndexedByHeadPredicatesRuleSet ruleSet, RulesCompilation compilation) {
-		LinkedList<ConjunctiveQuery> rewriteSet = new LinkedList<ConjunctiveQuery>();
-		Collection<QueryUnifier> unifiers = new LinkedList<QueryUnifier>();
-		for (Rule r : getUnifiableRules(q.getAtomSet().predicatesIterator(),
-				ruleSet, compilation)) {
-			unifiers.addAll(getSRUnifier(q, r, compilation));
-		}
+	<U1 extends T1, U2 extends T2> CloseableIterator<Substitution> execute(U1 q, U2 a, RulesCompilation compilation)
+			throws HomomorphismException;
 
-		/** compute the rewrite from the unifier **/
-		ConjunctiveQuery a;
-		for (QueryUnifier u : unifiers) {
-			a = Utils.rewrite(q, u);
-			if(a != null) {
-				rewriteSet.add(a);
-			}
-		}
+};
 
-		return rewriteSet;
-	}
-	
-}

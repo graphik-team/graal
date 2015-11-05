@@ -40,62 +40,47 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.backward_chaining.pure;
+package fr.lirmm.graphik.graal.test;
 
-import java.util.Collection;
-import java.util.LinkedList;
-
+import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
-import fr.lirmm.graphik.graal.core.ruleset.IndexedByHeadPredicatesRuleSet;
+import fr.lirmm.graphik.graal.api.core.RuleSet;
+import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
+import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.core.compilation.IDCompilation;
+import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
+import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphism;
+import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
- * Rewriting operator SRA
- * Query rewriting engine that rewrite query using
- * aggregation by rule of most general single piece-unifiers
- * 
- * @author Mélanie KÖNIG
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+ *
  */
-public class AggregSingleRuleOperator extends AbstractRewritingOperator {
-	
+public class HomomorphismWithCompilationTest {
 
-	// /////////////////////////////////////////////////////////////////////////
-	// METHODS
-	// /////////////////////////////////////////////////////////////////////////
-	
-	/**
-	 * Returns the rewrites compute from the given fact and the rule set of the
-	 * receiving object.
-	 * 
-	 * @param q
-	 *            A fact
-	 * @return the ArrayList that contains the rewrites compute from the given
-	 *         fact and the rule set of the receiving object.
-	 * @throws Exception
-	 */
-	@Override
-	public Collection<ConjunctiveQuery> getRewritesFrom(ConjunctiveQuery q, IndexedByHeadPredicatesRuleSet ruleSet, RulesCompilation compilation) {
-		LinkedList<ConjunctiveQuery> rewriteSet = new LinkedList<ConjunctiveQuery>();
-		Collection<QueryUnifier> unifiers = new LinkedList<QueryUnifier>();
-		for (Rule r : getUnifiableRules(q.getAtomSet().predicatesIterator(),
-				ruleSet, compilation)) {
-			unifiers.addAll(getSRUnifier(q, r, compilation));
+	public static void main(String[] args) throws HomomorphismException {
+		InMemoryAtomSet store = new LinkedListAtomSet();
+
+		store.add(DlgpParser.parseAtom("p(a,b)."));
+
+		RuleSet rules = new LinkedListRuleSet();
+		rules.add(DlgpParser.parseRule("q(X,Y) :- p(Y,X)."));
+
+		RulesCompilation comp = new IDCompilation();
+		comp.compile(rules.iterator());
+
+		HomomorphismWithCompilation<ConjunctiveQuery, AtomSet> h = BacktrackHomomorphism.instance();
+		CloseableIterator<Substitution> results = h.execute(DlgpParser.parseQuery("?(X,Y) :- q(X,Y)."), store, comp);
+
+		while (results.hasNext()) {
+			System.out.println(results.next());
 		}
-
-		/** compute the rewrite from the unifier **/
-		ConjunctiveQuery a;
-		for (QueryUnifier u : unifiers) {
-			a = Utils.rewrite(q, u);
-			if(a != null) {
-				rewriteSet.add(a);
-			}
-		}
-
-		return rewriteSet;
+		results.close();
 	}
-	
+
 }

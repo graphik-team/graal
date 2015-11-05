@@ -40,86 +40,96 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
+/**
  * 
  */
-package fr.lirmm.graphik.graal.backward_chaining.pure;
+package fr.lirmm.graphik.graal.core.compilation;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.homomorphism.PureHomomorphism;
+import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.util.Partition;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-class PureHomomorphismWithCompilation extends PureHomomorphism {
+public class NoCompilation extends AbstractRulesCompilation {
 
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(PureHomomorphismWithCompilation.class);
-	
-	private static PureHomomorphismWithCompilation instance;
+	private static NoCompilation instance;
 
-	protected PureHomomorphismWithCompilation() {
+	protected NoCompilation() {
 		super();
 	}
 
-	public static synchronized PureHomomorphismWithCompilation instance() {
+	public static synchronized NoCompilation instance() {
 		if (instance == null)
-			instance = new PureHomomorphismWithCompilation();
+			instance = new NoCompilation();
 
 		return instance;
 	}
-	
+
 	// /////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
+	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
-	
-	/**
-	 * return true iff exist an homomorphism from the query to the fact else
-	 * return false
-	 */
-	public boolean exist(AtomSet source, AtomSet target, RulesCompilation compilation)
-			throws HomomorphismException {
 
-		Homomorphism homomorphism = new Homomorphism();
-		homomorphism.compilation = compilation;
-
-		// check if the query is empty
-		if (source == null || !source.iterator().hasNext()) {
-			if (LOGGER.isInfoEnabled()) {
-				LOGGER.info("Empty query");
-			}
-			return true;
-		}
-
-		// /////////////////////////////////////////////////////////////////////
-		// Initialisation
-		if (!initialiseHomomorphism(homomorphism, source, target))
-			return false;
-
-		return backtrack(homomorphism);
-	}
-	
 	@Override
-	protected boolean isMappable(Atom a, Atom im, PureHomomorphism.Homomorphism homomorphism) {
-		if(((Homomorphism) homomorphism).compilation != null){
-			return ((Homomorphism) homomorphism).compilation.isMappable(a, im);
-		}
-		else {
-			return a.getPredicate().equals(im.getPredicate());
-		}
+	public void compile(Iterator<Rule> ruleset) {
 	}
-	
-	// /////////////////////////////////////////////////////////////////////////
-	// PRIVATE CLASS
-	// /////////////////////////////////////////////////////////////////////////
 
-	protected static class Homomorphism extends PureHomomorphism.Homomorphism {
-		RulesCompilation compilation = null;
+	@Override
+	public void load(Iterator<Rule> ruleset, Iterator<Rule> compilation) {
 	}
+
+	@Override
+	public Iterable<Rule> getSaturation() {
+		return Collections.emptyList();
+	}
+
+	@Override
+	public boolean isCompilable(Rule r) {
+		return false;
+	}
+
+	@Override
+	public boolean isMappable(Predicate father, Predicate son) {
+		return son.equals(father);
+	}
+
+	@Override
+	public Collection<Substitution> getMapping(Atom father, Atom son) {
+		return Collections.emptyList();
+	}
+
+	@Override
+	public Collection<Partition<Term>> getUnification(Atom father, Atom son) {
+		LinkedList<Partition<Term>> res = new LinkedList<Partition<Term>>();
+		if (isMappable(father.getPredicate(), son.getPredicate())) {
+			res.add(new Partition<Term>(father.getTerms(), son.getTerms()));
+		}
+		return res;
+	}
+
+	@Override
+	public boolean isImplied(Atom father, Atom son) {
+		return son.equals(father);
+	}
+
+	@Override
+	public Collection<Atom> getRewritingOf(Atom father) {
+		return Collections.singleton(father);
+	}
+
+	@Override
+	public Collection<Predicate> getUnifiablePredicate(Predicate p) {
+		return Collections.singleton(p);
+	}
+
 }

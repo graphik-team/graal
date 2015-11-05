@@ -40,14 +40,12 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- package fr.lirmm.graphik.graal.backward_chaining.pure;
+package fr.lirmm.graphik.graal.backward_chaining.pure;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
@@ -55,87 +53,22 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
 import fr.lirmm.graphik.util.Partition;
 
-class TermPartition extends Partition<Term> {
+/**
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+ *
+ */
+final class TermPartitionUtils {
 
-	/**
-	 * return the subset of sep containing terms that are in the same class than
-	 * existential variable
-	 * 
-	 * @param rule
-	 * @return
-	 */
-	public LinkedList<Term> getStickyVariable(LinkedList<Term> sep, Rule rule) {
-		// TODO faire mieux niveau optimisation
-		LinkedList<Term> res = new LinkedList<Term>();
-		for (Collection<Term> c : partition) {
-			for (Term t : c)
-				if (rule.getExistentials().contains(t))
-					for (Term x : c)
-						if (sep.contains(x))
-							res.add(x);
-
-		}
-		return res;
+	private TermPartitionUtils() {
 	}
-
-	/**
-	 * Compute the substitution associated with the current partition this
-	 * method computes a substitution by choosing one representative term by
-	 * class. Choosing first constant then answer variable (in context) return
-	 * null if the partition contain two constants in the same class
-	 */
-	public Substitution getAssociatedSubstitution(ConjunctiveQuery context) {
-		Substitution substitution = SubstitutionFactory.instance()
-				.createSubstitution();
-		// we will choose a representant for all the equivalence set of the
-		// partition
-		for (Collection<Term> set : partition) {
-
-			Iterator<Term> i = set.iterator();
-			Term representant = i.next();
-			while (i.hasNext()) {
-				Term t = i.next();
-				// t and the current representant are different
-				if (!representant.equals(t)) {
-					if (t.isConstant()) {
-						// representant is a different constant
-						if (representant.isConstant()) {
-							return null;
-						} else {
-							representant = t;
-						}
-					}// the current representant is a variable
-					else if (!representant.isConstant()) {
-						// t is a variable from the answer
-						if (context != null
-								&& !context.getAnswerVariables().contains(
-										representant)
-								&& context.getAtomSet().getTerms()
-										.contains(t)) {
-							representant = t;
-						}
-					}
-				} else { 
-					i.remove();
-				}
-			}
-			// all the terms in the equivalence set have as image the
-			// representant of the equivalence set
-			for (Term t : set)
-				if (!t.equals(representant))
-					substitution.put(t, representant);
-
-		}
-		return substitution;
-	}
-
+	
 	/**
 	 * Return false if a class of the receiving partition two constants, or
 	 * contains two existential variable of R, or contains a constant and an
 	 * existential variable of R, or contains an existential variable of R and a
 	 * frontier variable of R
 	 */
-	public boolean isAdmissible(Rule rule) {
+	public static boolean isAdmissible(Partition<Term> partition, Rule rule) {
 		Term cst = null;
 		Term exist = null;
 		Term fr = null;
@@ -173,28 +106,73 @@ class TermPartition extends Partition<Term> {
 	}
 
 	/**
-	 * Return the partition that unifies the terms of the two atoms return null
-	 * if the two atoms have not the same predicate arity
+	 * return the subset of sep containing terms that are in the same class than
+	 * existential variable
+	 * 
+	 * @param rule
+	 * @return
 	 */
-	public static TermPartition getPartitionByPosition(Atom toUnif, Atom atom) {
-		if (toUnif.getPredicate().getArity() != atom.getPredicate().getArity())
-			return null;
-		else {
-			TermPartition p = new TermPartition();
-			for (int i = 0; i < atom.getPredicate().getArity(); i++) {
-				p.add(toUnif.getTerm(i), atom.getTerm(i));
-			}
-			return p;
-		}
-	}
+	public static LinkedList<Term> getStickyVariable(Partition<Term> partition, LinkedList<Term> sep, Rule rule) {
+		// TODO faire mieux niveau optimisation
+		LinkedList<Term> res = new LinkedList<Term>();
+		for (Collection<Term> c : partition) {
+			for (Term t : c)
+				if (rule.getExistentials().contains(t))
+					for (Term x : c)
+						if (sep.contains(x))
+							res.add(x);
 
-	public TermPartition join(TermPartition p) {
-		TermPartition res = new TermPartition();
-		for (ArrayList<Term> cl : partition) {
-			res.partition.add(new ArrayList<Term>(cl));
 		}
-		for (ArrayList<Term> cl : p.partition)
-			res.addClass(cl);
 		return res;
 	}
+
+	/**
+	 * Compute the substitution associated with the current partition this
+	 * method computes a substitution by choosing one representative term by
+	 * class. Choosing first constant then answer variable (in context) return
+	 * null if the partition contain two constants in the same class
+	 */
+	public static Substitution getAssociatedSubstitution(Partition<Term> partition, ConjunctiveQuery context) {
+		Substitution substitution = SubstitutionFactory.instance().createSubstitution();
+		// we will choose a representant for all the equivalence set of the
+		// partition
+		for (Collection<Term> set : partition) {
+
+			Iterator<Term> i = set.iterator();
+			Term representant = i.next();
+			while (i.hasNext()) {
+				Term t = i.next();
+				// t and the current representant are different
+				if (!representant.equals(t)) {
+					if (t.isConstant()) {
+						// representant is a different constant
+						if (representant.isConstant()) {
+							return null;
+						} else {
+							representant = t;
+						}
+					}// the current representant is a variable
+					else if (!representant.isConstant()) {
+						// t is a variable from the answer
+						if (context != null
+						    && !context.getAnswerVariables().contains(representant)
+						    && context.getAtomSet().getTerms().contains(t)) {
+							representant = t;
+						}
+					}
+				} else {
+					i.remove();
+				}
+			}
+			// all the terms in the equivalence set have as image the
+			// representant of the equivalence set
+			for (Term t : set)
+				if (!t.equals(representant))
+					substitution.put(t, representant);
+
+		}
+		return substitution;
+	}
+
+
 }

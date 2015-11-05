@@ -58,10 +58,13 @@ import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetUtils;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.core.compilation.IDCompilation;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByHeadPredicatesRuleSet;
+import fr.lirmm.graphik.util.Partition;
 import fr.lirmm.graphik.util.Profilable;
 import fr.lirmm.graphik.util.Profiler;
 
@@ -127,12 +130,11 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 					.getHead().iterator().next());
 			Atom toUnif = i.next();
 			p.add(toUnif);
-			TermPartition partition = TermPartition.getPartitionByPosition(
-					toUnif, copy.getHead().getAtom());
+			Partition<Term> partition = new Partition<Term>(toUnif.getTerms(), copy.getHead().getAtom().getTerms());
 			// compute separating variable
 			LinkedList<Term> sep = AtomSetUtils.sep(p, q.getAtomSet());
 			// compute sticky variable
-			LinkedList<Term> sticky = partition.getStickyVariable(sep, copy);
+			LinkedList<Term> sticky = TermPartitionUtils.getStickyVariable(partition, sep, copy);
 			AtomSet pBar = AtomSetUtils.minus(q.getAtomSet(), p);
 			while (partition != null && !sticky.isEmpty()) {
 
@@ -146,12 +148,15 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 						Term x = ix.next();
 						// all the atoms of Q/P which contain x must be add to P
 						if (a.getTerms().contains(x)) {
-							if (compilation.isUnifiable(a, copy.getHead().getAtom())) {
+							// TODO use isMappable instead of isUnifiable
+							// because isUnifiable just made a call to
+							// isMappable
+							if (compilation.isMappable(a.getPredicate(), copy.getHead().getAtom().getPredicate())) {
 								p.add(a);
-								TermPartition part = partition.join(TermPartition
-										.getPartitionByPosition(a, copy
-												.getHead().getAtom()));
-								if (part.isAdmissible(copy)) {
+								Partition<Term> part = partition.join(new Partition<Term>(a.getTerms(), copy.getHead()
+								                                                                            .getAtom()
+								                                                                            .getTerms()));
+								if (TermPartitionUtils.isAdmissible(part, copy)) {
 									partition = part;
 								} else
 									partition = null;
@@ -163,7 +168,7 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 				if (partition != null) {
 					sep = AtomSetUtils.sep(p, q.getAtomSet());
 					pBar = AtomSetUtils.minus(q.getAtomSet(), p);
-					sticky = partition.getStickyVariable(sep, copy);
+					sticky = TermPartitionUtils.getStickyVariable(partition, sep, copy);
 				}
 			}
 			i.remove();
@@ -192,16 +197,18 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 			ConjunctiveQuery q, Rule r, RulesCompilation compilation) {
 		LinkedList<QueryUnifier> u = new LinkedList<QueryUnifier>();
 		Rule ruleCopy = Utils.getSafeCopy(r);
-		HashMap<Atom, LinkedList<TermPartition>> possibleUnification = new HashMap<Atom, LinkedList<TermPartition>>();
+		HashMap<Atom, LinkedList<Partition<Term>>> possibleUnification = new HashMap<Atom, LinkedList<Partition<Term>>>();
 		// compute possible unification between atoms of Q and head(R)
 		for (Atom a : q) {
 			for (Atom b : ruleCopy.getHead()) {
-				if (compilation.isUnifiable(a, b)) {
-					Collection<? extends TermPartition> unification = compilation.getUnification(a, b);
-					for(TermPartition partition : unification) {
-						if(partition.isAdmissible(ruleCopy) ) {
+				// TODO use isMappable instead of isUnifiable because
+				// isUnifiable just made a call to isMappable
+				if (compilation.isMappable(a.getPredicate(), b.getPredicate())) {
+					Collection<Partition<Term>> unification = compilation.getUnification(a, b);
+					for (Partition<Term> partition : unification) {
+						if (TermPartitionUtils.isAdmissible(partition, ruleCopy)) {
 							if(possibleUnification.get(a) == null)
-								possibleUnification.put(a, new LinkedList<TermPartition>());
+								possibleUnification.put(a, new LinkedList<Partition<Term>>());
 							possibleUnification.get(a).add(partition);
 						}
 					}
@@ -211,11 +218,11 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 
 		LinkedList<Atom> atoms = getUnifiableAtoms(q, r, compilation);
 		for (Atom a : atoms) {
-			LinkedList<TermPartition> partitionList = possibleUnification.get(a);
+			LinkedList<Partition<Term>> partitionList = possibleUnification.get(a);
 			if (partitionList != null) {
-				Iterator<TermPartition> i = partitionList.iterator();
+				Iterator<Partition<Term>> i = partitionList.iterator();
 				while (i.hasNext()) {
-					TermPartition unif = i.next();
+					Partition<Term> unif = i.next();
 					InMemoryAtomSet p = new LinkedListAtomSet();
 					p.add(a);
 					u.addAll(extend(p, unif, possibleUnification, q, ruleCopy));
@@ -259,7 +266,9 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 		LinkedList<Atom> answer = new LinkedList<Atom>();
 		for (Atom a : query)
 			for (Atom b : r.getHead())
-				if (compilation.isUnifiable(a, b))
+				// TODO use isMappable instead of isUnifiable because
+				// isUnifiable just made a call to isMappable
+				if (compilation.isMappable(a.getPredicate(), b.getPredicate()))
 					answer.add(a);
 		return answer;
 	}
@@ -350,15 +359,15 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 	// /////////////////////////////////////////////////////////////////////////
 
 	private Collection<? extends QueryUnifier> extend(InMemoryAtomSet p,
-			TermPartition unif,
-			HashMap<Atom, LinkedList<TermPartition>> possibleUnification,
+			Partition<Term> unif,
+	    HashMap<Atom, LinkedList<Partition<Term>>> possibleUnification,
 			ConjunctiveQuery q, Rule r) {
 		LinkedList<QueryUnifier> u = new LinkedList<QueryUnifier>();
 
 		// compute separating variable
 		LinkedList<Term> sep = AtomSetUtils.sep(p, q.getAtomSet());
 		// compute sticky variable
-		LinkedList<Term> sticky = unif.getStickyVariable(sep, r);
+		LinkedList<Term> sticky = TermPartitionUtils.getStickyVariable(unif, sep, r);
 		if (sticky.isEmpty()) {
 			u.add(new QueryUnifier(p, unif, r, q));
 		} else {
@@ -376,10 +385,10 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 					}
 				}
 			}
-			TermPartition part;
-			for (TermPartition uExt : preUnifier(pExt, r, possibleUnification)) {
+			Partition<Term> part;
+			for (Partition<Term> uExt : preUnifier(pExt, r, possibleUnification)) {
 				part = unif.join(uExt);
-				if (part != null && part.isAdmissible(r)) {
+				if (part != null && TermPartitionUtils.isAdmissible(part, r)) {
 					u.addAll(extend(AtomSetUtils.union(p, pExt), part,
 							possibleUnification, q, r));
 				}
@@ -390,12 +399,12 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 		return u;
 	}
 
-	private LinkedList<TermPartition> preUnifier(InMemoryAtomSet p, Rule r,
-			HashMap<Atom, LinkedList<TermPartition>> possibleUnification) {
-		LinkedList<TermPartition> res = new LinkedList<TermPartition>();
+	private LinkedList<Partition<Term>> preUnifier(InMemoryAtomSet p, Rule r,
+	    HashMap<Atom, LinkedList<Partition<Term>>> possibleUnification) {
+		LinkedList<Partition<Term>> res = new LinkedList<Partition<Term>>();
 		for (Atom a : p) {
 			if (possibleUnification.get(a) != null)
-				for (TermPartition ua : possibleUnification.get(a)) {
+				for (Partition<Term> ua : possibleUnification.get(a)) {
 					InMemoryAtomSet fa = new LinkedListAtomSet();
 					fa.add(a);
 					InMemoryAtomSet aBar = null;
@@ -404,11 +413,11 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 					if (!aBar.iterator().hasNext())
 						res.add(ua);
 					else {
-						TermPartition part;
-						for (TermPartition u : preUnifier(aBar, r,
+						Partition<Term> part;
+						for (Partition<Term> u : preUnifier(aBar, r,
 								possibleUnification)) {
 							part = ua.join(u);
-							if (part != null && part.isAdmissible(r)) {
+							if (part != null && TermPartitionUtils.isAdmissible(part, r)) {
 								res.add(part);
 							}
 						}

@@ -40,7 +40,7 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- package fr.lirmm.graphik.graal.backward_chaining.pure;
+ package fr.lirmm.graphik.graal.core.compilation;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -51,7 +51,11 @@ import java.util.TreeMap;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
+import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
+import fr.lirmm.graphik.util.Partition;
 
 public class HierarchicalCompilation extends AbstractRulesCompilation {
 
@@ -59,7 +63,7 @@ public class HierarchicalCompilation extends AbstractRulesCompilation {
 	private TreeMap<Predicate, Integer> predicateIndex;
 	private ArrayList<Predicate> indexPredicate;
 
-	// a matrix for code the order order[i][j] = 1 iff predicate(i) >
+	// a matrix for code the order order[i][j] = 1 iff predicate(i) >=
 	// predicate(j)
 	private byte[][] order;
 	int sizeOrder; // size of the tab order used by this
@@ -143,54 +147,44 @@ public class HierarchicalCompilation extends AbstractRulesCompilation {
 	 *  can answer true if there is no homomorphism
 	 */
 	@Override
-	public boolean isMappable(Atom father, Atom son) {
-		Predicate predFather = father.getPredicate();
-		Predicate predSon = son.getPredicate();
-		if (predSon.equals(predFather))
-			return true;
-		Integer f = predicateIndex.get(predFather);
-		Integer s = predicateIndex.get(predSon);
-		if (f != null && s != null)
+	public boolean isMappable(Predicate father, Predicate son) {
+		Integer f = predicateIndex.get(father);
+		Integer s = predicateIndex.get(son);
+		if (f != null && s != null) {
 			return order[f][s] == 1;
-		return false;
-	}
-
-	// @Override
-	// public Collection<Substitution> getMapping(Atom father, Atom son) {
-	// LinkedList<Substitution> res = new LinkedList<Substitution>();
-	// if (isMappable(father, son)) {
-	// Substitution sub = SubstitutionFactory.getInstance()
-	// .createSubstitution();
-	// Iterator<Term> fatherTermsIt = father.getTerms().iterator();
-	// Iterator<Term> sonTermsIt = son.getTerms().iterator();
-	//
-	// Term fatherTerm, sonTerm;
-	// while (fatherTermsIt.hasNext() && sonTermsIt.hasNext()) {
-	// fatherTerm = fatherTermsIt.next();
-	// sonTerm = sonTermsIt.next();
-	// if (sub.getSubstitute(fatherTerm).equals(fatherTerm))
-	// sub.put(fatherTerm, sonTerm);
-	// else if (!sub.getSubstitute(fatherTerm).equals(sonTerm))
-	// return res;
-	// }
-	// res.add(sub);
-	// }
-	// return res;
-	// }
-
-	// can answer true if there is no unifier
-	@Override
-	public boolean isUnifiable(Atom father, Atom son) {
-		return isMappable(father, son);
+		} else {
+			return son.equals(father);
+		}
 	}
 
 	@Override
-	public Collection<TermPartition> getUnification(Atom father, Atom son) {
-		LinkedList<TermPartition> res = new LinkedList<TermPartition>();
-		TermPartition p = TermPartition.getPartitionByPosition(father, son);
-		if (p != null)
-			res.add(p);
-		
+	public Collection<Substitution> getMapping(Atom father, Atom son) {
+		LinkedList<Substitution> res = new LinkedList<Substitution>();
+		if (isMappable(father.getPredicate(), son.getPredicate())) {
+			Substitution sub = SubstitutionFactory.instance().createSubstitution();
+			Iterator<Term> fatherTermsIt = father.getTerms().iterator();
+			Iterator<Term> sonTermsIt = son.getTerms().iterator();
+
+			Term fatherTerm, sonTerm;
+			while (fatherTermsIt.hasNext() && sonTermsIt.hasNext()) {
+				fatherTerm = fatherTermsIt.next();
+				sonTerm = sonTermsIt.next();
+				if (sub.createImageOf(fatherTerm).equals(fatherTerm))
+					sub.put(fatherTerm, sonTerm);
+				else if (!sub.createImageOf(fatherTerm).equals(sonTerm))
+					return res;
+			}
+			res.add(sub);
+		}
+		return res;
+	}
+
+	@Override
+	public Collection<Partition<Term>> getUnification(Atom father, Atom son) {
+		LinkedList<Partition<Term>> res = new LinkedList<Partition<Term>>();
+		if (isMappable(father.getPredicate(), son.getPredicate())) {
+			res.add(new Partition<Term>(father.getTerms(), son.getTerms()));
+		}
 		return res;
 	}
 
@@ -315,6 +309,11 @@ public class HierarchicalCompilation extends AbstractRulesCompilation {
 			father = ru.getHead().iterator().next();
 			son = ru.getBody().iterator().next();
 			this.addRule(father, son);
+		}
+
+		// reflexivity
+		for (int i = 0; i < this.order.length; ++i) {
+			this.order[i][i] = 1;
 		}
 	}
 	
