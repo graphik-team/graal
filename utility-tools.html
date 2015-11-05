@@ -39,15 +39,17 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <p>The utility-tools program is a set of utilities to manage
+        <p>The <em>utility-tools</em> program is a set of utilities to manage
           rules. It currently has three features:</p>
         <dl>
-          <dt>singlepiece-head decomposition</dt><dd>transforms a rule set into a
-          set of single-piece head rules.</dd>
-          <dt>atomic-head decomposition</dt><dd>transforms a rule set into a set
-          of atomic-head rules.</dd>
-          <dt>labeler</dt><dd>adds annotations into the label of each
-          rule if some patterns below are recognized:
+          <dt>single-piece head decomposition</dt><dd>transforms a set of rules into a
+          set of rules with a single-piece head. In other words, it splits rule heads as much as possible
+          while keeping logical equivalence and without introducing new predicates </dd>
+          <dt>atomic-head decomposition</dt><dd>transforms a set of rules into a set
+          of atomic-head rules. This requires to introduce new predicates. The atomic-head decomposition
+          first performs a single-piece head decomposition to minimize the number of added predicates.</dd>
+          <dt>labeler</dt><dd>adds an annotation into the label of rules
+          when they satisfy one of the patterns below:
               <ul>
           <li><strong>CI</strong>: Concept Inclusion - <em>B(x) :- A(x)</em></li>
           <li><strong>RI</strong>: Role Inclusion - <em>r(x,y) :- p(x,y)</em></li>
@@ -71,6 +73,7 @@
               p(x,y),r(x,y)</em></li>
           <li><strong>NC</strong>: Negative Constraint - <em> ! BODY </em></li>
         </ul>
+        This allows to easily extract specific kinds of rules from a rule set.
           </dd>
         </dl>
         <h2>Getting started</h2>
@@ -80,7 +83,7 @@
         </ul>
         <h3> Compute single-piece head rules </h3>
         <code>java -jar utility-tools-*.jar -p < ./example1.dlp </code>
-        <h3> Compute atomic head rules </h3>
+        <h3> Compute atomic-head rules </h3>
         <code>java -jar utility-tools-*.jar -a < ./example1.dlp </code>
         <h3> Label rules </h3>
         <code>java -jar utility-tools-*.jar -l < ./example1.dlp</code>

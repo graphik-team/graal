@@ -45,7 +45,7 @@
           base</strong> composed of an <strong>ontology</strong>
           and a set of <strong>facts</strong>. The ontology is
           described in the framework of <strong><a href="http://graphik-team.github.io/graal/papers/framework_en.pdf">existential
-          rules</a></strong>, aka <strong><a href="https://www.cs.ox.ac.uk/files/3608/RR-10-21.pdf">Datalog+</a></strong>.
+          rules</a></strong>, aka <strong><a href="https://www.cs.ox.ac.uk/files/3608/RR-10-21.pdf">Datalog+/-</a></strong>.
           <img src="images/context.svg" alt="" width="50%" />
         </p>
         <p>Graal can be broken down into seven parts:
@@ -59,7 +59,7 @@
             <li>The <strong>Homomorphism</strong> module implements
             algorithms to query data. </li>
             <li>The <strong>Forward Chaining</strong> module
-            implements chase algorithms.</li>
+            implements forward chaining (aka chase) algorithms.</li>
             <li>The <strong>Backward Chaining</strong> module
             implements query rewriting algorithms.</li>
             <li>The <strong>Rule Set Analyser</strong> module

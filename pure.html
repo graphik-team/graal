@@ -40,11 +40,9 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        Pure is a query rewriter, it rewrites a query using the rules
-        such that the answers can be computed by evaluating the
-        rewritten query directly over the initial data.
+        Pure is a query rewriter: given a set of rules R and a query q, it rewrites q using the rules in R such that, for any data set D, the answers to q over the knowledge base (R,D) can be computed by evaluating the rewritten query directly over D.
         <h2>Associated publications</h2>
-            <p>See <a href="./publications#SWJ2015">SWJ 2015</a> for Pure (basic query rewriting), <a href="./publications#IJCAI2015">IJCAI 2015</a> and <a href="./publications#RuleML2015">RuleML 2015</a> for Pure<sub>C</sub> (compilation based query rewriting).</p>
+            <p>See <a href="./publications#SWJ2015">SWJ 2015</a> for Pure (basic query rewriting), <a href="./publications#IJCAI2015">IJCAI 2015</a> and <a href="./publications#RuleML2015">RuleML 2015</a> for Pure<sub>C</sub> (compilation-based query rewriting).</p>
         <h2>Getting started</h2>
             The following program (Pure-rewriter) includes both the basic and the compilation-based versions of Pure.
         <ul>
@@ -56,13 +54,13 @@
             <p>There are three options for compilation:</p>
             <ul>
               <li>NONE: no compilation</li>
-              <li>H: compilation of hierarchical rules</li>
+              <li>H: compilation of hierarchical rules (a subset of compilable rules)</li>
               <li>ID: compilation of all compilable rules</li>
             </ul>
             <h3> Rewrite with ID compilation </h3>
             <ul>
               <li>
-                Compile ontology into ./example.idc: <br/>
+                Compile the ontology into ./example.idc: <br/>
                 <code>java -jar pure-rewriter-*.jar compile ./example.dlp -f ./example.idc </code>
               </li>
               <li>
@@ -81,10 +79,10 @@
             <h3> Other useful options </h3>
             <ul>
               <li>
-                Verbose mode, print informations like time, number of rewritings...
+                Verbose mode: print informations like runtime, number of rewritings, etc.
                 <code>java -jar pure-rewriter-*.jar -v compile ./example.dlp -f ./example.idc</code>
               <li>
-                One line rewriting with compilation and unfolding:
+                Rewrite+compile+unfold in a single line:
                 <code>java -jar pure-rewriter-*.jar rewrite ./example.dlp -q "?(X):- criticalManager(X),woman(X)." -u </code>
               </li>
               <li>

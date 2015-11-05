@@ -47,19 +47,19 @@
         properties of the strongly connected components in the GRD,
         which allows to determine properties of the rule set with
         respect to decidability as well as the kind of paradigm
-        (forward or backward chaining) that ensures decidability.</p>
+        (forward or backward chaining, or a mix of the two) that ensures decidability.</p>
 		<p>
 		  The analysis is divided into two steps. The first step
 		  <i>determines</i> the rule classes of the whole base,
 		  or of part of it (a strongly connected component of the GRD for instance), while the second step
-		  <i>combines</i> these classes in order to find a way of ensuring a finite query answering process.
+		  <i>combines</i> these classes in an attempt to ensure finite query answering.
 		</p>
 		<a name="determining"></a>
         <h4>Determining rule classes</h4>
 		<p>
-		  Known rule classes are partially ordered by specialization (a child is a specialization of its parents).
+		  Known rule classes are partially ordered by syntactic inclusion (a child is a 	specialization of its parents).
 		  If a test returns <em>success</em> for a rule class,
-		  all of its ancestors will be noted as successful
+		  all of its ancestors are noted as being successful
 		  without performing any other test.
 		</p>
 		<p>
@@ -74,34 +74,33 @@
 		  checks all <em>global properties</em> on each strongly connected component of the GRD.
 		  Finally, it checks all global properties on the full base.
 		</p><p>
-		  For further information about rule classes, you can go to <a href="./ruleclasses.html">this page</a> where each
+		  For further information about rule classes, you can go to <a href="./ruleclasses.html">this page</a>, where each
 		  rule class currently considered is shortly described.
 		</p>
 		<a name="combining"></a>
         <h4>Combining rule classes</h4>
 		<p>Provided that each strongly connected component of the GRD belongs to a known decidable class,
 		  the second analysis step consists of combining <i>abstract</i> rule classes
-		  (i.e., <i>Finite Expansion Set</i>, <i>Finite Unification Set</i> and <i>(Greedy) Bounded
-			Treewidth Set</i>) to which the strongly connected components belong, in
-		  order to find a way of ensuring finiteness of the query
-		  answering process.
+		  (i.e., <i>finite expansion set (fes)</i>, <i>finite unification set (fus)</i> and <i>(greedy) bounded treewidth set ((g)bts)</i>) to which the strongly connected components belong, in order to find a way of ensuring finite query
+		  answering.
 		</p>
 		<p>
 		  <!-- When using multiple algorithms, the <i>forward chaining</i> must be processed
 			   before any <i>backward chaining</i>.-->
-		  A sufficient property for decidability is that no rule
-		  that will be processed as <i>fes</i>  depends on a
-		  <i>fus</i> or <i>bts</i> rule, and no  rule that will be processed as <i>bts</i> depends on a <i>fus</i>  rule.
+		  Indeed, a sufficient property for decidability is that no rule
+		  processed as <i>fes</i>  depends on a
+		  <i>fus</i> or <i>bts</i> rule, and no  rule processed as <i>bts</i> depends on a <i>fus</i>  rule.
 		  In short:
 		  <em>FES<sup>*</sup> |&gt; BTS |&gt; FUS<sup>*</sup></em>
 		  <br>
 		  where <em>A |&gt; B</em> means "A precedes B", i.e.,
-		  there must be no edge from a rule in B to a rule in A.
+		  no rule in (a subset processed as) A depends on a rule in (a subset processed as) B.
 		</p>
         <h2>Associated publications</h2>
             <p>See <a href="./publications#KIABORA_RR2013">KIABORA: An
-            Analyzer of Existential Rule Bases (RR 2013)</a> (note
-            that the current version of Kiabora recognizes more classes).</p>
+            Analyzer of Existential Rule Bases (RR 2013)</a>
+            <br/>
+            Note that the current version of Kiabora recognizes more classes than the list given in this paper.</p>
         <h2>Getting started</h2>
         <p>Download <a href="./dl/kiabora-1.1.0.jar">kiabora</a></p>
         <p>

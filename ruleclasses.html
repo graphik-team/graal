@@ -76,8 +76,8 @@
 		<h2>Structures</h2>
         <p>
           The following structures are used by the analyzer for checking some rule classes.
-		  Furthermore the graph of rule dependencies is also used in the
-		  combination step to compute rule base subsets (corresponding to its strongly connected
+		  Furthermore, the graph of rule dependencies is also used in the
+		  combination step to define rule subsets (corresponding to its strongly connected
 		  components).
         </p>
 		<a name="grd"></a>
@@ -88,10 +88,10 @@
 		  there is a vertex for each rule in the set and there is an edge from a
 		  rule R<sub>1</sub> to a rule R<sub>2</sub> if R<sub>1</sub> <i>may
 			lead to trigger</i> R<sub>2</sub>, i.e., R<sub>2</sub> depends on R<sub>1</sub>.
-		  R<sub>2</sub> depends on R<sub>1</sub> if and only if there is piece-unifier
+		  R<sub>2</sub> depends on R<sub>1</sub> if and only if there is a piece-unifier
 		  (for this notion, see f.i. <a href="http://www.lirmm.fr/~mugnier/ArticlesPostscript/BLMSDecidabilityLine-PreAIJ2011.pdf">
 			this paper</a>) <!--(without the <i>atom erasing</i> check) -->
-		  between the body of R<sub>2</sub> and the head of R<sub>1</sub>.
+		  of the body of R<sub>2</sub> with the head of R<sub>1</sub>.
 		</p>
 		<a name="gpos"></a>
         <h4>Graph of Position Dependencies</h4>
@@ -116,8 +116,8 @@
 		  The marked variable set is built from a rule set by the
 		  following marking procedure:<br>
 		  (i) for each rule R<sub>i</sub> and for each variable v occuring in
-		  its body, if v does not occur in all atoms of its head, mark (each occurrence of) v in its body;<br>
-		  (ii) apply until a fixpoint is reached: for each rule R<sub>i</sub>, if a marked variable v appears at position p[k] in its body,
+		  its body, if v does not occur in all atoms of R<sub>i</sub>'s  head, mark (each occurrence of) v in R<sub>i</sub>'s body;<br>
+		  (ii) apply until a fixpoint is reached: for each rule R<sub>i</sub>, if a marked variable v appears at position p[k] in the body of R<sub>i</sub>,
 		  then for each rule R<sub>j</sub> (including
 		  i = j) and for each variable x appearing at position p[k] in the head of R<sub>j</sub>,
 		  mark each occurence of x in the body of R<sub>j</sub>.
@@ -158,7 +158,7 @@
 		rules.
 		</p>
         <p>
-		Finally, some classes present in this figure are not implemented for now in the
+		The concrete classes mentioned in italics in the figure are not considered yet by the
 		analyzer, hence they are not described below. These classes are the following:</p>
 		<ul>
 			<li>weakly-sticky-join (w-sticky-j)</li>
@@ -169,12 +169,12 @@
         <a name="abstract"></a>
 		<h3>Abstract Rule Classes</h3>
 		<p>
-		These rule classes are said <em>abstract</em> because they
-		have no syntactic property and are used to classify concrete
+		These rule classes are called <em>abstract</em> because they are not characterized by a syntactic property.
+		They are used to classify concrete
 		classes. Each of these classes ensures the existence of
-		query mechanisms that halt in finite time for any query.
+		query mechanisms that halt in finite time for any query and any set of facts.
 		Determining if a rule (or a set of rules) belongs to one
-		of these abstract classes is an undecidable problem.
+		of these abstract classes is known to be undecidable, except for gbts for which the question is open.
 		</p>
             <a name="fes"></a>
 			<h4>Finite expansion set (fes)</h4>
@@ -199,7 +199,7 @@ like halting algorithm. Almost all currently known BTS but not FES classes are G
         <a name="concrete"></a>
 		<h3>Concrete Rule Classes</h3>
 		<p>
-		These classes are presented with their syntactic property
+		These classes are presented with their syntactic properties
 		and the abstract classes they belong to.
 		</p>
 		<p>
@@ -209,14 +209,14 @@ like halting algorithm. Almost all currently known BTS but not FES classes are G
 		each rule independently from the others (hence a set fulfils
 		a local property if all of its rules fullfil it);</li>
 		<li><strong>global properties</strong> which are checked on
-		the set of rules (note that the analyser may <em>cut</em> the set
-		into subsets of rules thanks to the <a href='#grd'>graph of
-		rule dependencies</a> strongly connected components).
+		the set of rules (note that the analyser may <em>partition</em> the set
+		of rules into subsets corresponding to the strongly connected components of the <a href='#grd'>graph of
+		rule dependencies</a>).
 		</ul>
 		</p>
 		<p>
 		Reminder: the <em>frontier</em> of a rule is the set of
-		variables shared by its body and its head.
+		variables shared between its body and its head.
 		<p>
             <a name="agrd"></a>
 			<h4>Acyclic graph of rule dependencies (agrd)</h4>

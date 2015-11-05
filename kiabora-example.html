@@ -39,17 +39,18 @@
     <div id="main_content_wrap" class="outer">
       	<section id="main_content" class="inner">
     	<p>
-		A little example of Kiabora's capabilities.
+		Here is a little example to give an insight of what Kiabora can do.
 		</p>
-        <h2>Input file:</h2>
-			<pre>p(X,Z) :- p(X,Y), p(Y,Z).
+        <h2>Input file in Dlgp format:</h2>
+<pre>p(X,Z) :- p(X,Y), p(Y,Z).
 p(Y,X), q(X,Y,X) :- p(X,Y).
 q(X,Z,T) :- r(X,Y).
 r(Z,T) :- q(X,Y,Z).
 s(Z,Z,Z) :- p(X,X), r(Y,U), s(T,Y,X).
 s(Z,X,Y) :- s(X,X,X), s(Y,Y,Y).</pre>
-			<h2>Output (all options turned on): </h2>
-<p>The '-r' option can be used to display the rule set.</p>
+			<h2>Output (with all options turned on): </h2>
+<p>The '-r' option can be used to display the rule set.
+Note that unlabeled rules get a label of the form [Ri] starting with i = 0.</p>
 			<pre>
 ====== RULE SET ======
 [R0] p(X, Z) :- p(X, Y), p(Y, Z).
@@ -59,8 +60,16 @@ s(Z,X,Y) :- s(X,X,X), s(Y,Y,Y).</pre>
 [R4] s(Z, Z, Z) :- p(X, X), r(Y, U), s(T, Y, X).
 [R5] s(Z, X, Y) :- s(X, X, X), s(Y, Y, Y).
 </pre>
-<p>The '-g' option can be used to display the graph of rule dependencies.
-Here the '-u' option has been used, thus, unifiers also appear.</p>
+<p>The '-g' option can be used to display the graph of rule dependencies (GRD).
+An edge from Ri to Rj means that Ri may trigger Rj, i.e., Rj depends on Ri.
+<br/>
+The '-u' option used, hence all the piece-unifiers that support the dependencies are displayed as well.
+For instance, there are two piece-unifiers showing that R0 depends on itself.
+Since multiple rules may share variable names (or when displaying a unifier from a rule to itself),
+we use the following notation to distinguish variables :
+R::&lt;real_name&gt; represents a variable from the rule head while D::&lt;real_name&gt; a variable
+from the rule body.
+</p>
 <pre>
 ======== GRD =========
 R0--{R::Y->D::Z,R::X->D::X}{R::Y->D::X,R::Z->D::Z}-->R0
@@ -76,8 +85,8 @@ R3--{R::Y->D::Z,R::U->D::T}-->R4
 R4--{R::X->D::Z}{R::Y->D::Z}-->R5
 R5--{R::T->D::Z,R::Y->D::X,R::X->D::Y}-->R4
 </pre>
-<p>With the '-s' option, Kiabora displays the strongly connected component of the
-graph of rule dependencies.
+<p>With the '-s' option, the strongly connected components (SCCs) of the
+GRD are displayed.
 <pre>
 ======== SCC =========
 C0 = {R1, R0}
@@ -85,8 +94,7 @@ C1 = {R2, R3}
 C2 = {R4, R5}
 </pre>
 <p>
-And with '-G', Kiabora also displays the graph
-of the SCC.
+With the '-G' option, the graph of the SCCs is displayed.
 </p>
 <pre>
 ===== SCC GRAPH ======
@@ -95,8 +103,9 @@ C1 ---> C2
 C2
 </pre>
 <p>
-Rule properties are printed for each rule,
-thanks to the '-P' switch.
+Rule properties are printed for each rule
+thanks to the '-P' option. For abstract properties (fes,fus, (g)bts), a question mark indicates that Kiabora could
+not determine if the property is satisfied.
 </p>
 <pre>
 == RULE PROPERTIES ===
@@ -111,7 +120,7 @@ thanks to the '-P' switch.
 | aGRD | bts  | disc |  dr  | fes  |  fg  | fr1  | fus  | gbts | lin  |  rr  |  s   |  wa  | wfg  |  wg  |  ws  |
 +---------------------------------------------------------------------------------------------------------------+
 </pre>
-<p>Then, the rule set properties are checked against the full rule set (-R).</p>
+<p>The properties of the whole rule set are displayed using the -R option.</p>
 <pre>
 ===== PROPERTIES =====
 +---------------------------------------------------------------------------------------------------------------+
@@ -121,7 +130,8 @@ thanks to the '-P' switch.
 +---------------------------------------------------------------------------------------------------------------+
 </pre>
 <p>
-And the SCC properties can also be displayed (used for the combine steps) with -S.
+The properties of the SCCs can also be displayed with the -S option.
+These properties are used in the following combination step.
 </p>
 <pre>
 === SCC PROPERTIES ===
@@ -133,13 +143,12 @@ And the SCC properties can also be displayed (used for the combine steps) with -
 | aGRD | bts  | disc |  dr  | fes  |  fg  | fr1  | fus  | gbts | lin  |  rr  |  s   |  wa  | wfg  |  wg  |  ws  |
 +---------------------------------------------------------------------------------------------------------------+
 </pre>
-<p>Finally, Kiabora tries to find some combined approach for finite reasoning.
-First by maximising the number of components to be treated in forward chaining, then by
-maximising the backward chaining.
-Note that in this example, no property ensuring
-decidability have been found on the whole rule
-set, however, by using some combined approach,
-we can ensure a finite time reasoning.
+<p>Finally, Kiabora follows some combined approach in an attempt to ensure finite query answering.
+If successful, Kiabora outputs two solutions, which respectively maximize
+the number of SCCs processed in forward chaining (fes) or in backward chaining (fus).
+Note that in this example, no decidability property has been found for the whole rule set,
+however, finite query answering can be ensured by the combined approach. Trying to maximize fes or fus yields
+the same result.
 </p>
 <pre>
 === COMBINE (FES) ====

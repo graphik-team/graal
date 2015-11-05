@@ -43,14 +43,14 @@ reasoning, data engineering, java, semantic web, description logics"/>
         <ul>
           <li>
             a basic layer that provides <strong>generic interfaces</strong> to store
-            and query various kinds of data without considering the
-            rules;
+            and query various kinds of data (without considering the
+            rules);
           </li>
           <li> <strong>saturation</strong> algorithms, which apply rules on the data in a
             forward chaining manner;
           </li>
-          <li> <strong>query rewriting</strong> algorithms, which reformulate a conjunctive
-            query into a set (or ‘union’) of conjunctive queries;
+          <li> <strong>query rewriting</strong> algorithms, which use the rules to reformulate a conjunctive
+            query into a minimal set (or ‘union’) of conjunctive queries;
           </li>
           <li> utility tools:
             <ul>
@@ -73,21 +73,19 @@ reasoning, data engineering, java, semantic web, description logics"/>
         </ul>
         <h2>Existential rule framework</h2>
 	<p>
-	  <strong>Existential rules</strong> allow to assert the existence of not-yet-known individuals. The
-	  existential rule framework is also known as an extension to Datalog, called
+	  <strong>Existential rules</strong> allow to assert the existence of not-yet-known individuals.
+	  They are also known as an extension to Datalog, called
 	  <strong>Datalog+/-</strong>.
 	</p>
 	<p>
-	  It is particularly relevant to <strong>ontology-mediated query answering</strong>. In
-	  this framework, a knowledge base is composed of facts (or data) and of
-	  ontological knowledge expressed by existential rules (including rules with
-	  equality atoms) and negative constraints.
-	  The considered queries are conjunctive queries;
-	  extending them to unions of conjunctive queries is straightforward.
+	  This framework is particularly relevant to <strong>ontology-mediated query answering</strong>. Instead of
+	  querying databases, we query knowledge bases composed of facts (or data) and
+	  ontological knowledge expressed by existential rules and negative constraints.
+	  The considered queries are (unions of) conjunctive queries.
 	</p>
 	<p>
 	  [More: <a href="./papers/framework_en.pdf">A brief overview of the
-	    existential rules framework</a>]
+	    existential rule framework</a>]
 	</p>
 	<p>
 	  For a thorough theoretical presentation please see the following paper:
