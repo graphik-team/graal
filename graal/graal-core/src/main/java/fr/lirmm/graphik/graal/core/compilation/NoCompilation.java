@@ -51,6 +51,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.AtomComparator;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
@@ -119,7 +120,7 @@ public class NoCompilation extends AbstractRulesCompilation {
 
 	@Override
 	public boolean isImplied(Atom father, Atom son) {
-		return son.equals(father);
+		return AtomComparator.instance().compare(son, father) == 0;
 	}
 
 	@Override

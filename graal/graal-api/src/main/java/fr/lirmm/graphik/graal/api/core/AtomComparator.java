@@ -58,7 +58,24 @@ import java.util.List;
  */
 public class AtomComparator implements Comparator<Atom>, Serializable {
 
-	private static final long serialVersionUID = 2044427079906743437L;
+	private static final long     serialVersionUID = 2044427079906743437L;
+
+	private static AtomComparator instance;
+
+	protected AtomComparator() {
+		super();
+	}
+
+	public static synchronized AtomComparator instance() {
+		if (instance == null)
+			instance = new AtomComparator();
+
+		return instance;
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	//
+	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
 	public int compare(Atom atom0, Atom atom1) {
@@ -67,8 +84,7 @@ public class AtomComparator implements Comparator<Atom>, Serializable {
 			List<Term> atom0Terms = atom0.getTerms();
 			List<Term> atom1Terms = atom1.getTerms();
 
-			cmpVal = (atom0Terms.size() < atom1Terms.size()) ? -1
-					: ((atom0Terms.size() == atom1Terms.size()) ? 0 : 1);
+			cmpVal = (atom0Terms.size() < atom1Terms.size()) ? -1 : ((atom0Terms.size() == atom1Terms.size()) ? 0 : 1);
 			int i = 0;
 			Comparator<Term> cmp = new TermValueComparator();
 			while (cmpVal == 0 && i < atom0Terms.size()) {

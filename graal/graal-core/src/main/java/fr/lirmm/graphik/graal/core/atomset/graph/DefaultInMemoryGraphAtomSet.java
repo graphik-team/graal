@@ -56,8 +56,8 @@ import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.TermValueComparator;
 import fr.lirmm.graphik.graal.core.atomset.AbstractInMemoryAtomSet;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
-import fr.lirmm.graphik.util.stream.IteratorAdapter;
 import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.IteratorAdapter;
 
 /**
  * Implementation of a graph in memory. Inherits directly from Fact.
@@ -73,9 +73,9 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
     // /////////////////////////////////////////////////////////////////////////
 
     public DefaultInMemoryGraphAtomSet() {
-        this.terms = new TreeSet<TermVertex>(new TermValueComparator());
+		this.terms = new TreeSet<TermVertex>(TermValueComparator.instance());
         this.predicates = new TreeSet<PredicateVertex>();
-        this.atoms = new TreeSet<AtomEdge>(new AtomComparator());
+		this.atoms = new TreeSet<AtomEdge>(AtomComparator.instance());
     }
 
     // /////////////////////////////////////////////////////////////////////////

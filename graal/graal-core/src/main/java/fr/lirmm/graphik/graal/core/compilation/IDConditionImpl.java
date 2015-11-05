@@ -50,6 +50,7 @@ import java.util.List;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.TermValueComparator;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.factory.RuleFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
@@ -135,7 +136,7 @@ class IDConditionImpl implements IDCondition {
 		for (int i = 0; i < condBody.length; i++) {
 			if (check[condBody[i]] == null) {
 				check[condBody[i]] = body.get(i);
-			} else if (!body.get(i).equals(check[condBody[i]])) {
+			} else if (TermValueComparator.instance().compare(body.get(i), check[condBody[i]]) != 0) {
 				return false;
 			}
 		}

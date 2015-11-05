@@ -53,6 +53,7 @@ import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.TermValueComparator;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
 import fr.lirmm.graphik.util.Partition;
@@ -194,7 +195,7 @@ public class HierarchicalCompilation extends AbstractRulesCompilation {
 		Predicate predSon = son.getPredicate();
 		Integer f = predicateIndex.get(predFather);
 		Integer s = predicateIndex.get(predSon);
-		if (f != null && s != null && father.getTerms().equals(son.getTerms()))
+		if (f != null && s != null && TermValueComparator.instance().compare(father.getTerms(), son.getTerms()) == 0)
 			return order[f][s] == 1;
 		else
 			return false;
