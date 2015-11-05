@@ -172,9 +172,9 @@ public final class MFAProperty extends RuleSetProperty.Default {
 
 	public static List<Rule> translateRuleToMFA(final Rule r) {
 		List<Rule> result = new LinkedList<Rule>();
-		DefaultRule r2 = new DefaultRule();
-		r2.setBody(r.getBody());
-		r2.setHead(r.getHead());
+		DefaultRule r2 = new DefaultRule(r);
+		/*r2.setBody(r.getBody());
+		r2.setHead(r.getHead());*/
 		for (Term yi : r2.getExistentials()) {
 			Predicate Fir = GraalConstant.freshPredicate(1);
 			DefaultAtom f = new DefaultAtom(Fir);
