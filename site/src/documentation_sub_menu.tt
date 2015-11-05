@@ -1,0 +1,8 @@
+   <div id="sub_menu" class="outer">
+      <nav class="inner">
+        <a href="./documentation">Overview</a>
+        <a href="./getting-started">Getting started</a>
+        <a href="./papers/datalog+_v2.0_en.pdf">DLGP</a>
+        <a href="./[% config.graalVersion %]/javadocs/">Javadoc</a>
+      </nav>
+    </div>

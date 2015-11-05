@@ -45,7 +45,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -55,7 +54,6 @@ import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.graal.api.core.stream.SubstitutionReader;
 import fr.lirmm.graphik.graal.api.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
@@ -75,6 +73,7 @@ import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.DriverException;
 import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;
 import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * 
@@ -104,13 +103,14 @@ public class MelanieQueryTest {
 		for(Query query : queries) { 
 			System.out.println(query);
 			time = System.currentTimeMillis();
-			SubstitutionReader subR = StaticHomomorphism.executeQuery(query, atomSet);
+			CloseableIterator<Substitution> subR = StaticHomomorphism.executeQuery(query, atomSet);
 			time2 = System.currentTimeMillis();
 			
 			int i = 0;
-			for(Iterator<Substitution> it = subR.iterator(); it.hasNext(); it.next())
+			for (; subR.hasNext(); subR.next())
 				++i;
 			
+			subR.close();
 			System.out.println(i + " results in " + (time2 - time) + "ms");
 		}
 			
@@ -227,7 +227,8 @@ public class MelanieQueryTest {
 	public static void lowerCaseFact() throws AtomSetException, IOException {
 		DlgpParser parser = new DlgpParser(new FileReader("./src/test/resources/u/University0_0.dlp"));
 		DlgpWriter writer = new DlgpWriter(new File("./src/test/resources/u/University0_0_lowercase.dlp"));
-		for(Object o: parser) {
+		while(parser.hasNext()) {
+			Object o = parser.next();
 			if(o instanceof Atom) {
 				Atom atom = (Atom)o;
 				Predicate p = new Predicate(atom.getPredicate().toString().toLowerCase(), atom.getPredicate().getArity());

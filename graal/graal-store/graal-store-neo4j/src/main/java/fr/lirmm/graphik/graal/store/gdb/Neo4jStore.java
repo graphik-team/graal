@@ -46,6 +46,7 @@
 package fr.lirmm.graphik.graal.store.gdb;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -72,6 +73,8 @@ import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.store.GraphDBStore;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -93,6 +96,7 @@ public class Neo4jStore extends GraphDBStore {
 
 	private GraphDatabaseService graph;
 	private ExecutionEngine cypherEngine;
+	private Map<Thread, Transaction> transactions;
 
 	// //////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -103,8 +107,9 @@ public class Neo4jStore extends GraphDBStore {
 	 * @param graph
 	 */
 	public Neo4jStore(GraphDatabaseService graph) {
+		transactions = new HashMap<Thread, Transaction>();
 		this.graph = graph;
-		Transaction tx = graph.beginTx();
+		this.checkTransaction();
 		try {
 			if (!graph.schema().getConstraints().iterator().hasNext()) {
 				graph.schema().indexFor(NodeType.TERM);
@@ -117,9 +122,9 @@ public class Neo4jStore extends GraphDBStore {
 			}
 
 			cypherEngine = new ExecutionEngine(graph);
-			tx.success();
+			this.successTransaction();
 		} finally {
-			tx.close();
+			this.reloadTransaction();
 		}
 	}
 
@@ -145,12 +150,12 @@ public class Neo4jStore extends GraphDBStore {
 	@Override
 	public boolean add(Atom atom) {
 		boolean isAdded = false;
-		Transaction tx = graph.beginTx();
+		this.checkTransaction();
 		try {
-			isAdded = add(atom,tx);
-			tx.success();
+			isAdded = add(atom, null);
+			this.successTransaction();
 		} finally {
-			tx.close();
+			this.reloadTransaction();
 		}
 		return isAdded;
 	}
@@ -158,14 +163,14 @@ public class Neo4jStore extends GraphDBStore {
 	@Override
 	public boolean addAll(Iterator<? extends Atom> it) {
 		boolean isChanged = false;
-		Transaction tx = graph.beginTx();
+		this.checkTransaction();
 		try {
 			while(it.hasNext()) {
-				isChanged = this.add(it.next(), tx) || isChanged;
+				isChanged = this.add(it.next(), null) || isChanged;
 			}
-			tx.success();
+			this.successTransaction();
 		} finally {
-			tx.close();
+			this.reloadTransaction();
 		}
 		return isChanged;
 	}
@@ -193,12 +198,12 @@ public class Neo4jStore extends GraphDBStore {
 	@Override
 	public boolean remove(Atom atom) {
 		boolean isRemoved = false;
-		Transaction tx = graph.beginTx();
+		this.checkTransaction();
 		try {
-			isRemoved = remove(atom,tx);
-			tx.success();
+			isRemoved = remove(atom, null);
+			this.successTransaction();
 		} finally {
-			tx.close();
+			this.reloadTransaction();
 		}
 		return isRemoved;
 	}
@@ -206,14 +211,14 @@ public class Neo4jStore extends GraphDBStore {
 	@Override
 	public boolean removeAll(Iterator<? extends Atom> it) {
 		boolean isChanged = false;
-		Transaction tx = graph.beginTx();
+		this.checkTransaction();
 		try {
 			while(it.hasNext()) {
-				isChanged = this.remove(it.next(), tx) || isChanged;
+				isChanged = this.remove(it.next(), null) || isChanged;
 			}
-			tx.success();
+			this.successTransaction();
 		} finally {
-			tx.close();
+			this.reloadTransaction();
 		}
 		return isChanged;
 	}
@@ -230,16 +235,16 @@ public class Neo4jStore extends GraphDBStore {
 	}
 
 	@Override
-	public Iterator<Atom> iterator() {
-		Transaction transaction = graph.beginTx();
-		return new Neo4jAtomIterator(transaction, this.cypherEngine.execute(
+	public CloseableIterator<Atom> iterator() {
+		this.checkTransaction();
+		return new Neo4jAtomIterator(this.getTransaction(), this.cypherEngine.execute(
 				"match (atom:ATOM) return atom").iterator());
 	}
 
 	@Override
-	public Iterator<Term> termsIterator() throws AtomSetException {
-		Transaction transaction = graph.beginTx();
-		return new Neo4jTermIterator(transaction, this.cypherEngine.execute(
+	public CloseableIterator<Term> termsIterator() throws AtomSetException {
+		this.checkTransaction();
+		return new Neo4jTermIterator(this.getTransaction(), this.cypherEngine.execute(
 				"match (term:TERM) return term").iterator());
 	}
 
@@ -254,12 +259,11 @@ public class Neo4jStore extends GraphDBStore {
 	}
 
 	@Override
-	public Iterator<Term> termsIterator(Type type) throws AtomSetException {
+	public CloseableIterator<Term> termsIterator(Type type) throws AtomSetException {
 		Map<String, Object> params = new TreeMap<String, Object>();
 		params.put("type", type.toString());
-		Transaction transaction = graph.beginTx();
-
-		return new Neo4jTermIterator(transaction, this.cypherEngine.execute(
+		this.checkTransaction();
+		return new Neo4jTermIterator(this.getTransaction(), this.cypherEngine.execute(
 				"match (term:TERM {type : { type }}) return term", params)
 				.iterator());
 	}
@@ -275,9 +279,9 @@ public class Neo4jStore extends GraphDBStore {
 	}
 
 	@Override
-	public Iterator<Predicate> predicatesIterator() throws AtomSetException {
-		Transaction transaction = graph.beginTx();
-		return new Neo4jPredicateIterator(transaction, this.cypherEngine
+	public CloseableIterator<Predicate> predicatesIterator() throws AtomSetException {
+		this.checkTransaction();
+		return new Neo4jPredicateIterator(this.getTransaction(), this.cypherEngine
 				.execute("match (predicate:PREDICATE) return predicate")
 				.iterator());
 	}
@@ -294,23 +298,17 @@ public class Neo4jStore extends GraphDBStore {
 
 	@Override
 	public void clear() {
-		Transaction transaction = graph.beginTx();
+		this.checkTransaction();
 		this.cypherEngine
 				.execute("MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n, r");
-		transaction.success();
-		transaction.close();
+		this.successTransaction();
+		this.reloadTransaction();
 	}
 
 	@Override
 	public boolean contains(Atom atom) {
-		Transaction transaction = graph.beginTx();
-		boolean contains = false;
-		try {
-			contains = this.contains(atom, transaction);
-		} finally {
-			transaction.close();
-		}
-		return contains;
+		this.checkTransaction();
+		return this.contains(atom, null);
 	}
 
 	private boolean contains(Atom atom, Transaction transaction) {
@@ -326,6 +324,10 @@ public class Neo4jStore extends GraphDBStore {
 
 	@Override
 	public void close() {
+
+		Transaction tx = this.transactions.get(Thread.currentThread());
+		tx.close();
+		this.transactions.put(Thread.currentThread(), null);
 		this.graph.shutdown();
 	}
 
@@ -359,7 +361,7 @@ public class Neo4jStore extends GraphDBStore {
 		return node;
 	}
 
-	private static Term nodeToTerm(Node node) {
+	private Term nodeToTerm(Node node) {
 		return DefaultTermFactory.instance().createTerm(
 				node.getProperty("value"),
 				Term.Type.valueOf(node
@@ -455,14 +457,39 @@ public class Neo4jStore extends GraphDBStore {
 		sb.append("(atom)-[rel_predicate:PREDICATE]->(predicate) ");
 	}
 
+	private synchronized void reloadTransaction() {
+		Transaction tx = this.transactions.get(Thread.currentThread());
+		tx.close();
+		this.transactions.put(Thread.currentThread(), graph.beginTx());
+	}
+
+	private synchronized void checkTransaction() {
+		if (this.transactions.get(Thread.currentThread()) == null) {
+			this.transactions.put(Thread.currentThread(), graph.beginTx());
+		}
+	}
+
+	private synchronized Transaction getTransaction() {
+		Transaction tx = this.transactions.get(Thread.currentThread());
+		if (tx == null) {
+			tx = graph.beginTx();
+			this.transactions.put(Thread.currentThread(), tx);
+		}
+		return tx;
+	}
+
+	private synchronized void successTransaction() {
+		this.transactions.get(Thread.currentThread()).success();
+	}
+
 	// //////////////////////////////////////////////////////////////////////////
 	// PRIVATE STATIC CLASS
 	// //////////////////////////////////////////////////////////////////////////
 
-	private static abstract class Neo4jElementIterator<E> implements
-			Iterator<E> {
+	private abstract class Neo4jElementIterator<E> extends AbstractCloseableIterator<E> {
 		ResourceIterator<Map<String, Object>> iterator;
-		Transaction transaction;
+		Transaction                           transaction;
+		boolean isOpen = true;
 
 		/**
 		 * @param iterator
@@ -474,20 +501,16 @@ public class Neo4jStore extends GraphDBStore {
 		}
 
 		@Override
-		protected void finalize() throws Throwable {
-			this.close();
-			super.finalize();
-		}
-
-		private void close() {
-			this.iterator.close();
-			this.transaction.success();
-			this.transaction.close();
+		public void close() {
+			if(this.isOpen) {
+				this.isOpen = false;
+    			this.iterator.close();
+			}
 		}
 
 		@Override
 		public boolean hasNext() {
-			if (iterator.hasNext()) {
+			if (this.isOpen && iterator.hasNext()) {
 				return true;
 			} else {
 				this.close();
@@ -502,7 +525,7 @@ public class Neo4jStore extends GraphDBStore {
 
 	}
 
-	private static class Neo4jAtomIterator extends Neo4jElementIterator<Atom> {
+	private class Neo4jAtomIterator extends Neo4jElementIterator<Atom> {
 
 		/**
 		 * 
@@ -536,7 +559,7 @@ public class Neo4jStore extends GraphDBStore {
 
 	}
 
-	private static class Neo4jTermIterator extends Neo4jElementIterator<Term> {
+	private class Neo4jTermIterator extends Neo4jElementIterator<Term> {
 
 		/**
 		 * 
@@ -555,7 +578,7 @@ public class Neo4jStore extends GraphDBStore {
 
 	}
 
-	private static class Neo4jPredicateIterator extends
+	private class Neo4jPredicateIterator extends
 			Neo4jElementIterator<Predicate> {
 
 		/**

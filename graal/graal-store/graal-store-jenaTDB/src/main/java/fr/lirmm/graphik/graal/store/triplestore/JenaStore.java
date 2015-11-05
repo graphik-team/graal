@@ -59,6 +59,7 @@ import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ReadWrite;
 import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.tdb.TDBFactory;
 import com.hp.hpl.jena.update.GraphStore;
@@ -76,6 +77,11 @@ import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.store.AbstractTripleStore;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.util.Prefix;
+import fr.lirmm.graphik.util.URIUtils;
+import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -85,6 +91,46 @@ public class JenaStore extends AbstractTripleStore {
 
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(JenaStore.class);
+
+	private static class URIzer {
+		private static URIzer instance;
+
+		protected URIzer() {
+			super();
+		}
+
+		public static synchronized URIzer instance() {
+			if (instance == null)
+				instance = new URIzer();
+
+			return instance;
+		}
+
+		Prefix defaultPrefix = new Prefix("jena", "file:///jena/");
+
+		/**
+		 * Add default prefix if necessary
+		 * 
+		 * @param s
+		 * @return
+		 */
+		String input(String s) {
+			return URIUtils.createURI(s, defaultPrefix).toString();
+		}
+
+		/**
+		 * Remove default prefix if it is present
+		 * 
+		 * @param s
+		 * @return
+		 */
+		String output(String s) {
+			if (s.startsWith(defaultPrefix.getPrefix())) {
+				return s.substring(defaultPrefix.getPrefix().length());
+			}
+			return s;
+		}
+	}
 
 	Dataset dataset;
 	String directory;
@@ -131,14 +177,14 @@ public class JenaStore extends AbstractTripleStore {
 	}
 	
 	@Override
-	public boolean addAll(Iterable<? extends Atom> atoms)
+	public boolean addAll(Iterator<? extends Atom> atoms)
 			throws AtomSetException {
 		dataset.begin(ReadWrite.WRITE);
 		try {
 			GraphStore graphStore = GraphStoreFactory.create(dataset);
 			UpdateRequest request = UpdateFactory.create();
-			for (Atom atom : atoms) {
-				add(request, atom);
+			while (atoms.hasNext()) {
+				add(request, atoms.next());
 			}
 			UpdateProcessor proc = UpdateExecutionFactory.create(request,
 					graphStore);
@@ -180,14 +226,14 @@ public class JenaStore extends AbstractTripleStore {
 	}
 
 	@Override
-	public boolean removeAll(Iterable<? extends Atom> atoms)
+	public boolean removeAll(Iterator<? extends Atom> atoms)
 			throws AtomSetException {
 		dataset.begin(ReadWrite.WRITE);
 		try {
 			GraphStore graphStore = GraphStoreFactory.create(dataset);
 			UpdateRequest request = UpdateFactory.create();
-			for (Atom atom : atoms) {
-				remove(request, atom);
+			while (atoms.hasNext()) {
+				remove(request, atoms.next());
 			}
 			UpdateProcessor proc = UpdateExecutionFactory.create(request,
 					graphStore);
@@ -229,7 +275,7 @@ public class JenaStore extends AbstractTripleStore {
 	}
 
 	@Override
-	public Iterator<Atom> iterator() {
+	public CloseableIterator<Atom> iterator() {
 		return new AtomIterator(this.directory);
 	}
 
@@ -279,6 +325,12 @@ public class JenaStore extends AbstractTripleStore {
 	}
 
 	@Override
+	public CloseableIterator<Term> termsIterator() {
+		// TODO use a ResultSetIterator
+		return new CloseableIteratorAdapter<Term>(this.getTerms().iterator());
+	}
+
+	@Override
 	public Set<Term> getTerms(Type type) {
 		Set<Term> terms = this.getTerms();
 		Iterator<Term> it = terms.iterator();
@@ -289,6 +341,12 @@ public class JenaStore extends AbstractTripleStore {
 			}
 		}
 		return terms;
+	}
+
+	@Override
+	public CloseableIterator<Term> termsIterator(Term.Type type) {
+		// TODO use a ResultSetIterator
+		return new CloseableIteratorAdapter<Term>(this.getTerms(type).iterator());
 	}
 
 	@Override
@@ -313,6 +371,11 @@ public class JenaStore extends AbstractTripleStore {
 	}
 
 	@Override
+	public CloseableIterator<Predicate> predicatesIterator() {
+		return new CloseableIteratorAdapter<Predicate>(this.getPredicates().iterator());
+	}
+
+	@Override
 	public void clear() {
 		dataset.begin(ReadWrite.WRITE);
 		try {
@@ -331,7 +394,7 @@ public class JenaStore extends AbstractTripleStore {
 	// PRIVATE CLASS
 	// /////////////////////////////////////////////////////////////////////////
 
-	private static class AtomIterator implements Iterator<Atom> {
+	private static class AtomIterator extends AbstractCloseableIterator<Atom> {
 
 		Dataset dataset;
 		static final String SELECT = "PREFIX graal: <http://team.inria.fr/graphik/graal/> "
@@ -353,17 +416,12 @@ public class JenaStore extends AbstractTripleStore {
 			this.rs = qExec.execSelect();
 		}
 
-		@Override
-		protected void finalize() throws Throwable {
-			this.close();
-			super.finalize();
-		}
-
 		// /////////////////////////////////////////////////////////////////////////
 		// METHODS
 		// /////////////////////////////////////////////////////////////////////////
 
-		public void close() {
+		@Override
+        public void close() {
 			if (this.qExec != null) {
 				this.qExec.close();
 			}
@@ -389,16 +447,11 @@ public class JenaStore extends AbstractTripleStore {
 		public Atom next() {
 			QuerySolution next = this.rs.next();
 
-			Predicate predicate = new Predicate(next.get("?p").toString(), 2);
-			Term subject = DefaultTermFactory.instance().createConstant(
-					next.get("?s")
-					.toString());
+			Predicate predicate = createPredicate(next.get("?p"), 2);
+			Term subject = createTerm(next.get("?s"));
+			Term object = createTerm(next.get("?o"));
 
-			RDFNode o = next.get("?o");
-			Term object = createTerm(o);
-
-			Atom atom = new DefaultAtom(predicate, subject, object);
-			return atom;
+			return new DefaultAtom(predicate, subject, object);
 		}
 
 	}
@@ -408,12 +461,12 @@ public class JenaStore extends AbstractTripleStore {
 	// /////////////////////////////////////////////////////////////////////////
 
 	private static String predicateToString(Predicate p) {
-		return "<" + p.getIdentifier() + ">";
+		return "<" + URIzer.instance().input(p.getIdentifier().toString()) + ">";
 	}
 	
 	private static String termToString(Term t) {
 		if(Term.Type.CONSTANT.equals(t.getType())) {
-			return "<" + t.getIdentifier().toString() + ">";
+			return "<" + URIzer.instance().input(t.getIdentifier().toString()) + ">";
 		} else if (Term.Type.LITERAL.equals(t.getType())) {
 			return t.getIdentifier().toString();
 		} else if (Term.Type.VARIABLE.equals(t.getType())) {
@@ -426,13 +479,19 @@ public class JenaStore extends AbstractTripleStore {
 	private static Term createTerm(RDFNode node) {
 		Term term = null;
 		if (node.isLiteral()) {
-			term = DefaultTermFactory.instance().createLiteral(
-					node.asLiteral().getValue());
+			Literal l = node.asLiteral();
+			term = DefaultTermFactory.instance().createLiteral(URIUtils.createURI(l.getDatatypeURI()), l.getValue());
 		} else {
 			term = DefaultTermFactory.instance()
-					.createConstant(node.toString());
+.createConstant(URIzer.instance().output(node.toString()));
 		}
 		return term;
+	}
+
+	private static Predicate createPredicate(RDFNode node, int arity) {
+		String s = node.toString();
+		s = URIzer.instance().output(s);
+		return new Predicate(s, arity);
 	}
 
 }

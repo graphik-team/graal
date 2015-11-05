@@ -47,6 +47,7 @@ package fr.lirmm.graphik.graal.examples;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.Scanner;
 
 import fr.lirmm.graphik.graal.api.backward_chaining.BackwardChainer;
@@ -70,6 +71,7 @@ import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.HSQLDBDriver;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 public class Example0 {
 
@@ -90,7 +92,8 @@ public class Example0 {
 
 		// 2 - Parse Animals.dlp (A Dlgp file with rules and facts)
 		DlgpParser dlgpParser = new DlgpParser(new File("./src/main/resources/animals.dlp"));
-		for (Object o : dlgpParser) {
+		while (dlgpParser.hasNext()) {
+			Object o = dlgpParser.next();
 			if (o instanceof Atom) {
 				store.add((Atom) o);
 			}
@@ -119,7 +122,7 @@ public class Example0 {
 
 		// 6 - Query the store without reasoning
 		writer.write("\n= Answers =\n");
-		Iterable<Substitution> results = StaticHomomorphism.executeQuery(query, store);
+		CloseableIterator<Substitution> results = StaticHomomorphism.executeQuery(query, store);
 		printAnswers(results);
 		waitEntry();
 
@@ -172,8 +175,8 @@ public class Example0 {
 		// Query saturated data with the original query
 		writer.write("\n= Answers =\n");
 		results = StaticHomomorphism.executeQuery(query, store);
-		for (Substitution s : results) {
-			writer.write(s.toString());
+		while (results.hasNext()) {
+			writer.write(results.next().toString());
 			writer.write("\n");
 		}
 
@@ -181,10 +184,10 @@ public class Example0 {
 		writer.close();
 	}
 
-	private static void printAnswers(Iterable<Substitution> results) throws IOException {
-		if (results.iterator().hasNext()) {
-			for (Substitution s : results) {
-				writer.write(s.toString());
+	private static void printAnswers(Iterator<Substitution> results) throws IOException {
+		if (results.hasNext()) {
+			while (results.hasNext()) {
+				writer.write(results.next().toString());
 				writer.write("\n");
 			}
 		} else {

@@ -57,15 +57,16 @@ import org.slf4j.LoggerFactory;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.io.AbstractAtomParser;
+import fr.lirmm.graphik.graal.api.io.Parser;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public class RDF2Atom extends AbstractAtomParser {
+public class RDF2Atom extends AbstractCloseableIterator<Atom> implements Parser<Atom> {
 
 	
 	private static final Logger LOGGER = LoggerFactory

@@ -118,7 +118,8 @@ public class OWL2ParserTest {
 
 		int nbRules = 0;
 
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (o instanceof Rule) {
 				++nbRules;
 
@@ -150,7 +151,8 @@ public class OWL2ParserTest {
 
 		int nbRules = 0;
 
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (o instanceof Rule) {
 				++nbRules;
 				Rule r = (Rule) o;
@@ -185,10 +187,10 @@ public class OWL2ParserTest {
 
 		int nbNegativeConstraint = 0;
 
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (o instanceof DefaultNegativeConstraint) {
 				++nbNegativeConstraint;
-				System.out.println(o);
 				DefaultNegativeConstraint r = (DefaultNegativeConstraint) o;
 				Iterator<Atom> bodyIt = r.getBody().iterator();
 				Assert.assertTrue(bodyIt.hasNext());
@@ -226,7 +228,8 @@ public class OWL2ParserTest {
 
 		int nbRules = 0;
 
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (o instanceof Rule) {
 				++nbRules;
 
@@ -256,13 +259,14 @@ public class OWL2ParserTest {
 	@Test
 	public void objectSomeValuesFrom() throws OWL2ParserException {
 		OWL2Parser parser = new OWL2Parser(PREFIXES + ":A rdf:type owl:Class . "
-				+ ":B rdf:type owl:Class . " + ":p rdf:type owl:Property . "
+				+ ":B rdf:type owl:Class . " + ":p rdf:type owl:ObjectProperty . "
 				+ "	[rdf:type owl:Restriction ;	owl:onProperty :p ;"
 				+ "			owl:someValuesFrom :A]" + "	rdfs:subClassOf :B . ");
 
 		int nbRules = 0;
 
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (o instanceof Rule) {
 				++nbRules;
 
@@ -298,13 +302,14 @@ public class OWL2ParserTest {
 	@Test
 	public void objectHasValue() throws OWL2ParserException {
 		OWL2Parser parser = new OWL2Parser(PREFIXES + ":A rdf:type owl:Class . "
-				+ ":p rdf:type owl:Property . "
+				+ ":p rdf:type owl:ObjectProperty . "
 				+ "	[rdf:type owl:Restriction ;	owl:onProperty :p ;"
 				+ "			owl:hasValue :i1]" + "	rdfs:subClassOf :A . ");
 
 		int nbRules = 0;
 
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (o instanceof Rule) {
 				++nbRules;
 
@@ -334,14 +339,15 @@ public class OWL2ParserTest {
 	@Test
 	public void objectHasSelf() throws OWL2ParserException {
 		OWL2Parser parser = new OWL2Parser(PREFIXES + ":A rdf:type owl:Class . "
-				+ ":p rdf:type owl:Property . "
+		                                   + ":p rdf:type owl:ObjectProperty . "
 				+ "	[rdf:type owl:Restriction ;	owl:onProperty :p ;"
 				+ "			owl:hasSelf \"true\"^^xsd:boolean]"
 				+ "	rdfs:subClassOf :A . ");
 
 		int nbRules = 0;
 
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (o instanceof Rule) {
 				++nbRules;
 
@@ -379,7 +385,8 @@ public class OWL2ParserTest {
 
 		int nbRules = 0;
 
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (o instanceof Rule) {
 				++nbRules;
 
@@ -416,7 +423,8 @@ public class OWL2ParserTest {
 
 		int nbAssertions = 0;
 
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (!(o instanceof Prefix)) {
 				++nbAssertions;
 			}
@@ -436,7 +444,8 @@ public class OWL2ParserTest {
 
 		int nbAssertions = 0;
 
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (!(o instanceof Prefix)) {
 				++nbAssertions;
 			}
@@ -455,7 +464,8 @@ public class OWL2ParserTest {
 
 		int nbRules = 0;
 
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (o instanceof Rule) {
 				++nbRules;
 
@@ -499,7 +509,8 @@ public class OWL2ParserTest {
 
 		int nbRules = 0;
 
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (o instanceof DefaultNegativeConstraint) {
 				++nbRules;
 			}
@@ -518,11 +529,12 @@ public class OWL2ParserTest {
 
 		int nbRules = 0;
 
-		for (Object o : parser) {
-			if (o instanceof Rule) {
+		while (parser.hasNext()) {
+			if (parser.next() instanceof Rule)
 				++nbRules;
-			}
 		}
+		parser.close();
+
 		Assert.assertEquals("Number of assertions found:", 1, nbRules);
 	}
 	
@@ -536,11 +548,12 @@ public class OWL2ParserTest {
 				"                     owl:maxCardinality 1 ]. ");
 		int nbRules = 0;
 
-		for (Object o : parser) {
-			if (o instanceof Rule) {
+		while (parser.hasNext()) {
+			if (parser.next() instanceof Rule)
 				++nbRules;
-			}
 		}
+		parser.close();
+
 		Assert.assertEquals("Number of assertions found:", 1, nbRules);
 	}
 
@@ -558,11 +571,12 @@ public class OWL2ParserTest {
 
 		int nbRules = 0;
 
-		for (Object o : parser) {
-			if (o instanceof Rule) {
+		while (parser.hasNext()) {
+			if (parser.next() instanceof Rule)
 				++nbRules;
-			}
 		}
+		parser.close();
+
 		Assert.assertEquals("Number of assertions found:", 3, nbRules);
 	}
 
@@ -577,12 +591,12 @@ public class OWL2ParserTest {
 
 		int nbRules = 0;
 
-		for (Object o : parser) {
-			if (o instanceof Rule) {
+		while (parser.hasNext()) {
+			if (parser.next() instanceof Rule)
 				++nbRules;
-
-			}
 		}
+		parser.close();
+
 		Assert.assertEquals("Number of assertions found:", 1, nbRules);
 	}
 
@@ -597,12 +611,12 @@ public class OWL2ParserTest {
 
 		int nbRules = 0;
 
-		for (Object o : parser) {
-			if (o instanceof Rule) {
+		while (parser.hasNext()) {
+			if (parser.next() instanceof Rule)
 				++nbRules;
-
-			}
 		}
+		parser.close();
+
 		Assert.assertEquals("Number of assertions found:", 2, nbRules);
 	}
 
@@ -613,7 +627,8 @@ public class OWL2ParserTest {
 
 		int nbRules = 0;
 
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (o instanceof AtomSet) {
 				++nbRules;
 
@@ -646,7 +661,8 @@ public class OWL2ParserTest {
 
 		int nbRules = 0;
 
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (o instanceof DefaultNegativeConstraint) {
 				++nbRules;
 
@@ -674,14 +690,16 @@ public class OWL2ParserTest {
 	@Test
 	public void objectAllValuesFrom() throws OWL2ParserException {
 		OWL2Parser parser = new OWL2Parser(PREFIXES + ":A rdf:type owl:Class . "
-				+ ":B rdf:type owl:Class . " + ":p rdf:type owl:Property . "
+		                                   + ":B rdf:type owl:Class . "
+		                                   + ":p rdf:type owl:ObjectProperty . "
 				+ ":A rdfs:subClassOf [ rdf:type owl:Restriction ;"
 				+ "							owl:onProperty :p ;"
 										   + "	                        owl:allValuesFrom :B ]. ");
 
 		int nbRules = 0;
 
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (o instanceof Rule) {
 				++nbRules;
 
@@ -730,7 +748,8 @@ public class OWL2ParserTest {
 
 		int nbRules = 0;
 
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (o instanceof Rule) {
 				++nbRules;
 
@@ -764,7 +783,8 @@ public class OWL2ParserTest {
 
 		int nbRules = 0;
 
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (o instanceof AtomSet) {
 				for (Atom a : (AtomSet) o) {
 					++nbRules;
@@ -784,7 +804,8 @@ public class OWL2ParserTest {
 		OWL2Parser parser = new OWL2Parser(PREFIXES + ":A rdf:type owl:Class . "
 				+ ":B rdf:type owl:Class . " + ":C rdf:type owl:Class . "
 				+ ":D rdf:type owl:Class . " + ":E rdf:type owl:Class . "
-				+ ":p rdf:type owl:Property . " + "[ owl:intersectionOf ( "
+		                                   + ":p rdf:type owl:ObjectProperty . "
+		                                   + "[ owl:intersectionOf ( "
 				+ "		:B [ owl:unionOf ( "
 				+ "				:E [rdf:type owl:Restriction ;	"
 				+ "					owl:onProperty :p ;" + "					owl:someValuesFrom ["
@@ -793,7 +814,8 @@ public class OWL2ParserTest {
 
 		int nbRules = 0;
 
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (o instanceof Rule) {
 				++nbRules;
 
@@ -831,7 +853,8 @@ public class OWL2ParserTest {
 
 		int nbRules = 0;
 
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (o instanceof Rule) {
 
 				++nbRules;
@@ -852,7 +875,8 @@ public class OWL2ParserTest {
 
 		int nbRules = 0;
 
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (o instanceof Rule) {
 
 				++nbRules;
@@ -874,7 +898,8 @@ public class OWL2ParserTest {
 
 		int nbRules = 0;
 
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (o instanceof Rule) {
 
 				++nbRules;
@@ -892,7 +917,8 @@ public class OWL2ParserTest {
 
 		int nbRules = 0;
 
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (o instanceof AtomSet) {
 				for (Atom a : (AtomSet) o) {
 					++nbRules;
@@ -915,7 +941,8 @@ public class OWL2ParserTest {
 
 		int nbRules = 0;
 
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (o instanceof Rule) {
 
 				++nbRules;
@@ -942,7 +969,8 @@ public class OWL2ParserTest {
 
 		int nbRules = 0;
 
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (o instanceof Rule || o instanceof AtomSet) {
 				++nbRules;
 
@@ -964,9 +992,9 @@ public class OWL2ParserTest {
 				+ ":A owl:hasKey (:p :q) .");
 
 		int nbAssertions = 0;
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (!(o instanceof Prefix)) {
-				System.out.println(o);
 				Assert.assertTrue(o instanceof Rule);
 				++nbAssertions;
 			}
@@ -982,7 +1010,8 @@ public class OWL2ParserTest {
 						+ "[owl:unionOf( :A :B [owl:oneOf (:i1)] ) ] owl:hasKey (:p :q) .");
 
 		int nbAssertions = 0;
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (!(o instanceof Prefix)) {
 				Assert.assertTrue(o instanceof Rule);
 				++nbAssertions;
@@ -1004,7 +1033,8 @@ public class OWL2ParserTest {
 					+ ":p rdfs:subPropertyOf :q .");
 
 			int nbRules = 0;
-			for (Object o : parser) {
+			while (parser.hasNext()) {
+				Object o = parser.next();
 				if (o instanceof Rule) {
 
 					++nbRules;
@@ -1038,7 +1068,8 @@ public class OWL2ParserTest {
 					+ ":p owl:equivalentProperty :q .");
 
 			int nbRules = 0;
-			for (Object o : parser) {
+			while (parser.hasNext()) {
+				Object o = parser.next();
 				if (o instanceof Rule) {
 					++nbRules;
 					Rule r = (Rule) o;
@@ -1073,7 +1104,8 @@ public class OWL2ParserTest {
 					+ ":p owl:inverseOf :q .");
 
 			int nbRules = 0;
-			for (Object o : parser) {
+			while (parser.hasNext()) {
+				Object o = parser.next();
 				if (o instanceof Rule) {
 					++nbRules;
 					Rule r = (Rule) o;
@@ -1108,7 +1140,8 @@ public class OWL2ParserTest {
 					+ ":p owl:propertyDisjointWith :q .");
 
 			int nbRules = 0;
-			for (Object o : parser) {
+			while (parser.hasNext()) {
+				Object o = parser.next();
 				if (o instanceof Rule) {
 					++nbRules;
 					Rule r = (Rule) o;
@@ -1147,7 +1180,8 @@ public class OWL2ParserTest {
 							+ ":p rdf:type owl:ObjectProperty ; rdf:type owl:FunctionalProperty . ");
 
 			int nbRules = 0;
-			for (Object o : parser) {
+			while (parser.hasNext()) {
+				Object o = parser.next();
 				if (o instanceof Rule) {
 					++nbRules;
 
@@ -1190,7 +1224,8 @@ public class OWL2ParserTest {
 					+ ":p rdf:type owl:InverseFunctionalProperty . ");
 
 			int nbRules = 0;
-			for (Object o : parser) {
+			while (parser.hasNext()) {
+				Object o = parser.next();
 				if (o instanceof Rule) {
 					++nbRules;
 					Rule r = (Rule) o;
@@ -1232,7 +1267,8 @@ public class OWL2ParserTest {
 					+ ":p rdf:type owl:ReflexiveProperty . ");
 
 			int nbRules = 0;
-			for (Object o : parser) {
+			while (parser.hasNext()) {
+				Object o = parser.next();
 				if (o instanceof Rule) {
 					++nbRules;
 					Rule r = (Rule) o;
@@ -1267,7 +1303,8 @@ public class OWL2ParserTest {
 					+ ":p rdf:type owl:IrreflexiveProperty . ");
 
 			int nbRules = 0;
-			for (Object o : parser) {
+			while (parser.hasNext()) {
+				Object o = parser.next();
 				if (o instanceof DefaultNegativeConstraint) {
 					++nbRules;
 					Rule r = (Rule) o;
@@ -1295,7 +1332,8 @@ public class OWL2ParserTest {
 					+ ":p rdf:type owl:SymmetricProperty . ");
 
 			int nbRules = 0;
-			for (Object o : parser) {
+			while (parser.hasNext()) {
+				Object o = parser.next();
 				if (o instanceof Rule) {
 					++nbRules;
 					Rule r = (Rule) o;
@@ -1330,7 +1368,8 @@ public class OWL2ParserTest {
 					+ ":p rdf:type owl:AsymmetricProperty . ");
 
 			int nbRules = 0;
-			for (Object o : parser) {
+			while (parser.hasNext()) {
+				Object o = parser.next();
 				if (o instanceof Rule) {
 					++nbRules;
 					Rule r = (Rule) o;
@@ -1362,7 +1401,8 @@ public class OWL2ParserTest {
 					+ ":p rdf:type owl:TransitiveProperty . ");
 
 			int nbRules = 0;
-			for (Object o : parser) {
+			while (parser.hasNext()) {
+				Object o = parser.next();
 				if (o instanceof Rule) {
 					++nbRules;
 					Rule r = (Rule) o;
@@ -1407,7 +1447,8 @@ public class OWL2ParserTest {
 					+ ":A rdf:type owl:Class . " + ":p rdfs:range :A .");
 
 			boolean found = false;
-			for (Object o : parser) {
+			while (parser.hasNext()) {
+				Object o = parser.next();
 				if (!(o instanceof Prefix)) {
 					Rule r = (Rule) o;
 					Atom property = (Atom) r.getBody().iterator().next();
@@ -1435,7 +1476,8 @@ public class OWL2ParserTest {
 					+ ":A rdf:type owl:Class . " + ":p rdfs:domain :A .");
 
 			boolean found = false;
-			for (Object o : parser) {
+			while (parser.hasNext()) {
+				Object o = parser.next();
 				if (!(o instanceof Prefix)) {
 					Rule r = (Rule) o;
 					Atom property = (Atom) r.getBody().iterator().next();
@@ -1467,7 +1509,8 @@ public class OWL2ParserTest {
 
 		int nbRules = 0;
 
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (o instanceof Rule) {
 				++nbRules;
 
@@ -1512,7 +1555,8 @@ public class OWL2ParserTest {
 
 		int nbAssertions = 0;
 
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (!(o instanceof Prefix)) {
 				++nbAssertions;
 			}
@@ -1532,7 +1576,8 @@ public class OWL2ParserTest {
 
 		int nbRules = 0;
 
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (o instanceof Rule) {
 				++nbRules;
 				Rule r = (Rule) o;
@@ -1575,7 +1620,8 @@ public class OWL2ParserTest {
 
 		int nbRules = 0;
 
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (o instanceof DefaultNegativeConstraint) {
 				++nbRules;
 			}
@@ -1594,7 +1640,8 @@ public class OWL2ParserTest {
 
 		int nbRules = 0;
 
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (o instanceof Rule) {
 				++nbRules;
 			}
@@ -1613,7 +1660,8 @@ public class OWL2ParserTest {
 
 		int nbRules = 0;
 
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (o instanceof Rule) {
 				++nbRules;
 			}
@@ -1632,7 +1680,8 @@ public class OWL2ParserTest {
 
 		int nbRules = 0;
 
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (o instanceof Rule) {
 				++nbRules;
 			}
@@ -1648,7 +1697,8 @@ public class OWL2ParserTest {
 				+ ":C rdf:type owl:Class ." + ":p rdfs:domain :C .");
 
 		boolean found = false;
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (!(o instanceof Prefix)) {
 				Assert.assertTrue(o instanceof Rule);
 				Rule r = (Rule) o;
@@ -1674,7 +1724,8 @@ public class OWL2ParserTest {
 				+ ":D rdf:type rdfs:Datatype ." + ":p rdfs:range :D .");
 
 		boolean found = false;
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (!(o instanceof Prefix)) {
 				Assert.assertTrue(o instanceof Rule);
 				Rule r = (Rule) o;
@@ -1702,7 +1753,8 @@ public class OWL2ParserTest {
 				+ ":p rdfs:range [owl:intersectionOf ( :D :E ) ] .");
 
 		int nbAssertions = 0;
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (!(o instanceof Prefix)) {
 				Assert.assertTrue(o instanceof Rule);
 				Rule r = (Rule) o;
@@ -1723,7 +1775,8 @@ public class OWL2ParserTest {
 						+ ":p rdfs:range [owl:complementOf [owl:intersectionOf ( :D :E ) ]] .");
 
 		int nbAssertions = 0;
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (!(o instanceof Prefix)) {
 				Assert.assertTrue(o instanceof Rule);
 				Rule r = (Rule) o;
@@ -1744,7 +1797,8 @@ public class OWL2ParserTest {
 						+ ":p rdfs:range [a rdfs:Datatype; owl:complementOf [a rdfs:Datatype; owl:oneOf ( :i1 :i2 :i3 ) ]] .");
 
 		int nbAssertions = 0;
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (!(o instanceof Prefix)) {
 				Assert.assertTrue(o instanceof Rule);
 				Rule r = (Rule) o;
@@ -1766,11 +1820,11 @@ public class OWL2ParserTest {
 						+ ":p rdfs:range [a rdfs:Datatype; owl:complementOf [a rdfs:Datatype; owl:unionOf ( :D1 :D2 ) ]] .");
 
 		int nbAssertions = 0;
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (!(o instanceof Prefix)) {
 				Assert.assertTrue(o instanceof Rule);
 				Rule r = (Rule) o;
-				System.out.println(o);
 				++nbAssertions;
 
 			}
@@ -1790,7 +1844,8 @@ public class OWL2ParserTest {
 						+ ":A rdfs:subClassOf [a owl:Restriction; owl:onProperty :p; owl:someValuesFrom :D].");
 
 		int nbAssertions = 0;
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (!(o instanceof Prefix)) {
 				Assert.assertTrue(o instanceof Rule);
 				Rule r = (Rule) o;
@@ -1815,11 +1870,11 @@ public class OWL2ParserTest {
 						+ "[a owl:Restriction; owl:onProperty :p; owl:someValuesFrom [a rdfs:Datatype; owl:unionOf (:D1 :D2 :D3)]] rdfs:subClassOf :A.");
 
 		int nbAssertions = 0;
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (!(o instanceof Prefix)) {
 				Assert.assertTrue(o instanceof Rule);
 				Rule r = (Rule) o;
-				System.out.println(o);
 				++nbAssertions;
 
 			}
@@ -1839,7 +1894,8 @@ public class OWL2ParserTest {
 						+ ":A rdfs:subClassOf [a owl:Restriction; owl:onProperty :p; owl:allValuesFrom :D].");
 
 		int nbAssertions = 0;
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (!(o instanceof Prefix)) {
 				Assert.assertTrue(o instanceof Rule);
 				Rule r = (Rule) o;
@@ -1862,7 +1918,8 @@ public class OWL2ParserTest {
 				+ ":p rdfs:subPropertyOf [owl:inverseOf :q] .");
 
 		int nbRules = 0;
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (o instanceof Rule) {
 				++nbRules;
 				Rule r = (Rule) o;
@@ -1892,9 +1949,9 @@ public class OWL2ParserTest {
 				+ " owl:propertyChain  ( :p :q :r ) . ");
 
 		int nbRules = 0;
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (o instanceof Rule) {
-				System.out.println(o);
 				++nbRules;
 				Rule r = (Rule) o;
 				Iterator<Atom> it = r.getBody().iterator();
@@ -1952,7 +2009,8 @@ public class OWL2ParserTest {
 				+ ":i1 a :A ." + "");
 
 		int nbFacts = 0;
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if ((o instanceof AtomSet)) {
 				++nbFacts;
 				Iterator<Atom> it = ((AtomSet) o).iterator();
@@ -1976,7 +2034,8 @@ public class OWL2ParserTest {
 
 		int nbFacts = 0;
 		int nbConstraint = 0;
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if ((o instanceof AtomSet)) {
 
 				++nbFacts;
@@ -2009,7 +2068,8 @@ public class OWL2ParserTest {
 				+ ":p rdf:type owl:ObjectProperty . " + ":i1 :p :i2 ." + "");
 
 		boolean found = false;
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (!(o instanceof Prefix)) {
 				AtomSet atomset = (AtomSet) o;
 				Atom a = atomset.iterator().next();
@@ -2035,7 +2095,8 @@ public class OWL2ParserTest {
 
 			int nbFacts = 0;
 			int nbAtoms = 0;
-			for (Object o : parser) {
+			while (parser.hasNext()) {
+				Object o = parser.next();
 				if (o instanceof AtomSet) {
 					++nbFacts;
 					for (Atom a : (AtomSet) o) {
@@ -2063,7 +2124,8 @@ public class OWL2ParserTest {
 
 			int nbFacts = 0;
 			int nbAtoms = 0;
-			for (Object o : parser) {
+			while (parser.hasNext()) {
+				Object o = parser.next();
 				if (o instanceof AtomSet) {
 					++nbFacts;
 					for (Atom a : (AtomSet) o) {
@@ -2084,7 +2146,8 @@ public class OWL2ParserTest {
 				+ ":p rdf:type owl:DatatypeProperty . " + ":i1 :p 7 ." + "");
 
 		boolean found = false;
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (!(o instanceof Prefix)) {
 
 				AtomSet atomset = (AtomSet) o;
@@ -2111,7 +2174,8 @@ public class OWL2ParserTest {
 	// + "test:a test:property \"test\" ." + "");
 	//
 	// boolean found = false;
-	// for (Object o : parser) {
+	// while (parser.hasNext()) {
+	// Object o = parser.next();
 	// if (!(o instanceof Prefix)) {
 	// Atom a = (Atom) o;
 	// Assert.assertEquals(new Predicate("test:property", 2),
@@ -2147,7 +2211,8 @@ public class OWL2ParserTest {
 				+ "        owl:allValuesFrom :A] " + "] rdfs:subClassOf :B .");
 
 		int nbAssertion = 0;
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (!(o instanceof Prefix)) {
 				++nbAssertion;
 			}
@@ -2171,7 +2236,8 @@ public class OWL2ParserTest {
 						+ "] rdfs:subClassOf :B .");
 
 		int nbAssertion = 0;
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (!(o instanceof Prefix)) {
 				++nbAssertion;
 
@@ -2191,7 +2257,8 @@ public class OWL2ParserTest {
 				+ "        owl:allValuesFrom :B] ) ] rdfs:subClassOf :C .");
 
 		int nbAssertion = 0;
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (!(o instanceof Prefix)) {
 				++nbAssertion;
 
@@ -2210,7 +2277,8 @@ public class OWL2ParserTest {
 				+ "        owl:allValuesFrom :B] ) ] rdfs:subClassOf :C .");
 
 		int nbAssertion = 0;
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (!(o instanceof Prefix)) {
 				++nbAssertion;
 			}
@@ -2234,7 +2302,8 @@ public class OWL2ParserTest {
 						+ " rdfs:subClassOf :A .");
 
 		int nbAssertion = 0;
-		for (Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if (!(o instanceof Prefix)) {
 				++nbAssertion;
 			}
@@ -2261,7 +2330,8 @@ public class OWL2ParserTest {
 	//
 	// boolean found = false;
 	//
-	// for (Object o : parser) {
+	// while (parser.hasNext()) {
+	// Object o = parser.next();
 	// if (!(o instanceof Prefix)) {
 	//
 	// Rule r = (Rule) o;

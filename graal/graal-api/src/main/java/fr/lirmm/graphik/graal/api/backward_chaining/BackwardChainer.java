@@ -45,16 +45,15 @@
  */
 package fr.lirmm.graphik.graal.api.backward_chaining;
 
-import java.util.Iterator;
-
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.util.Profilable;
+import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */
-public interface BackwardChainer extends Iterator<ConjunctiveQuery>, Profilable {
+public interface BackwardChainer extends GIterator<ConjunctiveQuery>, Profilable {
 
 	@Override
 	boolean hasNext();

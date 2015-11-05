@@ -42,11 +42,10 @@
  */
  package fr.lirmm.graphik.graal.cqa;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-
 import java.io.File;
 import java.io.FileWriter;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 public class FGH implements Iterable<FGH.Edge> {
 
@@ -59,7 +58,8 @@ public class FGH implements Iterable<FGH.Edge> {
 			this.to = t;
 		}
 
-		public String toString() {
+		@Override
+        public String toString() {
 			StringBuilder s = new StringBuilder();
 			s.append('{');
 			boolean first = true;
@@ -74,7 +74,8 @@ public class FGH implements Iterable<FGH.Edge> {
 			return s.toString();
 		}
 
-		public int compareTo(Edge e) {
+		@Override
+        public int compareTo(Edge e) {
 			return 1;
 		}
 		public boolean isSubset(Edge e) {
@@ -88,7 +89,8 @@ public class FGH implements Iterable<FGH.Edge> {
 
 		public int to() { return this.to; }
 
-		public Iterator iterator() { return this.from.iterator(); }
+		@Override
+        public Iterator iterator() { return this.from.iterator(); }
 
 		private LinkedList<Integer> from = new LinkedList<Integer>();
 		private int to;
@@ -104,14 +106,16 @@ public class FGH implements Iterable<FGH.Edge> {
 	}
 
 	public void filterSupsets() {
+		LinkedList<Edge> toRemove = new LinkedList<Edge>();
 		for (Edge e : this.edges) {
 			for (Edge e2 : this.edges) {
 				if (e != e2) {
 					if (e.isSubset(e2))
-						this.edges.remove(e2);
+						toRemove.add(e2);
 				}
 			}
 		}
+		this.edges.removeAll(toRemove);
 	}
 
 	@Override
@@ -119,7 +123,8 @@ public class FGH implements Iterable<FGH.Edge> {
 		return this.edges.iterator();
 	}
 
-	public String toString() {
+	@Override
+    public String toString() {
 		StringBuilder s = new StringBuilder();
 		for (Edge e : this) {
 			s.append(e);

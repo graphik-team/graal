@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  [%- PROCESS config.tt -%]
+  [%- title = "Dlgp to RuleML"
+  desc="Translator from Dlgp to RuleML"
+  keywords="dlgp, ruleml, translator, rule, format, existential rules,
+  datalog+" -%]  
+  [%- INCLUDE header.tt -%]
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <h1 id="project_title">[% title %]</h1>
+        </header>
+        [%- INCLUDE nav.tt -%]
+    </div>
+
+    [%- INCLUDE downloads_sub_menu.tt -%]
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <p>The <em>dlgp2ruleml</em> program
+          translates <a href="http://graphik-team.github.io/graal/papers/datalog+_v2.0_en.pdf"><em>dlgp</em></a>
+          to the Datalog+ fragment of <a href="http://wiki.ruleml.org/index.php/Specification_of_Deliberation_RuleML_1.01">Deliberation RuleML 1.01</a>. This sublanguage includes:</p>
+
+        <ul>
+          <li>positive facts,</li>
+          <li>universally quantified implications,</li>
+          <li>existentials in the heads of implications,</li>
+          <li>equality,</li>
+          <li>falsity in the heads of implications,</li>
+          <li>conjunctions in the heads of implications.</li>
+        </ul>
+        <p>The translation from dlgp to this sublanguage is quite
+        direct. Since existential quantification in facts is not
+        allowed in this sublanguage, the tool translates each existential variable in facts by a new constant. </p>
+
+        <h2>Getting started</h2>
+
+        <ul>
+          <li>Download <a href="./dl/dlgp2ruleml-1.0.beta1.jar">dlgp2ruleml</a></li>
+          <li>Download <a href="./dl/example2.dlp">example2.dlp</a>
+          and its translation <a href="./dl/example2.ruleml">example2.ruleml</a></li>
+        </ul>
+
+         <ul>
+          <li>
+            Translate from an <em>dlgp</em> file to a RuleML file: <br/>
+            <code>java -jar dlgp2ruleml*.jar -f ./example2.dlp -o ./example.ruleml</code>
+          </li>
+          <li>
+            Translate from the standard input (dlgp) to the standard output (RuleML): <br/>
+            <code>java -jar dlgp2ruleml*.jar < ./example2.dlp > ./example.ruleml</code>
+          </li>
+        </ul>
+      </section>
+    </div>
+
+  [%- INCLUDE footer.tt -%]
+
+  </body>
+</html>

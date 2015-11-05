@@ -67,21 +67,4 @@ public class ToTripleTransformation extends AAtomTransformator {
         return Util.reification(atom, this.freeVarGen);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * fr.lirmm.graphik.alaska.transformation.AAtomTransformator#transform(fr
-     * .lirmm.graphik.kb.IAtomSet)
-     */
-    /*@Override
-    public AtomSet transform(AtomSet atomSet) {
-        WriteableAtomSet atomSetTransformed = new LinkedListAtomSet();
-        for (Atom atom : atomSet) {
-            for (Atom a : Util.reification(atom, freeVarGen)) {
-                atomSetTransformed.add(a);
-            }
-        }
-        return atomSetTransformed;
-    }*/
 }

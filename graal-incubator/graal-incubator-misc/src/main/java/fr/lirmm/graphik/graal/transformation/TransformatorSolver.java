@@ -46,10 +46,11 @@
 package fr.lirmm.graphik.graal.transformation;
 
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.api.core.stream.SubstitutionReader;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -74,7 +75,8 @@ public final class TransformatorSolver implements Homomorphism<ConjunctiveQuery,
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public SubstitutionReader execute(ConjunctiveQuery query, TransformAtomSet atomSet) throws HomomorphismException {
+	public CloseableIterator<Substitution> execute(ConjunctiveQuery query, TransformAtomSet atomSet)
+	                                                                                       throws HomomorphismException {
 		//TODO transform query and pass it to encapsulated atomSet
 		throw new MethodNotImplementedError();
 	}

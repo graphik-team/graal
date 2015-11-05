@@ -45,7 +45,6 @@
  */
 package fr.lirmm.graphik.graal.api.forward_chaining;
 
-import java.util.Iterator;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
@@ -53,6 +52,7 @@ import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
+import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
  * The ChaseHaltingCondition interface provides a way to control when a
@@ -69,14 +69,17 @@ public interface ChaseHaltingCondition {
 	 * @param rule
 	 *            The rule which is triggered
 	 * @param substitution
-	 *            A homomorphism of the rule body found.
+	 *            A homomorphism of the rule body found. The existential
+	 *            variables are not substitued.
 	 * @param data
 	 *            The data over which this rule is applied.
-	 * @return The atoms to actually add, if the application is redundant.
+	 * @return A full substitution or null if the application is reduntant. The
+	 *         returned substitution should substitutes all variables of the
+	 *         head of the rule.
 	 * 
 	 * @throws HomomorphismFactoryException
 	 * @throws HomomorphismException
 	 */
-	Iterator<Atom> apply(Rule rule, Substitution substitution, AtomSet data) throws HomomorphismFactoryException,
+	GIterator<Atom> apply(Rule rule, Substitution substitution, AtomSet data) throws HomomorphismFactoryException,
 	                                                                          HomomorphismException;
 }

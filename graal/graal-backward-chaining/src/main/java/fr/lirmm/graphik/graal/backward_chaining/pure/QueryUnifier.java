@@ -48,8 +48,10 @@ import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.factory.RuleFactory;
+import fr.lirmm.graphik.util.Partition;
 
 /**
  * An unifier describe how to unify a piece of a fact with a part of an head
@@ -74,11 +76,11 @@ class QueryUnifier {
 	/**
 	 * the partition that unify the piece and a part of the head rule
 	 */
-	private TermPartition partition;
+	private Partition<Term>  partition;
 
 	private Substitution associatedSubstitution;
 
-	public QueryUnifier(InMemoryAtomSet piece, TermPartition partition, Rule rule,
+	public QueryUnifier(InMemoryAtomSet piece, Partition<Term> partition, Rule rule,
 			ConjunctiveQuery query) {
 		super();
 		this.rule = rule;
@@ -111,7 +113,7 @@ class QueryUnifier {
 	/**
 	 * Change the substitution that unify the piece and a part of the head rule
 	 */
-	public void setSubstitution(TermPartition partition) {
+	public void setSubstitution(Partition<Term> partition) {
 		this.partition = partition;
 	}
 
@@ -132,7 +134,7 @@ class QueryUnifier {
 	/**
 	 * Return the partition that unify the piece and a part of the head rule
 	 */
-	public TermPartition getPartition() {
+	public Partition<Term> getPartition() {
 		return partition;
 	}
 
@@ -145,7 +147,7 @@ class QueryUnifier {
 		InMemoryAtomSet atomset = null;
 
 		if (associatedSubstitution == null) {
-			associatedSubstitution = partition.getAssociatedSubstitution(query);
+			associatedSubstitution = TermPartitionUtils.getAssociatedSubstitution(partition, query);
 		}
 
 		if (associatedSubstitution != null) {
@@ -196,7 +198,7 @@ class QueryUnifier {
 		}
 		Rule rule = RuleFactory.instance().create(b, h);
 		// we create the partition which is the join of the two partitions
-		TermPartition part = getPartition().join(u.getPartition());
+		Partition<Term> part = getPartition().join(u.getPartition());
 
 		return new QueryUnifier(pieces, part, rule, getQuery());
 	}
@@ -219,7 +221,7 @@ class QueryUnifier {
 				}
 			}
 		}
-		return this.getPartition().join(u.getPartition()).getAssociatedSubstitution(
+		return TermPartitionUtils.getAssociatedSubstitution(this.getPartition().join(u.getPartition()),
 				null) != null;
 	}
 

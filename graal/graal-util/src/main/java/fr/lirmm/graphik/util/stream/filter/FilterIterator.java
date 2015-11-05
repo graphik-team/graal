@@ -45,20 +45,21 @@
  */
 package fr.lirmm.graphik.util.stream.filter;
 
-import java.util.Iterator;
+import fr.lirmm.graphik.util.stream.AbstractIterator;
+import fr.lirmm.graphik.util.stream.GIterator;
 
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class FilterIterator<U, T extends U> implements Iterator<T> {
+public class FilterIterator<U, T extends U> extends AbstractIterator<T> {
 
-	private final Iterator<U> it;
+	private final GIterator<U> it;
 	private final Filter<U> filter;
 	private T next;
 
-	public FilterIterator(Iterator<U> it, Filter<U> filter) {
+	public FilterIterator(GIterator<U> it, Filter<U> filter) {
 		this.filter = filter;
 		this.it = it;
 		this.next = null;
@@ -84,12 +85,5 @@ public class FilterIterator<U, T extends U> implements Iterator<T> {
 		this.next = null;
 		return t;
 	}
-
-	@Override
-	public void remove() {
-		throw new UnsupportedOperationException();
-	}
-
-	
 
 }

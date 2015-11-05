@@ -42,19 +42,30 @@
  */
  package fr.lirmm.graphik.graal.api.forward_chaining;
 
+import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.util.stream.GIterator;
 
 public interface RuleApplicationHandler {
 
-	public boolean onRuleApplication(Rule rule, Substitution substitution, AtomSet data);
+	public boolean preRuleApplication(Rule rule, Substitution substitution, AtomSet data);
+
+	public GIterator<Atom> postRuleApplication(Rule rule, Substitution substitution, AtomSet data, GIterator<Atom> atomsToAdd);
 
 	public static RuleApplicationHandler DEFAULT = new RuleApplicationHandler() {
+
 		@Override
-		public boolean onRuleApplication(Rule rule, Substitution substitution, AtomSet data) {
+		public boolean preRuleApplication(Rule rule, Substitution substitution, AtomSet data) {
 			return true;
 		}
+
+		@Override
+		public GIterator<Atom> postRuleApplication(Rule rule, Substitution substitution, AtomSet data, GIterator<Atom> atomsToAdd) {
+			return atomsToAdd;
+		}
+
 	};
 
 };

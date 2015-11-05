@@ -55,18 +55,16 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import fr.lirmm.graphik.graal.GraalConstant;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
-import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
-import fr.lirmm.graphik.graal.GraalConstant;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetUtils;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
 import fr.lirmm.graphik.graal.core.factory.RuleFactory;
@@ -197,7 +195,7 @@ public final class RuleUtils {
 	 * @return The equivalent set of atomic head rules.
 	 */
 	public static Iterator<Rule> computeAtomicHead(Iterator<Rule> rules) {
-		return new AtomicHeadIterator(rules);
+		return new AtomicHeadIterator(new SinglePieceRulesIterator(rules));
 	}
 
 
@@ -212,7 +210,7 @@ public final class RuleUtils {
 		Collection<Rule> monoPiece = new LinkedList<Rule>();
 
 		if (label.isEmpty()) {
-			for (AtomSet piece : getPieces(rule)) {
+			for (InMemoryAtomSet piece : getPieces(rule)) {
 				monoPiece.add(RuleFactory.instance().create(rule.getBody(), piece));
 			}
 		} else {
@@ -593,6 +591,10 @@ public final class RuleUtils {
 						terms.add(t);
 			}
 		}
+
+		// TODO: In the definition of CI, we need to add all
+		// predicates in rule head. But why? This doesn't make any
+		// sense...
 
 		for (Predicate p : predicates) {
 			generateCriticalInstance(A,terms,p,0,new DefaultAtom(p));

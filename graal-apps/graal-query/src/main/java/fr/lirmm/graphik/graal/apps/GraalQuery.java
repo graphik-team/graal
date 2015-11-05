@@ -54,20 +54,20 @@ import com.beust.jcommander.Parameter;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.graal.api.core.stream.SubstitutionReader;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
+import fr.lirmm.graphik.graal.store.rdbms.SqlUCQHomomorphism;
 import fr.lirmm.graphik.graal.store.rdbms.driver.DriverException;
 import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
 import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
-import fr.lirmm.graphik.graal.store.rdbms.homomorphism.SqlUCQHomomorphism;
 import fr.lirmm.graphik.util.Apps;
 import fr.lirmm.graphik.util.Profiler;
+import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -153,7 +153,8 @@ public class GraalQuery {
 
 		DlgpParser parser = new DlgpParser(new File(options.file));
 		UnionConjunctiveQueries ucq = new UnionConjunctiveQueries();
-		for(Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if(o instanceof ConjunctiveQuery) {
 				ucq.add((ConjunctiveQuery)o);
 			}
@@ -168,16 +169,16 @@ public class GraalQuery {
 		if (options.verbose) {
 			PROFILER.start("answering time");
 		}
-		SubstitutionReader subr = solver.execute(ucq, store);
+		GIterator<Substitution> subr = solver.execute(ucq, store);
 		if (options.verbose) {
 			PROFILER.stop("answering time");
 			WRITER.writeComment("answers");
 		}
 
 		int i = 0;
-		for(Substitution sub : subr) {
+		while (subr.hasNext()) {
 			++i;
-			WRITER.writeComment(sub.toString());
+			WRITER.writeComment(subr.next().toString());
 		}
 		
 		if (options.verbose) {

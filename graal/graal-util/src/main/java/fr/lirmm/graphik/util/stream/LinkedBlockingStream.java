@@ -46,6 +46,7 @@
 package fr.lirmm.graphik.util.stream;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -53,7 +54,7 @@ import java.util.Queue;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class LinkedBlockingStream<T> extends AbstractReader<T> implements ObjectWriter<T> {
+public class LinkedBlockingStream<T> extends AbstractCloseableIterator<T> implements Writer<T> {
 
     final int MAX_QUEUE;
     final int MIN_QUEUE;
@@ -76,6 +77,7 @@ public class LinkedBlockingStream<T> extends AbstractReader<T> implements Object
     //	METHODS
     // /////////////////////////////////////////////////////////////////////////
 
+    @Override
     public  void write(T object) {
     	synchronized(lock) {
             while(this.isOpen && this.queue.size() >= MAX_QUEUE ) {
@@ -89,9 +91,7 @@ public class LinkedBlockingStream<T> extends AbstractReader<T> implements Object
     	}
     }
 
-    /* (non-Javadoc)
-     * @see fr.lirmm.graphik.kb.stream.AtomReader#hasNext()
-     */
+    @Override
     public boolean hasNext() {
     	synchronized(lock) {
             while(this.isOpen && this.queue.size() == 0) {
@@ -105,9 +105,7 @@ public class LinkedBlockingStream<T> extends AbstractReader<T> implements Object
     	}
     }
     
-    /* (non-Javadoc)
-     * @see fr.lirmm.graphik.kb.stream.AtomReader#next()
-     */
+    @Override
     public T next() {
     	synchronized(lock) {
             this.hasNext();
@@ -120,6 +118,7 @@ public class LinkedBlockingStream<T> extends AbstractReader<T> implements Object
     	}
     }
 
+    @Override
     public void close(){
     	synchronized(lock) {
     		this.isOpen = false;
@@ -127,13 +126,10 @@ public class LinkedBlockingStream<T> extends AbstractReader<T> implements Object
     	}
     }
 
-    /* (non-Javadoc)
-     * @see fr.lirmm.graphik.kb.stream.AtomWriter#write(fr.lirmm.graphik.kb.stream.AtomReader)
-     */
     @Override
-    public void write(Iterable<T> inputStream) throws IOException {
-       for(T object : inputStream)
-           this.write(object);
+	public void write(Iterator<T> it) throws IOException {
+		while (it.hasNext())
+			this.write(it.next());
     }
 
 

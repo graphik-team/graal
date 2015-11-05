@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
 		<artifactId>graal-main-project</artifactId>
-		<version>1.0.2-SNAPSHOT</version>
+		<version>1.0.2</version>
 	</parent>
 	
 	<artifactId>graal-examples</artifactId>
@@ -27,6 +27,11 @@
 		<dependency>
 		  <groupId>fr.lirmm.graphik</groupId>
 		  <artifactId>graal-api</artifactId>
+		  <version>${project.parent.version}</version>
+		</dependency>
+	  <dependency>
+		  <groupId>fr.lirmm.graphik</groupId>
+		  <artifactId>graal-util</artifactId>
 		  <version>${project.parent.version}</version>
 		</dependency>
 		<dependency>

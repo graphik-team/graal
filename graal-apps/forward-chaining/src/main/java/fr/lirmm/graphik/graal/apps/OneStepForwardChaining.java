@@ -61,9 +61,9 @@ import fr.lirmm.graphik.graal.forward_chaining.NaiveChase;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
+import fr.lirmm.graphik.graal.store.rdbms.SqlHomomorphism;
 import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
-import fr.lirmm.graphik.graal.store.rdbms.homomorphism.SqlHomomorphism;
 import fr.lirmm.graphik.graal.store.rdbms.rule_applier.SQLRuleApplier;
 import fr.lirmm.graphik.util.Profiler;
 
@@ -118,7 +118,8 @@ public class OneStepForwardChaining {
 		
 		DlgpParser parser = new DlgpParser(new File(options.file));
 		LinkedList<Rule> rules = new LinkedList<Rule>();
-		for(Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
 			if(o instanceof Rule) {
 				rules.add((Rule)o);
 			}

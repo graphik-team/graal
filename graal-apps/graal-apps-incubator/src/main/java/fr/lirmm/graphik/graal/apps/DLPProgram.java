@@ -65,6 +65,7 @@ import fr.lirmm.graphik.graal.forward_chaining.StaticChase;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -81,7 +82,8 @@ public class DLPProgram {
 		RuleSet ruleSet = new LinkedListRuleSet();
 		LinkedList<ConjunctiveQuery> querySet = new LinkedList<ConjunctiveQuery>();
 		
-        for(Object o : parser) {
+		while (parser.hasNext()) {
+			Object o = parser.next();
         	if(o instanceof NegativeConstraint)
         		System.err.println("Constraint not supported");
         	else if(o instanceof Rule)
@@ -100,8 +102,9 @@ public class DLPProgram {
         writer.write("\n\n% queries\n");
         for(ConjunctiveQuery q : querySet) {
         	writer.write(q);
-        	for(Substitution s : StaticHomomorphism.executeQuery(q, atomSet)) {
-        		writer.write(s.toString());
+        	CloseableIterator<Substitution> executeQuery = StaticHomomorphism.executeQuery(q, atomSet);
+			while (executeQuery.hasNext()) {
+        		writer.write(executeQuery.next().toString());
         		writer.write("\n");
         	}
         }

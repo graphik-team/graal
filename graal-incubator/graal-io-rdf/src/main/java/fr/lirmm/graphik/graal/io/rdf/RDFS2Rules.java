@@ -45,22 +45,21 @@
  */
 package fr.lirmm.graphik.graal.io.rdf;
 
-import java.util.Iterator;
-
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.io.AbstractParser;
+import fr.lirmm.graphik.graal.api.io.Parser;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.factory.RuleFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public class RDFS2Rules extends AbstractParser<Object> {
+public class RDFS2Rules extends AbstractCloseableIterator<Object> implements Parser<Object> {
 
 	public static final String RDFS_PREFIX = "http://www.w3.org/2000/01/rdf-schema#";
 
@@ -91,7 +90,7 @@ public class RDFS2Rules extends AbstractParser<Object> {
 	protected static final Term Z = DefaultTermFactory.instance()
 			.createVariable("Z");
 
-	private Iterator<Atom> reader;
+	private Parser<Atom> reader;
 	
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR

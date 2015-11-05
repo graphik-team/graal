@@ -40,29 +40,59 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
+/**
  * 
  */
 package fr.lirmm.graphik.graal.api.core;
 
 import java.io.Serializable;
 import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * 
- * This class implements a comparator of Term that doesn't make difference
- * on Term Type.
+ * This class implements a comparator of Term that doesn't make difference on
+ * Term Type.
  *
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
 public class TermValueComparator implements Comparator<Term>, Serializable {
 
-	private static final long serialVersionUID = -4231328676676157296L;
+	private static final long          serialVersionUID = -4231328676676157296L;
+
+	private static TermValueComparator instance;
+
+	protected TermValueComparator() {
+		super();
+	}
+
+	public static synchronized TermValueComparator instance() {
+		if (instance == null)
+			instance = new TermValueComparator();
+
+		return instance;
+	}
 
 	@Override
 	public int compare(Term term0, Term term1) {
 		return term0.getIdentifier().toString().compareTo(term1.getIdentifier().toString());
 	}
-};
 
+	public int compare(List<Term> l1, List<Term> l2) {
+		if (l1.size() != l2.size()) {
+			return l1.size() - l2.size();
+		}
+		Iterator<Term> it1 = l1.iterator();
+		Iterator<Term> it2 = l2.iterator();
+		while (it1.hasNext() && it2.hasNext()) {
+			int val = this.compare(it1.next(), it2.next());
+			if (val != 0) {
+				return val;
+			}
+		}
+
+		return 0;
+	}
+};

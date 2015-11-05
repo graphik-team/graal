@@ -49,9 +49,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,10 +60,11 @@ import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.VariableGenerator;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
+import fr.lirmm.graphik.graal.api.core.VariableGenerator;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -108,7 +107,7 @@ public class PlainTableRDBMSStore extends AbstractRdbmsStore {
 	}
 
 	@Override
-	public Iterator<Atom> iterator() {
+	public CloseableIterator<Atom> iterator() {
 		// TODO implement this method
 		throw new MethodNotImplementedError("This method isn't implemented");
 	}
@@ -140,34 +139,6 @@ public class PlainTableRDBMSStore extends AbstractRdbmsStore {
 		} catch(SQLException e) {
 		}
 		return false;
-	}
-
-	@Override
-	public Set<Term> getTerms() throws AtomSetException {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
-	}
-
-	@Override
-	public Iterator<Predicate> predicatesIterator() {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
-	}
-	
-	@Override
-	public Set<Predicate> getPredicates() throws AtomSetException {
-		TreeSet<Predicate> set = new TreeSet<Predicate>();
-		Iterator<Predicate> it = this.predicatesIterator();
-		while(it.hasNext()) {
-			set.add(it.next());
-		}
-		return set;
-	}
-
-	@Override
-	public Set<Term> getTerms(Type type) {
-		// TODO implement this method
-		throw new Error("This method isn't implemented");
 	}
 
 	@Override
@@ -253,6 +224,24 @@ public class PlainTableRDBMSStore extends AbstractRdbmsStore {
 	@Override
 	public Iterator<String> transformToSQL(Rule rangeRestrictedRule)
 			throws AtomSetException {
+		// TODO implement this method
+		throw new MethodNotImplementedError();
+	}
+
+	@Override
+	public CloseableIterator<Predicate> predicatesIterator() throws AtomSetException {
+		// TODO implement this method
+		throw new MethodNotImplementedError();
+	}
+
+	@Override
+	public CloseableIterator<Term> termsIterator() throws AtomSetException {
+		// TODO implement this method
+		throw new MethodNotImplementedError();
+	}
+
+	@Override
+	public CloseableIterator<Term> termsIterator(Type type) throws AtomSetException {
 		// TODO implement this method
 		throw new MethodNotImplementedError();
 	}

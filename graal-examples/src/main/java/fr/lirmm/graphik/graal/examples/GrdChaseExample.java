@@ -44,16 +44,19 @@
 import java.io.File;
 import java.io.IOException;
 
+import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
+import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseWithGRDAndUnfiers;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
-import fr.lirmm.graphik.graal.io.grd.GRDParser;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -62,18 +65,28 @@ import fr.lirmm.graphik.graal.io.grd.GRDParser;
 public class GrdChaseExample {
 	public static void main(String[] args) throws IOException, ChaseException, ParseException   {
 		
-		GraphOfRuleDependencies grd = GRDParser.getInstance().parse(
-				new File("./src/main/resources/test-grd.grd"));
-		
-		InMemoryAtomSet facts = new DefaultInMemoryGraphAtomSet();
-		facts.add(DlgpParser.parseAtom("r(a)."));
+		InMemoryAtomSet store = new DefaultInMemoryGraphAtomSet();
+		RuleSet ontology = new LinkedListRuleSet();
 
-		Chase chase = new ChaseWithGRDAndUnfiers(grd, facts);
+		DlgpParser parser = new DlgpParser(new File("./src/main/resources/animals.dlp"));
+
+		while (parser.hasNext()) {
+			Object o = parser.next();
+			if (o instanceof Rule) {
+				ontology.add((Rule) o);
+			} else if (o instanceof Atom) {
+				store.add((Atom) o);
+			}
+		}
+		
+		GraphOfRuleDependencies grd = new GraphOfRuleDependencies(ontology);
+
+		Chase chase = new ChaseWithGRDAndUnfiers(grd, store);
 		chase.execute();
 		
 		System.out.println("########### SATURATED FACTS BASE ##############");
 		DlgpWriter writer = new DlgpWriter();
-		writer.write(facts);
+		writer.write(store);
 		writer.close();
 		System.out.println("###############################################");
 		

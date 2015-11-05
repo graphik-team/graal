@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
 		<artifactId>graal-main-project</artifactId>
-		<version>1.0.2-SNAPSHOT</version>
+		<version>1.0.2</version>
 	</parent>
 	
 	<artifactId>graal-apps</artifactId>
@@ -17,7 +17,7 @@
 		<module>graal-cqa</module>
 		<module>graal-converter</module>
 		<module>graal-query</module>
-		<module>graal-tools</module>
+		<module>utility-tools</module>
 		<module>forward-chaining</module>
         <module>graal-interpreter</module>
 	</modules>

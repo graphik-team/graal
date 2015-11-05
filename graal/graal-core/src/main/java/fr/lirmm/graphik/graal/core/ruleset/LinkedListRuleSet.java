@@ -47,7 +47,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import fr.lirmm.graphik.graal.api.core.Rule;
-import fr.lirmm.graphik.graal.core.stream.IteratorRuleReader;
+import fr.lirmm.graphik.util.stream.IteratorAdapter;
 
 public class LinkedListRuleSet extends AbstractRuleSet implements
 		Collection<Rule> {
@@ -98,7 +98,7 @@ public class LinkedListRuleSet extends AbstractRuleSet implements
 
 	@Override
 	public Iterator<Rule> iterator() {
-		return new IteratorRuleReader(ruleList.iterator());
+		return new IteratorAdapter<Rule>(ruleList.iterator());
 	}
 
 	@Override

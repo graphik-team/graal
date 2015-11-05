@@ -66,7 +66,8 @@ public class Dlgp2ParserTest {
 				+ "toto(\"1\"^^xsd:integer)." + "toto(2).");
 
 		DlgpWriter w = new DlgpWriter();
-		for (Object o : p) {
+		while (p.hasNext()) {
+			Object o = p.next();
 			System.out.println(o);
 
 			w.write(o);

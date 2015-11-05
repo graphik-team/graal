@@ -110,8 +110,7 @@ public abstract class AbstractRdbmsDriver implements RdbmsDriver {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public String getInsertOrIgnoreStatement(String tableName,
-			Map<String, Object> data) {
+	public String getInsertOrIgnoreStatement(String tableName, Map<String, Object> data) {
 		StringBuilder fields = new StringBuilder(" (");
 		StringBuilder values = new StringBuilder("");
 
@@ -128,17 +127,15 @@ public abstract class AbstractRdbmsDriver implements RdbmsDriver {
 		fields.append(") ");
 
 		StringBuilder sb = new StringBuilder();
-		sb.append(INSERT_IGNORE).append(" ").append(tableName).append(fields)
-				.append(" VALUES (").append(values).append(");");
+		sb.append(INSERT_IGNORE).append(" ").append(tableName).append(fields).append(" VALUES (").append(values)
+		        .append(");");
 		return sb.toString();
 	}
 
 	@Override
-	public String getInsertOrIgnoreStatement(String tableName,
-			String selectQuery) {
+	public String getInsertOrIgnoreStatement(String tableName, String selectQuery) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(INSERT_IGNORE).append(' ').append(tableName).append(' ')
-				.append(selectQuery);
+		sb.append(INSERT_IGNORE).append(' ').append(tableName).append(' ').append(selectQuery);
 		return sb.toString();
 	}
 }

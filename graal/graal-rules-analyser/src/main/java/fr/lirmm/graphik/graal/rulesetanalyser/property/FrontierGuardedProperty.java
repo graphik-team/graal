@@ -42,9 +42,9 @@
  */
  package fr.lirmm.graphik.graal.rulesetanalyser.property;
 
-import java.util.Set;
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Rule;
@@ -70,6 +70,17 @@ public final class FrontierGuardedProperty extends RuleSetProperty.Local {
 		}
 		return instance;	
 	}
+
+	@Override
+	public String getFullName() {
+		return "Frontier-guarded";
+	}
+
+	@Override
+	public String getDescription() {
+		return "At least one atom in the body contains all the variables from the frontier.";
+	}
+	
 	
 	@Override
 	public int check(Rule rule) {

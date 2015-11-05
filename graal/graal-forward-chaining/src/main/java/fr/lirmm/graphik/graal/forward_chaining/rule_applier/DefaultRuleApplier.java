@@ -40,12 +40,12 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
+/**
  * 
  */
 package fr.lirmm.graphik.graal.forward_chaining.rule_applier;
 
-import java.util.Iterator;
+import java.util.LinkedList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,16 +67,19 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.RestrictedChaseStopCondition;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
+ * This Applier executes a call to the chaseStopCondition for all unique
+ * homomorphisms of frontier variables.
+ * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class DefaultRuleApplier<T extends AtomSet> implements
-		RuleApplier<Rule, T> {
+public class DefaultRuleApplier<T extends AtomSet> implements RuleApplier<Rule, T> {
 
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(DefaultRuleApplier.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultRuleApplier.class);
 
 	private ChaseHaltingCondition haltingCondition;
 	private Homomorphism<ConjunctiveQuery, T> solver;
@@ -85,13 +88,12 @@ public class DefaultRuleApplier<T extends AtomSet> implements
 	// //////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// //////////////////////////////////////////////////////////////////////////
-	
+
 	/**
 	 * Construct a DefaultRuleApplier with a RestrictedChaseStopCondition and
 	 * the given homomorphism solver.
 	 */
-	public DefaultRuleApplier(
-			Homomorphism<ConjunctiveQuery, T> homomorphismSolver) {
+	public DefaultRuleApplier(Homomorphism<ConjunctiveQuery, T> homomorphismSolver) {
 		this(homomorphismSolver, new RestrictedChaseStopCondition());
 	}
 
@@ -100,12 +102,11 @@ public class DefaultRuleApplier<T extends AtomSet> implements
 	 * 
 	 * @param haltingCondition
 	 */
-	public DefaultRuleApplier(
-			Homomorphism<ConjunctiveQuery, T> homomorphismSolver,
-			ChaseHaltingCondition haltingCondition) {
+	public DefaultRuleApplier(Homomorphism<ConjunctiveQuery, T> homomorphismSolver,
+	        ChaseHaltingCondition haltingCondition) {
 		this(homomorphismSolver, haltingCondition, new DefaultVariableGenerator("E"));
 	}
-	
+
 	/**
 	 * Construct a DefaultRuleApplier with the given HaltingCondition,
 	 * homomorphism solver and SymbolGenerator. The SymbolGenerator is used to
@@ -115,51 +116,48 @@ public class DefaultRuleApplier<T extends AtomSet> implements
 	 * @param homomorphismSolver
 	 * @param existentialVarGenerator
 	 */
-	public DefaultRuleApplier(
-			Homomorphism<ConjunctiveQuery, T> homomorphismSolver,
-			ChaseHaltingCondition haltingCondition,
-			VariableGenerator existentialVarGenerator) {
+	public DefaultRuleApplier(Homomorphism<ConjunctiveQuery, T> homomorphismSolver,
+	        ChaseHaltingCondition haltingCondition, VariableGenerator existentialVarGenerator) {
 		this.haltingCondition = haltingCondition;
 		this.solver = homomorphismSolver;
 		this.existentialGen = existentialVarGenerator;
 	}
-	
+
 	// //////////////////////////////////////////////////////////////////////////
 	// METHODS
 	// //////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public boolean apply(Rule rule, T atomSet)
-			throws RuleApplicationException {
+	public boolean apply(Rule rule, T atomSet) throws RuleApplicationException {
 		boolean isChanged = false;
 		ConjunctiveQuery query = ConjunctiveQueryFactory.instance().create(rule.getBody(),
-				rule.getFrontier());
+		        new LinkedList<Term>(rule.getFrontier()));
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Rule to execute: " + rule);
 			LOGGER.debug("       -- Query: " + query);
 		}
 
 		try {
-			for (Substitution substitution : this.executeQuery(query, atomSet)) {
+			CloseableIterator<Substitution> subIt = this.executeQuery(query, atomSet);
+			while (subIt.hasNext()) {
+				Substitution substitution = subIt.next();
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("-- Found homomorphism: " + substitution);
 				}
 
-				Iterator<Atom> it = this.getHaltingCondition().apply(rule, substitution, atomSet);
+				GIterator<Atom> it = this.getHaltingCondition().apply(rule, substitution, atomSet);
 				if (it.hasNext()) {
 					atomSet.addAll(it);
 					isChanged = true;
 				}
 			}
+			subIt.close();
 		} catch (HomomorphismFactoryException e) {
-			throw new RuleApplicationException("Error during rule application",
-					e);
+			throw new RuleApplicationException("Error during rule application", e);
 		} catch (HomomorphismException e) {
-			throw new RuleApplicationException("Error during rule application",
-					e);
+			throw new RuleApplicationException("Error during rule application", e);
 		} catch (AtomSetException e) {
-			throw new RuleApplicationException("Error during rule application",
-					e);
+			throw new RuleApplicationException("Error during rule application", e);
 		}
 
 		return isChanged;
@@ -173,9 +171,8 @@ public class DefaultRuleApplier<T extends AtomSet> implements
 		return this.haltingCondition;
 	}
 
-	protected Iterable<Substitution> executeQuery(ConjunctiveQuery query,
-			T atomSet) throws HomomorphismFactoryException,
-			HomomorphismException {
+	protected CloseableIterator<Substitution> executeQuery(ConjunctiveQuery query, T atomSet)
+	    throws HomomorphismFactoryException, HomomorphismException {
 		return this.solver.execute(query, atomSet);
 	}
 

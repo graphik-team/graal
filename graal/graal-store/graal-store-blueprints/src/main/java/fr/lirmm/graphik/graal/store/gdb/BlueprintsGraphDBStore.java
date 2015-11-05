@@ -56,7 +56,6 @@ import com.tinkerpop.blueprints.GraphQuery;
 import com.tinkerpop.blueprints.Vertex;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
@@ -64,6 +63,11 @@ import fr.lirmm.graphik.graal.api.store.GraphDBStore;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
+import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
+import fr.lirmm.graphik.util.stream.IteratorAdapter;
+import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
  * BlueprintsGraphDBStore wrap Blueprints API {@link http
@@ -121,15 +125,14 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 	}
 
 	@Override
-	public Iterator<Predicate> predicatesIterator() {
-		return new PredicateIterable(graph.getVertices("class", "predicate"))
-				.iterator();
+	public CloseableIterator<Predicate> predicatesIterator() {
+		return new PredicateIterator(graph.getVertices("class", "predicate").iterator());
 	}
 
 	@Override
 	public Set<Predicate> getPredicates() {
 		TreeSet<Predicate> set = new TreeSet<Predicate>();
-		Iterator<Predicate> it = this.predicatesIterator();
+		GIterator<Predicate> it = this.predicatesIterator();
 		while (it.hasNext()) {
 			set.add(it.next());
 		}
@@ -146,6 +149,11 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 	}
 
 	@Override
+	public CloseableIterator<Term> termsIterator() {
+		return new CloseableIteratorAdapter<Term>(this.getTerms().iterator());
+	}
+
+	@Override
 	public Set<Term> getTerms(Type type) {
 		Set<Term> terms = new TreeSet<Term>();
 		GraphQuery query = this.graph.query();
@@ -156,6 +164,11 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 			terms.add(vertexToTerm(v));
 		}
 		return terms;
+	}
+
+	@Override
+	public CloseableIterator<Term> termsIterator(Term.Type type) {
+		return new CloseableIteratorAdapter<Term>(this.getTerms(type).iterator());
 	}
 
 	@Override
@@ -221,22 +234,7 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 	}
 
 	@Override
-	public boolean addAll(Iterable<? extends Atom> atoms) {
-		for (Atom a : atoms) {
-			this.add(a);
-		}
-		return true;
-	}
-
-	@Override
 	public boolean remove(Atom atom) {
-		// TODO implement this method
-		throw new MethodNotImplementedError();
-	}
-
-	@Override
-	public boolean removeAll(Iterable<? extends Atom> atoms)
-			throws AtomSetException {
 		// TODO implement this method
 		throw new MethodNotImplementedError();
 	}
@@ -248,9 +246,9 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 	}
 
 	@Override
-	public Iterator<Atom> iterator() {
-		Iterator<Vertex> it = this.graph.getVertices("class", "atom")
-				.iterator();
+	public CloseableIterator<Atom> iterator() {
+		GIterator<Vertex> it = new IteratorAdapter<Vertex>(this.graph.getVertices("class", "atom")
+				.iterator());
 		return new AtomIterator(it);
 	}
 
@@ -299,7 +297,7 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 	// PRIVATE CLASSES
 	// //////////////////////////////////////////////////////////////////////////
 
-	private static class AtomIterator implements Iterator<Atom> {
+	private static class AtomIterator extends AbstractCloseableIterator<Atom> {
 		Iterator<Vertex> it;
 
 		public AtomIterator(Iterator<Vertex> it) {
@@ -320,23 +318,13 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 		public void remove() {
 			this.it.remove();
 		}
-	}
-
-	private static class PredicateIterable implements Iterable<Predicate> {
-
-		Iterable<Vertex> iterable;
-
-		public PredicateIterable(Iterable<Vertex> vertices) {
-			this.iterable = vertices;
-		}
 
 		@Override
-		public Iterator<Predicate> iterator() {
-			return new PredicateIterator(this.iterable.iterator());
+		public void close() {
 		}
 	}
 
-	private static class PredicateIterator implements Iterator<Predicate> {
+	private static class PredicateIterator extends AbstractCloseableIterator<Predicate> {
 
 		Iterator<Vertex> it;
 
@@ -357,6 +345,10 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 		@Override
 		public void remove() {
 			this.it.remove();
+		}
+
+		@Override
+		public void close() {
 		}
 
 	}

@@ -45,13 +45,16 @@
 import java.util.Iterator;
 import java.util.Set;
 
+import fr.lirmm.graphik.util.stream.GIterable;
+import fr.lirmm.graphik.util.stream.GIterator;
+
 /**
  * This interface represents a set of atoms.
  * 
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public interface AtomSet extends Iterable<Atom> {
+public interface AtomSet extends GIterable<Atom> {
 
 	/**
 	 * Returns true if this atom set contains the specified atom.
@@ -77,7 +80,7 @@ public interface AtomSet extends Iterable<Atom> {
 	 * @return
 	 * @throws AtomSetException
 	 */
-	Iterator<Predicate> predicatesIterator() throws AtomSetException;
+	GIterator<Predicate> predicatesIterator() throws AtomSetException;
 
 	/**
 	 * Returns a Set of all terms in this atom set.
@@ -94,7 +97,7 @@ public interface AtomSet extends Iterable<Atom> {
 	 * @return
 	 * @throws AtomSetException
 	 */
-	Iterator<Term> termsIterator() throws AtomSetException;
+	GIterator<Term> termsIterator() throws AtomSetException;
 	
 	/**
 	 * Returns a Set of all terms of the specified type in this atom set.
@@ -114,7 +117,7 @@ public interface AtomSet extends Iterable<Atom> {
 	 * @return
 	 * @throws AtomSetException
 	 */
-	Iterator<Term> termsIterator(Term.Type type) throws AtomSetException;
+	GIterator<Term> termsIterator(Term.Type type) throws AtomSetException;
 
 	/**
 	 * Use AtomSets.contains instead.
@@ -150,17 +153,13 @@ public interface AtomSet extends Iterable<Atom> {
 	 * @return true if this atomset changed as a result of the call
 	 * @throws
 	 */
-	boolean addAll(Iterable<? extends Atom> atoms) throws AtomSetException;
-	
-	/**
-	 * Add the specified atom stream to this atom set.
-	 * 
-	 * @param atoms
-	 *            - the atom iterator to be added
-	 * @return true if this atomset changed as a result of the call
-	 * @throws
-	 */
 	boolean addAll(Iterator<? extends Atom> atoms) throws AtomSetException;
+
+	/**
+	 * @param atoms
+	 * @return
+	 */
+	boolean addAll(AtomSet atoms) throws AtomSetException;
 
 	/**
 	 * Remove the specified atom from this this atom set.
@@ -179,17 +178,9 @@ public interface AtomSet extends Iterable<Atom> {
 	 * @return true if this atomset changed as a result of the call
 	 * @throws AtomSetException
 	 */
-	boolean removeAll(Iterable<? extends Atom> atoms) throws AtomSetException;
-	
-	/**
-	 * Remove the specified atom stream from this atom set.
-	 * 
-	 * @param stream
-	 *            - the atom stream to be removed.
-	 * @return true if this atomset changed as a result of the call
-	 * @throws AtomSetException
-	 */
 	boolean removeAll(Iterator<? extends Atom> atoms) throws AtomSetException;
+
+	boolean removeAll(AtomSet atoms) throws AtomSetException;
 
 	/**
 	 * 
@@ -202,6 +193,6 @@ public interface AtomSet extends Iterable<Atom> {
 	 * @return an iterator over the atoms in this atom set.
 	 */
 	@Override
-	Iterator<Atom> iterator();
+	GIterator<Atom> iterator();
 
 }

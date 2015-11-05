@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
 		<artifactId>graal</artifactId>
-		<version>1.0.2-SNAPSHOT </version>
+		<version>1.0.2 </version>
 	</parent>
 	
 	<artifactId>graal-homomorphism</artifactId>
@@ -30,6 +30,11 @@
 			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-core</artifactId>
 			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
