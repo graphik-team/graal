@@ -43,7 +43,7 @@
  /**
  * 
  */
-package fr.lirmm.graphik;
+package fr.lirmm.graphik.graal.forward_chaining;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;

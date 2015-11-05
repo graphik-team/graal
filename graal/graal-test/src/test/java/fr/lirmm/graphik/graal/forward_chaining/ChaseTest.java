@@ -43,7 +43,7 @@
  /**
  * 
  */
-package fr.lirmm.graphik;
+package fr.lirmm.graphik.graal.forward_chaining;
 
 import java.io.IOException;
 import java.util.Iterator;
