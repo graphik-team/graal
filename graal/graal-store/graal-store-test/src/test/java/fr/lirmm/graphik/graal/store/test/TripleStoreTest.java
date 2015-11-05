@@ -49,7 +49,9 @@ import java.util.Iterator;
 
 import org.junit.Assert;
 import org.junit.experimental.theories.DataPoints;
+import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
+import org.junit.runner.RunWith;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
@@ -64,6 +66,7 @@ import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
+@RunWith(Theories.class)
 public class TripleStoreTest {
 
 	@DataPoints
