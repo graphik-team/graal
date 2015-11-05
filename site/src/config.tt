@@ -1,5 +1,0 @@
-[% config = {
-     basedir => "./"
-     graalVersion => "1.0.0"
-   }
--%]

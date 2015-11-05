@@ -1,5 +1,0 @@
-dest/*.html
-dest/modules/*.html
-src/modules/*.tt
-*~
-*#
