@@ -182,7 +182,7 @@ public class GraalQuery {
 		}
 		
 		if (options.verbose) {
-			PROFILER.add("number of answer", i);
+			PROFILER.put("number of answer", i);
 		}
 
 	}
