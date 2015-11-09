@@ -133,6 +133,7 @@ public class BacktrackHomomorphism implements HomomorphismWithCompilation<Conjun
 	private static class Var {
 		Variable value;
 		int level;
+		int previousLevel;
 		Collection<Atom> preAtoms;
 		Iterator<Term> domain;
 		Term image;
@@ -140,6 +141,7 @@ public class BacktrackHomomorphism implements HomomorphismWithCompilation<Conjun
 		Var(Variable value, int level) {
 			this.value = value;
 			this.level = level;
+			this.previousLevel = level - 1;
 		}
 
 		@Override
@@ -189,7 +191,7 @@ public class BacktrackHomomorphism implements HomomorphismWithCompilation<Conjun
 			computeAtomOrder(h, vars);
 
 			currentVar = null;
-			levelMax = vars.length - 1;
+			levelMax = vars.length - 2;
 			level = 0;
 			goBack = false;
 		}
@@ -229,6 +231,10 @@ public class BacktrackHomomorphism implements HomomorphismWithCompilation<Conjun
 		// PRIVATE METHODS
 		// /////////////////////////////////////////////////////////////////////////
 
+		/*
+		 * level -1 : no more answers 
+		 * level  0 : not initialized
+		 */
 		private Substitution computeNext() throws HomomorphismException {
 			if (level >= 0) {
 				try {
@@ -247,7 +253,7 @@ public class BacktrackHomomorphism implements HomomorphismWithCompilation<Conjun
 						//
 						if (level > levelMax) {
 							goBack = true;
-							--level;
+							level = previousLevel(vars[level]);
 							return solutionFound(vars, ans);
 						} else {
 							currentVar = vars[level];
@@ -312,7 +318,7 @@ public class BacktrackHomomorphism implements HomomorphismWithCompilation<Conjun
 		 * @return
 		 */
 		private int previousLevel(Var var) {
-			return var.level - 1;
+			return var.previousLevel;
 		}
 
 		/**
@@ -331,27 +337,35 @@ public class BacktrackHomomorphism implements HomomorphismWithCompilation<Conjun
 		 */
 		private Var[] computeOrder(InMemoryAtomSet h, List<Term> ans) {
 			Set<Term> terms = h.getTerms(Term.Type.VARIABLE);
-			Var[] vars = new Var[terms.size() + 1];
+			Var[] vars = new Var[terms.size() + 2];
 			index = new TreeMap<Variable, Var>();
 
-			int i = 1;
+			int level = 1;
 			vars[0] = new Var(null, 0);
 
 			for (Term t : ans) {
 				if (t instanceof Variable && index.get(t) == null) {
-					vars[i] = new Var((Variable) t, i);
-					index.put(vars[i].value, vars[i]);
-					++i;
+					vars[level] = new Var((Variable) t, level);
+					index.put(vars[level].value, vars[level]);
+					++level;
 				}
 			}
 
+			int lastAnswerVariable = level - 1;
+			boolean areAnswersVariable = lastAnswerVariable > 0;
+
 			for (Term t : terms) {
 				if (index.get(t) == null) {
-					vars[i] = new Var((Variable) t, i);
-					index.put(vars[i].value, vars[i]);
-					++i;
+					vars[level] = new Var((Variable) t, level);
+					vars[level].previousLevel = (areAnswersVariable) ? lastAnswerVariable : level - 1;
+					index.put(vars[level].value, vars[level]);
+					++level;
 				}
 			}
+
+			vars[level] = new Var(null, level);
+			vars[level].previousLevel = (areAnswersVariable) ? lastAnswerVariable : -1;
+
 			return vars;
 		}
 
@@ -427,6 +441,32 @@ public class BacktrackHomomorphism implements HomomorphismWithCompilation<Conjun
 
 		@Override
 		public void close() {
+		}
+
+		@Override
+		public String toString() {
+			StringBuilder sb = new StringBuilder();
+			sb.append("{\n")
+			  .append("\t{query->")
+			  .append(h)
+			  .append("},\n\t{data->")
+			  .append(g)
+			  .append("},\n\t{level->")
+			  .append(level)
+			  .append("},\n\t{");
+			int i = 0;
+			for(Var v : vars) {
+				if (i == level)
+					sb.append('*');
+				sb.append(v.value)
+				.append("->")
+				.append(v.image)
+				.append(", ");
+				++i;
+			}
+			sb.append("}\n}\n");
+
+			return sb.toString();
 		}
 
 	}
