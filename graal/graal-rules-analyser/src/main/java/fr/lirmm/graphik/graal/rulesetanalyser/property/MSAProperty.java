@@ -82,7 +82,7 @@ public final class MSAProperty extends RuleSetProperty.Default {
 
 	@Override
 	public String getFullName() {
-		return "MSA";
+		return "Model-summarizing acyclicity";
 	}
 
 	@Override
