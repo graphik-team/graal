@@ -68,7 +68,7 @@ public final class AGRDProperty extends RuleSetProperty.Default {
 
 	@Override
 	public String getDescription() {
-		return "The graph of rule dependencies is ayclic.";
+		return "The associated graph of rule dependencies does not contain any circuit.";
 	}
 	
 

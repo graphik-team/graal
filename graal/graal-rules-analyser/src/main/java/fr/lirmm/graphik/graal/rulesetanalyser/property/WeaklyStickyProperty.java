@@ -90,7 +90,7 @@ public final class WeaklyStickyProperty extends RuleSetProperty.Default {
 
 	@Override
 	public String getDescription() {
-		return "All marked variables that occur more than once in a rule body appear at some position of finite rank.";
+		return "This class does not belong to any abstract class defined earlier. It is a generalisation of Sticky and Weakly-Acyclic. It relies upon the same graph of position dependencies as the Weakly-Acyclic test and upon the same marking procedure as the Sticky test. All marked variables that occur more than once in a rule body appear at some position of finite rank.";
 	}
 	
 	@Override

@@ -74,7 +74,10 @@ public final class FESProperty extends RuleSetProperty.Default {
 
 	@Override
 	public String getDescription() {
-		return "The core chase halts on any fact base.";
+		return "This abstract class ensures the finiteness of any forward "
+		       + "chaining algorithms that saturates the facts until "
+		       + "fixpoint with respect to logical equivalence and checks if "
+		       + "the query maps to the obtained facts.";
 	}
 	
 	@Override

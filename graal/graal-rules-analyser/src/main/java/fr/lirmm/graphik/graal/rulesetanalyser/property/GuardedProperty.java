@@ -78,7 +78,7 @@ public final class GuardedProperty extends RuleSetProperty.Local {
 
 	@Override
 	public String getDescription() {
-		return "At least one atom in the body contains all the variables from the body.";
+		return "At least one atom in the body (called a guard) contains all the variables from the body.";
 	}
 	
 	@Override
