@@ -185,26 +185,23 @@ public class GraphPositionDependencies {
 				bodyTermIndex = -1;
 				for (Term bodyTerm : bodyAtom) {
 					++bodyTermIndex;
-					for (Atom headAtom : r.getHead()) {
-						headTermIndex = -1;
-						for (Term headTerm : headAtom) {
-							++headTermIndex;
-							if (bodyTerm.equals(headTerm)) {
-								this.addEdge(
-										new PredicatePosition(bodyAtom
-												.getPredicate(), bodyTermIndex),
-										new PredicatePosition(headAtom
-												.getPredicate(), headTermIndex));
-							} else if (existentials.contains(headTerm)) {
-								this.addSpecialEdge(
-										new PredicatePosition(bodyAtom
-												.getPredicate(), bodyTermIndex),
-										new PredicatePosition(headAtom
-												.getPredicate(), headTermIndex));
+					if (r.getHead().getTerms().contains(bodyTerm)) {
+						for (Atom headAtom : r.getHead()) {
+							headTermIndex = -1;
+							for (Term headTerm : headAtom) {
+								++headTermIndex;
+								if (bodyTerm.equals(headTerm)) {
+									this.addEdge(
+											new PredicatePosition(bodyAtom.getPredicate(), bodyTermIndex),
+											new PredicatePosition(headAtom.getPredicate(), headTermIndex));
+								} else if (existentials.contains(headTerm)) {
+									this.addSpecialEdge(
+											new PredicatePosition(bodyAtom.getPredicate(), bodyTermIndex),
+											new PredicatePosition(headAtom.getPredicate(), headTermIndex));
+								}
 							}
 						}
 					}
-
 				}
 			}
 		}
