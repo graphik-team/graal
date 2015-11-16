@@ -201,6 +201,10 @@ public class GraphPositionDependencies {
 								}
 							}
 						}
+					} else {
+						if (!this.graph.containsVertex(new PredicatePosition(bodyAtom.getPredicate(), bodyTermIndex))) {
+							this.graph.addVertex(new PredicatePosition(bodyAtom.getPredicate(), bodyTermIndex));
+						}
 					}
 				}
 			}
