@@ -3,7 +3,7 @@
 
 	<groupId>fr.lirmm.graphik</groupId>
 	<artifactId>graal-main-project</artifactId>
-	<version>1.0.3-SNAPSHOT</version>
+	<version>1.0.4-SNAPSHOT</version>
 	<name>fr.lirmm.graphik:graal-main-project</name>
 	<packaging>pom</packaging>
 	
