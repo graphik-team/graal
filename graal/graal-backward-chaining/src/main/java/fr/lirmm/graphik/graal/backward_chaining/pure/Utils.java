@@ -106,7 +106,7 @@ final class Utils {
 				it.next();
 				++i;
 			}
-			profiler.add("Unfolded rewritings", i);
+			profiler.put("Unfolded rewritings", i);
 		}
 
 		return unfoldingRewritingSet;

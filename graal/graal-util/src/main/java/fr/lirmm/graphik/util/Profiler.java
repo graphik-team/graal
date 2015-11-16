@@ -53,6 +53,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 /**
+ * This class is a profiler with a timer feature (ms)
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */
@@ -79,10 +80,23 @@ public class Profiler {
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
+	/**
+	 * Start a timer with a specified key/identifier. If you recall this method
+	 * with the same key, you will erase the start time for the key.
+	 * 
+	 * @param key
+	 */
 	public void start(String key) {
 		this.tmpMap.put(key, this.getTime());
 	}
 
+	/**
+	 * Stop the timer with the specified key. The get method will return the
+	 * elapsed time between start and stop calls. You should called the start
+	 * method with the same key before.
+	 * 
+	 * @param key
+	 */
 	public void stop(String key) {
 		Long oldTime = (Long) this.map.get(key);
 		if(oldTime == null) {
@@ -95,25 +109,50 @@ public class Profiler {
 		}
 	}
 
-	public void add(String key, Object value) {
+	/**
+	 * Map miscellaneous data on the specified key. You can retrieve the data
+	 * using the get method.
+	 * 
+	 * @param key
+	 * @param value
+	 */
+	public void put(String key, Object value) {
 		this.map.put(key, value);
 		if (this.out != null) {
 			this.out.println("Profiler - " + key + ": " + value.toString());
 		}
 	}
 
+	/**
+	 * Get data/time attached to the specified key.
+	 * 
+	 * @param key
+	 * @return
+	 */
 	public Object get(String key) {
-		return this.map.get(key);
+		return ((Long) this.map.get(key) + 500000) / 1000000;
 	}
 
+	/**
+	 * Clear data attached to the specfied key.
+	 * 
+	 * @param key
+	 */
 	public void clear(String key) {
 		this.map.remove(key);
 	}
 
+	/**
+	 * Clear all data.
+	 */
 	public void clear() {
 		this.map.clear();
 	}
 
+	/**
+	 * 
+	 * @return a Set of all keys used.
+	 */
 	public Set<String> keySet() {
 		return this.map.keySet();
 	}
@@ -123,7 +162,7 @@ public class Profiler {
 	// /////////////////////////////////////////////////////////////////////////
 
 	private long getTime() {
-		return bean.getCurrentThreadCpuTime() / 1000000;
+		return bean.getCurrentThreadCpuTime();
 	}
 
 }

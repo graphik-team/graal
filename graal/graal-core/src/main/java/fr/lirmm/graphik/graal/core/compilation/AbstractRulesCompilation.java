@@ -118,7 +118,7 @@ public abstract class AbstractRulesCompilation implements RulesCompilation {
 		}
 
 		if (this.getProfiler() != null) {
-			this.getProfiler().add("Compiled rules", compilable.size());
+			this.getProfiler().put("Compiled rules", compilable.size());
 		}
 
 		return compilable;

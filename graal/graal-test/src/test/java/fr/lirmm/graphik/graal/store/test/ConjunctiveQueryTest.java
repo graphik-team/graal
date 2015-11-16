@@ -235,6 +235,27 @@ public class ConjunctiveQueryTest {
 		}
 	}
 
+	/**
+	 * Test a boolean query with variables
+	 */
+	@Theory
+	public void booleanQueryWithVariablesTest(AtomSet store) {
+		try {
+			store.addAll(DlgpParser.parseAtomSet("p(a,b),p(d,e),p(e,c),p(f,d)."));
+
+			ConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y,Z,W) :- p(X,Y),p(Y,Z),p(Z,W).");
+
+			CloseableIterator<Substitution> subReader = StaticHomomorphism.executeQuery(query, store);
+
+			Assert.assertTrue(subReader.hasNext());
+			Substitution sub = subReader.next();
+			Assert.assertFalse(subReader.hasNext());
+			subReader.close();
+		} catch (Exception e) {
+			Assert.assertTrue(e.getMessage(), false);
+		}
+	}
+
 	@Theory
 	public void basicQueryTest(AtomSet store) {
 		try {
