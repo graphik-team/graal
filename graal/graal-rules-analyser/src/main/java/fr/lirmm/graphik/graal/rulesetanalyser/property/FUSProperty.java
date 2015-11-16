@@ -71,7 +71,11 @@ public final class FUSProperty extends RuleSetProperty.Default {
 
 	@Override
 	public String getDescription() {
-		return "Any query can be finitely rewritten.";
+		return "This abstract class ensures the finiteness of any backward "
+		       + "chaining algorithm that rewrites the query in a breadth-first "
+		       + "manner while maintaining a set of the most general "
+		       + "rewritings and answers 'yes' if an element of this set maps to "
+		       + "the facts.";
 	}
 	
 	@Override

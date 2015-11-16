@@ -86,8 +86,7 @@ public final class WeaklyAcyclicProperty extends RuleSetProperty.Default {
 
 	@Override
 	public String getDescription() {
-		return "All predicate positions in the graph of position dependencies have finite rank"
-		       + " (i.e., there is no circuit with a special edge).";
+		return "All predicate positions in the graph of position dependencies have finite rank (i.e., there is no circuit with a special edge).";
 	}
 
 	@Override

@@ -90,7 +90,7 @@ public final class MFAProperty extends RuleSetProperty.Default {
 
 	@Override
 	public String getDescription() {
-		return "There is no cycle of functional symbol during the skolem chase executed on the critical instance.";
+		return "The skolem chase executed on the critical instance does not produce any 'cycle of functional symbols'.";
 	}
 
 	@Override

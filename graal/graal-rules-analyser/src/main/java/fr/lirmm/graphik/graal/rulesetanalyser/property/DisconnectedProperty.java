@@ -75,7 +75,7 @@ public final class DisconnectedProperty extends RuleSetProperty.Local {
 
 	@Override
 	public String getDescription() {
-		return "The rule frontier is empty.";
+		return "The frontier is empty. Note that any disconnected rule needs to be applied only once.";
 	}
 	
 	@Override
