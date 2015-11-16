@@ -34,7 +34,7 @@
 			<li><a href='#structures'>Structures</a></li>
 			<ul>
 				<li><a href='#grd'>Graph of rule dependencies</a></li>
-				<li><a href='#gp'>Graph of position dependencies</a></li>
+				<li><a href='#gpos'>Graph of position dependencies</a></li>
 				<li><a href='#marked'>Marked variable set</a></li>
 				<li><a href='#affected'>Affected position set</a></li>
 			</ul>
@@ -124,7 +124,7 @@
 		  i = j) and for each variable x appearing at position p[k] in the head of R<sub>j</sub>,
 		  mark each occurence of x in the body of R<sub>j</sub>.
 		</p>
-		<a name="gpos"></a>
+		<a name="affected"></a>
         <h4>Affected Position Set</h4>
 		<p>
 		  The affected position set is built from a rule set
@@ -233,10 +233,10 @@ like halting algorithm. Almost all currently known BTS but not FES classes are G
 not contain any circuit.</p>
             <a name="ab"></a>
 			<h4>Atomic-body (ab)</h4>
-				See <a ref='#lin'>Linear</a>.
+				See <a href='#lin'>Linear</a>.
             <a name="dlg"></a>
 			<h4>Datalog (dlg)</h4>
-				See <a ref='#rr'>Range-restricted</a>.
+				See <a href='#rr'>Range-restricted</a>.
             <a name="disc"></a>
 			<h4>Disconnected (disc)</h4>
 				<p>This rule class property is a local property.<br/>
@@ -350,7 +350,7 @@ href='#marked'>marked variable set</a>).</p>
 						<li>fes</li>
 				</ul>
 				</p>
-				<p>All predicate positions in the <a href='#gp'>graph of position
+				<p>All predicate positions in the <a href='#gpos'>graph of position
 dependencies</a> have finite rank (i.e., there is no circuit with a
 special edge).</p>
             <a name="wfg"></a>
@@ -385,7 +385,7 @@ variables from the body
 				<p>This class does not belong to any abstract class defined earlier.
 It is a generalisation of <a href='#s'>Sticky</a> and
 <a href='#wa'>Weakly-Acyclic</a>. It relies upon the same
-<a href='#gp'>graph of position dependencies</a> as the
+<a href='#gpos'>graph of position dependencies</a> as the
 <a href='#wa'>Weakly-Acyclic</a> test and upon the same
 <a href='#marked'>marking procedure</a> as the <a
 href='#s'>Sticky</a> test.
