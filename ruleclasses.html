@@ -180,14 +180,14 @@
 		</p>
             <a name="fes"></a>
 			<h4>Finite expansion set (fes)</h4>
-			<p>This abstract class ensures the finiteness of <em>forward
-chaining</em> algorithms that saturate facts until the halting
-condition is satisfied and check if the query maps to the obtained
-facts.</p>
+			<p>This abstract class ensures the finiteness of any <em>forward
+chaining</em> algorithms that saturates the facts until
+fixpoint with respect to logical equivalence and checks if
+the query maps to the obtained facts.</p>
             <a name="fus"></a>
 			<h4>Finite unification set (fus)</h4>
 			<p>This abstract class ensures the finiteness of any <em>backward
-chaining</em> algorithm thath rewrites the query in a breadth-first
+chaining</em> algorithm that rewrites the query in a breadth-first
 manner while maintaining a set of the <em>most general
 rewritings</em> and answers 'yes' if an element of this set maps to
 the facts.</p>
@@ -257,8 +257,8 @@ applied only once.</p>
 						<li>fus</li>
 				</ul>
 				</p>
-				<p>All atoms in the head contain either all or none variables from the
-body.</p>
+				<p>Each atom in the head contains all variables from the
+body or none.</p>
             <a name="fg"></a>
 			<h4>Frontier-guarded (fg)</h4>
 				<p>This rule class property is a local property.<br/>
@@ -287,7 +287,7 @@ frontier.</p>
 				</ul>
 				</p>
 				<p>At least one atom in the body (called a <em>guard</em>) contains
-all the variable from the body.</p>
+all the variables from the body.</p>
             <a name="lin"></a>
 			<h4>Linear (lin)</h4>
 				<p>This rule class property is a local property.<br/>
@@ -307,7 +307,9 @@ all the variable from the body.</p>
 						<li>bts</li>
 				</ul>
 				</p>
-				<p>There is no cycle of functional symbol during the skolem chase executed on the critical instance.</p>
+				<p>The skolem chase executed on the
+critical instance does not produce any 'cycle of
+functional symbols'.</p>
             <a name="msa"></a>
 			<h4>Model-summarising acyclicity (msa)</h4>
 				<p>This rule class property is a global property.<br/>
@@ -318,7 +320,7 @@ all the variable from the body.</p>
 						<li>mfa</li>
 				</ul>
 				</p>
-				<p>Approximates MFA with a lower complexity cost.</p>
+				<p>Approximates MFA with a lower complexity.</p>
             <a name="rr"></a>
 			<h4>Range-restricted (rr)</h4>
 				<p>This rule class property is a local property.<br/>
@@ -328,7 +330,7 @@ all the variable from the body.</p>
 						<li>gbts</li>
 				</ul>
 				</p>
-				<p>All variables that appear in the in the head also occur in the
+				<p>All variables that appear in the head also occur in the
 body.</p>
             <a name="s"></a>
 			<h4>Sticky (s)</h4>
