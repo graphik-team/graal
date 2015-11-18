@@ -45,8 +45,8 @@ package fr.lirmm.graphik.graal.test;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
-import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
@@ -74,7 +74,7 @@ public class HomomorphismWithCompilationTest {
 		RulesCompilation comp = new IDCompilation();
 		comp.compile(rules.iterator());
 
-		HomomorphismWithCompilation<ConjunctiveQuery, AtomSet> h = BacktrackHomomorphism.instance();
+		HomomorphismWithCompilation<ConjunctiveQuery, AtomSet> h = new BacktrackHomomorphism();
 		CloseableIterator<Substitution> results = h.execute(DlgpParser.parseQuery("?(X,Y) :- q(X,Y)."), store, comp);
 
 		while (results.hasNext()) {

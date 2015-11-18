@@ -57,9 +57,13 @@ import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphism;
  */
 public class BacktrackChecker extends AbstractChecker {
 	
+	private static BacktrackHomomorphism instance = null;
+
 	@Override
 	public BacktrackHomomorphism getSolver() {
-		return BacktrackHomomorphism.instance();
+		if (instance == null)
+			instance = new BacktrackHomomorphism();
+		return instance;
 	}
 	
 	@Override

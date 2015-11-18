@@ -44,29 +44,23 @@ package fr.lirmm.graphik.graal.homomorphism;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
+import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
-import fr.lirmm.graphik.graal.core.DefaultAtom;
-import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
-import fr.lirmm.graphik.util.stream.AbstractIterator;
-import fr.lirmm.graphik.util.stream.ArrayBlockingQueueToCloseableIteratorAdapter;
+import fr.lirmm.graphik.util.Profilable;
+import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
@@ -78,33 +72,28 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class BacktrackHomomorphism implements HomomorphismWithCompilation<ConjunctiveQuery, AtomSet> {
+public class BacktrackHomomorphism implements HomomorphismWithCompilation<ConjunctiveQuery, AtomSet>, Profilable {
 
-	private static BacktrackHomomorphism instance;
+	private Profiler profiler = null;
+	private Scheduler scheduler;
 
-	protected BacktrackHomomorphism() {
-		super();
+	public BacktrackHomomorphism() {
+		this(new DefaultScheduler());
 	}
 
-	public static synchronized BacktrackHomomorphism instance() {
-		if (instance == null)
-			instance = new BacktrackHomomorphism();
-
-		return instance;
+	public BacktrackHomomorphism(Scheduler s) {
+		super();
+		this.scheduler = s;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
-	//
+	// HOMOMORPHISM METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
 	public <U1 extends ConjunctiveQuery, U2 extends AtomSet> CloseableIterator<Substitution> execute(U1 q, U2 a)
-	                                                                                                throws HomomorphismException {
-		// return new
-		// ArrayBlockingQueueToCloseableIteratorAdapter<Substitution>(new
-		// BT(q.getAtomSet(), a,
-		// q.getAnswerVariables()));
-		return new BT(q.getAtomSet(), a, q.getAnswerVariables());
+	    throws HomomorphismException {
+		return this.execute(q, a, NoCompilation.instance());
 	}
 
 	@Override
@@ -115,358 +104,144 @@ public class BacktrackHomomorphism implements HomomorphismWithCompilation<Conjun
 		// BT(q.getAtomSet(), a,
 		// q.getAnswerVariables(),
 		// compilation));
-		return new BT(q.getAtomSet(), a, q.getAnswerVariables(), compilation);
-
-	}
-	public <U1 extends InMemoryAtomSet, U2 extends AtomSet> CloseableIterator<Substitution> execute(
-	                                                                                                U1 q,
-	                                                                                                U2 a,
-	                                                                                                List<Term> ans)
-	                                                                                                           throws HomomorphismException {
-		return new ArrayBlockingQueueToCloseableIteratorAdapter<Substitution>(new BT(q, a, ans));
+		BacktrackIterator backtrackIterator = new BacktrackIterator(q.getAtomSet(), a, q.getAnswerVariables(),
+		                                                            this.scheduler, compilation);
+		if (this.profiler != null) {
+			backtrackIterator.setProfiler(profiler);
+		}
+		return backtrackIterator;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
-	// STRUCTS
+	// PROFILABLE METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	private static class Var {
-		Variable value;
-		int level;
-		int previousLevel;
-		Collection<Atom> preAtoms;
-		Iterator<Term> domain;
-		Term image;
+	@Override
+	public void setProfiler(Profiler profiler) {
+		this.profiler = profiler;
+	}
 
-		Var(Variable value, int level) {
-			this.value = value;
+	@Override
+	public Profiler getProfiler() {
+		return this.profiler;
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// INTERN CLASSES
+	// /////////////////////////////////////////////////////////////////////////
+
+	public static class Var {
+		public Variable  value;
+		public int       level;
+		public int       previousLevelSuccess;
+		public int       previousLevelFailure;
+		public int       nextLevel;
+		public boolean   success = false;
+		public Collection<Atom> preAtoms;
+		public Iterator<Term>   domain;
+		public Term             image;
+
+		public Var() {
+		}
+
+		public Var(int level) {
 			this.level = level;
-			this.previousLevel = level - 1;
-		}
-
-		@Override
-		public String toString() {
-			if (value != null)
-				return value.toString();
-			else
-				return "NULL";
-		}
-	}
-
-	private class BT extends AbstractIterator<Substitution> implements CloseableIterator<Substitution> {
-
-		private InMemoryAtomSet h;
-		private AtomSet g;
-		private RulesCompilation    compilation;
-		private Substitution next = null;
-
-		private Var[] vars;
-		private Map<Variable, Var> index;
-		private Var currentVar;
-
-		private int levelMax;
-		private int level;
-		private boolean goBack;
-		private List<Term> ans;
-
-		// /////////////////////////////////////////////////////////////////////////
-		// CONSTRUCTORS
-		// /////////////////////////////////////////////////////////////////////////
-
-		/**
-		 * Look for an homomorphism of h into g.
-		 * 
-		 * @param h
-		 * @param g
-		 */
-		public BT(InMemoryAtomSet h, AtomSet g, List<Term> ans, RulesCompilation compilation) {
-			this.h = h;
-			this.g = g;
-			this.compilation = compilation;
-			this.ans = ans;
-
-			// Compute order on query variables and atoms
-			vars = this.computeOrder(this.h, ans);
-
-			computeAtomOrder(h, vars);
-
-			currentVar = null;
-			levelMax = vars.length - 2;
-			level = 0;
-			goBack = false;
-		}
-
-		public BT(InMemoryAtomSet h, AtomSet g, List<Term> ans) {
-			this(h, g, ans, NoCompilation.instance());
-		}
-
-		// /////////////////////////////////////////////////////////////////////////
-		// PUBLIC METHODS
-		// /////////////////////////////////////////////////////////////////////////
-
-		@Override
-		public boolean hasNext() {
-			if (this.next == null) {
-				try {
-					this.next = computeNext();
-				} catch (HomomorphismException e) {
-					this.next = null;
-					// TODO
-				}
-			}
-			return this.next != null;
-		}
-
-		@Override
-		public Substitution next() {
-			Substitution tmp = null;
-			if (this.hasNext()) {
-				tmp = this.next;
-				this.next = null;
-			}
-			return tmp;
-		}
-
-		// /////////////////////////////////////////////////////////////////////////
-		// PRIVATE METHODS
-		// /////////////////////////////////////////////////////////////////////////
-
-		/*
-		 * level -1 : no more answers 
-		 * level  0 : not initialized
-		 */
-		private Substitution computeNext() throws HomomorphismException {
-			if (level >= 0) {
-				try {
-					if (level == 0) { // first call
-						if (isHomomorphism(vars[level].preAtoms, g)) {
-							++level;
-						} else {
-							--level;
-						}
-					}
-					if (level > levelMax) { // there is no variable
-						level = -1;
-						return solutionFound(vars, ans);
-					}
-					while (level > 0) {
-						//
-						if (level > levelMax) {
-							goBack = true;
-							level = previousLevel(vars[level]);
-							return solutionFound(vars, ans);
-						} else {
-							currentVar = vars[level];
-						}
-
-						//
-						if (goBack) {
-							if (hasMoreValues(currentVar, g)) {
-								goBack = false;
-								level = nextLevel(currentVar);
-							} else {
-								level = previousLevel(currentVar);
-							}
-						} else {
-							if (getFirstValue(currentVar, g)) {
-								level = nextLevel(currentVar);
-							} else {
-								goBack = true;
-								level = previousLevel(currentVar);
-							}
-						}
-					}
-				} catch (AtomSetException e) {
-					throw new HomomorphismException("Exception during backtracking", e);
-				}
-				--level;
-			}
-			return null;
-		}
-
-		private Substitution solutionFound(Var[] vars, List<Term> ans) {
-			Substitution s = new TreeMapSubstitution();
-			for (Term t : ans) {
-				if (t instanceof Variable) {
-					Var v = this.index.get((Variable) t);
-					s.put(v.value, v.image);
-				} else {
-					s.put(t, t);
-				}
-			}
-
-			return s;
-		}
-
-		private boolean hasMoreValues(Var var, AtomSet g) throws AtomSetException {
-			while (var.domain.hasNext()) {
-				var.image = var.domain.next();
-				if (isHomomorphism(var.preAtoms, g)) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-		private boolean getFirstValue(Var var, AtomSet g) throws AtomSetException {
-			var.domain = g.termsIterator();
-			return this.hasMoreValues(var, g);
-		}
-
-		/**
-		 * @param var
-		 * @return
-		 */
-		private int previousLevel(Var var) {
-			return var.previousLevel;
-		}
-
-		/**
-		 * @param var
-		 * @return
-		 */
-		private int nextLevel(Var var) {
-			return var.level + 1;
-		}
-
-		/**
-		 * Compute an order over variables from h
-		 * 
-		 * @param h
-		 * @return
-		 */
-		private Var[] computeOrder(InMemoryAtomSet h, List<Term> ans) {
-			Set<Term> terms = h.getTerms(Term.Type.VARIABLE);
-			Var[] vars = new Var[terms.size() + 2];
-			index = new TreeMap<Variable, Var>();
-
-			int level = 1;
-			vars[0] = new Var(null, 0);
-
-			for (Term t : ans) {
-				if (t instanceof Variable && index.get(t) == null) {
-					vars[level] = new Var((Variable) t, level);
-					index.put(vars[level].value, vars[level]);
-					++level;
-				}
-			}
-
-			int lastAnswerVariable = level - 1;
-			boolean areAnswersVariable = lastAnswerVariable > 0;
-
-			for (Term t : terms) {
-				if (index.get(t) == null) {
-					vars[level] = new Var((Variable) t, level);
-					vars[level].previousLevel = (areAnswersVariable) ? lastAnswerVariable : level - 1;
-					index.put(vars[level].value, vars[level]);
-					++level;
-				}
-			}
-
-			vars[level] = new Var(null, level);
-			vars[level].previousLevel = (areAnswersVariable) ? lastAnswerVariable : -1;
-
-			return vars;
-		}
-
-		/**
-		 * The index 0 contains the fully instantiated atoms.
-		 * 
-		 * @param atomset
-		 * @param varsOrdered
-		 * @return
-		 */
-		private void computeAtomOrder(Iterable<Atom> atomset, Var[] vars) {
-			int tmp, rank;
-
-			for (int i = 0; i < vars.length; ++i)
-				vars[i].preAtoms = new LinkedList<Atom>();
-
-			//
-			for (Atom a : atomset) {
-				rank = 0;
-				for (Term t : a.getTerms(Type.VARIABLE)) {
-					tmp = this.index.get((Variable) t).level;
-
-					if (rank < tmp)
-						rank = tmp;
-				}
-				vars[rank].preAtoms.add(a);
-			}
-		}
-
-		/**
-		 * Return the index of the specified variable.
-		 * 
-		 * @param var
-		 * @return
-		 */
-		private Term imageOf(Variable var) {
-			return this.index.get(var).image;
-		}
-
-		private boolean isHomomorphism(Collection<Atom> atomsFrom, AtomSet atomsTo) throws AtomSetException {
-			for (Atom atom : atomsFrom) {
-				Atom image = createImageOf(atom);
-				boolean contains = false;
-				for (Atom a : atomsTo) {
-					if (this.compilation.isImplied(image, a)) {
-						contains = true;
-						break;
-					}
-				}
-				if (!contains)
-					return false;
-			}
-			return true;
-		}
-
-		/**
-		 * @param atom
-		 * @param images
-		 * @return
-		 */
-		private Atom createImageOf(Atom atom) {
-			List<Term> termsSubstitut = new LinkedList<Term>();
-			for (Term term : atom.getTerms()) {
-				if (term instanceof Variable) {
-					termsSubstitut.add(imageOf((Variable) term));
-				} else {
-					termsSubstitut.add(term);
-				}
-			}
-
-			return new DefaultAtom(atom.getPredicate(), termsSubstitut);
-		}
-
-		@Override
-		public void close() {
+			this.previousLevelFailure = this.previousLevelSuccess = level - 1;
+			this.nextLevel = level + 1;
 		}
 
 		@Override
 		public String toString() {
 			StringBuilder sb = new StringBuilder();
-			sb.append("{\n")
-			  .append("\t{query->")
-			  .append(h)
-			  .append("},\n\t{data->")
-			  .append(g)
-			  .append("},\n\t{level->")
-			  .append(level)
-			  .append("},\n\t{");
-			int i = 0;
-			for(Var v : vars) {
-				if (i == level)
-					sb.append('*');
-				sb.append(v.value)
-				.append("->")
-				.append(v.image)
-				.append(", ");
-				++i;
-			}
-			sb.append("}\n}\n");
-
+			sb.append('[').append(value).append("(").append(previousLevelSuccess).append('|')
+			  .append(previousLevelFailure).append("<-").append(level)
+			  .append("->")
+			  .append(nextLevel).append(")").append("]\n");
 			return sb.toString();
+		}
+	}
+
+	/**
+	 * The Scheduler interface provides a way to manage the backtracking order.
+	 * The Var.previousLevel will be used when the backtracking algorithm is in
+	 * a failure state (allow backjumping).
+	 * 
+	 * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+	 *
+	 */
+	public static interface Scheduler {
+
+		/**
+		 * @param h
+		 * @param ans
+		 * @return
+		 */
+		Var[] execute(InMemoryAtomSet h, List<Term> ans);
+
+	}
+
+	/**
+	 * Compute an order over variables from h. This scheduler put answer
+	 * variables first, then other variables are put in the order from
+	 * h.getTerms(Term.Type.VARIABLE).iterator().
+	 * 
+	 * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+	 *
+	 */
+	static class DefaultScheduler implements Scheduler {
+
+		private static DefaultScheduler instance;
+
+		protected DefaultScheduler() {
+			super();
+		}
+
+		public static synchronized DefaultScheduler instance() {
+			if (instance == null)
+				instance = new DefaultScheduler();
+
+			return instance;
+		}
+
+		/**
+		 * Compute the order.
+		 * 
+		 * @param h
+		 * @return
+		 */
+		@Override
+		public Var[] execute(InMemoryAtomSet h, List<Term> ans) {
+			Set<Term> terms = h.getTerms(Term.Type.VARIABLE);
+			Var[] vars = new Var[terms.size() + 2];
+
+			int level = 0;
+			vars[level] = new Var(level);
+
+			Set<Term> alreadyAffected = new TreeSet<Term>();
+			for (Term t : ans) {
+				if (t instanceof Variable && !alreadyAffected.contains(t)) {
+					++level;
+					vars[level] = new Var(level);
+					vars[level].value = (Variable) t;
+					alreadyAffected.add(t);
+				}
+			}
+
+			int lastAnswerVariable = level;
+
+			for (Term t : terms) {
+				if (!alreadyAffected.contains(t)) {
+					++level;
+					vars[level] = new Var(level);
+					vars[level].value = (Variable) t;
+				}
+			}
+
+			++level;
+			vars[level] = new Var(level);
+			vars[level].previousLevelSuccess = lastAnswerVariable;
+
+			return vars;
 		}
 
 	}

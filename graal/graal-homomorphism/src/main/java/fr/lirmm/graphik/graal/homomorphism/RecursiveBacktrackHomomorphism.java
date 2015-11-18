@@ -64,7 +64,7 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 
 /**
- * Implementation of a backtrack solving algorithm.
+ * Recursive implementation of a backtrack solving algorithm.
  * 
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
