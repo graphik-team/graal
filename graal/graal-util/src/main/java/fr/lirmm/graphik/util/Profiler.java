@@ -105,7 +105,7 @@ public class Profiler {
 		Long newTime = oldTime + this.getTime() - this.tmpMap.get(key);
 		this.map.put(key, newTime);
 		if (this.out != null) {
-			this.out.println("Profiler - " + key + ": " + newTime + "ms");
+			this.out.println("Profiler - " + key + ": " + newTime + "ns");
 		}
 	}
 
