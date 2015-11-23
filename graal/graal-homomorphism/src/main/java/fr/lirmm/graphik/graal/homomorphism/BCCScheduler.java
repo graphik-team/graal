@@ -72,18 +72,15 @@ import fr.lirmm.graphik.util.graph.HyperGraph;
 public class BCCScheduler implements BacktrackHomomorphism.Scheduler {
 
 	static Term[] inverseMap;
+	private boolean withForbiddenCandidate;
 
-	private static BCCScheduler instance;
-
-	protected BCCScheduler() {
-		super();
+	public BCCScheduler() {
+		this(false);
 	}
 
-	public static synchronized BCCScheduler instance() {
-		if (instance == null)
-			instance = new BCCScheduler();
-
-		return instance;
+	public BCCScheduler(boolean withForbiddenCandidate) {
+		super();
+		this.withForbiddenCandidate = withForbiddenCandidate;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -115,14 +112,47 @@ public class BCCScheduler implements BacktrackHomomorphism.Scheduler {
 			vars[v.level] = v;
 			v.value = (Variable) inverseMap[i];
 			v.nextLevel = v.level + 1;
-			v.previousLevelSuccess = v.level - 1;
+			v.previousLevel = v.level - 1;
+			if (withForbiddenCandidate && v.isAccesseur) {
+				v.forbidden = new TreeSet<Term>();
+			}
 		}
 
 		int level = variables.size() + 1;
 		vars[level] = new Var(level);
-		vars[level].previousLevelSuccess = ans.size();
+		vars[level].previousLevel = ans.size();
 
 		return vars;
+	}
+
+	/**
+	 * @param var
+	 * @return
+	 */
+	@Override
+	public int previousLevel(Var var, Var[] vars) {
+		if (!vars[var.previousLevelFailure].success) {
+			if (var.isEntry && vars[var.previousLevelFailure].forbidden != null) {
+				vars[var.previousLevelFailure].forbidden.add(vars[var.previousLevelFailure].image);
+			}
+			return var.previousLevelFailure;
+		} else {
+			return var.previousLevel;
+		}
+	}
+
+	/**
+	 * @param var
+	 * @return
+	 */
+	@Override
+	public int nextLevel(Var var, Var[] vars) {
+		return var.nextLevel;
+	}
+
+	@Override
+	public boolean isAllowed(Var var, Term image) {
+		return (var.forbidden == null || !var.forbidden.contains(image));
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -176,7 +206,6 @@ public class BCCScheduler implements BacktrackHomomorphism.Scheduler {
 			biconnect(g, d, ans.next(), 0, ans);
 		}
 		for (int v = 1; v <= g.nbVertices(); ++v) {
-			// System.out.println(inverseMap[v]);
 			if (d.vars[v].level == 0) {
 				biconnect(g, d, v, 0, ans);
 			}
@@ -204,8 +233,6 @@ public class BCCScheduler implements BacktrackHomomorphism.Scheduler {
 				d.lowpt[v] = Math.min(d.lowpt[v], d.lowpt[w]);
 				if (d.lowpt[w] >= d.vars[v].level) {
 					// start new component
-					// d.vars[v].isAccesseur = true;
-					// d.vars[v].isEntry = true;
 					d.currentComponent = new TreeSet<Integer>();
 					d.components.add(d.currentComponent);
 					while (d.vars[d.stack.peek().getTail()].level >= d.vars[w].level) {
@@ -217,6 +244,18 @@ public class BCCScheduler implements BacktrackHomomorphism.Scheduler {
 					DirectedEdge e = d.stack.pop();
 					d.currentComponent.add(e.getTail());
 					d.currentComponent.add(e.getHead());
+					int entry = w;
+					int accesseur = (u == 0) ? u : v;
+					d.vars[accesseur].isAccesseur = true;
+					for (int i : d.currentComponent) {
+						if ((u == 0 || i != v) && d.vars[i].level < d.vars[entry].level) {
+							entry = i;
+						}
+						if (i != v) {
+							d.vars[i].accesseur = d.vars[accesseur].level;
+						}
+					}
+					d.vars[entry].isEntry = true;
 				}
 			} else if (d.vars[w].level < d.vars[v].level && w != u) {
 				d.stack.push(new DefaultDirectedEdge(v, w));

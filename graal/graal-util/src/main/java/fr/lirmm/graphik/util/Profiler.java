@@ -102,7 +102,7 @@ public class Profiler {
 		if(oldTime == null) {
 			oldTime = 0L;
 		}
-		Long newTime = oldTime + this.getTime() - this.tmpMap.get(key);
+		Long newTime = oldTime + (((this.getTime() - this.tmpMap.get(key)) + 500000) / 1000000);
 		this.map.put(key, newTime);
 		if (this.out != null) {
 			this.out.println("Profiler - " + key + ": " + newTime + "ns");
@@ -130,7 +130,7 @@ public class Profiler {
 	 * @return
 	 */
 	public Object get(String key) {
-		return ((Long) this.map.get(key) + 500000) / 1000000;
+		return this.map.get(key);
 	}
 
 	/**

@@ -72,7 +72,8 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-class BacktrackIterator extends AbstractIterator<Substitution> implements CloseableIterator<Substitution>, Profilable {
+class BacktrackIterator extends AbstractIterator<Substitution> implements CloseableIterator<Substitution>,
+                                                                     Profilable {
 
 	private Scheduler          scheduler = new DefaultScheduler();
 
@@ -91,6 +92,8 @@ class BacktrackIterator extends AbstractIterator<Substitution> implements Closea
 	private List<Term>         ans;
 
 	private Profiler           profiler;
+
+	private static int         nbCall    = 0;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -134,7 +137,7 @@ class BacktrackIterator extends AbstractIterator<Substitution> implements Closea
 		}
 
 		if (ans.isEmpty()) {
-			vars[levelMax + 1].previousLevelSuccess = -1;
+			vars[levelMax + 1].previousLevel = -1;
 		}
 
 		computeAtomOrder(h, vars);
@@ -240,33 +243,34 @@ class BacktrackIterator extends AbstractIterator<Substitution> implements Closea
 					return solutionFound(vars, ans);
 				}
 				while (level > 0) {
+					++nbCall;
+					currentVar = vars[level];
+
 					// Homomorphism found
 					if (level > levelMax) {
 						goBack = true;
 
-						level = vars[level].previousLevelSuccess;
+						level = currentVar.previousLevel;
 						if (profiler != null) {
 							profiler.stop("backtracking time");
 						}
 						return solutionFound(vars, ans);
-					} else {
-						currentVar = vars[level];
 					}
 
 					//
 					if (goBack) {
 						if (hasMoreValues(currentVar, g)) {
 							goBack = false;
-							level = nextLevel(currentVar);
+							level = scheduler.nextLevel(currentVar, vars);
 						} else {
-							level = previousLevel(currentVar);
+							level = scheduler.previousLevel(currentVar, vars);
 						}
 					} else {
 						if (getFirstValue(currentVar, g)) {
-							level = nextLevel(currentVar);
+							level = scheduler.nextLevel(currentVar, vars);
 						} else {
 							goBack = true;
-							level = previousLevel(currentVar);
+							level = scheduler.previousLevel(currentVar, vars);
 						}
 					}
 				}
@@ -277,6 +281,7 @@ class BacktrackIterator extends AbstractIterator<Substitution> implements Closea
 		}
 		if (profiler != null) {
 			profiler.stop("backtracking time");
+			profiler.put("nbCall", nbCall);
 		}
 
 		return null;
@@ -304,7 +309,8 @@ class BacktrackIterator extends AbstractIterator<Substitution> implements Closea
 		while (var.domain.hasNext()) {
 			var.success = false;
 			var.image = var.domain.next();
-			if (isHomomorphism(var.preAtoms, g)) {
+
+			if (scheduler.isAllowed(var, var.image) && isHomomorphism(var.preAtoms, g)) {
 				return true;
 			}
 		}
@@ -315,26 +321,6 @@ class BacktrackIterator extends AbstractIterator<Substitution> implements Closea
 	private boolean getFirstValue(Var var, AtomSet g) throws AtomSetException {
 		var.domain = g.termsIterator();
 		return this.hasMoreValues(var, g);
-	}
-
-	/**
-	 * @param var
-	 * @return
-	 */
-	private int previousLevel(Var var) {
-		if (!vars[var.previousLevelFailure].success) {
-			return var.previousLevelFailure;
-		} else {
-			return var.previousLevelSuccess;
-		}
-	}
-
-	/**
-	 * @param var
-	 * @return
-	 */
-	private int nextLevel(Var var) {
-		return var.nextLevel;
 	}
 
 	/**

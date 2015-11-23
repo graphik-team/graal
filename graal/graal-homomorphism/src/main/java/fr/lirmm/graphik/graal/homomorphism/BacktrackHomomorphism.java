@@ -131,32 +131,43 @@ public class BacktrackHomomorphism implements HomomorphismWithCompilation<Conjun
 	// /////////////////////////////////////////////////////////////////////////
 
 	public static class Var {
-		public Variable  value;
-		public int       level;
-		public int       previousLevelSuccess;
-		public int       previousLevelFailure;
-		public int       nextLevel;
-		public boolean   success = false;
+		public int              level;
+		public Variable         value;
+		public Term             image;
+
+		public int              nextLevel;
+		public int              previousLevel;
+		public int              previousLevelFailure;
+
+		public boolean          isAccesseur;
+		public boolean          isEntry;
+		public int              accesseur;
+		public boolean          success = false;
+
 		public Collection<Atom> preAtoms;
 		public Iterator<Term>   domain;
-		public Term             image;
+		public Set<Term>        forbidden;
 
 		public Var() {
 		}
 
 		public Var(int level) {
 			this.level = level;
-			this.previousLevelFailure = this.previousLevelSuccess = level - 1;
+			this.previousLevelFailure = this.previousLevel = level - 1;
 			this.nextLevel = level + 1;
 		}
 
 		@Override
 		public String toString() {
 			StringBuilder sb = new StringBuilder();
-			sb.append('[').append(value).append("(").append(previousLevelSuccess).append('|')
+			sb.append('[').append(value).append("(").append(previousLevel).append('|')
 			  .append(previousLevelFailure).append("<-").append(level)
 			  .append("->")
-			  .append(nextLevel).append(")").append("]\n");
+			  .append(nextLevel).append(")");
+			sb.append(" A:").append(accesseur);
+			if(isEntry) 
+				sb.append(" E");
+			sb.append("]\n");
 			return sb.toString();
 		}
 	}
@@ -174,9 +185,31 @@ public class BacktrackHomomorphism implements HomomorphismWithCompilation<Conjun
 		/**
 		 * @param h
 		 * @param ans
-		 * @return
+		 * @return an array of Var
 		 */
 		Var[] execute(InMemoryAtomSet h, List<Term> ans);
+
+		/**
+		 * @param currentVar
+		 * @param vars
+		 * @return the previous level
+		 */
+		int previousLevel(Var currentVar, Var[] vars);
+
+		/**
+		 * @param currentVar
+		 * @param vars
+		 * @return the next level
+		 */
+		int nextLevel(Var currentVar, Var[] vars);
+		
+		/**
+		 * @param var
+		 * @param image
+		 * @return true if the specified image is not forbidden for the
+		 *         specified var
+		 */
+		boolean isAllowed(Var var, Term image);
 
 	}
 
@@ -239,9 +272,24 @@ public class BacktrackHomomorphism implements HomomorphismWithCompilation<Conjun
 
 			++level;
 			vars[level] = new Var(level);
-			vars[level].previousLevelSuccess = lastAnswerVariable;
+			vars[level].previousLevel = lastAnswerVariable;
 
 			return vars;
+		}
+
+		@Override
+		public int previousLevel(Var currentVar, Var[] vars) {
+			return currentVar.previousLevel;
+		}
+
+		@Override
+		public int nextLevel(Var currentVar, Var[] vars) {
+			return currentVar.nextLevel;
+		}
+
+		@Override
+		public boolean isAllowed(Var var, Term image) {
+			return true;
 		}
 
 	}
