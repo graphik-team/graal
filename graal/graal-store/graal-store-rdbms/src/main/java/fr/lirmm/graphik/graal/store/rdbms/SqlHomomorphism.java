@@ -52,6 +52,7 @@ import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
@@ -64,6 +65,8 @@ public final class SqlHomomorphism implements Homomorphism<ConjunctiveQuery, Rdb
 			.getLogger(SqlHomomorphism.class);
     
     private static SqlHomomorphism instance;
+
+	private Profiler               profiler;
 
 	private SqlHomomorphism() {
 	}
@@ -90,6 +93,16 @@ public final class SqlHomomorphism implements Homomorphism<ConjunctiveQuery, Rdb
         }
     }
     
+	@Override
+	public void setProfiler(Profiler profiler) {
+		this.profiler = profiler;
+	}
+
+	@Override
+	public Profiler getProfiler() {
+		return this.profiler;
+	}
+
     // /////////////////////////////////////////////////////////////////////////
     //	PRIVATE METHODS
     // /////////////////////////////////////////////////////////////////////////

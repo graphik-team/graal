@@ -55,6 +55,7 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.BuiltInPredicate;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
+import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.AbstractIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
@@ -63,6 +64,7 @@ public class ComplexHomomorphism<Q extends ConjunctiveQuery, F extends AtomSet> 
 
 	private Homomorphism<ConjunctiveQuery,F> rawSolver;
 	private LinkedList<Atom> builtInAtoms;
+	private Profiler                          profiler;
 
 	public ComplexHomomorphism(Homomorphism<ConjunctiveQuery,F> rawSolver) {
 		this.rawSolver = rawSolver;
@@ -141,6 +143,16 @@ public class ComplexHomomorphism<Q extends ConjunctiveQuery, F extends AtomSet> 
 		private Substitution next;
 		private CloseableIterator<Substitution> rawReader;
 
+	}
+
+	@Override
+	public void setProfiler(Profiler profiler) {
+		this.profiler = profiler;
+	}
+
+	@Override
+	public Profiler getProfiler() {
+		return this.profiler;
 	};
 };
 

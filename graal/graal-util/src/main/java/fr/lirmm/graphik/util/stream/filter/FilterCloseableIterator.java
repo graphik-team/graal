@@ -40,36 +40,55 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.util.graph;
+ /**
+ * 
+ */
+package fr.lirmm.graphik.util.stream.filter;
 
-import java.util.Iterator;
+import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+
 
 /**
- * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+ * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public interface Graph {
+public class FilterCloseableIterator<U, T extends U> extends AbstractCloseableIterator<T> {
 
-	public int nbVertices();
+	private final CloseableIterator<U> it;
+	private final Filter<U> filter;
+	private T next;
 
-	public Iterator<Integer> adjacencyList(int v);
+	public FilterCloseableIterator(CloseableIterator<U> it, Filter<U> filter) {
+		this.filter = filter;
+		this.it = it;
+		this.next = null;
+	}
 
-	/**
-	 * @param e
-	 */
-	void add(Edge e);
+	@Override
+	public boolean hasNext() {
+		if(this.next == null && this.it.hasNext()) {
+			U o = this.it.next();
+			if(this.filter.filter(o)) {
+				this.next = (T) o;
+			} else {
+				this.hasNext();
+			}
+		}
+		return this.next != null;
+	}
 
-	/**
-	 * @param v1
-	 * @param v2
-	 */
-	void addEdge(int v1, int v2);
+	@Override
+	public T next() {
+		this.hasNext();
+		T t = this.next;
+		this.next = null;
+		return t;
+	}
 
-	void addPath(int... path);
-
-	/**
-	 * @return
-	 */
-	int addVertice();
+	@Override
+	public void close() {
+		this.it.close();
+	}
 
 }

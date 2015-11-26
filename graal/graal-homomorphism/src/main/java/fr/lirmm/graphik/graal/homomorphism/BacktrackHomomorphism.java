@@ -141,12 +141,14 @@ public class BacktrackHomomorphism implements HomomorphismWithCompilation<Conjun
 
 		public boolean          isAccesseur;
 		public boolean          isEntry;
+		public boolean          isTerminal;
 		public int              accesseur;
 		public boolean          success = false;
 
 		public Collection<Atom> preAtoms;
 		public Iterator<Term>   domain;
 		public Set<Term>        forbidden;
+		public Set<Integer>     compilateurs;
 
 		public Var() {
 		}
@@ -167,6 +169,11 @@ public class BacktrackHomomorphism implements HomomorphismWithCompilation<Conjun
 			sb.append(" A:").append(accesseur);
 			if(isEntry) 
 				sb.append(" E");
+			if (isTerminal)
+				sb.append(" T");
+			if(compilateurs != null) {
+				sb.append(" C:").append(compilateurs);
+			}
 			sb.append("]\n");
 			return sb.toString();
 		}

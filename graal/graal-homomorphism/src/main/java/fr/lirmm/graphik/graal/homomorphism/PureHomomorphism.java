@@ -65,6 +65,7 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
 import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
+import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
@@ -83,6 +84,8 @@ public class PureHomomorphism implements
 			.getLogger(PureHomomorphism.class);
 
 	private static PureHomomorphism instance;
+
+	private Profiler                profiler;
 
 	protected PureHomomorphism() {
 	}
@@ -137,10 +140,34 @@ public class PureHomomorphism implements
 
 		// /////////////////////////////////////////////////////////////////////
 		// Initialisation
-		if (!initialiseHomomorphism(homomorphism, source, target))
-			return false;
+		if (profiler != null) {
+			profiler.start("preprocessing time");
+		}
+		boolean val = initialiseHomomorphism(homomorphism, source, target);
+		if (profiler != null) {
+			profiler.stop("preprocessing time");
+		}
+		
+		if (profiler != null) {
+			profiler.start("backtracking time");
+		}
+		if(val) {
+			val = backtrack(homomorphism);
+		}
+		if (profiler != null) {
+			profiler.stop("backtracking time");
+		}
+		return val;
+	}
 
-		return backtrack(homomorphism);
+	@Override
+	public void setProfiler(Profiler profiler) {
+		this.profiler = profiler;
+	}
+
+	@Override
+	public Profiler getProfiler() {
+		return this.profiler;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

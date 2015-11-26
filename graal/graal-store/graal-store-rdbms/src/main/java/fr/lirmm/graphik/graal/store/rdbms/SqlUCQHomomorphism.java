@@ -55,6 +55,7 @@ import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
 import fr.lirmm.graphik.graal.homomorphism.UnionConjunctiveQueriesHomomorphism;
+import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
@@ -69,6 +70,8 @@ public final class SqlUCQHomomorphism implements UnionConjunctiveQueriesHomomorp
 			.getLogger(SqlUCQHomomorphism.class);
 	
 	private static SqlUCQHomomorphism instance;
+
+	private Profiler                  profiler;
 
 	private SqlUCQHomomorphism() {
 	}
@@ -96,6 +99,16 @@ public final class SqlUCQHomomorphism implements UnionConjunctiveQueriesHomomorp
 		} catch (Exception e) {
 			throw new HomomorphismException(e.getMessage(), e);
 		}
+	}
+
+	@Override
+	public void setProfiler(Profiler profiler) {
+		this.profiler = profiler;
+	}
+
+	@Override
+	public Profiler getProfiler() {
+		return this.profiler;
 	}
 
 	private static String preprocessing(UnionConjunctiveQueries queries, RdbmsStore store) throws HomomorphismException {

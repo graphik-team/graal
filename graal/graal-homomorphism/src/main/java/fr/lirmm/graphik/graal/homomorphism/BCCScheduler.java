@@ -42,6 +42,8 @@
  */
 package fr.lirmm.graphik.graal.homomorphism;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -57,9 +59,11 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphism.Var;
 import fr.lirmm.graphik.util.graph.DefaultDirectedEdge;
+import fr.lirmm.graphik.util.graph.DefaultGraph;
 import fr.lirmm.graphik.util.graph.DefaultHyperEdge;
 import fr.lirmm.graphik.util.graph.DefaultHyperGraph;
 import fr.lirmm.graphik.util.graph.DirectedEdge;
+import fr.lirmm.graphik.util.graph.Graph;
 import fr.lirmm.graphik.util.graph.HyperGraph;
 
 /**
@@ -71,7 +75,7 @@ import fr.lirmm.graphik.util.graph.HyperGraph;
  */
 public class BCCScheduler implements BacktrackHomomorphism.Scheduler {
 
-	static Term[] inverseMap;
+	static Term[]   inverseMap;
 	private boolean withForbiddenCandidate;
 
 	public BCCScheduler() {
@@ -96,19 +100,18 @@ public class BCCScheduler implements BacktrackHomomorphism.Scheduler {
 		Map<Term, Integer> map = new TreeMap<Term, Integer>();
 		inverseMap = new Term[variables.size() + 1];
 		HyperGraph graph = constructHyperGraph(h, variables, inverseMap, map, ans);
-		
+
 		List<Integer> ansInt = new LinkedList<Integer>();
 		for (Term t : ans) {
 			ansInt.add(map.get(t));
 		}
-		Var[] tmp = biconnect(graph, ansInt.iterator());
-
+		Data d = biconnect(graph, ansInt.iterator());
 		Var[] vars = new Var[variables.size() + 2];
 
 		vars[0] = new Var(0);
 
-		for (int i = 1; i < tmp.length; ++i) {
-			Var v = tmp[i];
+		for (int i = 1; i < d.vars.length; ++i) {
+			Var v = d.vars[i];
 			vars[v.level] = v;
 			v.value = (Variable) inverseMap[i];
 			v.nextLevel = v.level + 1;
@@ -172,7 +175,7 @@ public class BCCScheduler implements BacktrackHomomorphism.Scheduler {
 			map.put(t, i);
 		}
 
-		HyperGraph graph = new DefaultHyperGraph(variables.size());
+		HyperGraph graph = new DefaultHyperGraph(variables.size() + 1);
 		for (Atom a : h) {
 			DefaultHyperEdge edge = new DefaultHyperEdge();
 			for (Term t : a.getTerms(Term.Type.VARIABLE)) {
@@ -180,7 +183,7 @@ public class BCCScheduler implements BacktrackHomomorphism.Scheduler {
 			}
 			graph.add(edge);
 		}
-		
+
 		// ANSWER VARIABLES
 		DefaultHyperEdge edge = new DefaultHyperEdge();
 		for (Term t : ans) {
@@ -191,28 +194,31 @@ public class BCCScheduler implements BacktrackHomomorphism.Scheduler {
 		return graph;
 	}
 
-	private static Var[] biconnect(HyperGraph g, Iterator<Integer> ans) {
+	private static Data biconnect(HyperGraph g, Iterator<Integer> ans) {
 		Data d = new Data();
-		d.vars = new Var[g.nbVertices() + 1];
+		d.vars = new Var[g.nbVertices()];
 		for (int i = 0; i < d.vars.length; ++i) {
 			d.vars[i] = new Var();
 		}
-		d.components = new LinkedList<Set<Integer>>();
+		d.components = new ArrayList<Set<Integer>>();
 		d.i = 0;
 		d.stack = new LinkedList<DirectedEdge>();
-		d.lowpt = new int[g.nbVertices() + 1];
+		d.lowpt = new int[g.nbVertices()];
 
 		if (ans.hasNext()) {
 			biconnect(g, d, ans.next(), 0, ans);
 		}
-		for (int v = 1; v <= g.nbVertices(); ++v) {
+		for (int v = 1; v < g.nbVertices(); ++v) {
 			if (d.vars[v].level == 0) {
 				biconnect(g, d, v, 0, ans);
 			}
 		}
 
-		return d.vars;
+		return d;
 	}
+
+	static Deque<Integer> lastAccesseurs = new LinkedList<Integer>();
+	static int                 lastTerminal;
 
 	private static void biconnect(HyperGraph g, Data d, int v, int u, Iterator<Integer> ans) {
 
@@ -244,18 +250,47 @@ public class BCCScheduler implements BacktrackHomomorphism.Scheduler {
 					DirectedEdge e = d.stack.pop();
 					d.currentComponent.add(e.getTail());
 					d.currentComponent.add(e.getHead());
+
 					int entry = w;
 					int accesseur = (u == 0) ? u : v;
+					int terminal = v;
 					d.vars[accesseur].isAccesseur = true;
 					for (int i : d.currentComponent) {
 						if ((u == 0 || i != v) && d.vars[i].level < d.vars[entry].level) {
 							entry = i;
+						}
+						if (d.vars[i].level > d.vars[terminal].level) {
+							terminal = i;
 						}
 						if (i != v) {
 							d.vars[i].accesseur = d.vars[accesseur].level;
 						}
 					}
 					d.vars[entry].isEntry = true;
+
+					int componentVertice = d.bccGraph.addComponent(d.currentComponent);
+					int accesseurVertice = d.bccGraph.addAccesseur(accesseur);
+					d.bccGraph.addEdge(componentVertice, accesseurVertice);
+
+					if (!lastAccesseurs.isEmpty() && d.vars[lastAccesseurs.peek()].level >= d.vars[entry].level) {
+						while (!lastAccesseurs.isEmpty() && d.vars[lastAccesseurs.peek()].level >= d.vars[entry].level) {
+							int a = lastAccesseurs.pop();
+							if (a != accesseur) {
+								d.bccGraph.addEdge(componentVertice, d.bccGraph.addAccesseur(a));
+							}
+						}
+					} else {
+						d.vars[terminal].isTerminal = true;
+						d.vars[terminal].compilateurs = new TreeSet<Integer>();
+						lastTerminal = terminal;
+					}
+
+					d.vars[lastTerminal].compilateurs.add(d.vars[entry].level);
+
+					if (lastAccesseurs.isEmpty() || lastAccesseurs.peek() != accesseur) {
+						lastAccesseurs.push(accesseur);
+					}
+
 				}
 			} else if (d.vars[w].level < d.vars[v].level && w != u) {
 				d.stack.push(new DefaultDirectedEdge(v, w));
@@ -271,5 +306,87 @@ public class BCCScheduler implements BacktrackHomomorphism.Scheduler {
 		Deque<DirectedEdge> stack;
 		List<Set<Integer>>  components;
 		Set<Integer>        currentComponent;
+		BCCGraph            bccGraph = new BCCGraph();
 	}
+
+	private static class BCCGraph {
+
+		public Graph    graph                       = new DefaultGraph();
+		public Object[] bccGraphMap                 = new Object[40];
+		public int[]    bccGraphEntryInverseMap     = new int[30];
+		public int[]    bccGraphAccesseurInverseMap = new int[30];
+
+		BCCGraph() {
+			Arrays.fill(bccGraphEntryInverseMap, -1);
+			Arrays.fill(bccGraphAccesseurInverseMap, -1);
+		}
+
+		int addAccesseur(int accesseur) {
+			int v = bccGraphAccesseurInverseMap[accesseur];
+			if (v == -1) {
+				v = graph.addVertice();
+				bccGraphMap[v] = accesseur;
+				bccGraphAccesseurInverseMap[accesseur] = v;
+			}
+			return v;
+		}
+
+		int addComponent(Set<Integer> component) {
+			int v = graph.addVertice();
+			bccGraphMap[v] = component;
+			return v;
+		}
+
+		Object getObject(int v) {
+			return bccGraphMap[v];
+		}
+
+		void addEdge(int v1, int v2) {
+			this.graph.addEdge(v1, v2);
+		}
+
+		public int nbVertices() {
+			return this.graph.nbVertices();
+		}
+
+		public Iterator<Integer> adjacencyList(int v) {
+			return this.graph.adjacencyList(v);
+		}
+
+	}
+
+	/**
+	 * @param bccGraph
+	 * @param inverseMap2
+	 */
+	private void printBccGraph(BCCGraph bccGraph, Term[] inverseMap) {
+		System.out.println("\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+		for (int i = 0; i < bccGraph.nbVertices(); ++i) {
+			Iterator<Integer> adjacencyList = bccGraph.adjacencyList(i);
+			printBccVertice(bccGraph, inverseMap, i);
+			System.out.print(": ");
+			while (adjacencyList.hasNext()) {
+				int j = adjacencyList.next();
+				printBccVertice(bccGraph, inverseMap, j);
+				System.out.print(" ");
+			}
+			System.out.println();
+
+		}
+		System.out.println("\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+	}
+
+	private void printBccVertice(BCCGraph g, Term[] inverseMap, int v) {
+		Object o = g.getObject(v);
+		if (o instanceof Integer) {
+			System.out.print("(" + inverseMap[(Integer) o] + ")");
+		} else if (o instanceof Set) {
+			Set<Integer> set = (Set<Integer>) o;
+			System.out.print("{");
+			for (int j : set)
+				System.out.print(inverseMap[j] + " ");
+			System.out.print("}");
+		}
+	}
+
 }

@@ -65,4 +65,9 @@ public interface HyperGraph {
 	 */
 	void addEdge(int... vertices);
 
+	/**
+	 * @return
+	 */
+	int addVertice();
+
 }

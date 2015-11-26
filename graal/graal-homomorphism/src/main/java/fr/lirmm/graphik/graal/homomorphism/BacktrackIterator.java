@@ -363,11 +363,18 @@ class BacktrackIterator extends AbstractIterator<Substitution> implements Closea
 		for (Atom atom : atomsFrom) {
 			Atom image = createImageOf(atom);
 			boolean contains = false;
+			if (profiler != null) {
+				profiler.start("atom comparaison");
+			}
 			for (Atom a : atomsTo) {
 				if (this.compilation.isImplied(image, a)) {
 					contains = true;
 					break;
 				}
+			}
+			// contains = atomsTo.contains(image);
+			if (profiler != null) {
+				profiler.stop("atom comparaison");
 			}
 			if (!contains)
 				return false;

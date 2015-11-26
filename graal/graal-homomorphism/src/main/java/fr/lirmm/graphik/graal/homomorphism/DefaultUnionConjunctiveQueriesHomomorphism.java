@@ -49,6 +49,7 @@ import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
+import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
@@ -58,6 +59,7 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
 public final class DefaultUnionConjunctiveQueriesHomomorphism implements UnionConjunctiveQueriesHomomorphism<AtomSet> {
 
 	private static DefaultUnionConjunctiveQueriesHomomorphism instance;
+	private Profiler                                          profiler;
     
 	/**
      * @param queries
@@ -77,6 +79,16 @@ public final class DefaultUnionConjunctiveQueriesHomomorphism implements UnionCo
 	public CloseableIterator<Substitution> execute(UnionConjunctiveQueries queries,
 			AtomSet atomset) throws HomomorphismException {
         return new UnionConjunctiveQueriesSubstitutionReader(queries, atomset);
+	}
+
+	@Override
+	public void setProfiler(Profiler profiler) {
+		this.profiler = profiler;
+	}
+
+	@Override
+	public Profiler getProfiler() {
+		return this.profiler;
 	}
 
 }

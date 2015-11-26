@@ -47,13 +47,14 @@ package fr.lirmm.graphik.graal.api.homomorphism;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.util.Profilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface Homomorphism<T1 extends Object, T2 extends AtomSet> {
+public interface Homomorphism<T1 extends Object, T2 extends AtomSet> extends Profilable {
 
 	/**
 	 * Look for the homomorphisms of the specified object into the specified

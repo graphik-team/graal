@@ -42,6 +42,7 @@
  */
 package fr.lirmm.graphik.util.graph;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -51,14 +52,19 @@ import java.util.LinkedList;
  */
 public class DefaultHyperGraph implements HyperGraph {
 
-	private LinkedList<Integer> adjacencyList[];
+	private ArrayList<LinkedList<Integer>> adjacencyList;
 	private int                 nbVertices;
 
-	public DefaultHyperGraph(int nbVertices) {
-		this.nbVertices = nbVertices;
-		this.adjacencyList = new LinkedList[nbVertices + 1];
-		for (int i = 0; i <= nbVertices; ++i) {
-			this.adjacencyList[i] = new LinkedList<Integer>();
+	public DefaultHyperGraph() {
+		this.nbVertices = 0;
+		this.adjacencyList = new ArrayList<LinkedList<Integer>>();
+	}
+
+	public DefaultHyperGraph(int nbVerticesInit) {
+		this.nbVertices = nbVerticesInit;
+		this.adjacencyList = new ArrayList<LinkedList<Integer>>(nbVerticesInit);
+		for (int i = 0; i < nbVertices; ++i) {
+			this.adjacencyList.add(new LinkedList<Integer>());
 		}
 	}
 
@@ -68,8 +74,14 @@ public class DefaultHyperGraph implements HyperGraph {
 	}
 
 	@Override
+	public int addVertice() {
+		this.adjacencyList.add(new LinkedList<Integer>());
+		return this.nbVertices++;
+	}
+
+	@Override
 	public Iterator<Integer> adjacencyList(int v) {
-		return this.adjacencyList[v].iterator();
+		return this.adjacencyList.get(v).iterator();
 	}
 
 	@Override
@@ -84,7 +96,7 @@ public class DefaultHyperGraph implements HyperGraph {
 			while (it2.hasNext()) {
 				v2 = it2.next();
 				if (v1 != v2) {
-					this.adjacencyList[v1].add(v2);
+					this.adjacencyList.get(v1).add(v2);
 				}
 			}
 
@@ -95,8 +107,8 @@ public class DefaultHyperGraph implements HyperGraph {
 	public void addEdge(int... vertices) {
 		for (int i = 0; i < vertices.length - 1; ++i) {
 			for (int j = i + 1; j < vertices.length; ++j) {
-				this.adjacencyList[vertices[i]].add(vertices[j]);
-				this.adjacencyList[vertices[j]].add(vertices[i]);
+				this.adjacencyList.get(vertices[i]).add(vertices[j]);
+				this.adjacencyList.get(vertices[j]).add(vertices[i]);
 			}
 		}
 	}

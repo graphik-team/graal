@@ -60,6 +60,7 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.HashMapSubstitution;
+import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 
@@ -75,6 +76,8 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
 
 	private static RecursiveBacktrackHomomorphism instance;
 	private Set<Term> domain;
+
+	private Profiler                              profiler;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -104,19 +107,35 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
 		if (LOGGER.isTraceEnabled()) {
 			LOGGER.trace(query.toString());
 		}
+		if (profiler != null) {
+			profiler.start("preprocessing time");
+		}
 		List<Term> orderedVars = order(query.getAtomSet().getTerms(Term.Type.VARIABLE));
 		Collection<Atom>[] queryAtomRanked = getAtomRank(query.getAtomSet(), orderedVars);
+		if (profiler != null) {
+			profiler.stop("preprocessing time");
+		}
 
 		try {
 			this.domain = facts.getTerms();
 
+			if (profiler != null) {
+				profiler.start("backtracking time");
+			}
+			CloseableIteratorAdapter<Substitution> results;
 			if (isHomomorphism(queryAtomRanked[0], facts, new HashMapSubstitution())) {
-				return new CloseableIteratorAdapter<Substitution>(homomorphism(query, queryAtomRanked, facts,
+				results = new CloseableIteratorAdapter<Substitution>(homomorphism(query, queryAtomRanked, facts,
 						new HashMapSubstitution(), orderedVars, 1).iterator());
+
 			} else {
 				// return false
-				return new CloseableIteratorAdapter<Substitution>(Collections.<Substitution> emptyList().iterator());
+				results = new CloseableIteratorAdapter<Substitution>(Collections.<Substitution> emptyList().iterator());
 			}
+			if (profiler != null) {
+				profiler.stop("backtracking time");
+			}
+			return results;
+
 		} catch (Exception e) {
 			throw new HomomorphismException(e.getMessage(), e);
 		}
@@ -142,6 +161,16 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
 		} catch (Exception e) {
 			throw new HomomorphismException(e.getMessage(), e);
 		}
+	}
+
+	@Override
+	public void setProfiler(Profiler profiler) {
+		this.profiler = profiler;
+	}
+
+	@Override
+	public Profiler getProfiler() {
+		return this.profiler;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
