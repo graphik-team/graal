@@ -50,6 +50,7 @@ import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
+import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
@@ -59,6 +60,7 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
 public final class TransformatorSolver implements Homomorphism<ConjunctiveQuery, TransformAtomSet> {
 
 	private static TransformatorSolver instance;
+	private Profiler                   profiler;
 
 	private TransformatorSolver() {
 	}
@@ -79,6 +81,16 @@ public final class TransformatorSolver implements Homomorphism<ConjunctiveQuery,
 	                                                                                       throws HomomorphismException {
 		//TODO transform query and pass it to encapsulated atomSet
 		throw new MethodNotImplementedError();
+	}
+
+	@Override
+	public void setProfiler(Profiler profiler) {
+		this.profiler = profiler;
+	}
+
+	@Override
+	public Profiler getProfiler() {
+		return this.profiler;
 	}
 
 }

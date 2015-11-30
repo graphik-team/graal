@@ -1,13 +1,14 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
 		<artifactId>graal-apps</artifactId>
 		<version>1.0.4-SNAPSHOT</version>
 	</parent>
-	
+
 	<artifactId>graal-interpreter</artifactId>
 	<name>fr.lirmm.graphik:graal-interpreter</name>
 	<packaging>jar</packaging>
@@ -26,22 +27,27 @@
 	</developers>
 
 	<dependencies>
-       <dependency>
+		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-api</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-        <dependency>
+		<dependency>
+			<groupId>fr.lirmm.graphik</groupId>
+			<artifactId>graal-homomorphism</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-core</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-        <dependency>
+		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-util</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-        <dependency>
+		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-forward-chaining</artifactId>
 			<version>${project.parent.version}</version>
