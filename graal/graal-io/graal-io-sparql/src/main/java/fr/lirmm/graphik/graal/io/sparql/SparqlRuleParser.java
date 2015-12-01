@@ -43,45 +43,76 @@
 /**
  * 
  */
-package fr.lirmm.graphik.graal.core.factory;
+package fr.lirmm.graphik.graal.io.sparql;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
-import fr.lirmm.graphik.graal.api.factory.InMemoryAtomSetFactory;
-import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import com.hp.hpl.jena.graph.Triple;
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryFactory;
+import com.hp.hpl.jena.sparql.syntax.Template;
+
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.core.DefaultRule;
+import fr.lirmm.graphik.util.Prefix;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- * 
+ *
  */
-public final class AtomSetFactory implements InMemoryAtomSetFactory {
+public class SparqlRuleParser {
 
-	private static AtomSetFactory instance = new AtomSetFactory();
+	private Rule         rule;
+	private List<Prefix> prefixes;
 
-	private AtomSetFactory() {
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTOR
+	// /////////////////////////////////////////////////////////////////////////
+
+	public SparqlRuleParser(String sparqlQuery) {
+		super();
+		this.execute(sparqlQuery);
 	}
 
-	public static AtomSetFactory instance() {
-		return instance;
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	public List<Prefix> getPrefixes() {
+		return this.prefixes;
 	}
 
-	@Override
-	public InMemoryAtomSet createAtomSet() {
-		return new LinkedListAtomSet();
+	public Rule getRule() {
+		return this.rule;
 	}
 
-	@Override
-	public InMemoryAtomSet createAtomSet(AtomSet src) {
-		InMemoryAtomSet atomset = this.createAtomSet();
-		for (Atom a : src) {
-			atomset.add(a);
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	private void execute(String sparqlQuery) {
+
+		Query sparql = QueryFactory.create(sparqlQuery);
+		this.prefixes = new LinkedList<Prefix>();
+		
+		for(Map.Entry<String,String> e : sparql.getPrefixMapping().getNsPrefixMap().entrySet()) {
+			this.prefixes.add(new Prefix(e.getKey(), e.getValue()));
 		}
-		return atomset;
+		
+		Rule rule = new DefaultRule();
+		if (sparql.isConstructType()) {
+			Template template = sparql.getConstructTemplate();
+			for (Triple triple : template.getTriples()) {
+				rule.getHead().add(SparqlUtils.triple2Atom(triple));
+			}
+		}
+
+		ElementVisitorImpl visitor = new ElementVisitorImpl(rule.getBody());
+		sparql.getQueryPattern().visit(visitor);
+
+		this.rule = rule;
 	}
 
-	@Override
-	public InMemoryAtomSet createAtomSet(Atom atom) {
-		return new LinkedListAtomSet(atom);
-	}
 }

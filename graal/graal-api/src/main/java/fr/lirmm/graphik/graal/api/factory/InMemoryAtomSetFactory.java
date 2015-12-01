@@ -40,48 +40,22 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-/**
- * 
- */
-package fr.lirmm.graphik.graal.core.factory;
+package fr.lirmm.graphik.graal.api.factory;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
-import fr.lirmm.graphik.graal.api.factory.InMemoryAtomSetFactory;
-import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- * 
+ *
  */
-public final class AtomSetFactory implements InMemoryAtomSetFactory {
+public interface InMemoryAtomSetFactory {
 
-	private static AtomSetFactory instance = new AtomSetFactory();
+	InMemoryAtomSet createAtomSet();
 
-	private AtomSetFactory() {
-	}
+	InMemoryAtomSet createAtomSet(AtomSet src);
 
-	public static AtomSetFactory instance() {
-		return instance;
-	}
+	InMemoryAtomSet createAtomSet(Atom atom);
 
-	@Override
-	public InMemoryAtomSet createAtomSet() {
-		return new LinkedListAtomSet();
-	}
-
-	@Override
-	public InMemoryAtomSet createAtomSet(AtomSet src) {
-		InMemoryAtomSet atomset = this.createAtomSet();
-		for (Atom a : src) {
-			atomset.add(a);
-		}
-		return atomset;
-	}
-
-	@Override
-	public InMemoryAtomSet createAtomSet(Atom atom) {
-		return new LinkedListAtomSet(atom);
-	}
 }

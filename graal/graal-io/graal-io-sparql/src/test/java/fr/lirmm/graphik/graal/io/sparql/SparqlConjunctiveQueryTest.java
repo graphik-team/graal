@@ -63,7 +63,7 @@ import fr.lirmm.graphik.util.URIUtils;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class SparqlTest {
+public class SparqlConjunctiveQueryTest {
 
 	private static final String PREFIX = "http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#";
 	private static final Predicate A = new Predicate(URIUtils.createURI(PREFIX + "A"), 1);
@@ -88,7 +88,7 @@ public class SparqlTest {
 					   + "	?0 :p ?1  ."
 					   + "	?1 :q ?2 "
 					   + "}";
-		ConjunctiveQuery cq = SparqlConjunctiveQueryParser.parse(query);
+		ConjunctiveQuery cq = new SparqlConjunctiveQueryParser(query).getConjunctiveQuery();
 		Assert.assertEquals(1, cq.getAnswerVariables().size());
 		int nbTriple = 0;
 		for (Atom a : cq.getAtomSet()) {
@@ -108,7 +108,7 @@ public class SparqlTest {
 					   + "	?0  :worksFor ?1  ."
 					   + "	?1  :affiliatedOrganizationOf ?2 "
 					   + "}";
-		ConjunctiveQuery cq = SparqlConjunctiveQueryParser.parse(query);
+		ConjunctiveQuery cq = new SparqlConjunctiveQueryParser(query).getConjunctiveQuery();
 		Assert.assertEquals(3, cq.getAnswerVariables().size());
 		Assert.assertEquals(2, Iterators.count(cq.getAtomSet().iterator()));
 	}
@@ -125,7 +125,8 @@ public class SparqlTest {
 					   + "	?x :p :toto  ."
 					   + "	:titi :q ?y "
 					   + "}";
-		ConjunctiveQuery cq = SparqlConjunctiveQueryParser.parse(query);
+
+		ConjunctiveQuery cq = new SparqlConjunctiveQueryParser(query).getConjunctiveQuery();
 		Assert.assertEquals(2, cq.getAnswerVariables().size());
 		int nbTriple = 0;
 		for (Atom a : cq.getAtomSet()) {
@@ -152,7 +153,7 @@ public class SparqlTest {
 					   + "{"
 					   + "	?x a :A  ."
 					   + "}";
-		ConjunctiveQuery cq = SparqlConjunctiveQueryParser.parse(query);
+		ConjunctiveQuery cq = new SparqlConjunctiveQueryParser(query).getConjunctiveQuery();
 		for (Atom a : cq.getAtomSet()) {
 			Assert.assertEquals(A, a.getPredicate());
 		}
@@ -170,7 +171,7 @@ public class SparqlTest {
 					   + "	?0 :p ?1  ."
 					   + "	?1 :q ?2 "
 					   + "}";
-		ConjunctiveQuery cq = SparqlConjunctiveQueryParser.parse(query);
+		ConjunctiveQuery cq = new SparqlConjunctiveQueryParser(query).getConjunctiveQuery();
 		Assert.assertEquals(3, cq.getAnswerVariables().size());
 	}
 	
@@ -185,7 +186,7 @@ public class SparqlTest {
 					   + "{"
 					   + "	?x :p 7 ."
 					   + "}";
-		ConjunctiveQuery cq = SparqlConjunctiveQueryParser.parse(query);
+		ConjunctiveQuery cq = new SparqlConjunctiveQueryParser(query).getConjunctiveQuery();
 		for (Atom a : cq.getAtomSet()) {
 			Assert.assertEquals(P, a.getPredicate());
 			Assert.assertEquals(INTEGER, a.getTerm(1));
@@ -203,7 +204,7 @@ public class SparqlTest {
 					   + "{"
 					   + "	?x :p 'toto' ."
 					   + "}";
-		ConjunctiveQuery cq = SparqlConjunctiveQueryParser.parse(query);
+		ConjunctiveQuery cq = new SparqlConjunctiveQueryParser(query).getConjunctiveQuery();
 		for (Atom a : cq.getAtomSet()) {
 			Assert.assertEquals(P, a.getPredicate());
 			Assert.assertEquals(STRING, a.getTerm(1));

@@ -40,79 +40,78 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-/**
- * 
- */
 package fr.lirmm.graphik.graal.io.sparql;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.graph.Triple;
 
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryFactory;
-
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
-import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
+import fr.lirmm.graphik.graal.api.io.ParseError;
+import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
-import fr.lirmm.graphik.util.Prefix;
+import fr.lirmm.graphik.util.URIUtils;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class SparqlConjunctiveQueryParser {
+final class SparqlUtils {
 
-	private ConjunctiveQuery query;
-	private List<Prefix>     prefixes;
-
-	// /////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	// /////////////////////////////////////////////////////////////////////////
-
-	public SparqlConjunctiveQueryParser(String sparqlQuery) {
-		super();
-		this.execute(sparqlQuery);
+	private SparqlUtils() {
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public List<Prefix> getPrefixes() {
-		return this.prefixes;
-	}
-
-	public ConjunctiveQuery getConjunctiveQuery() {
-		return this.query;
-	}
-
-	// /////////////////////////////////////////////////////////////////////////
-	// PRIVATE METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	private void execute(String queryString) {
-
-		this.prefixes = new LinkedList<Prefix>();
-		List<Term> ans = new LinkedList<Term>();
-		Query sparql = QueryFactory.create(queryString);
-
-		for (Map.Entry<String, String> e : sparql.getPrefixMapping().getNsPrefixMap().entrySet()) {
-			this.prefixes.add(new Prefix(e.getKey(), e.getValue()));
+	public static Atom triple2Atom(Triple triple) {
+		Node subject = triple.getSubject();
+		Node object = triple.getObject();
+		Node predicate = triple.getPredicate();
+		if (predicate.getURI().equals(URIUtils.RDF_TYPE.toString())) {
+			return DefaultAtomFactory.instance().create(node2Predicate(object, 1), node2Term(subject));
+		} else {
+			return DefaultAtomFactory.instance().create(node2Predicate(predicate, 2), node2Term(subject),
+			    node2Term(object));
 		}
+	}
 
-		if (sparql.isSelectType()) {
-			for (String v : sparql.getResultVars()) {
-				ans.add(DefaultTermFactory.instance().createVariable(v));
+	/**
+	 * @param node
+	 * @return
+	 */
+	public static Term node2Term(Node node) {
+		Term term;
+		if (node.isURI()) {
+			term = DefaultTermFactory.instance().createConstant(URIUtils.createURI(node.getURI()));
+		} else if (node.isLiteral()) {
+			if (node.getLiteralValue() instanceof String) {
+				// FIXME Jena ARQ Bug fix
+				term = DefaultTermFactory.instance().createLiteral(URIUtils.XSD_STRING, node.getLiteralValue());
+			} else {
+				term = DefaultTermFactory.instance().createLiteral(URIUtils.createURI(node.getLiteralDatatypeURI()),
+				    node.getLiteralValue());
 			}
+		} else if (node.isVariable()) {
+			term = DefaultTermFactory.instance().createVariable(node.getName());
+		} else if (node.isBlank()) {
+			term = DefaultTermFactory.instance().createVariable(node.getBlankNodeLabel());
+		} else {
+			throw new ParseError("Unknow error on " + node);
 		}
+		return term;
+	}
 
-		ElementVisitorImpl visitor = new ElementVisitorImpl(AtomSetFactory.instance().createAtomSet());
-		sparql.getQueryPattern().visit(visitor);
-
-		this.query = ConjunctiveQueryFactory.instance().create(visitor.getAtomSet(), ans);
+	public static Predicate node2Predicate(Node node, int arity) {
+		Predicate predicate;
+		if (node.isURI()) {
+			predicate = new Predicate(URIUtils.createURI(node.getURI()), arity);
+		} else {
+			throw new ParseError("Unknow error on " + node);
+		}
+		return predicate;
 	}
 
 }
