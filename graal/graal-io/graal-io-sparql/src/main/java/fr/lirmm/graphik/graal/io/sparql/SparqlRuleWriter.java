@@ -52,27 +52,17 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
-import fr.lirmm.graphik.graal.GraalConstant;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
-import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
-import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.io.AbstractWriter;
 import fr.lirmm.graphik.graal.api.io.RuleWriter;
-import fr.lirmm.graphik.graal.api.io.WriterException;
 import fr.lirmm.graphik.util.Prefix;
-import fr.lirmm.graphik.util.PrefixManager;
-import fr.lirmm.graphik.util.URI;
-import fr.lirmm.graphik.util.URIUtils;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class SparqlRuleWriter extends AbstractWriter implements RuleWriter {
-
-	private PrefixManager pm;
+public class SparqlRuleWriter extends AbstractSparqlWriter implements RuleWriter {
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
@@ -80,7 +70,6 @@ public class SparqlRuleWriter extends AbstractWriter implements RuleWriter {
 
 	public SparqlRuleWriter(Writer out) {
 		super(out);
-		this.pm = new PrefixManager();
 	}
 
 	public SparqlRuleWriter() {
@@ -104,13 +93,7 @@ public class SparqlRuleWriter extends AbstractWriter implements RuleWriter {
 	// //////////////////////////////////////////////////////////////////////////
 	@Override
 	public SparqlRuleWriter write(Prefix prefix) throws IOException {
-		this.pm.putPrefix(prefix);
-		this.write("PREFIX ");
-		this.write(prefix.getPrefixName());
-		this.write(": <");
-		this.write(prefix.getPrefix());
-		this.writeln('>');
-
+		super.write(prefix);
 		return this;
 	}
 
@@ -128,9 +111,7 @@ public class SparqlRuleWriter extends AbstractWriter implements RuleWriter {
 
 	@Override
 	public SparqlRuleWriter writeComment(String comment) throws IOException {
-		this.write("# ");
-		this.writeln(comment);
-
+		super.writeComment(comment);
 		return this;
 	}
 
@@ -152,72 +133,13 @@ public class SparqlRuleWriter extends AbstractWriter implements RuleWriter {
 		this.write("\n }\n");
 	}
 
-	/**
-	 * @param a
-	 * @throws IOException
-	 */
-	private void writeAtom(Atom a) throws IOException {
-		this.write("\t");
-		this.write(a.getTerm(0));
-		this.write(' ');
 
-		if (a.getPredicate().getArity() == 1) {
-			this.write("rdf:type ");
-			this.write(a.getPredicate());
-		} else if (a.getPredicate().getArity() == 2) {
-			this.write(a.getPredicate());
-			this.write(' ');
-			this.write(a.getTerm(1));
-		} else {
-			throw new WriterException("Unsupported predicate arity");
-		}
-	}
 
-	/**
-	 * @param predicate
-	 * @throws IOException
-	 */
-	private void write(Predicate predicate) throws IOException {
-		this.writeIdentifier(predicate.getIdentifier());
-	}
 
-	/**
-	 * @param t
-	 * @throws IOException
-	 */
-	private void write(Term t) throws IOException {
-		if (Term.Type.VARIABLE.equals(t.getType())) {
-			this.write('?');
-			this.writeSimpleIdentifier(t.getIdentifier().toString());
-		} else {
-			this.writeIdentifier(t.getIdentifier());
-		}
-		this.write(' ');
-	}
 
-	private void writeIdentifier(Object identifier) throws IOException {
 
-		if (!(identifier instanceof URI)) {
-			identifier = URIUtils.createURI(GraalConstant.INTERNAL_PREFIX, identifier.toString());
-		}
-		this.writeURI((URI) identifier);
-	}
 
-	private void writeSimpleIdentifier(String identifier) throws IOException {
-		char first = identifier.charAt(0);
-		identifier = identifier.replaceAll("[^a-zA-Z0-9_]", "_");
-		this.write(identifier);
-	}
 
-	protected void writeURI(URI uri) throws IOException {
-		Prefix prefix = this.pm.getPrefixByValue(uri.getPrefix());
-		if (prefix == null) {
-			this.write('<');
-			this.write(uri.toString());
-			this.write('>');
-		} else {
-			this.write(prefix.getPrefixName() + ":" + uri.getLocalname());
-		}
-	}
+
 
 }

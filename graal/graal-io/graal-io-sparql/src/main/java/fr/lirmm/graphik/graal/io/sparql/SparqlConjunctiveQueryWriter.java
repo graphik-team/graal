@@ -54,18 +54,15 @@ import java.io.Writer;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.io.AbstractWriter;
 import fr.lirmm.graphik.graal.api.io.ConjunctiveQueryWriter;
-import fr.lirmm.graphik.graal.api.io.WriterException;
 import fr.lirmm.graphik.util.Prefix;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class SparqlConjunctiveQueryWriter extends AbstractWriter implements
+public class SparqlConjunctiveQueryWriter extends AbstractSparqlWriter implements
 		ConjunctiveQueryWriter {
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -95,17 +92,13 @@ public class SparqlConjunctiveQueryWriter extends AbstractWriter implements
 	// //////////////////////////////////////////////////////////////////////////
 	//
 	// //////////////////////////////////////////////////////////////////////////
+	
 	@Override
 	public SparqlConjunctiveQueryWriter write(Prefix prefix) throws IOException {
-		this.write("PREFIX ");
-		this.write(prefix.getPrefixName());
-		this.write(": <");
-		this.write(prefix.getPrefix());
-		this.writeln('>');
-
+		super.write(prefix);
 		return this;
 	}
-	
+
 	@Override
 	public SparqlConjunctiveQueryWriter write(ConjunctiveQuery query)
 			throws IOException {
@@ -132,56 +125,8 @@ public class SparqlConjunctiveQueryWriter extends AbstractWriter implements
 
 	@Override
 	public SparqlConjunctiveQueryWriter writeComment(String comment) throws IOException {
-		this.write("# ");
-		this.writeln(comment);
-
+		super.writeComment(comment);
 		return this;
-	}
-
-	// /////////////////////////////////////////////////////////////////////////
-	// PRIVATE METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	/**
-	 * @param a
-	 * @throws IOException 
-	 */
-	private void writeAtom(Atom a) throws IOException {
-		this.write("\t");
-		this.write(a.getTerm(0));
-		this.write(' ');
-		
-		if(a.getPredicate().getArity() == 1) {
-			this.write("rdf:type ");
-			this.write(a.getPredicate());
-		} else if (a.getPredicate().getArity() == 2) {
-			this.write(a.getPredicate());
-			this.write(' ');
-			this.write(a.getTerm(1));
-		} else {
-			throw new WriterException("Unsupported predicate arity");
-		}
-	}
-
-	/**
-	 * @param predicate
-	 * @throws IOException 
-	 */
-	private void write(Predicate predicate) throws IOException {
-		this.write(predicate.getIdentifier().toString());
-	}
-
-	/**
-	 * @param t
-	 * @throws IOException 
-	 */
-	private void write(Term t) throws IOException {
-		if (Term.Type.VARIABLE.equals(t.getType())) {
-			this.write('?');
-		}
-		
-		this.write(t.getIdentifier().toString());
-		this.write(' ');
 	}
 
 }
