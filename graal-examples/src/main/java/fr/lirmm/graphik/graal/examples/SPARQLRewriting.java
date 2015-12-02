@@ -59,46 +59,61 @@ import fr.lirmm.graphik.util.Prefix;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class SparqlRewriting {
+public class SPARQLRewriting {
+
+	static final String sparqlQuery = " PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>              "
+	                                  + " PREFIX : <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#>       "
+	                                  + " SELECT DISTINCT ?0                                                     "
+	                                  + "   WHERE                                                                "
+	                                  + "   {                                                                    "
+	                                  + "     ?0  a :Person .                                                    "
+	                                  + "     ?0  :worksFor ?1  .                                                "
+	                                  + "     ?1  a :University .                                                "
+	                                  + "     ?1  :hasAlumnus ?0                                                 "
+	                                  + "   }                                                                    ";
 
 	public static void main(String[] args) throws IOException {
-		SparqlConjunctiveQueryParser queryParser = new SparqlConjunctiveQueryParser(
-		  " PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>              "
-		          + " PREFIX : <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#>       "
-		          + " SELECT DISTINCT ?0                                                     "
-		          + "   WHERE                                                                "
-		          + "   {                                                                    "
-		          + "     ?0  a :Person .                                                    "
-		          + "     ?0  :worksFor ?1  .                                                "
-		          + "     ?1  a :University .                                                "
-		          + "     ?1  :hasAlumnus ?0                                                 "
-		          + "   }                                                                    ");
-
-		List<Prefix> prefixes = queryParser.getPrefixes();
-		ConjunctiveQuery query = queryParser.getConjunctiveQuery();
+		List<Prefix> prefixes;
+		ConjunctiveQuery query;
 		LinkedList<Rule> ontology = new LinkedList<Rule>();
+		SparqlConjunctiveQueryWriter writer = new SparqlConjunctiveQueryWriter();
+		BackwardChainer bc;
 
+		// 1 - Parse the SPARQL query
+		SparqlConjunctiveQueryParser queryParser = new SparqlConjunctiveQueryParser(sparqlQuery);
+		prefixes = queryParser.getPrefixes();
+		query = queryParser.getConjunctiveQuery();
+
+		// 2 - Parse the ontology (provides as SPARQL CONSTRUCT queries)
 		for (String rule : ontology()) {
 			SparqlRuleParser ruleParser = new SparqlRuleParser(rule);
 			ontology.add(ruleParser.getRule());
 		}
 
-		SparqlConjunctiveQueryWriter writer = new SparqlConjunctiveQueryWriter();
-		BackwardChainer bc = new PureRewriter(query, ontology);
+		// 3 - Execute the query rewriter
+		bc = new PureRewriter(query, ontology);
 		while (bc.hasNext()) {
+			// 4 - Print the query as SPARQL
 			writer.write("\n");
-			ConjunctiveQuery q = bc.next();
 			for (Prefix p : prefixes) {
 				writer.write(p);
 			}
-			writer.write(q);
+			writer.write(bc.next());
 			writer.flush();
 		}
+
+		// 5 - Close the writer
 		writer.close();
 
 	}
 
-	public static LinkedList<String> ontology() {
+	/**
+	 * Provides a List of String representing the LUBM ontology (U version) as
+	 * SPARQL CONSTRUCT query.
+	 * 
+	 * @return
+	 */
+	static LinkedList<String> ontology() {
 		LinkedList<String> rules = new LinkedList<>();
 		rules.add(" PREFIX : <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#>  "
 		          + " PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>  "
