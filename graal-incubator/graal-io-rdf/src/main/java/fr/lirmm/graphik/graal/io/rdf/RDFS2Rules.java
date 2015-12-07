@@ -90,7 +90,7 @@ public class RDFS2Rules extends AbstractCloseableIterator<Object> implements Par
 	protected static final Term Z = DefaultTermFactory.instance()
 			.createVariable("Z");
 
-	private Parser<Atom> reader;
+	private Parser<Object>      reader;
 	
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
@@ -105,44 +105,44 @@ public class RDFS2Rules extends AbstractCloseableIterator<Object> implements Par
 
 	@Override
 	public Object next() {
-		Object o = null;
-		Atom a = this.reader.next();
+		Object o = this.reader.next();
 
-		String predicateLabel = a.getPredicate().toString();
-		if (RDFS_RANGE.equals(predicateLabel)) {
-			Rule rule = RuleFactory.instance().create();
-			Predicate p = new Predicate(a.getTerm(0).toString(), 2);
-			rule.getBody().add(new DefaultAtom(p, X, Y));
-			p = new Predicate(a.getTerm(1).toString(), 1);
-			rule.getHead().add(new DefaultAtom(p, Y));
-			o = rule;
+		if (o instanceof Atom) {
+			Atom a = (Atom) o;
+			String predicateLabel = a.getPredicate().toString();
+			if (RDFS_RANGE.equals(predicateLabel)) {
+				Rule rule = RuleFactory.instance().create();
+				Predicate p = new Predicate(a.getTerm(0).toString(), 2);
+				rule.getBody().add(new DefaultAtom(p, X, Y));
+				p = new Predicate(a.getTerm(1).toString(), 1);
+				rule.getHead().add(new DefaultAtom(p, Y));
+				o = rule;
 
-		} else if (RDFS_DOMAIN.equals(predicateLabel)) {
-			Rule rule = RuleFactory.instance().create();
-			Predicate p = new Predicate(a.getTerm(0).toString(), 2);
-			rule.getBody().add(new DefaultAtom(p, X, Y));
-			p = new Predicate(a.getTerm(1).toString(), 1);
-			rule.getHead().add(new DefaultAtom(p, X));
-			o = rule;
-			
-		} else if (RDFS_SUB_CLASS_OF.equals(predicateLabel)) {
-			Rule rule = RuleFactory.instance().create();
-			Predicate p1 = new Predicate(a.getTerm(0).toString(), 1);
-			Predicate p2 = new Predicate(a.getTerm(1).toString(), 1);
-			rule.getBody().add(new DefaultAtom(p1, X));
-			rule.getHead().add(new DefaultAtom(p2, X));
-			o = rule;
-			
-		} else if (RDFS_SUB_PROPERTY_OF.equals(predicateLabel)) {
-			Rule rule = RuleFactory.instance().create();
-			Predicate p1 = new Predicate(a.getTerm(0).toString(), 2);
-			Predicate p2 = new Predicate(a.getTerm(1).toString(), 2);
-			rule.getBody().add(new DefaultAtom(p1, X, Y));
-			rule.getHead().add(new DefaultAtom(p2, X, Y));
-			o = rule;
-			
-		} else {
-			o = a;
+			} else if (RDFS_DOMAIN.equals(predicateLabel)) {
+				Rule rule = RuleFactory.instance().create();
+				Predicate p = new Predicate(a.getTerm(0).toString(), 2);
+				rule.getBody().add(new DefaultAtom(p, X, Y));
+				p = new Predicate(a.getTerm(1).toString(), 1);
+				rule.getHead().add(new DefaultAtom(p, X));
+				o = rule;
+
+			} else if (RDFS_SUB_CLASS_OF.equals(predicateLabel)) {
+				Rule rule = RuleFactory.instance().create();
+				Predicate p1 = new Predicate(a.getTerm(0).toString(), 1);
+				Predicate p2 = new Predicate(a.getTerm(1).toString(), 1);
+				rule.getBody().add(new DefaultAtom(p1, X));
+				rule.getHead().add(new DefaultAtom(p2, X));
+				o = rule;
+
+			} else if (RDFS_SUB_PROPERTY_OF.equals(predicateLabel)) {
+				Rule rule = RuleFactory.instance().create();
+				Predicate p1 = new Predicate(a.getTerm(0).toString(), 2);
+				Predicate p2 = new Predicate(a.getTerm(1).toString(), 2);
+				rule.getBody().add(new DefaultAtom(p1, X, Y));
+				rule.getHead().add(new DefaultAtom(p2, X, Y));
+				o = rule;
+
+			}
 		}
 
 		return o;

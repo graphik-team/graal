@@ -48,11 +48,15 @@ package fr.lirmm.graphik.graal.io.rdf;
 import org.openrdf.model.Literal;
 import org.openrdf.model.Statement;
 import org.openrdf.rio.helpers.RDFHandlerBase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.util.DefaultURI;
+import fr.lirmm.graphik.util.URIUtils;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -60,22 +64,33 @@ import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
  */
 abstract class AbstractRDFListener extends RDFHandlerBase {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRDFListener.class);
+
 	@Override
 	public void handleStatement(Statement st) {
-		Predicate predicate = new Predicate(st.getPredicate().toString(), 2);
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug(st.toString());
+		}
+		Predicate predicate = new Predicate(new DefaultURI(st.getPredicate().toString()), 2);
 		Term subject = DefaultTermFactory.instance().createConstant(
-				st.getSubject().toString());
+new DefaultURI(st.getSubject().toString()));
 		Term object;
+		fr.lirmm.graphik.util.URI datatype;
+
 		if (st.getObject() instanceof Literal) {
 			Literal l = (Literal) st.getObject();
-			fr.lirmm.graphik.util.URI datatype = new fr.lirmm.graphik.util.DefaultURI(
+			if (l.getDatatype() == null) {
+				datatype = URIUtils.RDF_LANG_STRING;
+			} else {
+				datatype = new fr.lirmm.graphik.util.DefaultURI(
 					l.getDatatype().getNamespace(), l.getDatatype()
 							.getLocalName());
+			}
 			object = DefaultTermFactory.instance().createLiteral(datatype,
 					l.getLabel());
 		} else {
 			object = DefaultTermFactory.instance().createConstant(
-					st.getObject().toString());
+new DefaultURI(st.getObject().toString()));
 		}
 		DefaultAtom a = new DefaultAtom(predicate, subject, object);
 		

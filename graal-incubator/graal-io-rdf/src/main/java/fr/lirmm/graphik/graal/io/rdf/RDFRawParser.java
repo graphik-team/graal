@@ -57,10 +57,10 @@ import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.RDFParseException;
 import org.openrdf.rio.Rio;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.io.ParseError;
 import fr.lirmm.graphik.graal.api.io.Parser;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
+import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.ArrayBlockingStream;
 
@@ -68,16 +68,16 @@ import fr.lirmm.graphik.util.stream.ArrayBlockingStream;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public final class RDFRawParser extends AbstractCloseableIterator<Atom> implements Parser<Atom> {
+public final class RDFRawParser extends AbstractCloseableIterator<Object> implements Parser<Object> {
 
-	private ArrayBlockingStream<Atom> buffer = new ArrayBlockingStream<Atom>(
+	private ArrayBlockingStream<Object> buffer = new ArrayBlockingStream<Object>(
 			512);
 
 	private static class RDFListener extends AbstractRDFListener {
 
-		private ArrayBlockingStream<Atom> set;
+		private ArrayBlockingStream<Object> set;
 
-		public RDFListener(ArrayBlockingStream<Atom> set) {
+		public RDFListener(ArrayBlockingStream<Object> set) {
 			this.set = set;
 		}
 
@@ -85,15 +85,21 @@ public final class RDFRawParser extends AbstractCloseableIterator<Atom> implemen
 		protected void createAtom(DefaultAtom atom) {
 			this.set.write(atom);
 		}
+
+		@Override
+		public void handleNamespace(java.lang.String prefix, java.lang.String uri) {
+			this.set.write(new Prefix(prefix, uri));
+	 	}
+
 	};
 
 	private static class Producer implements Runnable {
 
 		private Reader reader;
-		private ArrayBlockingStream<Atom> buffer;
+		private ArrayBlockingStream<Object> buffer;
 		private RDFFormat format;
 
-		Producer(Reader reader, ArrayBlockingStream<Atom> buffer, RDFFormat format) {
+		Producer(Reader reader, ArrayBlockingStream<Object> buffer, RDFFormat format) {
 			this.reader = reader;
 			this.buffer = buffer;
 			this.format = format;
@@ -152,7 +158,7 @@ public final class RDFRawParser extends AbstractCloseableIterator<Atom> implemen
 	}
 
 	@Override
-	public Atom next() {
+	public Object next() {
 		return buffer.next();
 	}
 

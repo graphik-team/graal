@@ -52,7 +52,6 @@ import java.net.URL;
 
 import org.openrdf.rio.RDFFormat;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.io.Parser;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 
@@ -60,7 +59,7 @@ import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class RDFParser extends AbstractCloseableIterator<Atom> implements Parser<Atom> {
+public class RDFParser extends AbstractCloseableIterator<Object> implements Parser<Object> {
 
 	private RDF2Atom rdf2atom;
 
@@ -90,7 +89,7 @@ public class RDFParser extends AbstractCloseableIterator<Atom> implements Parser
 	}
 
 	@Override
-	public Atom next() {
+	public Object next() {
 		return this.rdf2atom.next();
 	}
 
