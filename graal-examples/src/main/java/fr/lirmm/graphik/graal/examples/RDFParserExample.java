@@ -51,7 +51,6 @@ import java.net.URL;
 
 import org.openrdf.rio.RDFFormat;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
@@ -73,7 +72,7 @@ public class RDFParserExample {
 		System.out.println();
 		int i = 0;
 		while (parser.hasNext()) {
-			Atom a = parser.next();
+			Object a = parser.next();
 			System.out.println(++i);
 			System.out.println(a.toString());
 			writer.write(a);
