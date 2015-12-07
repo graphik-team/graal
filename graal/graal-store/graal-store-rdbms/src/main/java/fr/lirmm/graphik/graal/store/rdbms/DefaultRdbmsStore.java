@@ -77,6 +77,7 @@ import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.string.StringUtils;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -595,7 +596,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			int i = -1;
 			for(Term t : atom.getTerms()) {
 				++i;
-				data.put("term" + i, t);
+				data.put("term" + i, StringUtils.addSlashes(t.toString()));
 			}
 			String query = this.getDriver().getInsertOrIgnoreStatement(
 					tableName, data);
@@ -652,7 +653,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	private void add(Statement statement, Term term) throws AtomSetException {
 		try {
 			Map<String, Object> data = new TreeMap<String, Object>();
-			data.put("term", term.getIdentifier());
+			data.put("term", StringUtils.addSlashes(term.getIdentifier().toString()));
 			data.put("term_type", term.getType());
 			String query = this.getDriver()
 					.getInsertOrIgnoreStatement(
