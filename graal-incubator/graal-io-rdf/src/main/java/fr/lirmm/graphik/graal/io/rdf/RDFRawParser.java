@@ -52,6 +52,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.net.URL;
 
+import org.openrdf.rio.ParserConfig;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.RDFParseException;
@@ -98,11 +99,13 @@ public final class RDFRawParser extends AbstractCloseableIterator<Object> implem
 		private Reader reader;
 		private ArrayBlockingStream<Object> buffer;
 		private RDFFormat format;
+		private ParserConfig                config;
 
-		Producer(Reader reader, ArrayBlockingStream<Object> buffer, RDFFormat format) {
+		Producer(Reader reader, ArrayBlockingStream<Object> buffer, RDFFormat format, ParserConfig config) {
 			this.reader = reader;
 			this.buffer = buffer;
 			this.format = format;
+			this.config = config;
 		}
 
 		@Override
@@ -110,6 +113,9 @@ public final class RDFRawParser extends AbstractCloseableIterator<Object> implem
 
 			org.openrdf.rio.RDFParser rdfParser = Rio
 					.createParser(format);
+			if (this.config != null) {
+				rdfParser.setParserConfig(config);
+			}
 			rdfParser.setRDFHandler(new RDFListener(buffer));
 			try {
 				rdfParser.parse(this.reader, "");
@@ -135,13 +141,17 @@ public final class RDFRawParser extends AbstractCloseableIterator<Object> implem
 	// /////////////////////////////////////////////////////////////////////////
 
 	public RDFRawParser(Reader reader, RDFFormat format) {
-		new Thread(new Producer(reader, buffer, format)).start();
+		this(reader, format, null);
+	}
+	
+	public RDFRawParser(Reader reader, RDFFormat format, ParserConfig parserConfig) {
+		new Thread(new Producer(reader, buffer, format, parserConfig)).start();
 	}
 
 	public RDFRawParser(URL url, RDFFormat format) throws IOException {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(
 				url.openStream()));
-		new Thread(new Producer(reader, buffer, format)).start();
+		new Thread(new Producer(reader, buffer, format, null)).start();
 	}
 
 	public RDFRawParser(String s, RDFFormat format) {
