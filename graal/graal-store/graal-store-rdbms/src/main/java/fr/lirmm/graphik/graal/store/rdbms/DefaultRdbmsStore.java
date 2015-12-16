@@ -40,7 +40,7 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
+/**
  * 
  */
 package fr.lirmm.graphik.graal.store.rdbms;
@@ -86,73 +86,70 @@ import fr.lirmm.graphik.util.string.StringUtils;
  *         Database System where each predicates is stored in a dedicated table.
  */
 public class DefaultRdbmsStore extends AbstractRdbmsStore {
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(DefaultRdbmsStore.class);
+	private static final Logger        LOGGER                     = LoggerFactory.getLogger(DefaultRdbmsStore.class);
 
-	private static final int VARCHAR_SIZE = 128;
+	private static final int           VARCHAR_SIZE               = 128;
 
-	private static final String MAX_VARIABLE_ID_COUNTER = "max_variable_id";
-	private static final String MAX_PREDICATE_ID_COUNTER = "max_predicate_id";
+	private static final String        MAX_VARIABLE_ID_COUNTER    = "max_variable_id";
+	private static final String        MAX_PREDICATE_ID_COUNTER   = "max_predicate_id";
 
 	// tables names
-	static final String COUNTER_TABLE_NAME = "counters";
-	static final String PREDICATE_TABLE_NAME = "predicates";
-	static final String TERM_TABLE_NAME = "terms";
-	static final String EMPTY_TABLE_NAME = "empty";
-	static final String TEST_TABLE_NAME = "test";
+	static final String                COUNTER_TABLE_NAME         = "counters";
+	static final String                PREDICATE_TABLE_NAME       = "predicates";
+	static final String                TERM_TABLE_NAME            = "terms";
+	static final String                EMPTY_TABLE_NAME           = "empty";
+	static final String                TEST_TABLE_NAME            = "test";
 
 	// table fields name
-	static final String PREFIX_TERM_FIELD = "term";
+	static final String                PREFIX_TERM_FIELD          = "term";
 
 	// queries
-	private static final String GET_ALL_PREDICATES_QUERY = "SELECT * FROM "
-	                                                       + DefaultRdbmsStore.PREDICATE_TABLE_NAME
-	                                                       + ";";
+	private static final String        GET_ALL_PREDICATES_QUERY   = "SELECT * FROM "
+	                                                                + DefaultRdbmsStore.PREDICATE_TABLE_NAME
+	                                                                + ";";
 
-	private static final String GET_PREDICATE_QUERY = "SELECT * FROM "
-													+ PREDICATE_TABLE_NAME
-													+ " WHERE predicate_label = ? " 
-													+ " AND predicate_arity = ?;";
-	private static final String INSERT_PREDICATE_QUERY = "INSERT INTO "
-													   + PREDICATE_TABLE_NAME
-													   + " VALUES ( ?, ?, ?)";
+	private static final String        GET_PREDICATE_QUERY        = "SELECT * FROM "
+	                                                                + PREDICATE_TABLE_NAME
+	                                                                + " WHERE predicate_label = ? "
+	                                                                + " AND predicate_arity = ?;";
+	private static final String        INSERT_PREDICATE_QUERY     = "INSERT INTO "
+	                                                                + PREDICATE_TABLE_NAME
+	                                                                + " VALUES ( ?, ?, ?)";
 
-	private static final String GET_ALL_TERMS_QUERY = "SELECT * FROM "
-												   + TERM_TABLE_NAME
-												   + ";";
-	
-	private static final String GET_TERMS_BY_TYPE = "SELECT * FROM "
-			   + TERM_TABLE_NAME
-			   + " WHERE term_type = ?;";
-	
-	private static final String GET_TERM_QUERY = "SELECT * FROM "
-											   + TERM_TABLE_NAME
-											   + " WHERE term = ?;";
+	private static final String        GET_ALL_TERMS_QUERY        = "SELECT * FROM " + TERM_TABLE_NAME + ";";
+
+	private static final String        GET_TERMS_BY_TYPE          = "SELECT * FROM "
+	                                                                + TERM_TABLE_NAME
+	                                                                + " WHERE term_type = ?;";
+
+	private static final String        GET_TERM_QUERY             = "SELECT * FROM "
+	                                                                + TERM_TABLE_NAME
+	                                                                + " WHERE term = ?;";
 
 	// counter queries
-	private static final String GET_COUNTER_VALUE_QUERY = "SELECT value FROM "
-													   + COUNTER_TABLE_NAME
-													   + " WHERE counter_name = ?;";
+	private static final String        GET_COUNTER_VALUE_QUERY    = "SELECT value FROM "
+	                                                                + COUNTER_TABLE_NAME
+	                                                                + " WHERE counter_name = ?;";
 
-	private static final String UPDATE_COUNTER_VALUE_QUERY = "UPDATE "
-														  + COUNTER_TABLE_NAME
-														  + " SET value = ? WHERE counter_name = ?;";
+	private static final String        UPDATE_COUNTER_VALUE_QUERY = "UPDATE "
+	                                                                + COUNTER_TABLE_NAME
+	                                                                + " SET value = ? WHERE counter_name = ?;";
 
-	private static final String TEST_SCHEMA_QUERY = "SELECT 0 FROM "
-													+ PREDICATE_TABLE_NAME
-													+ " LIMIT 1";
+	private static final String        TEST_SCHEMA_QUERY          = "SELECT 0 FROM "
+	                                                                + PREDICATE_TABLE_NAME
+	                                                                + " LIMIT 1";
 
-	private PreparedStatement getPredicateTableStatement;
-	private PreparedStatement insertPredicateStatement;
+	private PreparedStatement          getPredicateTableStatement;
+	private PreparedStatement          insertPredicateStatement;
 
-	private PreparedStatement getTermStatement;
+	private PreparedStatement          getTermStatement;
 
-	private PreparedStatement getCounterValueStatement;
-	private PreparedStatement updateCounterValueStatement;
+	private PreparedStatement          getCounterValueStatement;
+	private PreparedStatement          updateCounterValueStatement;
 
-	private PreparedStatement getTermsByTypeStatement;
-	
-	private TreeMap<Predicate, String> predicateMap = new TreeMap<Predicate, String>();
+	private PreparedStatement          getTermsByTypeStatement;
+
+	private TreeMap<Predicate, String> predicateMap               = new TreeMap<Predicate, String>();
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
@@ -168,16 +165,11 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		super(driver);
 
 		try {
-			this.getPredicateTableStatement = this.getConnection()
-					.prepareStatement(GET_PREDICATE_QUERY);
-			this.insertPredicateStatement = this.getConnection()
-					.prepareStatement(INSERT_PREDICATE_QUERY);
-			this.getCounterValueStatement = this.getConnection()
-					.prepareStatement(GET_COUNTER_VALUE_QUERY);
-			this.updateCounterValueStatement = this.getConnection()
-					.prepareStatement(UPDATE_COUNTER_VALUE_QUERY);
-			this.getTermStatement = this.getConnection().prepareStatement(
-					GET_TERM_QUERY);
+			this.getPredicateTableStatement = this.getConnection().prepareStatement(GET_PREDICATE_QUERY);
+			this.insertPredicateStatement = this.getConnection().prepareStatement(INSERT_PREDICATE_QUERY);
+			this.getCounterValueStatement = this.getConnection().prepareStatement(GET_COUNTER_VALUE_QUERY);
+			this.updateCounterValueStatement = this.getConnection().prepareStatement(UPDATE_COUNTER_VALUE_QUERY);
+			this.getTermStatement = this.getConnection().prepareStatement(GET_TERM_QUERY);
 			this.getTermsByTypeStatement = this.getConnection().prepareStatement(GET_TERMS_BY_TYPE);
 		} catch (SQLException e) {
 			throw new AtomSetException(e.getMessage(), e);
@@ -197,7 +189,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		} catch (AtomSetException e) {
 			throw new AtomSetException(e.getMessage(), e);
 		} finally {
-			if(statement != null) {
+			if (statement != null) {
 				try {
 					statement.close();
 					this.getConnection().rollback();
@@ -213,32 +205,30 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	@Override
 	protected void createDatabaseSchema() throws AtomSetException {
 		final String createPredicateTableQuery = "CREATE TABLE "
-												 + PREDICATE_TABLE_NAME
-												 + "(predicate_label varchar("
-												 + VARCHAR_SIZE
-												 + "), predicate_arity int, "
-												 + "predicate_table_name varchar("
-												 + VARCHAR_SIZE
-												 + "), PRIMARY KEY (predicate_label, predicate_arity));";
+		                                         + PREDICATE_TABLE_NAME
+		                                         + "(predicate_label varchar("
+		                                         + VARCHAR_SIZE
+		                                         + "), predicate_arity int, "
+		                                         + "predicate_table_name varchar("
+		                                         + VARCHAR_SIZE
+		                                         + "), PRIMARY KEY (predicate_label, predicate_arity));";
 
 		final String createTermTableQuery = "CREATE TABLE "
-											+ TERM_TABLE_NAME
-											+ " (term varchar("
-											+ VARCHAR_SIZE
-											+ "), term_type varchar("
-											+ VARCHAR_SIZE
-											+ "), PRIMARY KEY (term));";
+		                                    + TERM_TABLE_NAME
+		                                    + " (term varchar("
+		                                    + VARCHAR_SIZE
+		                                    + "), term_type varchar("
+		                                    + VARCHAR_SIZE
+		                                    + "), PRIMARY KEY (term));";
 
 		final String termTypeTableName = "term_type";
 		final String createTermTypeTableQuery = "CREATE TABLE "
-												+ termTypeTableName
-												+ " (term_type varchar("
-												+ VARCHAR_SIZE
-												+ "), PRIMARY KEY (term_type));";
+		                                        + termTypeTableName
+		                                        + " (term_type varchar("
+		                                        + VARCHAR_SIZE
+		                                        + "), PRIMARY KEY (term_type));";
 
-		final String insertTermTypeQuery = "INSERT INTO "
-										   + termTypeTableName
-										   + " values (?);";
+		final String insertTermTypeQuery = "INSERT INTO " + termTypeTableName + " values (?);";
 		Statement statement = null;
 		PreparedStatement pstat = null;
 		try {
@@ -273,8 +263,8 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			statement.executeUpdate(createTermTableQuery);
 
 			final String createCounterTableQuery = "CREATE TABLE "
-												   + COUNTER_TABLE_NAME
-												   + " (counter_name varchar(64), value BIGINT, PRIMARY KEY (counter_name));";
+			                                       + COUNTER_TABLE_NAME
+			                                       + " (counter_name varchar(64), value BIGINT, PRIMARY KEY (counter_name));";
 
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug(createCounterTableQuery);
@@ -290,15 +280,11 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 				}
 			}
 		}
-		
+
 		try {
-			final String insertCounterTableQuery = "INSERT INTO "
-					   + COUNTER_TABLE_NAME
-					   + " values (?, -1);";
-			final String[] counters = { MAX_PREDICATE_ID_COUNTER,
-					MAX_VARIABLE_ID_COUNTER };
-			pstat = this.getConnection().prepareStatement(
-					insertCounterTableQuery);
+			final String insertCounterTableQuery = "INSERT INTO " + COUNTER_TABLE_NAME + " values (?, -1);";
+			final String[] counters = { MAX_PREDICATE_ID_COUNTER, MAX_VARIABLE_ID_COUNTER };
+			pstat = this.getConnection().prepareStatement(insertCounterTableQuery);
 			for (int i = 0; i < counters.length; ++i) {
 				pstat.setString(1, counters[i]);
 				pstat.addBatch();
@@ -328,7 +314,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		try {
 			return new DefaultRdbmsAtomIterator(this);
 		} catch (AtomSetException e) {
-			if(LOGGER.isErrorEnabled()) {
+			if (LOGGER.isErrorEnabled()) {
 				LOGGER.error(e.getMessage(), e);
 			}
 			return null;
@@ -337,9 +323,8 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 
 	@Override
 	public VariableGenerator getFreeVarGen() {
-		return new RdbmsSymbolGenenrator(this.getConnection(),
-				MAX_VARIABLE_ID_COUNTER, GET_COUNTER_VALUE_QUERY,
-				UPDATE_COUNTER_VALUE_QUERY);
+		return new RdbmsSymbolGenenrator(this.getConnection(), MAX_VARIABLE_ID_COUNTER, GET_COUNTER_VALUE_QUERY,
+		                                 UPDATE_COUNTER_VALUE_QUERY);
 	}
 
 	@Override
@@ -360,17 +345,15 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 
 			Iterator<Term> terms = atom.getTerms().iterator();
 
-			term = terms.next();            // TODO: FIX THIS => if arity = 0 -> crash ?!
+			term = terms.next(); // TODO: FIX THIS => if arity = 0 -> crash ?!
 			++termIndex;
-			query.append("term").append(termIndex).append(" = \'").append(term)
-					.append('\'');
+			query.append("term").append(termIndex).append(" = \'").append(term).append('\'');
 
 			while (terms.hasNext()) {
 				term = terms.next();
 				++termIndex;
-				query.append(" and ").append(PREFIX_TERM_FIELD)
-						.append(termIndex).append(" = \'").append(term)
-						.append('\'');
+				query.append(" and ").append(PREFIX_TERM_FIELD).append(termIndex).append(" = \'").append(term)
+				     .append('\'');
 			}
 			query.append(" LIMIT 1;");
 
@@ -386,7 +369,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 				}
 				results.close();
 			} catch (SQLException e) {
-				if(statement != null) {
+				if (statement != null) {
 					try {
 						statement.close();
 					} catch (SQLException sqlEx) {
@@ -416,10 +399,8 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			this.getTermStatement.setString(1, label);
 			results = this.getTermStatement.executeQuery();
 			if (results.next()) {
-				term = DefaultTermFactory.instance().createTerm(
-						results.getString(1),
-						Term.Type.valueOf(results
-						.getString(2)));
+				term = DefaultTermFactory.instance().createTerm(results.getString(1),
+				    Term.Type.valueOf(results.getString(2)));
 			}
 			results.close();
 		} catch (SQLException e) {
@@ -452,8 +433,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	 * Transforms the fact into a SQL statement.
 	 */
 	@Override
-	public String transformToSQL(ConjunctiveQuery cquery)
-			throws AtomSetException {
+	public String transformToSQL(ConjunctiveQuery cquery) throws AtomSetException {
 
 		AtomSet atomSet = cquery.getAtomSet();
 
@@ -485,8 +465,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 					constants.add(thisTerm + " = '" + term + "'");
 				} else {
 					if (lastOccurrence.containsKey(term.toString())) {
-						equivalences.add(lastOccurrence.get(term.toString())
-								+ " = " + thisTerm);
+						equivalences.add(lastOccurrence.get(term.toString()) + " = " + thisTerm);
 					}
 					lastOccurrence.put(term.toString(), thisTerm);
 					if (cquery.getAnswerVariables().contains(term))
@@ -516,8 +495,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			if (tables.length() != 0)
 				tables.append(", ");
 
-			tableName = this.predicateTableExist(entries.getKey()
-					.getPredicate());
+			tableName = this.predicateTableExist(entries.getKey().getPredicate());
 			if (tableName == null)
 				return this.createEmptyQuery(cquery.getAnswerVariables());
 			else
@@ -553,23 +531,20 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		query.append(';');
 
 		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("Generated SQL query :" + cquery + " --> "
-					+ query.toString());
+			LOGGER.debug("Generated SQL query :" + cquery + " --> " + query.toString());
 
 		return query.toString();
 	}
 
 	@Override
-	public Iterator<String> transformToSQL(Rule rangeRestrictedRule)
-			throws AtomSetException {
+	public Iterator<String> transformToSQL(Rule rangeRestrictedRule) throws AtomSetException {
 		Collection<String> queries = new LinkedList<String>();
 		InMemoryAtomSet body = rangeRestrictedRule.getBody();
 		for (Atom headAtom : rangeRestrictedRule.getHead()) {
-			String tableName = this.getPredicateTable(headAtom.getPredicate()); 
+			String tableName = this.getPredicateTable(headAtom.getPredicate());
 			ConjunctiveQuery query = ConjunctiveQueryFactory.instance().create(body, headAtom.getTerms());
 			String selectQuery = this.transformToSQL(query);
-			queries.add(this.getDriver().getInsertOrIgnoreStatement(tableName,
-					selectQuery));
+			queries.add(this.getDriver().getInsertOrIgnoreStatement(tableName, selectQuery));
 		}
 		return queries.iterator();
 	}
@@ -585,21 +560,19 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	 * @throws SQLException
 	 */
 	@Override
-	protected Statement add(Statement statement, Atom atom)
-														   throws AtomSetException {
+	protected Statement add(Statement statement, Atom atom) throws AtomSetException {
 		try {
-			for(Term t : atom.getTerms()) {
+			for (Term t : atom.getTerms()) {
 				this.add(statement, t);
 			}
 			String tableName = this.getPredicateTable(atom.getPredicate());
 			Map<String, Object> data = new TreeMap<String, Object>();
 			int i = -1;
-			for(Term t : atom.getTerms()) {
+			for (Term t : atom.getTerms()) {
 				++i;
 				data.put("term" + i, StringUtils.addSlashes(t.toString()));
 			}
-			String query = this.getDriver().getInsertOrIgnoreStatement(
-					tableName, data);
+			String query = this.getDriver().getInsertOrIgnoreStatement(tableName, data);
 
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug(atom.toString() + " : " + query.toString());
@@ -610,7 +583,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		}
 		return statement;
 	}
-	
+
 	/**
 	 * 
 	 * @param atom
@@ -620,7 +593,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	protected Statement remove(Statement statement, Atom atom) throws AtomSetException {
 		try {
 			String tableName = this.predicateTableExist(atom.getPredicate());
-			if (tableName == null) 
+			if (tableName == null)
 				return statement;
 			StringBuilder query = new StringBuilder("DELETE FROM ");
 			query.append(tableName);
@@ -645,7 +618,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		}
 		return statement;
 	}
-	
+
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
@@ -653,11 +626,10 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	private void add(Statement statement, Term term) throws AtomSetException {
 		try {
 			Map<String, Object> data = new TreeMap<String, Object>();
+			System.out.println(term.getIdentifier().toString());
 			data.put("term", StringUtils.addSlashes(term.getIdentifier().toString()));
 			data.put("term_type", term.getType());
-			String query = this.getDriver()
-					.getInsertOrIgnoreStatement(
-					TERM_TABLE_NAME, data);
+			String query = this.getDriver().getInsertOrIgnoreStatement(TERM_TABLE_NAME, data);
 			statement.executeUpdate(query);
 		} catch (SQLException e) {
 			throw new AtomSetException("Error during insertion of a term", e);
@@ -673,8 +645,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	 * @throws SQLException
 	 * @throws AtomSetException
 	 */
-	private String getPredicateTable(Predicate predicate)
-			throws AtomSetException {
+	private String getPredicateTable(Predicate predicate) throws AtomSetException {
 		// look in the local map
 		String tableName = this.predicateMap.get(predicate);
 
@@ -685,9 +656,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 				try {
 					tableName = this.createPredicateTable(predicate);
 				} catch (SQLException e) {
-					throw new AtomSetException(
-							"Error during the creation of a table for a predicate",
-							e);
+					throw new AtomSetException("Error during the creation of a table for a predicate", e);
 				}
 			}
 
@@ -705,15 +674,12 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	 * @throws AtomSetException
 	 * @throws SQLException
 	 */
-	private String createPredicateTable(Predicate predicate)
-															throws SQLException,
-															AtomSetException {
+	private String createPredicateTable(Predicate predicate) throws SQLException, AtomSetException {
 		String tableName = "pred" + this.getFreePredicateId();
 		if (predicate.getArity() >= 1) {
 			Statement stat = this.createStatement();
-			stat.executeUpdate(generateCreateTablePredicateQuery(tableName,
-					predicate));
-			if(stat != null) {
+			stat.executeUpdate(generateCreateTablePredicateQuery(tableName, predicate));
+			if (stat != null) {
 				try {
 					stat.close();
 				} catch (SQLException e) {
@@ -727,9 +693,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		return tableName;
 	}
 
-	private static String generateCreateTablePredicateQuery(
-															String tableName,
-															Predicate predicate) {
+	private static String generateCreateTablePredicateQuery(String tableName, Predicate predicate) {
 		StringBuilder primaryKey = new StringBuilder("PRIMARY KEY (");
 		StringBuilder query = new StringBuilder("CREATE TABLE ");
 		query.append(tableName);
@@ -738,8 +702,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		query.append(" varchar(").append(VARCHAR_SIZE).append(")");
 		primaryKey.append("term0");
 		for (int i = 1; i < predicate.getArity(); i++) {
-			query.append(", ").append(PREFIX_TERM_FIELD).append(i)
-					.append(" varchar(" + VARCHAR_SIZE + ")");
+			query.append(", ").append(PREFIX_TERM_FIELD).append(i).append(" varchar(" + VARCHAR_SIZE + ")");
 			primaryKey.append(", term" + i);
 		}
 		primaryKey.append(")");
@@ -756,10 +719,8 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	 * @param predicate
 	 * @throws SQLException
 	 */
-	private void insertPredicate(String tableName, Predicate predicate)
-																	   throws SQLException {
-		this.insertPredicateStatement.setString(1, predicate.getIdentifier()
-				.toString());
+	private void insertPredicate(String tableName, Predicate predicate) throws SQLException {
+		this.insertPredicateStatement.setString(1, predicate.getIdentifier().toString());
 		this.insertPredicateStatement.setInt(2, predicate.getArity());
 		this.insertPredicateStatement.setString(3, tableName);
 		this.insertPredicateStatement.execute();
@@ -773,19 +734,17 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	 *         predicate doesn't exist.
 	 * @throws SQLException
 	 */
-	private String predicateTableExist(Predicate predicate)
-														   throws AtomSetException {
+	private String predicateTableExist(Predicate predicate) throws AtomSetException {
 		String predicateTableName = null;
 
 		try {
-			this.getPredicateTableStatement.setString(1, predicate
-					.getIdentifier().toString());
+			this.getPredicateTableStatement.setString(1, predicate.getIdentifier().toString());
 			this.getPredicateTableStatement.setInt(2, predicate.getArity());
 			ResultSet results = this.getPredicateTableStatement.executeQuery();
 
 			if (results.next())
 				predicateTableName = results.getString("predicate_table_name");
-			
+
 			results.close();
 		} catch (SQLException e) {
 			throw new AtomSetException(e);
@@ -823,26 +782,28 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			throw new AtomSetException("Untreated exception", e);
 		}
 	}
-	
+
 	@Override
 	public Set<Predicate> getPredicates() throws AtomSetException {
 		TreeSet<Predicate> set = new TreeSet<Predicate>();
 		Iterator<Predicate> it = this.predicatesIterator();
-		while(it.hasNext()) {
+		while (it.hasNext()) {
 			set.add(it.next());
 		}
 		return set;
 	}
-	
+
 	/**
 	 * Return a SQL query like below:
 	 * "select 0, …, 0 from (select 0) as t where 0;"
-	 * @param nbAnswerVars number of column needed
-	 * @return 
+	 * 
+	 * @param nbAnswerVars
+	 *            number of column needed
+	 * @return
 	 */
 	private String createEmptyQuery(List<Term> answerVars) {
 		StringBuilder s = new StringBuilder("select ");
-		
+
 		boolean first = true;
 		for (Term t : answerVars) {
 			if (!first) {
@@ -854,7 +815,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		if (first) {
 			s.append("'' ");
 		}
-		
+
 		s.append(" from ").append(EMPTY_TABLE_NAME).append(';');
 		return s.toString();
 
@@ -866,6 +827,5 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		this.removeAll(it);
 		it.close();
 	}
-
 
 }
