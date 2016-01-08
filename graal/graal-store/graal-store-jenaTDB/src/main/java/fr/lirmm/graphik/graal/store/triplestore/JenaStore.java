@@ -40,7 +40,7 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
+/**
  * 
  */
 package fr.lirmm.graphik.graal.store.triplestore;
@@ -82,6 +82,7 @@ import fr.lirmm.graphik.util.URIUtils;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
+import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -89,8 +90,7 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
  */
 public class JenaStore extends AbstractTripleStore {
 
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(JenaStore.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(JenaStore.class);
 
 	private static class URIzer {
 		private static URIzer instance;
@@ -132,19 +132,16 @@ public class JenaStore extends AbstractTripleStore {
 		}
 	}
 
-	Dataset dataset;
-	String directory;
+	Dataset                     dataset;
+	String                      directory;
 
-	private static final String INSERT_QUERY = PREFIX + " INSERT DATA { "
-			+ " %s %s %s " + " } ";
+	private static final String INSERT_QUERY = PREFIX + " INSERT DATA { " + " %s %s %s " + " } ";
 
-	private static final String DELETE_QUERY = PREFIX
-			+ " DELETE WHERE { %s %s %s } ";
+	private static final String DELETE_QUERY = PREFIX + " DELETE WHERE { %s %s %s } ";
 
-	private static final String SELECT_QUERY = PREFIX + "SELECT ?x "
-			+ " WHERE { %s %s %s } ";
-
+	private static final String SELECT_QUERY = PREFIX + "SELECT * " + " WHERE { %s %s %s } ";
 	
+	private static final String SELECT_FILTERED_QUERY = PREFIX + "SELECT ?s ?p ?o WHERE { %s %s %s }";
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -154,7 +151,7 @@ public class JenaStore extends AbstractTripleStore {
 		this.directory = directory;
 		this.dataset = TDBFactory.createDataset(directory);
 	}
-	
+
 	public JenaStore(File jenaDirectory) {
 		this(jenaDirectory.getAbsolutePath());
 	}
@@ -175,10 +172,9 @@ public class JenaStore extends AbstractTripleStore {
 			this.dataset.close();
 		}
 	}
-	
+
 	@Override
-	public boolean addAll(Iterator<? extends Atom> atoms)
-			throws AtomSetException {
+	public boolean addAll(Iterator<? extends Atom> atoms) throws AtomSetException {
 		dataset.begin(ReadWrite.WRITE);
 		try {
 			GraphStore graphStore = GraphStoreFactory.create(dataset);
@@ -186,8 +182,7 @@ public class JenaStore extends AbstractTripleStore {
 			while (atoms.hasNext()) {
 				add(request, atoms.next());
 			}
-			UpdateProcessor proc = UpdateExecutionFactory.create(request,
-					graphStore);
+			UpdateProcessor proc = UpdateExecutionFactory.create(request, graphStore);
 			proc.execute();
 			dataset.commit();
 		} finally {
@@ -204,8 +199,7 @@ public class JenaStore extends AbstractTripleStore {
 			GraphStore graphStore = GraphStoreFactory.create(dataset);
 			UpdateRequest request = UpdateFactory.create();
 			add(request, atom);
-			UpdateProcessor proc = UpdateExecutionFactory.create(request,
-					graphStore);
+			UpdateProcessor proc = UpdateExecutionFactory.create(request, graphStore);
 			proc.execute();
 			dataset.commit();
 		} finally {
@@ -217,7 +211,7 @@ public class JenaStore extends AbstractTripleStore {
 
 	private static boolean add(UpdateRequest request, Atom atom) {
 		String insert = String.format(INSERT_QUERY, termToString(atom.getTerm(0)),
-				predicateToString(atom.getPredicate()), termToString(atom.getTerm(1)));
+		    predicateToString(atom.getPredicate()), termToString(atom.getTerm(1)));
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(insert);
 		}
@@ -226,8 +220,7 @@ public class JenaStore extends AbstractTripleStore {
 	}
 
 	@Override
-	public boolean removeAll(Iterator<? extends Atom> atoms)
-			throws AtomSetException {
+	public boolean removeAll(Iterator<? extends Atom> atoms) throws AtomSetException {
 		dataset.begin(ReadWrite.WRITE);
 		try {
 			GraphStore graphStore = GraphStoreFactory.create(dataset);
@@ -235,8 +228,7 @@ public class JenaStore extends AbstractTripleStore {
 			while (atoms.hasNext()) {
 				remove(request, atoms.next());
 			}
-			UpdateProcessor proc = UpdateExecutionFactory.create(request,
-					graphStore);
+			UpdateProcessor proc = UpdateExecutionFactory.create(request, graphStore);
 			proc.execute();
 			dataset.commit();
 		} finally {
@@ -253,8 +245,7 @@ public class JenaStore extends AbstractTripleStore {
 			GraphStore graphStore = GraphStoreFactory.create(dataset);
 			UpdateRequest request = UpdateFactory.create();
 			remove(request, atom);
-			UpdateProcessor proc = UpdateExecutionFactory.create(request,
-					graphStore);
+			UpdateProcessor proc = UpdateExecutionFactory.create(request, graphStore);
 			proc.execute();
 			dataset.commit();
 		} finally {
@@ -265,8 +256,7 @@ public class JenaStore extends AbstractTripleStore {
 	}
 
 	private static boolean remove(UpdateRequest request, Atom atom) {
-		String delete = String.format(DELETE_QUERY, atom.getTerm(0),
-				atom.getPredicate(), atom.getTerm(1));
+		String delete = String.format(DELETE_QUERY, atom.getTerm(0), atom.getPredicate(), atom.getTerm(1));
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(delete);
 		}
@@ -276,14 +266,14 @@ public class JenaStore extends AbstractTripleStore {
 
 	@Override
 	public CloseableIterator<Atom> iterator() {
-		return new AtomIterator(this.directory);
+		return new AtomIterator(this.directory, SELECT_ALL);
 	}
 
 	@Override
 	public boolean contains(Atom atom) throws AtomSetException {
 		boolean contains = false;
 		String select = String.format(SELECT_QUERY, termToString(atom.getTerm(0)),
-				predicateToString(atom.getPredicate()), termToString(atom.getTerm(1)));
+		    predicateToString(atom.getPredicate()), termToString(atom.getTerm(1)));
 
 		dataset.begin(ReadWrite.READ);
 		QueryExecution qExec = null;
@@ -301,6 +291,22 @@ public class JenaStore extends AbstractTripleStore {
 		}
 
 		return contains;
+	}
+
+	@Override
+	public GIterator<Atom> match(Atom atom) throws AtomSetException {
+		String select = String.format(SELECT_QUERY, termToString(atom.getTerm(0), "?s"),
+		    predicateToString(atom.getPredicate()), termToString(atom.getTerm(1), "?o"));
+
+		Term subject = atom.getTerm(0);
+		if (!subject.isConstant())
+			subject = null;
+
+		Term object = atom.getTerm(1);
+		if (!object.isConstant())
+			object = null;
+
+		return new AtomIterator(this.directory, select, subject, atom.getPredicate(), object);
 	}
 
 	@Override
@@ -381,8 +387,7 @@ public class JenaStore extends AbstractTripleStore {
 		try {
 			GraphStore graphStore = GraphStoreFactory.create(dataset);
 			UpdateRequest request = UpdateFactory.create("CLEAR DEFAULT");
-			UpdateProcessor proc = UpdateExecutionFactory.create(request,
-					graphStore);
+			UpdateProcessor proc = UpdateExecutionFactory.create(request, graphStore);
 			proc.execute();
 			dataset.commit();
 		} finally {
@@ -396,11 +401,14 @@ public class JenaStore extends AbstractTripleStore {
 
 	private static class AtomIterator extends AbstractCloseableIterator<Atom> {
 
-		Dataset dataset;
-		static final String SELECT = "PREFIX graal: <http://team.inria.fr/graphik/graal/> "
-				+ "SELECT ?s ?p ?o WHERE { ?s ?p ?o } ";
-		ResultSet rs;
-		QueryExecution qExec;
+		Dataset             dataset;
+		ResultSet           rs;
+		QueryExecution      qExec;
+		
+		Term subject = null;
+		Predicate predicate = null;
+		Term object = null;
+
 
 		// /////////////////////////////////////////////////////////////////////////
 		// CONSTRUCTOR
@@ -410,24 +418,37 @@ public class JenaStore extends AbstractTripleStore {
 		 * @param dataset
 		 */
 		public AtomIterator(String directory) {
+			this(directory, SELECT_ALL);
+		}
+
+		public AtomIterator(String directory, String query) {
+			this(directory, query, null, null, null);
+		}
+		
+		public AtomIterator(String directory, String query, Term subject, Predicate predicate, Term object) {
 			this.dataset = TDBFactory.createDataset(directory);
 			this.dataset.begin(ReadWrite.READ);
-			this.qExec = QueryExecutionFactory.create(SELECT, this.dataset);
+			this.qExec = QueryExecutionFactory.create(query, this.dataset);
 			this.rs = qExec.execSelect();
+			
+			this.subject = subject;
+			this.predicate = predicate;
+			this.object = object;
 		}
+
 
 		// /////////////////////////////////////////////////////////////////////////
 		// METHODS
 		// /////////////////////////////////////////////////////////////////////////
 
 		@Override
-        public void close() {
+		public void close() {
 			if (this.qExec != null) {
 				this.qExec.close();
 			}
 			this.dataset.end();
 		}
-		
+
 		@Override
 		public void remove() {
 			this.rs.remove();
@@ -447,9 +468,17 @@ public class JenaStore extends AbstractTripleStore {
 		public Atom next() {
 			QuerySolution next = this.rs.next();
 
-			Predicate predicate = createPredicate(next.get("?p"), 2);
-			Term subject = createTerm(next.get("?s"));
-			Term object = createTerm(next.get("?o"));
+			Predicate predicate = this.predicate;
+			if(predicate == null)
+				predicate = createPredicate(next.get("?p"), 2);
+			
+			Term subject = this.subject;
+			if(subject == null)
+				subject = createTerm(next.get("?s"));
+			
+			Term object = this.object;
+			if (object == null)
+				object = createTerm(next.get("?o"));
 
 			return new DefaultAtom(predicate, subject, object);
 		}
@@ -463,27 +492,30 @@ public class JenaStore extends AbstractTripleStore {
 	private static String predicateToString(Predicate p) {
 		return "<" + URIzer.instance().input(p.getIdentifier().toString()) + ">";
 	}
-	
+
 	private static String termToString(Term t) {
-		if(Term.Type.CONSTANT.equals(t.getType())) {
+		return termToString(t, "<" + URIzer.instance().input(t.getIdentifier().toString()) + ">");
+	}
+	
+	private static String termToString(Term t, String valueIfVariable) {
+		if (Term.Type.CONSTANT.equals(t.getType())) {
 			return "<" + URIzer.instance().input(t.getIdentifier().toString()) + ">";
 		} else if (Term.Type.LITERAL.equals(t.getType())) {
 			return t.getIdentifier().toString();
 		} else if (Term.Type.VARIABLE.equals(t.getType())) {
-			return "?" + t.getIdentifier().toString();
+			return valueIfVariable;
 		} else {
 			return "";
 		}
 	}
-	
+
 	private static Term createTerm(RDFNode node) {
 		Term term = null;
 		if (node.isLiteral()) {
 			Literal l = node.asLiteral();
 			term = DefaultTermFactory.instance().createLiteral(URIUtils.createURI(l.getDatatypeURI()), l.getValue());
 		} else {
-			term = DefaultTermFactory.instance()
-.createConstant(URIzer.instance().output(node.toString()));
+			term = DefaultTermFactory.instance().createConstant(URIzer.instance().output(node.toString()));
 		}
 		return term;
 	}

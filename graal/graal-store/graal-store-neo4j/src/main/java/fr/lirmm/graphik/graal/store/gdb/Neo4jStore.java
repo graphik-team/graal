@@ -75,6 +75,7 @@ import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -312,7 +313,7 @@ public class Neo4jStore extends GraphDBStore {
 	}
 
 	private boolean contains(Atom atom, Transaction transaction) {
-		String query = containsAtomIntoCypherQuery(atom);
+		String query = containsAtomIntoCypherQuery(atom, true);
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(query);
 		}
@@ -320,6 +321,18 @@ public class Neo4jStore extends GraphDBStore {
 		boolean res = result.hasNext();
 		result.close();
 		return res;
+	}
+
+	@Override
+	public GIterator<Atom> match(Atom atom) {
+		String query = containsAtomIntoCypherQuery(atom, false);
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug(query);
+		}
+		System.out.println(query);
+		ResourceIterator<Map<String, Object>> result = this.cypherEngine.execute(query).iterator();
+
+		return new Neo4jAtomIterator(this.getTransaction(), result);
 	}
 
 	@Override
@@ -409,7 +422,7 @@ public class Neo4jStore extends GraphDBStore {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("MATCH ");
-		atomToCypher(sb, a);
+		atomToCypher(sb, a, true);
 		sb.append("DELETE atom, rel_predicate");
 		int i = -1;
 		Iterator<Term> it = a.iterator();
@@ -425,17 +438,17 @@ public class Neo4jStore extends GraphDBStore {
 		return sb.toString();
 	}
 
-	private static String containsAtomIntoCypherQuery(Atom a) {
+	private static String containsAtomIntoCypherQuery(Atom a, boolean checkVariable) {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("MATCH ");
-		atomToCypher(sb, a);
+		atomToCypher(sb, a, checkVariable);
 		sb.append("RETURN atom");
 
 		return sb.toString();
 	}
 
-	private static void atomToCypher(StringBuilder sb, Atom a) {
+	private static void atomToCypher(StringBuilder sb, Atom a, boolean checkVariable) {
 		Predicate p = a.getPredicate();
 		sb.append("(atom:ATOM), (predicate:PREDICATE { value: '")
 				.append(p.getIdentifier()).append("', arity: ").append(p.getArity())
@@ -446,12 +459,11 @@ public class Neo4jStore extends GraphDBStore {
 			// (term?:TERM {value: '?', arity: ?}),
 			// (atom)-[:TERM { index: ? }->(term?)
 			++i;
-			sb.append("(term").append(i).append(":TERM {value: '")
-					.append(t.getIdentifier().toString()).append("', type: '")
-					.append(t.getType().toString())
-					.append("' }), (atom)-[rel_term").append(i)
-					.append(":TERM { index: ").append(i).append(" }]->(term")
-					.append(i).append("), ");
+			if (checkVariable || t.isConstant()) {
+				sb.append("(term").append(i).append(":TERM {value: '").append(t.getIdentifier().toString())
+				  .append("', type: '").append(t.getType().toString()).append("' }), (atom)-[rel_term").append(i)
+				  .append(":TERM { index: ").append(i).append(" }]->(term").append(i).append("), ");
+			}
 		}
 
 		sb.append("(atom)-[rel_predicate:PREDICATE]->(predicate) ");

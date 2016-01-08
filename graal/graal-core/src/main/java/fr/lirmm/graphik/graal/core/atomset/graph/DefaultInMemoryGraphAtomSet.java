@@ -40,8 +40,9 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- package fr.lirmm.graphik.graal.core.atomset.graph;
+package fr.lirmm.graphik.graal.core.atomset.graph;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -54,33 +55,36 @@ import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.TermValueComparator;
+import fr.lirmm.graphik.graal.core.AtomMatcher;
 import fr.lirmm.graphik.graal.core.atomset.AbstractInMemoryAtomSet;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.stream.GIterator;
 import fr.lirmm.graphik.util.stream.IteratorAdapter;
+import fr.lirmm.graphik.util.stream.filter.Filter;
+import fr.lirmm.graphik.util.stream.filter.FilterIterator;
 
 /**
  * Implementation of a graph in memory. Inherits directly from Fact.
  */
 public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet implements GraphAtomSet, InMemoryAtomSet {
 
-    private TreeSet<TermVertex> terms;
-    private TreeSet<PredicateVertex> predicates;
-    private TreeSet<AtomEdge> atoms;
+	private TreeSet<TermVertex>      terms;
+	private TreeSet<PredicateVertex> predicates;
+	private TreeSet<AtomEdge>        atoms;
 
-    // /////////////////////////////////////////////////////////////////////////
-    // CONSTRUCTORS
-    // /////////////////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
 
-    public DefaultInMemoryGraphAtomSet() {
+	public DefaultInMemoryGraphAtomSet() {
 		this.terms = new TreeSet<TermVertex>(TermValueComparator.instance());
-        this.predicates = new TreeSet<PredicateVertex>();
+		this.predicates = new TreeSet<PredicateVertex>();
 		this.atoms = new TreeSet<AtomEdge>(AtomComparator.instance());
-    }
+	}
 
-    // /////////////////////////////////////////////////////////////////////////
-    // PUBLIC METHODS
-    // /////////////////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
 	public GIterator<AtomEdge> getAtoms(Predicate p) {
@@ -94,7 +98,7 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 		throw new MethodNotImplementedError();
 	}
 
-    @Override
+	@Override
 	public Set<Predicate> getPredicates() {
 		Set<Predicate> predicates = new TreeSet<Predicate>();
 		for (Atom a : this) {
@@ -102,111 +106,128 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 		}
 		return predicates;
 	}
-    
+
 	@Override
 	public GIterator<Predicate> predicatesIterator() {
 		return new IteratorAdapter<Predicate>(this.getPredicates().iterator());
 	}
 
-    @Override
-    public GIterator<Atom> iterator() {
+	@Override
+	public GIterator<Atom> iterator() {
 		return new IteratorAdapter<Atom>(new TreeSet<Atom>(this.atoms).iterator());
-    }
+	}
 
-    @Override
-    public boolean remove(Atom atom) {
-        // TODO implement this method
-        throw new Error("This method isn't implemented");
-    }
+	@Override
+	public boolean remove(Atom atom) {
+		// TODO implement this method
+		throw new Error("This method isn't implemented");
+	}
 
-    @Override
-    public boolean contains(Atom atom) {
-        return this.atoms.contains(atom);
-    }
+	@Override
+	public boolean contains(Atom atom) {
+		return this.atoms.contains(atom);
+	}
 
-    @Override
-    public TreeSet<Term> getTerms() {
-        return new TreeSet<Term>(this.terms);
-    }
+
+
+	@Override
+	public GIterator<Atom> match(final Atom atom) {
+		final AtomMatcher matcher = new AtomMatcher(atom);
+		Iterator<Edge> it = null;
+		for (Term t : atom.getTerms()) {
+			if (t.isConstant()) {
+				it = this.getTermVertex(t).getEdges().iterator();
+				break;
+			}
+		}
+
+		return new FilterIterator<Edge, Atom>(new IteratorAdapter<Edge>(it), new Filter<Edge>() {
+			@Override
+			public boolean filter(Edge a) {
+				return matcher.check((Atom) a);
+			}
+		});
+	}
+
+
+	@Override
+	public TreeSet<Term> getTerms() {
+		return new TreeSet<Term>(this.terms);
+	}
 
 	@Override
 	public GIterator<Term> termsIterator() {
 		return new IteratorAdapter<Term>(this.getTerms().iterator());
 	}
 
-    @Override
-    public Set<Term> getTerms(Type type) {
-        TreeSet<Term> set = new TreeSet<Term>();
-        for (Term t : this.terms)
-            if (type.equals(t.getType()))
-                set.add(t);
+	@Override
+	public Set<Term> getTerms(Type type) {
+		TreeSet<Term> set = new TreeSet<Term>();
+		for (Term t : this.terms)
+			if (type.equals(t.getType()))
+				set.add(t);
 
-        return set;
-    }
+		return set;
+	}
 
 	@Override
 	public GIterator<Term> termsIterator(Term.Type type) {
 		return new IteratorAdapter<Term>(this.getTerms(type).iterator());
 	}
 
+	/**
+	 * @see fr.lirmm.graphik.alaska.store.Store#write(fr.lirmm.graphik.kb.core.IAtom)
+	 */
+	@Override
+	public boolean add(Atom atom) {
+		List<TermVertex> atomTerms = new LinkedList<TermVertex>();
+		PredicateVertex atomPredicate;
 
-    /**
-     * @see fr.lirmm.graphik.alaska.store.Store#write(fr.lirmm.graphik.kb.core.IAtom)
-     */
-    @Override
-    public boolean add(Atom atom) {
-        List<TermVertex> atomTerms = new LinkedList<TermVertex>();
-        PredicateVertex atomPredicate;
+		for (Term t : atom.getTerms())
+			atomTerms.add(this.addTermVertex(TermVertexFactory.instance().createTerm(t)));
 
-        for (Term t : atom.getTerms())
-			atomTerms.add(this.addTermVertex(TermVertexFactory.instance()
-					.createTerm(t)));
+		atomPredicate = this.addPredicateVertex(new PredicateVertex(atom.getPredicate()));
+		AtomEdge atomEdge = new AtomEdge(atomPredicate, atomTerms);
+		return this.addAtomEdge(atomEdge);
+	}
 
-        atomPredicate = this.addPredicateVertex(new PredicateVertex(atom
-                .getPredicate()));
-        AtomEdge atomEdge = new AtomEdge(atomPredicate, atomTerms);
-        return this.addAtomEdge(atomEdge);
-    }
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
-    // /////////////////////////////////////////////////////////////////////////
-    // PRIVATE METHODS
-    // /////////////////////////////////////////////////////////////////////////
+	TermVertex getTermVertex(Term term) {
+		TermVertex t = this.terms.tailSet(TermVertexFactory.instance().createTerm(term)).first();
+		return (term.equals(t)) ? t : null;
+	}
 
-    TermVertex getTermVertex(Term term) {
-		TermVertex t = this.terms.tailSet(
-				TermVertexFactory.instance().createTerm(term))
-				.first();
-        return (term.equals(t)) ? t : null;
-    }
+	PredicateVertex getPredicateVertex(PredicateVertex predicate) {
+		PredicateVertex p = this.predicates.tailSet(predicate).first();
+		return (predicate.equals(p)) ? p : null;
+	}
 
-    PredicateVertex getPredicateVertex(PredicateVertex predicate) {
-        PredicateVertex p = this.predicates.tailSet(predicate).first();
-        return (predicate.equals(p)) ? p : null;
-    }
+	TermVertex addTermVertex(TermVertex term) {
+		if (this.terms.add(term))
+			return term;
+		else
+			return this.terms.tailSet(term).first();
+	}
 
-    TermVertex addTermVertex(TermVertex term) {
-        if (this.terms.add(term))
-            return term;
-        else
-            return this.terms.tailSet(term).first();
-    }
+	PredicateVertex addPredicateVertex(PredicateVertex predicate) {
+		if (this.predicates.add(predicate))
+			return predicate;
+		else
+			return this.predicates.tailSet(predicate).first();
+	}
 
-    PredicateVertex addPredicateVertex(PredicateVertex predicate) {
-        if (this.predicates.add(predicate))
-            return predicate;
-        else
-            return this.predicates.tailSet(predicate).first();
-    }
-
-    boolean addAtomEdge(AtomEdge atom) {
-        boolean val = this.atoms.add(atom);
-        if (val) {
-            for (Vertex term : atom.getVertices()) {
-                term.getEdges().add(atom);
-            }
-        }
-        return val;
-    }
+	boolean addAtomEdge(AtomEdge atom) {
+		boolean val = this.atoms.add(atom);
+		if (val) {
+			for (Vertex term : atom.getVertices()) {
+				term.getEdges().add(atom);
+			}
+		}
+		return val;
+	}
 
 	@Override
 	public void clear() {

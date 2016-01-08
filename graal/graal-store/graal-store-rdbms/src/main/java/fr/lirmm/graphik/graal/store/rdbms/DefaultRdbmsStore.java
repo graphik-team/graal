@@ -73,7 +73,10 @@ import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.VariableGenerator;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
+import fr.lirmm.graphik.graal.core.stream.SubstitutionIterator2AtomIterator;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -383,6 +386,19 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		return res;
 	}
 
+	@Override
+	public CloseableIterator<Atom> match(Atom atom) throws AtomSetException {
+
+		ConjunctiveQuery query = ConjunctiveQueryFactory.instance().create(new LinkedListAtomSet(atom));
+		SqlHomomorphism solver = SqlHomomorphism.instance();
+
+		try {
+			return new SubstitutionIterator2AtomIterator(atom, solver.execute(query, this));
+		} catch (HomomorphismException e) {
+			throw new AtomSetException(e);
+		}
+	}
+
 	/**
 	 * Get a term by its label
 	 * 
@@ -626,7 +642,6 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	private void add(Statement statement, Term term) throws AtomSetException {
 		try {
 			Map<String, Object> data = new TreeMap<String, Object>();
-			System.out.println(term.getIdentifier().toString());
 			data.put("term", StringUtils.addSlashes(term.getIdentifier().toString()));
 			data.put("term_type", term.getType());
 			String query = this.getDriver().getInsertOrIgnoreStatement(TERM_TABLE_NAME, data);

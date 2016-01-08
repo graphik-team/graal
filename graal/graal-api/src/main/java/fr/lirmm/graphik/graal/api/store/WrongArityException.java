@@ -40,50 +40,42 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.util.stream.filter;
+package fr.lirmm.graphik.graal.api.store;
 
-import fr.lirmm.graphik.util.stream.AbstractIterator;
-import fr.lirmm.graphik.util.stream.GIterator;
-
+import fr.lirmm.graphik.graal.api.core.AtomSetException;
 
 /**
- * @author Clément Sipieter (INRIA) <clement@6pi.fr>
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class FilterIterator<U, T> extends AbstractIterator<T> {
+public class WrongArityException extends AtomSetException {
 
-	private final GIterator<U> it;
-	private final Filter<U> filter;
-	private T next;
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
 
-	public FilterIterator(GIterator<U> it, Filter<U> filter) {
-		this.filter = filter;
-		this.it = it;
-		this.next = null;
+	public WrongArityException(String m) {
+		super(m);
 	}
 
-	@Override
-	public boolean hasNext() {
-		if(this.next == null && this.it.hasNext()) {
-			U o = this.it.next();
-			if(this.filter.filter(o)) {
-				this.next = (T) o;
-			} else {
-				this.hasNext();
-			}
-		}
-		return this.next != null;
+	public WrongArityException(Throwable e) {
+		super(e);
 	}
 
-	@Override
-	public T next() {
-		this.hasNext();
-		T t = this.next;
-		this.next = null;
-		return t;
+	public WrongArityException(String m, Throwable e) {
+		super(m, e);
 	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	// /////////////////////////////////////////////////////////////////////////
+	// OBJECT OVERRIDE METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
 }

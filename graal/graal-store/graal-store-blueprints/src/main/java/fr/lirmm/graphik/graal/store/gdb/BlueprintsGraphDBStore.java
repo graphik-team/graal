@@ -66,8 +66,8 @@ import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
-import fr.lirmm.graphik.util.stream.IteratorAdapter;
 import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.IteratorAdapter;
 
 /**
  * BlueprintsGraphDBStore wrap Blueprints API {@link http
@@ -122,6 +122,22 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 		}
 
 		return query.vertices().iterator().hasNext();
+	}
+
+	@Override
+	public GIterator<Atom> match(Atom atom) {
+		GraphQuery query = this.graph.query();
+		query.has("class", "atom");
+		query.has("predicate", predicateToString(atom.getPredicate()));
+
+		int i = 0;
+		for (Term t : atom) {
+			if (t.isConstant()) {
+				query.has("term" + i++, termToString(t));
+			}
+		}
+
+		return new AtomIterator(query.vertices().iterator());
 	}
 
 	@Override

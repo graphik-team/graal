@@ -58,11 +58,9 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
-import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphism.DefaultScheduler;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphism.Scheduler;
-import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphism.Var;
+import fr.lirmm.graphik.graal.homomorphism.forward_checking.ForwardChecking;
 import fr.lirmm.graphik.util.Profilable;
 import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.AbstractIterator;
@@ -72,10 +70,10 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-class BacktrackIterator extends AbstractIterator<Substitution> implements CloseableIterator<Substitution>,
-                                                                     Profilable {
+class BacktrackIterator extends AbstractIterator<Substitution> implements CloseableIterator<Substitution>, Profilable {
 
-	private Scheduler          scheduler = new DefaultScheduler();
+	private Scheduler          scheduler;
+	private ForwardChecking    fc;
 
 	private InMemoryAtomSet    h;
 	private AtomSet            g;
@@ -93,7 +91,7 @@ class BacktrackIterator extends AbstractIterator<Substitution> implements Closea
 
 	private Profiler           profiler;
 
-	private static int         nbCall    = 0;
+	private int                nbCall = 0;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -105,13 +103,14 @@ class BacktrackIterator extends AbstractIterator<Substitution> implements Closea
 	 * @param h
 	 * @param g
 	 */
-	public BacktrackIterator(InMemoryAtomSet h, AtomSet g, List<Term> ans, Scheduler scheduler,
+	public BacktrackIterator(InMemoryAtomSet h, AtomSet g, List<Term> ans, Scheduler scheduler, ForwardChecking fc,
 	    RulesCompilation compilation) {
 
 		this.h = h;
 		this.g = g;
 		this.ans = ans;
 		this.scheduler = scheduler;
+		this.fc = fc;
 		this.compilation = compilation;
 
 		this.currentVar = null;
@@ -141,6 +140,7 @@ class BacktrackIterator extends AbstractIterator<Substitution> implements Closea
 		}
 
 		computeAtomOrder(h, vars);
+		fc.init(vars, index);
 
 		if (profiler != null) {
 			profiler.stop("preprocessing time");
@@ -250,7 +250,10 @@ class BacktrackIterator extends AbstractIterator<Substitution> implements Closea
 					if (level > levelMax) {
 						goBack = true;
 
-						level = currentVar.previousLevel;
+						int nextLevel = currentVar.previousLevel;
+						for (; level > nextLevel; --level) {
+							vars[level].image = null;
+						}
 						if (profiler != null) {
 							profiler.stop("backtracking time");
 						}
@@ -263,14 +266,20 @@ class BacktrackIterator extends AbstractIterator<Substitution> implements Closea
 							goBack = false;
 							level = scheduler.nextLevel(currentVar, vars);
 						} else {
-							level = scheduler.previousLevel(currentVar, vars);
+							int nextLevel = scheduler.previousLevel(currentVar, vars);
+							for (; level > nextLevel; --level) {
+								vars[level].image = null;
+							}
 						}
 					} else {
 						if (getFirstValue(currentVar, g)) {
 							level = scheduler.nextLevel(currentVar, vars);
 						} else {
 							goBack = true;
-							level = scheduler.previousLevel(currentVar, vars);
+							int nextLevel = scheduler.previousLevel(currentVar, vars);
+							for (; level > nextLevel; --level) {
+								vars[level].image = null;
+							}
 						}
 					}
 				}
@@ -305,22 +314,28 @@ class BacktrackIterator extends AbstractIterator<Substitution> implements Closea
 		return s;
 	}
 
+	private boolean getFirstValue(Var var, AtomSet g) throws AtomSetException {
+		if (var.possibleImage == null || var.possibleImage[var.level - 1] == null) {
+			var.domain = g.termsIterator();
+		} else {
+			var.domain = var.possibleImage[var.level - 1].iterator();
+		}
+		return this.hasMoreValues(var, g);
+	}
+
 	private boolean hasMoreValues(Var var, AtomSet g) throws AtomSetException {
 		while (var.domain.hasNext()) {
+			// TODO explicit var.success
 			var.success = false;
 			var.image = var.domain.next();
 
 			if (scheduler.isAllowed(var, var.image) && isHomomorphism(var.preAtoms, g)) {
-				return true;
+				if (fc.checkForward(var, g, this.index, this.compilation)) {
+					return true;
+				}
 			}
 		}
-		var.image = null;
 		return false;
-	}
-
-	private boolean getFirstValue(Var var, AtomSet g) throws AtomSetException {
-		var.domain = g.termsIterator();
-		return this.hasMoreValues(var, g);
 	}
 
 	/**
@@ -333,35 +348,30 @@ class BacktrackIterator extends AbstractIterator<Substitution> implements Closea
 	private void computeAtomOrder(Iterable<Atom> atomset, Var[] vars) {
 		int tmp, rank;
 
-		for (int i = 0; i < vars.length; ++i)
+		// initialisation preAtoms and postAtoms Collections
+		for (int i = 0; i < vars.length; ++i) {
 			vars[i].preAtoms = new LinkedList<Atom>();
+			vars[i].postAtoms = new LinkedList<Atom>();
+		}
 
 		//
 		for (Atom a : atomset) {
 			rank = 0;
 			for (Term t : a.getTerms(Type.VARIABLE)) {
 				tmp = this.index.get((Variable) t).level;
+				vars[tmp].postAtoms.add(a);
 
 				if (rank < tmp)
 					rank = tmp;
 			}
+			vars[rank].postAtoms.remove(a);
 			vars[rank].preAtoms.add(a);
 		}
 	}
 
-	/**
-	 * Return the index of the specified variable.
-	 * 
-	 * @param var
-	 * @return
-	 */
-	private Term imageOf(Variable var) {
-		return this.index.get(var).image;
-	}
-
 	private boolean isHomomorphism(Collection<Atom> atomsFrom, AtomSet atomsTo) throws AtomSetException {
 		for (Atom atom : atomsFrom) {
-			Atom image = createImageOf(atom);
+			Atom image = BacktrackUtils.createImageOf(atom, this.index);
 			boolean contains = false;
 			if (profiler != null) {
 				profiler.start("atom comparaison");
@@ -384,22 +394,6 @@ class BacktrackIterator extends AbstractIterator<Substitution> implements Closea
 		return true;
 	}
 
-	/**
-	 * @param atom
-	 * @param images
-	 * @return
-	 */
-	private Atom createImageOf(Atom atom) {
-		List<Term> termsSubstitut = new LinkedList<Term>();
-		for (Term term : atom.getTerms()) {
-			if (term instanceof Variable) {
-				termsSubstitut.add(imageOf((Variable) term));
-			} else {
-				termsSubstitut.add(term);
-			}
-		}
 
-		return new DefaultAtom(atom.getPredicate(), termsSubstitut);
-	}
 
 }

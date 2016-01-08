@@ -60,6 +60,8 @@ public abstract class AbstractTripleStore extends AbstractAtomSet implements
 	
 	protected static final String PREFIX = "PREFIX " + DEFAULT_PREFIX + " " + DEFAULT_PREFIX_VALUE + " ";
 
+	protected static final String SELECT_ALL = PREFIX + "SELECT ?s ?p ?o WHERE { ?s ?p ?o } ";
+
 	protected static final String SELECT_TERMS_QUERY = PREFIX
 			+ "SELECT DISTINCT ?term " + " WHERE { { ?term  ?p  ?o } "
 			+ " UNION { ?s ?p ?term } } ";

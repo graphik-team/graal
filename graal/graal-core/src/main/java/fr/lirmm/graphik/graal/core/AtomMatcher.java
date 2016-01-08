@@ -40,50 +40,65 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.util.stream.filter;
+package fr.lirmm.graphik.graal.core;
 
-import fr.lirmm.graphik.util.stream.AbstractIterator;
-import fr.lirmm.graphik.util.stream.GIterator;
-
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Term;
 
 /**
- * @author Clément Sipieter (INRIA) <clement@6pi.fr>
+ * AtomMatcher check if an atom match a pattern specified by the atom given in
+ * the constructor. Note that, it does not check if a same variable are
+ * instantiated by the same term. So, an AtomMatcher instantiated with
+ * "p(X1,X1,a)" match "p(a,a,a)" but also "p(a,b,a)".
+ * 
+ * 
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class FilterIterator<U, T> extends AbstractIterator<T> {
+public class AtomMatcher {
 
-	private final GIterator<U> it;
-	private final Filter<U> filter;
-	private T next;
+	private Predicate predicate;
+	private Term check[];
 
-	public FilterIterator(GIterator<U> it, Filter<U> filter) {
-		this.filter = filter;
-		this.it = it;
-		this.next = null;
-	}
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
 
-	@Override
-	public boolean hasNext() {
-		if(this.next == null && this.it.hasNext()) {
-			U o = this.it.next();
-			if(this.filter.filter(o)) {
-				this.next = (T) o;
-			} else {
-				this.hasNext();
+	public AtomMatcher(Atom a) {
+		this.predicate = a.getPredicate();
+		this.check = new Term[this.predicate.getArity()];
+
+		int i = -1;
+		for (Term t : a.getTerms()) {
+			++i;
+			if (t.isConstant()) {
+				this.check[i] = t;
 			}
 		}
-		return this.next != null;
 	}
 
-	@Override
-	public T next() {
-		this.hasNext();
-		T t = this.next;
-		this.next = null;
-		return t;
-	}
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
+	/**
+	 * 
+	 * @param atom
+	 * @return true
+	 */
+	public boolean check(Atom atom) {
+		if (!predicate.equals(atom.getPredicate())) {
+			return false;
+		}
+
+		int i = -1;
+		for (Term t : atom) {
+			++i;
+			if (this.check[i] != null && !this.check[i].equals(t)) {
+				return false;
+			}
+		}
+		return true;
+	}
 }

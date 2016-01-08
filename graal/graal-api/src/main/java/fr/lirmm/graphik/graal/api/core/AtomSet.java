@@ -64,6 +64,16 @@ public interface AtomSet extends GIterable<Atom> {
 	 * @throws AtomSetException
 	 */
 	boolean contains(Atom atom) throws AtomSetException;
+	
+	/**
+	 * Returns an iterator over atoms that match predicate and constants from
+	 * the specified atom.
+	 * 
+	 * @param atom
+	 * @return
+	 * @throws AtomSetException
+	 */
+	GIterator<Atom> match(Atom atom) throws AtomSetException;
 
 	/**
 	 * Returns a Set of all predicates in this atom set.

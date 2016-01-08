@@ -77,12 +77,14 @@ import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.store.AbstractTripleStore;
+import fr.lirmm.graphik.graal.api.store.WrongArityException;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.URIUtils;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -105,7 +107,7 @@ public class SailStore extends AbstractTripleStore {
 			return instance;
 		}
 
-		Prefix defaultPrefix = new Prefix("jena", "file:///jena/");
+		Prefix defaultPrefix = new Prefix("sail", "file:///sail/");
 
 		/**
 		 * Add default prefix if necessary
@@ -228,6 +230,26 @@ public class SailStore extends AbstractTripleStore {
 	}
 
 	@Override
+	public GIterator<Atom> match(Atom atom) throws AtomSetException {
+		Statement stat = this.atomToStatement(atom);
+		System.out.println(stat);
+		URI subject = (URI) stat.getSubject();
+		if (subject.getNamespace().equals("_:")) {
+			subject = null;
+		}
+		Value object = stat.getObject();
+		if (object instanceof URI && ((URI) object).getNamespace().equals("_:")) {
+			object = null;
+		}
+
+		try {
+			return new AtomIterator(this.connection.getStatements(subject, stat.getPredicate(), object, false));
+		} catch (RepositoryException e) {
+			throw new AtomSetException(e);
+		}
+	}
+
+	@Override
 	public CloseableIterator<Predicate> predicatesIterator() throws AtomSetException {
 		TupleQueryResult result;
 		try {
@@ -336,11 +358,28 @@ public class SailStore extends AbstractTripleStore {
 	// PRIVATE
 	// //////////////////////////////////////////////////////////////////////////
 
-	private Statement atomToStatement(Atom atom) {
-		URI predicate = this.createURI(atom.getPredicate().getIdentifier().toString());
-		URI term0 = this.createURI(atom.getTerm(0).getIdentifier().toString());
+	private Statement atomToStatement(Atom atom) throws WrongArityException {
+		if(atom.getPredicate().getArity() != 2) {
+			throw new WrongArityException("Arity "
+			                              + atom.getPredicate().getArity()
+			                              + " is not supported by this store.");
+		}
+		URI predicate = this.createURI(atom.getPredicate());
+		URI term0 = this.createURI(atom.getTerm(0));
 		Value term1 = this.createValue(atom.getTerm(1));
 		return valueFactory.createStatement(term0, predicate, term1);
+	}
+
+	private URI createURI(Predicate p) {
+		return createURI(URIzer.instance().input(p.getIdentifier().toString()));
+	}
+
+	private URI createURI(Term t) {
+		if (t.isConstant()) {
+			return createURI(URIzer.instance().input(t.getIdentifier().toString()));
+		} else {
+			return createURI("_:" + t.getIdentifier().toString());
+		}
 	}
 
 	/**
@@ -348,7 +387,7 @@ public class SailStore extends AbstractTripleStore {
 	 * method add a default prefix to the string.
 	 */
 	private URI createURI(String string) {
-		return valueFactory.createURI(URIzer.instance().input(string));
+		return valueFactory.createURI(string);
 	}
 
 	private Value createValue(Term t) {
@@ -357,7 +396,7 @@ public class SailStore extends AbstractTripleStore {
 			return valueFactory.createLiteral(l.getValue().toString(),
 			    valueFactory.createURI(l.getDatatype().toString()));
 		} else {
-			return createURI(t.toString());
+			return createURI(t);
 		}
 	}
 
@@ -401,7 +440,11 @@ public class SailStore extends AbstractTripleStore {
 
 		@Override
 		public Statement next() {
-			return atomToStatement(it.next());
+			try {
+				return atomToStatement(it.next());
+			} catch (WrongArityException e) {
+				return null;
+			}
 		}
 
 		@Override

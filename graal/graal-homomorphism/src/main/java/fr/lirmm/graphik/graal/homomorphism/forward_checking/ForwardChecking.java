@@ -40,50 +40,24 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.util.stream.filter;
+package fr.lirmm.graphik.graal.homomorphism.forward_checking;
 
-import fr.lirmm.graphik.util.stream.AbstractIterator;
-import fr.lirmm.graphik.util.stream.GIterator;
+import java.util.Map;
 
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
+import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.graal.homomorphism.Var;
 
 /**
- * @author Clément Sipieter (INRIA) <clement@6pi.fr>
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class FilterIterator<U, T> extends AbstractIterator<T> {
+public interface ForwardChecking {
 
-	private final GIterator<U> it;
-	private final Filter<U> filter;
-	private T next;
+	void init(Var[] vars, Map<Variable, Var> map);
 
-	public FilterIterator(GIterator<U> it, Filter<U> filter) {
-		this.filter = filter;
-		this.it = it;
-		this.next = null;
-	}
-
-	@Override
-	public boolean hasNext() {
-		if(this.next == null && this.it.hasNext()) {
-			U o = this.it.next();
-			if(this.filter.filter(o)) {
-				this.next = (T) o;
-			} else {
-				this.hasNext();
-			}
-		}
-		return this.next != null;
-	}
-
-	@Override
-	public T next() {
-		this.hasNext();
-		T t = this.next;
-		this.next = null;
-		return t;
-	}
+	boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc) throws AtomSetException;
 
 }

@@ -40,50 +40,65 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.util.stream.filter;
+package fr.lirmm.graphik.graal.homomorphism;
 
-import fr.lirmm.graphik.util.stream.AbstractIterator;
-import fr.lirmm.graphik.util.stream.GIterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.graal.core.DefaultAtom;
 
 /**
- * @author Clément Sipieter (INRIA) <clement@6pi.fr>
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class FilterIterator<U, T> extends AbstractIterator<T> {
+public final class BacktrackUtils {
 
-	private final GIterator<U> it;
-	private final Filter<U> filter;
-	private T next;
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
 
-	public FilterIterator(GIterator<U> it, Filter<U> filter) {
-		this.filter = filter;
-		this.it = it;
-		this.next = null;
+	private BacktrackUtils() {
 	}
 
-	@Override
-	public boolean hasNext() {
-		if(this.next == null && this.it.hasNext()) {
-			U o = this.it.next();
-			if(this.filter.filter(o)) {
-				this.next = (T) o;
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * @param atom
+	 * @param images
+	 * @return
+	 */
+	public static Atom createImageOf(Atom atom, Map<Variable, Var> map) {
+		List<Term> termsSubstitut = new LinkedList<Term>();
+		for (Term term : atom.getTerms()) {
+			if (term instanceof Variable) {
+				termsSubstitut.add(imageOf((Variable) term, map));
 			} else {
-				this.hasNext();
+				termsSubstitut.add(term);
 			}
 		}
-		return this.next != null;
+
+		return new DefaultAtom(atom.getPredicate(), termsSubstitut);
 	}
 
-	@Override
-	public T next() {
-		this.hasNext();
-		T t = this.next;
-		this.next = null;
-		return t;
+	/**
+	 * Return the index of the specified variable.
+	 * 
+	 * @param var
+	 * @return
+	 */
+	public static Term imageOf(Variable var, Map<Variable, Var> map) {
+		Term t = map.get(var).image;
+		if (t == null) {
+			return var;
+		} else {
+			return t;
+		}
 	}
 
 }

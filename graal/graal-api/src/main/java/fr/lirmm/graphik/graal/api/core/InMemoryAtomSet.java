@@ -53,6 +53,9 @@ public interface InMemoryAtomSet extends AtomSet {
 	boolean contains(Atom atom);
 
 	@Override
+	GIterator<Atom> match(Atom atom);
+
+	@Override
 	Set<Predicate> getPredicates();
 
 	@Override

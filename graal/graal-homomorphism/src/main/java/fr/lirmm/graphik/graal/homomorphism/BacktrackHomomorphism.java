@@ -42,13 +42,10 @@
  */
 package fr.lirmm.graphik.graal.homomorphism;
 
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
@@ -59,16 +56,18 @@ import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
 import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
+import fr.lirmm.graphik.graal.homomorphism.forward_checking.ForwardChecking;
+import fr.lirmm.graphik.graal.homomorphism.forward_checking.NoFC;
 import fr.lirmm.graphik.util.Profilable;
 import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * This Backtrack is inspired by the Baget Jean-François Thesis (Chapter 5)
- * 
+ *
  * see also "Backtracking Through Biconnected Components of a Constraint Graph"
  * (Jean-François Baget, Yannic S. Tognetti IJCAI 2001)
- * 
+ *
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
@@ -76,13 +75,23 @@ public class BacktrackHomomorphism implements HomomorphismWithCompilation<Conjun
 
 	private Profiler profiler = null;
 	private Scheduler scheduler;
+	private ForwardChecking fc;
 
 	public BacktrackHomomorphism() {
-		this(new DefaultScheduler());
+		this(new DefaultScheduler(), new NoFC());
 	}
 
 	public BacktrackHomomorphism(Scheduler s) {
+		this(s, new NoFC());
+	}
+
+	public BacktrackHomomorphism(ForwardChecking fc) {
+		this(new DefaultScheduler(), fc);
+	}
+
+	public BacktrackHomomorphism(Scheduler s, ForwardChecking fc) {
 		super();
+		this.fc = fc;
 		this.scheduler = s;
 	}
 
@@ -105,7 +114,7 @@ public class BacktrackHomomorphism implements HomomorphismWithCompilation<Conjun
 		// q.getAnswerVariables(),
 		// compilation));
 		BacktrackIterator backtrackIterator = new BacktrackIterator(q.getAtomSet(), a, q.getAnswerVariables(),
-		                                                            this.scheduler, compilation);
+		                                                            this.scheduler, this.fc, compilation);
 		if (this.profiler != null) {
 			backtrackIterator.setProfiler(profiler);
 		}
@@ -130,60 +139,13 @@ public class BacktrackHomomorphism implements HomomorphismWithCompilation<Conjun
 	// INTERN CLASSES
 	// /////////////////////////////////////////////////////////////////////////
 
-	public static class Var {
-		public int              level;
-		public Variable         value;
-		public Term             image;
 
-		public int              nextLevel;
-		public int              previousLevel;
-		public int              previousLevelFailure;
-
-		public boolean          isAccesseur;
-		public boolean          isEntry;
-		public boolean          isTerminal;
-		public int              accesseur;
-		public boolean          success = false;
-
-		public Collection<Atom> preAtoms;
-		public Iterator<Term>   domain;
-		public Set<Term>        forbidden;
-		public Set<Integer>     compilateurs;
-
-		public Var() {
-		}
-
-		public Var(int level) {
-			this.level = level;
-			this.previousLevelFailure = this.previousLevel = level - 1;
-			this.nextLevel = level + 1;
-		}
-
-		@Override
-		public String toString() {
-			StringBuilder sb = new StringBuilder();
-			sb.append('[').append(value).append("(").append(previousLevel).append('|')
-			  .append(previousLevelFailure).append("<-").append(level)
-			  .append("->")
-			  .append(nextLevel).append(")");
-			sb.append(" A:").append(accesseur);
-			if(isEntry) 
-				sb.append(" E");
-			if (isTerminal)
-				sb.append(" T");
-			if(compilateurs != null) {
-				sb.append(" C:").append(compilateurs);
-			}
-			sb.append("]\n");
-			return sb.toString();
-		}
-	}
 
 	/**
 	 * The Scheduler interface provides a way to manage the backtracking order.
 	 * The Var.previousLevel will be used when the backtracking algorithm is in
 	 * a failure state (allow backjumping).
-	 * 
+	 *
 	 * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
 	 *
 	 */
@@ -209,7 +171,7 @@ public class BacktrackHomomorphism implements HomomorphismWithCompilation<Conjun
 		 * @return the next level
 		 */
 		int nextLevel(Var currentVar, Var[] vars);
-		
+
 		/**
 		 * @param var
 		 * @param image
@@ -224,7 +186,7 @@ public class BacktrackHomomorphism implements HomomorphismWithCompilation<Conjun
 	 * Compute an order over variables from h. This scheduler put answer
 	 * variables first, then other variables are put in the order from
 	 * h.getTerms(Term.Type.VARIABLE).iterator().
-	 * 
+	 *
 	 * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
 	 *
 	 */
@@ -245,7 +207,7 @@ public class BacktrackHomomorphism implements HomomorphismWithCompilation<Conjun
 
 		/**
 		 * Compute the order.
-		 * 
+		 *
 		 * @param h
 		 * @return
 		 */

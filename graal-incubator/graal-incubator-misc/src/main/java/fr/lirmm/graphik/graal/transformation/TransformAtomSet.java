@@ -58,6 +58,7 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.homomorphism.DefaultHomomorphismFactory;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
+import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.stream.GIterator;
 import fr.lirmm.graphik.util.stream.IteratorAdapter;
 
@@ -99,6 +100,11 @@ public class TransformAtomSet extends AbstractAtomSet implements AtomSet {
 		} catch (HomomorphismException e) {
 			throw new AtomSetException(e);
 		}
+	}
+
+	@Override
+	public GIterator<Atom> match(Atom atom) throws AtomSetException {
+		throw new MethodNotImplementedError();
 	}
 
 	@Override

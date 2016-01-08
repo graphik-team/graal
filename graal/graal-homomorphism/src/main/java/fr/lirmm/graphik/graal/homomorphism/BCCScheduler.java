@@ -57,7 +57,6 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphism.Var;
 import fr.lirmm.graphik.util.graph.DefaultDirectedEdge;
 import fr.lirmm.graphik.util.graph.DefaultGraph;
 import fr.lirmm.graphik.util.graph.DefaultHyperEdge;

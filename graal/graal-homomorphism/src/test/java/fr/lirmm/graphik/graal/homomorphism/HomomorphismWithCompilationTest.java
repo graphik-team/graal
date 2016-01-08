@@ -43,7 +43,10 @@
 package fr.lirmm.graphik.graal.homomorphism;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.experimental.theories.DataPoints;
+import org.junit.experimental.theories.Theories;
+import org.junit.experimental.theories.Theory;
+import org.junit.runner.RunWith;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
@@ -57,6 +60,7 @@ import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.compilation.IDCompilation;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
@@ -64,10 +68,20 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
+@RunWith(Theories.class)
 public class HomomorphismWithCompilationTest {
 
-	@Test
-	public void test1() throws HomomorphismException {
+	@DataPoints
+	public static HomomorphismWithCompilation[] writeableStore() {
+
+		return new HomomorphismWithCompilation[] { new BacktrackHomomorphism(),
+		        new BacktrackHomomorphism(new BCCScheduler()),
+		        new BacktrackHomomorphism(new NFC2()), new BacktrackHomomorphism(new BCCScheduler(), new NFC2()) };
+
+	}
+
+	@Theory
+	public void test1(HomomorphismWithCompilation<ConjunctiveQuery, AtomSet> h) throws HomomorphismException {
 		InMemoryAtomSet store = new LinkedListAtomSet();
 
 		store.add(DlgpParser.parseAtom("p(a)."));
@@ -78,7 +92,6 @@ public class HomomorphismWithCompilationTest {
 		RulesCompilation comp = new IDCompilation();
 		comp.compile(rules.iterator());
 
-		HomomorphismWithCompilation<ConjunctiveQuery, AtomSet> h = new BacktrackHomomorphism();
 		CloseableIterator<Substitution> results = h.execute(DlgpParser.parseQuery("?(X) :- q(X)."), store, comp);
 		Assert.assertTrue(results.hasNext());
 		Substitution next = results.next();
@@ -88,8 +101,8 @@ public class HomomorphismWithCompilationTest {
 		results.close();
 	}
 
-	@Test
-	public void test2() throws HomomorphismException {
+	@Theory
+	public void test2(HomomorphismWithCompilation<ConjunctiveQuery, AtomSet> h) throws HomomorphismException {
 		InMemoryAtomSet store = new LinkedListAtomSet();
 
 		store.add(DlgpParser.parseAtom("p(a,b)."));
@@ -100,7 +113,6 @@ public class HomomorphismWithCompilationTest {
 		RulesCompilation comp = new IDCompilation();
 		comp.compile(rules.iterator());
 
-		HomomorphismWithCompilation<ConjunctiveQuery, AtomSet> h = new BacktrackHomomorphism();
 		CloseableIterator<Substitution> results = h.execute(DlgpParser.parseQuery("?(X,Y) :- q(X,Y)."), store, comp);
 
 		Assert.assertTrue(results.hasNext());
