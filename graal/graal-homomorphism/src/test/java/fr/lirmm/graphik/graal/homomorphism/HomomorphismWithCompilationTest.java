@@ -60,7 +60,6 @@ import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.compilation.IDCompilation;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
-import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
@@ -73,11 +72,7 @@ public class HomomorphismWithCompilationTest {
 
 	@DataPoints
 	public static HomomorphismWithCompilation[] writeableStore() {
-
-		return new HomomorphismWithCompilation[] { new BacktrackHomomorphism(),
-		        new BacktrackHomomorphism(new BCCScheduler()),
-		        new BacktrackHomomorphism(new NFC2()), new BacktrackHomomorphism(new BCCScheduler(), new NFC2()) };
-
+		return TestUtil.getHomomorphismsWithCompilation();
 	}
 
 	@Theory

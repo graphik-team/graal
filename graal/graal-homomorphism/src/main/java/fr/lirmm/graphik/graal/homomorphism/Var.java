@@ -44,7 +44,6 @@ package fr.lirmm.graphik.graal.homomorphism;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
@@ -74,7 +73,6 @@ public class Var implements Comparable<Var> {
 
 	// Forward Checking
 	public Iterator<Term>   domain;
-	public List<Term>[]     possibleImage;
 	public Set<Var>         forwardNeighbors;
 
 	// BackJumping

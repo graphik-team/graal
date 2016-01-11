@@ -44,29 +44,42 @@ package fr.lirmm.graphik.graal.homomorphism.forward_checking;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackUtils;
 import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.util.MethodNotImplementedError;
 
 /**
- * SimpleFC is a simple ForwardChecking implementation for HyperGraph with
- * immediate local checking in one step. It is simple because it does not
- * maintain a list of possible candidats for each variables.
+ * NFC2 is a ForwardChecking implementation for HyperGraph with immediate local
+ * propagation in one step. It maintain a list of possible candidats for each
+ * variables but only if the number of candidats in lower than a specified
+ * limit.
  * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class SimpleFC implements ForwardChecking {
+public class NFC2WithLimit implements ForwardChecking {
+
+	private Map<Var, Set<Term>> candidats = new TreeMap<Var, Set<Term>>();
+	private final int           LIMIT;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
+
+	public NFC2WithLimit(int limit) {
+		this.LIMIT = limit;
+	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
@@ -74,38 +87,88 @@ public class SimpleFC implements ForwardChecking {
 
 	@Override
 	public void init(Var[] vars, Map<Variable, Var> map) {
+		for (int i = 0; i < vars.length; ++i) {
+			vars[i].forwardNeighbors = new TreeSet<Var>();
+			for (Atom a : vars[i].postAtoms) {
+				for (Term t : a.getTerms(Type.VARIABLE)) {
+					Var v = map.get((Variable) t);
+					if (v.level > i) {
+						vars[i].forwardNeighbors.add(v);
+					}
+				}
+			}
+
+			// vars[i].possibleImage = new List[vars[i].level + 1];
+		}
 	}
 
 	@Override
 	public boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc) throws AtomSetException {
-		for (Atom atom : v.postAtoms) {
-			boolean contains = false;
-			Atom im = BacktrackUtils.createImageOf(atom, map);
 
-			for (Atom a : rc.getRewritingOf(im)) {
-				if (g.match(a).hasNext()) {
+		candidats.clear();
+		for (Var z : v.forwardNeighbors) {
+			candidats.put(z, new TreeSet<Term>());
+		}
+
+		boolean contains;
+		for (Atom atom : v.postAtoms) {
+			contains = false;
+
+			for (Atom a : rc.getRewritingOf(atom)) {
+
+				// Compute post variables positions
+				Var postV[] = new Var[a.getPredicate().getArity()];
+				int i = -1;
+				for (Term t : a) {
+					++i;
+					Var z = map.get(t);
+					if (!t.isConstant() && z.level > v.level) {
+						postV[i] = z;
+					}
+				}
+
+				Atom im = BacktrackUtils.createImageOf(a, map);
+				Iterator<? extends Atom> it = g.match(im);
+				while (it.hasNext()) {
+					i = -1;
+					for (Term t : it.next()) {
+						++i;
+						if (postV[i] != null) {
+							candidats.get(postV[i]).add(t);
+						}
+					}
 					contains = true;
-					break;
 				}
 			}
 
 			if (!contains) {
 				return false;
 			}
+
 		}
+
+		// for (Var z : v.forwardNeighbors) {
+		// Set<Term> set = candidats.get(z);
+		// if (z.possibleImage[v.level - 1] != null) {
+		// set.retainAll(z.possibleImage[v.level - 1]);
+		// }
+		// z.possibleImage[v.level] = new LinkedList<Term>(set);
+		// }
+
 		return true;
 	}
-
-	@Override
-	public Iterator<Term> getCandidatsIterator(AtomSet g, Var var) throws AtomSetException {
-		return g.termsIterator();
-	}
-
 	// /////////////////////////////////////////////////////////////////////////
 	// OBJECT OVERRIDE METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
+	@Override
+	public Iterator<Term> getCandidatsIterator(AtomSet g, Var var) throws AtomSetException {
+		// TODO implement this method
+		throw new MethodNotImplementedError();
+	}
+
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
+
 }

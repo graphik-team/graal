@@ -315,11 +315,7 @@ class BacktrackIterator extends AbstractIterator<Substitution> implements Closea
 	}
 
 	private boolean getFirstValue(Var var, AtomSet g) throws AtomSetException {
-		if (var.possibleImage == null || var.possibleImage[var.level - 1] == null) {
-			var.domain = g.termsIterator();
-		} else {
-			var.domain = var.possibleImage[var.level - 1].iterator();
-		}
+		var.domain = fc.getCandidatsIterator(g, var);
 		return this.hasMoreValues(var, g);
 	}
 

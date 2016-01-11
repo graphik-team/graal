@@ -70,6 +70,10 @@ import fr.lirmm.graphik.graal.homomorphism.Var;
  */
 public class NFC2 implements ForwardChecking {
 
+	/**
+	 * A data extension for variable indexed by level
+	 */
+	private VarData[]           data;
 	private Map<Var, Set<Term>> candidats = new TreeMap<Var, Set<Term>>();
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -82,6 +86,8 @@ public class NFC2 implements ForwardChecking {
 
 	@Override
 	public void init(Var[] vars, Map<Variable, Var> map) {
+		this.data = new VarData[vars.length];
+
 		for (int i = 0; i < vars.length; ++i) {
 			vars[i].forwardNeighbors = new TreeSet<Var>();
 			for (Atom a : vars[i].postAtoms) {
@@ -93,7 +99,8 @@ public class NFC2 implements ForwardChecking {
 				}
 			}
 
-			vars[i].possibleImage = new List[vars[i].level + 1];
+			this.data[vars[i].level] = new VarData();
+			this.data[vars[i].level].possibleImage = new List[vars[i].level];
 		}
 	}
 
@@ -144,14 +151,24 @@ public class NFC2 implements ForwardChecking {
 
 		for (Var z : v.forwardNeighbors) {
 			Set<Term> set = candidats.get(z);
-			if (z.possibleImage[v.level - 1] != null) {
-				set.retainAll(z.possibleImage[v.level - 1]);
+			if (this.data[z.level].possibleImage[v.level - 1] != null) {
+				set.retainAll(this.data[z.level].possibleImage[v.level - 1]);
 			}
-			z.possibleImage[v.level] = new LinkedList<Term>(set);
+			this.data[z.level].possibleImage[v.level] = new LinkedList<Term>(set);
 		}
 
 		return true;
 	}
+
+	@Override
+	public Iterator<Term> getCandidatsIterator(AtomSet g, Var var) throws AtomSetException {
+		if (this.data[var.level].possibleImage == null || this.data[var.level].possibleImage[var.level - 1] == null) {
+			return g.termsIterator();
+		} else {
+			return this.data[var.level].possibleImage[var.level - 1].iterator();
+		}
+	}
+
 	// /////////////////////////////////////////////////////////////////////////
 	// OBJECT OVERRIDE METHODS
 	// /////////////////////////////////////////////////////////////////////////
@@ -160,4 +177,7 @@ public class NFC2 implements ForwardChecking {
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
+	private class VarData {
+		List<Term>[] possibleImage;
+	}
 }

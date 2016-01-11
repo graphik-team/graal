@@ -40,33 +40,42 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.homomorphism.forward_checking;
+ /**
+ * 
+ */
+package fr.lirmm.graphik.graal.homomorphism;
 
-import java.util.Iterator;
-import java.util.Map;
-
-import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.AtomSetException;
-import fr.lirmm.graphik.graal.api.core.RulesCompilation;
-import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
+import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2;
+import fr.lirmm.graphik.graal.homomorphism.forward_checking.SimpleFC;
 
 /**
- * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+ * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public interface ForwardChecking {
+final class TestUtil {
 
-	void init(Var[] vars, Map<Variable, Var> map);
+	private TestUtil() {
+	}
 
-	boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc) throws AtomSetException;
+	public static HomomorphismWithCompilation[] getHomomorphismsWithCompilation() {
 
-	/**
-	 * @param var
-	 * @return
-	 * @throws AtomSetException
-	 */
-	Iterator<Term> getCandidatsIterator(AtomSet g, Var var) throws AtomSetException;
+		return new HomomorphismWithCompilation[] { new BacktrackHomomorphism(),
+		        new BacktrackHomomorphism(new BCCScheduler()), new BacktrackHomomorphism(new NFC2()),
+		        new BacktrackHomomorphism(new BCCScheduler(), new NFC2()) };
+
+	}
+
+	public static Homomorphism[] getHomomorphisms() {
+
+		return new Homomorphism[] { RecursiveBacktrackHomomorphism.instance(),
+		        new BacktrackHomomorphism(),
+		        new BacktrackHomomorphism(new BCCScheduler()), new BacktrackHomomorphism(new NFC2()),
+		        new BacktrackHomomorphism(new SimpleFC()),
+		        new BacktrackHomomorphism(new BCCScheduler(), new SimpleFC()),
+		        new BacktrackHomomorphism(new BCCScheduler(), new NFC2()) };
+
+	}
 
 }
