@@ -47,8 +47,8 @@ package fr.lirmm.graphik.graal.examples;
 
 import java.io.IOException;
 
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
-import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
@@ -107,8 +107,8 @@ public class DefaultUseCaseExample {
 		
 		// /////////////////////////////////////////////////////////////////////
 		// execute query
-		Query query = DlgpParser.parseQuery("?(X,Y) :- s(X, Y), p(X), q(Y).");
-		CloseableIterator<Substitution> subReader = StaticHomomorphism.executeQuery(query, atomSet);
+		ConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y) :- s(X, Y), p(X), q(Y).");
+		CloseableIterator<Substitution> subReader = StaticHomomorphism.instance().execute(query, atomSet);
 		while (subReader.hasNext()) {
 			System.out.println(subReader.next());
 		}

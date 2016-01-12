@@ -54,10 +54,8 @@ import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.forward_chaining.AbstractChase;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
-import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
-import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 
 /**
  * This chase (forward-chaining) algorithm use GRD to define the Rules that will 
@@ -80,9 +78,7 @@ public class ChaseWithGRD extends AbstractChase {
 	// /////////////////////////////////////////////////////////////////////////
 	
 	public ChaseWithGRD(GraphOfRuleDependencies grd, AtomSet atomSet) {
-		super(new DefaultRuleApplier(StaticHomomorphism.getSolverFactory()
-.getSolver(
-				ConjunctiveQueryFactory.instance().create(), atomSet)));
+		super(new DefaultRuleApplier());
 		this.grd = grd;
 		this.atomSet = atomSet;
 		for(Rule r : grd.getRules()) {			

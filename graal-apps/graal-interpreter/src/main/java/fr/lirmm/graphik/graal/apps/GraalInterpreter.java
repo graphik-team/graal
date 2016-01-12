@@ -119,7 +119,7 @@ public class GraalInterpreter {
 					StaticChase.executeChase(atomSet, ruleSet);
 
 					ConjunctiveQuery query = (ConjunctiveQuery) o;
-					CloseableIterator<Substitution> execute = StaticHomomorphism.executeQuery(query, atomSet);
+					CloseableIterator<Substitution> execute = StaticHomomorphism.instance().execute(query, atomSet);
 					while (execute.hasNext()) {
 						Substitution s = execute.next();
 						writer.write(s.toString());

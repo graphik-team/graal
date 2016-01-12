@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.Query;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
@@ -95,12 +95,12 @@ public class RestrictedChaseStopCondition implements ChaseHaltingCondition {
 		}
 
 		AtomSet newFacts = substitution.createImageOf(rule.getHead());
-		Query query = new ConjunctiveQueryWithFixedVariables(newFacts, fixedVars);
+		ConjunctiveQuery query = new ConjunctiveQueryWithFixedVariables(newFacts, fixedVars);
 
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Fixed Query:" + query);
 		}
-		if (StaticHomomorphism.executeQuery(query, data).hasNext()) {
+		if (StaticHomomorphism.instance().execute(query, data).hasNext()) {
 			return new IteratorAdapter<Atom>(Collections.<Atom> emptyList().iterator());
 		}
 

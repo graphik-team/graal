@@ -105,7 +105,7 @@ public class AnimalsExample {
 		waitEntry();
 
 		writer.write("\n= Answers =\n");
-		CloseableIterator<Substitution> results = StaticHomomorphism.executeQuery(query,
+		CloseableIterator<Substitution> results = StaticHomomorphism.instance().execute(query,
 				kb.getFacts());
 		if (results.hasNext()) {
 			while (results.hasNext()) {
@@ -152,7 +152,7 @@ public class AnimalsExample {
 		// /////////////////////////////////////////////////////////////////////////
 		// Backward Chaining Query
 		writer.write("\n= Answers =\n");
-		results = StaticHomomorphism.executeQuery(ucq, kb.getFacts());
+		results = StaticHomomorphism.instance().execute(ucq, kb.getFacts());
 		while (results.hasNext()) {
 			writer.write(results.next().toString());
 			writer.write("\n");
@@ -187,7 +187,7 @@ public class AnimalsExample {
 		// /////////////////////////////////////////////////////////////////////////
 		// Forward Chaining Query
 		writer.write("\n= Answers =\n");
-		results = StaticHomomorphism.executeQuery(query, kb.getFacts());
+		results = StaticHomomorphism.instance().execute(query, kb.getFacts());
 		while (results.hasNext()) {
 			writer.write(results.next().toString());
 			writer.write("\n");

@@ -103,7 +103,7 @@ public class MelanieQueryTest {
 		for(Query query : queries) { 
 			System.out.println(query);
 			time = System.currentTimeMillis();
-			CloseableIterator<Substitution> subR = StaticHomomorphism.executeQuery(query, atomSet);
+			CloseableIterator<Substitution> subR = StaticHomomorphism.instance().execute(query, atomSet);
 			time2 = System.currentTimeMillis();
 			
 			int i = 0;

@@ -89,7 +89,7 @@ public class LiteralsTest {
 		store.add(a);
 
 		ConjunctiveQuery q = new DefaultConjunctiveQuery(new LinkedListAtomSet(a), Collections.<Term> emptyList());
-		Assert.assertTrue(StaticHomomorphism.executeQuery(q, store).hasNext());
+		Assert.assertTrue(StaticHomomorphism.instance().execute(q, store).hasNext());
 
 		Atom b = store.iterator().next();
 		Assert.assertEquals(a, b);
@@ -101,7 +101,7 @@ public class LiteralsTest {
 		store.add(a);
 
 		ConjunctiveQuery q = new DefaultConjunctiveQuery(new LinkedListAtomSet(a), Collections.<Term> emptyList());
-		Assert.assertTrue(StaticHomomorphism.executeQuery(q, store).hasNext());
+		Assert.assertTrue(StaticHomomorphism.instance().execute(q, store).hasNext());
 
 		Atom b = store.iterator().next();
 		Assert.assertEquals(a, b);
@@ -113,7 +113,7 @@ public class LiteralsTest {
 		store.add(a);
 
 		ConjunctiveQuery q = new DefaultConjunctiveQuery(new LinkedListAtomSet(a), Collections.<Term> emptyList());
-		Assert.assertTrue(StaticHomomorphism.executeQuery(q, store).hasNext());
+		Assert.assertTrue(StaticHomomorphism.instance().execute(q, store).hasNext());
 
 		Atom b = store.iterator().next();
 		Assert.assertEquals(a, b);
@@ -125,7 +125,7 @@ public class LiteralsTest {
 		store.add(a);
 
 		ConjunctiveQuery q = new DefaultConjunctiveQuery(new LinkedListAtomSet(a), Collections.<Term> emptyList());
-		Assert.assertTrue(StaticHomomorphism.executeQuery(q, store).hasNext());
+		Assert.assertTrue(StaticHomomorphism.instance().execute(q, store).hasNext());
 
 		Atom b = store.iterator().next();
 		Assert.assertEquals(a, b);
@@ -137,7 +137,7 @@ public class LiteralsTest {
 		store.add(a);
 
 		ConjunctiveQuery q = new DefaultConjunctiveQuery(new LinkedListAtomSet(a), Collections.<Term> emptyList());
-		Assert.assertTrue(StaticHomomorphism.executeQuery(q, store).hasNext());
+		Assert.assertTrue(StaticHomomorphism.instance().execute(q, store).hasNext());
 
 		Atom b = store.iterator().next();
 		Assert.assertEquals(a, b);

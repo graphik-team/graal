@@ -54,7 +54,6 @@ import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.homomorphism.DefaultHomomorphismFactory;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
@@ -94,9 +93,7 @@ public class TransformAtomSet extends AbstractAtomSet implements AtomSet {
 		Query query = ConjunctiveQueryFactory.instance().create(
 				this.transformator.transform(atom));
 		try {
-			return StaticHomomorphism.executeQuery(query, this).hasNext();
-		} catch (HomomorphismFactoryException e) {
-			throw new AtomSetException(e);
+			return StaticHomomorphism.instance().execute(query, this).hasNext();
 		} catch (HomomorphismException e) {
 			throw new AtomSetException(e);
 		}

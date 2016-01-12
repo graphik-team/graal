@@ -67,6 +67,7 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.RestrictedChaseStopCondition;
+import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.GIterator;
 
@@ -82,7 +83,7 @@ public class DefaultRuleApplier<T extends AtomSet> implements RuleApplier<Rule, 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultRuleApplier.class);
 
 	private ChaseHaltingCondition haltingCondition;
-	private Homomorphism<ConjunctiveQuery, T> solver;
+	private Homomorphism<? super ConjunctiveQuery, ? super T> solver;
 	private VariableGenerator existentialGen;
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -90,10 +91,18 @@ public class DefaultRuleApplier<T extends AtomSet> implements RuleApplier<Rule, 
 	// //////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * Construct a DefaultRuleApplier with a RestrictedChaseStopCondition and
-	 * the given homomorphism solver.
+	 * Construct a DefaultRuleApplier with a
+	 * {@link RestrictedChaseStopCondition} and a {@link StaticHomomorphism}
 	 */
-	public DefaultRuleApplier(Homomorphism<ConjunctiveQuery, T> homomorphismSolver) {
+	public DefaultRuleApplier() {
+		this(StaticHomomorphism.instance());
+	}
+
+	/**
+	 * Construct a DefaultRuleApplier with a
+	 * {@link RestrictedChaseStopCondition} and the given homomorphism solver.
+	 */
+	public DefaultRuleApplier(Homomorphism<? super ConjunctiveQuery, ? super T> homomorphismSolver) {
 		this(homomorphismSolver, new RestrictedChaseStopCondition());
 	}
 
@@ -102,7 +111,16 @@ public class DefaultRuleApplier<T extends AtomSet> implements RuleApplier<Rule, 
 	 * 
 	 * @param haltingCondition
 	 */
-	public DefaultRuleApplier(Homomorphism<ConjunctiveQuery, T> homomorphismSolver,
+	public DefaultRuleApplier(ChaseHaltingCondition haltingCondition) {
+		this(StaticHomomorphism.instance(), haltingCondition, new DefaultVariableGenerator("E"));
+	}
+
+	/**
+	 * Construct a DefaultRuleApplier with the given HaltingCondition.
+	 * 
+	 * @param haltingCondition
+	 */
+	public DefaultRuleApplier(Homomorphism<? super ConjunctiveQuery, ? super T> homomorphismSolver,
 	        ChaseHaltingCondition haltingCondition) {
 		this(homomorphismSolver, haltingCondition, new DefaultVariableGenerator("E"));
 	}
@@ -116,7 +134,7 @@ public class DefaultRuleApplier<T extends AtomSet> implements RuleApplier<Rule, 
 	 * @param homomorphismSolver
 	 * @param existentialVarGenerator
 	 */
-	public DefaultRuleApplier(Homomorphism<ConjunctiveQuery, T> homomorphismSolver,
+	public DefaultRuleApplier(Homomorphism<? super ConjunctiveQuery, ? super T> homomorphismSolver,
 	        ChaseHaltingCondition haltingCondition, VariableGenerator existentialVarGenerator) {
 		this.haltingCondition = haltingCondition;
 		this.solver = homomorphismSolver;

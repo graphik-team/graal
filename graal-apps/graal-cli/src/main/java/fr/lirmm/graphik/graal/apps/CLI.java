@@ -162,7 +162,7 @@ public class CLI {
 			for (Query q : queries) {
 				try {
 					writer.write(q);
-					CloseableIterator<Substitution> executeQuery = StaticHomomorphism.executeQuery(q, atomset);
+					CloseableIterator<Substitution> executeQuery = StaticHomomorphism.instance().execute(q, atomset);
 					while (executeQuery.hasNext())
 						System.out.println(executeQuery.next());
 				}

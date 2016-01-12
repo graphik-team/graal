@@ -122,7 +122,7 @@ public class Example0 {
 
 		// 6 - Query the store without reasoning
 		writer.write("\n= Answers =\n");
-		CloseableIterator<Substitution> results = StaticHomomorphism.executeQuery(query, store);
+		CloseableIterator<Substitution> results = StaticHomomorphism.instance().execute(query, store);
 		printAnswers(results);
 		waitEntry();
 
@@ -149,7 +149,7 @@ public class Example0 {
 
 		// Query data with the union of queries
 		writer.write("\n= Answers =\n");
-		results = StaticHomomorphism.executeQuery(ucq, store);
+		results = StaticHomomorphism.instance().execute(ucq, store);
 		printAnswers(results);
 		waitEntry();
 
@@ -174,7 +174,7 @@ public class Example0 {
 
 		// Query saturated data with the original query
 		writer.write("\n= Answers =\n");
-		results = StaticHomomorphism.executeQuery(query, store);
+		results = StaticHomomorphism.instance().execute(query, store);
 		while (results.hasNext()) {
 			writer.write(results.next().toString());
 			writer.write("\n");

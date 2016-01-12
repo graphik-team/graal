@@ -54,7 +54,6 @@ import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
 import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
-import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.util.Verbosable;
 
 /**
@@ -79,8 +78,7 @@ public class NaiveChase extends AbstractChase implements Verbosable {
 	// /////////////////////////////////////////////////////////////////////////
 	
 	public NaiveChase(Iterable<Rule> ruleSet, AtomSet atomSet) {
-		super(new DefaultRuleApplier<AtomSet>(StaticHomomorphism
-				.getSolverFactory().getConjunctiveQuerySolver(atomSet)));
+		super(new DefaultRuleApplier<AtomSet>());
 		this.ruleSet = ruleSet;
 		this.atomSet = atomSet;
 	}
@@ -100,8 +98,7 @@ public class NaiveChase extends AbstractChase implements Verbosable {
 	}
 
 	public NaiveChase(Iterable<Rule> ruleSet, AtomSet atomSet, ChaseHaltingCondition haltingCondition) {
-		super(new DefaultRuleApplier<AtomSet>(StaticHomomorphism.getSolverFactory().getConjunctiveQuerySolver(atomSet),
-		        haltingCondition));
+		super(new DefaultRuleApplier<AtomSet>(haltingCondition));
 		this.ruleSet = ruleSet;
 		this.atomSet = atomSet;
 	}

@@ -58,8 +58,8 @@ import org.junit.runner.RunWith;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
-import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.Substitution;
@@ -69,9 +69,6 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
-import fr.lirmm.graphik.graal.forward_chaining.ChaseWithGRDAndUnfiers;
-import fr.lirmm.graphik.graal.forward_chaining.NaiveChase;
-import fr.lirmm.graphik.graal.forward_chaining.StaticChase;
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.CoreChaseStopCondition;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.homomorphism.RecursiveBacktrackHomomorphism;
@@ -101,8 +98,8 @@ public class ChaseTest {
 		Chase chase = new NaiveChase(ruleSet, atomSet);
 		chase.execute();
 		
-		Query query = DlgpParser.parseQuery("? :- p(X,Y),q(X,Y).");
-		Assert.assertTrue(StaticHomomorphism.executeQuery(query, atomSet).hasNext());
+		ConjunctiveQuery query = DlgpParser.parseQuery("? :- p(X,Y),q(X,Y).");
+		Assert.assertTrue(StaticHomomorphism.instance().execute(query, atomSet).hasNext());
 	}
 	
 	@Theory
@@ -125,7 +122,7 @@ public class ChaseTest {
 		
 		Assert.assertEquals(4, size);
 	}
-	
+
 	@Theory
 	public void restrictedChaseTestWithGrd(InMemoryAtomSet atomSet) throws IOException, ChaseException, ParseException,
 	                                                               AtomSetException {
@@ -182,8 +179,8 @@ public class ChaseTest {
 		        new CoreChaseStopCondition());
 		chase.execute();
 
-		Query query = DlgpParser.parseQuery("? :- e(X,Y),e(Y,Z),e(X,Z).");
-		Assert.assertTrue(StaticHomomorphism.executeQuery(query, atomSet).hasNext());
+		ConjunctiveQuery query = DlgpParser.parseQuery("? :- e(X,Y),e(Y,Z),e(X,Z).");
+		Assert.assertTrue(StaticHomomorphism.instance().execute(query, atomSet).hasNext());
 	}
 
 	@Theory
@@ -210,8 +207,8 @@ public class ChaseTest {
 		
 		// /////////////////////////////////////////////////////////////////////
 		// execute query
-		Query query = DlgpParser.parseQuery("?(X,Y) :- s(X, Y), p(X), q(Y).");
-		CloseableIterator<Substitution> subReader = StaticHomomorphism.executeQuery(query, atomSet);
+		ConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y) :- s(X, Y), p(X), q(Y).");
+		CloseableIterator<Substitution> subReader = StaticHomomorphism.instance().execute(query, atomSet);
 		Assert.assertTrue(subReader.hasNext());
 	}
 	

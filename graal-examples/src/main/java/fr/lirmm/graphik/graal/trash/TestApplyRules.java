@@ -90,7 +90,7 @@ public class TestApplyRules {
 
 		Query query = DlgpParser.parseQuery("?(X) :- p(X,Y),q(X,Y).");
 		
-		GIterator<Substitution> sub = StaticHomomorphism.executeQuery(query, atomSet);
+		GIterator<Substitution> sub = StaticHomomorphism.instance().execute(query, atomSet);
 		if(sub.hasNext()) {
 			sub.next();
 			System.out.println("ok");
@@ -103,7 +103,7 @@ public class TestApplyRules {
 	public static void applyRule(Rule rule, AtomSet atomSet) throws AtomSetException, HomomorphismFactoryException, HomomorphismException {
 		Query query = ConjunctiveQueryFactory.instance().create(rule.getBody().iterator(),
 		        rule.getFrontier().iterator());
-		CloseableIterator<Substitution> reader = StaticHomomorphism.executeQuery(query, atomSet);
+		CloseableIterator<Substitution> reader = StaticHomomorphism.instance().execute(query, atomSet);
 		while (reader.hasNext()) {
 			Substitution s = reader.next();
 			System.out.print(s);
@@ -138,7 +138,7 @@ public class TestApplyRules {
 		}
 		
 		Query query = DlgpParser.parseQuery("?(X,Y) :- p(X,Y).q(X,Y).");
-		if(StaticHomomorphism.executeQuery(query, atomSet).hasNext()) {
+		if (StaticHomomorphism.instance().execute(query, atomSet).hasNext()) {
 			System.out.println("ok");
 		} else {
 			System.out.println("nok");

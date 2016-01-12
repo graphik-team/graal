@@ -40,7 +40,7 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
+/**
  * 
  */
 package fr.lirmm.graphik.graal.homomorphism;
@@ -55,20 +55,42 @@ import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactory;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
+import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */
-public class StaticHomomorphism {
+public class StaticHomomorphism implements Homomorphism<Query, AtomSet> {
 
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(StaticHomomorphism.class);
-	
+	private Profiler            profiler;
+	private static final Logger LOGGER = LoggerFactory.getLogger(StaticHomomorphism.class);
+
 	public static HomomorphismFactory getSolverFactory() {
 		return DefaultHomomorphismFactory.instance();
 	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTOR
+	// /////////////////////////////////////////////////////////////////////////
+
+	private static StaticHomomorphism instance;
+
+	protected StaticHomomorphism() {
+		super();
+	}
+
+	public static synchronized StaticHomomorphism instance() {
+		if (instance == null)
+			instance = new StaticHomomorphism();
+
+		return instance;
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * For boolean query, return a SubstitutionReader with an empty Substitution
@@ -80,17 +102,25 @@ public class StaticHomomorphism {
 	 * @throws HomomorphismFactoryException
 	 * @throws HomomorphismException
 	 */
-	public static CloseableIterator<Substitution> executeQuery(Query query,
-			AtomSet atomSet) throws HomomorphismFactoryException,
-			HomomorphismException {
+	@Override
+	public <T1 extends Query, U2 extends AtomSet> CloseableIterator<Substitution> execute(T1 query, U2 atomSet)
+	    throws HomomorphismException {
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Query : " + query);
 
-		Homomorphism solver = DefaultHomomorphismFactory
-				.instance()
-				.getSolver(query,
-				atomSet);
+		Homomorphism solver = getSolverFactory().getSolver(query, atomSet);
+		solver.setProfiler(profiler);
 		return solver.execute(query, atomSet);
-
 	}
+
+	@Override
+	public void setProfiler(Profiler profiler) {
+		this.profiler = profiler;
+	}
+
+	@Override
+	public Profiler getProfiler() {
+		return this.profiler;
+	}
+
 }

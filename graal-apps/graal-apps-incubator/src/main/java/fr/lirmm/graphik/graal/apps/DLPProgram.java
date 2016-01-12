@@ -102,7 +102,7 @@ public class DLPProgram {
         writer.write("\n\n% queries\n");
         for(ConjunctiveQuery q : querySet) {
         	writer.write(q);
-        	CloseableIterator<Substitution> executeQuery = StaticHomomorphism.executeQuery(q, atomSet);
+			CloseableIterator<Substitution> executeQuery = StaticHomomorphism.instance().execute(q, atomSet);
 			while (executeQuery.hasNext()) {
         		writer.write(executeQuery.next().toString());
         		writer.write("\n");
