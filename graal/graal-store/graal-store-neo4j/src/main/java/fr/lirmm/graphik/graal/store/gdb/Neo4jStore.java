@@ -329,7 +329,6 @@ public class Neo4jStore extends GraphDBStore {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(query);
 		}
-		System.out.println(query);
 		ResourceIterator<Map<String, Object>> result = this.cypherEngine.execute(query).iterator();
 
 		return new Neo4jAtomIterator(this.getTransaction(), result);
