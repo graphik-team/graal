@@ -73,7 +73,7 @@ public class DefaultDirectedEdge implements DirectedEdge {
 
 	@Override
 	public int getSecond() {
-		return this.getSecond();
+		return this.getHead();
 	}
 
 	@Override
