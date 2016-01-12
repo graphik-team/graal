@@ -161,7 +161,8 @@ public class ChaseTest {
 
 		int size = 0;
 		for (Iterator<Atom> it = atomSet.iterator(); it.hasNext(); it.next()) {
-			++size;
+			if (++size > 3)
+				Assert.assertFalse(true);
 		}
 
 		Assert.assertTrue(true);

@@ -87,7 +87,8 @@ public class CoreChaseStopCondition implements ChaseHaltingCondition {
 
 		InMemoryAtomSet newFacts = substitution.createImageOf(rule.getHead());
 
-		ConjunctiveQuery query = new DefaultConjunctiveQuery(newFacts);
+		ConjunctiveQuery query = new DefaultConjunctiveQuery();
+		query.getAtomSet().addAll(newFacts);
 		query.getAtomSet().addAll(substitution.createImageOf(rule.getBody()));
 
 		if (LOGGER.isDebugEnabled()) {
