@@ -45,6 +45,7 @@ package fr.lirmm.graphik.graal.core;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.TermValueComparator;
 
 /**
  * AtomMatcher check if an atom match a pattern specified by the atom given in
@@ -95,7 +96,7 @@ public class AtomMatcher {
 		int i = -1;
 		for (Term t : atom) {
 			++i;
-			if (this.check[i] != null && !this.check[i].equals(t)) {
+			if (this.check[i] != null && TermValueComparator.instance().compare(this.check[i], t) != 0) {
 				return false;
 			}
 		}

@@ -197,7 +197,7 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 
 	TermVertex getTermVertex(Term term) {
 		TermVertex t = this.terms.tailSet(TermVertexFactory.instance().createTerm(term)).first();
-		return (term.equals(t)) ? t : null;
+		return (TermValueComparator.instance().compare(term, t) == 0) ? t : null;
 	}
 
 	PredicateVertex getPredicateVertex(PredicateVertex predicate) {

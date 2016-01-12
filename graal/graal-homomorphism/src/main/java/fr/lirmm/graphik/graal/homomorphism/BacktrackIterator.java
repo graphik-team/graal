@@ -59,6 +59,7 @@ import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphism.Scheduler;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.ForwardChecking;
 import fr.lirmm.graphik.util.Profilable;
@@ -324,6 +325,11 @@ class BacktrackIterator extends AbstractIterator<Substitution> implements Closea
 			// TODO explicit var.success
 			var.success = false;
 			var.image = var.domain.next();
+			
+			// Fix for existential variable in data
+			if(!var.image.isConstant()) {
+				var.image = DefaultTermFactory.instance().createConstant(var.image.getLabel());
+			}
 
 			if (scheduler.isAllowed(var, var.image) && isHomomorphism(var.preAtoms, g)) {
 				if (fc.checkForward(var, g, this.index, this.compilation)) {

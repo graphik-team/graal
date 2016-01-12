@@ -103,6 +103,25 @@ public class ChaseTest {
 	}
 	
 	@Theory
+	public void restrictedChaseTest0(AtomSet atomSet)
+	    throws AtomSetException, HomomorphismFactoryException, HomomorphismException, ChaseException {
+		atomSet.addAll(DlgpParser.parseAtomSet("p(a)."));
+
+		LinkedList<Rule> ruleSet = new LinkedList<Rule>();
+		ruleSet.add(DlgpParser.parseRule("q(X,Z) :- p(X)."));
+
+		Chase chase = new NaiveChase(ruleSet, atomSet);
+		chase.execute();
+
+		int size = 0;
+		for (Iterator<Atom> it = atomSet.iterator(); it.hasNext(); it.next()) {
+			++size;
+		}
+
+		Assert.assertEquals(2, size);
+	}
+
+	@Theory
 	public void restrictedChaseTest(AtomSet atomSet) throws AtomSetException, HomomorphismFactoryException, HomomorphismException, ChaseException {
 		atomSet.addAll(DlgpParser.parseAtomSet("p(a)."));
 		
