@@ -57,9 +57,16 @@ import com.tinkerpop.blueprints.impls.tg.TinkerGraph;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.store.TripleStore;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
+import fr.lirmm.graphik.graal.homomorphism.BCCScheduler;
+import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphism;
+import fr.lirmm.graphik.graal.homomorphism.RecursiveBacktrackHomomorphism;
+import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
+import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2;
+import fr.lirmm.graphik.graal.homomorphism.forward_checking.SimpleFC;
 import fr.lirmm.graphik.graal.store.gdb.BlueprintsGraphDBStore;
 import fr.lirmm.graphik.graal.store.gdb.Neo4jStore;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
@@ -101,6 +108,17 @@ public final class TestUtil {
 	public static JenaStore jenaStore = null;
 	public static Neo4jStore neo4jStore = null;
 	public static SailStore sailStore = null;
+
+	public static Homomorphism[] getHomomorphisms() {
+
+		return new Homomorphism[] { StaticHomomorphism.instance(), RecursiveBacktrackHomomorphism.instance(),
+		        new BacktrackHomomorphism(),
+		        new BacktrackHomomorphism(new BCCScheduler()), 
+		        new BacktrackHomomorphism(new NFC2()),
+		        new BacktrackHomomorphism(new SimpleFC()),
+		        new BacktrackHomomorphism(new BCCScheduler(), new NFC2()) };
+
+	}
 
 	public static AtomSet[] getAtomSet() {
 		if (rdbmsStore != null) {
