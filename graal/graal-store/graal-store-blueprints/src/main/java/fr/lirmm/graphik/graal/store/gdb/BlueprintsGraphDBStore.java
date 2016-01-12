@@ -130,10 +130,11 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 		query.has("class", "atom");
 		query.has("predicate", predicateToString(atom.getPredicate()));
 
-		int i = 0;
+		int i = -1;
 		for (Term t : atom) {
+			++i;
 			if (t.isConstant()) {
-				query.has("term" + i++, termToString(t));
+				query.has("term" + i, termToString(t));
 			}
 		}
 
