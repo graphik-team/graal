@@ -1,6 +1,5 @@
 package fr.lirmm.graphik.graal.homomorphism.forward_checking;
 
-import java.util.Iterator;
 import java.util.Map;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
@@ -9,6 +8,7 @@ import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
@@ -69,7 +69,7 @@ public class NoFC implements ForwardChecking {
 	}
 
 	@Override
-	public Iterator<Term> getCandidatsIterator(AtomSet g, Var var) throws AtomSetException {
+	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var) throws AtomSetException {
 		return g.termsIterator();
 	}
 

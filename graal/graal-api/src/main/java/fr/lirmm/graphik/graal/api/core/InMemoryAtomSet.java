@@ -45,7 +45,7 @@
 import java.util.Iterator;
 import java.util.Set;
 
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 public interface InMemoryAtomSet extends AtomSet {
 	
@@ -53,25 +53,25 @@ public interface InMemoryAtomSet extends AtomSet {
 	boolean contains(Atom atom);
 
 	@Override
-	GIterator<Atom> match(Atom atom);
+	CloseableIterator<Atom> match(Atom atom);
 
 	@Override
 	Set<Predicate> getPredicates();
 
 	@Override
-	GIterator<Predicate> predicatesIterator();
+	CloseableIterator<Predicate> predicatesIterator();
 
 	@Override
 	Set<Term> getTerms();
 
 	@Override
-	GIterator<Term> termsIterator();
+	CloseableIterator<Term> termsIterator();
 	
 	@Override
 	Set<Term> getTerms(Term.Type type);
 
 	@Override
-	GIterator<Term> termsIterator(Term.Type type);
+	CloseableIterator<Term> termsIterator(Term.Type type);
 
 	@Override
 	@Deprecated

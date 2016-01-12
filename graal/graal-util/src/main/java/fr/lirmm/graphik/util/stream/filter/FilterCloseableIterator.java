@@ -53,7 +53,7 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class FilterCloseableIterator<U, T extends U> extends AbstractCloseableIterator<T> {
+public class FilterCloseableIterator<U, T> extends AbstractCloseableIterator<T> {
 
 	private final CloseableIterator<U> it;
 	private final Filter<U> filter;

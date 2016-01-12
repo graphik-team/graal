@@ -75,7 +75,6 @@ import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -252,10 +251,11 @@ public class Neo4jStore extends GraphDBStore {
 	@Override
 	public Set<Term> getTerms() throws AtomSetException {
 		TreeSet<Term> set = new TreeSet<Term>();
-		Iterator<Term> it = this.termsIterator();
+		CloseableIterator<Term> it = this.termsIterator();
 		while (it.hasNext()) {
 			set.add(it.next());
 		}
+		it.close();
 		return set;
 	}
 
@@ -324,7 +324,7 @@ public class Neo4jStore extends GraphDBStore {
 	}
 
 	@Override
-	public GIterator<Atom> match(Atom atom) {
+	public CloseableIterator<Atom> match(Atom atom) {
 		String query = containsAtomIntoCypherQuery(atom, false);
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(query);

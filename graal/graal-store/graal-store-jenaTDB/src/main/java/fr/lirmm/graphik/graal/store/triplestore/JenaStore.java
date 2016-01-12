@@ -82,7 +82,6 @@ import fr.lirmm.graphik.util.URIUtils;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
-import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -294,7 +293,7 @@ public class JenaStore extends AbstractTripleStore {
 	}
 
 	@Override
-	public GIterator<Atom> match(Atom atom) throws AtomSetException {
+	public CloseableIterator<Atom> match(Atom atom) throws AtomSetException {
 		String select = String.format(SELECT_QUERY, termToString(atom.getTerm(0), "?s"),
 		    predicateToString(atom.getPredicate()), termToString(atom.getTerm(1), "?o"));
 

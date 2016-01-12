@@ -58,8 +58,8 @@ import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.homomorphism.DefaultHomomorphismFactory;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
-import fr.lirmm.graphik.util.stream.GIterator;
-import fr.lirmm.graphik.util.stream.IteratorAdapter;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 
 public class TransformAtomSet extends AbstractAtomSet implements AtomSet {
 
@@ -100,12 +100,12 @@ public class TransformAtomSet extends AbstractAtomSet implements AtomSet {
 	}
 
 	@Override
-	public GIterator<Atom> match(Atom atom) throws AtomSetException {
+	public CloseableIterator<Atom> match(Atom atom) throws AtomSetException {
 		throw new MethodNotImplementedError();
 	}
 
 	@Override
-	public GIterator<Atom> iterator() {
+	public CloseableIterator<Atom> iterator() {
 		return this.transformator.transform(this.store.iterator());
 	}
 
@@ -115,8 +115,8 @@ public class TransformAtomSet extends AbstractAtomSet implements AtomSet {
 	}
 
 	@Override
-	public GIterator<Term> termsIterator() throws AtomSetException {
-		return new IteratorAdapter<Term>(this.getTerms().iterator());
+	public CloseableIterator<Term> termsIterator() throws AtomSetException {
+		return new CloseableIteratorAdapter<Term>(this.getTerms().iterator());
 	}
 
 	@Override
@@ -125,8 +125,8 @@ public class TransformAtomSet extends AbstractAtomSet implements AtomSet {
 	}
 
 	@Override
-	public GIterator<Term> termsIterator(Term.Type type) throws AtomSetException {
-		return new IteratorAdapter<Term>(this.getTerms(type).iterator());
+	public CloseableIterator<Term> termsIterator(Term.Type type) throws AtomSetException {
+		return new CloseableIteratorAdapter<Term>(this.getTerms(type).iterator());
 	}
 
 	@Override
@@ -171,8 +171,8 @@ public class TransformAtomSet extends AbstractAtomSet implements AtomSet {
 	}
 
 	@Override
-	public GIterator<Predicate> predicatesIterator() throws AtomSetException {
-		return new IteratorAdapter<Predicate>(this.getPredicates().iterator());
+	public CloseableIterator<Predicate> predicatesIterator() throws AtomSetException {
+		return new CloseableIteratorAdapter<Predicate>(this.getPredicates().iterator());
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

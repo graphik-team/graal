@@ -125,7 +125,7 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 	}
 
 	@Override
-	public GIterator<Atom> match(Atom atom) {
+	public CloseableIterator<Atom> match(Atom atom) {
 		GraphQuery query = this.graph.query();
 		query.has("class", "atom");
 		query.has("predicate", predicateToString(atom.getPredicate()));

@@ -59,6 +59,8 @@ import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackUtils;
 import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 
 /**
  * NFC2 is a ForwardChecking implementation for HyperGraph with immediate local
@@ -161,11 +163,11 @@ public class NFC2 implements ForwardChecking {
 	}
 
 	@Override
-	public Iterator<Term> getCandidatsIterator(AtomSet g, Var var) throws AtomSetException {
+	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var) throws AtomSetException {
 		if (this.data[var.level].possibleImage == null || this.data[var.level].possibleImage[var.level - 1] == null) {
 			return g.termsIterator();
 		} else {
-			return this.data[var.level].possibleImage[var.level - 1].iterator();
+			return new CloseableIteratorAdapter<Term>(this.data[var.level].possibleImage[var.level - 1].iterator());
 		}
 	}
 

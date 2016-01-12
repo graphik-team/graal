@@ -84,7 +84,6 @@ import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.URIUtils;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -230,7 +229,7 @@ public class SailStore extends AbstractTripleStore {
 	}
 
 	@Override
-	public GIterator<Atom> match(Atom atom) throws AtomSetException {
+	public CloseableIterator<Atom> match(Atom atom) throws AtomSetException {
 		Statement stat = this.atomToStatement(atom);
 		System.out.println(stat);
 		URI subject = (URI) stat.getSubject();

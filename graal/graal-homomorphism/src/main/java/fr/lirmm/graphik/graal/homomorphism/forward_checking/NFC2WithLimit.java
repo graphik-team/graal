@@ -58,6 +58,7 @@ import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackUtils;
 import fr.lirmm.graphik.graal.homomorphism.Var;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * NFC2 is a ForwardChecking implementation for HyperGraph with immediate local
@@ -162,7 +163,7 @@ public class NFC2WithLimit implements ForwardChecking {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public Iterator<Term> getCandidatsIterator(AtomSet g, Var var) throws AtomSetException {
+	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var) throws AtomSetException {
 		// TODO implement this method
 		throw new MethodNotImplementedError();
 	}

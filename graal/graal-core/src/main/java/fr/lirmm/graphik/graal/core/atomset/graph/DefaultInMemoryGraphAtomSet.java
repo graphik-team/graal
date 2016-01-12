@@ -58,10 +58,11 @@ import fr.lirmm.graphik.graal.api.core.TermValueComparator;
 import fr.lirmm.graphik.graal.core.AtomMatcher;
 import fr.lirmm.graphik.graal.core.atomset.AbstractInMemoryAtomSet;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.GIterator;
-import fr.lirmm.graphik.util.stream.IteratorAdapter;
 import fr.lirmm.graphik.util.stream.filter.Filter;
-import fr.lirmm.graphik.util.stream.filter.FilterIterator;
+import fr.lirmm.graphik.util.stream.filter.FilterCloseableIterator;
 
 /**
  * Implementation of a graph in memory. Inherits directly from Fact.
@@ -108,13 +109,13 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 	}
 
 	@Override
-	public GIterator<Predicate> predicatesIterator() {
-		return new IteratorAdapter<Predicate>(this.getPredicates().iterator());
+	public CloseableIterator<Predicate> predicatesIterator() {
+		return new CloseableIteratorAdapter<Predicate>(this.getPredicates().iterator());
 	}
 
 	@Override
-	public GIterator<Atom> iterator() {
-		return new IteratorAdapter<Atom>(new TreeSet<Atom>(this.atoms).iterator());
+	public CloseableIterator<Atom> iterator() {
+		return new CloseableIteratorAdapter<Atom>(new TreeSet<Atom>(this.atoms).iterator());
 	}
 
 	@Override
@@ -131,7 +132,7 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 
 
 	@Override
-	public GIterator<Atom> match(final Atom atom) {
+	public CloseableIterator<Atom> match(final Atom atom) {
 		final AtomMatcher matcher = new AtomMatcher(atom);
 		Iterator<Edge> it = null;
 		for (Term t : atom.getTerms()) {
@@ -141,7 +142,7 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 			}
 		}
 
-		return new FilterIterator<Edge, Atom>(new IteratorAdapter<Edge>(it), new Filter<Edge>() {
+		return new FilterCloseableIterator<Edge, Atom>(new CloseableIteratorAdapter<Edge>(it), new Filter<Edge>() {
 			@Override
 			public boolean filter(Edge a) {
 				return matcher.check((Atom) a);
@@ -156,8 +157,8 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 	}
 
 	@Override
-	public GIterator<Term> termsIterator() {
-		return new IteratorAdapter<Term>(this.getTerms().iterator());
+	public CloseableIterator<Term> termsIterator() {
+		return new CloseableIteratorAdapter<Term>(this.getTerms().iterator());
 	}
 
 	@Override
@@ -171,8 +172,8 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 	}
 
 	@Override
-	public GIterator<Term> termsIterator(Term.Type type) {
-		return new IteratorAdapter<Term>(this.getTerms(type).iterator());
+	public CloseableIterator<Term> termsIterator(Term.Type type) {
+		return new CloseableIteratorAdapter<Term>(this.getTerms(type).iterator());
 	}
 
 	/**

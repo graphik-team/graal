@@ -42,7 +42,6 @@
  */
 package fr.lirmm.graphik.graal.homomorphism.forward_checking;
 
-import java.util.Iterator;
 import java.util.Map;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
@@ -51,6 +50,7 @@ import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -67,6 +67,6 @@ public interface ForwardChecking {
 	 * @return
 	 * @throws AtomSetException
 	 */
-	Iterator<Term> getCandidatsIterator(AtomSet g, Var var) throws AtomSetException;
+	CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var) throws AtomSetException;
 
 }

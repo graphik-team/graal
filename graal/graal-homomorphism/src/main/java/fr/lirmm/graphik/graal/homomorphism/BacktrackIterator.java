@@ -64,14 +64,15 @@ import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphism.Scheduler;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.ForwardChecking;
 import fr.lirmm.graphik.util.Profilable;
 import fr.lirmm.graphik.util.Profiler;
-import fr.lirmm.graphik.util.stream.AbstractIterator;
+import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-class BacktrackIterator extends AbstractIterator<Substitution> implements CloseableIterator<Substitution>, Profilable {
+class BacktrackIterator extends AbstractCloseableIterator<Substitution> implements CloseableIterator<Substitution>,
+                                                                       Profilable {
 
 	private Scheduler          scheduler;
 	private ForwardChecking    fc;
@@ -177,6 +178,11 @@ class BacktrackIterator extends AbstractIterator<Substitution> implements Closea
 
 	@Override
 	public void close() {
+		for (int i = 1; i < vars.length; ++i) {
+			if (vars[i].domain != null) {
+				this.vars[i].domain.close();
+			}
+		}
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -337,6 +343,7 @@ class BacktrackIterator extends AbstractIterator<Substitution> implements Closea
 				}
 			}
 		}
+		var.domain.close();
 		return false;
 	}
 
