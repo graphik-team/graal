@@ -59,13 +59,9 @@ import fr.lirmm.graphik.graal.homomorphism.forward_checking.SimpleFC;
  */
 public class BacktrackChecker extends AbstractChecker {
 	
-	private static BacktrackHomomorphism instance = null;
-
 	@Override
 	public BacktrackHomomorphism getSolver() {
-		if (instance == null)
-			instance = new BacktrackHomomorphism(new BCCScheduler(), new SimpleFC());
-		return instance;
+		return new BacktrackHomomorphism(new BCCScheduler(), new SimpleFC());
 	}
 	
 	@Override

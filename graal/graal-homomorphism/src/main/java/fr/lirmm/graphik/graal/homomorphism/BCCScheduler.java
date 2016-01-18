@@ -75,7 +75,7 @@ import fr.lirmm.graphik.util.graph.HyperGraph;
 public class BCCScheduler implements BacktrackHomomorphism.Scheduler {
 
 	private VarData[] data;
-	static Term[]     inverseMap;
+	private Term[]    inverseMap;
 	private boolean   withForbiddenCandidate;
 
 	public BCCScheduler() {
