@@ -80,14 +80,7 @@ public class Var implements Comparable<Var> {
 	public int              previousLevel;
 	public int              previousLevelFailure;
 
-	// BCC
-	public boolean          isAccesseur;
-	public boolean          isEntry;
-	public boolean          isTerminal;
-	public int              accesseur;
 	public boolean          success = false;
-	public Set<Term>        forbidden;
-	public Set<Integer>     compilateurs;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -118,14 +111,6 @@ public class Var implements Comparable<Var> {
 		StringBuilder sb = new StringBuilder();
 		sb.append('[').append(value).append("(").append(previousLevel).append('|').append(previousLevelFailure)
 		  .append("<-").append(level).append("->").append(nextLevel).append(")");
-		sb.append(" A:").append(accesseur);
-		if (isEntry)
-			sb.append(" E");
-		if (isTerminal)
-			sb.append(" T");
-		if (compilateurs != null) {
-			sb.append(" C:").append(compilateurs);
-		}
 		sb.append("]\n");
 		return sb.toString();
 	}

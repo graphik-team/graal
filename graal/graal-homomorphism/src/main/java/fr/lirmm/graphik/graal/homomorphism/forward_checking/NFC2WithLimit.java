@@ -45,7 +45,6 @@ package fr.lirmm.graphik.graal.homomorphism.forward_checking;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
@@ -57,8 +56,8 @@ import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackUtils;
 import fr.lirmm.graphik.graal.homomorphism.Var;
-import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 
 /**
  * NFC2 is a ForwardChecking implementation for HyperGraph with immediate local
@@ -71,7 +70,10 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
  */
 public class NFC2WithLimit implements ForwardChecking {
 
-	private Map<Var, Set<Term>> candidats = new TreeMap<Var, Set<Term>>();
+	/**
+	 * A data extension for variable indexed by level
+	 */
+	private VarData[]           data;
 	private final int           LIMIT;
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -88,6 +90,8 @@ public class NFC2WithLimit implements ForwardChecking {
 
 	@Override
 	public void init(Var[] vars, Map<Variable, Var> map) {
+		this.data = new VarData[vars.length];
+
 		for (int i = 0; i < vars.length; ++i) {
 			vars[i].forwardNeighbors = new TreeSet<Var>();
 			for (Atom a : vars[i].postAtoms) {
@@ -99,23 +103,33 @@ public class NFC2WithLimit implements ForwardChecking {
 				}
 			}
 
-			// vars[i].possibleImage = new List[vars[i].level + 1];
+			this.data[vars[i].level] = new VarData();
+			this.data[vars[i].level].candidats = new Set[vars[i].level];
+			this.data[vars[i].level].tmp = new TreeSet<Term>();
 		}
 	}
 
 	@Override
 	public boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc) throws AtomSetException {
 
-		candidats.clear();
 		for (Var z : v.forwardNeighbors) {
-			candidats.put(z, new TreeSet<Term>());
+			this.data[z.level].tmp.clear();
+
+			if (this.data[z.level].candidats[v.level - 1] != null) {
+				this.data[z.level].candidats[v.level] = new TreeSet<Term>(this.data[z.level].candidats[v.level - 1]);
+			} else {
+				this.data[z.level].candidats[v.level] = null;
+			}
 		}
 
 		boolean contains;
 		for (Atom atom : v.postAtoms) {
 			contains = false;
+			int cpt = 0;
 
-			for (Atom a : rc.getRewritingOf(atom)) {
+			Iterator<Atom> rewIt = rc.getRewritingOf(atom).iterator();
+			while (rewIt.hasNext() && cpt < LIMIT) {
+				Atom a = rewIt.next();
 
 				// Compute post variables positions
 				Var postV[] = new Var[a.getPredicate().getArity()];
@@ -130,46 +144,57 @@ public class NFC2WithLimit implements ForwardChecking {
 
 				Atom im = BacktrackUtils.createImageOf(a, map);
 				Iterator<? extends Atom> it = g.match(im);
-				while (it.hasNext()) {
+				while (it.hasNext() && cpt < LIMIT) {
 					i = -1;
+					++cpt;
 					for (Term t : it.next()) {
 						++i;
 						if (postV[i] != null) {
-							candidats.get(postV[i]).add(t);
+							this.data[postV[i].level].tmp.add(t);
 						}
 					}
 					contains = true;
 				}
 			}
 
-			if (!contains) {
+			if (contains) {
+				if (cpt < LIMIT) {
+					for (Var z : v.forwardNeighbors) {
+						if (this.data[z.level].candidats[v.level] == null) {
+							this.data[z.level].candidats[v.level] = new TreeSet<Term>(this.data[z.level].tmp);
+						} else {
+							this.data[z.level].candidats[v.level].retainAll(this.data[z.level].tmp);
+						}
+					}
+				}
+			} else {
 				return false;
 			}
 
 		}
 
-		// for (Var z : v.forwardNeighbors) {
-		// Set<Term> set = candidats.get(z);
-		// if (z.possibleImage[v.level - 1] != null) {
-		// set.retainAll(z.possibleImage[v.level - 1]);
-		// }
-		// z.possibleImage[v.level] = new LinkedList<Term>(set);
-		// }
-
 		return true;
 	}
-	// /////////////////////////////////////////////////////////////////////////
-	// OBJECT OVERRIDE METHODS
-	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
 	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var) throws AtomSetException {
-		// TODO implement this method
-		throw new MethodNotImplementedError();
+		if (this.data[var.level].candidats == null || this.data[var.level].candidats[var.level - 1] == null) {
+			return g.termsIterator();
+		} else {
+			return new CloseableIteratorAdapter<Term>(this.data[var.level].candidats[var.level - 1].iterator());
+		}
 	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// OBJECT OVERRIDE METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
+	private class VarData {
+		Set<Term>[] candidats;
+		Set<Term>    tmp;
+	}
 }
