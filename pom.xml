@@ -115,7 +115,7 @@ algorithms, structural analysis of decidability properties of a rule set, a text
 				<executions>
 					<execution>
 						<id>sign-artifacts</id>
-						<phase>verify</phase>
+						<phase>deploy</phase>
 						<goals>
 							<goal>sign</goal>
 						</goals>
