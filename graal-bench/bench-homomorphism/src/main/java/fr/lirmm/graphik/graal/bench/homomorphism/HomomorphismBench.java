@@ -48,11 +48,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
@@ -63,12 +63,12 @@ import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.bench.core.AbstractGraalBench;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
-import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.util.Profiler;
+import fr.lirmm.graphik.util.stream.AbstractIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.filter.Filter;
@@ -85,7 +85,7 @@ public class HomomorphismBench extends AbstractGraalBench {
 	// /////////////////////////////////////////////////////////////////////////
 
 	private Random                       rand;
-	private int                          maxInstanceSize = 1048576;
+	private int                          maxInstanceSize = 524288;
 
 	private static final Predicate[]     PREDICATES      = { new Predicate("p2", 2), new Predicate("p3", 3),
 	        new Predicate("p4", 4), new Predicate("q2", 2), new Predicate("q3", 3), new Predicate("q4", 4),
@@ -134,8 +134,6 @@ public class HomomorphismBench extends AbstractGraalBench {
 		this.maxInstanceSize = maxInstanceSize;
 	}
 
-
-
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
@@ -166,25 +164,47 @@ public class HomomorphismBench extends AbstractGraalBench {
 	@Override
 	public CloseableIterator<Map.Entry<String, AtomSet>> getInstances() {
 
-		InMemoryAtomSet atomSet = new LinkedListAtomSet();
-		for (int i = 0; i < this.maxInstanceSize; ++i) {
-			int p = rand.nextInt(PREDICATES.length);
-			List<Term> terms = new LinkedList<Term>();
-			for (int j = 0; j < (p % 3) + 2; ++j) {
-				terms.add(DOMAIN.get(rand.nextInt(DOMAIN_SIZE)));
-			}
-			atomSet.add(new DefaultAtom(PREDICATES[p], terms));
-		}
+		return new CloseableIteratorAdapter<Map.Entry<String, AtomSet>>(
+		                                                                new AbstractIterator<Map.Entry<String, AtomSet>>() {
 
-		LinkedList<Map.Entry<String, AtomSet>> list = new LinkedList<Map.Entry<String, AtomSet>>();
-		for (int nbAtoms = 100; nbAtoms <= this.maxInstanceSize; ++nbAtoms) {
-			InMemoryAtomSet s = new DefaultInMemoryGraphAtomSet();
-			nbAtoms *= 2;
-			addNFirstAtoms(atomSet, s, nbAtoms);
-			list.add(new ImmutablePair<String, AtomSet>(Integer.toString(nbAtoms), atomSet));
-		}
+			                                                                InMemoryAtomSet s       = new DefaultInMemoryGraphAtomSet();
+			                                                                int             nbAtoms = 50;
 
-		return new CloseableIteratorAdapter<Map.Entry<String, AtomSet>>(list.iterator());
+			                                                                {
+				                                                                addNAtoms(s, nbAtoms);
+			                                                                }
+
+			                                                                @Override
+			                                                                public boolean hasNext() {
+				                                                                return nbAtoms <= maxInstanceSize;
+			                                                                }
+
+			                                                                @Override
+			                                                                public Entry<String, AtomSet> next() {
+				                                                                addNAtoms(s, nbAtoms);
+				                                                                nbAtoms *= 2;
+
+				                                                                return new ImmutablePair<String, AtomSet>(
+				                                                                                                          Integer.toString(nbAtoms),
+				                                                                                                          s);
+
+			                                                                }
+
+			                                                                private void addNAtoms(InMemoryAtomSet to,
+			                                                                    int n) {
+				                                                                for (int i = 0; i < n; ++i) {
+					                                                                int p = rand.nextInt(PREDICATES.length);
+					                                                                List<Term> terms = new LinkedList<Term>();
+					                                                                for (int j = 0; j < (p % 3) + 2; ++j) {
+						                                                                terms.add(DOMAIN.get(rand.nextInt(DOMAIN_SIZE)));
+					                                                                }
+					                                                                to.add(new DefaultAtom(
+					                                                                                       PREDICATES[p],
+					                                                                                       terms));
+				                                                                }
+			                                                                }
+
+		                                                                });
 	}
 
 	@Override
@@ -217,14 +237,5 @@ public class HomomorphismBench extends AbstractGraalBench {
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
-
-	private void addNFirstAtoms(Iterable<Atom> from, InMemoryAtomSet to, int n) {
-		int i = 0;
-		Iterator<Atom> it = from.iterator();
-		while (it.hasNext() && i < n) {
-			to.add(it.next());
-			++i;
-		}
-	}
 
 }
