@@ -149,6 +149,10 @@ public class Profiler {
 		return this.map.get(key);
 	}
 
+	public Set<Map.Entry<String, Object>> entrySet() {
+		return this.map.entrySet();
+	}
+
 	/**
 	 * Clear data attached to the specfied key.
 	 * 
