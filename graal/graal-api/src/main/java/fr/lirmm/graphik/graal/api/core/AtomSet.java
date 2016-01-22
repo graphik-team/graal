@@ -45,8 +45,8 @@
 import java.util.Iterator;
 import java.util.Set;
 
-import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.GIterable;
+import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
  * This interface represents a set of atoms.
@@ -73,7 +73,7 @@ public interface AtomSet extends GIterable<Atom> {
 	 * @return
 	 * @throws AtomSetException
 	 */
-	CloseableIterator<Atom> match(Atom atom) throws AtomSetException;
+	GIterator<Atom> match(Atom atom) throws AtomSetException;
 
 	/**
 	 * Returns a Set of all predicates in this atom set.
@@ -90,7 +90,7 @@ public interface AtomSet extends GIterable<Atom> {
 	 * @return
 	 * @throws AtomSetException
 	 */
-	CloseableIterator<Predicate> predicatesIterator() throws AtomSetException;
+	GIterator<Predicate> predicatesIterator() throws AtomSetException;
 
 	/**
 	 * Returns a Set of all terms in this atom set.
@@ -107,7 +107,7 @@ public interface AtomSet extends GIterable<Atom> {
 	 * @return
 	 * @throws AtomSetException
 	 */
-	CloseableIterator<Term> termsIterator() throws AtomSetException;
+	GIterator<Term> termsIterator() throws AtomSetException;
 	
 	/**
 	 * Returns a Set of all terms of the specified type in this atom set.
@@ -127,7 +127,7 @@ public interface AtomSet extends GIterable<Atom> {
 	 * @return
 	 * @throws AtomSetException
 	 */
-	CloseableIterator<Term> termsIterator(Term.Type type) throws AtomSetException;
+	GIterator<Term> termsIterator(Term.Type type) throws AtomSetException;
 
 	/**
 	 * Use AtomSets.contains instead.
@@ -203,6 +203,6 @@ public interface AtomSet extends GIterable<Atom> {
 	 * @return an iterator over the atoms in this atom set.
 	 */
 	@Override
-	CloseableIterator<Atom> iterator();
+	GIterator<Atom> iterator();
 
 }

@@ -42,6 +42,12 @@
  */
  package fr.lirmm.graphik.graal.api.core;
 
+/**
+ * Reports an error while accessing the data.
+ * 
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+ *
+ */
 public class AtomSetException extends Exception {
 
 	private static final long serialVersionUID = -7793681455338699527L;

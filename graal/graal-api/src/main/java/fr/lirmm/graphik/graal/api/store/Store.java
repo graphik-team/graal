@@ -53,6 +53,8 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
+ * This interface represents a persistent AtomSet.
+ * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
@@ -60,6 +62,9 @@ public interface Store extends AtomSet {
 	
 	@Override
 	CloseableIterator<Atom> iterator();
+
+	@Override
+	CloseableIterator<Atom> match(Atom atom) throws AtomSetException;
 
 	@Override
 	CloseableIterator<Predicate> predicatesIterator() throws AtomSetException;

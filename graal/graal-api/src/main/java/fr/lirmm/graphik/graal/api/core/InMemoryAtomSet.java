@@ -45,33 +45,40 @@
 import java.util.Iterator;
 import java.util.Set;
 
-import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.GIterator;
 
+/**
+ * This interface represents an InMemory AtomSet. So, AtomSet methods are
+ * redefined without the ability to throw exception.
+ * 
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+ *
+ */
 public interface InMemoryAtomSet extends AtomSet {
 	
 	@Override
 	boolean contains(Atom atom);
 
 	@Override
-	CloseableIterator<Atom> match(Atom atom);
+	GIterator<Atom> match(Atom atom);
 
 	@Override
 	Set<Predicate> getPredicates();
 
 	@Override
-	CloseableIterator<Predicate> predicatesIterator();
+	GIterator<Predicate> predicatesIterator();
 
 	@Override
 	Set<Term> getTerms();
 
 	@Override
-	CloseableIterator<Term> termsIterator();
+	GIterator<Term> termsIterator();
 	
 	@Override
 	Set<Term> getTerms(Term.Type type);
 
 	@Override
-	CloseableIterator<Term> termsIterator(Term.Type type);
+	GIterator<Term> termsIterator(Term.Type type);
 
 	@Override
 	@Deprecated
