@@ -67,12 +67,10 @@ public class FilterIterator<U, T> extends AbstractIterator<T> {
 
 	@Override
 	public boolean hasNext() {
-		if(this.next == null && this.it.hasNext()) {
+		while (this.next == null && this.it.hasNext()) {
 			U o = this.it.next();
 			if(this.filter.filter(o)) {
 				this.next = (T) o;
-			} else {
-				this.hasNext();
 			}
 		}
 		return this.next != null;
