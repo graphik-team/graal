@@ -85,7 +85,7 @@ public class HomomorphismBench extends AbstractGraalBench {
 	// /////////////////////////////////////////////////////////////////////////
 
 	private Random                       rand;
-	private int                          maxInstanceSize = 524288;
+	private int                          maxInstanceSize = 102400;
 
 	private static final Predicate[]     PREDICATES      = { new Predicate("p2", 2), new Predicate("p3", 3),
 	        new Predicate("p4", 4), new Predicate("q2", 2), new Predicate("q3", 3), new Predicate("q4", 4),
