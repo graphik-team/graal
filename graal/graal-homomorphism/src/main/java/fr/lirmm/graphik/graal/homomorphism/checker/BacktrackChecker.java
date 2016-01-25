@@ -49,8 +49,8 @@ import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.homomorphism.AbstractChecker;
-import fr.lirmm.graphik.graal.homomorphism.BCCScheduler;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphism;
+import fr.lirmm.graphik.graal.homomorphism.bbc.BCCScheduler;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.SimpleFC;
 
 /**

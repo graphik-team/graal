@@ -54,7 +54,7 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
 import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.ForwardChecking;
-import fr.lirmm.graphik.graal.homomorphism.forward_checking.NoFC;
+import fr.lirmm.graphik.graal.homomorphism.forward_checking.NoForwardChaining;
 import fr.lirmm.graphik.util.Profilable;
 import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -75,11 +75,11 @@ public class BacktrackHomomorphism implements HomomorphismWithCompilation<Conjun
 	private ForwardChecking fc;
 
 	public BacktrackHomomorphism() {
-		this(new DefaultScheduler(), new NoFC());
+		this(new DefaultScheduler(), new NoForwardChaining());
 	}
 
 	public BacktrackHomomorphism(Scheduler s) {
-		this(s, new NoFC());
+		this(s, new NoForwardChaining());
 	}
 
 	public BacktrackHomomorphism(ForwardChecking fc) {
@@ -154,20 +154,6 @@ public class BacktrackHomomorphism implements HomomorphismWithCompilation<Conjun
 		 * @return an array of Var
 		 */
 		Var[] execute(InMemoryAtomSet h, List<Term> ans);
-
-		/**
-		 * @param currentVar
-		 * @param vars
-		 * @return the previous level
-		 */
-		int previousLevel(Var currentVar, Var[] vars);
-
-		/**
-		 * @param currentVar
-		 * @param vars
-		 * @return the next level
-		 */
-		int nextLevel(Var currentVar, Var[] vars);
 
 		/**
 		 * @param var

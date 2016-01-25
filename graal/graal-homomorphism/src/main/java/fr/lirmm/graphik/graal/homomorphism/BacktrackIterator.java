@@ -61,7 +61,7 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphism.Scheduler;
-import fr.lirmm.graphik.graal.homomorphism.backjumping.Backjumping;
+import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.GraphBaseBackJumping;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.ForwardChecking;
 import fr.lirmm.graphik.util.Profilable;
@@ -78,7 +78,7 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 
 	private Scheduler          scheduler;
 	private ForwardChecking    fc;
-	private Backjumping        bc;
+	private BackJumping        bc;
 
 	private InMemoryAtomSet    h;
 	private AtomSet            g;

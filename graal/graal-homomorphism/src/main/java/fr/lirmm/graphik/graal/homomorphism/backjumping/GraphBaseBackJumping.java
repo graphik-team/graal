@@ -56,7 +56,7 @@ import fr.lirmm.graphik.graal.homomorphism.Var;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class GraphBaseBackJumping implements Backjumping {
+public class GraphBaseBackJumping implements BackJumping {
 
 	/**
 	 * A data extension for variable indexed by level
@@ -108,6 +108,7 @@ public class GraphBaseBackJumping implements Backjumping {
 			this.data[v.level].backjumpSet.remove(v);
 			ret = v.level;
 		}
+
 		this.data[var.level].backjumpSet.clear();
 		return ret;
 	}
