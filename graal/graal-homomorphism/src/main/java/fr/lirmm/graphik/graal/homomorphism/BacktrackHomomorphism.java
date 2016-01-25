@@ -43,8 +43,6 @@
 package fr.lirmm.graphik.graal.homomorphism;
 
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
@@ -52,7 +50,6 @@ import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
 import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
@@ -179,87 +176,6 @@ public class BacktrackHomomorphism implements HomomorphismWithCompilation<Conjun
 		 *         specified var
 		 */
 		boolean isAllowed(Var var, Term image);
-
-	}
-
-	/**
-	 * Compute an order over variables from h. This scheduler put answer
-	 * variables first, then other variables are put in the order from
-	 * h.getTerms(Term.Type.VARIABLE).iterator().
-	 *
-	 * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
-	 *
-	 */
-	static class DefaultScheduler implements Scheduler {
-
-		private static DefaultScheduler instance;
-
-		protected DefaultScheduler() {
-			super();
-		}
-
-		public static synchronized DefaultScheduler instance() {
-			if (instance == null)
-				instance = new DefaultScheduler();
-
-			return instance;
-		}
-
-		/**
-		 * Compute the order.
-		 *
-		 * @param h
-		 * @return
-		 */
-		@Override
-		public Var[] execute(InMemoryAtomSet h, List<Term> ans) {
-			Set<Term> terms = h.getTerms(Term.Type.VARIABLE);
-			Var[] vars = new Var[terms.size() + 2];
-
-			int level = 0;
-			vars[level] = new Var(level);
-
-			Set<Term> alreadyAffected = new TreeSet<Term>();
-			for (Term t : ans) {
-				if (t instanceof Variable && !alreadyAffected.contains(t)) {
-					++level;
-					vars[level] = new Var(level);
-					vars[level].value = (Variable) t;
-					alreadyAffected.add(t);
-				}
-			}
-
-			int lastAnswerVariable = level;
-
-			for (Term t : terms) {
-				if (!alreadyAffected.contains(t)) {
-					++level;
-					vars[level] = new Var(level);
-					vars[level].value = (Variable) t;
-				}
-			}
-
-			++level;
-			vars[level] = new Var(level);
-			vars[level].previousLevel = lastAnswerVariable;
-
-			return vars;
-		}
-
-		@Override
-		public int previousLevel(Var currentVar, Var[] vars) {
-			return currentVar.previousLevel;
-		}
-
-		@Override
-		public int nextLevel(Var currentVar, Var[] vars) {
-			return currentVar.nextLevel;
-		}
-
-		@Override
-		public boolean isAllowed(Var var, Term image) {
-			return true;
-		}
 
 	}
 

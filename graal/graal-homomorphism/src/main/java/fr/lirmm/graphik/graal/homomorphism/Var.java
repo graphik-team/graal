@@ -73,7 +73,8 @@ public class Var implements Comparable<Var> {
 
 	// Forward Checking
 	public CloseableIterator<Term> domain;
-	public Set<Var>         forwardNeighbors;
+	public Set<Var>         preVars;
+	public Set<Var>         postVars;
 
 	// BackJumping
 	public int              nextLevel;
