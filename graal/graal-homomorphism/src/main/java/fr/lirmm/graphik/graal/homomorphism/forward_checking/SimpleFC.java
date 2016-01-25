@@ -53,6 +53,7 @@ import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackUtils;
 import fr.lirmm.graphik.graal.homomorphism.Var;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 
 /**
  * SimpleFC is a simple ForwardChecking implementation for HyperGraph with
@@ -98,7 +99,7 @@ public class SimpleFC implements ForwardChecking {
 
 	@Override
 	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var) throws AtomSetException {
-		return g.termsIterator();
+		return new CloseableIteratorAdapter<Term>(g.termsIterator());
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

@@ -167,7 +167,7 @@ public class NFC2 implements ForwardChecking {
 	@Override
 	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var) throws AtomSetException {
 		if (this.data[var.level].candidats == null || this.data[var.level].candidats[var.level - 1] == null) {
-			return g.termsIterator();
+			return new CloseableIteratorAdapter<Term>(g.termsIterator());
 		} else {
 			return new CloseableIteratorAdapter<Term>(this.data[var.level].candidats[var.level - 1].iterator());
 		}

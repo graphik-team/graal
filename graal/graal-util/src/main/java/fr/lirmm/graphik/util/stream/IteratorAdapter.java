@@ -45,7 +45,7 @@
 
 public class IteratorAdapter<T> extends AbstractIterator<T> {
 	
-	private java.util.Iterator<T> iterator;
+	protected java.util.Iterator<T> iterator;
 	
 	public IteratorAdapter(java.util.Iterator<T> iterator) {
 		this.iterator = iterator;

@@ -42,6 +42,9 @@
  */
 package fr.lirmm.graphik.util.stream;
 
+import java.io.Closeable;
+import java.io.IOException;
+
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
@@ -54,6 +57,13 @@ public class CloseableIteratorAdapter<T> extends IteratorAdapter<T> implements C
 
 	@Override
 	public void close() {
+		if (iterator instanceof Closeable) {
+			try {
+				((Closeable) iterator).close();
+			} catch (IOException e) {
+				throw new Error("Untreated exception", e);
+			}
+		}
 	}
 
 }
