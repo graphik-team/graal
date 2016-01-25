@@ -40,84 +40,85 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.homomorphism;
+package fr.lirmm.graphik.graal.homomorphism.backjumping;
 
-import java.util.Collection;
-import java.util.Set;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.graal.homomorphism.Var;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class Var implements Comparable<Var> {
+public class GraphBaseBackJumping implements BackJumping {
 
-	public int              level;
-	public Variable         value;
-	public Term             image;
-
-	/*
-	 * Each atoms from the request graph in which this variable have the highest
-	 * level.
+	/**
+	 * A data extension for variable indexed by level
 	 */
-	public Collection<Atom> preAtoms;
-	/*
-	 * Each atoms from the request graph that is not in preAtoms and in which
-	 * this variable appears.
-	 */
-	public Collection<Atom> postAtoms;
-
-	// Forward Checking
-	public CloseableIterator<Term> domain;
-	public Set<Var>         preVars;
-	public Set<Var>         postVars;
-
-	// BackJumping
-	public int              nextLevel;
-	public int              previousLevel;
-
-	public boolean          success = false;
-
-	// /////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	// /////////////////////////////////////////////////////////////////////////
-
-	public Var() {
-	}
-
-	public Var(int level) {
-		this.level = level;
-		this.previousLevel = level - 1;
-		this.nextLevel = level + 1;
-	}
+	private VarData[] data;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	// /////////////////////////////////////////////////////////////////////////
-	// OBJECT OVERRIDE METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	/**
-	 * Use for debugging
-	 */
 	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append('[').append(value).append("(").append(previousLevel)
-		  .append("<-").append(level).append("->").append(nextLevel).append(")");
-		sb.append("]\n");
-		return sb.toString();
+    public void init(Var[] vars, Map<Variable, Var> map) {
+		this.data = new VarData[vars.length];
+
+		for (int i = 0; i < vars.length; ++i) {
+			vars[i].preVars = new TreeSet<Var>();
+			for (Atom a : vars[i].preAtoms) {
+				for (Term t : a.getTerms(Type.VARIABLE)) {
+					Var v = map.get((Variable) t);
+					if (v.level > i) {
+						vars[i].preVars.add(v);
+					}
+				}
+			}
+
+			this.data[vars[i].level] = new VarData();
+			this.data[vars[i].level].preVars = new TreeSet<Var>();
+			this.data[vars[i].level].backjumpSet = new TreeSet<Var>();
+		}
 	}
 
 	@Override
-	public int compareTo(Var o) {
-		return this.level - o.level;
+	public int previousLevel(Var var, Var[] vars) {
+		int ret = var.previousLevel;
+
+		Var v = null, y = null;
+		if (!this.data[var.level].preVars.isEmpty()) {
+			v = this.data[var.level].preVars.last();
+		}
+		if (!this.data[var.level].backjumpSet.isEmpty()) {
+			y = this.data[var.level].backjumpSet.last();
+			if (v != null && v.compareTo(y) < 0) {
+				v = y;
+			}
+		}
+		if (v != null && !vars[v.level].success) {
+			this.data[v.level].backjumpSet.addAll(this.data[var.level].preVars);
+			this.data[v.level].backjumpSet.addAll(this.data[var.level].backjumpSet);
+			this.data[v.level].backjumpSet.remove(v);
+			ret = v.level;
+		}
+
+		this.data[var.level].backjumpSet.clear();
+		return ret;
 	}
 
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	private class VarData {
+		public SortedSet<Var> preVars;
+		public SortedSet<Var> backjumpSet;
+	}
 }

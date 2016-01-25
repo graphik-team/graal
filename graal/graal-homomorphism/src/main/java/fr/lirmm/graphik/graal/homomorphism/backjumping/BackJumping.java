@@ -40,84 +40,21 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.homomorphism;
+package fr.lirmm.graphik.graal.homomorphism.backjumping;
 
-import java.util.Collection;
-import java.util.Set;
+import java.util.Map;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.graal.homomorphism.Var;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class Var implements Comparable<Var> {
+public interface BackJumping {
 
-	public int              level;
-	public Variable         value;
-	public Term             image;
+	void init(Var[] vars, Map<Variable, Var> map);
 
-	/*
-	 * Each atoms from the request graph in which this variable have the highest
-	 * level.
-	 */
-	public Collection<Atom> preAtoms;
-	/*
-	 * Each atoms from the request graph that is not in preAtoms and in which
-	 * this variable appears.
-	 */
-	public Collection<Atom> postAtoms;
-
-	// Forward Checking
-	public CloseableIterator<Term> domain;
-	public Set<Var>         preVars;
-	public Set<Var>         postVars;
-
-	// BackJumping
-	public int              nextLevel;
-	public int              previousLevel;
-
-	public boolean          success = false;
-
-	// /////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	// /////////////////////////////////////////////////////////////////////////
-
-	public Var() {
-	}
-
-	public Var(int level) {
-		this.level = level;
-		this.previousLevel = level - 1;
-		this.nextLevel = level + 1;
-	}
-
-	// /////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	// /////////////////////////////////////////////////////////////////////////
-	// OBJECT OVERRIDE METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	/**
-	 * Use for debugging
-	 */
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append('[').append(value).append("(").append(previousLevel)
-		  .append("<-").append(level).append("->").append(nextLevel).append(")");
-		sb.append("]\n");
-		return sb.toString();
-	}
-
-	@Override
-	public int compareTo(Var o) {
-		return this.level - o.level;
-	}
+	public int previousLevel(Var var, Var[] vars);
 
 }

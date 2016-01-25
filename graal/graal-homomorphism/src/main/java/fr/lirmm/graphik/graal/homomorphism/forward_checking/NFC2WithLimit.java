@@ -101,10 +101,11 @@ public class NFC2WithLimit extends NFC2 implements ForwardChecking {
 
 		}
 	}
+
 	@Override
 	public boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc) throws AtomSetException {
 
-		for (Var z : v.forwardNeighbors) {
+		for (Var z : v.postVars) {
 			super.data[z.level].tmp.clear();
 			this.dataWithLimit[z.level].atomsToCheck.removeAll(v.postAtoms);
 
@@ -199,5 +200,4 @@ public class NFC2WithLimit extends NFC2 implements ForwardChecking {
 	protected class VarDataWithLimit {
 		Collection<Atom> atomsToCheck;
 	}
-
 }

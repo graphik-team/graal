@@ -42,82 +42,34 @@
  */
 package fr.lirmm.graphik.graal.homomorphism;
 
-import java.util.Collection;
-import java.util.Set;
+import java.util.List;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
+ * The Scheduler interface provides a way to manage the backtracking order. The
+ * Var.previousLevel will be used when the backtracking algorithm is in a
+ * failure state (allow backjumping).
+ *
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class Var implements Comparable<Var> {
-
-	public int              level;
-	public Variable         value;
-	public Term             image;
-
-	/*
-	 * Each atoms from the request graph in which this variable have the highest
-	 * level.
-	 */
-	public Collection<Atom> preAtoms;
-	/*
-	 * Each atoms from the request graph that is not in preAtoms and in which
-	 * this variable appears.
-	 */
-	public Collection<Atom> postAtoms;
-
-	// Forward Checking
-	public CloseableIterator<Term> domain;
-	public Set<Var>         preVars;
-	public Set<Var>         postVars;
-
-	// BackJumping
-	public int              nextLevel;
-	public int              previousLevel;
-
-	public boolean          success = false;
-
-	// /////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	// /////////////////////////////////////////////////////////////////////////
-
-	public Var() {
-	}
-
-	public Var(int level) {
-		this.level = level;
-		this.previousLevel = level - 1;
-		this.nextLevel = level + 1;
-	}
-
-	// /////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	// /////////////////////////////////////////////////////////////////////////
-	// OBJECT OVERRIDE METHODS
-	// /////////////////////////////////////////////////////////////////////////
+public interface Scheduler {
 
 	/**
-	 * Use for debugging
+	 * @param h
+	 * @param ans
+	 * @return an array of Var
 	 */
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append('[').append(value).append("(").append(previousLevel)
-		  .append("<-").append(level).append("->").append(nextLevel).append(")");
-		sb.append("]\n");
-		return sb.toString();
-	}
+	Var[] execute(InMemoryAtomSet h, List<Term> ans);
 
-	@Override
-	public int compareTo(Var o) {
-		return this.level - o.level;
-	}
+	/**
+	 * @param var
+	 * @param image
+	 * @return true if the specified image is not forbidden for the specified
+	 *         var
+	 */
+	boolean isAllowed(Var var, Term image);
 
 }

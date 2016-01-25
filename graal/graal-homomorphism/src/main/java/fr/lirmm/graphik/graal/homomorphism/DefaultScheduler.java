@@ -42,82 +42,81 @@
  */
 package fr.lirmm.graphik.graal.homomorphism;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
+ * Compute an order over variables from h. This scheduler put answer
+ * variables first, then other variables are put in the order from
+ * h.getTerms(Term.Type.VARIABLE).iterator().
+ *
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class Var implements Comparable<Var> {
+public class DefaultScheduler implements Scheduler {
 
-	public int              level;
-	public Variable         value;
-	public Term             image;
+	private static DefaultScheduler instance;
 
-	/*
-	 * Each atoms from the request graph in which this variable have the highest
-	 * level.
-	 */
-	public Collection<Atom> preAtoms;
-	/*
-	 * Each atoms from the request graph that is not in preAtoms and in which
-	 * this variable appears.
-	 */
-	public Collection<Atom> postAtoms;
-
-	// Forward Checking
-	public CloseableIterator<Term> domain;
-	public Set<Var>         preVars;
-	public Set<Var>         postVars;
-
-	// BackJumping
-	public int              nextLevel;
-	public int              previousLevel;
-
-	public boolean          success = false;
-
-	// /////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	// /////////////////////////////////////////////////////////////////////////
-
-	public Var() {
+	protected DefaultScheduler() {
+		super();
 	}
 
-	public Var(int level) {
-		this.level = level;
-		this.previousLevel = level - 1;
-		this.nextLevel = level + 1;
+	public static synchronized DefaultScheduler instance() {
+		if (instance == null)
+			instance = new DefaultScheduler();
+
+		return instance;
 	}
-
-	// /////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	// /////////////////////////////////////////////////////////////////////////
-	// OBJECT OVERRIDE METHODS
-	// /////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * Use for debugging
+	 * Compute the order.
+	 *
+	 * @param h
+	 * @return
 	 */
 	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append('[').append(value).append("(").append(previousLevel)
-		  .append("<-").append(level).append("->").append(nextLevel).append(")");
-		sb.append("]\n");
-		return sb.toString();
+	public Var[] execute(InMemoryAtomSet h, List<Term> ans) {
+		Set<Term> terms = h.getTerms(Term.Type.VARIABLE);
+		Var[] vars = new Var[terms.size() + 2];
+
+		int level = 0;
+		vars[level] = new Var(level);
+
+		Set<Term> alreadyAffected = new TreeSet<Term>();
+		for (Term t : ans) {
+			if (t instanceof Variable && !alreadyAffected.contains(t)) {
+				++level;
+				vars[level] = new Var(level);
+				vars[level].value = (Variable) t;
+				alreadyAffected.add(t);
+			}
+		}
+
+		int lastAnswerVariable = level;
+
+		for (Term t : terms) {
+			if (!alreadyAffected.contains(t)) {
+				++level;
+				vars[level] = new Var(level);
+				vars[level].value = (Variable) t;
+			}
+		}
+
+		++level;
+		vars[level] = new Var(level);
+		vars[level].previousLevel = lastAnswerVariable;
+
+		return vars;
 	}
 
 	@Override
-	public int compareTo(Var o) {
-		return this.level - o.level;
+	public boolean isAllowed(Var var, Term image) {
+		return true;
 	}
 
 }

@@ -40,7 +40,7 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.homomorphism;
+package fr.lirmm.graphik.graal.homomorphism.bbc;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,6 +57,10 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.graal.homomorphism.Scheduler;
+import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
+import fr.lirmm.graphik.graal.homomorphism.backjumping.NoBackJumping;
 import fr.lirmm.graphik.util.graph.DefaultDirectedEdge;
 import fr.lirmm.graphik.util.graph.DefaultGraph;
 import fr.lirmm.graphik.util.graph.DefaultHyperEdge;
@@ -72,100 +76,36 @@ import fr.lirmm.graphik.util.graph.HyperGraph;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class BCCScheduler implements BacktrackHomomorphism.Scheduler {
+public class BCC {
 
 	private VarData[] data;
 	private Term[]    inverseMap;
 	private boolean   withForbiddenCandidate;
+	private BCCScheduler scheduler;
+	private BCCBackJumping backJumping;
 
-	public BCCScheduler() {
-		this(false);
+	public BCC() {
+		this(NoBackJumping.instance(), false);
 	}
 
-	public BCCScheduler(boolean withForbiddenCandidate) {
+	public BCC(BackJumping bc, boolean withForbiddenCandidate) {
 		super();
 		this.withForbiddenCandidate = withForbiddenCandidate;
+		this.scheduler = new BCCScheduler();
+		this.backJumping = new BCCBackJumping(bc);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	@Override
-	public Var[] execute(InMemoryAtomSet h, List<Term> ans) {
-
-		Set<Term> variables = h.getTerms(Term.Type.VARIABLE);
-
-		// BCC
-		Map<Term, Integer> map = new TreeMap<Term, Integer>();
-		inverseMap = new Term[variables.size() + 1];
-		HyperGraph graph = constructHyperGraph(h, variables, inverseMap, map, ans);
-
-		List<Integer> ansInt = new LinkedList<Integer>();
-		for (Term t : ans) {
-			ansInt.add(map.get(t));
-		}
-		BCCData d = biconnect(graph, ansInt.iterator());
-
-		Var[] vars = new Var[variables.size() + 2];
-		data = new VarData[variables.size() + 2];
-
-		vars[0] = new Var(0);
-		data[0] = new VarData();
-
-		for (int i = 1; i < d.vars.length; ++i) {
-			Var v = d.vars[i];
-			vars[v.level] = v;
-			data[v.level] = d.ext[i];
-			v.value = (Variable) inverseMap[i];
-			v.nextLevel = v.level + 1;
-			v.previousLevel = v.level - 1;
-			if (withForbiddenCandidate && data[v.level].isAccesseur) {
-				data[v.level].forbidden = new TreeSet<Term>();
-			}
-		}
-
-		int level = variables.size() + 1;
-		vars[level] = new Var(level);
-		data[level] = new VarData();
-		vars[level].previousLevel = ans.size();
-
-		return vars;
+	public BCCScheduler getBCCScheduler() {
+		return this.scheduler;
 	}
 
-	/**
-	 * @param var
-	 * @return
-	 */
-	@Override
-	public int previousLevel(Var var, Var[] vars) {
-		if (!data[vars[var.previousLevelFailure].level].success) {
-			if (data[var.level].isEntry && data[vars[var.previousLevelFailure].level].forbidden != null) {
-				data[vars[var.previousLevelFailure].level].forbidden.add(vars[var.previousLevelFailure].image);
-			}
-			return var.previousLevelFailure;
-		} else {
-			return var.previousLevel;
-		}
+	public BCCBackJumping getBCCBackJumping() {
+		return this.backJumping;
 	}
-
-	/**
-	 * @param var
-	 * @return
-	 */
-	@Override
-	public int nextLevel(Var var, Var[] vars) {
-		return var.nextLevel;
-	}
-
-	@Override
-	public boolean isAllowed(Var var, Term image) {
-		return (data[var.level].forbidden == null || !data[var.level].forbidden.contains(image));
-	}
-
-	// /////////////////////////////////////////////////////////////////////////
-	// PRIVATE CLASSES
-	// /////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * @param h
@@ -199,8 +139,8 @@ public class BCCScheduler implements BacktrackHomomorphism.Scheduler {
 		return graph;
 	}
 
-	private static BCCData biconnect(HyperGraph g, Iterator<Integer> ans) {
-		BCCData d = new BCCData(g.nbVertices());
+	private static TmpData biconnect(HyperGraph g, Iterator<Integer> ans) {
+		TmpData d = new TmpData(g.nbVertices());
 
 		d.components = new ArrayList<Set<Integer>>();
 		d.i = 0;
@@ -222,10 +162,10 @@ public class BCCScheduler implements BacktrackHomomorphism.Scheduler {
 	static Deque<Integer> lastAccesseurs = new LinkedList<Integer>();
 	static int            lastTerminal;
 
-	private static void biconnect(HyperGraph g, BCCData d, int v, int u, Iterator<Integer> ans) {
+	private static void biconnect(HyperGraph g, TmpData d, int v, int u, Iterator<Integer> ans) {
 
 		d.lowpt[v] = d.vars[v].level = ++d.i;
-		d.vars[v].previousLevelFailure = d.vars[u].level;
+		d.ext[v].previousLevelFailure = d.vars[u].level;
 		Iterator<Integer> adjacencyIt = g.adjacencyList(v);
 
 		int w;
@@ -305,18 +245,85 @@ public class BCCScheduler implements BacktrackHomomorphism.Scheduler {
 	// PRIVATE CLASS
 	// /////////////////////////////////////////////////////////////////////////
 
-	private static class VarData {
-		// BCC
-		public boolean      isAccesseur;
-		public boolean      isEntry;
-		public boolean      isTerminal;
-		public int          accesseur;
-		public boolean      success = false;
-		public Set<Term>    forbidden;
-		public Set<Integer> compilateurs;
+	private class BCCScheduler implements Scheduler {
+
+		@Override
+		public Var[] execute(InMemoryAtomSet h, List<Term> ans) {
+
+			Set<Term> variables = h.getTerms(Term.Type.VARIABLE);
+
+			// BCC
+			Map<Term, Integer> map = new TreeMap<Term, Integer>();
+			inverseMap = new Term[variables.size() + 1];
+			HyperGraph graph = constructHyperGraph(h, variables, inverseMap, map, ans);
+
+			List<Integer> ansInt = new LinkedList<Integer>();
+			for (Term t : ans) {
+				ansInt.add(map.get(t));
+			}
+			TmpData d = biconnect(graph, ansInt.iterator());
+
+			Var[] vars = new Var[variables.size() + 2];
+			data = new VarData[variables.size() + 2];
+
+			vars[0] = new Var(0);
+			data[0] = new VarData();
+
+			for (int i = 1; i < d.vars.length; ++i) {
+				Var v = d.vars[i];
+				vars[v.level] = v;
+				data[v.level] = d.ext[i];
+				v.value = (Variable) inverseMap[i];
+				v.nextLevel = v.level + 1;
+				v.previousLevel = v.level - 1;
+				if (withForbiddenCandidate && data[v.level].isAccesseur) {
+					data[v.level].forbidden = new TreeSet<Term>();
+				}
+			}
+
+			int level = variables.size() + 1;
+			vars[level] = new Var(level);
+			data[level] = new VarData();
+			vars[level].previousLevel = ans.size();
+
+			return vars;
+		}
+
+		@Override
+		public boolean isAllowed(Var var, Term image) {
+			return (data[var.level].forbidden == null || !data[var.level].forbidden.contains(image));
+		}
+
 	}
 
-	private static class BCCData {
+	private class BCCBackJumping implements BackJumping {
+
+		private BackJumping bc;
+
+		private BCCBackJumping(BackJumping bc) {
+			this.bc = bc;
+		}
+
+		@Override
+		public void init(Var[] vars, Map<Variable, Var> map) {
+			this.bc.init(vars, map);
+		}
+
+		@Override
+		public int previousLevel(Var var, Var[] vars) {
+			if (data[var.level].isEntry && !vars[data[var.level].previousLevelFailure].success) {
+				if (data[data[var.level].previousLevelFailure].forbidden != null) {
+					data[data[var.level].previousLevelFailure].forbidden.add(vars[data[var.level].previousLevelFailure].image);
+				}
+				return data[var.level].previousLevelFailure;
+			} else {
+				return this.bc.previousLevel(var, vars);
+			}
+		}
+
+	}
+
+	private static class TmpData {
 		Var[]               vars;
 		VarData[]           ext;
 		int                 i;
@@ -326,7 +333,7 @@ public class BCCScheduler implements BacktrackHomomorphism.Scheduler {
 		Set<Integer>        currentComponent;
 		BCCGraph            bccGraph = new BCCGraph();
 
-		BCCData(int nbVertices) {
+		TmpData(int nbVertices) {
 			vars = new Var[nbVertices];
 			ext = new VarData[nbVertices];
 			for (int i = 0; i < nbVertices; ++i) {

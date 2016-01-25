@@ -89,7 +89,7 @@ public class NFC2 implements ForwardChecking {
 		this.data = new VarData[vars.length];
 
 		for (int i = 0; i < vars.length; ++i) {
-			vars[i].forwardNeighbors = new TreeSet<Var>();
+			vars[i].postVars = new TreeSet<Var>();
 			this.data[vars[i].level] = new VarData();
 			this.data[vars[i].level].candidats = new Set[vars[i].level];
 			this.data[vars[i].level].tmp = new TreeSet<Term>();
@@ -99,7 +99,7 @@ public class NFC2 implements ForwardChecking {
 				for (Term t : a.getTerms(Type.VARIABLE)) {
 					Var v = map.get((Variable) t);
 					if (v.level > i) {
-						vars[i].forwardNeighbors.add(v);
+						vars[i].postVars.add(v);
 					}
 				}
 			}
@@ -123,13 +123,12 @@ public class NFC2 implements ForwardChecking {
 				}
 			}
 		}
-
 	}
 
 	@Override
 	public boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc) throws AtomSetException {
 
-		for (Var z : v.forwardNeighbors) {
+		for (Var z : v.postVars) {
 			this.data[z.level].tmp.clear();
 
 			if (this.data[z.level].candidats[v.level - 1] != null) {
