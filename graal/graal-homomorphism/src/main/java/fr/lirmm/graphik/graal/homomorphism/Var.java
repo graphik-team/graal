@@ -79,7 +79,6 @@ public class Var implements Comparable<Var> {
 	// BackJumping
 	public int              nextLevel;
 	public int              previousLevel;
-	public int              previousLevelFailure;
 
 	public boolean          success = false;
 
@@ -92,7 +91,7 @@ public class Var implements Comparable<Var> {
 
 	public Var(int level) {
 		this.level = level;
-		this.previousLevelFailure = this.previousLevel = level - 1;
+		this.previousLevel = level - 1;
 		this.nextLevel = level + 1;
 	}
 
@@ -110,7 +109,7 @@ public class Var implements Comparable<Var> {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append('[').append(value).append("(").append(previousLevel).append('|').append(previousLevelFailure)
+		sb.append('[').append(value).append("(").append(previousLevel)
 		  .append("<-").append(level).append("->").append(nextLevel).append(")");
 		sb.append("]\n");
 		return sb.toString();

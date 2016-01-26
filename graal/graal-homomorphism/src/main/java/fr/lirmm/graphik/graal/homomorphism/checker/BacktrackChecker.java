@@ -50,7 +50,8 @@ import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.homomorphism.AbstractChecker;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphism;
-import fr.lirmm.graphik.graal.homomorphism.bbc.BCCScheduler;
+import fr.lirmm.graphik.graal.homomorphism.backjumping.GraphBaseBackJumping;
+import fr.lirmm.graphik.graal.homomorphism.bbc.BCC;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.SimpleFC;
 
 /**
@@ -61,7 +62,8 @@ public class BacktrackChecker extends AbstractChecker {
 	
 	@Override
 	public BacktrackHomomorphism getSolver() {
-		return new BacktrackHomomorphism(new BCCScheduler(), new SimpleFC());
+		BCC bcc = new BCC(new GraphBaseBackJumping(), false);
+		return new BacktrackHomomorphism(bcc.getBCCScheduler(), new SimpleFC(), bcc.getBCCBackJumping());
 	}
 	
 	@Override

@@ -49,7 +49,6 @@ import java.util.TreeSet;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphism.Scheduler;
 
 /**
  * Compute an order over variables from h. This scheduler put answer
@@ -113,16 +112,6 @@ public class DefaultScheduler implements Scheduler {
 		vars[level].previousLevel = lastAnswerVariable;
 
 		return vars;
-	}
-
-	@Override
-	public int previousLevel(Var currentVar, Var[] vars) {
-		return currentVar.previousLevel;
-	}
-
-	@Override
-	public int nextLevel(Var currentVar, Var[] vars) {
-		return currentVar.nextLevel;
 	}
 
 	@Override

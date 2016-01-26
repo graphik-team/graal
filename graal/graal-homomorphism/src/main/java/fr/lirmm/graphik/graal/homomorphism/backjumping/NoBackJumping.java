@@ -53,6 +53,19 @@ import fr.lirmm.graphik.graal.homomorphism.Var;
  */
 public class NoBackJumping implements BackJumping {
 
+	private static NoBackJumping instance;
+
+	protected NoBackJumping() {
+		super();
+	}
+
+	public static synchronized NoBackJumping instance() {
+		if (instance == null)
+			instance = new NoBackJumping();
+
+		return instance;
+	}
+
 	@Override
 	public void init(Var[] vars, Map<Variable, Var> map) {
 	}

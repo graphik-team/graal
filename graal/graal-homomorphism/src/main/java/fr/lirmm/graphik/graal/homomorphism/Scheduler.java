@@ -1,16 +1,3 @@
-package fr.lirmm.graphik.graal.homomorphism.forward_checking;
-
-import java.util.Map;
-
-import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.AtomSetException;
-import fr.lirmm.graphik.graal.api.core.RulesCompilation;
-import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.graal.homomorphism.Var;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
-
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
  * (Université de Montpellier & CNRS) (2014 - 2015)
@@ -53,25 +40,36 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
+package fr.lirmm.graphik.graal.homomorphism;
+
+import java.util.List;
+
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.Term;
 
 /**
+ * The Scheduler interface provides a way to manage the backtracking order. The
+ * Var.previousLevel will be used when the backtracking algorithm is in a
+ * failure state (allow backjumping).
+ *
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class NoForwardChaining implements ForwardChecking {
+public interface Scheduler {
 
-	@Override
-	public void init(Var[] vars, Map<Variable, Var> map) {
-	}
+	/**
+	 * @param h
+	 * @param ans
+	 * @return an array of Var
+	 */
+	Var[] execute(InMemoryAtomSet h, List<Term> ans);
 
-	@Override
-	public boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc) {
-		return true;
-	}
-
-	@Override
-	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var) throws AtomSetException {
-		return new CloseableIteratorAdapter<Term>(g.termsIterator());
-	}
+	/**
+	 * @param var
+	 * @param image
+	 * @return true if the specified image is not forbidden for the specified
+	 *         var
+	 */
+	boolean isAllowed(Var var, Term image);
 
 }

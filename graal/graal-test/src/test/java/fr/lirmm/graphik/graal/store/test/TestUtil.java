@@ -64,7 +64,8 @@ import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.RecursiveBacktrackHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
-import fr.lirmm.graphik.graal.homomorphism.bbc.BCCScheduler;
+import fr.lirmm.graphik.graal.homomorphism.backjumping.GraphBaseBackJumping;
+import fr.lirmm.graphik.graal.homomorphism.bbc.BCC;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.SimpleFC;
 import fr.lirmm.graphik.graal.store.gdb.BlueprintsGraphDBStore;
@@ -111,12 +112,16 @@ public final class TestUtil {
 
 	public static Homomorphism[] getHomomorphisms() {
 
+		BCC bcc0 = new BCC();
+		BCC bcc1 = new BCC(new GraphBaseBackJumping(), false);
+		BCC bcc2 = new BCC(new GraphBaseBackJumping(), false);
+
 		return new Homomorphism[] { StaticHomomorphism.instance(), RecursiveBacktrackHomomorphism.instance(),
 		        new BacktrackHomomorphism(),
-		        new BacktrackHomomorphism(new BCCScheduler()), 
-		        new BacktrackHomomorphism(new NFC2()),
-		        new BacktrackHomomorphism(new SimpleFC()),
-		        new BacktrackHomomorphism(new BCCScheduler(), new NFC2()) };
+		        new BacktrackHomomorphism(bcc0.getBCCScheduler(), bcc0.getBCCBackJumping()),
+		        new BacktrackHomomorphism(bcc1.getBCCScheduler(), bcc1.getBCCBackJumping()),
+		        new BacktrackHomomorphism(new NFC2()), new BacktrackHomomorphism(new SimpleFC()),
+		        new BacktrackHomomorphism(bcc2.getBCCScheduler(), new NFC2(), bcc2.getBCCBackJumping()) };
 
 	}
 

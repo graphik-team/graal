@@ -60,9 +60,7 @@ import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
-import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphism.Scheduler;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
-import fr.lirmm.graphik.graal.homomorphism.backjumping.GraphBaseBackJumping;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.ForwardChecking;
 import fr.lirmm.graphik.util.Profilable;
 import fr.lirmm.graphik.util.Profiler;
@@ -78,7 +76,7 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 
 	private Scheduler          scheduler;
 	private ForwardChecking    fc;
-	private BackJumping        bc;
+	private BackJumping        bj;
 
 	private InMemoryAtomSet    h;
 	private AtomSet            g;
@@ -109,6 +107,7 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 	 * @param g
 	 */
 	public BacktrackIterator(InMemoryAtomSet h, AtomSet g, List<Term> ans, Scheduler scheduler, ForwardChecking fc,
+	    BackJumping bj,
 	    RulesCompilation compilation) {
 
 		this.h = h;
@@ -116,7 +115,7 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 		this.ans = ans;
 		this.scheduler = scheduler;
 		this.fc = fc;
-		this.bc = new GraphBaseBackJumping();
+		this.bj = bj;
 		this.compilation = compilation;
 
 		this.currentVar = null;
@@ -147,7 +146,7 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 
 		computeAtomOrder(h, vars);
 		fc.init(vars, index);
-		bc.init(vars, index);
+		bj.init(vars, index);
 
 		if (profiler != null) {
 			profiler.stop("preprocessing time");
@@ -276,19 +275,19 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 					if (goBack) {
 						if (hasMoreValues(currentVar, g)) {
 							goBack = false;
-							level = scheduler.nextLevel(currentVar, vars);
+							++level;
 						} else {
-							int nextLevel = bc.previousLevel(currentVar, vars);
+							int nextLevel = bj.previousLevel(currentVar, vars);
 							for (; level > nextLevel; --level) {
 								vars[level].image = null;
 							}
 						}
 					} else {
 						if (getFirstValue(currentVar, g)) {
-							level = scheduler.nextLevel(currentVar, vars);
+							++level;
 						} else {
 							goBack = true;
-							int nextLevel = bc.previousLevel(currentVar, vars);
+							int nextLevel = bj.previousLevel(currentVar, vars);
 							for (; level > nextLevel; --level) {
 								vars[level].image = null;
 							}

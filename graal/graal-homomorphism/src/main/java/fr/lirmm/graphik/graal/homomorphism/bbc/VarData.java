@@ -59,5 +59,6 @@ public class VarData {
 	public int          accesseur;
 	public Set<Term>    forbidden;
 	public Set<Integer> compilateurs;
+	public int          previousLevelFailure;
 
 }

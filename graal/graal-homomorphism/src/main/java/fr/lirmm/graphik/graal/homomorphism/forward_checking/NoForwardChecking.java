@@ -1,3 +1,16 @@
+package fr.lirmm.graphik.graal.homomorphism.forward_checking;
+
+import java.util.Map;
+
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
+
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
  * (Université de Montpellier & CNRS) (2014 - 2015)
@@ -40,53 +53,38 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.homomorphism.bbc;
-
-import java.util.Map;
-
-import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.graal.homomorphism.Var;
-import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class BCCBackJumping implements BackJumping {
+public class NoForwardChecking implements ForwardChecking {
 
-	/**
-	 * A data extension for variable indexed by level
-	 */
-	private BCCData[] data;
+	private static NoForwardChecking instance;
+
+	protected NoForwardChecking() {
+		super();
+	}
+
+	public static synchronized NoForwardChecking instance() {
+		if (instance == null)
+			instance = new NoForwardChecking();
+
+		return instance;
+	}
 
 	@Override
 	public void init(Var[] vars, Map<Variable, Var> map) {
-		this.data = new BCCData[vars.length];
-
-		for (int i = 0; i < vars.length; ++i) {
-			vars[i].previousLevelFailure = i - 1;
-		}
-
 	}
 
 	@Override
-	public int previousLevel(Var var, Var[] vars) {
-		if (!vars[var.previousLevelFailure].success) {
-			if (data[var.level].isEntry && data[vars[var.previousLevelFailure].level].forbidden != null) {
-				data[vars[var.previousLevelFailure].level].forbidden.add(vars[var.previousLevelFailure].image);
-			}
-			return var.previousLevelFailure;
-		} else {
-			return var.previousLevel;
-		}
+	public boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc) {
+		return true;
 	}
 
-	// /////////////////////////////////////////////////////////////////////////
-	// PRIVATE METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	private class BCCData {
-		public int previousLevelFailure;
+	@Override
+	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var) throws AtomSetException {
+		return new CloseableIteratorAdapter<Term>(g.termsIterator());
 	}
 
 }

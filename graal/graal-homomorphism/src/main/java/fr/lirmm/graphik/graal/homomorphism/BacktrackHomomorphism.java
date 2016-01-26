@@ -42,19 +42,17 @@
  */
 package fr.lirmm.graphik.graal.homomorphism;
 
-import java.util.List;
-
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
 import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
+import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
+import fr.lirmm.graphik.graal.homomorphism.backjumping.NoBackJumping;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.ForwardChecking;
-import fr.lirmm.graphik.graal.homomorphism.forward_checking.NoForwardChaining;
+import fr.lirmm.graphik.graal.homomorphism.forward_checking.NoForwardChecking;
 import fr.lirmm.graphik.util.Profilable;
 import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -73,22 +71,32 @@ public class BacktrackHomomorphism implements HomomorphismWithCompilation<Conjun
 	private Profiler profiler = null;
 	private Scheduler scheduler;
 	private ForwardChecking fc;
+	private BackJumping     bj;
 
 	public BacktrackHomomorphism() {
-		this(new DefaultScheduler(), new NoForwardChaining());
+		this(new DefaultScheduler(), NoForwardChecking.instance(), NoBackJumping.instance());
 	}
 
 	public BacktrackHomomorphism(Scheduler s) {
-		this(s, new NoForwardChaining());
+		this(s, NoForwardChecking.instance(), NoBackJumping.instance());
 	}
 
 	public BacktrackHomomorphism(ForwardChecking fc) {
-		this(new DefaultScheduler(), fc);
+		this(new DefaultScheduler(), fc, NoBackJumping.instance());
 	}
 
-	public BacktrackHomomorphism(Scheduler s, ForwardChecking fc) {
+	public BacktrackHomomorphism(BackJumping bj) {
+		this(new DefaultScheduler(), NoForwardChecking.instance(), bj);
+	}
+
+	public BacktrackHomomorphism(Scheduler s, BackJumping bj) {
+		this(s, NoForwardChecking.instance(), bj);
+	}
+
+	public BacktrackHomomorphism(Scheduler s, ForwardChecking fc, BackJumping bj) {
 		super();
 		this.fc = fc;
+		this.bj = bj;
 		this.scheduler = s;
 	}
 
@@ -111,7 +119,7 @@ public class BacktrackHomomorphism implements HomomorphismWithCompilation<Conjun
 		// q.getAnswerVariables(),
 		// compilation));
 		BacktrackIterator backtrackIterator = new BacktrackIterator(q.getAtomSet(), a, q.getAnswerVariables(),
-		                                                            this.scheduler, this.fc, compilation);
+		                                                            this.scheduler, this.fc, this.bj, compilation);
 		if (this.profiler != null) {
 			backtrackIterator.setProfiler(profiler);
 		}
@@ -130,39 +138,6 @@ public class BacktrackHomomorphism implements HomomorphismWithCompilation<Conjun
 	@Override
 	public Profiler getProfiler() {
 		return this.profiler;
-	}
-
-	// /////////////////////////////////////////////////////////////////////////
-	// INTERN CLASSES
-	// /////////////////////////////////////////////////////////////////////////
-
-
-
-	/**
-	 * The Scheduler interface provides a way to manage the backtracking order.
-	 * The Var.previousLevel will be used when the backtracking algorithm is in
-	 * a failure state (allow backjumping).
-	 *
-	 * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
-	 *
-	 */
-	public static interface Scheduler {
-
-		/**
-		 * @param h
-		 * @param ans
-		 * @return an array of Var
-		 */
-		Var[] execute(InMemoryAtomSet h, List<Term> ans);
-
-		/**
-		 * @param var
-		 * @param image
-		 * @return true if the specified image is not forbidden for the
-		 *         specified var
-		 */
-		boolean isAllowed(Var var, Term image);
-
 	}
 
 }
