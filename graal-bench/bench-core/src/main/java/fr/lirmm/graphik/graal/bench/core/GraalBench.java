@@ -42,7 +42,7 @@
  */
 package fr.lirmm.graphik.graal.bench.core;
 
-import java.io.File;
+import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -91,12 +91,12 @@ public interface GraalBench {
 	 * 
 	 * @param outputFile
 	 */
-	void setOutputFile(File outputFile);
+	void setOutputStream(OutputStream outputStream);
 
 	/**
 	 * @return
 	 */
-	File getOutputFile();
+	OutputStream getOutputStream();
 
 	void run(Map<String, ? extends Object> params);
 

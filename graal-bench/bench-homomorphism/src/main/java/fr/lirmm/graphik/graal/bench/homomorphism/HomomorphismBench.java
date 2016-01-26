@@ -80,6 +80,8 @@ import fr.lirmm.graphik.util.stream.filter.FilterCloseableIterator;
  */
 public class HomomorphismBench extends AbstractGraalBench {
 
+
+
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
@@ -169,6 +171,7 @@ public class HomomorphismBench extends AbstractGraalBench {
 
 			                                                                InMemoryAtomSet s       = new DefaultInMemoryGraphAtomSet();
 			                                                                int             nbAtoms = 50;
+			                                                                int             domain  = 5;
 
 			                                                                {
 				                                                                addNAtoms(s, nbAtoms);
@@ -176,14 +179,14 @@ public class HomomorphismBench extends AbstractGraalBench {
 
 			                                                                @Override
 			                                                                public boolean hasNext() {
-				                                                                return nbAtoms <= maxInstanceSize;
+				                                                                return (nbAtoms * 2) <= maxInstanceSize;
 			                                                                }
 
 			                                                                @Override
 			                                                                public Entry<String, AtomSet> next() {
 				                                                                addNAtoms(s, nbAtoms);
 				                                                                nbAtoms *= 2;
-
+				                                                                domain *= 1.5f;
 				                                                                return new ImmutablePair<String, AtomSet>(
 				                                                                                                          Integer.toString(nbAtoms),
 				                                                                                                          s);
@@ -196,7 +199,10 @@ public class HomomorphismBench extends AbstractGraalBench {
 					                                                                int p = rand.nextInt(PREDICATES.length);
 					                                                                List<Term> terms = new LinkedList<Term>();
 					                                                                for (int j = 0; j < (p % 3) + 2; ++j) {
-						                                                                terms.add(DOMAIN.get(rand.nextInt(DOMAIN_SIZE)));
+						                                                                // terms.add(DOMAIN.get(rand.nextInt(DOMAIN_SIZE)));
+						                                                                terms.add(DefaultTermFactory.instance()
+						                                                                                            .createConstant(
+						                                                                                                rand.nextInt(domain)));
 					                                                                }
 					                                                                to.add(new DefaultAtom(
 					                                                                                       PREDICATES[p],
@@ -232,6 +238,13 @@ public class HomomorphismBench extends AbstractGraalBench {
 			e.printStackTrace();
 		}
 		return profiler.entrySet().iterator();
+	}
+
+	/**
+	 * @param nbAtomsMax
+	 */
+	public void setNbAtomsMax(int nbAtomsMax) {
+		this.maxInstanceSize = nbAtomsMax;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

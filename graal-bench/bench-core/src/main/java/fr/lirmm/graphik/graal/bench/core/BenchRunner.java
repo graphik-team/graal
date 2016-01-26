@@ -42,9 +42,8 @@
  */
 package fr.lirmm.graphik.graal.bench.core;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Iterator;
 import java.util.Map;
@@ -70,17 +69,17 @@ class BenchRunner {
 	private static final Logger LOGGER = LoggerFactory.getLogger(BenchRunner.class);
 
 	private final GraalBench    BENCH;
-	private final File          FILE;
+	private final OutputStream  OUT;
 	private final int           NB_ITERATION;
 
-	public BenchRunner(GraalBench bench, File file) {
-		this(bench, file, 1);
+	public BenchRunner(GraalBench bench, OutputStream out) {
+		this(bench, out, 1);
 	}
 
-	public BenchRunner(GraalBench bench, File file, int nbIteration) {
+	public BenchRunner(GraalBench bench, OutputStream out, int nbIteration) {
 		super();
 		this.BENCH = bench;
-		this.FILE = file;
+		this.OUT = out;
 		this.NB_ITERATION = nbIteration;
 	}
 
@@ -93,7 +92,7 @@ class BenchRunner {
 	}
 
 	public void run(Map<String, ? extends Object> params) throws FileNotFoundException {
-		PrintStream writer = new PrintStream(new FileOutputStream(this.FILE, true));
+		PrintStream writer = new PrintStream(OUT);
 		writer.format("%s,%s,%s,%s,%s,%s\n", "iteration", "query", "data instance", "parameter number", "data name",
 		    "data value");
 

@@ -4,7 +4,7 @@
 
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
-		<artifactId>graal</artifactId>
+		<artifactId>graal-bench</artifactId>
 		<version>1.1.2-SNAPSHOT</version>
 	</parent>
 

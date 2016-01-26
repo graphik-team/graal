@@ -42,13 +42,16 @@
  */
 package fr.lirmm.graphik.graal.bench.homomorphism;
 
-import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.TreeMap;
+
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
 
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.bench.core.GraalBench;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2WithLimit;
@@ -58,20 +61,65 @@ import fr.lirmm.graphik.graal.homomorphism.forward_checking.SimpleFC;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class BacktrackHomomorphismTest {
+public class BacktrackHomomorphismBench {
+
+	@Parameter(names = { "-h", "--help" }, description = "Print this message", help = true)
+	private boolean            help;
+
+	@Parameter(names = { "-v", "--verbose" }, description = "Enable verbose mode")
+	private boolean            verbose      = false;
+
+	@Parameter(names = { "-V", "--version" }, description = "Print version information")
+	private boolean            version      = false;
+
+	@Parameter(names = { "-o", "--output-file" }, description = "Output file (use '-' for stdout)")
+	private String             outputFilePath = "-";
+
+	@Parameter(names = { "-s", "--max-size" }, description = "Max data size")
+	private int                maxSize        = 51200;
+
+	@Parameter(names = { "-r", "--nb-repeat" }, description = "Number of bench repeats")
+	private int                nbRepeat       = 10;
+
+	public static final String PROGRAM_NAME = "bench-homo";
 
 	public static void main(String args[]) throws HomomorphismException, FileNotFoundException {
 
+		BacktrackHomomorphismBench options = new BacktrackHomomorphismBench();
+
+		JCommander commander = new JCommander(options, args);
+
+		if (options.help) {
+			commander.usage();
+			System.exit(0);
+		}
+
+		OutputStream outputStream = null;
+		if (options.outputFilePath.equals("-")) {
+			outputStream = System.out;
+		} else {
+			try {
+				outputStream = new FileOutputStream(options.outputFilePath);
+			} catch (Exception e) {
+				System.err.println("Could not open file: " + options.outputFilePath);
+				System.err.println(e);
+				e.printStackTrace();
+				System.exit(1);
+			}
+		}
+
 		TreeMap<String, Homomorphism> params = new TreeMap<String, Homomorphism>();
 
+		params.put("Backtrack", new BacktrackHomomorphism());
 		params.put("simpleNFC", new BacktrackHomomorphism(new SimpleFC()));
 		params.put("NFC2", new BacktrackHomomorphism(new NFC2()));
 		params.put("NFC2WithLimit32", new BacktrackHomomorphism(new NFC2WithLimit(32)));
-		params.put("NFC2WithLimit64", new BacktrackHomomorphism(new NFC2WithLimit(64)));
 		params.put("NFC2WithLimit128", new BacktrackHomomorphism(new NFC2WithLimit(128)));
 
-		GraalBench bench = new HomomorphismBench();
-		bench.setOutputFile(new File("/tmp/bench.csv"));
+		HomomorphismBench bench = new HomomorphismBench();
+		bench.setOutputStream(outputStream);
+		bench.setNbIteration(options.nbRepeat);
+		bench.setMaxInstanceSize(options.maxSize);
 		bench.setNbIteration(10);
 		bench.run(params);
 

@@ -42,8 +42,8 @@
  */
 package fr.lirmm.graphik.graal.bench.core;
 
-import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.OutputStream;
 import java.util.Map;
 
 /**
@@ -52,7 +52,7 @@ import java.util.Map;
  */
 public abstract class AbstractGraalBench implements GraalBench {
 
-	private File outputFile = new File("/tmp/bench.csv");
+	private OutputStream outputStream = System.out;
 	private int  nbIteration = 10;
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -67,13 +67,13 @@ public abstract class AbstractGraalBench implements GraalBench {
 	 * @return the outputFile
 	 */
 	@Override
-	public File getOutputFile() {
-		return outputFile;
+	public OutputStream getOutputStream() {
+		return this.outputStream;
 	}
 
 	@Override
-	public void setOutputFile(File outputFile) {
-		this.outputFile = outputFile;
+	public void setOutputStream(OutputStream outputStream) {
+		this.outputStream = outputStream;
 	}
 
 	/**
@@ -100,7 +100,7 @@ public abstract class AbstractGraalBench implements GraalBench {
 	@Override
 	public void run(Map<String, ? extends Object> params) {
 		try {
-			new BenchRunner(this, this.outputFile, this.nbIteration).run(params);
+			new BenchRunner(this, this.outputStream, this.nbIteration).run(params);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			throw new Error("Untreated exception");
