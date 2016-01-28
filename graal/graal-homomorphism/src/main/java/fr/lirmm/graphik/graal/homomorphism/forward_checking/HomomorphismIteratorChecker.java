@@ -44,30 +44,95 @@ package fr.lirmm.graphik.graal.homomorphism.forward_checking;
 
 import java.util.Map;
 
+import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.graal.homomorphism.BacktrackUtils;
 import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface ForwardChecking {
+class HomomorphismIteratorChecker extends AbstractCloseableIterator<Term> {
 
-	void init(Var[] vars, Map<Variable, Var> map);
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
 
-	boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc) throws AtomSetException;
+	private CloseableIterator<Term> it;
+	private Term                    next;
+	private Var                     var;
+	private Iterable<Atom>          h;
+	private AtomSet                 g;
+	private Map<Variable, Var>      map;
+	private RulesCompilation        rc;
 
 	/**
-	 * @param var
-	 * @return
-	 * @throws AtomSetException
+	 * Check over it, the images for var such that there exists an homomorphism
+	 * from h to g.
 	 */
-	CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Map<Variable, Var> map, RulesCompilation rc)
-	    throws AtomSetException;
+	public HomomorphismIteratorChecker(Var var, CloseableIterator<Term> it, Iterable<Atom> h, AtomSet g,
+	    Map<Variable, Var> map,
+	    RulesCompilation rc) {
+		this.var = var;
+		this.it = it;
+		this.h = h;
+		this.g = g;
+		this.map = map;
+		this.rc = rc;
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	@Override
+	public boolean hasNext() {
+		try {
+			while (this.next == null && this.it.hasNext()) {
+				Term t = this.it.next();
+				if (this.check(t)) {
+					this.next = t;
+				}
+			}
+		} catch (AtomSetException e) {
+			// TODO treat this exception
+			e.printStackTrace();
+			throw new Error("Untreated exception");
+		}
+		return this.next != null;
+	}
+
+	@Override
+	public Term next() {
+		this.hasNext();
+		Term t = this.next;
+		this.next = null;
+		return t;
+	}
+
+	@Override
+	public void close() {
+		this.it.close();
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// OBJECT OVERRIDE METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	private boolean check(Term t) throws AtomSetException {
+		this.var.image = t;
+		return BacktrackUtils.isHomomorphism(h, g, map, rc);
+	}
 
 }

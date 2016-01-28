@@ -263,7 +263,7 @@ public class ConjunctiveQueryTest {
 	}
 
 	@Theory
-	public void basicQueryTest(Homomorphism h, AtomSet store) {
+	public void queryAtomsWithoutNeighborsInForwardCheckingTest(Homomorphism h, AtomSet store) {
 		try {
 			store.addAll(DlgpParser.parseAtomSet("p(a,b).p(b,c)."));
 
@@ -293,6 +293,33 @@ sub.createImageOf(DefaultTermFactory.instance()
 		}
 	}
 	
+	@Theory
+	public void queryAtomsWithoutNeighborsInForwardChecking2Test(Homomorphism h, AtomSet store) {
+		try {
+			store.addAll(DlgpParser.parseAtomSet("p(a,b),p(a,c),q(b)."));
+
+			ConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y) :- p(X,Y),q(Y).");
+
+			CloseableIterator<Substitution> subReader;
+			Substitution sub;
+
+			subReader = h.execute(query, store);
+
+			Assert.assertTrue(subReader.hasNext());
+			sub = subReader.next();
+			Assert.assertEquals(2, sub.getTerms().size());
+			Assert.assertEquals(sub.createImageOf(DefaultTermFactory.instance().createVariable("X")),
+			    DefaultTermFactory.instance().createConstant("a"));
+			Assert.assertEquals(sub.createImageOf(DefaultTermFactory.instance().createVariable("Y")),
+			    DefaultTermFactory.instance().createConstant("b"));
+
+			Assert.assertFalse(subReader.hasNext());
+			subReader.close();
+		} catch (Exception e) {
+			Assert.assertTrue(e.getMessage(), false);
+		}
+	}
+
 	public void variableFusionTest(Homomorphism h, AtomSet store) {
 		try {
 			store.addAll(DlgpParser.parseAtomSet("p(a,b),q(b,b)."));
@@ -324,9 +351,6 @@ sub.createImageOf(DefaultTermFactory.instance()
 		
 	}
 
-	/**
-	 * Test a boolean query
-	 */
 	@Theory
 	public void tttTrueQueryTest(Homomorphism h, AtomSet store) {
 		try {
@@ -493,6 +517,42 @@ sub.createImageOf(DefaultTermFactory.instance()
 
 			Assert.assertTrue(subReader.hasNext());
 			Substitution sub = subReader.next();
+			Assert.assertFalse(subReader.hasNext());
+			subReader.close();
+		} catch (Exception e) {
+			Assert.assertTrue(e.getMessage(), false);
+		}
+	}
+
+	@Theory
+	public void NFC2WithLimit8Test(Homomorphism h, AtomSet store) {
+		try {
+
+			store.addAll(DlgpParser.parseAtomSet("q(k,a),q(k,k),p(k,a),p(k,b),p(k,c),p(k,d),p(k,e),p(k,f),p(k,g),p(k,h),p(k,i)."));
+
+			ConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y,Z) :- p(X,Z),q(Y,Z).");
+
+			CloseableIterator<Substitution> subReader = h.execute(query, store);
+
+			Assert.assertTrue(subReader.hasNext());
+			Substitution sub = subReader.next();
+			Assert.assertFalse(subReader.hasNext());
+			subReader.close();
+		} catch (Exception e) {
+			Assert.assertTrue(e.getMessage(), false);
+		}
+	}
+
+	@Theory
+	public void NFC2Test(Homomorphism h, AtomSet store) {
+		try {
+
+			store.addAll(DlgpParser.parseAtomSet("p(a,b,c)."));
+
+			ConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y) :- p(X,Y,Y).");
+
+			CloseableIterator<Substitution> subReader = h.execute(query, store);
+
 			Assert.assertFalse(subReader.hasNext());
 			subReader.close();
 		} catch (Exception e) {

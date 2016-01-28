@@ -42,6 +42,7 @@
  */
 package fr.lirmm.graphik.graal.homomorphism.forward_checking;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -52,7 +53,6 @@ import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackUtils;
 import fr.lirmm.graphik.graal.homomorphism.Var;
@@ -68,12 +68,12 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class NFC2WithLimit implements ForwardChecking {
+public class NFC2WithLimit extends NFC2 implements ForwardChecking {
 
 	/**
 	 * A data extension for variable indexed by level
 	 */
-	private VarData[]           data;
+	protected VarDataWithLimit[] dataWithLimit;
 	private final int           LIMIT;
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -81,6 +81,7 @@ public class NFC2WithLimit implements ForwardChecking {
 	// /////////////////////////////////////////////////////////////////////////
 
 	public NFC2WithLimit(int limit) {
+		super();
 		this.LIMIT = limit;
 	}
 
@@ -89,36 +90,28 @@ public class NFC2WithLimit implements ForwardChecking {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public void init(Var[] vars, Map<Variable, Var> map) {
-		this.data = new VarData[vars.length];
+	public void init(Var[] vars, java.util.Map<Variable,Var> map) {
+		super.init(vars, map);
+		
+		this.dataWithLimit = new VarDataWithLimit[vars.length];
 
 		for (int i = 0; i < vars.length; ++i) {
-			vars[i].forwardNeighbors = new TreeSet<Var>();
-			for (Atom a : vars[i].postAtoms) {
-				for (Term t : a.getTerms(Type.VARIABLE)) {
-					Var v = map.get((Variable) t);
-					if (v.level > i) {
-						vars[i].forwardNeighbors.add(v);
-					}
-				}
-			}
+			this.dataWithLimit[vars[i].level] = new VarDataWithLimit();
+			this.dataWithLimit[vars[i].level].atomsToCheck = new TreeSet<Atom>();
 
-			this.data[vars[i].level] = new VarData();
-			this.data[vars[i].level].candidats = new Set[vars[i].level];
-			this.data[vars[i].level].tmp = new TreeSet<Term>();
 		}
 	}
-
 	@Override
 	public boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc) throws AtomSetException {
 
 		for (Var z : v.forwardNeighbors) {
-			this.data[z.level].tmp.clear();
+			super.data[z.level].tmp.clear();
+			this.dataWithLimit[z.level].atomsToCheck.removeAll(v.postAtoms);
 
-			if (this.data[z.level].candidats[v.level - 1] != null) {
-				this.data[z.level].candidats[v.level] = new TreeSet<Term>(this.data[z.level].candidats[v.level - 1]);
+			if (super.data[z.level].candidats[v.level - 1] != null) {
+				super.data[z.level].candidats[v.level] = new TreeSet<Term>(this.data[z.level].candidats[v.level - 1]);
 			} else {
-				this.data[z.level].candidats[v.level] = null;
+				super.data[z.level].candidats[v.level] = null;
 			}
 		}
 
@@ -128,6 +121,8 @@ public class NFC2WithLimit implements ForwardChecking {
 			int cpt = 0;
 
 			Iterator<Atom> rewIt = rc.getRewritingOf(atom).iterator();
+			Set<Var> forwardNeighborsInThisAtom = new TreeSet<Var>();
+
 			while (rewIt.hasNext() && cpt < LIMIT) {
 				Atom a = rewIt.next();
 
@@ -139,6 +134,7 @@ public class NFC2WithLimit implements ForwardChecking {
 					Var z = map.get(t);
 					if (!t.isConstant() && z.level > v.level) {
 						postV[i] = z;
+						forwardNeighborsInThisAtom.add(z);
 					}
 				}
 
@@ -150,7 +146,7 @@ public class NFC2WithLimit implements ForwardChecking {
 					for (Term t : it.next()) {
 						++i;
 						if (postV[i] != null) {
-							this.data[postV[i].level].tmp.add(t);
+							super.data[postV[i].level].tmp.add(t);
 						}
 					}
 					contains = true;
@@ -158,12 +154,16 @@ public class NFC2WithLimit implements ForwardChecking {
 			}
 
 			if (contains) {
-				if (cpt < LIMIT) {
-					for (Var z : v.forwardNeighbors) {
-						if (this.data[z.level].candidats[v.level] == null) {
-							this.data[z.level].candidats[v.level] = new TreeSet<Term>(this.data[z.level].tmp);
+				for (Var z : forwardNeighborsInThisAtom) {
+					if (cpt >= LIMIT) {
+						if (z.preAtoms.contains(atom)) {
+							this.dataWithLimit[z.level].atomsToCheck.add(atom);
+						}
+					} else {
+						if (super.data[z.level].candidats[v.level] == null) {
+							super.data[z.level].candidats[v.level] = new TreeSet<Term>(this.data[z.level].tmp);
 						} else {
-							this.data[z.level].candidats[v.level].retainAll(this.data[z.level].tmp);
+							super.data[z.level].candidats[v.level].retainAll(this.data[z.level].tmp);
 						}
 					}
 				}
@@ -177,24 +177,27 @@ public class NFC2WithLimit implements ForwardChecking {
 	}
 
 	@Override
-	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var) throws AtomSetException {
+	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Map<Variable, Var> map, RulesCompilation rc)
+	    throws AtomSetException {
 		if (this.data[var.level].candidats == null || this.data[var.level].candidats[var.level - 1] == null) {
-			return new CloseableIteratorAdapter<Term>(g.termsIterator());
+			return new HomomorphismIteratorChecker(var, new CloseableIteratorAdapter<Term>(g.termsIterator()),
+			                                       var.preAtoms, g, map, rc);
 		} else {
-			return new CloseableIteratorAdapter<Term>(this.data[var.level].candidats[var.level - 1].iterator());
+			this.dataWithLimit[var.level].atomsToCheck.addAll(this.data[var.level].toCheckAfterAssignment);
+			return new HomomorphismIteratorChecker(
+			                                       var,
+			                                       new CloseableIteratorAdapter<Term>(
+			                                                                          this.data[var.level].candidats[var.level - 1].iterator()),
+			                                       this.dataWithLimit[var.level].atomsToCheck, g, map, rc);
 		}
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
-	// OBJECT OVERRIDE METHODS
+	// PRIVATE CLASSES
 	// /////////////////////////////////////////////////////////////////////////
 
-	// /////////////////////////////////////////////////////////////////////////
-	// PRIVATE METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	private class VarData {
-		Set<Term>[] candidats;
-		Set<Term>    tmp;
+	protected class VarDataWithLimit {
+		Collection<Atom> atomsToCheck;
 	}
+
 }

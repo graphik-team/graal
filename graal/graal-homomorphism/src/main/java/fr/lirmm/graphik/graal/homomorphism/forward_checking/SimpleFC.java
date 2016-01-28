@@ -79,6 +79,10 @@ public class SimpleFC implements ForwardChecking {
 
 	@Override
 	public boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc) throws AtomSetException {
+		if (!BacktrackUtils.isHomomorphism(v.preAtoms, g, map, rc)) {
+			return false;
+		}
+
 		for (Atom atom : v.postAtoms) {
 			boolean contains = false;
 			Atom im = BacktrackUtils.createImageOf(atom, map);
@@ -94,12 +98,15 @@ public class SimpleFC implements ForwardChecking {
 				return false;
 			}
 		}
+
 		return true;
 	}
 
 	@Override
-	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var) throws AtomSetException {
-		return new CloseableIteratorAdapter<Term>(g.termsIterator());
+	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Map<Variable, Var> map, RulesCompilation rc)
+	    throws AtomSetException {
+		return new HomomorphismIteratorChecker(var, new CloseableIteratorAdapter<Term>(g.termsIterator()),
+		                                       var.preAtoms, g, map, rc);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -109,4 +116,5 @@ public class SimpleFC implements ForwardChecking {
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
+
 }

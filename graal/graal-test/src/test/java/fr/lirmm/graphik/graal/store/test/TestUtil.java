@@ -40,7 +40,7 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
+/**
  * 
  */
 package fr.lirmm.graphik.graal.store.test;
@@ -66,6 +66,7 @@ import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.RecursiveBacktrackHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2;
+import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2WithLimit;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.SimpleFC;
 import fr.lirmm.graphik.graal.store.gdb.BlueprintsGraphDBStore;
 import fr.lirmm.graphik.graal.store.gdb.Neo4jStore;
@@ -83,10 +84,10 @@ public final class TestUtil {
 	private TestUtil() {
 	}
 
-	public static final String HSQLDB_TEST = "test";
+	public static final String           HSQLDB_TEST = "test";
 
-	public static final String JENA_TEST;
-	public static final String NEO4J_TEST;
+	public static final String           JENA_TEST;
+	public static final String           NEO4J_TEST;
 	static {
 		File jena;
 		File neo4j;
@@ -103,20 +104,18 @@ public final class TestUtil {
 
 	}
 
-	public static DefaultRdbmsStore rdbmsStore = null;
-	public static BlueprintsGraphDBStore graphStore = null;
-	public static JenaStore jenaStore = null;
-	public static Neo4jStore neo4jStore = null;
-	public static SailStore sailStore = null;
+	public static DefaultRdbmsStore      rdbmsStore  = null;
+	public static BlueprintsGraphDBStore graphStore  = null;
+	public static JenaStore              jenaStore   = null;
+	public static Neo4jStore             neo4jStore  = null;
+	public static SailStore              sailStore   = null;
 
 	public static Homomorphism[] getHomomorphisms() {
 
 		return new Homomorphism[] { StaticHomomorphism.instance(), RecursiveBacktrackHomomorphism.instance(),
-		        new BacktrackHomomorphism(),
-		        new BacktrackHomomorphism(new BCCScheduler()), 
-		        new BacktrackHomomorphism(new NFC2()),
-		        new BacktrackHomomorphism(new SimpleFC()),
-		        new BacktrackHomomorphism(new BCCScheduler(), new NFC2()) };
+		        new BacktrackHomomorphism(), new BacktrackHomomorphism(new BCCScheduler()),
+		        new BacktrackHomomorphism(new NFC2()), new BacktrackHomomorphism(new NFC2WithLimit(8)),
+		        new BacktrackHomomorphism(new SimpleFC()), new BacktrackHomomorphism(new BCCScheduler(), new NFC2()) };
 
 	}
 
@@ -185,13 +184,11 @@ public final class TestUtil {
 				try {
 					FileUtils.deleteDirectory(file);
 				} catch (IOException e) {
-					throw new IOError(new Error("I can't delete the file "
-							+ file.getAbsolutePath(), e));
+					throw new IOError(new Error("I can't delete the file " + file.getAbsolutePath(), e));
 				}
 			} else {
 				if (!file.delete()) {
-					throw new IOError(new Error("I can't delete the file "
-							+ file.getAbsolutePath()));
+					throw new IOError(new Error("I can't delete the file " + file.getAbsolutePath()));
 				}
 			}
 		}

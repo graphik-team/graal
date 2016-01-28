@@ -42,11 +42,10 @@
  */
 package fr.lirmm.graphik.graal.homomorphism;
 
-import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
@@ -236,19 +235,22 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 		if (level >= 0) {
 			try {
 				if (level == 0) { // first call
-					if (isHomomorphism(vars[level].preAtoms, g)) {
+					// check if the full instantiated atoms from the query are
+					// in the data
+					if (BacktrackUtils.isHomomorphism(vars[level].preAtoms, g, this.index, this.compilation)) {
 						++level;
+						if (level > levelMax) { // there is no variable
+							level = -1;
+							if (profiler != null) {
+								profiler.stop("backtracking time");
+							}
+							return solutionFound(vars, ans);
+						}
 					} else {
 						--level;
 					}
 				}
-				if (level > levelMax) { // there is no variable
-					level = -1;
-					if (profiler != null) {
-						profiler.stop("backtracking time");
-					}
-					return solutionFound(vars, ans);
-				}
+
 				while (level > 0) {
 					++nbCall;
 					currentVar = vars[level];
@@ -322,7 +324,7 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 	}
 
 	private boolean getFirstValue(Var var, AtomSet g) throws AtomSetException {
-		var.domain = fc.getCandidatsIterator(g, var);
+		var.domain = fc.getCandidatsIterator(g, var, this.index, this.compilation);
 		return this.hasMoreValues(var, g);
 	}
 
@@ -337,7 +339,7 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 				var.image = DefaultTermFactory.instance().createConstant(var.image.getLabel());
 			}
 
-			if (scheduler.isAllowed(var, var.image) && isHomomorphism(var.preAtoms, g)) {
+			if (scheduler.isAllowed(var, var.image)) {
 				if (fc.checkForward(var, g, this.index, this.compilation)) {
 					return true;
 				}
@@ -359,8 +361,8 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 
 		// initialisation preAtoms and postAtoms Collections
 		for (int i = 0; i < vars.length; ++i) {
-			vars[i].preAtoms = new LinkedList<Atom>();
-			vars[i].postAtoms = new LinkedList<Atom>();
+			vars[i].preAtoms = new TreeSet<Atom>();
+			vars[i].postAtoms = new TreeSet<Atom>();
 		}
 
 		//
@@ -377,32 +379,5 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 			vars[rank].preAtoms.add(a);
 		}
 	}
-
-	private boolean isHomomorphism(Collection<Atom> atomsFrom, AtomSet atomsTo) throws AtomSetException {
-		for (Atom atom : atomsFrom) {
-			Atom image = BacktrackUtils.createImageOf(atom, this.index);
-			boolean contains = false;
-			if (profiler != null) {
-				profiler.start("atom comparaison");
-			}
-
-			for (Atom a : this.compilation.getRewritingOf(image)) {
-				if (atomsTo.contains(a)) {
-					contains = true;
-					break;
-				}
-			}
-
-			// contains = atomsTo.contains(image);
-			if (profiler != null) {
-				profiler.stop("atom comparaison");
-			}
-			if (!contains)
-				return false;
-		}
-		return true;
-	}
-
-
 
 }

@@ -47,6 +47,9 @@ import java.util.List;
 import java.util.Map;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
@@ -67,6 +70,34 @@ public final class BacktrackUtils {
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * 
+	 * @param atomsFrom
+	 * @param atomsTo
+	 * @param index
+	 * @param rc
+	 * @return
+	 * @throws AtomSetException
+	 */
+	public static boolean isHomomorphism(Iterable<Atom> atomsFrom, AtomSet atomsTo, Map<Variable, Var> index,
+	    RulesCompilation rc) throws AtomSetException {
+		for (Atom atom : atomsFrom) {
+			Atom image = BacktrackUtils.createImageOf(atom, index);
+			boolean contains = false;
+
+			for (Atom a : rc.getRewritingOf(image)) {
+				if (atomsTo.contains(a)) {
+					contains = true;
+					break;
+				}
+			}
+
+			if (!contains)
+				return false;
+		}
+		return true;
+	}
 
 	/**
 	 * @param atom

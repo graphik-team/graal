@@ -42,7 +42,9 @@
  */
 package fr.lirmm.graphik.graal.homomorphism.forward_checking;
 
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -72,7 +74,7 @@ public class NFC2 implements ForwardChecking {
 	/**
 	 * A data extension for variable indexed by level
 	 */
-	private VarData[]           data;
+	protected VarData[] data;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -88,6 +90,11 @@ public class NFC2 implements ForwardChecking {
 
 		for (int i = 0; i < vars.length; ++i) {
 			vars[i].forwardNeighbors = new TreeSet<Var>();
+			this.data[vars[i].level] = new VarData();
+			this.data[vars[i].level].candidats = new Set[vars[i].level];
+			this.data[vars[i].level].tmp = new TreeSet<Term>();
+			this.data[vars[i].level].toCheckAfterAssignment = new LinkedList<Atom>();
+
 			for (Atom a : vars[i].postAtoms) {
 				for (Term t : a.getTerms(Type.VARIABLE)) {
 					Var v = map.get((Variable) t);
@@ -97,10 +104,26 @@ public class NFC2 implements ForwardChecking {
 				}
 			}
 
-			this.data[vars[i].level] = new VarData();
-			this.data[vars[i].level].candidats = new Set[vars[i].level];
-			this.data[vars[i].level].tmp = new TreeSet<Term>();
+			for (Atom a : vars[i].preAtoms) {
+				int cpt = 0;
+				boolean toAdd = true;
+				for (Term t : a.getTerms()) {
+					if (!t.isConstant()) {
+						if (t.equals(vars[i].value))
+							++cpt;
+						else
+							toAdd = false;
+					}
+				}
+				if (cpt > 1)
+					toAdd = true;
+
+				if (toAdd) {
+					this.data[vars[i].level].toCheckAfterAssignment.add(a);
+				}
+			}
 		}
+
 	}
 
 	@Override
@@ -119,6 +142,7 @@ public class NFC2 implements ForwardChecking {
 		boolean contains;
 		for (Atom atom : v.postAtoms) {
 			contains = false;
+			Set<Var> forwardNeighborsInThisAtom = new TreeSet<Var>();
 
 			for (Atom a : rc.getRewritingOf(atom)) {
 
@@ -130,6 +154,7 @@ public class NFC2 implements ForwardChecking {
 					Var z = map.get(t);
 					if (!t.isConstant() && z.level > v.level) {
 						postV[i] = z;
+						forwardNeighborsInThisAtom.add(z);
 					}
 				}
 
@@ -148,7 +173,7 @@ public class NFC2 implements ForwardChecking {
 			}
 
 			if (contains) {
-				for (Var z : v.forwardNeighbors) {
+				for (Var z : forwardNeighborsInThisAtom) {
 					if (this.data[z.level].candidats[v.level] == null) {
 						this.data[z.level].candidats[v.level] = new TreeSet<Term>(this.data[z.level].tmp);
 					} else {
@@ -165,11 +190,17 @@ public class NFC2 implements ForwardChecking {
 	}
 
 	@Override
-	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var) throws AtomSetException {
+	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Map<Variable, Var> map, RulesCompilation rc)
+	    throws AtomSetException {
 		if (this.data[var.level].candidats == null || this.data[var.level].candidats[var.level - 1] == null) {
-			return new CloseableIteratorAdapter<Term>(g.termsIterator());
+			return new HomomorphismIteratorChecker(var, new CloseableIteratorAdapter<Term>(g.termsIterator()),
+			                                       var.preAtoms, g, map, rc);
 		} else {
-			return new CloseableIteratorAdapter<Term>(this.data[var.level].candidats[var.level - 1].iterator());
+			return new HomomorphismIteratorChecker(
+			                                       var,
+			                                       new CloseableIteratorAdapter<Term>(
+			                                                                          this.data[var.level].candidats[var.level - 1].iterator()),
+			                                       this.data[var.level].toCheckAfterAssignment, g, map, rc);
 		}
 	}
 
@@ -181,8 +212,9 @@ public class NFC2 implements ForwardChecking {
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	private class VarData {
-		Set<Term>[] candidats;
-		Set<Term>    tmp;
+	protected class VarData {
+		Set<Term>[]      candidats;
+		Set<Term>        tmp;
+		Collection<Atom> toCheckAfterAssignment;
 	}
 }

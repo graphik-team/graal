@@ -65,13 +65,18 @@ public class NoFC implements ForwardChecking {
 	}
 
 	@Override
-	public boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc) {
+	public boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc) throws AtomSetException {
 		return true;
 	}
 
 	@Override
-	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var) throws AtomSetException {
-		return new CloseableIteratorAdapter<Term>(g.termsIterator());
+	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Map<Variable, Var> map, RulesCompilation rc)
+	    throws AtomSetException {
+		return new HomomorphismIteratorChecker(var, new CloseableIteratorAdapter<Term>(g.termsIterator()),
+		                                       var.preAtoms, g, map, rc);
+
 	}
+
+
 
 }
