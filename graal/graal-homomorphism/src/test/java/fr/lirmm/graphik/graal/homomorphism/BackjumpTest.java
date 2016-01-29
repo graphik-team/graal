@@ -80,7 +80,8 @@ public class BackjumpTest {
 
 		ConjunctiveQuery query = DlgpParser.parseQuery("?(X1,X2,X3,X4,X5,X6) :- p12(X1,X2), p23(X2,X3), p24(X2,X4), p15(X1,X5), p56(X5,X6).");
 
-		Homomorphism h = new BacktrackHomomorphism(new BCC());
+		BCC bcc = new BCC();
+		Homomorphism h = new BacktrackHomomorphism(bcc.getBCCScheduler(), bcc.getBCCBackJumping());
 		h.setProfiler(new Profiler());
 		CloseableIterator results = h.execute(query, data);
 		while (results.hasNext()) {

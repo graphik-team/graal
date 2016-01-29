@@ -62,20 +62,25 @@ final class TestUtil {
 
 	public static HomomorphismWithCompilation[] getHomomorphismsWithCompilation() {
 
+		BCC bcc = new BCC();
+
 		return new HomomorphismWithCompilation[] { new BacktrackHomomorphism(),
-		        new BacktrackHomomorphism(new BCC()), new BacktrackHomomorphism(new NFC2()),
-		        new BacktrackHomomorphism(new BCC(), new NFC2()) };
+		        new BacktrackHomomorphism(bcc.getBCCScheduler(), bcc.getBCCBackJumping()),
+		        new BacktrackHomomorphism(new NFC2()),
+		        new BacktrackHomomorphism(bcc.getBCCScheduler(), new NFC2(), bcc.getBCCBackJumping()) };
 
 	}
 
 	public static Homomorphism[] getHomomorphisms() {
 
+		BCC bcc = new BCC();
+
 		return new Homomorphism[] { RecursiveBacktrackHomomorphism.instance(),
 		        new BacktrackHomomorphism(),
-		        new BacktrackHomomorphism(new BCC()), new BacktrackHomomorphism(new NFC2()),
+		        new BacktrackHomomorphism(bcc.getBCCScheduler(), bcc.getBCCBackJumping()), new BacktrackHomomorphism(new NFC2()),
 		        new BacktrackHomomorphism(new SimpleFC()),
-		        new BacktrackHomomorphism(new BCC(), new SimpleFC()),
-		        new BacktrackHomomorphism(new BCC(), new NFC2()) };
+		        new BacktrackHomomorphism(bcc.getBCCScheduler(), new SimpleFC(), bcc.getBCCBackJumping()),
+		        new BacktrackHomomorphism(bcc.getBCCScheduler(), new NFC2(), bcc.getBCCBackJumping()) };
 
 	}
 
