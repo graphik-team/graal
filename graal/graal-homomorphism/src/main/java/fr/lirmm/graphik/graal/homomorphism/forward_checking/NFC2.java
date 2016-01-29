@@ -47,6 +47,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
@@ -54,7 +55,6 @@ import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackUtils;
 import fr.lirmm.graphik.graal.homomorphism.Var;
@@ -89,20 +89,10 @@ public class NFC2 implements ForwardChecking {
 		this.data = new VarData[vars.length];
 
 		for (int i = 0; i < vars.length; ++i) {
-			vars[i].postVars = new TreeSet<Var>();
 			this.data[vars[i].level] = new VarData();
-			this.data[vars[i].level].candidats = new Set[vars[i].level];
+			this.data[vars[i].level].candidats = new TreeMap<Var, AcceptableCandidats>();
 			this.data[vars[i].level].tmp = new TreeSet<Term>();
 			this.data[vars[i].level].toCheckAfterAssignment = new LinkedList<Atom>();
-
-			for (Atom a : vars[i].postAtoms) {
-				for (Term t : a.getTerms(Type.VARIABLE)) {
-					Var v = map.get((Variable) t);
-					if (v.level > i) {
-						vars[i].postVars.add(v);
-					}
-				}
-			}
 
 			for (Atom a : vars[i].preAtoms) {
 				int cpt = 0;
@@ -122,26 +112,40 @@ public class NFC2 implements ForwardChecking {
 					this.data[vars[i].level].toCheckAfterAssignment.add(a);
 				}
 			}
+
+			AcceptableCandidats previous = new AcceptableCandidats();
+			for (Var z : vars[i].preVars) {
+				AcceptableCandidats ac = new AcceptableCandidats();
+				ac.candidats = new TreeSet<Term>();
+				ac.previous = previous.candidats;
+				previous = ac;
+
+				this.data[vars[i].level].candidats.put(z, ac);
+			}
+			this.data[vars[i].level].init = previous.init;
+			this.data[vars[i].level].realCandidats = previous.candidats;
 		}
 	}
 
 	@Override
 	public boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc) throws AtomSetException {
 
+		// clear all computed candidats for post variables
 		for (Var z : v.postVars) {
 			this.data[z.level].tmp.clear();
-
-			if (this.data[z.level].candidats[v.level - 1] != null) {
-				this.data[z.level].candidats[v.level] = new TreeSet<Term>(this.data[z.level].candidats[v.level - 1]);
-			} else {
-				this.data[z.level].candidats[v.level] = null;
+			AcceptableCandidats ac = this.data[z.level].candidats.get(v);
+			ac.candidats.clear();
+			ac.init = false;
+			if (ac.previous != null) {
+				ac.candidats.addAll(ac.previous);
+				ac.init = true;
 			}
 		}
 
 		boolean contains;
 		for (Atom atom : v.postAtoms) {
 			contains = false;
-			Set<Var> forwardNeighborsInThisAtom = new TreeSet<Var>();
+			Set<Var> postVarsFromThisAtom = new TreeSet<Var>();
 
 			for (Atom a : rc.getRewritingOf(atom)) {
 
@@ -153,7 +157,7 @@ public class NFC2 implements ForwardChecking {
 					Var z = map.get(t);
 					if (!t.isConstant() && z.level > v.level) {
 						postV[i] = z;
-						forwardNeighborsInThisAtom.add(z);
+						postVarsFromThisAtom.add(z);
 					}
 				}
 
@@ -172,11 +176,14 @@ public class NFC2 implements ForwardChecking {
 			}
 
 			if (contains) {
-				for (Var z : forwardNeighborsInThisAtom) {
-					if (this.data[z.level].candidats[v.level] == null) {
-						this.data[z.level].candidats[v.level] = new TreeSet<Term>(this.data[z.level].tmp);
+				// set computed candidats for post variables
+				for (Var z : postVarsFromThisAtom) {
+					AcceptableCandidats ac = this.data[z.level].candidats.get(v);
+					if (ac.init) {
+						ac.candidats.retainAll(this.data[z.level].tmp);
 					} else {
-						this.data[z.level].candidats[v.level].retainAll(this.data[z.level].tmp);
+						ac.candidats.addAll(this.data[z.level].tmp);
+						ac.init = true;
 					}
 				}
 			} else {
@@ -191,15 +198,15 @@ public class NFC2 implements ForwardChecking {
 	@Override
 	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Map<Variable, Var> map, RulesCompilation rc)
 	    throws AtomSetException {
-		if (this.data[var.level].candidats == null || this.data[var.level].candidats[var.level - 1] == null) {
-			return new HomomorphismIteratorChecker(var, new CloseableIteratorAdapter<Term>(g.termsIterator()),
-			                                       var.preAtoms, g, map, rc);
-		} else {
+		if (this.data[var.level].init) {
 			return new HomomorphismIteratorChecker(
 			                                       var,
 			                                       new CloseableIteratorAdapter<Term>(
-			                                                                          this.data[var.level].candidats[var.level - 1].iterator()),
+			                                                                          this.data[var.level].realCandidats.iterator()),
 			                                       this.data[var.level].toCheckAfterAssignment, g, map, rc);
+		} else {
+			return new HomomorphismIteratorChecker(var, new CloseableIteratorAdapter<Term>(g.termsIterator()),
+			                                       var.preAtoms, g, map, rc);
 		}
 	}
 
@@ -212,8 +219,16 @@ public class NFC2 implements ForwardChecking {
 	// /////////////////////////////////////////////////////////////////////////
 
 	protected class VarData {
-		Set<Term>[]      candidats;
+		Map<Var, AcceptableCandidats> candidats;
+		Set<Term>                     realCandidats;
+		Boolean                       init = false;
 		Set<Term>        tmp;
 		Collection<Atom> toCheckAfterAssignment;
+	}
+
+	protected class AcceptableCandidats {
+		Set<Term> candidats;
+		Set<Term> previous;
+		Boolean   init = false;
 	}
 }

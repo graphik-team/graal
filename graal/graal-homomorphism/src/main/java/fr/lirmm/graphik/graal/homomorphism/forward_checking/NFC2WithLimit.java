@@ -105,14 +105,17 @@ public class NFC2WithLimit extends NFC2 implements ForwardChecking {
 	@Override
 	public boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc) throws AtomSetException {
 
+		// clear all computed candidats for post variables
 		for (Var z : v.postVars) {
-			super.data[z.level].tmp.clear();
+			this.data[z.level].tmp.clear();
 			this.dataWithLimit[z.level].atomsToCheck.removeAll(v.postAtoms);
 
-			if (super.data[z.level].candidats[v.level - 1] != null) {
-				super.data[z.level].candidats[v.level] = new TreeSet<Term>(this.data[z.level].candidats[v.level - 1]);
-			} else {
-				super.data[z.level].candidats[v.level] = null;
+			AcceptableCandidats ac = this.data[z.level].candidats.get(v);
+			ac.candidats.clear();
+			ac.init = false;
+			if (ac.previous != null) {
+				ac.candidats.addAll(ac.previous);
+				ac.init = true;
 			}
 		}
 
@@ -122,7 +125,7 @@ public class NFC2WithLimit extends NFC2 implements ForwardChecking {
 			int cpt = 0;
 
 			Iterator<Atom> rewIt = rc.getRewritingOf(atom).iterator();
-			Set<Var> forwardNeighborsInThisAtom = new TreeSet<Var>();
+			Set<Var> postVarsFromThisAtom = new TreeSet<Var>();
 
 			while (rewIt.hasNext() && cpt < LIMIT) {
 				Atom a = rewIt.next();
@@ -135,7 +138,7 @@ public class NFC2WithLimit extends NFC2 implements ForwardChecking {
 					Var z = map.get(t);
 					if (!t.isConstant() && z.level > v.level) {
 						postV[i] = z;
-						forwardNeighborsInThisAtom.add(z);
+						postVarsFromThisAtom.add(z);
 					}
 				}
 
@@ -155,16 +158,19 @@ public class NFC2WithLimit extends NFC2 implements ForwardChecking {
 			}
 
 			if (contains) {
-				for (Var z : forwardNeighborsInThisAtom) {
+				// set computed candidats for post variables
+				for (Var z : postVarsFromThisAtom) {
 					if (cpt >= LIMIT) {
 						if (z.preAtoms.contains(atom)) {
 							this.dataWithLimit[z.level].atomsToCheck.add(atom);
 						}
 					} else {
-						if (super.data[z.level].candidats[v.level] == null) {
-							super.data[z.level].candidats[v.level] = new TreeSet<Term>(this.data[z.level].tmp);
+						AcceptableCandidats ac = this.data[z.level].candidats.get(v);
+						if (ac.init) {
+							ac.candidats.retainAll(this.data[z.level].tmp);
 						} else {
-							super.data[z.level].candidats[v.level].retainAll(this.data[z.level].tmp);
+							ac.candidats.addAll(this.data[z.level].tmp);
+							ac.init = true;
 						}
 					}
 				}
@@ -180,16 +186,16 @@ public class NFC2WithLimit extends NFC2 implements ForwardChecking {
 	@Override
 	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Map<Variable, Var> map, RulesCompilation rc)
 	    throws AtomSetException {
-		if (this.data[var.level].candidats == null || this.data[var.level].candidats[var.level - 1] == null) {
-			return new HomomorphismIteratorChecker(var, new CloseableIteratorAdapter<Term>(g.termsIterator()),
-			                                       var.preAtoms, g, map, rc);
-		} else {
+		if (this.data[var.level].init) {
 			this.dataWithLimit[var.level].atomsToCheck.addAll(this.data[var.level].toCheckAfterAssignment);
 			return new HomomorphismIteratorChecker(
 			                                       var,
 			                                       new CloseableIteratorAdapter<Term>(
-			                                                                          this.data[var.level].candidats[var.level - 1].iterator()),
+			                                                                          this.data[var.level].realCandidats.iterator()),
 			                                       this.dataWithLimit[var.level].atomsToCheck, g, map, rc);
+		} else {
+			return new HomomorphismIteratorChecker(var, new CloseableIteratorAdapter<Term>(g.termsIterator()),
+			                                       var.preAtoms, g, map, rc);
 		}
 	}
 
