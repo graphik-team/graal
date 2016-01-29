@@ -1,4 +1,4 @@
-# Graal [![Build Status](https://travis-ci.org/graphik-team/graal.svg?branch=master)](https://travis-ci.org/graphik-team/graal)
+# Graal [![Build Status](https://travis-ci.org/graphik-team/graal.svg?branch=master)](https://travis-ci.org/graphik-team/graal/branches)
 
 [See Graal homepage](https://graphik-team.github.io/graal)
 
