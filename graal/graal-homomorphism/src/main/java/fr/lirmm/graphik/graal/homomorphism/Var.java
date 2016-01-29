@@ -43,12 +43,14 @@
 package fr.lirmm.graphik.graal.homomorphism;
 
 import java.util.Collection;
+import java.util.NavigableSet;
 import java.util.Set;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -73,7 +75,7 @@ public class Var implements Comparable<Var> {
 
 	// Forward Checking
 	public CloseableIterator<Term> domain;
-	public Set<Var>         preVars;
+	public NavigableSet<Var>       preVars;
 	public Set<Var>         postVars;
 
 	// BackJumping

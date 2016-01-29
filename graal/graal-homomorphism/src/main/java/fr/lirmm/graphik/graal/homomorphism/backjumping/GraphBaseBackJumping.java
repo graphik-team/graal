@@ -46,9 +46,6 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.Var;
 
@@ -72,18 +69,7 @@ public class GraphBaseBackJumping implements BackJumping {
 		this.data = new VarData[vars.length];
 
 		for (int i = 0; i < vars.length; ++i) {
-			vars[i].preVars = new TreeSet<Var>();
-			for (Atom a : vars[i].preAtoms) {
-				for (Term t : a.getTerms(Type.VARIABLE)) {
-					Var v = map.get((Variable) t);
-					if (v.level > i) {
-						vars[i].preVars.add(v);
-					}
-				}
-			}
-
 			this.data[vars[i].level] = new VarData();
-			this.data[vars[i].level].preVars = new TreeSet<Var>();
 			this.data[vars[i].level].backjumpSet = new TreeSet<Var>();
 		}
 	}
@@ -93,8 +79,8 @@ public class GraphBaseBackJumping implements BackJumping {
 		int ret = var.previousLevel;
 
 		Var v = null, y = null;
-		if (!this.data[var.level].preVars.isEmpty()) {
-			v = this.data[var.level].preVars.last();
+		if (!var.preVars.isEmpty()) {
+			v = var.preVars.last();
 		}
 		if (!this.data[var.level].backjumpSet.isEmpty()) {
 			y = this.data[var.level].backjumpSet.last();
@@ -103,7 +89,7 @@ public class GraphBaseBackJumping implements BackJumping {
 			}
 		}
 		if (v != null && !vars[v.level].success) {
-			this.data[v.level].backjumpSet.addAll(this.data[var.level].preVars);
+			this.data[v.level].backjumpSet.addAll(var.preVars);
 			this.data[v.level].backjumpSet.addAll(this.data[var.level].backjumpSet);
 			this.data[v.level].backjumpSet.remove(v);
 			ret = v.level;
@@ -118,7 +104,6 @@ public class GraphBaseBackJumping implements BackJumping {
 	// /////////////////////////////////////////////////////////////////////////
 
 	private class VarData {
-		public SortedSet<Var> preVars;
 		public SortedSet<Var> backjumpSet;
 	}
 }

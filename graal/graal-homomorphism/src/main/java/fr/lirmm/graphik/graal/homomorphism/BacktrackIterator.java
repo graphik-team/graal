@@ -80,7 +80,7 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 	private InMemoryAtomSet    h;
 	private AtomSet            g;
 	private RulesCompilation   compilation;
-	private Substitution       next      = null;
+	private Substitution       next   = null;
 
 	private Var[]              vars;
 	private Map<Variable, Var> index;
@@ -106,8 +106,7 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 	 * @param g
 	 */
 	public BacktrackIterator(InMemoryAtomSet h, AtomSet g, List<Term> ans, Scheduler scheduler, ForwardChecking fc,
-	    BackJumping bj,
-	    RulesCompilation compilation) {
+	    BackJumping bj, RulesCompilation compilation) {
 
 		this.h = h;
 		this.g = g;
@@ -337,9 +336,9 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 			// TODO explicit var.success
 			var.success = false;
 			var.image = var.domain.next();
-			
+
 			// Fix for existential variable in data
-			if(!var.image.isConstant()) {
+			if (!var.image.isConstant()) {
 				var.image = DefaultTermFactory.instance().createConstant(var.image.getLabel());
 			}
 
@@ -367,6 +366,8 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 		for (int i = 0; i < vars.length; ++i) {
 			vars[i].preAtoms = new TreeSet<Atom>();
 			vars[i].postAtoms = new TreeSet<Atom>();
+			vars[i].postVars = new TreeSet<Var>();
+			vars[i].preVars = new TreeSet<Var>();
 		}
 
 		//
@@ -381,6 +382,18 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 			}
 			vars[rank].postAtoms.remove(a);
 			vars[rank].preAtoms.add(a);
+		}
+
+		for (int i = 0; i < vars.length; ++i) {
+			for (Atom a : vars[i].postAtoms) {
+				for (Term t : a.getTerms(Type.VARIABLE)) {
+					Var v = this.index.get((Variable) t);
+					if (v.level > i) {
+						vars[i].postVars.add(v);
+						v.preVars.add(vars[i]);
+					}
+				}
+			}
 		}
 	}
 
