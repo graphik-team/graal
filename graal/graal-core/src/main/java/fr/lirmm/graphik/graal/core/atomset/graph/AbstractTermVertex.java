@@ -45,17 +45,27 @@
  */
 package fr.lirmm.graphik.graal.core.atomset.graph;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.api.core.AbstractTerm;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.IteratorAdapter;
 
 abstract class AbstractTermVertex extends AbstractTerm implements TermVertex {
 
 	private static final long serialVersionUID = -1087277093687686210L;
 
 	private final TreeSet<Edge> edges = new TreeSet<Edge>();
+	private final TreeMap<Predicate, TreeMap<Integer, Collection<Atom>>> index            = new TreeMap<Predicate, TreeMap<Integer, Collection<Atom>>>();
 
 	// /////////////////////////////////////////////////////////////////////////
 	// ABSTRACT METHODS
@@ -70,6 +80,44 @@ abstract class AbstractTermVertex extends AbstractTerm implements TermVertex {
 	@Override
 	public Set<Edge> getEdges() {
 		return this.edges;
+	}
+
+	@Override
+	public GIterator<Atom> getNeighbors(Predicate p, int position) {
+		Iterator<Atom> it = null;
+		TreeMap<Integer, Collection<Atom>> map = this.index.get(p);
+		if(map != null) {
+			Collection<Atom> collection = map.get(position);
+			if(collection != null) {
+				it = collection.iterator();
+			}
+		}
+		if (it == null) {
+			it = Collections.<Atom> emptyIterator();
+		}
+		return new IteratorAdapter<Atom>(it);
+	}
+
+	@Override
+	public void add(Atom a) {
+		TreeMap<Integer, Collection<Atom>> map = this.index.get(a.getPredicate());
+		if (map == null) {
+			map = new TreeMap<Integer, Collection<Atom>>();
+			this.index.put(a.getPredicate(), map);
+		}
+
+		int i = -1;
+		for (Term t : a) {
+			++i;
+			if (this.equals(t)) {
+				Collection<Atom> collection = map.get(i);
+				if (collection == null) {
+					collection = new LinkedList<Atom>();
+					map.put(i, collection);
+				}
+				collection.add(a);
+			}
+		}
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

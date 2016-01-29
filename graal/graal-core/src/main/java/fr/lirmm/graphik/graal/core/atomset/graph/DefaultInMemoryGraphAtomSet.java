@@ -60,8 +60,6 @@ import fr.lirmm.graphik.graal.core.atomset.AbstractInMemoryAtomSet;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.stream.GIterator;
 import fr.lirmm.graphik.util.stream.IteratorAdapter;
-import fr.lirmm.graphik.util.stream.filter.Filter;
-import fr.lirmm.graphik.util.stream.filter.FilterIterator;
 
 /**
  * Implementation of a graph in memory. Inherits directly from Fact.
@@ -128,25 +126,24 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 		return this.atoms.contains(atom);
 	}
 
-
-
 	@Override
-	public GIterator<Atom> match(final Atom atom) {
+	public GIterator<Atom> match(Atom atom) {
 		final AtomMatcher matcher = new AtomMatcher(atom);
-		Iterator<Edge> it = null;
+		int i = -1;
 		for (Term t : atom.getTerms()) {
+			++i;
 			if (t.isConstant()) {
-				it = this.getTermVertex(t).getEdges().iterator();
-				break;
+				return this.getTermVertex(t).getNeighbors(atom.getPredicate(), i);
 			}
 		}
-
-		return new FilterIterator<Edge, Atom>(new IteratorAdapter<Edge>(it), new Filter<Edge>() {
-			@Override
-			public boolean filter(Edge a) {
-				return matcher.check((Atom) a);
-			}
-		});
+		return null;
+		// return new FilterIterator<Edge, Atom>(new IteratorAdapter<Edge>(it),
+		// new Filter<Edge>() {
+		// @Override
+		// public boolean filter(Edge a) {
+		// return matcher.check((Atom) a);
+		// }
+		// });
 	}
 
 
@@ -222,8 +219,12 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 	boolean addAtomEdge(AtomEdge atom) {
 		boolean val = this.atoms.add(atom);
 		if (val) {
-			for (Vertex term : atom.getVertices()) {
-				term.getEdges().add(atom);
+			for (Vertex v : atom.getVertices()) {
+				v.getEdges().add(atom);
+				if (v instanceof TermVertex) {
+					TermVertex term = (TermVertex) v;
+					term.add(atom);
+				}
 			}
 		}
 		return val;
