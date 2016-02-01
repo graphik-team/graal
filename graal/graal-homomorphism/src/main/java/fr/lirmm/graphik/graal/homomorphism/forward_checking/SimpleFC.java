@@ -79,9 +79,6 @@ public class SimpleFC implements ForwardChecking {
 
 	@Override
 	public boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc) throws AtomSetException {
-		if (!BacktrackUtils.isHomomorphism(v.preAtoms, g, map, rc)) {
-			return false;
-		}
 
 		for (Atom atom : v.postAtoms) {
 			boolean contains = false;
