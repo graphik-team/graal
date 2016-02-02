@@ -60,6 +60,8 @@ import fr.lirmm.graphik.graal.core.atomset.AbstractInMemoryAtomSet;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.stream.GIterator;
 import fr.lirmm.graphik.util.stream.IteratorAdapter;
+import fr.lirmm.graphik.util.stream.filter.Filter;
+import fr.lirmm.graphik.util.stream.filter.FilterIterator;
 
 /**
  * Implementation of a graph in memory. Inherits directly from Fact.
@@ -129,23 +131,21 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 	@Override
 	public GIterator<Atom> match(Atom atom) {
 		final AtomMatcher matcher = new AtomMatcher(atom);
+		GIterator<Atom> it = null;
 		int i = -1;
 		for (Term t : atom.getTerms()) {
 			++i;
 			if (t.isConstant()) {
-				return this.getTermVertex(t).getNeighbors(atom.getPredicate(), i);
+				it = this.getTermVertex(t).getNeighbors(atom.getPredicate(), i);
 			}
 		}
-		return null;
-		// return new FilterIterator<Edge, Atom>(new IteratorAdapter<Edge>(it),
-		// new Filter<Edge>() {
-		// @Override
-		// public boolean filter(Edge a) {
-		// return matcher.check((Atom) a);
-		// }
-		// });
+		return new FilterIterator<Atom, Atom>(it, new Filter<Atom>() {
+			 @Override
+			 public boolean filter(Atom a) {
+			 return matcher.check((Atom) a);
+			}
+		});
 	}
-
 
 	@Override
 	public TreeSet<Term> getTerms() {
