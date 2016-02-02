@@ -122,8 +122,7 @@ public class NFC2 implements ForwardChecking {
 
 				this.data[vars[i].level].candidats.put(z, ac);
 			}
-			this.data[vars[i].level].init = previous.init;
-			this.data[vars[i].level].realCandidats = previous.candidats;
+			this.data[vars[i].level].last = previous;
 		}
 	}
 
@@ -207,11 +206,11 @@ public class NFC2 implements ForwardChecking {
 	@Override
 	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Map<Variable, Var> map, RulesCompilation rc)
 	    throws AtomSetException {
-		if (this.data[var.level].init) {
+		if (this.data[var.level].last.init) {
 			return new HomomorphismIteratorChecker(
 			                                       var,
 			                                       new CloseableIteratorAdapter<Term>(
-			                                                                          this.data[var.level].realCandidats.iterator()),
+			                                                                          this.data[var.level].last.candidats.iterator()),
 			                                       this.data[var.level].toCheckAfterAssignment, g, map, rc);
 		} else {
 			return new HomomorphismIteratorChecker(var, new CloseableIteratorAdapter<Term>(g.termsIterator()),
@@ -229,8 +228,7 @@ public class NFC2 implements ForwardChecking {
 
 	protected class VarData {
 		Map<Var, AcceptableCandidats> candidats;
-		Set<Term>                     realCandidats;
-		Boolean                       init = false;
+		AcceptableCandidats           last;
 		Set<Term>        tmp;
 		Collection<Atom> toCheckAfterAssignment;
 	}
