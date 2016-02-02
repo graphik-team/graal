@@ -132,7 +132,6 @@ public class NFC2 implements ForwardChecking {
 
 		// clear all computed candidats for post variables
 		for (Var z : v.postVars) {
-			this.data[z.level].tmp.clear();
 			AcceptableCandidats ac = this.data[z.level].candidats.get(v);
 			ac.candidats.clear();
 			ac.init = false;
@@ -176,15 +175,25 @@ public class NFC2 implements ForwardChecking {
 			}
 
 			if (contains) {
+				boolean isThereAnEmptiedList = false;
+				
 				// set computed candidats for post variables
 				for (Var z : postVarsFromThisAtom) {
-					AcceptableCandidats ac = this.data[z.level].candidats.get(v);
-					if (ac.init) {
-						ac.candidats.retainAll(this.data[z.level].tmp);
-					} else {
-						ac.candidats.addAll(this.data[z.level].tmp);
-						ac.init = true;
+					if (!isThereAnEmptiedList) {
+						AcceptableCandidats ac = this.data[z.level].candidats.get(v);
+						if (ac.init) {
+							ac.candidats.retainAll(this.data[z.level].tmp);
+							isThereAnEmptiedList |= ac.candidats.isEmpty();
+						} else {
+							ac.candidats.addAll(this.data[z.level].tmp);
+							ac.init = true;
+						}
 					}
+					this.data[z.level].tmp.clear();
+				}
+					
+				if (isThereAnEmptiedList) {
+					return false;
 				}
 			} else {
 				return false;
