@@ -45,8 +45,17 @@
  */
 package fr.lirmm.graphik.graal.homomorphism;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
+
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
+import fr.lirmm.graphik.graal.core.DefaultAtom;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.homomorphism.bbc.BCC;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.SimpleFC;
@@ -82,6 +91,17 @@ final class TestUtil {
 		        new BacktrackHomomorphism(bcc.getBCCScheduler(), new SimpleFC(), bcc.getBCCBackJumping()),
 		        new BacktrackHomomorphism(bcc.getBCCScheduler(), new NFC2(), bcc.getBCCBackJumping()) };
 
+	}
+	
+	public static void addNAtoms(InMemoryAtomSet to, int n, Predicate[] predicates, int domainSize, Random rand) {
+		for (int i = 0; i < n; ++i) {
+			int p = rand.nextInt(predicates.length);
+			List<Term> terms = new LinkedList<Term>();
+			for (int j = 0; j < predicates[p].getArity(); ++j) {
+				terms.add(DefaultTermFactory.instance().createConstant(rand.nextInt(domainSize)));
+			}
+			to.add(new DefaultAtom(predicates[p], terms));
+		}
 	}
 
 }
