@@ -56,6 +56,7 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackUtils;
 import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 
@@ -74,14 +75,26 @@ public class NFC2WithLimit extends NFC2 implements ForwardChecking {
 	 * A data extension for variable indexed by level
 	 */
 	protected VarDataWithLimit[] dataWithLimit;
-	private final int           LIMIT;
+	private final int            LIMIT;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
 	public NFC2WithLimit(int limit) {
-		super();
+		super(false);
+		this.LIMIT = limit;
+	}
+
+	/**
+	 * If enableCheckMode is true, NFC2 use AtomSet.contains(Atom) instead of
+	 * AtomSet.match(Atom) when there is an initialized set of candidates for
+	 * each variable.
+	 * 
+	 * @param enableCheckMode
+	 */
+	public NFC2WithLimit(int limit, boolean enableCheckMode) {
+		super(enableCheckMode);
 		this.LIMIT = limit;
 	}
 
@@ -98,105 +111,99 @@ public class NFC2WithLimit extends NFC2 implements ForwardChecking {
 		for (int i = 0; i < vars.length; ++i) {
 			this.dataWithLimit[vars[i].level] = new VarDataWithLimit();
 			this.dataWithLimit[vars[i].level].atomsToCheck = new TreeSet<Atom>();
-
 		}
-	}
-
-	@Override
-	public boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc) throws AtomSetException {
-
-		// clear all computed candidats for post variables
-		for (Var z : v.postVars) {
-			this.data[z.level].tmp.clear();
-			this.dataWithLimit[z.level].atomsToCheck.removeAll(v.postAtoms);
-
-			AcceptableCandidats ac = this.data[z.level].candidats.get(v);
-			ac.candidats.clear();
-			ac.init = false;
-			if (ac.previous != null) {
-				ac.candidats.addAll(ac.previous);
-				ac.init = true;
-			}
-		}
-
-		boolean contains;
-		for (Atom atom : v.postAtoms) {
-			contains = false;
-			int cpt = 0;
-
-			Iterator<Atom> rewIt = rc.getRewritingOf(atom).iterator();
-			Set<Var> postVarsFromThisAtom = new TreeSet<Var>();
-
-			while (rewIt.hasNext() && cpt < LIMIT) {
-				Atom a = rewIt.next();
-
-				// Compute post variables positions
-				Var postV[] = new Var[a.getPredicate().getArity()];
-				int i = -1;
-				for (Term t : a) {
-					++i;
-					Var z = map.get(t);
-					if (!t.isConstant() && z.level > v.level) {
-						postV[i] = z;
-						postVarsFromThisAtom.add(z);
-					}
-				}
-
-				Atom im = BacktrackUtils.createImageOf(a, map);
-				Iterator<? extends Atom> it = g.match(im);
-				while (it.hasNext() && cpt < LIMIT) {
-					i = -1;
-					++cpt;
-					for (Term t : it.next()) {
-						++i;
-						if (postV[i] != null) {
-							super.data[postV[i].level].tmp.add(t);
-						}
-					}
-					contains = true;
-				}
-			}
-
-			if (contains) {
-				// set computed candidats for post variables
-				for (Var z : postVarsFromThisAtom) {
-					if (cpt >= LIMIT) {
-						if (z.preAtoms.contains(atom)) {
-							this.dataWithLimit[z.level].atomsToCheck.add(atom);
-						}
-					} else {
-						AcceptableCandidats ac = this.data[z.level].candidats.get(v);
-						if (ac.init) {
-							ac.candidats.retainAll(this.data[z.level].tmp);
-						} else {
-							ac.candidats.addAll(this.data[z.level].tmp);
-							ac.init = true;
-						}
-					}
-				}
-			} else {
-				return false;
-			}
-
-		}
-
-		return true;
 	}
 
 	@Override
 	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Map<Variable, Var> map, RulesCompilation rc)
 	    throws AtomSetException {
-		if (this.data[var.level].init) {
+		if (this.data[var.level].last.init) {
 			this.dataWithLimit[var.level].atomsToCheck.addAll(this.data[var.level].toCheckAfterAssignment);
 			return new HomomorphismIteratorChecker(
-			                                       var,
-			                                       new CloseableIteratorAdapter<Term>(
-			                                                                          this.data[var.level].realCandidats.iterator()),
-			                                       this.dataWithLimit[var.level].atomsToCheck, g, map, rc);
+			        var,
+			        new CloseableIteratorAdapter<Term>(this.data[var.level].last.candidats.iterator()),
+			        this.dataWithLimit[var.level].atomsToCheck, g, map, rc
+			    );
 		} else {
 			return new HomomorphismIteratorChecker(var, new CloseableIteratorAdapter<Term>(g.termsIterator()),
 			                                       var.preAtoms, g, map, rc);
 		}
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	@Override
+    protected boolean select(Atom atom, Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc)
+	    throws AtomSetException {
+		boolean contains = false;
+		int nbAns = 0;
+		Iterator<Atom> rewIt = rc.getRewritingOf(atom).iterator();
+		Set<Var> postVarsFromThisAtom = new TreeSet<Var>();
+
+		while (rewIt.hasNext() && nbAns < LIMIT) {
+			Atom a = rewIt.next();
+			
+			Var[] postV = this.computePostVariablesPosition(a, v, map, postVarsFromThisAtom);
+			Atom im = BacktrackUtils.createImageOf(a, map);
+
+			Profiler profiler = this.getProfiler();
+			if (profiler != null) {
+				profiler.incr("#Select", 1);
+				profiler.start("SelectTime");
+			}
+			
+			int cpt = 0;
+			Iterator<? extends Atom> it = g.match(im);
+			while (it.hasNext() && nbAns < LIMIT) {
+				++nbAns;
+				++cpt;
+				int i = -1;
+				for (Term t : it.next()) {
+					++i;
+					if (postV[i] != null) {
+						this.data[postV[i].level].tmp.add(t);
+					}
+				}
+				contains = true;
+			}
+			
+			if (profiler != null) {
+				profiler.stop("SelectTime");
+				profiler.incr("#SelectAns", cpt);
+			}
+		}
+
+		boolean isThereAnEmptiedList = false;
+		if (contains) {
+			// set computed candidats for post variables
+			for (Var z : postVarsFromThisAtom) {
+				if (!isThereAnEmptiedList) {
+					if (nbAns >= LIMIT) {
+						this.dataWithLimit[z.level].atomsToCheck.add(atom);
+					} else {
+    					AcceptableCandidats ac = this.data[z.level].candidats.get(v);
+    					if (ac.init) {
+    						ac.candidats.retainAll(this.data[z.level].tmp);
+    						isThereAnEmptiedList |= ac.candidats.isEmpty();
+    					} else {
+    						ac.candidats.addAll(this.data[z.level].tmp);
+    						ac.init = true;
+    					}
+					}
+				}
+				this.data[z.level].tmp.clear();
+			}
+		}
+
+		return contains && !isThereAnEmptiedList;
+	}
+
+	@Override
+	protected void clear(Var v, Var z) {
+		super.clear(v, z);
+		this.dataWithLimit[z.level].atomsToCheck.removeAll(v.postAtoms);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

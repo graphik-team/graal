@@ -1,17 +1,3 @@
-package fr.lirmm.graphik.graal.homomorphism.forward_checking;
-
-import java.util.Map;
-
-import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.AtomSetException;
-import fr.lirmm.graphik.graal.api.core.RulesCompilation;
-import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.graal.homomorphism.Var;
-import fr.lirmm.graphik.util.AbstractProfilable;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
-
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
  * (Université de Montpellier & CNRS) (2014 - 2015)
@@ -54,46 +40,24 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
+package fr.lirmm.graphik.util;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class NoForwardChecking extends AbstractProfilable implements ForwardChecking {
+public class AbstractProfilable implements Profilable {
 
-	private static NoForwardChecking instance;
+	private Profiler profiler;
 
-	protected NoForwardChecking() {
-		super();
-	}
-
-	public static synchronized NoForwardChecking instance() {
-		if (instance == null)
-			instance = new NoForwardChecking();
-
-		return instance;
+	@Override
+	public void setProfiler(Profiler profiler) {
+		this.profiler = profiler;
 	}
 
 	@Override
-	public void init(Var[] vars, Map<Variable, Var> map) {
-	}
-
-	@Override
-	public boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc) {
-		return true;
-	}
-
-	@Override
-	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Map<Variable, Var> map, RulesCompilation rc)
-	    throws AtomSetException {
-		HomomorphismIteratorChecker tmp = new HomomorphismIteratorChecker(
-		        var,
-		        new CloseableIteratorAdapter<Term>(g.termsIterator()),
-		        var.preAtoms, g, map, rc
-		    );
-		tmp.setProfiler(this.getProfiler());
-		return tmp;
-
+	public Profiler getProfiler() {
+		return this.profiler;
 	}
 
 }

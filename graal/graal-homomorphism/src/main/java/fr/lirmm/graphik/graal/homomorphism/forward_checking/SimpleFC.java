@@ -52,6 +52,7 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackUtils;
 import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.util.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 
@@ -63,7 +64,7 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class SimpleFC implements ForwardChecking {
+public class SimpleFC extends AbstractProfilable implements ForwardChecking {
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -102,8 +103,13 @@ public class SimpleFC implements ForwardChecking {
 	@Override
 	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Map<Variable, Var> map, RulesCompilation rc)
 	    throws AtomSetException {
-		return new HomomorphismIteratorChecker(var, new CloseableIteratorAdapter<Term>(g.termsIterator()),
-		                                       var.preAtoms, g, map, rc);
+		HomomorphismIteratorChecker tmp = new HomomorphismIteratorChecker(
+		                                                                  var,
+		                                                                  new CloseableIteratorAdapter<Term>(
+		                                                                                                     g.termsIterator()),
+		                                                                  var.preAtoms, g, map, rc);
+		tmp.setProfiler(this.getProfiler());
+		return tmp;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

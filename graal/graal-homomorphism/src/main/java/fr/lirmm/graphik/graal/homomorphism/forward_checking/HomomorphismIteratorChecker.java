@@ -52,6 +52,8 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackUtils;
 import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.util.Profilable;
+import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
@@ -59,7 +61,7 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-class HomomorphismIteratorChecker extends AbstractCloseableIterator<Term> {
+class HomomorphismIteratorChecker extends AbstractCloseableIterator<Term> implements Profilable {
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -72,6 +74,7 @@ class HomomorphismIteratorChecker extends AbstractCloseableIterator<Term> {
 	private AtomSet                 g;
 	private Map<Variable, Var>      map;
 	private RulesCompilation        rc;
+	private Profiler                profiler;
 
 	/**
 	 * Check over it, the images for var such that there exists an homomorphism
@@ -122,6 +125,17 @@ class HomomorphismIteratorChecker extends AbstractCloseableIterator<Term> {
 		this.it.close();
 	}
 
+
+	@Override
+	public void setProfiler(Profiler profiler) {
+		this.profiler = profiler;
+	}
+
+	@Override
+	public Profiler getProfiler() {
+		return this.profiler;
+	}
+
 	// /////////////////////////////////////////////////////////////////////////
 	// OBJECT OVERRIDE METHODS
 	// /////////////////////////////////////////////////////////////////////////
@@ -132,7 +146,16 @@ class HomomorphismIteratorChecker extends AbstractCloseableIterator<Term> {
 
 	private boolean check(Term t) throws AtomSetException {
 		this.var.image = t;
-		return BacktrackUtils.isHomomorphism(h, g, map, rc);
+		Profiler profiler = this.getProfiler();
+		if (profiler != null) {
+			profiler.incr("#isHomomorphism", 1);
+			profiler.start("isHomomorphismTime");
+		}
+		boolean res = BacktrackUtils.isHomomorphism(h, g, map, rc);
+		if (profiler != null) {
+			profiler.stop("isHomomorphismTime");
+		}
+		return res;
 	}
 
 }

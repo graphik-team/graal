@@ -42,6 +42,7 @@
  */
 package fr.lirmm.graphik.graal.homomorphism;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -50,9 +51,11 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
+import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -100,6 +103,7 @@ public final class BacktrackUtils {
 	}
 
 	/**
+	 * 
 	 * @param atom
 	 * @param images
 	 * @return
@@ -118,7 +122,7 @@ public final class BacktrackUtils {
 	}
 
 	/**
-	 * Return the index of the specified variable.
+	 * Return the image of the specified variable (extracted from map).
 	 * 
 	 * @param var
 	 * @return
@@ -130,6 +134,23 @@ public final class BacktrackUtils {
 		} else {
 			return t;
 		}
+	}
+
+	/**
+	 * Extract image of variables from Var class in a Substitution.
+	 * 
+	 * @param vars
+	 * @return
+	 */
+	public static Substitution createSubstitution(Iterator<Var> vars) {
+		Substitution s = new TreeMapSubstitution();
+		while (vars.hasNext()) {
+			Var v = vars.next();
+			if (v.image != null) {
+				s.put(v.value, v.image);
+			}
+		}
+		return s;
 	}
 
 }

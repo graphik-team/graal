@@ -124,6 +124,22 @@ public class Profiler {
 	}
 
 	/**
+	 * Increment an integer attached to the specified key.
+	 * 
+	 * @param key
+	 * @param value
+	 */
+	public void incr(String key, int value) {
+		Object o = this.map.get(key);
+		if (o == null) {
+			o = 0;
+		}
+		Integer i = (Integer) o;
+		i += value;
+		this.map.put(key, i);
+	}
+
+	/**
 	 * Get data/time attached to the specified key.
 	 * 
 	 * @param key

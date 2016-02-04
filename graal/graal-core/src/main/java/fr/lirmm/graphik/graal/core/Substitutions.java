@@ -1,17 +1,3 @@
-package fr.lirmm.graphik.graal.homomorphism.forward_checking;
-
-import java.util.Map;
-
-import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.AtomSetException;
-import fr.lirmm.graphik.graal.api.core.RulesCompilation;
-import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.graal.homomorphism.Var;
-import fr.lirmm.graphik.util.AbstractProfilable;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
-
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
  * (Université de Montpellier & CNRS) (2014 - 2015)
@@ -54,46 +40,54 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
+package fr.lirmm.graphik.graal.core;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.Term;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class NoForwardChecking extends AbstractProfilable implements ForwardChecking {
+public final class Substitutions {
 
-	private static NoForwardChecking instance;
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
 
-	protected NoForwardChecking() {
-		super();
+	private Substitutions() {
+
 	}
 
-	public static synchronized NoForwardChecking instance() {
-		if (instance == null)
-			instance = new NoForwardChecking();
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
-		return instance;
-	}
+	/**
+	 * Create a new Atom which is the image of the specified atom by replacing
+	 * the specified term by the specified image.
+	 * 
+	 * @param atom
+	 * @param term
+	 *            the term to replace
+	 * @param image
+	 *            the image of the specified term
+	 * @return a new Atom which is the image of the specified atom.
+	 */
+	public static Atom createImageOf(Atom atom, Term term, Term image) {
+		List<Term> termsSubstitut = new LinkedList<Term>();
+		for (Term t : atom.getTerms()) {
+			if (term.equals(t)) {
+				termsSubstitut.add(image);
+			} else {
+				termsSubstitut.add(t);
+			}
+		}
 
-	@Override
-	public void init(Var[] vars, Map<Variable, Var> map) {
-	}
-
-	@Override
-	public boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc) {
-		return true;
-	}
-
-	@Override
-	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Map<Variable, Var> map, RulesCompilation rc)
-	    throws AtomSetException {
-		HomomorphismIteratorChecker tmp = new HomomorphismIteratorChecker(
-		        var,
-		        new CloseableIteratorAdapter<Term>(g.termsIterator()),
-		        var.preAtoms, g, map, rc
-		    );
-		tmp.setProfiler(this.getProfiler());
-		return tmp;
-
+		return new DefaultAtom(atom.getPredicate(), termsSubstitut);
 	}
 
 }

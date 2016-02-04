@@ -54,10 +54,15 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.graal.core.Substitutions;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackUtils;
 import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.util.AbstractProfilable;
+import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 
@@ -69,16 +74,32 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class NFC2 implements ForwardChecking {
+public class NFC2 extends AbstractProfilable implements ForwardChecking {
 
 	/**
 	 * A data extension for variable indexed by level
 	 */
 	protected VarData[] data;
+	private boolean     checkMode;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
+
+	public NFC2() {
+		this(false);
+	}
+
+	/**
+	 * If enableCheckMode is true, NFC2 use AtomSet.contains(Atom) instead of
+	 * AtomSet.match(Atom) when there is an initialized set of candidates for
+	 * each variable.
+	 * 
+	 * @param enableCheckMode
+	 */
+	public NFC2(boolean enableCheckMode) {
+		this.checkMode = enableCheckMode;
+	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
@@ -117,7 +138,7 @@ public class NFC2 implements ForwardChecking {
 			for (Var z : vars[i].preVars) {
 				AcceptableCandidats ac = new AcceptableCandidats();
 				ac.candidats = new TreeSet<Term>();
-				ac.previous = previous.candidats;
+				ac.previous = previous;
 				previous = ac;
 
 				this.data[vars[i].level].candidats.put(z, ac);
@@ -131,73 +152,34 @@ public class NFC2 implements ForwardChecking {
 
 		// clear all computed candidats for post variables
 		for (Var z : v.postVars) {
-			AcceptableCandidats ac = this.data[z.level].candidats.get(v);
-			ac.candidats.clear();
-			ac.init = false;
-			if (ac.previous != null) {
-				ac.candidats.addAll(ac.previous);
-				ac.init = true;
-			}
+			this.clear(v, z);
 		}
 
-		boolean contains;
 		for (Atom atom : v.postAtoms) {
-			contains = false;
-			Set<Var> postVarsFromThisAtom = new TreeSet<Var>();
-
-			for (Atom a : rc.getRewritingOf(atom)) {
-
-				// Compute post variables positions
-				Var postV[] = new Var[a.getPredicate().getArity()];
-				int i = -1;
-				for (Term t : a) {
-					++i;
+			boolean runCheck = true;
+			if (checkMode) {
+				int i = 0;
+				for (Term t : atom.getTerms(Type.VARIABLE)) {
 					Var z = map.get(t);
-					if (!t.isConstant() && z.level > v.level) {
-						postV[i] = z;
-						postVarsFromThisAtom.add(z);
-					}
-				}
-
-				Atom im = BacktrackUtils.createImageOf(a, map);
-				Iterator<? extends Atom> it = g.match(im);
-				while (it.hasNext()) {
-					i = -1;
-					for (Term t : it.next()) {
+					if (z.level > v.level) {
 						++i;
-						if (postV[i] != null) {
-							this.data[postV[i].level].tmp.add(t);
+						if (i > 1 || !this.data[z.level].candidats.get(v).init) {
+							runCheck = false;
+							break;
 						}
 					}
-					contains = true;
 				}
 			}
 
-			if (contains) {
-				boolean isThereAnEmptiedList = false;
-				
-				// set computed candidats for post variables
-				for (Var z : postVarsFromThisAtom) {
-					if (!isThereAnEmptiedList) {
-						AcceptableCandidats ac = this.data[z.level].candidats.get(v);
-						if (ac.init) {
-							ac.candidats.retainAll(this.data[z.level].tmp);
-							isThereAnEmptiedList |= ac.candidats.isEmpty();
-						} else {
-							ac.candidats.addAll(this.data[z.level].tmp);
-							ac.init = true;
-						}
-					}
-					this.data[z.level].tmp.clear();
-				}
-					
-				if (isThereAnEmptiedList) {
+			if (checkMode && runCheck) {
+				if (!check(atom, v, g, map, rc)) {
 					return false;
 				}
 			} else {
-				return false;
+				if (!select(atom, v, g, map, rc)) {
+					return false;
+				}
 			}
-
 		}
 
 		return true;
@@ -206,25 +188,135 @@ public class NFC2 implements ForwardChecking {
 	@Override
 	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Map<Variable, Var> map, RulesCompilation rc)
 	    throws AtomSetException {
+		HomomorphismIteratorChecker tmp;
 		if (this.data[var.level].last.init) {
-			return new HomomorphismIteratorChecker(
-			                                       var,
-			                                       new CloseableIteratorAdapter<Term>(
-			                                                                          this.data[var.level].last.candidats.iterator()),
-			                                       this.data[var.level].toCheckAfterAssignment, g, map, rc);
+			tmp = new HomomorphismIteratorChecker(
+			        var,
+			        new CloseableIteratorAdapter<Term>(this.data[var.level].last.candidats.iterator()),
+			        this.data[var.level].toCheckAfterAssignment, g, map, rc
+			    );
 		} else {
-			return new HomomorphismIteratorChecker(var, new CloseableIteratorAdapter<Term>(g.termsIterator()),
+			tmp = new HomomorphismIteratorChecker(var, new CloseableIteratorAdapter<Term>(g.termsIterator()),
 			                                       var.preAtoms, g, map, rc);
 		}
+		tmp.setProfiler(this.getProfiler());
+		return tmp;
 	}
-
-	// /////////////////////////////////////////////////////////////////////////
-	// OBJECT OVERRIDE METHODS
-	// /////////////////////////////////////////////////////////////////////////
 
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
+
+	protected boolean select(Atom atom, Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc)
+	    throws AtomSetException {
+		boolean contains = false;
+		Set<Var> postVarsFromThisAtom = new TreeSet<Var>();
+
+		for (Atom a : rc.getRewritingOf(atom)) {
+
+			Var postV[] = this.computePostVariablesPosition(a, v, map, postVarsFromThisAtom);
+			Atom im = BacktrackUtils.createImageOf(a, map);
+
+			Profiler profiler = this.getProfiler();
+			if (profiler != null) {
+				profiler.incr("#Select", 1);
+				profiler.start("SelectTime");
+			}
+			int nbAns = 0;
+			Iterator<? extends Atom> it = g.match(im);
+			while (it.hasNext()) {
+				++nbAns;
+				int i = -1;
+				for (Term t : it.next()) {
+					++i;
+					if (postV[i] != null) {
+						this.data[postV[i].level].tmp.add(t);
+					}
+				}
+				contains = true;
+			}
+			if (profiler != null) {
+				profiler.stop("SelectTime");
+				profiler.incr("#SelectAns", nbAns);
+			}
+		}
+
+		boolean isThereAnEmptiedList = false;
+		if (contains) {
+			// set computed candidats for post variables
+			for (Var z : postVarsFromThisAtom) {
+				if (!isThereAnEmptiedList) {
+					AcceptableCandidats ac = this.data[z.level].candidats.get(v);
+					if (ac.init) {
+						ac.candidats.retainAll(this.data[z.level].tmp);
+						isThereAnEmptiedList |= ac.candidats.isEmpty();
+					} else {
+						ac.candidats.addAll(this.data[z.level].tmp);
+						ac.init = true;
+					}
+				}
+				this.data[z.level].tmp.clear();
+			}
+		}
+
+		return contains && !isThereAnEmptiedList;
+	}
+
+	protected boolean check(Atom atom, Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc)
+	    throws AtomSetException {
+		Substitution s = BacktrackUtils.createSubstitution(map.values().iterator());
+		// FIXME bug with p(X,Y,Z) -> q(X,Y) in the compilation
+		boolean contains = false;
+		for (Atom a : rc.getRewritingOf(atom)) {
+			Atom im = s.createImageOf(a);
+			Var z = map.get(im.getTerms(Type.VARIABLE).iterator().next());
+
+			Set<Term> candidats = this.data[z.level].candidats.get(v).candidats;
+			Iterator<Term> it = candidats.iterator();
+			while (it.hasNext()) {
+				Atom fullInstantiatedAtom = Substitutions.createImageOf(im, z.value, it.next());
+				Profiler profiler = this.getProfiler();
+				if (profiler != null) {
+					profiler.incr("#check", 1);
+					profiler.start("checkTime");
+				}
+				if (!g.contains(fullInstantiatedAtom)) {
+					it.remove();
+				}
+				if (profiler != null) {
+					profiler.stop("checkTime");
+				}
+			}
+			if (!candidats.isEmpty()) {
+				contains = true;
+			}
+		}
+		return contains;
+	}
+
+	protected Var[] computePostVariablesPosition(Atom a, Var v, Map<Variable, Var> map, Set<Var> postVarsFromThisAtom) {
+		Var postV[] = new Var[a.getPredicate().getArity()];
+		int i = -1;
+		for (Term t : a) {
+			++i;
+			Var z = map.get(t);
+			if (!t.isConstant() && z.level > v.level) {
+				postV[i] = z;
+				postVarsFromThisAtom.add(z);
+			}
+		}
+		return postV;
+	}
+
+	protected void clear(Var v, Var z) {
+		AcceptableCandidats ac = this.data[z.level].candidats.get(v);
+		ac.candidats.clear();
+		ac.init = false;
+		if (ac.previous.init) {
+			ac.candidats.addAll(ac.previous.candidats);
+			ac.init = true;
+		}
+	}
 
 	protected class VarData {
 		Map<Var, AcceptableCandidats> candidats;
@@ -235,7 +327,7 @@ public class NFC2 implements ForwardChecking {
 
 	protected class AcceptableCandidats {
 		Set<Term> candidats;
-		Set<Term> previous;
+		AcceptableCandidats previous;
 		Boolean   init = false;
 	}
 }
