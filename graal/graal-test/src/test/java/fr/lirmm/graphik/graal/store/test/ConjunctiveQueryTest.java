@@ -409,7 +409,6 @@ public class ConjunctiveQueryTest {
 
 			Assert.assertTrue(subReader.hasNext());
 			sub = subReader.next();
-			System.out.println(sub);
 			Assert.assertEquals(3, sub.getTerms().size());
 			Assert.assertEquals(sub.createImageOf(DefaultTermFactory.instance().createVariable("X")),
 			    DefaultTermFactory.instance().createConstant("a"));
