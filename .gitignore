@@ -63,3 +63,5 @@ tags
 ######################
 
 graal-examples/src/main/java/fr/lirmm/graphik/graal/trash/*
+graal-examples/src/main/java/fr/lirmm/graphik/graal/test/*
+*.patch
