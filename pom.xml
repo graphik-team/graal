@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>fr.lirmm.graphik</groupId>
@@ -6,11 +7,11 @@
 	<version>1.1.2-SNAPSHOT</version>
 	<name>fr.lirmm.graphik:graal-main-project</name>
 	<packaging>pom</packaging>
-	
+
 	<description>Graal is a java toolkit dedicated to ontological query answering in the framework of existential rules. We consider knowledge bases composed of data and an ontology expressed by existential rules. The main features of Graal are the following: a basic layer that provides generic interfaces to store and query various kinds of data, forward chaining and query rewriting
 algorithms, structural analysis of decidability properties of a rule set, a textual format and its parser, and import of OWL 2 files. We describe in more detail the query rewriting algorithms, which rely on original techniques, and report some experiments.
 	</description>
-	
+
 	<url>https://graphik-team.github.io/graal/</url>
 	<inceptionYear>2014</inceptionYear>
 	<licenses>
@@ -47,7 +48,7 @@ algorithms, structural analysis of decidability properties of a rule set, a text
 			<organization>INRIA</organization>
 		</developer>
 	</developers>
-	
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>1.6</jdk.version>
@@ -60,6 +61,15 @@ algorithms, structural analysis of decidability properties of a rule set, a text
 		<module>graal-distro</module>
 		<module>graal-incubator</module>
 	</modules>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.jacoco</groupId>
+			<artifactId>org.jacoco.core</artifactId>
+			<version>0.7.5.201505241946</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 
 	<build>
 		<plugins>
@@ -150,7 +160,7 @@ algorithms, structural analysis of decidability properties of a rule set, a text
 					<effort>Max</effort>
 					<threshold>Low</threshold>
 					<xmlOutput>true</xmlOutput>
-				  <excludeFilterFile>${project.basedir}/config/findbugs/exclude-filter.xml</excludeFilterFile>
+					<excludeFilterFile>${project.basedir}/config/findbugs/exclude-filter.xml</excludeFilterFile>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -160,6 +170,23 @@ algorithms, structural analysis of decidability properties of a rule set, a text
 				<configuration>
 					<stagingDirectory>/tmp/graal-site/</stagingDirectory>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.7.5.201505241946</version>
+				<executions>
+					<!-- prepare agent for measuring unit tests -->
+					<execution>
+						<id>prepare-unit-tests</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+						<configuration>
+							<destFile>${project.basedir}/target/jacoco.exec</destFile>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
@@ -176,7 +203,7 @@ algorithms, structural analysis of decidability properties of a rule set, a text
 			</plugin>
 		</plugins>
 	</reporting>
-	
+
 	<distributionManagement>
 		<snapshotRepository>
 			<id>ossrh</id>
