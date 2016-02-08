@@ -53,6 +53,7 @@ import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackUtils;
 import fr.lirmm.graphik.graal.homomorphism.Var;
 import fr.lirmm.graphik.util.AbstractProfilable;
+import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 
@@ -81,15 +82,23 @@ public class SimpleFC extends AbstractProfilable implements ForwardChecking {
 	@Override
 	public boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc) throws AtomSetException {
 
+		Profiler profiler = this.getProfiler();
 		for (Atom atom : v.postAtoms) {
 			boolean contains = false;
 			Atom im = BacktrackUtils.createImageOf(atom, map);
 
+			if (profiler != null) {
+				profiler.incr("#selectOne", 1);
+				profiler.start("selectOneTime");
+			}
 			for (Atom a : rc.getRewritingOf(im)) {
 				if (g.match(a).hasNext()) {
 					contains = true;
 					break;
 				}
+			}
+			if (profiler != null) {
+				profiler.stop("selectOneTime");
 			}
 
 			if (!contains) {

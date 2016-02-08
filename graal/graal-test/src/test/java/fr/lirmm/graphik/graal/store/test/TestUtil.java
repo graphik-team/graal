@@ -66,6 +66,7 @@ import fr.lirmm.graphik.graal.homomorphism.RecursiveBacktrackHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.GraphBaseBackJumping;
 import fr.lirmm.graphik.graal.homomorphism.bbc.BCC;
+import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC0;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2WithLimit;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.SimpleFC;
@@ -121,6 +122,7 @@ public final class TestUtil {
 		        new BacktrackHomomorphism(),
 		        new BacktrackHomomorphism(bcc0.getBCCScheduler(), bcc0.getBCCBackJumping()),
 		        new BacktrackHomomorphism(bcc1.getBCCScheduler(), bcc1.getBCCBackJumping()),
+		        new BacktrackHomomorphism(new NFC0()),
 		        new BacktrackHomomorphism(new NFC2()), new BacktrackHomomorphism(new SimpleFC()),
 		        new BacktrackHomomorphism(new NFC2WithLimit(8)),
 		        new BacktrackHomomorphism(bcc2.getBCCScheduler(), new NFC2(), bcc2.getBCCBackJumping()) };

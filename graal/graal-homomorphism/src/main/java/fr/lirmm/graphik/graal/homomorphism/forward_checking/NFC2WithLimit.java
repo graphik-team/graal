@@ -117,17 +117,20 @@ public class NFC2WithLimit extends NFC2 implements ForwardChecking {
 	@Override
 	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Map<Variable, Var> map, RulesCompilation rc)
 	    throws AtomSetException {
+		HomomorphismIteratorChecker tmp;
 		if (this.data[var.level].last.init) {
 			this.dataWithLimit[var.level].atomsToCheck.addAll(this.data[var.level].toCheckAfterAssignment);
-			return new HomomorphismIteratorChecker(
+			tmp = new HomomorphismIteratorChecker(
 			        var,
 			        new CloseableIteratorAdapter<Term>(this.data[var.level].last.candidats.iterator()),
 			        this.dataWithLimit[var.level].atomsToCheck, g, map, rc
 			    );
 		} else {
-			return new HomomorphismIteratorChecker(var, new CloseableIteratorAdapter<Term>(g.termsIterator()),
+			tmp = new HomomorphismIteratorChecker(var, new CloseableIteratorAdapter<Term>(g.termsIterator()),
 			                                       var.preAtoms, g, map, rc);
 		}
+		tmp.setProfiler(this.getProfiler());
+		return tmp;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

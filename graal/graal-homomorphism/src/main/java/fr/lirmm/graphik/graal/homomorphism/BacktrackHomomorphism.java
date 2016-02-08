@@ -133,6 +133,7 @@ public class BacktrackHomomorphism implements HomomorphismWithCompilation<Conjun
 	@Override
 	public void setProfiler(Profiler profiler) {
 		this.profiler = profiler;
+		this.fc.setProfiler(profiler);
 	}
 
 	@Override
