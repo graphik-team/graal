@@ -139,8 +139,11 @@ class DefaultRdbmsAtomIterator extends AbstractIterator<Atom> implements Closeab
 
 	@Override
     public void close() {
-		this.predicateIt.close();
-		this.atomIt.close();
+		if (this.predicateIt != null)
+			this.predicateIt.close();
+
+		if (this.atomIt != null)
+			this.atomIt.close();
     }
 
 }
