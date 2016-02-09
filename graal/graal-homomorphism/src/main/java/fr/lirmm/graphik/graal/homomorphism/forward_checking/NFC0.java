@@ -42,7 +42,6 @@
  */
 package fr.lirmm.graphik.graal.homomorphism.forward_checking;
 
-import java.util.Iterator;
 import java.util.Map;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
@@ -97,15 +96,8 @@ public class NFC0 extends AbstractNFC implements ForwardChecking {
 				}
 			}
 
-
 			if (checkThisAtom) {
-				if (!this.data[varToAssign.level].candidats.get(v).init) {
-					this.data[varToAssign.level].candidats.get(v).init = true;
-					Iterator<Term> it = g.termsIterator();
-					while (it.hasNext())
-						this.data[varToAssign.level].candidats.get(v).candidats.add(it.next());
-				}
-				if (!check(atom, v, varToAssign, g, map, rc)) {
+				if (!select(atom, v, g, map, rc)) {
 					return false;
 				}
 			}

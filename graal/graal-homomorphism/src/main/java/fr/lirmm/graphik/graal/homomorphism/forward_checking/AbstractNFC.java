@@ -171,6 +171,61 @@ public abstract class AbstractNFC extends AbstractProfilable implements ForwardC
 		return contains;
 	}
 
+	protected boolean select(Atom atom, Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc)
+	    throws AtomSetException {
+		boolean contains = false;
+		Set<Var> postVarsFromThisAtom = new TreeSet<Var>();
+
+		for (Atom a : rc.getRewritingOf(atom)) {
+
+			Var postV[] = this.computePostVariablesPosition(a, v, map, postVarsFromThisAtom);
+			Atom im = BacktrackUtils.createImageOf(a, map);
+
+			Profiler profiler = this.getProfiler();
+			if (profiler != null) {
+				profiler.incr("#Select", 1);
+				profiler.start("SelectTime");
+			}
+			int nbAns = 0;
+			Iterator<? extends Atom> it = g.match(im);
+			while (it.hasNext()) {
+				++nbAns;
+				int i = -1;
+				for (Term t : it.next()) {
+					++i;
+					if (postV[i] != null) {
+						this.data[postV[i].level].tmp.add(t);
+					}
+				}
+				contains = true;
+			}
+			if (profiler != null) {
+				profiler.stop("SelectTime");
+				profiler.incr("#SelectAns", nbAns);
+			}
+		}
+
+		boolean isThereAnEmptiedList = false;
+		if (contains) {
+			// set computed candidats for post variables
+			for (Var z : postVarsFromThisAtom) {
+				if (!isThereAnEmptiedList) {
+					AcceptableCandidats ac = this.data[z.level].candidats.get(v);
+					if (ac.init) {
+						ac.candidats.retainAll(this.data[z.level].tmp);
+						isThereAnEmptiedList |= ac.candidats.isEmpty();
+					} else {
+						ac.candidats.addAll(this.data[z.level].tmp);
+						ac.init = true;
+					}
+				}
+				this.data[z.level].tmp.clear();
+			}
+		}
+
+		return contains && !isThereAnEmptiedList;
+	}
+
 	protected Var[] computePostVariablesPosition(Atom a, Var v, Map<Variable, Var> map, Set<Var> postVarsFromThisAtom) {
 		Var postV[] = new Var[a.getPredicate().getArity()];
 		int i = -1;
