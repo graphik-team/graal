@@ -40,7 +40,7 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
+/**
  * 
  */
 package fr.lirmm.graphik.graal.core.atomset.graph;
@@ -62,71 +62,81 @@ import fr.lirmm.graphik.graal.api.core.Term.Type;
  */
 class AtomEdge extends AbstractAtom implements Edge {
 
-    private PredicateVertex predicate;
-    private List<TermVertex> terms;
+	private PredicateVertex  predicate;
+	private List<TermVertex> terms;
 
-    // /////////////////////////////////////////////////////////////////////////
-    // CONSTRUCTORS
-    // /////////////////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
 
-    /**
-     * @param predicate
-     * @param terms
-     */
-    public AtomEdge(PredicateVertex predicate, List<TermVertex> terms) {
-        this.predicate = predicate;
-        this.terms = terms;
-    }
+	/**
+	 * @param predicate
+	 * @param terms
+	 */
+	public AtomEdge(PredicateVertex predicate, List<TermVertex> terms) {
+		this.predicate = predicate;
+		this.terms = terms;
+	}
 
-    // /////////////////////////////////////////////////////////////////////////
-    // IATOM METHODS
-    // /////////////////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////////////////
+	// IATOM METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
-    @Override
-    public void setPredicate(Predicate predicate) {
-        this.predicate = new PredicateVertex(predicate);
-    }
+	@Override
+	public void setPredicate(Predicate predicate) {
+		this.predicate = new PredicateVertex(predicate);
+	}
 
-    @Override
-    public Predicate getPredicate() {
-        return this.predicate;
-    }
+	@Override
+	public Predicate getPredicate() {
+		return this.predicate;
+	}
 
-    @Override
-    public void setTerm(int index, Term term) {
+	@Override
+	public void setTerm(int index, Term term) {
 		this.terms.set(index, TermVertexFactory.instance().createTerm(term));
-    }
+	}
 
-    @Override
-    public TermVertex getTerm(int index) {
-        return this.terms.get(index);
-    }
+	@Override
+	public TermVertex getTerm(int index) {
+		return this.terms.get(index);
+	}
 
-    @Override
-    public List<Term> getTerms() {
-        return new LinkedList<Term>(this.terms);
-    }
+	@Override
+	public int indexOf(Term t) {
+		return this.terms.indexOf(t);
+	}
 
-    @Override
-    public Collection<Term> getTerms(Type type) {
-        Collection<Term> typedTerms = new LinkedList<Term>();
-        for (Term term : this.terms)
-            if (type.equals(term.getType()))
-                typedTerms.add(term);
+	@Override
+	public boolean contains(Term t) {
+		return this.terms.contains(t);
+	}
 
-        return typedTerms;
-    }
+	@Override
+	public List<Term> getTerms() {
+		return new LinkedList<Term>(this.terms);
+	}
 
-    // /////////////////////////////////////////////////////////////////////////
-    // EDGE METHODS
-    // /////////////////////////////////////////////////////////////////////////
+	@Override
+	public Collection<Term> getTerms(Type type) {
+		Collection<Term> typedTerms = new LinkedList<Term>();
+		for (Term term : this.terms)
+			if (type.equals(term.getType()))
+				typedTerms.add(term);
 
-    @Override
-    public Set<Vertex> getVertices() {
-        Set<Vertex> set = new TreeSet<Vertex>(new VertexComparator());
-        set.addAll(terms);
-        set.add(predicate);
-        return set;
-    }
+		return typedTerms;
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// EDGE METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	@Override
+	public Set<Vertex> getVertices() {
+		Set<Vertex> set = new TreeSet<Vertex>(new VertexComparator());
+		set.addAll(terms);
+		set.add(predicate);
+		return set;
+	}
 
 }

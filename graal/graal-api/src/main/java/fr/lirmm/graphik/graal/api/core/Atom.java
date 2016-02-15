@@ -40,7 +40,7 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- package fr.lirmm.graphik.graal.api.core;
+package fr.lirmm.graphik.graal.api.core;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -52,7 +52,6 @@ import fr.lirmm.graphik.util.string.AppendableToStringBuilder;
  * This interface represents a logical atom like p(X,Y).
  */
 public interface Atom extends Comparable<Atom>, Iterable<Term>, AppendableToStringBuilder {
-
 
 	/**
 	 * Set the Predicate of this Atom.
@@ -83,6 +82,24 @@ public interface Atom extends Comparable<Atom>, Iterable<Term>, AppendableToStri
 	 * @return
 	 */
 	Term getTerm(int index);
+
+	/**
+	 * Returns the index of the first occurrence of the specified term in the
+	 * term list of this atom, or -1 if this atom does not contain the term.
+	 * 
+	 * @param t
+	 *            term to search for
+	 * @return
+	 */
+	int indexOf(Term t);
+
+	/**
+	 * Returns true if the term list contains the specified term.
+	 * 
+	 * @param t
+	 * @return
+	 */
+	boolean contains(Term t);
 
 	/**
 	 * Get an ordered List that represents the terms of this Atom.

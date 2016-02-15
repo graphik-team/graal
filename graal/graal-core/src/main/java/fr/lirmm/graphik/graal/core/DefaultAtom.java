@@ -112,23 +112,20 @@ public class DefaultAtom extends AbstractAtom implements Serializable {
 		return typedTerms;
 	}
 
-	/**
-	 * Verifies if a certain term is contained in the atom or not.
-	 */
+	@Override
 	public boolean contains(Term term) {
-		int size = terms.size();
-		for (int i = 0; i < size; i++) {
-			if (terms.get(i).equals(term)) {
-				return true;
-			}
-		}
-		return false;
+		return this.terms.contains(term);
+	}
+
+	@Override
+	public int indexOf(Term term) {
+		return this.terms.indexOf(term);
 	}
 
 	/**
 	 * Returns the index of a given term in the atom.
 	 */
-	public int[] getIndexOf(Term term) {
+	public int[] indexesOf(Term term) {
 		int[] result = null;
 		int resultCounter = 0;
 		int termsSize = terms.size();
