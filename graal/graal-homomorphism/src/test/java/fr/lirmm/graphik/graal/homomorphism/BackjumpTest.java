@@ -51,6 +51,8 @@ import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.homomorphism.bbc.BCC;
+import fr.lirmm.graphik.graal.homomorphism.bootstrapper.StupidBootstrapper;
+import fr.lirmm.graphik.graal.homomorphism.forward_checking.NoForwardChecking;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -81,7 +83,8 @@ public class BackjumpTest {
 		ConjunctiveQuery query = DlgpParser.parseQuery("?(X1,X2,X3,X4,X5,X6) :- p12(X1,X2), p23(X2,X3), p24(X2,X4), p15(X1,X5), p56(X5,X6).");
 
 		BCC bcc = new BCC();
-		Homomorphism h = new BacktrackHomomorphism(bcc.getBCCScheduler(), bcc.getBCCBackJumping());
+		Homomorphism h = new BacktrackHomomorphism(bcc.getBCCScheduler(), StupidBootstrapper.instance(),
+		                                           NoForwardChecking.instance(), bcc.getBCCBackJumping());
 		h.setProfiler(new Profiler());
 		CloseableIterator results = h.execute(query, data);
 		while (results.hasNext()) {

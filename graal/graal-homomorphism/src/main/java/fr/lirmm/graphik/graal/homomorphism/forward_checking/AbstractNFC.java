@@ -59,6 +59,7 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.Substitutions;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackUtils;
+import fr.lirmm.graphik.graal.homomorphism.HomomorphismIteratorChecker;
 import fr.lirmm.graphik.graal.homomorphism.Var;
 import fr.lirmm.graphik.util.AbstractProfilable;
 import fr.lirmm.graphik.util.Profiler;
@@ -113,6 +114,11 @@ public abstract class AbstractNFC extends AbstractProfilable implements ForwardC
 			}
 			this.data[vars[i].level].last = previous;
 		}
+	}
+
+	@Override
+	public boolean isInit(Var v) {
+		return this.data[v.level].last.init;
 	}
 
 	@Override

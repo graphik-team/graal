@@ -40,37 +40,23 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.homomorphism.forward_checking;
-
-import java.util.Map;
+package fr.lirmm.graphik.graal.homomorphism.bootstrapper;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.Var;
-import fr.lirmm.graphik.util.Profilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface ForwardChecking extends Profilable {
+public interface Bootstrapper {
 
-	void init(Var[] vars, Map<Variable, Var> map);
-
-	boolean isInit(Var v);
-
-	boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc) throws AtomSetException;
-
-	/**
-	 * @param var
-	 * @return
-	 * @throws AtomSetException
-	 */
-	CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Map<Variable, Var> map, RulesCompilation rc)
+	CloseableIterator<Term> exec(Var v, InMemoryAtomSet query, AtomSet data, RulesCompilation compilation)
 	    throws AtomSetException;
 
 }

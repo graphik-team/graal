@@ -40,37 +40,96 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.homomorphism.forward_checking;
+package fr.lirmm.graphik.graal.homomorphism.bootstrapper;
 
-import java.util.Map;
+import java.util.Iterator;
 
+import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.Var;
-import fr.lirmm.graphik.util.Profilable;
+import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
+import fr.lirmm.graphik.util.stream.CloseableIteratorAggregator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface ForwardChecking extends Profilable {
+public class DefaultBootstrapper implements Bootstrapper {
 
-	void init(Var[] vars, Map<Variable, Var> map);
+	private static DefaultBootstrapper instance;
 
-	boolean isInit(Var v);
+	protected DefaultBootstrapper() {
+		super();
+	}
 
-	boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc) throws AtomSetException;
+	public static synchronized DefaultBootstrapper instance() {
+		if (instance == null)
+			instance = new DefaultBootstrapper();
 
-	/**
-	 * @param var
-	 * @return
-	 * @throws AtomSetException
-	 */
-	CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Map<Variable, Var> map, RulesCompilation rc)
-	    throws AtomSetException;
+		return instance;
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	//
+	// /////////////////////////////////////////////////////////////////////////
+
+	@Override
+	public CloseableIterator<Term> exec(final Var v, InMemoryAtomSet query, final AtomSet data,
+	    RulesCompilation compilation) throws AtomSetException {
+		Iterator<Atom> it = v.postAtoms.iterator();
+		if (it.hasNext()) {
+			Atom a = it.next();
+			final Iterator<Atom> rewritingOf = compilation.getRewritingOf(a).iterator();
+
+			AbstractCloseableIterator<CloseableIterator<Term>> metaIt = new AbstractCloseableIterator<CloseableIterator<Term>>() {
+
+				CloseableIterator<Term> next = null;
+
+				@Override
+				public void close() {
+					if (next != null)
+						this.next.close();
+				}
+
+				@Override
+				public boolean hasNext() {
+					try {
+						if (next == null && rewritingOf.hasNext()) {
+							Atom im = rewritingOf.next();
+							Predicate predicate = im.getPredicate();
+							int pos = im.indexOf(v.value);
+							next = new CloseableIteratorAdapter<Term>(data.termsByPredicatePosition(predicate, pos));
+						}
+					} catch (AtomSetException e) {
+
+					}
+
+					return next != null;
+				}
+
+				@Override
+				public CloseableIterator<Term> next() {
+					if (next == null)
+						this.hasNext();
+
+					CloseableIterator<Term> ret = next;
+					next = null;
+					return ret;
+				}
+
+			};
+
+			return new CloseableIteratorAggregator<Term>(metaIt);
+		} else {
+			return new CloseableIteratorAdapter<Term>(data.termsIterator());
+		}
+	}
 
 }

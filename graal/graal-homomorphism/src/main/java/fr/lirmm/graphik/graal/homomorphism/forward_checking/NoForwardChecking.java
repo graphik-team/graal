@@ -7,6 +7,7 @@ import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.graal.homomorphism.HomomorphismIteratorChecker;
 import fr.lirmm.graphik.graal.homomorphism.Var;
 import fr.lirmm.graphik.util.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -76,6 +77,11 @@ public class NoForwardChecking extends AbstractProfilable implements ForwardChec
 
 	@Override
 	public void init(Var[] vars, Map<Variable, Var> map) {
+	}
+
+	@Override
+	public boolean isInit(Var v) {
+		return false;
 	}
 
 	@Override

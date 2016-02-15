@@ -57,6 +57,7 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.homomorphism.bbc.BCC;
+import fr.lirmm.graphik.graal.homomorphism.bootstrapper.DefaultBootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC0;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.SimpleFC;
@@ -77,7 +78,8 @@ final class TestUtil {
 		return new HomomorphismWithCompilation[] { new BacktrackHomomorphism(),
 		        new BacktrackHomomorphism(bcc.getBCCScheduler(), bcc.getBCCBackJumping()),
 		        new BacktrackHomomorphism(new NFC0()), new BacktrackHomomorphism(new NFC2()),
-		        new BacktrackHomomorphism(bcc.getBCCScheduler(), new NFC2(), bcc.getBCCBackJumping()) };
+		        new BacktrackHomomorphism(bcc.getBCCScheduler(), DefaultBootstrapper.instance(), new NFC2(),
+		                                  bcc.getBCCBackJumping()) };
 
 	}
 
@@ -90,8 +92,10 @@ final class TestUtil {
 		        new BacktrackHomomorphism(bcc.getBCCScheduler(), bcc.getBCCBackJumping()),
 		        new BacktrackHomomorphism(new NFC0()), new BacktrackHomomorphism(new NFC2()),
 		        new BacktrackHomomorphism(new SimpleFC()),
-		        new BacktrackHomomorphism(bcc.getBCCScheduler(), new SimpleFC(), bcc.getBCCBackJumping()),
-		        new BacktrackHomomorphism(bcc.getBCCScheduler(), new NFC2(), bcc.getBCCBackJumping()) };
+		        new BacktrackHomomorphism(bcc.getBCCScheduler(), DefaultBootstrapper.instance(), new SimpleFC(),
+		                                  bcc.getBCCBackJumping()),
+		        new BacktrackHomomorphism(bcc.getBCCScheduler(), DefaultBootstrapper.instance(), new NFC2(),
+		                                  bcc.getBCCBackJumping()) };
 
 	}
 	

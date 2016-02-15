@@ -60,6 +60,7 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
+import fr.lirmm.graphik.graal.homomorphism.bootstrapper.Bootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.ForwardChecking;
 import fr.lirmm.graphik.util.Profilable;
 import fr.lirmm.graphik.util.Profiler;
@@ -74,6 +75,7 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
                                                                        Profilable {
 
 	private Scheduler          scheduler;
+	private Bootstrapper       bootstrapper;
 	private ForwardChecking    fc;
 	private BackJumping        bj;
 
@@ -105,13 +107,15 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 	 * @param h
 	 * @param g
 	 */
-	public BacktrackIterator(InMemoryAtomSet h, AtomSet g, List<Term> ans, Scheduler scheduler, ForwardChecking fc,
+	public BacktrackIterator(InMemoryAtomSet h, AtomSet g, List<Term> ans, Scheduler scheduler,
+	    Bootstrapper boostrapper, ForwardChecking fc,
 	    BackJumping bj, RulesCompilation compilation) {
 
 		this.h = h;
 		this.g = g;
 		this.ans = ans;
 		this.scheduler = scheduler;
+		this.bootstrapper = boostrapper;
 		this.fc = fc;
 		this.bj = bj;
 		this.compilation = compilation;
@@ -327,7 +331,13 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 	}
 
 	private boolean getFirstValue(Var var, AtomSet g) throws AtomSetException {
-		var.domain = fc.getCandidatsIterator(g, var, this.index, this.compilation);
+		if (fc.isInit(var)) {
+			var.domain = fc.getCandidatsIterator(g, var, this.index, this.compilation);
+		} else {
+			var.domain = new HomomorphismIteratorChecker(var, bootstrapper.exec(var, h, g, this.compilation),
+			                                             var.preAtoms, g,
+			                                             this.index, this.compilation);
+		}
 		return this.hasMoreValues(var, g);
 	}
 

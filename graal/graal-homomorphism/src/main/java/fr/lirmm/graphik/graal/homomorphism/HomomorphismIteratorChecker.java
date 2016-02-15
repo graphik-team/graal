@@ -40,7 +40,7 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.homomorphism.forward_checking;
+package fr.lirmm.graphik.graal.homomorphism;
 
 import java.util.Map;
 
@@ -50,8 +50,6 @@ import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.graal.homomorphism.BacktrackUtils;
-import fr.lirmm.graphik.graal.homomorphism.Var;
 import fr.lirmm.graphik.util.Profilable;
 import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
@@ -61,7 +59,7 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-class HomomorphismIteratorChecker extends AbstractCloseableIterator<Term> implements Profilable {
+public class HomomorphismIteratorChecker extends AbstractCloseableIterator<Term> implements Profilable {
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS

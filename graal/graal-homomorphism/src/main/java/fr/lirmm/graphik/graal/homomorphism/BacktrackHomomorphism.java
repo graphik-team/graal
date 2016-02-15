@@ -51,6 +51,8 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
 import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.NoBackJumping;
+import fr.lirmm.graphik.graal.homomorphism.bootstrapper.Bootstrapper;
+import fr.lirmm.graphik.graal.homomorphism.bootstrapper.DefaultBootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.ForwardChecking;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NoForwardChecking;
 import fr.lirmm.graphik.util.Profilable;
@@ -68,36 +70,75 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
  */
 public class BacktrackHomomorphism implements HomomorphismWithCompilation<ConjunctiveQuery, AtomSet>, Profilable {
 
-	private Profiler profiler = null;
-	private Scheduler scheduler;
+	private Profiler        profiler = null;
+	private Scheduler       scheduler;
+	private Bootstrapper    bootstrapper;
 	private ForwardChecking fc;
 	private BackJumping     bj;
 
 	public BacktrackHomomorphism() {
-		this(new DefaultScheduler(), NoForwardChecking.instance(), NoBackJumping.instance());
+		this(new DefaultScheduler(), DefaultBootstrapper.instance(), NoForwardChecking.instance(),
+		     NoBackJumping.instance());
 	}
 
 	public BacktrackHomomorphism(Scheduler s) {
-		this(s, NoForwardChecking.instance(), NoBackJumping.instance());
+		this(s, DefaultBootstrapper.instance(), NoForwardChecking.instance(), NoBackJumping.instance());
 	}
 
 	public BacktrackHomomorphism(ForwardChecking fc) {
-		this(new DefaultScheduler(), fc, NoBackJumping.instance());
+		this(new DefaultScheduler(), DefaultBootstrapper.instance(), fc, NoBackJumping.instance());
 	}
 
 	public BacktrackHomomorphism(BackJumping bj) {
-		this(new DefaultScheduler(), NoForwardChecking.instance(), bj);
+		this(new DefaultScheduler(), DefaultBootstrapper.instance(), NoForwardChecking.instance(), bj);
 	}
 
 	public BacktrackHomomorphism(Scheduler s, BackJumping bj) {
-		this(s, NoForwardChecking.instance(), bj);
+		this(s, DefaultBootstrapper.instance(), NoForwardChecking.instance(), bj);
 	}
 
-	public BacktrackHomomorphism(Scheduler s, ForwardChecking fc, BackJumping bj) {
+	public BacktrackHomomorphism(Scheduler s, Bootstrapper bs, ForwardChecking fc, BackJumping bj) {
 		super();
 		this.fc = fc;
 		this.bj = bj;
 		this.scheduler = s;
+		this.bootstrapper = bs;
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// SETTERS
+	// /////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * @param scheduler
+	 *            the scheduler to set
+	 */
+	public void setScheduler(Scheduler scheduler) {
+		this.scheduler = scheduler;
+	}
+
+	/**
+	 * @param bootstrapper
+	 *            the bootstrapper to set
+	 */
+	public void setBootstrapper(Bootstrapper bootstrapper) {
+		this.bootstrapper = bootstrapper;
+	}
+
+	/**
+	 * @param fc
+	 *            the ForwardChecking to set
+	 */
+	public void setFc(ForwardChecking fc) {
+		this.fc = fc;
+	}
+
+	/**
+	 * @param bj
+	 *            the BackJumping to set
+	 */
+	public void setBj(BackJumping bj) {
+		this.bj = bj;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -119,7 +160,8 @@ public class BacktrackHomomorphism implements HomomorphismWithCompilation<Conjun
 		// q.getAnswerVariables(),
 		// compilation));
 		BacktrackIterator backtrackIterator = new BacktrackIterator(q.getAtomSet(), a, q.getAnswerVariables(),
-		                                                            this.scheduler, this.fc, this.bj, compilation);
+		                                                            this.scheduler, this.bootstrapper, this.fc,
+		                                                            this.bj, compilation);
 		if (this.profiler != null) {
 			backtrackIterator.setProfiler(profiler);
 		}
