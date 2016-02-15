@@ -335,6 +335,40 @@ public class Neo4jStore extends GraphDBStore {
 	}
 
 	@Override
+	public CloseableIterator<Atom> atomsByPredicate(Predicate p) throws AtomSetException {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("MATCH ");
+		predicateToCypher(sb, p);
+		sb.append("<-[rel_predicate:PREDICATE]-(atom)");
+		sb.append("RETURN atom");
+		String query = sb.toString();
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug(query);
+		}
+		ResourceIterator<Map<String, Object>> result = this.cypherEngine.execute(query).iterator();
+
+		return new Neo4jAtomIterator(this.getTransaction(), result);
+	}
+
+	@Override
+	public CloseableIterator<Term> termsByPredicatePosition(Predicate p, int position) throws AtomSetException {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("MATCH ");
+		predicateToCypher(sb, p);
+		sb.append("<-[rel_predicate:PREDICATE]-(atom)-[:TERM { index: ").append(position).append(" }]->(term) ");
+		sb.append("RETURN DISTINCT term");
+		String query = sb.toString();
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug(query);
+		}
+		ResourceIterator<Map<String, Object>> result = this.cypherEngine.execute(query).iterator();
+
+		return new Neo4jTermIterator(this.getTransaction(), result);
+	}
+
+	@Override
 	public void close() {
 
 		Transaction tx = this.transactions.get(Thread.currentThread());
@@ -448,15 +482,14 @@ public class Neo4jStore extends GraphDBStore {
 	}
 
 	private static void atomToCypher(StringBuilder sb, Atom a, boolean checkVariable) {
-		Predicate p = a.getPredicate();
-		sb.append("(atom:ATOM), (predicate:PREDICATE { value: '")
-				.append(p.getIdentifier()).append("', arity: ").append(p.getArity())
-				.append(" }), ");
+		sb.append("(atom:ATOM),");
+		predicateToCypher(sb, a.getPredicate());
+		sb.append(",");
 
 		int i = -1;
 		for (Term t : a) {
 			// (term?:TERM {value: '?', arity: ?}),
-			// (atom)-[:TERM { index: ? }->(term?)
+			// (atom)-[:TERM { index: ? }]->(term?)
 			++i;
 			if (checkVariable || t.isConstant()) {
 				sb.append("(term").append(i).append(":TERM {value: '").append(t.getIdentifier().toString())
@@ -466,6 +499,12 @@ public class Neo4jStore extends GraphDBStore {
 		}
 
 		sb.append("(atom)-[rel_predicate:PREDICATE]->(predicate) ");
+	}
+
+	private static void predicateToCypher(StringBuilder sb, Predicate p) {
+		// (predicate:PREDICATE { value: <ID>, arity: <ARITY> })
+		sb.append("(predicate:PREDICATE { value: '").append(p.getIdentifier()).append("', arity: ")
+		  .append(p.getArity()).append(" })");
 	}
 
 	private synchronized void reloadTransaction() {

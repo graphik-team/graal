@@ -76,6 +76,22 @@ public interface AtomSet extends GIterable<Atom> {
 	GIterator<Atom> match(Atom atom) throws AtomSetException;
 
 	/**
+	 * Returns an iterator over all atoms with the specified predicate.
+	 * 
+	 * @param predicate
+	 * @return
+	 * @throws AtomSetException
+	 */
+	GIterator<Atom> atomsByPredicate(Predicate predicate) throws AtomSetException;
+
+	/**
+	 * @param p
+	 * @param position
+	 * @return
+	 */
+	GIterator<Term> termsByPredicatePosition(Predicate p, int position) throws AtomSetException;
+
+	/**
 	 * Returns a Set of all predicates in this atom set.
 	 * 
 	 * @return

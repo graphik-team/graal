@@ -40,78 +40,14 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- package fr.lirmm.graphik.graal.api.core;
-
-import java.util.Iterator;
-import java.util.Set;
-
-import fr.lirmm.graphik.util.stream.GIterator;
+package fr.lirmm.graphik.util.stream.converter;
 
 /**
- * This interface represents an InMemory AtomSet. So, AtomSet methods are
- * redefined without the ability to throw exception.
- * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface InMemoryAtomSet extends AtomSet {
-	
-	@Override
-	boolean contains(Atom atom);
+public interface Converter<U, T> {
 
-	@Override
-	GIterator<Atom> match(Atom atom);
-
-	@Override
-	GIterator<Atom> atomsByPredicate(Predicate p);
-
-	@Override
-	GIterator<Term> termsByPredicatePosition(Predicate p, int position);
-
-	@Override
-	Set<Predicate> getPredicates();
-
-	@Override
-	GIterator<Predicate> predicatesIterator();
-
-	@Override
-	Set<Term> getTerms();
-
-	@Override
-	GIterator<Term> termsIterator();
-	
-	@Override
-	Set<Term> getTerms(Term.Type type);
-
-	@Override
-	GIterator<Term> termsIterator(Term.Type type);
-
-	@Override
-	@Deprecated
-	boolean isSubSetOf(AtomSet atomset);
-
-	@Override
-	boolean isEmpty();
-
-	@Override
-	boolean add(Atom atom);
-
-	@Override
-	boolean addAll(Iterator<? extends Atom> atoms);
-
-	@Override
-	boolean addAll(AtomSet atoms);
-
-	@Override
-	boolean remove(Atom atom);
-
-	@Override
-	boolean removeAll(Iterator<? extends Atom> atoms);
-
-	@Override
-	boolean removeAll(AtomSet atoms);
-
-	@Override
-	void clear();
+	T convert(U object);
 
 }

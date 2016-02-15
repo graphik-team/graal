@@ -75,6 +75,7 @@ import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.store.AbstractTripleStore;
+import fr.lirmm.graphik.graal.api.store.WrongArityException;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.Prefix;
@@ -309,6 +310,25 @@ public class JenaStore extends AbstractTripleStore {
 	}
 
 	@Override
+	public CloseableIterator<Atom> atomsByPredicate(Predicate p) throws AtomSetException {
+		String select = String.format(SELECT_QUERY, "?s", predicateToString(p), "?o");
+
+		return new AtomIterator(this.directory, select, null, p, null);
+
+	}
+
+	@Override
+	public CloseableIterator<Term> termsByPredicatePosition(Predicate p, int position) throws AtomSetException {
+		if(position == 0) {
+			return new TermIterator(this.directory, "SELECT DISTINCT ?x WHERE { ?x " + predicateToString(p) + " ?y }");
+		} else if (position == 1) {
+			return new TermIterator(this.directory, "SELECT DISTINCT ?x WHERE { ?y " + predicateToString(p) + " ?x }");
+		} else {
+			throw new WrongArityException("Position should be 0 for subject or 1 for object.");
+		}
+	}
+
+	@Override
 	public Set<Term> getTerms() {
 		Set<Term> terms = new TreeSet<Term>();
 		dataset.begin(ReadWrite.READ);
@@ -480,6 +500,68 @@ public class JenaStore extends AbstractTripleStore {
 				object = createTerm(next.get("?o"));
 
 			return new DefaultAtom(predicate, subject, object);
+		}
+
+	}
+
+	private static class TermIterator extends AbstractCloseableIterator<Term> {
+
+		Dataset        dataset;
+		ResultSet      rs;
+		QueryExecution qExec;
+
+		Term           subject   = null;
+		Predicate      predicate = null;
+		Term           object    = null;
+
+		// /////////////////////////////////////////////////////////////////////////
+		// CONSTRUCTOR
+		// /////////////////////////////////////////////////////////////////////////
+
+		/**
+		 * This Iterator will iterate over ?x
+		 * 
+		 * @param directory
+		 * @param query
+		 */
+		public TermIterator(String directory, String query) {
+			this.dataset = TDBFactory.createDataset(directory);
+			this.dataset.begin(ReadWrite.READ);
+			this.qExec = QueryExecutionFactory.create(query, this.dataset);
+			this.rs = qExec.execSelect();
+		}
+
+		// /////////////////////////////////////////////////////////////////////////
+		// METHODS
+		// /////////////////////////////////////////////////////////////////////////
+
+		@Override
+		public void close() {
+			if (this.qExec != null) {
+				this.qExec.close();
+			}
+			this.dataset.end();
+		}
+
+		@Override
+		public void remove() {
+			this.rs.remove();
+		}
+
+		@Override
+		public boolean hasNext() {
+			if (this.rs.hasNext()) {
+				return true;
+			} else {
+				this.close();
+				return false;
+			}
+		}
+
+		@Override
+		public Term next() {
+			QuerySolution next = this.rs.next();
+			return createTerm(next.get("?x"));
 		}
 
 	}

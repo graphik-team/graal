@@ -54,8 +54,10 @@ import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.GraphQuery;
 import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.blueprints.VertexQuery;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
@@ -139,6 +141,27 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 		}
 
 		return new AtomIterator(query.vertices().iterator());
+	}
+
+	@Override
+	public CloseableIterator<Atom> atomsByPredicate(Predicate p) throws AtomSetException {
+		GraphQuery query = this.graph.query();
+		query.has("class", "atom");
+		query.has("predicate", predicateToString(p));
+		return new AtomIterator(query.vertices().iterator());
+	}
+
+	@Override
+	public CloseableIterator<Term> termsByPredicatePosition(Predicate p, int position) throws AtomSetException {
+		GraphQuery query = this.graph.query();
+		query.has("class", "atom");
+		query.has("predicate", predicateToString(p));
+		Set<Term> terms = new TreeSet<Term>();
+		Iterator<Term> it = new AtomToTermIterator(query.vertices().iterator(), position);
+		while (it.hasNext()) {
+			terms.add(it.next());
+		}
+		return new CloseableIteratorAdapter<Term>(terms.iterator());
 	}
 
 	@Override
@@ -369,5 +392,39 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 		}
 
 	}
+
+	private static class AtomToTermIterator extends AbstractCloseableIterator<Term> {
+
+		Iterator<Vertex> it;
+		int              position;
+
+		public AtomToTermIterator(Iterator<Vertex> it, int position) {
+			this.it = it;
+			this.position = position;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return this.it.hasNext();
+		}
+
+		@Override
+		public Term next() {
+			VertexQuery query = this.it.next().query();
+			query.has("index", position);
+			return vertexToTerm(query.vertices().iterator().next());
+		}
+
+		@Override
+		public void remove() {
+			this.it.remove();
+		}
+
+		@Override
+		public void close() {
+		}
+
+	}
+
 
 }

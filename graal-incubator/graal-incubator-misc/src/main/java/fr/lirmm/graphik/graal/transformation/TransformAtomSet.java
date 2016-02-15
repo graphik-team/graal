@@ -60,6 +60,7 @@ import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
+import fr.lirmm.graphik.util.stream.GIterator;
 
 public class TransformAtomSet extends AbstractAtomSet implements AtomSet {
 
@@ -101,6 +102,16 @@ public class TransformAtomSet extends AbstractAtomSet implements AtomSet {
 
 	@Override
 	public CloseableIterator<Atom> match(Atom atom) throws AtomSetException {
+		throw new MethodNotImplementedError();
+	}
+
+	@Override
+	public GIterator<Atom> atomsByPredicate(Predicate predicate) throws AtomSetException {
+		throw new MethodNotImplementedError();
+	}
+
+	@Override
+	public GIterator<Term> termsByPredicatePosition(Predicate p, int position) throws AtomSetException {
 		throw new MethodNotImplementedError();
 	}
 

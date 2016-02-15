@@ -67,6 +67,12 @@ public interface Store extends AtomSet {
 	CloseableIterator<Atom> match(Atom atom) throws AtomSetException;
 
 	@Override
+	CloseableIterator<Atom> atomsByPredicate(Predicate p) throws AtomSetException;
+
+	@Override
+	CloseableIterator<Term> termsByPredicatePosition(Predicate p, int position) throws AtomSetException;
+
+	@Override
 	CloseableIterator<Predicate> predicatesIterator() throws AtomSetException;
 
 	@Override

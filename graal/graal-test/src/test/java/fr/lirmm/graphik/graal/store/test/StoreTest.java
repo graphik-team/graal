@@ -144,6 +144,45 @@ public class StoreTest {
 	}
 
 	@Theory
+	public void atomByPredicate(AtomSet store) throws AtomSetException {
+		store.add(DlgpParser.parseAtom("p(b,a)."));
+		store.add(DlgpParser.parseAtom("p(a,a)."));
+		store.add(DlgpParser.parseAtom("p(b,b)."));
+		store.add(DlgpParser.parseAtom("p(a,c)."));
+		store.add(DlgpParser.parseAtom("q(a,a)."));
+		store.add(DlgpParser.parseAtom("q(a,b)."));
+
+		Atom a = DlgpParser.parseAtom("p(a,X).");
+
+		Iterator<?> it = store.atomsByPredicate(new Predicate("p", 2));
+		int cpt = 0;
+		while (it.hasNext()) {
+			++cpt;
+			it.next();
+		}
+
+		Assert.assertEquals(4, cpt);
+	}
+
+	@Theory
+	public void termsByPredicatePosition(AtomSet store) throws AtomSetException {
+		store.add(DlgpParser.parseAtom("p(b,a)."));
+		store.add(DlgpParser.parseAtom("p(a,a)."));
+		store.add(DlgpParser.parseAtom("p(b,b)."));
+		store.add(DlgpParser.parseAtom("p(d,c)."));
+		store.add(DlgpParser.parseAtom("q(e,e)."));
+
+		Iterator<?> it = store.termsByPredicatePosition(new Predicate("p", 2), 1);
+		int cpt = 0;
+		while (it.hasNext()) {
+			++cpt;
+			it.next();
+		}
+
+		Assert.assertEquals(3, cpt);
+	}
+
+	@Theory
 	public void contains(AtomSet store) throws AtomSetException {
 		store.add(DlgpParser.parseAtom("p(b,a)."));
 		store.add(DlgpParser.parseAtom("p(a,a)."));

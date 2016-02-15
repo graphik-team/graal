@@ -40,7 +40,7 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- package fr.lirmm.graphik.graal.core.atomset;
+package fr.lirmm.graphik.graal.core.atomset;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -58,6 +58,8 @@ import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.GIterator;
 import fr.lirmm.graphik.util.stream.IteratorAdapter;
+import fr.lirmm.graphik.util.stream.converter.Converter;
+import fr.lirmm.graphik.util.stream.converter.ConverterIterator;
 import fr.lirmm.graphik.util.stream.filter.Filter;
 import fr.lirmm.graphik.util.stream.filter.FilterIterator;
 
@@ -65,8 +67,7 @@ import fr.lirmm.graphik.util.stream.filter.FilterIterator;
  * 
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  */
-public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements
-		InMemoryAtomSet, Collection<Atom> {
+public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements InMemoryAtomSet, Collection<Atom> {
 
 	private LinkedList<Atom> linkedList;
 
@@ -90,6 +91,31 @@ public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements
 		});
 	}
 
+	@Override
+	public GIterator<Atom> atomsByPredicate(final Predicate p) {
+		return new FilterIterator<Atom, Atom>(this.iterator(), new Filter<Atom>() {
+			@Override
+			public boolean filter(Atom a) {
+				return a.getPredicate().equals(p);
+			}
+		});
+	}
+
+	@Override
+	public GIterator<Term> termsByPredicatePosition(Predicate p, final int position) {
+		Set<Term> terms = new TreeSet<Term>();
+		GIterator<Term> it = new ConverterIterator<Atom, Term>(this.atomsByPredicate(p), new Converter<Atom, Term>() {
+			@Override
+			public Term convert(Atom atom) {
+				return atom.getTerm(position);
+			}
+		});
+		while (it.hasNext()) {
+			terms.add(it.next());
+		}
+		return new IteratorAdapter<Term>(terms.iterator());
+	}
+
 	public LinkedListAtomSet(LinkedList<Atom> list) {
 		this.linkedList = list;
 	}
@@ -100,7 +126,6 @@ public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements
 			this.linkedList.add(a);
 	}
 
-
 	public LinkedListAtomSet(Iterator<Atom> it) {
 		this();
 		while (it.hasNext()) {
@@ -109,7 +134,7 @@ public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements
 	}
 
 	/**
-	 *  copy constructor
+	 * copy constructor
 	 */
 	public LinkedListAtomSet(AtomSet atomset) {
 		this();
@@ -121,7 +146,7 @@ public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
-	 
+
 	@Override
 	public Set<Predicate> getPredicates() {
 		Set<Predicate> predicates = new TreeSet<Predicate>();

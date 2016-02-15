@@ -40,78 +40,65 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- package fr.lirmm.graphik.graal.api.core;
+package fr.lirmm.graphik.util.stream;
 
-import java.util.Iterator;
-import java.util.Set;
-
-import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
- * This interface represents an InMemory AtomSet. So, AtomSet methods are
- * redefined without the ability to throw exception.
- * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface InMemoryAtomSet extends AtomSet {
-	
-	@Override
-	boolean contains(Atom atom);
+public class CloseableIteratorAggregator<E> extends AbstractCloseableIterator<E> {
+
+	private CloseableIterator<CloseableIterator<E>> metaIt;
+	private CloseableIterator<E>                    it;
+	private E                                       next;
+
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTOR
+	// /////////////////////////////////////////////////////////////////////////
+
+	public CloseableIteratorAggregator(CloseableIterator<CloseableIterator<E>> metaIt) {
+		this.metaIt = metaIt;
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	GIterator<Atom> match(Atom atom);
+	public boolean hasNext() {
+		while (next == null && (this.metaIt.hasNext() || (this.it != null && this.it.hasNext()))) {
+			if (this.it == null) {
+				this.it = this.metaIt.next();
+			} else if (!this.it.hasNext()) {
+				this.it.close();
+				this.it = this.metaIt.next();
+			}
+			if (this.it.hasNext()) {
+				next = this.it.next();
+			}
+		}
+		return next != null;
+
+	}
 
 	@Override
-	GIterator<Atom> atomsByPredicate(Predicate p);
+	public E next() {
+		if (next == null)
+			this.hasNext();
+
+		E ret = next;
+		next = null;
+		return ret;
+	}
 
 	@Override
-	GIterator<Term> termsByPredicatePosition(Predicate p, int position);
+	public void close() {
+		if (this.metaIt != null)
+			this.metaIt.close();
 
-	@Override
-	Set<Predicate> getPredicates();
-
-	@Override
-	GIterator<Predicate> predicatesIterator();
-
-	@Override
-	Set<Term> getTerms();
-
-	@Override
-	GIterator<Term> termsIterator();
-	
-	@Override
-	Set<Term> getTerms(Term.Type type);
-
-	@Override
-	GIterator<Term> termsIterator(Term.Type type);
-
-	@Override
-	@Deprecated
-	boolean isSubSetOf(AtomSet atomset);
-
-	@Override
-	boolean isEmpty();
-
-	@Override
-	boolean add(Atom atom);
-
-	@Override
-	boolean addAll(Iterator<? extends Atom> atoms);
-
-	@Override
-	boolean addAll(AtomSet atoms);
-
-	@Override
-	boolean remove(Atom atom);
-
-	@Override
-	boolean removeAll(Iterator<? extends Atom> atoms);
-
-	@Override
-	boolean removeAll(AtomSet atoms);
-
-	@Override
-	void clear();
+		if (this.it != null)
+			this.it.close();
+	}
 
 }

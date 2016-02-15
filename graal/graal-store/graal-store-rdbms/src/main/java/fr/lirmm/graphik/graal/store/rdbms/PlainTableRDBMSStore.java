@@ -48,6 +48,8 @@ package fr.lirmm.graphik.graal.store.rdbms;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -65,7 +67,9 @@ import fr.lirmm.graphik.graal.api.core.VariableGenerator;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionIterator2AtomIterator;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -156,6 +160,28 @@ public class PlainTableRDBMSStore extends AbstractRdbmsStore {
 		} catch (HomomorphismException e) {
 			throw new AtomSetException(e);
 		}
+	}
+
+	@Override
+	public CloseableIterator<Atom> atomsByPredicate(Predicate p) throws AtomSetException {
+		List<Term> terms = new LinkedList<Term>();
+		for (int i = 0; i < p.getArity(); ++i) {
+			terms.add(DefaultTermFactory.instance().createVariable(i));
+		}
+		Atom atom = DefaultAtomFactory.instance().create(p, terms);
+		ConjunctiveQuery query = ConjunctiveQueryFactory.instance().create(new LinkedListAtomSet(atom));
+		SqlHomomorphism solver = SqlHomomorphism.instance();
+
+		try {
+			return new SubstitutionIterator2AtomIterator(atom, solver.execute(query, this));
+		} catch (HomomorphismException e) {
+			throw new AtomSetException(e);
+		}
+	}
+
+	@Override
+	public CloseableIterator<Term> termsByPredicatePosition(Predicate p, int position) throws AtomSetException {
+		throw new MethodNotImplementedError();
 	}
 
 	@Override

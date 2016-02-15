@@ -76,6 +76,7 @@ import fr.lirmm.graphik.graal.api.core.VariableGenerator;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionIterator2AtomIterator;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
@@ -129,6 +130,8 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	                                                                + TERM_TABLE_NAME
 	                                                                + " WHERE term = ?;";
 
+	private static final String        GET_ATOMS_BY_PREDICATE     = "SELECT * FROM %s;";
+
 	// counter queries
 	private static final String        GET_COUNTER_VALUE_QUERY    = "SELECT value FROM "
 	                                                                + COUNTER_TABLE_NAME
@@ -174,6 +177,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			this.updateCounterValueStatement = this.getConnection().prepareStatement(UPDATE_COUNTER_VALUE_QUERY);
 			this.getTermStatement = this.getConnection().prepareStatement(GET_TERM_QUERY);
 			this.getTermsByTypeStatement = this.getConnection().prepareStatement(GET_TERMS_BY_TYPE);
+
 		} catch (SQLException e) {
 			throw new AtomSetException(e.getMessage(), e);
 		}
@@ -395,6 +399,38 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		try {
 			return new SubstitutionIterator2AtomIterator(atom, solver.execute(query, this));
 		} catch (HomomorphismException e) {
+			throw new AtomSetException(e);
+		}
+	}
+
+	@Override
+	public CloseableIterator<Atom> atomsByPredicate(Predicate p) throws AtomSetException {
+		List<Term> terms = new LinkedList<Term>();
+		for (int i = 0; i < p.getArity(); ++i) {
+			terms.add(DefaultTermFactory.instance().createVariable("X" + i));
+		}
+		Atom atom = DefaultAtomFactory.instance().create(p, terms);
+		ConjunctiveQuery query = ConjunctiveQueryFactory.instance().create(new LinkedListAtomSet(atom));
+		SqlHomomorphism solver = SqlHomomorphism.instance();
+
+		try {
+			return new SubstitutionIterator2AtomIterator(atom, solver.execute(query, this));
+		} catch (HomomorphismException e) {
+			throw new AtomSetException(e);
+		}
+	}
+
+	@Override
+	public CloseableIterator<Term> termsByPredicatePosition(Predicate p, int position) throws AtomSetException {
+		try {
+			return new ResultSetTermIterator(this, "SELECT DISTINCT p.term"
+			                                       + position
+			                                       + ", t.term_type FROM "
+			                                       + this.getPredicateTable(p)
+			                                       + " AS p LEFT JOIN terms AS t ON p.term"
+			                                       + position
+			                                       + " = t.term;");
+		} catch (SQLException e) {
 			throw new AtomSetException(e);
 		}
 	}

@@ -92,6 +92,7 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
 public class SailStore extends AbstractTripleStore {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SailStore.class);
+
 	private static class URIzer {
 		private static URIzer instance;
 
@@ -133,10 +134,10 @@ public class SailStore extends AbstractTripleStore {
 	}
 
 	private RepositoryConnection connection;
-	private ValueFactory valueFactory;
+	private ValueFactory         valueFactory;
 
-	private TupleQuery predicatesQuery;
-	private TupleQuery termsQuery;
+	private TupleQuery           predicatesQuery;
+	private TupleQuery           termsQuery;
 
 	public SailStore() throws AtomSetException {
 		Repository repo = new SailRepository(new MemoryStore());
@@ -231,7 +232,6 @@ public class SailStore extends AbstractTripleStore {
 	@Override
 	public CloseableIterator<Atom> match(Atom atom) throws AtomSetException {
 		Statement stat = this.atomToStatement(atom);
-		System.out.println(stat);
 		URI subject = (URI) stat.getSubject();
 		if (subject.getNamespace().equals("_:")) {
 			subject = null;
@@ -246,6 +246,45 @@ public class SailStore extends AbstractTripleStore {
 		} catch (RepositoryException e) {
 			throw new AtomSetException(e);
 		}
+	}
+
+	@Override
+	public CloseableIterator<Atom> atomsByPredicate(Predicate p) throws AtomSetException {
+		try {
+			return new AtomIterator(this.connection.getStatements(null, this.createURI(p), null, false));
+		} catch (RepositoryException e) {
+			throw new AtomSetException(e);
+		}
+	}
+
+	@Override
+	public CloseableIterator<Term> termsByPredicatePosition(Predicate p, int position) throws AtomSetException {
+		TupleQuery query = null;
+		TupleQueryResult results = null;
+		try {
+			if (position == 0) {
+				query = this.connection.prepareTupleQuery(QueryLanguage.SPARQL,
+ "SELECT DISTINCT ?x WHERE { ?x <"
+				                                                                + this.createURI(p)
+				                                                                + "> ?y }");
+			} else if (position == 1) {
+				query = this.connection.prepareTupleQuery(QueryLanguage.SPARQL,
+ "SELECT DISTINCT ?x WHERE { ?y <"
+				                                                                + this.createURI(p)
+				                                                                + "> ?x }");
+			} else {
+				throw new WrongArityException("Position should be 0 for subject or 1 for object.");
+			}
+			results = query.evaluate();
+		} catch (RepositoryException e) {
+			throw new AtomSetException(e);
+		} catch (MalformedQueryException e) {
+			throw new AtomSetException(e);
+		} catch (QueryEvaluationException e) {
+			throw new AtomSetException(e);
+		}
+
+		return new TermsIterator(results, "x");
 	}
 
 	@Override
@@ -358,7 +397,7 @@ public class SailStore extends AbstractTripleStore {
 	// //////////////////////////////////////////////////////////////////////////
 
 	private Statement atomToStatement(Atom atom) throws WrongArityException {
-		if(atom.getPredicate().getArity() != 2) {
+		if (atom.getPredicate().getArity() != 2) {
 			throw new WrongArityException("Arity "
 			                              + atom.getPredicate().getArity()
 			                              + " is not supported by this store.");
@@ -390,7 +429,7 @@ public class SailStore extends AbstractTripleStore {
 	}
 
 	private Value createValue(Term t) {
-		if(t instanceof Literal) {
+		if (t instanceof Literal) {
 			Literal l = (Literal) t;
 			return valueFactory.createLiteral(l.getValue().toString(),
 			    valueFactory.createURI(l.getDatatype().toString()));
@@ -415,8 +454,8 @@ public class SailStore extends AbstractTripleStore {
 			return DefaultTermFactory.instance().createConstant(URIzer.instance().output(value.toString()));
 		} else { //  Literal
 			org.openrdf.model.Literal l = (org.openrdf.model.Literal) value;
-			return DefaultTermFactory.instance()
-			                  .createLiteral(URIUtils.createURI(l.getDatatype().toString()), l.getLabel());
+			return DefaultTermFactory.instance().createLiteral(URIUtils.createURI(l.getDatatype().toString()),
+			    l.getLabel());
 		}
 	}
 
@@ -461,7 +500,7 @@ public class SailStore extends AbstractTripleStore {
 		}
 
 		@Override
-        public void close() {
+		public void close() {
 			try {
 				this.it.close();
 			} catch (RepositoryException e) {
@@ -572,14 +611,21 @@ public class SailStore extends AbstractTripleStore {
 
 	private class TermsIterator extends TupleQueryResultIterator<Term> {
 
+		String value = "term";
+
 		TermsIterator(TupleQueryResult results) {
 			super.it = results;
+		}
+
+		TermsIterator(TupleQueryResult results, String value) {
+			super.it = results;
+			this.value = value;
 		}
 
 		@Override
 		public Term next() {
 			try {
-				return valueToTerm(this.it.next().getValue("term"));
+				return valueToTerm(this.it.next().getValue(value));
 			} catch (QueryEvaluationException e) {
 				if (LOGGER.isErrorEnabled()) {
 					// TODO manage this Exception
@@ -590,4 +636,5 @@ public class SailStore extends AbstractTripleStore {
 		}
 
 	}
+
 }
