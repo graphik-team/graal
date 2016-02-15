@@ -133,7 +133,7 @@ public class PostgreSQLDriver extends AbstractRdbmsDriver {
 		
 		int i = 0;
 		for (Map.Entry<String, Object> e : data.entrySet()) {
-			if(i > 0) {
+			if (++i > 1) {
 				query.append(" and ");
 			}
 			query.append(e.getKey()).append(" = ");
