@@ -36,7 +36,7 @@
   ub:Professor(X),
   ub:worksFor(X, <http://www.Department0.University0.edu>),
   ub:name(X, Y1),
-@prefix : <http://swat.cse.lehigh.edu/onto/univ-bench.owl#>  ub:emailAddress(X, Y2),
+  ub:emailAddress(X, Y2),
   ub:telephone(X, Y3).
 
 % Query5
