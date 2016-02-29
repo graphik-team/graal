@@ -78,7 +78,7 @@ public final class DefaultUnionConjunctiveQueriesHomomorphism implements UnionCo
 	@Override
 	public CloseableIterator<Substitution> execute(UnionConjunctiveQueries queries,
 			AtomSet atomset) throws HomomorphismException {
-        return new UnionConjunctiveQueriesSubstitutionReader(queries, atomset);
+        return new UnionConjunctiveQueriesSubstitutionIterator(queries, atomset);
 	}
 
 	@Override

@@ -60,22 +60,22 @@ import fr.lirmm.graphik.util.stream.GIterator;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class UnionConjunctiveQueriesSubstitutionReader implements CloseableIterator<Substitution> {
+public class UnionConjunctiveQueriesSubstitutionIterator implements CloseableIterator<Substitution> {
 
     private AtomSet atomSet;
 	private GIterator<ConjunctiveQuery> cqueryIterator;
-	private CloseableIterator<Substitution> tmpReader;
+	private CloseableIterator<Substitution> tmpIt;
     private boolean hasNextCallDone = false;
     
     /**
      * @param queries
      * @param atomSet
      */
-    public UnionConjunctiveQueriesSubstitutionReader(UnionConjunctiveQueries queries,
+    public UnionConjunctiveQueriesSubstitutionIterator(UnionConjunctiveQueries queries,
             AtomSet atomSet) {
         this.cqueryIterator = queries.iterator();
         this.atomSet = atomSet;
-        this.tmpReader = null;
+        this.tmpIt = null;
     }
 
     @Override
@@ -83,10 +83,10 @@ public class UnionConjunctiveQueriesSubstitutionReader implements CloseableItera
         if (!this.hasNextCallDone) {
             this.hasNextCallDone = true;
 
-            while ((this.tmpReader == null || !this.tmpReader.hasNext())
+            while ((this.tmpIt == null || !this.tmpIt.hasNext())
                     && this.cqueryIterator.hasNext()) {
-				if (!this.tmpReader.hasNext()) {
-					this.tmpReader.close();
+				if (this.tmpIt != null) {
+					this.tmpIt.close();
 				}
                 Query q = this.cqueryIterator.next();
                 Homomorphism solver;
@@ -95,14 +95,14 @@ public class UnionConjunctiveQueriesSubstitutionReader implements CloseableItera
                     if(solver == null) {
                     	return false;
                     } else {
-                    	this.tmpReader = solver.execute(q, this.atomSet);
+                    	this.tmpIt = solver.execute(q, this.atomSet);
                     }
                 } catch (HomomorphismException e) {
                     return false;
                 }
             }
         }
-        return this.tmpReader != null && this.tmpReader.hasNext();
+        return this.tmpIt != null && this.tmpIt.hasNext();
     }
 
     @Override
@@ -112,12 +112,12 @@ public class UnionConjunctiveQueriesSubstitutionReader implements CloseableItera
 
         this.hasNextCallDone = false;
 
-        return this.tmpReader.next();
+        return this.tmpIt.next();
     }
 
     @Override
     public void close() {
-		this.tmpReader.close();
+		this.tmpIt.close();
     }
 
     @Override
