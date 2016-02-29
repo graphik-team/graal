@@ -171,23 +171,6 @@ algorithms, structural analysis of decidability properties of a rule set, a text
 					<stagingDirectory>/tmp/graal-site/</stagingDirectory>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.7.5.201505241946</version>
-				<executions>
-					<!-- prepare agent for measuring unit tests -->
-					<execution>
-						<id>prepare-unit-tests</id>
-						<goals>
-							<goal>prepare-agent</goal>
-						</goals>
-						<configuration>
-							<destFile>${project.basedir}/target/jacoco.exec</destFile>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
 
