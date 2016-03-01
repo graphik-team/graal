@@ -54,4 +54,5 @@ public interface Profilable {
 	void setProfiler(Profiler profiler);
 
 	Profiler getProfiler();
+
 }

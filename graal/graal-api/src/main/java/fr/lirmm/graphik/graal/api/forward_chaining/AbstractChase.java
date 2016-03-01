@@ -45,9 +45,8 @@
  */
 package fr.lirmm.graphik.graal.api.forward_chaining;
 
-import fr.lirmm.graphik.graal.api.forward_chaining.Chase;
-import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
-import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
+import fr.lirmm.graphik.util.NoProfiler;
+import fr.lirmm.graphik.util.Profiler;
 
 
 /**
@@ -57,6 +56,7 @@ import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
 public abstract class AbstractChase implements Chase {
 
 	private RuleApplier ruleApplier;
+	private Profiler    profiler = NoProfiler.instance();
 
 	protected AbstractChase(RuleApplier ruleApplier) {
 		this.ruleApplier = ruleApplier;
@@ -64,11 +64,24 @@ public abstract class AbstractChase implements Chase {
 
 	@Override
 	public void execute() throws ChaseException {
-		while (this.hasNext())
+		this.getProfiler().start("saturation");
+		while (this.hasNext()) {
 			this.next();
+		}
+		this.getProfiler().stop("saturation");
 	}
 
 	protected RuleApplier getRuleApplier() {
 		return this.ruleApplier;
+	}
+
+	@Override
+	public void setProfiler(Profiler profiler) {
+		this.profiler = profiler;
+	}
+
+	@Override
+	public Profiler getProfiler() {
+		return this.profiler;
 	}
 };

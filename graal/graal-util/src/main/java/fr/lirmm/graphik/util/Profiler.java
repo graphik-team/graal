@@ -40,45 +40,35 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
 package fr.lirmm.graphik.util;
 
 import java.io.PrintStream;
-import java.lang.management.ManagementFactory;
-import java.lang.management.ThreadMXBean;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 /**
- * This class is a profiler with a timer feature (ms)
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- * 
+ *
  */
-public class Profiler {
+public interface Profiler {
+	/**
+	 * Defines the date format used for displaying when the output stream is
+	 * set.
+	 */
+	void setDateFormat(String pattern);
 
-	private PrintStream out = null;
-
-	private final ThreadMXBean bean = ManagementFactory.getThreadMXBean();
-	private final Map<String, Long> tmpMap = new TreeMap<String, Long>();
-	private final Map<String, Object> map = new TreeMap<String, Object>();
-
-	// /////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTOR
-	// /////////////////////////////////////////////////////////////////////////
-
-	public Profiler() {
-	}
-
-	public Profiler(PrintStream out) {
-		this.out = out;
-	}
+	/**
+	 * Sets the output stream.
+	 * 
+	 * @param out
+	 */
+	void setOutputStream(PrintStream out);
 
 	// /////////////////////////////////////////////////////////////////////////
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
+
+	public boolean isProfilingEnabled();
 
 	/**
 	 * Start a timer with a specified key/identifier. If you recall this method
@@ -86,9 +76,7 @@ public class Profiler {
 	 * 
 	 * @param key
 	 */
-	public void start(String key) {
-		this.tmpMap.put(key, this.getTime());
-	}
+	public void start(String key);
 
 	/**
 	 * Stop the timer with the specified key. The get method will return the
@@ -97,17 +85,7 @@ public class Profiler {
 	 * 
 	 * @param key
 	 */
-	public void stop(String key) {
-		Long oldTime = (Long) this.map.get(key);
-		if(oldTime == null) {
-			oldTime = 0L;
-		}
-		Long newTime = oldTime + (((this.getTime() - this.tmpMap.get(key)) + 500000) / 1000000);
-		this.map.put(key, newTime);
-		if (this.out != null) {
-			this.out.println("Profiler - " + key + ": " + newTime + "ms");
-		}
-	}
+	public void stop(String key);
 
 	/**
 	 * Map miscellaneous data on the specified key. You can retrieve the data
@@ -116,12 +94,7 @@ public class Profiler {
 	 * @param key
 	 * @param value
 	 */
-	public void put(String key, Object value) {
-		this.map.put(key, value);
-		if (this.out != null) {
-			this.out.println("Profiler - " + key + ": " + value.toString());
-		}
-	}
+	public void put(String key, Object value);
 
 	/**
 	 * Increment an integer attached to the specified key.
@@ -129,15 +102,7 @@ public class Profiler {
 	 * @param key
 	 * @param value
 	 */
-	public void incr(String key, int value) {
-		Object o = this.map.get(key);
-		if (o == null) {
-			o = 0;
-		}
-		Integer i = (Integer) o;
-		i += value;
-		this.map.put(key, i);
-	}
+	public void incr(String key, int value);
 
 	/**
 	 * Get data/time attached to the specified key.
@@ -145,60 +110,32 @@ public class Profiler {
 	 * @param key
 	 * @return
 	 */
-	public Object get(String key) {
-		return this.map.get(key);
-	}
+	public Object get(String key);
 
-	public Set<Map.Entry<String, Object>> entrySet() {
-		return this.map.entrySet();
-	}
+	public Set<Map.Entry<String, Object>> entrySet();
 
 	/**
 	 * Clear data attached to the specfied key.
 	 * 
 	 * @param key
 	 */
-	public void clear(String key) {
-		this.tmpMap.remove(key);
-		this.map.remove(key);
-	}
+	public void clear(String key);
 
 	/**
 	 * Clear all data.
 	 */
-	public void clear() {
-		this.map.clear();
-	}
+	public void clear();
+
+	/**
+	 * If the output stream is set, print this strings.
+	 * 
+	 * @param strings
+	 */
+	public void trace(String... strings);
 
 	/**
 	 * 
 	 * @return a Set of all keys used.
 	 */
-	public Set<String> keySet() {
-		return this.map.keySet();
-	}
-
-	// /////////////////////////////////////////////////////////////////////////
-	// OBJECT METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("{\n");
-		for (Map.Entry e : map.entrySet()) {
-			sb.append("\t").append(e.getKey()).append(": ").append(e.getValue()).append("\n");
-		}
-		sb.append("}\n");
-		return sb.toString();
-
-	}
-	// /////////////////////////////////////////////////////////////////////////
-	// PRIVATE
-	// /////////////////////////////////////////////////////////////////////////
-
-	private long getTime() {
-		return bean.getCurrentThreadCpuTime();
-	}
-
+	public Set<String> keySet();
 }

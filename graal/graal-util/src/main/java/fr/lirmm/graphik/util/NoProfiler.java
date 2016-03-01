@@ -40,89 +40,94 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.forward_chaining;
+package fr.lirmm.graphik.util;
 
-import java.util.TreeSet;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.Rule;
-import fr.lirmm.graphik.graal.api.forward_chaining.AbstractChase;
-import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
-import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
-import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
+import java.io.PrintStream;
+import java.util.Collections;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
- * This chase (forward-chaining) algorithm use GRD to define the Rules that will 
- * be triggered in the next step.
- * 
- * @author Clément Sipieter (INRIA) <clement@6pi.fr>
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class ChaseWithGRD extends AbstractChase {
-	
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(ChaseWithGRD.class);
-	
-	private GraphOfRuleDependencies grd;
-	private AtomSet atomSet;
-	private TreeSet<Rule> queue = new TreeSet<Rule>();
-	
+public class NoProfiler implements Profiler {
+
 	// /////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTOR
+	// SINGLETON
 	// /////////////////////////////////////////////////////////////////////////
-	
-	public ChaseWithGRD(GraphOfRuleDependencies grd, AtomSet atomSet) {
-		super(new DefaultRuleApplier());
-		this.grd = grd;
-		this.atomSet = atomSet;
-		for(Rule r : grd.getRules()) {			
-			this.queue.add(r);
-		}
+
+	private static NoProfiler instance;
+
+	protected NoProfiler() {
+		super();
 	}
-	
+
+	public static synchronized NoProfiler instance() {
+		if (instance == null)
+			instance = new NoProfiler();
+
+		return instance;
+	}
+
 	// /////////////////////////////////////////////////////////////////////////
-	// METHODS
+	//
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public void next() throws ChaseException {
-		Rule rule;
-		try {
-			rule = queue.pollFirst();
-			if(rule != null) {
-				String key = null;
-				if (this.getProfiler() != null && this.getProfiler().isProfilingEnabled()) {
-					key = "Rule " + rule.getLabel() + " saturation time";
-					this.getProfiler().clear(key);
-					this.getProfiler().start(key);
-				}
-				if (this.getRuleApplier().apply(rule, this.atomSet)) {
-					for (Integer e : this.grd.getOutgoingEdgesOf(rule)) {
-						Rule triggeredRule = this.grd.getEdgeTarget(e);
-						if(LOGGER.isDebugEnabled()) {
-							LOGGER.debug("-- -- Dependency: " + triggeredRule);
-						}
-						this.queue.add(triggeredRule);
-					}
-				}
-				if (this.getProfiler() != null && this.getProfiler().isProfilingEnabled()) {
-					this.getProfiler().stop(key);
-				}
-			}
-		} catch (Exception e) {
-			throw new ChaseException("An error occur pending saturation step.", e);
-		}
+    public boolean isProfilingEnabled() {
+		return false;
 	}
 
 	@Override
-	public boolean hasNext() {
-		return !queue.isEmpty();
+	public void setDateFormat(String pattern) {
+	}
+
+	@Override
+	public void setOutputStream(PrintStream out) {
+	}
+
+	@Override
+	public void start(String key) {
+	}
+
+	@Override
+	public void stop(String key) {
+	}
+
+	@Override
+	public void put(String key, Object value) {
+	}
+
+	@Override
+	public void incr(String key, int value) {
+	}
+
+	@Override
+	public Object get(String key) {
+		return "";
+	}
+
+	@Override
+	public Set<Entry<String, Object>> entrySet() {
+		return Collections.<String, Object> emptyMap().entrySet();
+	}
+
+	@Override
+	public void clear(String key) {
+	}
+
+	@Override
+	public void clear() {
+	}
+
+	@Override
+	public void trace(String... strings) {
+	}
+
+	@Override
+	public Set<String> keySet() {
+		return Collections.<String> emptySet();
 	}
 
 }

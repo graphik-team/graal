@@ -119,15 +119,27 @@ public class NaiveChase extends AbstractChase implements Verbosable {
 	public void next() throws ChaseException {
 		try {
     		if(this.hasNext) {
+				if (this.getProfiler().isProfilingEnabled()) {
+					this.getProfiler().start("saturationTime");
+				}
     			this.hasNext = false;
     			for (Rule rule : this.ruleSet) {
-    				if(this.isVerbose) {
-    					System.out.println("Rule: " + rule);
+					String key = null;
+					if (this.isVerbose && this.getProfiler().isProfilingEnabled()) {
+						key = "Rule " + rule.getLabel() + " application time";
+						this.getProfiler().clear(key);
+						this.getProfiler().start(key);
     				}
 					if (this.getRuleApplier().apply(rule, atomSet)) {
     					this.hasNext = true;
     				}
+					if (this.isVerbose && this.getProfiler().isProfilingEnabled()) {
+						this.getProfiler().stop(key);
+					}
     			}
+				if (this.getProfiler().isProfilingEnabled()) {
+					this.getProfiler().stop("saturationTime");
+				}
     		}
 		} catch (Exception e) {
 			throw new ChaseException("An error occured during saturation step.", e);
@@ -147,4 +159,5 @@ public class NaiveChase extends AbstractChase implements Verbosable {
 	public void enableVerbose(boolean enable) {
 		this.isVerbose = enable;
 	}
+
 }

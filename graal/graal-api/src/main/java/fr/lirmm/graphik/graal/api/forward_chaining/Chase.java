@@ -45,6 +45,8 @@
  */
 package fr.lirmm.graphik.graal.api.forward_chaining;
 
+import fr.lirmm.graphik.util.Profilable;
+
 
 
 /**
@@ -54,7 +56,7 @@ package fr.lirmm.graphik.graal.api.forward_chaining;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public interface Chase {
+public interface Chase extends Profilable {
 
 	/**
 	 * Calls next() until hasNext() return false.

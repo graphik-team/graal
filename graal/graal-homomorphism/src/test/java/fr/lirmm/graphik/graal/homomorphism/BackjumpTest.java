@@ -54,7 +54,7 @@ import fr.lirmm.graphik.graal.homomorphism.bbc.BCC;
 import fr.lirmm.graphik.graal.homomorphism.bootstrapper.StupidBootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NoForwardChecking;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
-import fr.lirmm.graphik.util.Profiler;
+import fr.lirmm.graphik.util.DefaultProfiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 
@@ -85,7 +85,7 @@ public class BackjumpTest {
 		BCC bcc = new BCC();
 		Homomorphism h = new BacktrackHomomorphism(bcc.getBCCScheduler(), StupidBootstrapper.instance(),
 		                                           NoForwardChecking.instance(), bcc.getBCCBackJumping());
-		h.setProfiler(new Profiler());
+		h.setProfiler(new DefaultProfiler());
 		CloseableIterator results = h.execute(query, data);
 		while (results.hasNext()) {
 			results.next();

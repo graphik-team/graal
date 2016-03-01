@@ -90,6 +90,7 @@ final class Utils {
 	public static Iterable<ConjunctiveQuery> unfold(Iterable<ConjunctiveQuery> pivotRewritingSet,
 	    RulesCompilation compilation, Profiler profiler) {
 		if (profiler != null) {
+			profiler.clear("Unfolding time");
 			profiler.start("Unfolding time");
 		}
 

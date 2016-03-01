@@ -145,7 +145,9 @@ public class PureRewriter extends AbstractBackwardChainer implements Verbosable 
 	// /////////////////////////////////////////////////////////////////////////
 
 	private void compute() {
-		
+		if (this.getProfiler() != null && this.getProfiler().isProfilingEnabled()) {
+			this.getProfiler().trace(this.pquery.getLabel());
+		}
 		IndexedByHeadPredicatesRuleSet indexedRuleSet = new IndexedByHeadPredicatesRuleSet(this.ruleset);
 		
 		// rewriting

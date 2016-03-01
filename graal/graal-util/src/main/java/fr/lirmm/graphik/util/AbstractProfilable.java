@@ -48,7 +48,7 @@ package fr.lirmm.graphik.util;
  */
 public class AbstractProfilable implements Profilable {
 
-	private Profiler profiler;
+	private Profiler profiler = new NoProfiler();
 
 	@Override
 	public void setProfiler(Profiler profiler) {

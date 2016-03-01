@@ -65,6 +65,7 @@ import fr.lirmm.graphik.graal.store.rdbms.SqlHomomorphism;
 import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
 import fr.lirmm.graphik.graal.store.rdbms.rule_applier.SQLRuleApplier;
+import fr.lirmm.graphik.util.DefaultProfiler;
 import fr.lirmm.graphik.util.Profiler;
 
 /**
@@ -98,7 +99,7 @@ public class OneStepForwardChaining {
 	@Parameter(names = { "-h", "--help" }, help = true)
 	private boolean help;
 
-	private static final Profiler PROFILER = new Profiler(System.out);
+	private static final Profiler PROFILER         = new DefaultProfiler(System.out);
 	
 	public static void main(String[] args) throws AtomSetException, FileNotFoundException, ChaseException, ParseException {
 		OneStepForwardChaining options = new OneStepForwardChaining();

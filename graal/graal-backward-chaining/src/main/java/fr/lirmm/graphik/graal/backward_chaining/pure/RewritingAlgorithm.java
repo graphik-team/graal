@@ -65,7 +65,7 @@ import fr.lirmm.graphik.util.Verbosable;
 class RewritingAlgorithm implements Verbosable, Profilable {
 
 	private boolean verbose;
-	private Profiler profiler;
+	private Profiler          profiler;
 	
 	private RewritingOperator operator;
 
@@ -92,6 +92,7 @@ class RewritingAlgorithm implements Verbosable, Profilable {
 	 */
 	public Collection<ConjunctiveQuery> execute(ConjunctiveQuery query, IndexedByHeadPredicatesRuleSet ruleSet, RulesCompilation compilation) {
 		if(this.verbose) {
+			this.profiler.trace(query.toString());
 			this.profiler.put("CONFIG", operator.getClass().getSimpleName());
 		}
 		LinkedList<ConjunctiveQuery> finalRewritingSet = new LinkedList<ConjunctiveQuery>();
@@ -102,6 +103,7 @@ class RewritingAlgorithm implements Verbosable, Profilable {
 		int generatedRewrites = 0;
 
 		if(this.verbose) {
+			this.profiler.clear("Rewriting time");
 			this.profiler.start("Rewriting time");
 		}
 
