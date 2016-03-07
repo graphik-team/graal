@@ -43,7 +43,6 @@
  package fr.lirmm.graphik.graal.core;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -62,7 +61,7 @@ public class DefaultAtom extends AbstractAtom implements Serializable {
 	private static final long serialVersionUID = -5889218407173357933L;
 
 	private Predicate predicate;
-	private List<Term> terms;
+	private Term[]            terms;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -71,14 +70,19 @@ public class DefaultAtom extends AbstractAtom implements Serializable {
 	public DefaultAtom(Predicate predicate) {
 		this.predicate = predicate;
 		int n = predicate.getArity();
-		this.terms = new ArrayList<Term>(n);
-		for (int i = 0; i < n; ++i)
-			this.terms.add(null);
+		this.terms = new Term[n];
 	}
 
 	public DefaultAtom(Predicate predicate, List<Term> terms) {
 		this.predicate = predicate;
-		this.terms = terms;
+		int n = predicate.getArity();
+		this.terms = new Term[n];
+		int i = 0;
+		for (Term t : terms) {
+			this.terms[i++] = t;
+			if (i == n)
+				break;
+		}
 	}
 
 	public DefaultAtom(Predicate predicate, Term... terms) {
@@ -89,10 +93,7 @@ public class DefaultAtom extends AbstractAtom implements Serializable {
 	 * @param atom
 	 */
 	public DefaultAtom(Atom atom) {
-		this.predicate = atom.getPredicate(); // Predicate is immutable
-		this.terms = new LinkedList<Term>();
-		for (Term t : atom.getTerms())
-			this.terms.add(t); // Term is immutable
+		this(atom.getPredicate(), atom.getTerms());
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -114,12 +115,17 @@ public class DefaultAtom extends AbstractAtom implements Serializable {
 
 	@Override
 	public boolean contains(Term term) {
-		return this.terms.contains(term);
+		return this.indexOf(term) >= 0;
 	}
 
 	@Override
 	public int indexOf(Term term) {
-		return this.terms.indexOf(term);
+		for (int i = 0; i < this.terms.length; ++i) {
+			if (term.equals(this.terms[i])) {
+				return i;
+			}
+		}
+		return -1;
 	}
 
 	/**
@@ -128,9 +134,9 @@ public class DefaultAtom extends AbstractAtom implements Serializable {
 	public int[] indexesOf(Term term) {
 		int[] result = null;
 		int resultCounter = 0;
-		int termsSize = terms.size();
+		int termsSize = terms.length;
 		for (int i = 0; i < termsSize; i++) {
-			if (terms.get(i).equals(term)) {
+			if (terms[i].equals(term)) {
 				resultCounter++;
 			}
 		}
@@ -138,7 +144,7 @@ public class DefaultAtom extends AbstractAtom implements Serializable {
 			result = new int[resultCounter];
 			int pos = 0;
 			for (int i = 0; i < termsSize; i++) {
-				if (terms.get(i).equals(term)) {
+				if (terms[i].equals(term)) {
 					result[pos] = i;
 					pos++;
 				}
@@ -172,7 +178,7 @@ public class DefaultAtom extends AbstractAtom implements Serializable {
 	 */
 	@Override
 	public void setTerm(int index, Term term) {
-		this.terms.set(index, term);
+		this.terms[index] = term;
 
 	}
 
@@ -181,7 +187,7 @@ public class DefaultAtom extends AbstractAtom implements Serializable {
 	 */
 	@Override
 	public Term getTerm(int index) {
-		return this.terms.get(index);
+		return this.terms[index];
 	}
 
 	/**
@@ -190,7 +196,12 @@ public class DefaultAtom extends AbstractAtom implements Serializable {
 	 * @param terms
 	 */
 	public void setTerms(List<Term> terms) {
-		this.terms = terms;
+		int i = 0;
+		for (Term t : terms) {
+			this.terms[i++] = t;
+			if (i == this.terms.length)
+				break;
+		}
 	}
 
 	/**
@@ -198,7 +209,7 @@ public class DefaultAtom extends AbstractAtom implements Serializable {
 	 */
 	@Override
 	public List<Term> getTerms() {
-		return this.terms;
+		return Arrays.asList(this.terms);
 	}
 
 };

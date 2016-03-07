@@ -63,7 +63,7 @@ import fr.lirmm.graphik.graal.api.core.Term.Type;
 class AtomEdge extends AbstractAtom implements Edge {
 
 	private PredicateVertex  predicate;
-	private List<TermVertex> terms;
+	private TermVertex[]    terms;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -75,7 +75,14 @@ class AtomEdge extends AbstractAtom implements Edge {
 	 */
 	public AtomEdge(PredicateVertex predicate, List<TermVertex> terms) {
 		this.predicate = predicate;
-		this.terms = terms;
+		int n = predicate.getArity();
+		this.terms = new TermVertex[n];
+		int i = 0;
+		for (TermVertex t : terms) {
+			this.terms[i++] = t;
+			if (i == n)
+				break;
+		}
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -94,27 +101,37 @@ class AtomEdge extends AbstractAtom implements Edge {
 
 	@Override
 	public void setTerm(int index, Term term) {
-		this.terms.set(index, TermVertexFactory.instance().createTerm(term));
+		this.terms[index] = TermVertexFactory.instance().createTerm(term);
 	}
 
 	@Override
 	public TermVertex getTerm(int index) {
-		return this.terms.get(index);
+		return this.terms[index];
 	}
 
 	@Override
 	public int indexOf(Term t) {
-		return this.terms.indexOf(t);
+		int i = -1;
+		for (; i < this.terms.length; ++i) {
+			if (t.equals(this.terms[i])) {
+				return i;
+			}
+		}
+		return i;
 	}
 
 	@Override
 	public boolean contains(Term t) {
-		return this.terms.contains(t);
+		return this.indexOf(t) >= 0;
 	}
 
 	@Override
 	public List<Term> getTerms() {
-		return new LinkedList<Term>(this.terms);
+		List<Term> list = new LinkedList<Term>();
+		for (TermVertex t : this.terms) {
+			list.add(t);
+		}
+		return list;
 	}
 
 	@Override
@@ -134,7 +151,9 @@ class AtomEdge extends AbstractAtom implements Edge {
 	@Override
 	public Set<Vertex> getVertices() {
 		Set<Vertex> set = new TreeSet<Vertex>(new VertexComparator());
-		set.addAll(terms);
+		for (TermVertex t : terms)
+			set.add(t);
+
 		set.add(predicate);
 		return set;
 	}

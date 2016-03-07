@@ -49,9 +49,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.api.core.AbstractTerm;
 import fr.lirmm.graphik.graal.api.core.Atom;
@@ -64,8 +62,8 @@ abstract class AbstractTermVertex extends AbstractTerm implements TermVertex {
 
 	private static final long serialVersionUID = -1087277093687686210L;
 
-	private final TreeSet<Edge> edges = new TreeSet<Edge>();
-	private final TreeMap<Predicate, TreeMap<Integer, Collection<Atom>>> index            = new TreeMap<Predicate, TreeMap<Integer, Collection<Atom>>>();
+	// private final TreeSet<Edge> edges = new TreeSet<Edge>();
+	private final TreeMap<Predicate, Collection<Atom>[]> index            = new TreeMap<Predicate, Collection<Atom>[]>();
 
 	// /////////////////////////////////////////////////////////////////////////
 	// ABSTRACT METHODS
@@ -77,17 +75,17 @@ abstract class AbstractTermVertex extends AbstractTerm implements TermVertex {
 	// VERTEX METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	@Override
-	public Set<Edge> getEdges() {
-		return this.edges;
-	}
+	// @Override
+	// public Set<Edge> getEdges() {
+	// return this.edges;
+	// }
 
 	@Override
 	public GIterator<Atom> getNeighbors(Predicate p, int position) {
 		Iterator<Atom> it = null;
-		TreeMap<Integer, Collection<Atom>> map = this.index.get(p);
+		Collection<Atom>[] map = this.index.get(p);
 		if(map != null) {
-			Collection<Atom> collection = map.get(position);
+			Collection<Atom> collection = map[position];
 			if(collection != null) {
 				it = collection.iterator();
 			}
@@ -100,9 +98,9 @@ abstract class AbstractTermVertex extends AbstractTerm implements TermVertex {
 
 	@Override
 	public void add(Atom a) {
-		TreeMap<Integer, Collection<Atom>> map = this.index.get(a.getPredicate());
+		Collection<Atom>[] map = this.index.get(a.getPredicate());
 		if (map == null) {
-			map = new TreeMap<Integer, Collection<Atom>>();
+			map = new Collection[a.getPredicate().getArity()];
 			this.index.put(a.getPredicate(), map);
 		}
 
@@ -110,10 +108,10 @@ abstract class AbstractTermVertex extends AbstractTerm implements TermVertex {
 		for (Term t : a) {
 			++i;
 			if (this.equals(t)) {
-				Collection<Atom> collection = map.get(i);
+				Collection<Atom> collection = map[i];
 				if (collection == null) {
 					collection = new LinkedList<Atom>();
-					map.put(i, collection);
+					map[i] = collection;
 				}
 				collection.add(a);
 			}
