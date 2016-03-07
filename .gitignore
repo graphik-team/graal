@@ -1,3 +1,8 @@
+# SPECIFIC DIRECTORY #
+######################
+graal-examples/src/main/java/fr/lirmm/graphik/graal/trash/*
+graal-examples/src/main/java/fr/lirmm/graphik/graal/test/*
+*.patch
 **/src/design/
 
 # Compiled source #
@@ -51,6 +56,7 @@ Thumbs.db
 *.swo
 *.swn
 *.*~
+\#*\#
 
 # OTHER tools #
 ###############
@@ -58,10 +64,3 @@ Thumbs.db
 
 # ctags file
 tags
-
-# SPECIFIC DIRECTORY #
-######################
-
-graal-examples/src/main/java/fr/lirmm/graphik/graal/trash/*
-graal-examples/src/main/java/fr/lirmm/graphik/graal/test/*
-*.patch
