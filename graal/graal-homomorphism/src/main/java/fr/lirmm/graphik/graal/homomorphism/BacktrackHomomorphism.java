@@ -52,7 +52,7 @@ import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.NoBackJumping;
 import fr.lirmm.graphik.graal.homomorphism.bootstrapper.Bootstrapper;
-import fr.lirmm.graphik.graal.homomorphism.bootstrapper.DefaultBootstrapper;
+import fr.lirmm.graphik.graal.homomorphism.bootstrapper.StarBootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.ForwardChecking;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NoForwardChecking;
 import fr.lirmm.graphik.util.Profilable;
@@ -77,24 +77,24 @@ public class BacktrackHomomorphism implements HomomorphismWithCompilation<Conjun
 	private BackJumping     bj;
 
 	public BacktrackHomomorphism() {
-		this(new DefaultScheduler(), DefaultBootstrapper.instance(), NoForwardChecking.instance(),
+		this(new DefaultScheduler(), StarBootstrapper.instance(), NoForwardChecking.instance(),
 		     NoBackJumping.instance());
 	}
 
 	public BacktrackHomomorphism(Scheduler s) {
-		this(s, DefaultBootstrapper.instance(), NoForwardChecking.instance(), NoBackJumping.instance());
+		this(s, StarBootstrapper.instance(), NoForwardChecking.instance(), NoBackJumping.instance());
 	}
 
 	public BacktrackHomomorphism(ForwardChecking fc) {
-		this(new DefaultScheduler(), DefaultBootstrapper.instance(), fc, NoBackJumping.instance());
+		this(new DefaultScheduler(), StarBootstrapper.instance(), fc, NoBackJumping.instance());
 	}
 
 	public BacktrackHomomorphism(BackJumping bj) {
-		this(new DefaultScheduler(), DefaultBootstrapper.instance(), NoForwardChecking.instance(), bj);
+		this(new DefaultScheduler(), StarBootstrapper.instance(), NoForwardChecking.instance(), bj);
 	}
 
 	public BacktrackHomomorphism(Scheduler s, BackJumping bj) {
-		this(s, DefaultBootstrapper.instance(), NoForwardChecking.instance(), bj);
+		this(s, StarBootstrapper.instance(), NoForwardChecking.instance(), bj);
 	}
 
 	public BacktrackHomomorphism(Scheduler s, Bootstrapper bs, ForwardChecking fc, BackJumping bj) {

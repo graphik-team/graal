@@ -40,7 +40,7 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
+/**
  * 
  */
 package fr.lirmm.graphik.graal.homomorphism.checker;
@@ -52,24 +52,24 @@ import fr.lirmm.graphik.graal.api.homomorphism.AbstractChecker;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.GraphBaseBackJumping;
 import fr.lirmm.graphik.graal.homomorphism.bbc.BCC;
-import fr.lirmm.graphik.graal.homomorphism.bootstrapper.DefaultBootstrapper;
-import fr.lirmm.graphik.graal.homomorphism.forward_checking.SimpleFC;
+import fr.lirmm.graphik.graal.homomorphism.bootstrapper.StarBootstrapper;
+import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
 public class BacktrackChecker extends AbstractChecker {
-	
+
 	@Override
 	public BacktrackHomomorphism getSolver() {
 		BCC bcc = new BCC(new GraphBaseBackJumping(), false);
-		return new BacktrackHomomorphism(bcc.getBCCScheduler(), DefaultBootstrapper.instance(), new SimpleFC(),
+		return new BacktrackHomomorphism(bcc.getBCCScheduler(), StarBootstrapper.instance(), new NFC2(),
 		                                 bcc.getBCCBackJumping());
 	}
-	
+
 	@Override
-	public boolean check(Query query,  AtomSet atomset) {
+	public boolean check(Query query, AtomSet atomset) {
 		return query instanceof ConjunctiveQuery;
 	}
 
