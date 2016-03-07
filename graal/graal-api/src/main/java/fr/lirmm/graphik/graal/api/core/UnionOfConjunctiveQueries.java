@@ -40,37 +40,18 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.homomorphism.checker;
+package fr.lirmm.graphik.graal.api.core;
 
-import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.Query;
-import fr.lirmm.graphik.graal.api.homomorphism.AbstractChecker;
-import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
-import fr.lirmm.graphik.graal.core.DefaultUnionOfConjunctiveQueries;
-import fr.lirmm.graphik.graal.homomorphism.DefaultUCQHomomorphism;
+import fr.lirmm.graphik.util.stream.GIterator;
+
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class DefaultUnionConjunctiveQueriesChecker extends AbstractChecker {
+public interface UnionOfConjunctiveQueries extends Query, Iterable<ConjunctiveQuery> {
 
 	@Override
-	public boolean check(Query query, AtomSet atomset) {
-		return query instanceof DefaultUnionOfConjunctiveQueries;
-	}
-
-	@Override
-	public Homomorphism<? extends Query, ? extends AtomSet> getSolver() {
-		return new DefaultUCQHomomorphism();
-	}
-
-	@Override
-	public int getDefaultPriority() {
-		return 0;
-	}
+	GIterator<ConjunctiveQuery> iterator();
 
 }

@@ -61,7 +61,7 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
+import fr.lirmm.graphik.graal.core.DefaultUnionOfConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
@@ -262,7 +262,7 @@ public class CLI {
 
 		String ucqFile = args.get(FILE_UCQ);
 		if (ucqFile != null) {
-			UnionConjunctiveQueries ucq = new UnionConjunctiveQueries();
+			DefaultUnionOfConjunctiveQueries ucq = new DefaultUnionOfConjunctiveQueries();
 			if (verbose) System.out.println("Opening UCQ file "+ucqFile+"...");
 			try {
 				DlgpParser parser = new DlgpParser(new FileReader(ucqFile));
@@ -294,7 +294,7 @@ public class CLI {
 
 		String ucqString = args.get(STRING_UCQ);
 		if (ucqString != null) {
-			UnionConjunctiveQueries ucq = new UnionConjunctiveQueries();
+			DefaultUnionOfConjunctiveQueries ucq = new DefaultUnionOfConjunctiveQueries();
 			if (verbose) System.out.println("Reading UCQ string "+ucqString+"...");
 			try {
 				DlgpParser parser = new DlgpParser(new StringReader(ucqString));

@@ -40,15 +40,18 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
+/**
  * 
  */
 package fr.lirmm.graphik.graal.homomorphism;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.api.core.UnionOfConjunctiveQueries;
+import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
+import fr.lirmm.graphik.graal.api.homomorphism.UCQHomomorphismWithCompilation;
 import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
@@ -56,29 +59,33 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public final class DefaultUnionConjunctiveQueriesHomomorphism implements UnionConjunctiveQueriesHomomorphism<AtomSet> {
+public final class DefaultUCQHomomorphism implements UCQHomomorphismWithCompilation<AtomSet> {
 
-	private static DefaultUnionConjunctiveQueriesHomomorphism instance;
-	private Profiler                                          profiler;
-    
+	private Profiler     profiler;
+	private Homomorphism homomorphism;
+
 	/**
-     * @param queries
-     * @param atomSet
-     */
-    private DefaultUnionConjunctiveQueriesHomomorphism() {
-    }
-    
-    public static synchronized DefaultUnionConjunctiveQueriesHomomorphism instance() {
-    	if(instance == null)
-    		instance = new DefaultUnionConjunctiveQueriesHomomorphism();
-    	
-    	return instance;
-    }
+	 * @param queries
+	 * @param atomSet
+	 */
+	public DefaultUCQHomomorphism() {
+	}
+
+	public DefaultUCQHomomorphism(Homomorphism h) {
+		this.homomorphism = h;
+	}
 
 	@Override
-	public CloseableIterator<Substitution> execute(UnionConjunctiveQueries queries,
-			AtomSet atomset) throws HomomorphismException {
-        return new UnionConjunctiveQueriesSubstitutionIterator(queries, atomset);
+	public CloseableIterator<Substitution> execute(UnionOfConjunctiveQueries queries, AtomSet atomset)
+	    throws HomomorphismException {
+		return new UnionConjunctiveQueriesSubstitutionIterator(queries, atomset, homomorphism);
+	}
+
+	@Override
+	public CloseableIterator<Substitution> execute(UnionOfConjunctiveQueries queries, AtomSet atomset,
+	    RulesCompilation rc)
+	    throws HomomorphismException {
+		return new UnionConjunctiveQueriesSubstitutionIterator(queries, atomset, homomorphism, rc);
 	}
 
 	@Override

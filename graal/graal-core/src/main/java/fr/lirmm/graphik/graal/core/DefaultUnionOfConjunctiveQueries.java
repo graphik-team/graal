@@ -51,8 +51,9 @@ import java.util.LinkedList;
 
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Query;
-import fr.lirmm.graphik.util.stream.IteratorAdapter;
+import fr.lirmm.graphik.graal.api.core.UnionOfConjunctiveQueries;
 import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.IteratorAdapter;
 
 /**
  * This class represents query which is the union of conjunctive queries.
@@ -60,7 +61,7 @@ import fr.lirmm.graphik.util.stream.GIterator;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class UnionConjunctiveQueries implements Query,
+public class DefaultUnionOfConjunctiveQueries implements UnionOfConjunctiveQueries,
 		Collection<ConjunctiveQuery> {
 
 	private String label = "";
@@ -70,22 +71,22 @@ public class UnionConjunctiveQueries implements Query,
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public UnionConjunctiveQueries() {
+	public DefaultUnionOfConjunctiveQueries() {
 		this.queries = new LinkedList<ConjunctiveQuery>();
 	}
 
-	public UnionConjunctiveQueries(Collection<ConjunctiveQuery> queries) {
+	public DefaultUnionOfConjunctiveQueries(Collection<ConjunctiveQuery> queries) {
 		this.queries = queries;
 	}
 
-	public UnionConjunctiveQueries(Iterator<ConjunctiveQuery> queries) {
+	public DefaultUnionOfConjunctiveQueries(Iterator<ConjunctiveQuery> queries) {
 		this.queries = new LinkedList<ConjunctiveQuery>();
 		while (queries.hasNext()) {
 			this.queries.add(queries.next());
 		}
 	}
 
-	public UnionConjunctiveQueries(ConjunctiveQuery... queries) {
+	public DefaultUnionOfConjunctiveQueries(ConjunctiveQuery... queries) {
 		this.queries = new LinkedList<ConjunctiveQuery>();
 		for (ConjunctiveQuery cq : queries)
 			this.queries.add(cq);

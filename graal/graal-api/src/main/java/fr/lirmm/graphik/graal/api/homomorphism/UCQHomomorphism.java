@@ -40,19 +40,15 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.homomorphism;
+package fr.lirmm.graphik.graal.api.homomorphism;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
-import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
+import fr.lirmm.graphik.graal.api.core.UnionOfConjunctiveQueries;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface UnionConjunctiveQueriesHomomorphism<A extends AtomSet> extends Homomorphism<UnionConjunctiveQueries, A> {
+public interface UCQHomomorphism<A extends AtomSet> extends Homomorphism<UnionOfConjunctiveQueries, A> {
 
 }

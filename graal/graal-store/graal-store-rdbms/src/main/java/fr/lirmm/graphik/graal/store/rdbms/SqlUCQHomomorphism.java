@@ -52,9 +52,9 @@ import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.api.core.UnionOfConjunctiveQueries;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
-import fr.lirmm.graphik.graal.homomorphism.UnionConjunctiveQueriesHomomorphism;
+import fr.lirmm.graphik.graal.api.homomorphism.UCQHomomorphism;
 import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
@@ -64,7 +64,7 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public final class SqlUCQHomomorphism implements UnionConjunctiveQueriesHomomorphism<RdbmsStore> {
+public final class SqlUCQHomomorphism implements UCQHomomorphism<RdbmsStore> {
 
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(SqlUCQHomomorphism.class);
@@ -88,7 +88,7 @@ public final class SqlUCQHomomorphism implements UnionConjunctiveQueriesHomomorp
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public CloseableIterator<Substitution> execute(UnionConjunctiveQueries queries,
+	public CloseableIterator<Substitution> execute(UnionOfConjunctiveQueries queries,
 			RdbmsStore store) throws HomomorphismException {
 		String sqlQuery = preprocessing(queries, store);
 		try {
@@ -111,7 +111,8 @@ public final class SqlUCQHomomorphism implements UnionConjunctiveQueriesHomomorp
 		return this.profiler;
 	}
 
-	private static String preprocessing(UnionConjunctiveQueries queries, RdbmsStore store) throws HomomorphismException {
+	private static String preprocessing(UnionOfConjunctiveQueries queries, RdbmsStore store)
+	    throws HomomorphismException {
 		Iterator<ConjunctiveQuery> it = queries.iterator();
 		StringBuilder sqlQuery = new StringBuilder();
 		try {
@@ -132,4 +133,5 @@ public final class SqlUCQHomomorphism implements UnionConjunctiveQueriesHomomorp
 		}
 		return sqlQuery.toString();
 	}
+
 }

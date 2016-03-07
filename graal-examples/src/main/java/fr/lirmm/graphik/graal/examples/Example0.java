@@ -63,7 +63,7 @@ import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.backward_chaining.pure.PureRewriter;
-import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
+import fr.lirmm.graphik.graal.core.DefaultUnionOfConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.forward_chaining.NaiveChase;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
@@ -137,7 +137,7 @@ public class Example0 {
 		// 7 - Rewrite the original query (backward chaining) in an union of
 		// queries
 		BackwardChainer backwardChainer = new PureRewriter(query, ontology);
-		UnionConjunctiveQueries ucq = new UnionConjunctiveQueries(backwardChainer);
+		DefaultUnionOfConjunctiveQueries ucq = new DefaultUnionOfConjunctiveQueries(backwardChainer);
 
 		// Print the set of facts in Dlgp
 		writer.write("\n= Facts =\n");

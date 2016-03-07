@@ -43,34 +43,16 @@
  /**
  * 
  */
-package fr.lirmm.graphik.graal.homomorphism.checker;
+package fr.lirmm.graphik.graal.api.homomorphism;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.Query;
-import fr.lirmm.graphik.graal.api.homomorphism.AbstractChecker;
-import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
-import fr.lirmm.graphik.graal.core.DefaultUnionOfConjunctiveQueries;
-import fr.lirmm.graphik.graal.homomorphism.DefaultUCQHomomorphism;
+import fr.lirmm.graphik.graal.api.core.UnionOfConjunctiveQueries;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class DefaultUnionConjunctiveQueriesChecker extends AbstractChecker {
-
-	@Override
-	public boolean check(Query query, AtomSet atomset) {
-		return query instanceof DefaultUnionOfConjunctiveQueries;
-	}
-
-	@Override
-	public Homomorphism<? extends Query, ? extends AtomSet> getSolver() {
-		return new DefaultUCQHomomorphism();
-	}
-
-	@Override
-	public int getDefaultPriority() {
-		return 0;
-	}
+public interface UCQHomomorphismWithCompilation<A extends AtomSet> extends
+HomomorphismWithCompilation<UnionOfConjunctiveQueries, A> {
 
 }

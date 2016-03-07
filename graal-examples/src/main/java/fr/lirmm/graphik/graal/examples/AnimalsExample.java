@@ -60,7 +60,7 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.backward_chaining.pure.PureRewriter;
 import fr.lirmm.graphik.graal.core.DefaultKnowledgeBase;
-import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
+import fr.lirmm.graphik.graal.core.DefaultUnionOfConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.forward_chaining.NaiveChase;
@@ -131,7 +131,7 @@ public class AnimalsExample {
 
 		BackwardChainer backwardChainer = new PureRewriter(query,
 				kb.getOntology());
-		UnionConjunctiveQueries ucq = new UnionConjunctiveQueries();
+		DefaultUnionOfConjunctiveQueries ucq = new DefaultUnionOfConjunctiveQueries();
 		while(backwardChainer.hasNext()) {
 			ucq.add(backwardChainer.next());
 		}

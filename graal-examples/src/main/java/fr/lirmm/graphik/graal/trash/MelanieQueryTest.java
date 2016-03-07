@@ -60,7 +60,7 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
-import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
+import fr.lirmm.graphik.graal.core.DefaultUnionOfConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.stream.filter.AtomFilterIterator;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseWithGRDAndUnfiers;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
@@ -186,28 +186,28 @@ public class MelanieQueryTest {
 	
 	public static void parseUnionQuery() throws ParseException {
 
-		UnionConjunctiveQueries ucq = new UnionConjunctiveQueries();
+		DefaultUnionOfConjunctiveQueries ucq = new DefaultUnionOfConjunctiveQueries();
 		ucq.add(DlgpParser.parseQuery("?(A,B) :- affiliatedOrganizationOf(B,C), headOf(A,B)."));
 		ucq.add(DlgpParser.parseQuery("?(A,B) :- affiliatedOrganizationOf(B,C), worksFor(A,B)."));
 		queries.add(ucq);
 
-		ucq = new UnionConjunctiveQueries();
+		ucq = new DefaultUnionOfConjunctiveQueries();
 		ucq.add(DlgpParser.parseQuery("?(A,B) :- teacherOf(A,B)."));
 		queries.add(ucq);
 		
-		ucq = new UnionConjunctiveQueries();
+		ucq = new DefaultUnionOfConjunctiveQueries();
 		ucq.add(DlgpParser.parseQuery("?(A,B,C) :- hasExamrecord(A,D), takesCourse(A,C), teacherOf(B,C)." ));
 		ucq.add(DlgpParser.parseQuery("?(A,B,C) :- advisor(A,B), \"ResearchAssistant\"(A), takesCourse(A,C), teacherOf(B,C)." ));
 		ucq.add(DlgpParser.parseQuery("?(A,B,C) :- advisor(A,B), \"Student\"(A), takesCourse(A,C), teacherOf(B,C)." ));
 		ucq.add(DlgpParser.parseQuery("?(A,B,C) :- takesCourse(A,C), teacherOf(B,C), \"UndergraduateStudent\"(A)." ));
 		queries.add(ucq);
 
-		ucq = new UnionConjunctiveQueries();
+		ucq = new DefaultUnionOfConjunctiveQueries();
 		ucq.add(DlgpParser.parseQuery("?(A,B) :- headOf(A,B)." ));
 		ucq.add(DlgpParser.parseQuery("?(A,B) :- worksFor(A,B)." ));
 		queries.add(ucq);
 
-		ucq = new UnionConjunctiveQueries();
+		ucq = new DefaultUnionOfConjunctiveQueries();
 		ucq.add(DlgpParser.parseQuery("?(A,B) :- degreeFrom(A,B), headof(A,B)."));
 		ucq.add(DlgpParser.parseQuery("?(A,B) :- degreeFrom(A,B), worksfor(A,B)."));
 		ucq.add(DlgpParser.parseQuery("?(A,B) :- doctoralDegreeFrom(A,B), headOf(A,B)."));

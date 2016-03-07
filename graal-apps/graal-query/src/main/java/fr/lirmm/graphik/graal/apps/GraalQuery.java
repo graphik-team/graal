@@ -55,7 +55,7 @@ import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
+import fr.lirmm.graphik.graal.core.DefaultUnionOfConjunctiveQueries;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
@@ -153,7 +153,7 @@ public class GraalQuery {
 		RdbmsStore store = new DefaultRdbmsStore(driver);
 
 		DlgpParser parser = new DlgpParser(new File(options.file));
-		UnionConjunctiveQueries ucq = new UnionConjunctiveQueries();
+		DefaultUnionOfConjunctiveQueries ucq = new DefaultUnionOfConjunctiveQueries();
 		while (parser.hasNext()) {
 			Object o = parser.next();
 			if(o instanceof ConjunctiveQuery) {

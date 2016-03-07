@@ -40,19 +40,21 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
+/**
  * 
  */
 package fr.lirmm.graphik.graal.homomorphism;
 
-
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Query;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.api.core.UnionOfConjunctiveQueries;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
+import fr.lirmm.graphik.util.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.GIterator;
 
@@ -60,71 +62,86 @@ import fr.lirmm.graphik.util.stream.GIterator;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class UnionConjunctiveQueriesSubstitutionIterator implements CloseableIterator<Substitution> {
+public class UnionConjunctiveQueriesSubstitutionIterator extends AbstractProfilable implements
+                                                                                   CloseableIterator<Substitution> {
 
-    private AtomSet atomSet;
-	private GIterator<ConjunctiveQuery> cqueryIterator;
-	private CloseableIterator<Substitution> tmpIt;
-    private boolean hasNextCallDone = false;
-    
-    /**
-     * @param queries
-     * @param atomSet
-     */
-    public UnionConjunctiveQueriesSubstitutionIterator(UnionConjunctiveQueries queries,
-            AtomSet atomSet) {
-        this.cqueryIterator = queries.iterator();
-        this.atomSet = atomSet;
-        this.tmpIt = null;
-    }
+	private AtomSet                                 atomSet;
+	private GIterator<ConjunctiveQuery>             cqueryIterator;
+	private CloseableIterator<Substitution>         tmpIt;
+	private boolean                                 hasNextCallDone = false;
+	private Homomorphism<ConjunctiveQuery, AtomSet> homomorphism;
+	private RulesCompilation                        compilation;
 
-    @Override
-    public boolean hasNext() {
-        if (!this.hasNextCallDone) {
-            this.hasNextCallDone = true;
+	public UnionConjunctiveQueriesSubstitutionIterator(UnionOfConjunctiveQueries queries, AtomSet atomSet) {
+		this(queries, atomSet, null, null);
+	}
 
-            while ((this.tmpIt == null || !this.tmpIt.hasNext())
-                    && this.cqueryIterator.hasNext()) {
+	public UnionConjunctiveQueriesSubstitutionIterator(UnionOfConjunctiveQueries queries, AtomSet atomSet,
+	    Homomorphism<ConjunctiveQuery, AtomSet> homomorphism) {
+		this(queries, atomSet, homomorphism, null);
+	}
+
+	public UnionConjunctiveQueriesSubstitutionIterator(UnionOfConjunctiveQueries queries, AtomSet atomSet,
+	    Homomorphism<ConjunctiveQuery, AtomSet> homomorphism, RulesCompilation rc) {
+		this.cqueryIterator = queries.iterator();
+		this.atomSet = atomSet;
+		this.tmpIt = null;
+		this.homomorphism = homomorphism;
+		this.compilation = rc;
+	}
+
+	@Override
+	public boolean hasNext() {
+		if (!this.hasNextCallDone) {
+			this.hasNextCallDone = true;
+
+			while ((this.tmpIt == null || !this.tmpIt.hasNext()) && this.cqueryIterator.hasNext()) {
 				if (this.tmpIt != null) {
 					this.tmpIt.close();
 				}
-                Query q = this.cqueryIterator.next();
-                Homomorphism solver;
-                try {
-                    solver = DefaultHomomorphismFactory.instance().getSolver(q, this.atomSet);
-                    if(solver == null) {
-                    	return false;
-                    } else {
-                    	this.tmpIt = solver.execute(q, this.atomSet);
-                    }
-                } catch (HomomorphismException e) {
-                    return false;
-                }
-            }
-        }
-        return this.tmpIt != null && this.tmpIt.hasNext();
-    }
+				Query q = this.cqueryIterator.next();
+				Homomorphism solver = this.homomorphism;
+				try {
+					if (solver == null) {
+						solver = DefaultHomomorphismFactory.instance().getSolver(q, this.atomSet);
+						if (solver == null) {
+							throw new Error("Solver not found.");
+						}
+					}
+					solver.setProfiler(this.getProfiler());
 
-    @Override
-    public Substitution next() {
-        if (!this.hasNextCallDone)
-            this.hasNext();
+					if (this.compilation != null && solver instanceof HomomorphismWithCompilation) {
+						this.tmpIt = ((HomomorphismWithCompilation) solver).execute(q, this.atomSet, this.compilation);
+					} else {
+						this.tmpIt = solver.execute(q, this.atomSet);
+					}
 
-        this.hasNextCallDone = false;
+				} catch (HomomorphismException e) {
+					return false;
+				}
+			}
+		}
+		return this.tmpIt != null && this.tmpIt.hasNext();
+	}
 
-        return this.tmpIt.next();
-    }
+	@Override
+	public Substitution next() {
+		if (!this.hasNextCallDone)
+			this.hasNext();
 
-    @Override
-    public void close() {
+		this.hasNextCallDone = false;
+
+		return this.tmpIt.next();
+	}
+
+	@Override
+	public void close() {
 		this.tmpIt.close();
-    }
+	}
 
-    @Override
-    public void remove() {
-        throw new UnsupportedOperationException();
-    }
-    
-    
+	@Override
+	public void remove() {
+		throw new UnsupportedOperationException();
+	}
 
 }

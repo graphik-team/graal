@@ -56,11 +56,11 @@ import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
-import fr.lirmm.graphik.graal.core.UnionConjunctiveQueries;
+import fr.lirmm.graphik.graal.core.DefaultUnionOfConjunctiveQueries;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
-import fr.lirmm.graphik.graal.homomorphism.UnionConjunctiveQueriesHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.store.rdbms.SqlHomomorphism;
+import fr.lirmm.graphik.graal.store.rdbms.SqlUCQHomomorphism;
 import fr.lirmm.graphik.graal.store.rdbms.driver.DriverException;
 
 /**
@@ -86,11 +86,11 @@ public class SolverFactoryTest {
 
 		ConjunctiveQuery query1 = DlgpParser.parseQuery("?(X) :- p(X).");
 		ConjunctiveQuery query2 = DlgpParser.parseQuery("?(Y) :- q(Y).");
-		UnionConjunctiveQueries ucq = new UnionConjunctiveQueries(query1,
+		DefaultUnionOfConjunctiveQueries ucq = new DefaultUnionOfConjunctiveQueries(query1,
 				query2);
 
 		Homomorphism solver = StaticHomomorphism.getSolverFactory().getSolver(ucq, atomSet);
-		Assert.assertTrue(solver instanceof UnionConjunctiveQueriesHomomorphism);
+		Assert.assertTrue(solver instanceof SqlUCQHomomorphism);
 	}
 
 }
