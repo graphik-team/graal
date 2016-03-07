@@ -66,7 +66,7 @@ import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
-import fr.lirmm.graphik.util.Profiler;
+import fr.lirmm.graphik.util.DefaultProfiler;
 import fr.lirmm.graphik.util.stream.AbstractIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
@@ -208,10 +208,8 @@ public class HomomorphismBench extends AbstractGraalBench {
 	public CloseableIterator<Query> getQueries() {
 		DlgpParser dlgpParser = new DlgpParser(
 		// "?(X1,X2) :- p2(X1,X2). "
-		// + "?(X,Y,Z) :- p2(X,Y), q2(X,Z), r2(Y,Z)."
 		                                       "?(X1,X2,X3,X4) :- p3(X1,X2,X3), p3(X3,X2,X1), p2(X3,X4). "
-		// +
-		// "?(X5,X6,X7,X8) :- p4(X5,X6,X7,X8), p4(X8,X7,X6,X5), p3(X7,X8,X9), p2(X7,X11). "
+		                                               + "?(X5,X6,X7,X8) :- p4(X5,X6,X7,X8), p4(X8,X7,X6,X5), p3(X7,X8,X9), p2(X7,X11). "
 		);
 		// +
 		// "?(X1,X2,X3,X4,X5,X6,X7,X8) :- p3(X1,X2,X3), p3(X3,X2,X1), p2(X3,X4), p4(X5,X6,X7,X8), p4(X8,X7,X6,X5), p3(X7,X8,X9), p2(X7,X11)."
@@ -239,6 +237,7 @@ public class HomomorphismBench extends AbstractGraalBench {
 			                                                                InMemoryAtomSet s       = new DefaultInMemoryGraphAtomSet();
 			                                                                int             nbAtoms = minInstanceSize;
 			                                                                int             domain  = domainSize;
+			                                                                int             realNbAtoms = 0;
 
 			                                                                {
 				                                                                addNAtoms(s, nbAtoms);
@@ -255,7 +254,7 @@ public class HomomorphismBench extends AbstractGraalBench {
 				                                                                nbAtoms *= instanceIncreaseFactor;
 				                                                                domain *= domainIncreaseFactor;
 				                                                                return new ImmutablePair<String, AtomSet>(
-				                                                                                                          Integer.toString(nbAtoms),
+				                                                                                                          Integer.toString(realNbAtoms),
 				                                                                                                          s);
 
 			                                                                }
@@ -270,9 +269,11 @@ public class HomomorphismBench extends AbstractGraalBench {
 						                                                                                            .createConstant(
 						                                                                                                rand.nextInt(domain)));
 					                                                                }
-					                                                                to.add(new DefaultAtom(
+					                                                                if (to.add(new DefaultAtom(
 					                                                                                       PREDICATES[p],
-					                                                                                       terms));
+					                                                                                           terms))) {
+						                                                                ++realNbAtoms;
+					                                                                }
 				                                                                }
 			                                                                }
 
@@ -282,7 +283,7 @@ public class HomomorphismBench extends AbstractGraalBench {
 	@Override
 	public Iterator<Map.Entry<String, Object>> execute(Query q, AtomSet atomset, Object o) {
 
-		Profiler profiler = new Profiler();
+		DefaultProfiler profiler = new DefaultProfiler();
 		BacktrackHomomorphism h = (BacktrackHomomorphism) o;
 		h.setProfiler(profiler);
 

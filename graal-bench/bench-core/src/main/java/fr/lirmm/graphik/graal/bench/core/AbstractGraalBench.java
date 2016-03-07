@@ -42,9 +42,12 @@
  */
 package fr.lirmm.graphik.graal.bench.core;
 
-import java.io.FileNotFoundException;
 import java.io.OutputStream;
-import java.util.Map;
+import java.util.Iterator;
+import java.util.Map.Entry;
+
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.Query;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -54,6 +57,10 @@ public abstract class AbstractGraalBench implements GraalBench {
 
 	private OutputStream outputStream = System.out;
 	private int  nbIteration = 10;
+	private Object       object;
+	private AtomSet      atomset;
+	private Query        query;
+	private Iterator<Entry<String, Object>> results;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -98,19 +105,37 @@ public abstract class AbstractGraalBench implements GraalBench {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public void run(Map<String, ? extends Object> params) {
-		try {
-			new BenchRunner(this, this.outputStream, this.nbIteration).run(params);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			throw new Error("Untreated exception");
-		}
+	public void setParams(Query q, AtomSet data, Object extra) {
+		this.query = q;
+		this.atomset = data;
+		this.object = extra;
 	}
 
+	@Override
+	public Iterator<Entry<String, Object>> getResults() {
+		return this.results;
+	}
+
+
 	// /////////////////////////////////////////////////////////////////////////
-	// OBJECT OVERRIDE METHODS
+	// PROTECTED METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
+	protected Query getQuery() {
+		return this.query;
+	}
+
+	protected AtomSet getAtomSet() {
+		return this.atomset;
+	}
+
+	protected Object getExtra() {
+		return this.object;
+	}
+
+	protected void setResults(Iterator<Entry<String, Object>> results) {
+		this.results = results;
+	}
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
