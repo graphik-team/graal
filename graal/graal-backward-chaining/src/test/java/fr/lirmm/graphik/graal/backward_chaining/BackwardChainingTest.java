@@ -58,8 +58,8 @@ import org.junit.runner.RunWith;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Predicate;
-import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.backward_chaining.pure.AggregAllRulesOperator;
 import fr.lirmm.graphik.graal.backward_chaining.pure.AggregSingleRuleOperator;
@@ -72,6 +72,7 @@ import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.util.Iterators;
+import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -107,10 +108,10 @@ public class BackwardChainingTest {
 				.parseQuery("?(X) :- q(X, Y), p(Y).");
 
 		compilation.compile(rules.iterator());
-		PureRewriter bc = new PureRewriter(query, rules, compilation, operator);
-		bc.enableUnfolding(true);
+		PureRewriter bc = new PureRewriter(operator, true);
+		GIterator<? extends ConjunctiveQuery> it = bc.execute(query, rules, compilation);
 		
-		int i = Iterators.count(bc);
+		int i = Iterators.count(it);
 		Assert.assertEquals(4, i);
 	}
 	
@@ -126,10 +127,10 @@ public class BackwardChainingTest {
 		ConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y) :- p(X,Y).");
 
 		compilation.compile(rules.iterator());
-		PureRewriter bc = new PureRewriter(query, rules, compilation, operator);
-		bc.enableUnfolding(true);
-
-		int i = Iterators.count(bc);
+		PureRewriter bc = new PureRewriter(operator, true);
+		GIterator<? extends ConjunctiveQuery> it = bc.execute(query, rules, compilation);
+		
+		int i = Iterators.count(it);
 		Assert.assertEquals(4, i);
 	}
 
@@ -145,10 +146,10 @@ public class BackwardChainingTest {
 		ConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y,Z) :- p(X, Y), q(Y,Z).");
 
 		compilation.compile(rules.iterator());
-		PureRewriter bc = new PureRewriter(query, rules, compilation, operator);
-		bc.enableUnfolding(true);
+		PureRewriter bc = new PureRewriter(operator, true);
+		GIterator<? extends ConjunctiveQuery> it = bc.execute(query, rules, compilation);
 		
-		int i = Iterators.count(bc);
+		int i = Iterators.count(it);
 		Assert.assertEquals(4, i);
 	}
 	
@@ -160,10 +161,10 @@ public class BackwardChainingTest {
 		ConjunctiveQuery query = DlgpParser.parseQuery("?(X) :- p(X), r(a,X).");
 
 		compilation.compile(rules.iterator());
-		PureRewriter bc = new PureRewriter(query, rules, compilation, operator);
-		bc.enableUnfolding(true);
+		PureRewriter bc = new PureRewriter(operator, true);
+		GIterator<? extends ConjunctiveQuery> it = bc.execute(query, rules, compilation);
 		
-		int i = Iterators.count(bc);
+		int i = Iterators.count(it);
 		Assert.assertEquals(1, i);
 	}
 
@@ -181,12 +182,12 @@ public class BackwardChainingTest {
 		ConjunctiveQuery query = DlgpParser.parseQuery("?(X) :- p(X).");
 
 		compilation.compile(rules.iterator());
-		PureRewriter bc = new PureRewriter(query, rules, compilation, operator);
-		bc.enableUnfolding(true);
-
+		PureRewriter bc = new PureRewriter(operator, true);
+		GIterator<? extends ConjunctiveQuery> rewIt = bc.execute(query, rules, compilation);
+		
 		boolean isFound = false;
-		while(bc.hasNext()) {
-			ConjunctiveQuery rew = bc.next();
+		while(rewIt.hasNext()) {
+			ConjunctiveQuery rew = rewIt.next();
 			Iterator<Atom> it = rew.getAtomSet().iterator();
 			if(it.hasNext()) {
 				Atom a = it.next();
@@ -215,12 +216,12 @@ public class BackwardChainingTest {
 		ConjunctiveQuery query = DlgpParser.parseQuery("?(X) :- p(X).");
 
 		compilation.compile(rules.iterator());
-		PureRewriter bc = new PureRewriter(query, rules, compilation, operator);
-		bc.enableUnfolding(true);
+		PureRewriter bc = new PureRewriter(operator, true);
+		GIterator<? extends ConjunctiveQuery> rewIt = bc.execute(query, rules, compilation);
 
 		boolean isFound = false;
-		while (bc.hasNext()) {
-			ConjunctiveQuery rew = bc.next();
+		while (rewIt.hasNext()) {
+			ConjunctiveQuery rew = rewIt.next();
 			Iterator<Atom> it = rew.getAtomSet().iterator();
 			if (it.hasNext()) {
 				Atom a = it.next();
@@ -251,10 +252,10 @@ public class BackwardChainingTest {
 		ConjunctiveQuery query = DlgpParser.parseQuery("?(X) :- p(X).");
 
 		compilation.compile(rules.iterator());
-		PureRewriter bc = new PureRewriter(query, rules, compilation, operator);
-		bc.enableUnfolding(true);
-
-		int i = Iterators.count(bc);
+		PureRewriter bc = new PureRewriter(operator, true);
+		GIterator<? extends ConjunctiveQuery> it = bc.execute(query, rules, compilation);
+		
+		int i = Iterators.count(it);
 		Assert.assertEquals(3, i);
 	}
 
@@ -268,19 +269,11 @@ public class BackwardChainingTest {
 		ConjunctiveQuery query = DlgpParser.parseQuery("?(X) :- q(X,Y), p(Y,Z).");
 
 		compilation.compile(rules.iterator());
-		PureRewriter bc = new PureRewriter(query, rules, compilation, operator);
-		bc.enableUnfolding(true);
-
-
-		// int i = Iterators.count(bc);
-		int i = 0;
-		System.out.println(compilation.getClass() + "///" + operator.getClass());
-		while (bc.hasNext()) {
-			++i;
-			System.out.println("### > " + bc.next());
-		}
-		System.out.println(i);
-		// Assert.assertEquals(3, i);
+		PureRewriter bc = new PureRewriter(operator, true);
+		GIterator<? extends ConjunctiveQuery> it = bc.execute(query, rules, compilation);
+		
+		int i = Iterators.count(it);
+		Assert.assertEquals(4, i);
 	}
 
 }

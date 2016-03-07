@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,25 +40,20 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
 package fr.lirmm.graphik.graal.api.backward_chaining;
 
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
-import fr.lirmm.graphik.util.Profilable;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- * 
+ *
  */
-public interface BackwardChainer extends GIterator<ConjunctiveQuery>, Profilable {
+public interface QueryRewriterWithCompilation extends QueryRewriter {
 
-	@Override
-	boolean hasNext();
-
-	@Override
-	ConjunctiveQuery next();
+	GIterator<ConjunctiveQuery> execute(ConjunctiveQuery query, Iterable<Rule> rules,
+	    RulesCompilation compilation);
 
 }

@@ -49,7 +49,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
 
-import fr.lirmm.graphik.graal.api.backward_chaining.BackwardChainer;
+import fr.lirmm.graphik.graal.api.backward_chaining.QueryRewriter;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.KnowledgeBase;
@@ -68,6 +68,7 @@ import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -129,12 +130,9 @@ public class AnimalsExample {
 		writer.flush();
 		waitEntry();
 
-		BackwardChainer backwardChainer = new PureRewriter(query,
-				kb.getOntology());
-		DefaultUnionOfConjunctiveQueries ucq = new DefaultUnionOfConjunctiveQueries();
-		while(backwardChainer.hasNext()) {
-			ucq.add(backwardChainer.next());
-		}
+		QueryRewriter rewriter = new PureRewriter();
+		GIterator<ConjunctiveQuery> it = rewriter.execute(query, kb.getOntology());
+		DefaultUnionOfConjunctiveQueries ucq = new DefaultUnionOfConjunctiveQueries(it);
 
 		writer.write("\n= Facts =\n");
 		writer.write(kb.getFacts());

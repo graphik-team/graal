@@ -40,65 +40,48 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
+/**
  * 
  */
 package fr.lirmm.graphik.graal.backward_chaining.pure;
 
-import fr.lirmm.graphik.graal.api.backward_chaining.AbstractBackwardChainer;
+import fr.lirmm.graphik.graal.api.backward_chaining.QueryRewriterWithCompilation;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
-import fr.lirmm.graphik.graal.core.RuleUtils;
-import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
-import fr.lirmm.graphik.graal.core.ruleset.IndexedByHeadPredicatesRuleSet;
-import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
+import fr.lirmm.graphik.util.AbstractProfilable;
 import fr.lirmm.graphik.util.Verbosable;
 import fr.lirmm.graphik.util.stream.GIterator;
-import fr.lirmm.graphik.util.stream.IteratorAdapter;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */
-public class PureRewriter extends AbstractBackwardChainer implements Verbosable {
+public class PureRewriter extends AbstractProfilable implements QueryRewriterWithCompilation, Verbosable {
 
-	private PureQuery pquery;
-	private LinkedListRuleSet ruleset;
-	private RulesCompilation compilation;
-	private GIterator<ConjunctiveQuery> rewrites = null;
-	
-	private boolean verbose;
-	private boolean isUnfoldingEnable = true;
+	private boolean           verbose   = false;
+	private boolean           unfolding = true;
 	private RewritingOperator operator;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
-	/**
-	 * @throws Exception
-	 * 
-	 */
-	public PureRewriter(ConjunctiveQuery query, Iterable<Rule> rules) {
-		this(query, rules, NoCompilation.instance());
-	}
-	
-	public PureRewriter(ConjunctiveQuery query, Iterable<Rule> rules,
-			RulesCompilation compilation) {
-		this(query, rules, compilation, new AggregSingleRuleOperator());
+	public PureRewriter() {
+		this(new AggregSingleRuleOperator());
 	}
 
-	/**
-	 * @throws Exception
-	 * 
-	 */
-	public PureRewriter(ConjunctiveQuery query, Iterable<Rule> rules,
-			RulesCompilation compilation, RewritingOperator operator) {
-		this.pquery = new PureQuery(query);
-		this.ruleset = new LinkedListRuleSet(RuleUtils.computeSinglePiece(rules.iterator()));
-		this.compilation = compilation;
+	public PureRewriter(boolean unfolding) {
+		this(new AggregSingleRuleOperator(), unfolding);
+	}
+
+	public PureRewriter(RewritingOperator operator) {
 		this.operator = operator;
+	}
+
+	public PureRewriter(RewritingOperator operator, boolean unfolding) {
+		this.operator = operator;
+		this.unfolding = unfolding;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -106,64 +89,25 @@ public class PureRewriter extends AbstractBackwardChainer implements Verbosable 
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public boolean hasNext() {
-		if (this.rewrites == null) {
-			this.compute();
-		}
-		return this.rewrites.hasNext();
+	public GIterator<ConjunctiveQuery> execute(ConjunctiveQuery query, Iterable<Rule> rules) {
+		RewritingIterator it = new RewritingIterator(this.unfolding, query, rules, this.operator);
+		it.enableVerbose(this.verbose);
+		it.setProfiler(this.getProfiler());
+		return it;
 	}
 
 	@Override
-	public ConjunctiveQuery next() {
-		if (this.rewrites == null) {
-			this.compute();
-		}
-		ConjunctiveQuery query = this.rewrites.next();
-		PureQuery.removeAnswerPredicate(query);
-		return query;
+	public GIterator<ConjunctiveQuery> execute(ConjunctiveQuery query, Iterable<Rule> rules,
+	    RulesCompilation compilation) {
+		RewritingIterator it = new RewritingIterator(this.unfolding, query, rules, compilation, this.operator);
+		it.enableVerbose(this.verbose);
+		it.setProfiler(this.getProfiler());
+		return it;
 	}
-		
-	/**
-	 * Enable or disable unfolding. The unfolding is enable by default.
-	 * @param isUnfoldingEnable
-	 */
-	public void enableUnfolding(boolean isUnfoldingEnable) {
-		this.isUnfoldingEnable = isUnfoldingEnable;
-	}
-	
-	public boolean isUnfoldingEnable() {
-		return this.isUnfoldingEnable;
-	}
-	
+
 	@Override
 	public void enableVerbose(boolean enable) {
 		this.verbose = enable;
-	}
-
-	// /////////////////////////////////////////////////////////////////////////
-	// PRIVATE METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	private void compute() {
-		if (this.getProfiler() != null && this.getProfiler().isProfilingEnabled()) {
-			this.getProfiler().trace(this.pquery.getLabel());
-		}
-		IndexedByHeadPredicatesRuleSet indexedRuleSet = new IndexedByHeadPredicatesRuleSet(this.ruleset);
-		
-		// rewriting
-		RewritingAlgorithm algo = new RewritingAlgorithm(this.operator);
-		
-		algo.enableVerbose(this.verbose);
-		operator.setProfiler(this.getProfiler());
-		algo.setProfiler(this.getProfiler());
-		
-		Iterable<ConjunctiveQuery> queries = algo.execute(pquery, indexedRuleSet, compilation);
-
-		if(this.isUnfoldingEnable) {
-			queries = Utils.unfold(queries, this.compilation, this.getProfiler());
-		}
-		
-		this.rewrites = new IteratorAdapter<ConjunctiveQuery>(queries.iterator());
 	}
 
 }

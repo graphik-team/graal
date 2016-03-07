@@ -45,13 +45,14 @@
  */
 package fr.lirmm.graphik.graal.examples;
 
-import fr.lirmm.graphik.graal.api.backward_chaining.BackwardChainer;
+import fr.lirmm.graphik.graal.api.backward_chaining.QueryRewriter;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.backward_chaining.pure.PureRewriter;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
+import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -75,10 +76,11 @@ public class PureRewritingExample {
 		rules.add(DlgpParser.parseRule("q(X) :- r(X)."));
 		rules.add(DlgpParser.parseRule("r(X) :- s(X)."));
 		
-		BackwardChainer bc = new PureRewriter(query, rules);
+		QueryRewriter bc = new PureRewriter();
+		GIterator<ConjunctiveQuery> it = bc.execute(query, rules);
 		
-		while(bc.hasNext()) {
-			System.out.println(bc.next());
+		while (it.hasNext()) {
+			System.out.println(it.next());
 		}
 	}
 }

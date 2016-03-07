@@ -46,7 +46,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import fr.lirmm.graphik.graal.api.backward_chaining.BackwardChainer;
+import fr.lirmm.graphik.graal.api.backward_chaining.QueryRewriter;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.backward_chaining.pure.PureRewriter;
@@ -54,6 +54,7 @@ import fr.lirmm.graphik.graal.io.sparql.SparqlConjunctiveQueryParser;
 import fr.lirmm.graphik.graal.io.sparql.SparqlConjunctiveQueryWriter;
 import fr.lirmm.graphik.graal.io.sparql.SparqlRuleParser;
 import fr.lirmm.graphik.util.Prefix;
+import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -77,7 +78,7 @@ public class SPARQLRewriting {
 		ConjunctiveQuery query;
 		LinkedList<Rule> ontology = new LinkedList<Rule>();
 		SparqlConjunctiveQueryWriter writer = new SparqlConjunctiveQueryWriter();
-		BackwardChainer bc;
+		QueryRewriter bc;
 
 		// 1 - Parse the SPARQL query
 		SparqlConjunctiveQueryParser queryParser = new SparqlConjunctiveQueryParser(sparqlQuery);
@@ -91,14 +92,16 @@ public class SPARQLRewriting {
 		}
 
 		// 3 - Execute the query rewriter
-		bc = new PureRewriter(query, ontology);
-		while (bc.hasNext()) {
+		bc = new PureRewriter();
+		GIterator<ConjunctiveQuery> it = bc.execute(query, ontology);
+
+		while (it.hasNext()) {
 			// 4 - Print the query as SPARQL
 			writer.write("\n");
 			for (Prefix p : prefixes) {
 				writer.write(p);
 			}
-			writer.write(bc.next());
+			writer.write(it.next());
 			writer.flush();
 		}
 
