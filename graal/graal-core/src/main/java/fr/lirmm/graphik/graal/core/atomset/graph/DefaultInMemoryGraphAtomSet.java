@@ -58,6 +58,7 @@ import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.TermValueComparator;
 import fr.lirmm.graphik.graal.core.AtomMatcher;
 import fr.lirmm.graphik.graal.core.atomset.AbstractInMemoryAtomSet;
+import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.stream.GIterator;
 import fr.lirmm.graphik.util.stream.IteratorAdapter;
 import fr.lirmm.graphik.util.stream.filter.Filter;
@@ -141,13 +142,14 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 
 	@Override
 	public GIterator<Atom> atomsByPredicate(Predicate p) {
-		return new FilterIterator<Edge, Atom>(new IteratorAdapter<Edge>(this.getPredicateVertex(p).getEdges()
-		                                                                    .iterator()), new Filter<Edge>() {
-			@Override
-			public boolean filter(Edge e) {
-				return true;
-			}
-		});
+//		return new FilterIterator<Edge, Atom>(new IteratorAdapter<Edge>(this.getPredicateVertex(p).getEdges()
+//		                                                                    .iterator()), new Filter<Edge>() {
+//			@Override
+//			public boolean filter(Edge e) {
+//				return true;
+//			}
+//		});
+		throw new MethodNotImplementedError();
 	}
 
 	@Override
@@ -193,10 +195,21 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 		List<TermVertex> atomTerms = new LinkedList<TermVertex>();
 		PredicateVertex atomPredicate;
 
-		for (Term t : atom.getTerms())
+		for (Term t : atom.getTerms()) {
+			// if (t.isConstant()) {
+			// t =
+			// DefaultTermFactory.instance().createConstant(t.getIdentifier().hashCode());
+			// }
 			atomTerms.add(this.addTermVertex(TermVertexFactory.instance().createTerm(t)));
+		}
 
-		atomPredicate = this.addPredicateVertex(new PredicateVertex(atom.getPredicate()));
+		atomPredicate = this.addPredicateVertex(new PredicateVertex(atom.getPredicate().getIdentifier()/*
+																									    * .
+																									    * hashCode
+																									    * (
+																									    * )
+																									    */,
+		                                                            atom.getPredicate().getArity()));
 		AtomEdge atomEdge = new AtomEdge(atomPredicate, atomTerms);
 		return this.addAtomEdge(atomEdge);
 	}
@@ -238,7 +251,7 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 		boolean val = this.atoms.add(atom);
 		if (val) {
 			for (Vertex v : atom.getVertices()) {
-				v.getEdges().add(atom);
+				// v.getEdges().add(atom);
 				if (v instanceof TermVertex) {
 					TermVertex term = (TermVertex) v;
 					term.add(atom);

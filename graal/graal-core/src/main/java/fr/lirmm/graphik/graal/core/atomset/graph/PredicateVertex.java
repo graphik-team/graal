@@ -45,16 +45,14 @@
  */
 package fr.lirmm.graphik.graal.core.atomset.graph;
 
-import java.util.Set;
-import java.util.TreeSet;
-
 import fr.lirmm.graphik.graal.api.core.Predicate;
 
 
 class PredicateVertex extends Predicate implements Vertex {
 
 	private static final long serialVersionUID = 1607321754413212182L;
-	private Set<Edge> edges = new TreeSet<Edge>();
+
+	// private Set<Edge> edges = new TreeSet<Edge>();
 
     // /////////////////////////////////////////////////////////////////////////
     // CONSTRUCTORS
@@ -67,6 +65,10 @@ class PredicateVertex extends Predicate implements Vertex {
        super(predicate.getIdentifier(), predicate.getArity());
     }
 
+	public PredicateVertex(Object identifier, int arity) {
+		super(identifier, arity);
+	}
+
     // /////////////////////////////////////////////////////////////////////////
     // VERTEX METHODS
     // /////////////////////////////////////////////////////////////////////////
@@ -76,10 +78,10 @@ class PredicateVertex extends Predicate implements Vertex {
      * 
      * @see fr.lirmm.graphik.alaska.store.graph.Vertex#getEdges()
      */
-    @Override
-    public Set<Edge> getEdges() {
-        return this.edges;
-    }
+	// @Override
+	// public Set<Edge> getEdges() {
+	// return this.edges;
+	// }
     
     @Override
     public boolean equals(Object o) {
