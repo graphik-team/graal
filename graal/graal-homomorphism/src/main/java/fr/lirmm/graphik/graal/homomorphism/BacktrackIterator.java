@@ -62,6 +62,7 @@ import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
 import fr.lirmm.graphik.graal.homomorphism.bootstrapper.Bootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.ForwardChecking;
+import fr.lirmm.graphik.util.NoProfiler;
 import fr.lirmm.graphik.util.Profilable;
 import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
@@ -101,15 +102,10 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
-	/**
-	 * Look for an homomorphism of h into g.
-	 * 
-	 * @param h
-	 * @param g
-	 */
 	public BacktrackIterator(InMemoryAtomSet h, AtomSet g, List<Term> ans, Scheduler scheduler,
-	    Bootstrapper boostrapper, ForwardChecking fc,
-	    BackJumping bj, RulesCompilation compilation) {
+	    Bootstrapper boostrapper, ForwardChecking fc, BackJumping bj, RulesCompilation compilation, Profiler profiler) {
+
+		this.profiler = profiler;
 
 		this.h = h;
 		this.g = g;
@@ -127,13 +123,25 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 		this.preprocessing();
 	}
 
+	/**
+	 * Look for an homomorphism of h into g.
+	 * 
+	 * @param h
+	 * @param g
+	 */
+	public BacktrackIterator(InMemoryAtomSet h, AtomSet g, List<Term> ans, Scheduler scheduler,
+	    Bootstrapper boostrapper, ForwardChecking fc,
+	    BackJumping bj, RulesCompilation compilation) {
+		this(h, g, ans, scheduler, boostrapper, fc, bj, compilation, NoProfiler.instance());
+	}
+
 	private void preprocessing() {
 		if (profiler != null) {
 			profiler.start("preprocessing time");
 		}
 
 		// Compute order on query variables and atoms
-		vars = scheduler.execute(this.h, ans);
+		vars = scheduler.execute(this.h, ans, this.g);
 		levelMax = vars.length - 2;
 
 		index = new TreeMap<Variable, Var>();

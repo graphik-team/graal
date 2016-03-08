@@ -49,7 +49,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.api.core.AbstractTerm;
 import fr.lirmm.graphik.graal.api.core.Atom;
@@ -62,7 +64,7 @@ abstract class AbstractTermVertex extends AbstractTerm implements TermVertex {
 
 	private static final long serialVersionUID = -1087277093687686210L;
 
-	// private final TreeSet<Edge> edges = new TreeSet<Edge>();
+	private final TreeSet<Edge>                          edges            = new TreeSet<Edge>();
 	private final TreeMap<Predicate, Collection<Atom>[]> index            = new TreeMap<Predicate, Collection<Atom>[]>();
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -75,10 +77,10 @@ abstract class AbstractTermVertex extends AbstractTerm implements TermVertex {
 	// VERTEX METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	// @Override
-	// public Set<Edge> getEdges() {
-	// return this.edges;
-	// }
+	@Override
+	public Set<Edge> getEdges() {
+		return this.edges;
+	}
 
 	@Override
 	public GIterator<Atom> getNeighbors(Predicate p, int position) {

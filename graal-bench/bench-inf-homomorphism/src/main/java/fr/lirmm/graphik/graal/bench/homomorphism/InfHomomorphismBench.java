@@ -323,7 +323,7 @@ public class InfHomomorphismBench extends AbstractGraalBench {
 			} else if (this.db.equals(Db.SQL)) {
 				h = SqlHomomorphism.instance();
 			}
-			h.setProfiler(profiler);
+
 
 			try {
 				DefaultUnionOfConjunctiveQueries ucq = (DefaultUnionOfConjunctiveQueries) q;
@@ -336,12 +336,15 @@ public class InfHomomorphismBench extends AbstractGraalBench {
 				if (mode.equals(Mode.INF_HOMO)) {
 					UCQHomomorphismWithCompilation<AtomSet> ucqH = new DefaultUCQHomomorphism(
 					                                                                                                   h);
+					ucqH.setProfiler(profiler);
 					it = ucqH.execute(ucq, atomset, this.rc);
 				} else if (mode.equals(Mode.SEMI_SAT) || mode.equals(Mode.UCQ)) {
 					UCQHomomorphismWithCompilation<AtomSet> ucqH = new DefaultUCQHomomorphism(
 					                                                                                                   h);
+					ucqH.setProfiler(profiler);
 					it = ucqH.execute(ucq, atomset);
 				} else {
+					h.setProfiler(profiler);
 					it = h.execute(ucq, atomset);
 				}
 
@@ -416,7 +419,7 @@ public class InfHomomorphismBench extends AbstractGraalBench {
 
 		@Override
 		public boolean hasNext() {
-			if (nbUniv < 0) {
+			if (nbUniv <= 0) {
 				if (instance instanceof Store) {
 					((Store) instance).close();
 				}

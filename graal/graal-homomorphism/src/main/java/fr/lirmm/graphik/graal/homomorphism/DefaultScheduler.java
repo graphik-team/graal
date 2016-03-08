@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
@@ -80,7 +81,7 @@ public class DefaultScheduler implements Scheduler {
 	 * @return
 	 */
 	@Override
-	public Var[] execute(InMemoryAtomSet h, List<Term> ans) {
+	public Var[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data) {
 		Set<Term> terms = h.getTerms(Term.Type.VARIABLE);
 		Var[] vars = new Var[terms.size() + 2];
 

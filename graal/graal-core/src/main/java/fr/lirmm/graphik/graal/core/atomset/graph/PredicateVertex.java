@@ -40,57 +40,54 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
+/**
  * 
  */
 package fr.lirmm.graphik.graal.core.atomset.graph;
 
-import fr.lirmm.graphik.graal.api.core.Predicate;
+import java.util.Set;
+import java.util.TreeSet;
 
+import fr.lirmm.graphik.graal.api.core.Predicate;
 
 class PredicateVertex extends Predicate implements Vertex {
 
 	private static final long serialVersionUID = 1607321754413212182L;
 
-	// private Set<Edge> edges = new TreeSet<Edge>();
+	private Set<Edge>         edges            = new TreeSet<Edge>();
 
-    // /////////////////////////////////////////////////////////////////////////
-    // CONSTRUCTORS
-    // /////////////////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
 
-    /**
-     * @param predicate
-     */
-    public PredicateVertex(Predicate predicate) {
-       super(predicate.getIdentifier(), predicate.getArity());
-    }
+	/**
+	 * @param predicate
+	 */
+	public PredicateVertex(Predicate predicate) {
+		super(predicate.getIdentifier(), predicate.getArity());
+	}
 
 	public PredicateVertex(Object identifier, int arity) {
 		super(identifier, arity);
 	}
 
-    // /////////////////////////////////////////////////////////////////////////
-    // VERTEX METHODS
-    // /////////////////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////////////////
+	// VERTEX METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see fr.lirmm.graphik.alaska.store.graph.Vertex#getEdges()
-     */
-	// @Override
-	// public Set<Edge> getEdges() {
-	// return this.edges;
-	// }
-    
-    @Override
-    public boolean equals(Object o) {
-    	return super.equals(o);
-    }
-    
-    @Override 
-    public int hashCode() {
-    	return super.hashCode();
-    }
+	@Override
+	public Set<Edge> getEdges() {
+		return this.edges;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		return super.equals(o);
+	}
+
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
 
 }

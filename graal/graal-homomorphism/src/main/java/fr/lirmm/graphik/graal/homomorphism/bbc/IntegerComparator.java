@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,16 +40,37 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
+package fr.lirmm.graphik.graal.homomorphism.bbc;
+
+import java.util.Comparator;
+
+/**
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+ *
  */
-package fr.lirmm.graphik.graal.core.atomset.graph;
+class IntegerComparator implements Comparator<Integer> {
 
-import java.util.Set;
+	private double[] values;
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
 
+	public IntegerComparator(double[] values) {
+		this.values = values;
+	}
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
-interface Vertex {
-
-	Set<Edge> getEdges();
+	@Override
+	public int compare(Integer v0, Integer v1) {
+		if (values[v0] < values[v1]) {
+			return -1;
+		} else if (values[v0] > values[v1]) {
+			return 1;
+		} else {
+			return 0;
+		}
+	}
 
 }

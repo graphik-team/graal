@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,16 +40,42 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.core.atomset.graph;
+package fr.lirmm.graphik.graal.homomorphism.bbc;
 
-import java.util.Set;
+import java.util.Map;
 
+import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
 
-interface Vertex {
+class BCCBackJumping implements BackJumping {
 
-	Set<Edge> getEdges();
+	/**
+	 * 
+	 */
+    private final BCC BCC;
+	private BackJumping bc;
+
+	BCCBackJumping(BCC bcc, BackJumping bc) {
+		BCC = bcc;
+		this.bc = bc;
+	}
+
+	@Override
+	public void init(Var[] vars, Map<Variable, Var> map) {
+		this.bc.init(vars, map);
+	}
+
+	@Override
+	public int previousLevel(Var var, Var[] vars) {
+		if (BCC.varData[var.level].isEntry && !vars[BCC.varData[var.level].previousLevelFailure].success) {
+			if (BCC.varData[BCC.varData[var.level].previousLevelFailure].forbidden != null) {
+				BCC.varData[BCC.varData[var.level].previousLevelFailure].forbidden.add(vars[BCC.varData[var.level].previousLevelFailure].image);
+			}
+			return BCC.varData[var.level].previousLevelFailure;
+		} else {
+			return this.bc.previousLevel(var, vars);
+		}
+	}
 
 }

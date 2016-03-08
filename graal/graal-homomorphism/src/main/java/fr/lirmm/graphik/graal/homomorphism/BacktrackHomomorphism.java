@@ -159,10 +159,14 @@ public class BacktrackHomomorphism implements HomomorphismWithCompilation<Conjun
 		// BT(q.getAtomSet(), a,
 		// q.getAnswerVariables(),
 		// compilation));
+		if (this.profiler != null) {
+			this.profiler.start("preprocessing");
+		}
 		BacktrackIterator backtrackIterator = new BacktrackIterator(q.getAtomSet(), a, q.getAnswerVariables(),
 		                                                            this.scheduler, this.bootstrapper, this.fc,
 		                                                            this.bj, compilation);
 		if (this.profiler != null) {
+			this.profiler.stop("preprocessing");
 			backtrackIterator.setProfiler(profiler);
 		}
 		return backtrackIterator;

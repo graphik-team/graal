@@ -44,6 +44,7 @@ package fr.lirmm.graphik.graal.homomorphism;
 
 import java.util.List;
 
+import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Term;
 
@@ -62,7 +63,7 @@ public interface Scheduler {
 	 * @param ans
 	 * @return an array of Var
 	 */
-	Var[] execute(InMemoryAtomSet h, List<Term> ans);
+	Var[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data);
 
 	/**
 	 * @param var
