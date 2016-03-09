@@ -53,11 +53,13 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.forward_chaining.AbstractChase;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
+import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
 import fr.lirmm.graphik.graal.core.HashMapSubstitution;
 import fr.lirmm.graphik.graal.core.Unifier;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
@@ -80,13 +82,17 @@ public class ChaseWithGRDAndUnfiers extends AbstractChase {
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 	
-	public ChaseWithGRDAndUnfiers(GraphOfRuleDependencies grd, AtomSet atomSet) {
-		super(new DefaultRuleApplier());
+	public ChaseWithGRDAndUnfiers(GraphOfRuleDependencies grd, AtomSet atomSet, RuleApplier ruleApplier) {
+		super(ruleApplier);
 		this.grd = grd;
 		this.atomSet = atomSet;
 		for(Rule r : grd.getRules()) {			
 			this.queue.add(new ImmutablePair<Rule, Substitution>(r, new HashMapSubstitution()));
 		}
+	}
+	
+	public ChaseWithGRDAndUnfiers(GraphOfRuleDependencies grd, AtomSet atomSet) {
+		this(grd, atomSet, new DefaultRuleApplier());
 	}
 	
 	// /////////////////////////////////////////////////////////////////////////
