@@ -266,6 +266,8 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 					if (level > levelMax) {
 						goBack = true;
 
+						Substitution sol = solutionFound(vars, ans);
+						
 						int nextLevel = currentVar.previousLevel;
 						for (; level > nextLevel; --level) {
 							vars[level].image = null;
@@ -273,7 +275,7 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 						if (profiler != null) {
 							profiler.stop("backtracking time");
 						}
-						return solutionFound(vars, ans);
+						return sol;
 					}
 
 					//
