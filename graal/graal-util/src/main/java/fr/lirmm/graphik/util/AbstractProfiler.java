@@ -59,7 +59,7 @@ import java.util.TreeMap;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */
-public class DefaultProfiler implements Profiler {
+public abstract class AbstractProfiler implements Profiler {
 
 	private PrintStream               out        = null;
 	private SimpleDateFormat          dateFormat = new SimpleDateFormat();
@@ -72,10 +72,10 @@ public class DefaultProfiler implements Profiler {
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 
-	public DefaultProfiler() {
+	public AbstractProfiler() {
 	}
 
-	public DefaultProfiler(PrintStream out) {
+	public AbstractProfiler(PrintStream out) {
 		this.setOutputStream(out);
 	}
 
@@ -259,9 +259,12 @@ public class DefaultProfiler implements Profiler {
 	// PRIVATE
 	// /////////////////////////////////////////////////////////////////////////
 
-	private long getTime() {
-		return bean.getCurrentThreadCpuTime();
-	}
+	/**
+	 * Return time in nanoseconds
+	 * 
+	 * @return
+	 */
+	protected abstract long getTime();
 
 	private void printPrefix() {
 		this.out.print("Profiler [");

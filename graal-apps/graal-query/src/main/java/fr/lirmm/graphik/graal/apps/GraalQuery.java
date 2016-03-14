@@ -66,7 +66,7 @@ import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
 import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
 import fr.lirmm.graphik.util.Apps;
-import fr.lirmm.graphik.util.DefaultProfiler;
+import fr.lirmm.graphik.util.CPUTimeProfiler;
 import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.GIterator;
 
@@ -105,7 +105,7 @@ public class GraalQuery {
 	@Parameter(names = { "-h", "--help" }, help = true)
 	private boolean help = false;
 
-	private static final Profiler   PROFILER         = new DefaultProfiler(System.out);
+	private static final Profiler   PROFILER         = new CPUTimeProfiler(System.out);
 	private static final DlgpWriter WRITER = new DlgpWriter();
 
 	private static final String DRIVER_SQLITE = "sqlite";

@@ -57,7 +57,7 @@ import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.SimpleFC;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
-import fr.lirmm.graphik.util.DefaultProfiler;
+import fr.lirmm.graphik.util.CPUTimeProfiler;
 import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
@@ -76,10 +76,9 @@ public class ForwardCheckingTest {
 		ConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y,Z) :- p(X,Y), p(X,Z).");
 
 		Homomorphism h = new BacktrackHomomorphism(new NFC2());
-		h.setProfiler(new DefaultProfiler());
 		CloseableIterator results = h.execute(query, data);
 		while (results.hasNext()) {
-			System.out.println(results.next());
+			results.next();
 		}
 		results.close();
 
@@ -87,7 +86,7 @@ public class ForwardCheckingTest {
 
 	@Test
 	public void simpleFCTest1() throws HomomorphismException {
-		Profiler profiler = new DefaultProfiler();
+		Profiler profiler = new CPUTimeProfiler();
 
 		InMemoryAtomSet data = new DefaultInMemoryGraphAtomSet();
 		data.addAll(DlgpParser.parseAtomSet("p(a,b), q(b,c)."));
@@ -98,7 +97,7 @@ public class ForwardCheckingTest {
 
 		CloseableIterator results = h.execute(query, data);
 		while (results.hasNext()) {
-			System.out.println(results.next());
+			results.next();
 		}
 		results.close();
 		Assert.assertEquals(7, profiler.get("nbCall"));
@@ -106,7 +105,7 @@ public class ForwardCheckingTest {
 
 	@Test
 	public void FCTest2() throws HomomorphismException {
-		Profiler profiler = new DefaultProfiler();
+		Profiler profiler = new CPUTimeProfiler();
 
 		InMemoryAtomSet data = new DefaultInMemoryGraphAtomSet();
 		data.addAll(DlgpParser.parseAtomSet("p(a,b), p(a,c), q(a,a), q(a,b)."));
@@ -125,7 +124,7 @@ public class ForwardCheckingTest {
 
 	@Test
 	public void NFC2Test() throws HomomorphismException {
-		Profiler profiler = new DefaultProfiler();
+		Profiler profiler = new CPUTimeProfiler();
 
 		Predicate[] predicates = { new Predicate("p2", 2), new Predicate("p3", 3), new Predicate("p4", 4)};
 		
@@ -148,7 +147,7 @@ public class ForwardCheckingTest {
 
 	@Test
 	public void NFC2Test2() throws HomomorphismException {
-		Profiler profiler = new DefaultProfiler();
+		Profiler profiler = new CPUTimeProfiler();
 
 		Predicate[] predicates = { new Predicate("p", 2), new Predicate("q", 2), new Predicate("r", 2) };
 
