@@ -47,6 +47,7 @@ import java.util.List;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.util.Profilable;
 
 /**
  * The Scheduler interface provides a way to manage the backtracking order. The
@@ -56,7 +57,7 @@ import fr.lirmm.graphik.graal.api.core.Term;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface Scheduler {
+public interface Scheduler extends Profilable {
 
 	/**
 	 * @param h

@@ -50,6 +50,7 @@ import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.util.AbstractProfilable;
 
 /**
  * Compute an order over variables from h. This scheduler put answer
@@ -59,7 +60,7 @@ import fr.lirmm.graphik.graal.api.core.Variable;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class DefaultScheduler implements Scheduler {
+public class DefaultScheduler extends AbstractProfilable implements Scheduler {
 
 	private static DefaultScheduler instance;
 
