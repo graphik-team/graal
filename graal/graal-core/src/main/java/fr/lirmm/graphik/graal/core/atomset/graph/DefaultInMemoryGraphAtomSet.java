@@ -45,6 +45,7 @@ package fr.lirmm.graphik.graal.core.atomset.graph;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -233,8 +234,12 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 	}
 
 	PredicateVertex getPredicateVertex(Predicate predicate) {
-		PredicateVertex p = this.predicates.tailSet(new PredicateVertex(predicate)).first();
-		return (predicate.equals(p)) ? p : null;
+		try {
+			PredicateVertex p = this.predicates.tailSet(new PredicateVertex(predicate)).first();
+			return (predicate.equals(p)) ? p : null;
+		} catch (NoSuchElementException e) {
+			return null;
+		}
 	}
 
 	TermVertex addTermVertex(TermVertex term) {
