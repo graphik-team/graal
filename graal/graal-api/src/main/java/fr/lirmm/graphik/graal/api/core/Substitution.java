@@ -52,7 +52,7 @@ import fr.lirmm.graphik.util.string.AppendableToStringBuilder;
  * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  */
-public interface Substitution extends AppendableToStringBuilder {
+public interface Substitution extends Comparable<Substitution>, AppendableToStringBuilder {
 
 	/** 
 	 * Get all terms that have a substitute.
