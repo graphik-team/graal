@@ -48,6 +48,7 @@ import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.util.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 
@@ -55,7 +56,7 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class StupidBootstrapper implements Bootstrapper {
+public class StupidBootstrapper extends AbstractProfilable implements Bootstrapper {
 
 	private static StupidBootstrapper instance;
 

@@ -69,17 +69,17 @@ import fr.lirmm.graphik.util.stream.GIterator;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class StarBootstrapper extends AbstractProfilable implements Bootstrapper {
+public class StatBootstrapper extends AbstractProfilable implements Bootstrapper {
 
-	private static StarBootstrapper instance;
+	private static StatBootstrapper instance;
 
-	protected StarBootstrapper() {
+	protected StatBootstrapper() {
 		super();
 	}
 
-	public static synchronized StarBootstrapper instance() {
+	public static synchronized StatBootstrapper instance() {
 		if (instance == null)
-			instance = new StarBootstrapper();
+			instance = new StatBootstrapper();
 
 		return instance;
 	}
@@ -131,23 +131,29 @@ public class StarBootstrapper extends AbstractProfilable implements Bootstrapper
 		}
 
 		if (terms == null) {
+			double domainSize2 = Math.pow(data.getDomainSize(), 2);
+			Atom a = null, tmp;
+			double probaA = 1;
+
 			it = v.postAtoms.iterator();
 			while (it.hasNext()) {
-				if (terms == null) {
-					terms = execOverRewritings(it.next(), v, data, compilation);
-				} else {
-					terms.retainAll(execOverRewritings(it.next(), v, data, compilation));
+				tmp = it.next();
+				double p = data.count(tmp.getPredicate()) / domainSize2;
+				if (p < probaA) {
+					a = tmp;
 				}
 			}
 
 			it = v.preAtoms.iterator();
 			while (it.hasNext()) {
-				if (terms == null) {
-					terms = execOverRewritings(it.next(), v, data, compilation);
-				} else {
-					terms.retainAll(execOverRewritings(it.next(), v, data, compilation));
+				tmp = it.next();
+				double p = data.count(tmp.getPredicate()) / domainSize2;
+				if (p < probaA) {
+					a = tmp;
 				}
 			}
+
+			terms = execOverRewritings(a, v, data, compilation);
 		}
 		
 		if(this.getProfiler() != null) {
