@@ -47,8 +47,9 @@ import java.util.Map;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.Var;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
+import fr.lirmm.graphik.util.AbstractProfilable;
 
-class BCCBackJumping implements BackJumping {
+class BCCBackJumping extends AbstractProfilable implements BackJumping {
 
 	/**
 	 * 
@@ -72,6 +73,7 @@ class BCCBackJumping implements BackJumping {
 			if (BCC.varData[BCC.varData[var.level].previousLevelFailure].forbidden != null) {
 				BCC.varData[BCC.varData[var.level].previousLevelFailure].forbidden.add(vars[BCC.varData[var.level].previousLevelFailure].image);
 			}
+			this.getProfiler().incr("#BCCBackjumps", 1);
 			return BCC.varData[var.level].previousLevelFailure;
 		} else {
 			return this.bc.previousLevel(var, vars);
