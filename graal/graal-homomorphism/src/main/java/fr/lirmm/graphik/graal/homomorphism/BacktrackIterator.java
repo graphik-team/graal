@@ -144,7 +144,7 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 		profiler.start("preprocessingTime");
 
 		// Compute order on query variables and atoms
-		vars = scheduler.execute(this.h, ans, this.g);
+		vars = scheduler.execute(this.h, ans, this.g, this.compilation);
 		levelMax = vars.length - 2;
 		if (this.profiler.isProfilingEnabled()) {
 			StringBuilder sb = new StringBuilder();

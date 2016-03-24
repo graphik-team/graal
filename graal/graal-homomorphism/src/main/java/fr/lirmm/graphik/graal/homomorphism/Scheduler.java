@@ -46,6 +46,7 @@ import java.util.List;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.util.Profilable;
 
@@ -64,7 +65,7 @@ public interface Scheduler extends Profilable {
 	 * @param ans
 	 * @return an array of Var
 	 */
-	Var[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data);
+	Var[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data, RulesCompilation rc);
 
 	/**
 	 * @param var

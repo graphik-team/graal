@@ -58,6 +58,7 @@ import java.util.TreeSet;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.Scheduler;
@@ -74,7 +75,7 @@ import fr.lirmm.graphik.util.graph.HyperGraph;
 class BCCScheduler extends AbstractProfilable implements Scheduler {
 
 	private final BCC           BCC;
-	private double              domainSize2;
+	private double              domainSize;
 	private Comparator<Integer> varComparator;
 	private Term[]              inverseMap;
 	boolean                     withForbiddenCandidate;
@@ -88,9 +89,9 @@ class BCCScheduler extends AbstractProfilable implements Scheduler {
 	}
 
 	@Override
-	public Var[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data) {
+	public Var[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data, RulesCompilation rc) {
 
-		this.domainSize2 = Math.pow(data.getDomainSize(), 2);
+		this.domainSize = data.getDomainSize();
 		Set<Term> variables = h.getTerms(Term.Type.VARIABLE);
 
 		// BCC
@@ -98,7 +99,7 @@ class BCCScheduler extends AbstractProfilable implements Scheduler {
 		this.inverseMap = new Term[variables.size() + 1];
 		HyperGraph graph = constructHyperGraph(h, variables, this.inverseMap, map, ans);
 		
-		double[] proba = this.computeProba(h, data, variables.size(), map);
+		double[] proba = this.computeProba(h, data, variables.size(), map, rc);
 		this.varComparator = new IntegerComparator(proba);
 
 		TmpData d = biconnect(graph, this.varComparator);
@@ -146,19 +147,31 @@ class BCCScheduler extends AbstractProfilable implements Scheduler {
 	 * @param nbVar
 	 * @return
 	 */
-	private double[] computeProba(InMemoryAtomSet h, AtomSet data, int nbVar, Map<Term, Integer> map) {
+	private double[] computeProba(InMemoryAtomSet h, AtomSet data, int nbVar, Map<Term, Integer> map,
+	    RulesCompilation rc) {
 		this.getProfiler().start("probaComputingTime");
 		final double[] proba = new double[nbVar + 1];
-
-		// FIXME manage rule compilation
+		for (int i = 0; i < proba.length; ++i) {
+			proba[i] = -1.;
+		}
+		
 		for (Atom a : h) {
-			double p = data.count(a.getPredicate()) / this.domainSize2;
+			int count = 0;
+			for (Atom im : rc.getRewritingOf(a)) {
+				count += data.count(im.getPredicate());
+			}
+
+			double probaA = count / Math.pow(this.domainSize, a.getPredicate().getArity());
+			for (Term t : a.getTerms(Term.Type.CONSTANT)) {
+				probaA /= data.getDomainSize();
+			}
+
 			for (Term t : a.getTerms(Term.Type.VARIABLE)) {
 				int i = map.get(t);
 				if (proba[i] < 0) {
-					proba[i] = p;
+					proba[i] = probaA;
 				} else {
-					proba[i] *= p;
+					proba[i] *= probaA;
 				}
 			}
 		}

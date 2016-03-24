@@ -48,6 +48,7 @@ import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.util.AbstractProfilable;
@@ -82,7 +83,7 @@ public class DefaultScheduler extends AbstractProfilable implements Scheduler {
 	 * @return
 	 */
 	@Override
-	public Var[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data) {
+	public Var[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data, RulesCompilation rc) {
 		Set<Term> terms = h.getTerms(Term.Type.VARIABLE);
 		Var[] vars = new Var[terms.size() + 2];
 
