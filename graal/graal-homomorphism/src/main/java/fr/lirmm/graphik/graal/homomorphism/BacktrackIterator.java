@@ -152,7 +152,8 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 				sb.append(vars[i].value.toString());
 				sb.append(' ');
 			}
-			this.profiler.put("Scheduling", sb.toString());
+			this.profiler.incr("__#cqs", 1);
+			this.profiler.put("SchedulingSubQuery" + this.profiler.get("__#cqs"), sb.toString());
 		}
 
 		index = new TreeMap<Variable, Var>();

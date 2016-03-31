@@ -71,6 +71,7 @@ public class UnionConjunctiveQueriesSubstitutionIterator extends AbstractProfila
 	private boolean                                 hasNextCallDone = false;
 	private Homomorphism<ConjunctiveQuery, AtomSet> homomorphism;
 	private RulesCompilation                        compilation;
+	private int                                     i               = 0;
 
 	public UnionConjunctiveQueriesSubstitutionIterator(UnionOfConjunctiveQueries queries, AtomSet atomSet) {
 		this(queries, atomSet, null, null);
@@ -95,11 +96,14 @@ public class UnionConjunctiveQueriesSubstitutionIterator extends AbstractProfila
 		if (!this.hasNextCallDone) {
 			this.hasNextCallDone = true;
 
-			while ((this.tmpIt == null || !this.tmpIt.hasNext()) && this.cqueryIterator.hasNext()) {
-				if (this.tmpIt != null) {
-					this.tmpIt.close();
-				}
+			if (this.tmpIt != null && !this.tmpIt.hasNext()) {
+				this.tmpIt.close();
+				this.tmpIt = null;
+				this.getProfiler().stop("SubQuery" + i++);
+			}
+			while (this.tmpIt == null && this.cqueryIterator.hasNext()) {
 				Query q = this.cqueryIterator.next();
+				this.getProfiler().start("SubQuery" + i);
 				Homomorphism solver = this.homomorphism;
 				try {
 					if (solver == null) {
@@ -136,7 +140,9 @@ public class UnionConjunctiveQueriesSubstitutionIterator extends AbstractProfila
 
 	@Override
 	public void close() {
-		this.tmpIt.close();
+		if (this.tmpIt != null) {
+			this.tmpIt.close();
+		}
 	}
 
 	@Override
