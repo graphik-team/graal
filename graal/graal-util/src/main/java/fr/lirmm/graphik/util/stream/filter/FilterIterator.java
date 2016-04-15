@@ -50,6 +50,8 @@ import fr.lirmm.graphik.util.stream.GIterator;
 
 
 /**
+ * Remove some unwanted elements from an {@link GIterator}.
+ * 
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */

@@ -52,7 +52,7 @@ import fr.lirmm.graphik.util.stream.filter.Filter;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class AtomFilter implements Filter {
+public class AtomFilter implements Filter<Object> {
 	
 	private static AtomFilter instance;
 

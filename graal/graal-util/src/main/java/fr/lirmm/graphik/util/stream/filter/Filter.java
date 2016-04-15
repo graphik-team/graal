@@ -46,6 +46,8 @@
 package fr.lirmm.graphik.util.stream.filter;
 
 /**
+ * Check if an element should be filtered.
+ * 
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */

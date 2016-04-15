@@ -45,24 +45,30 @@
  */
 package fr.lirmm.graphik.graal.core.stream.filter;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.util.stream.GIterator;
-import fr.lirmm.graphik.util.stream.filter.FilterIterator;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.util.stream.filter.Filter;
 
 /**
- * Keeps only {@link Atom} instances from the given iterator.
- *
- * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+ * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class AtomFilterIterator extends FilterIterator<Object, Atom> {
+public class RuleFilter implements Filter<Object> {
 	
-	/**
-	 * @param it
-	 * @param filter
-	 */
-	public AtomFilterIterator(GIterator<Object> it) {
-		super(it, AtomFilter.instance());
+	private static RuleFilter instance;
+
+	protected RuleFilter() {
+		super();
 	}
 
-}
+	public static synchronized RuleFilter instance() {
+		if (instance == null)
+			instance = new RuleFilter();
+
+		return instance;
+	}
+
+	@Override
+	public boolean filter(Object o) {
+		return o instanceof Rule;
+	}
+};

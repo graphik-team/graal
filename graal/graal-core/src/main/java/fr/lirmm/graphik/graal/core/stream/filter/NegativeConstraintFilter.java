@@ -45,24 +45,30 @@
  */
 package fr.lirmm.graphik.graal.core.stream.filter;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.util.stream.GIterator;
-import fr.lirmm.graphik.util.stream.filter.FilterIterator;
+import fr.lirmm.graphik.graal.api.core.NegativeConstraint;
+import fr.lirmm.graphik.util.stream.filter.Filter;
 
 /**
- * Keeps only {@link Atom} instances from the given iterator.
- *
- * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+ * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class AtomFilterIterator extends FilterIterator<Object, Atom> {
+public class NegativeConstraintFilter implements Filter<Object> {
 	
-	/**
-	 * @param it
-	 * @param filter
-	 */
-	public AtomFilterIterator(GIterator<Object> it) {
-		super(it, AtomFilter.instance());
+	private static NegativeConstraintFilter instance;
+
+	protected NegativeConstraintFilter() {
+		super();
 	}
 
-}
+	public static synchronized NegativeConstraintFilter instance() {
+		if (instance == null)
+			instance = new NegativeConstraintFilter();
+
+		return instance;
+	}
+
+	@Override
+	public boolean filter(Object o) {
+		return o instanceof NegativeConstraint;
+	}
+};
