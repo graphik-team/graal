@@ -43,7 +43,6 @@
 package fr.lirmm.graphik.graal.bench.homomorphism;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -66,10 +65,12 @@ import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
-import fr.lirmm.graphik.util.Profiler;
+import fr.lirmm.graphik.util.DefaultProfiler;
 import fr.lirmm.graphik.util.stream.AbstractIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
+import fr.lirmm.graphik.util.stream.converter.Converter;
+import fr.lirmm.graphik.util.stream.converter.ConverterCloseableIterator;
 import fr.lirmm.graphik.util.stream.filter.Filter;
 import fr.lirmm.graphik.util.stream.filter.FilterCloseableIterator;
 
@@ -87,10 +88,10 @@ public class HomomorphismBenchBinary extends AbstractGraalBench {
 
 	private Random                       rand;
 
-	private static final Predicate[] PREDICATES             = { new Predicate("p", 2), new Predicate("p3", 2),
-	        new Predicate("p4", 2), new Predicate("q", 2), new Predicate("q3", 2), new Predicate("q4", 2),
-	        new Predicate("r", 2), new Predicate("r3", 2), new Predicate("r4", 2), new Predicate("s2", 2),
-	        new Predicate("s3", 2), new Predicate("s", 2)  };
+	private static final Predicate[] PREDICATES             = { new Predicate("p", 2), new Predicate("p2", 2),
+	        new Predicate("p3", 2), new Predicate("q", 2), new Predicate("q2", 2), new Predicate("q3", 2),
+	        new Predicate("r", 2), new Predicate("r2", 2), new Predicate("r3", 2), new Predicate("s", 2),
+	        new Predicate("s2", 2), new Predicate("s3", 2) };
 
 	private int                      domainSize             = 32;
 	private float                    domainIncreaseFactor   = 1f;
@@ -203,10 +204,12 @@ public class HomomorphismBenchBinary extends AbstractGraalBench {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public CloseableIterator<Query> getQueries() {
+	public CloseableIterator<Map.Entry<String, Query>> getQueries() {
 		DlgpParser dlgpParser = new DlgpParser(
 		                                       "[ATOMIC] ?(X1,X2) :- p(X1,X2). "
-		                                               + "[FC] ?(X,Y,Z) :- p(X,Y), q(X,Z), r(Y,Z)."
+		                                               + "[FC0] ?(X,Y,Z) :- p(X,Y), q(X,Z), r(Y,Z)."
+		                                               + "[FC1] ?(X,Y,Z) :- p0(X,Y), q(X,Z), r(Y,Z)."
+		                                               + "[FC2] ?(X,Y,Z) :- p(X,Y), q0(X,Z), r(Y,Z)."
 		                                               + "[STAR3-SIMPLE] ?(X1,X2,X3,X4) :- p(X1,X2), q(X1,X3), r(X1,X4)."
 		                                               + "[2-STAR3-SIMPLE] ?(X1,X2,X3,X4) :- p(X1,X2), q(X1,X3), r(X1,X4), p2(X4,X2), p2(X4,X5),p2(X4,X6)."
 		                                               + "[DOUBLE-3CIRCUIT-SIMPLE] ?(X1,X2,X3) :- p(X1,X2), q(X2,X3), r(X3, X1), p(X3,X2), q(X2,X1), r(X1,X3). "
@@ -214,13 +217,26 @@ public class HomomorphismBenchBinary extends AbstractGraalBench {
 		                                               + "[DOUBLE-4CIRCUIT-SIMPLE] ?(X5,X6,X7,X8) :- p(X5,X6), q(X6,X7), r(X7,X8), s(X8,X5), p(X8,X7), q(X7,X6), r(X6,X5), s(X5,X8). "
 		                                               + "[DOUBLE-4CIRCUIT] ?(X5,X6,X7,X8) :- p(X5,X6), q(X6,X7), r(X7,X8), s(X8,X5), p(X8,X7), q(X7,X6), r(X6,X5), s(X5,X8), p2(X8,X9), q2(X9,X10), r2(X10,X8), s2(X10,X11). "
 		                                               + "[DOUBLE-4CIRCUIT-BCC] ?(B,G,D,E) :- p(B,G), q(G,D), r(D,E), s(E,B), p(E,D), q(D,G), r(G,B), s(B,E), p2(E,A), q2(A,F), r2(F,E), s2(F,C). ");
-
-		return new FilterCloseableIterator<Object, Query>(dlgpParser, new Filter<Object>() {
-			@Override
-			public boolean filter(Object o) {
-				return o instanceof Query;
-			}
-		});
+		return new ConverterCloseableIterator<Query, Map.Entry<String, Query>>(
+				  new CloseableIteratorAdapter<Query>(
+						  	new FilterCloseableIterator<Object, Query>(dlgpParser, new Filter<Object>() {
+								@Override
+								public boolean filter(Object o) {
+									return o instanceof Query;
+								}
+		                                                                                                                                                      })),
+				  new Converter<Query, Map.Entry<String, Query>>() {
+		          
+			      @Override
+			      public Entry<String, Query> convert(
+			          Query object) {
+			          return new ImmutablePair<String, Query>(
+				                                                                                                               ((ConjunctiveQuery) object).getLabel(),
+			                                                  object);
+			      }
+		          
+				  });
+		
 	}
 
 	@Override
@@ -237,6 +253,7 @@ public class HomomorphismBenchBinary extends AbstractGraalBench {
 			                                                                InMemoryAtomSet s       = new DefaultInMemoryGraphAtomSet();
 			                                                                int             nbAtoms = minInstanceSize;
 			                                                                int             domain  = domainSize;
+			                                                                int             realNbAtoms = 0;
 
 			                                                                {
 				                                                                addNAtoms(s, nbAtoms);
@@ -253,7 +270,7 @@ public class HomomorphismBenchBinary extends AbstractGraalBench {
 				                                                                nbAtoms *= instanceIncreaseFactor;
 				                                                                domain *= domainIncreaseFactor;
 				                                                                return new ImmutablePair<String, AtomSet>(
-				                                                                                                          Integer.toString(nbAtoms),
+				                                                                                                          Integer.toString(realNbAtoms),
 				                                                                                                          s);
 
 			                                                                }
@@ -268,9 +285,11 @@ public class HomomorphismBenchBinary extends AbstractGraalBench {
 						                                                                                            .createConstant(
 						                                                                                                rand.nextInt(domain)));
 					                                                                }
-					                                                                to.add(new DefaultAtom(
+					                                                                if (to.add(new DefaultAtom(
 					                                                                                       PREDICATES[p],
-					                                                                                       terms));
+					                                                                                           terms))) {
+						                                                                ++realNbAtoms;
+					                                                                }
 				                                                                }
 			                                                                }
 
@@ -278,9 +297,13 @@ public class HomomorphismBenchBinary extends AbstractGraalBench {
 	}
 
 	@Override
-	public Iterator<Map.Entry<String, Object>> execute(Query q, AtomSet atomset, Object o) {
+	public void run() {
 
-		Profiler profiler = new Profiler();
+		Query q = this.getQuery();
+		AtomSet atomset = this.getAtomSet();
+		Object o = this.getExtra();
+
+		DefaultProfiler profiler = new DefaultProfiler();
 		BacktrackHomomorphism h = (BacktrackHomomorphism) o;
 		h.setProfiler(profiler);
 
@@ -301,7 +324,7 @@ public class HomomorphismBenchBinary extends AbstractGraalBench {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return profiler.entrySet().iterator();
+		this.setResults(profiler.entrySet().iterator());
 	}
 
 	/**

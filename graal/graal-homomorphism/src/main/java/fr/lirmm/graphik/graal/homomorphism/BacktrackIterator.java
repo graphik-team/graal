@@ -62,6 +62,7 @@ import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
 import fr.lirmm.graphik.graal.homomorphism.bootstrapper.Bootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.ForwardChecking;
+import fr.lirmm.graphik.util.NoProfiler;
 import fr.lirmm.graphik.util.Profilable;
 import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
@@ -101,15 +102,9 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
-	/**
-	 * Look for an homomorphism of h into g.
-	 * 
-	 * @param h
-	 * @param g
-	 */
 	public BacktrackIterator(InMemoryAtomSet h, AtomSet g, List<Term> ans, Scheduler scheduler,
-	    Bootstrapper boostrapper, ForwardChecking fc,
-	    BackJumping bj, RulesCompilation compilation) {
+	    Bootstrapper boostrapper, ForwardChecking fc, BackJumping bj, RulesCompilation compilation, Profiler profiler) {
+
 
 		this.h = h;
 		this.g = g;
@@ -124,17 +119,42 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 		this.level = 0;
 		this.goBack = false;
 
+		this.profiler = profiler;
+		this.bootstrapper.setProfiler(profiler);
+		this.scheduler.setProfiler(profiler);
+		this.fc.setProfiler(profiler);
+		this.bj.setProfiler(profiler);
+
 		this.preprocessing();
 	}
 
+	/**
+	 * Look for an homomorphism of h into g.
+	 * 
+	 * @param h
+	 * @param g
+	 */
+	public BacktrackIterator(InMemoryAtomSet h, AtomSet g, List<Term> ans, Scheduler scheduler,
+	    Bootstrapper boostrapper, ForwardChecking fc,
+	    BackJumping bj, RulesCompilation compilation) {
+		this(h, g, ans, scheduler, boostrapper, fc, bj, compilation, NoProfiler.instance());
+	}
+
 	private void preprocessing() {
-		if (profiler != null) {
-			profiler.start("preprocessing time");
-		}
+		profiler.start("preprocessingTime");
 
 		// Compute order on query variables and atoms
-		vars = scheduler.execute(this.h, ans);
+		vars = scheduler.execute(this.h, ans, this.g, this.compilation);
 		levelMax = vars.length - 2;
+		if (this.profiler.isProfilingEnabled()) {
+			StringBuilder sb = new StringBuilder();
+			for (int i = 1; i < vars.length - 1; ++i) {
+				sb.append(vars[i].value.toString());
+				sb.append(' ');
+			}
+			this.profiler.incr("__#cqs", 1);
+			this.profiler.put("SchedulingSubQuery" + this.profiler.get("__#cqs"), sb.toString());
+		}
 
 		index = new TreeMap<Variable, Var>();
 		for (Var v : vars) {
@@ -150,9 +170,8 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 		fc.init(vars, index);
 		bj.init(vars, index);
 
-		if (profiler != null) {
-			profiler.stop("preprocessing time");
-		}
+		profiler.stop("preprocessingTime");
+
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -197,7 +216,14 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 
 	@Override
 	public void setProfiler(Profiler profiler) {
+		if(profiler == null) {
+			profiler = NoProfiler.instance();
+		}
 		this.profiler = profiler;
+		this.bootstrapper.setProfiler(profiler);
+		this.scheduler.setProfiler(profiler);
+		this.fc.setProfiler(profiler);
+		this.bj.setProfiler(profiler);
 	}
 
 	@Override
@@ -212,7 +238,7 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("{\n").append("\t{query->").append(h).append("},\n\t{data->").append(g).append("},\n\t{level->")
+		sb.append("{\n").append("\t{query->").append(h).append("},\n\t{level->")
 		  .append(level).append("},\n\t{");
 		int i = 0;
 		for (Var v : vars) {
@@ -236,7 +262,7 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 	 */
 	private Substitution computeNext() throws HomomorphismException {
 		if (profiler != null) {
-			profiler.start("backtracking time");
+			profiler.start("backtrackingTime");
 		}
 
 		if (level >= 0) {
@@ -249,7 +275,7 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 						if (level > levelMax) { // there is no variable
 							level = -1;
 							if (profiler != null) {
-								profiler.stop("backtracking time");
+								profiler.stop("backtrackingTime");
 							}
 							return solutionFound(vars, ans);
 						}
@@ -273,7 +299,7 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 							vars[level].image = null;
 						}
 						if (profiler != null) {
-							profiler.stop("backtracking time");
+							profiler.stop("backtrackingTime");
 						}
 						return sol;
 					}
@@ -307,8 +333,8 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 			--level;
 		}
 		if (profiler != null) {
-			profiler.stop("backtracking time");
-			profiler.put("nbCall", nbCall);
+			profiler.stop("backtrackingTime");
+			profiler.put("#calls", nbCall);
 		}
 
 		return null;

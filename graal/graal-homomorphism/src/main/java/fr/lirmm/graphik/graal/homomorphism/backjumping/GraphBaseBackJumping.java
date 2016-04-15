@@ -48,12 +48,13 @@ import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.util.AbstractProfilable;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class GraphBaseBackJumping implements BackJumping {
+public class GraphBaseBackJumping extends AbstractProfilable implements BackJumping {
 
 	/**
 	 * A data extension for variable indexed by level
@@ -92,6 +93,7 @@ public class GraphBaseBackJumping implements BackJumping {
 			this.data[v.level].backjumpSet.addAll(var.preVars);
 			this.data[v.level].backjumpSet.addAll(this.data[var.level].backjumpSet);
 			this.data[v.level].backjumpSet.remove(v);
+			this.getProfiler().incr("#backjumps", 1);
 			ret = v.level;
 		}
 

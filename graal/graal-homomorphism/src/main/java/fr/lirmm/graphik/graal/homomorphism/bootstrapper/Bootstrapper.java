@@ -48,13 +48,14 @@ import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.util.Profilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface Bootstrapper {
+public interface Bootstrapper extends Profilable {
 
 	CloseableIterator<Term> exec(Var v, InMemoryAtomSet query, AtomSet data, RulesCompilation compilation)
 	    throws AtomSetException;

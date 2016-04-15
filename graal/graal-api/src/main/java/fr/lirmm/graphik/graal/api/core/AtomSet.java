@@ -221,4 +221,17 @@ public interface AtomSet extends GIterable<Atom> {
 	@Override
 	GIterator<Atom> iterator();
 
+	/**
+	 * Return the number of atoms related to the predicate p
+	 * 
+	 * @param p
+	 * @return
+	 */
+	int count(Predicate p);
+
+	/**
+	 * @return
+	 */
+	int getDomainSize();
+
 }

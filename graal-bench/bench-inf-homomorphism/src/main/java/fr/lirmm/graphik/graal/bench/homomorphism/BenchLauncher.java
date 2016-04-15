@@ -50,56 +50,72 @@ import java.util.TreeMap;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
-import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphism;
-import fr.lirmm.graphik.graal.homomorphism.DefaultScheduler;
-import fr.lirmm.graphik.graal.homomorphism.backjumping.GraphBaseBackJumping;
-import fr.lirmm.graphik.graal.homomorphism.bbc.BCC;
-import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2;
-import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2WithLimit;
+import fr.lirmm.graphik.graal.bench.core.BenchRunner;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class BacktrackHomomorphismBench {
+public class BenchLauncher {
 
 	@Parameter(names = { "-h", "--help" }, description = "Print this message", help = true)
 	private boolean            help;
 
-	@Parameter(names = { "-v", "--verbose" }, description = "Enable verbose mode")
-	private boolean            verbose        = false;
+	// @Parameter(names = { "-v", "--verbose" }, description =
+	// "Enable verbose mode")
+	// private boolean verbose = false;
 
 	@Parameter(names = { "-V", "--version" }, description = "Print version information")
 	private boolean            version        = false;
 
+	@Parameter(names = { "-u", "--nb-univ" }, description = "Sets the number of universities")
+	private int                nbUniv         = 10;
+
+	@Parameter(names = { "-m", "--mode" }, description = "SAT|UCQ|SEMI|INF")
+	private String             mode           = "UCQ";
+
+	@Parameter(names = { "--db" }, description = "MEM|SQL")
+	private String             db             = "MEM";
+
 	@Parameter(names = { "-o", "--output-file" }, description = "Output file (use '-' for stdout)")
 	private String             outputFilePath = "-";
 
-	@Parameter(names = { "-d", "--domain-min-size" }, description = "Min domain size")
-	private int                domainSize             = 32;
+	@Parameter(names = { "-d", "--data-dir" }, description = "")
+	private String             dataDir        = "./src/main/resources/data";
 
-	@Parameter(names = { "--dof", "--domain-factor" }, description = "Domain increase factor")
-	private float              domainIncreaseFactor = 1f;
+	@Parameter(names = { "-t", "--timeout" }, description = "Timeout in ms")
+	private long               timeout        = 600000;
 
-	@Parameter(names = { "--daf", "--data-factor" }, description = "Data increase factor")
-	private float              dataIncreaseFactor = 2f;
-
-	@Parameter(names = { "-m", "--data-min-size" }, description = "Min data size")
-	private int                minSize              = 50;
-
-	@Parameter(names = { "-M", "--data-max-size" }, description = "Max data size")
-	private int                maxSize        = 51200;
-
-	@Parameter(names = { "-r", "--nb-repeat" }, description = "Number of bench repeats")
-	private int                nbRepeat       = 10;
+	// @Parameter(names = { "-d", "--domain-min-size" }, description =
+	// "Min domain size")
+	// private int domainSize = 32;
+	//
+	// @Parameter(names = { "--dof", "--domain-factor" }, description =
+	// "Domain increase factor")
+	// private float domainIncreaseFactor = 1f;
+	//
+	// @Parameter(names = { "--daf", "--data-factor" }, description =
+	// "Data increase factor")
+	// private float dataIncreaseFactor = 2f;
+	//
+	// @Parameter(names = { "-m", "--data-min-size" }, description =
+	// "Min data size")
+	// private int minSize = 50;
+	//
+	// @Parameter(names = { "-M", "--data-max-size" }, description =
+	// "Max data size")
+	// private int maxSize = 51200;
+	//
+	// @Parameter(names = { "-r", "--nb-repeat" }, description =
+	// "Number of bench repeats")
+	// private int nbRepeat = 10;
 
 	public static final String PROGRAM_NAME   = "bench-homo";
 
 	public static void main(String args[]) throws HomomorphismException, FileNotFoundException {
 
-		BacktrackHomomorphismBench options = new BacktrackHomomorphismBench();
+		BenchLauncher options = new BenchLauncher();
 
 		JCommander commander = new JCommander(options, args);
 
@@ -107,7 +123,6 @@ public class BacktrackHomomorphismBench {
 			commander.usage();
 			System.exit(0);
 		}
-
 
 		OutputStream outputStream = null;
 		if (options.outputFilePath.equals("-")) {
@@ -123,40 +138,24 @@ public class BacktrackHomomorphismBench {
 			}
 		}
 
-		TreeMap<String, Homomorphism> params = new TreeMap<String, Homomorphism>();
-
-		params.put("BT", new BacktrackHomomorphism());
-
-		BCC bcc = new BCC();
-		params.put("BCC", new BacktrackHomomorphism(bcc.getBCCScheduler(), bcc.getBCCBackJumping()));
-		params.put("NFC2", new BacktrackHomomorphism(new NFC2(false)));
-		params.put("GBBJ", new BacktrackHomomorphism(new GraphBaseBackJumping()));
-		params.put("NFC2_GBBJ", new BacktrackHomomorphism(DefaultScheduler.instance(), new NFC2(false),
-		                                                  new GraphBaseBackJumping()));
-
-		params.put("NFC2WithLimit32", new BacktrackHomomorphism(new NFC2WithLimit(32)));
-		params.put("NFC2WithLimit128", new BacktrackHomomorphism(new NFC2WithLimit(128)));
-		params.put("NFC2WithLimit512", new BacktrackHomomorphism(new NFC2WithLimit(512)));
-
-		BCC bcc2 = new BCC(new GraphBaseBackJumping(), false);
-		params.put("BCC_GBBJ", new BacktrackHomomorphism(bcc2.getBCCScheduler(), bcc.getBCCBackJumping()));
-
-		BCC bcc3 = new BCC(new GraphBaseBackJumping(), false);
-		params.put("BCC_NFC2_GBBJ",
-		    new BacktrackHomomorphism(bcc3.getBCCScheduler(), new NFC2(false), bcc.getBCCBackJumping()));
+		TreeMap<String, String> params = new TreeMap<String, String>();
+		params.put("fix", "me");
 
 
 
-		HomomorphismBenchBinary bench = new HomomorphismBenchBinary();
+		InfHomomorphismBench bench = new InfHomomorphismBench(options.dataDir);
 		bench.setOutputStream(outputStream);
-		bench.setNbIteration(options.nbRepeat);
-		bench.setInstanceIncreaseFactor(options.dataIncreaseFactor);
-		bench.setMinInstanceSize(options.minSize);
-		bench.setMaxInstanceSize(options.maxSize);
-		bench.setDomainSize(options.domainSize);
-		bench.setDomainIncreaseFactor(options.domainIncreaseFactor);
-		bench.run(params);
-
+		bench.setMode(options.mode);
+		bench.setDb(options.db);
+		bench.setNbUniv(options.nbUniv);
+//		bench.setOutputStream(outputStream);
+//		bench.setNbIteration(options.nbRepeat);
+//		bench.setInstanceIncreaseFactor(options.dataIncreaseFactor);
+//		bench.setMinInstanceSize(options.minSize);
+//		bench.setMaxInstanceSize(options.maxSize);
+//		bench.setDomainSize(options.domainSize);
+//		bench.setDomainIncreaseFactor(options.domainIncreaseFactor);
+		new BenchRunner(bench, outputStream, 1, options.timeout).run(params);
 	}
 
 }

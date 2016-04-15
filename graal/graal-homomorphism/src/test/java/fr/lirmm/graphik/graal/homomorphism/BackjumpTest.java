@@ -68,7 +68,10 @@ public class BackjumpTest {
 	/*
 	 * X1 --(p15)--> X5 --(p56)--> X6 \ (p12)--> X2 --(p24)--> X4 \ (p23)--> X3
 	 * 
-	 * solutions: X1 X2 X3 X4 X5 X6 b b c d a a b b d d a a b d a a a a
+	 * solutions: X1 X2 X3 X4 X5 X6 
+	 *            b  b  c  d  a  a 
+	 *            b  b  d  d  a  a 
+	 *            b  d  a  a  a  a
 	 */
 	@Test
 	public void test1() throws HomomorphismException {
@@ -88,8 +91,9 @@ public class BackjumpTest {
 		h.setProfiler(new CPUTimeProfiler());
 		CloseableIterator results = h.execute(query, data);
 		while (results.hasNext()) {
-			results.next();
+
+			System.out.println(results.next());
 		}
-		Assert.assertEquals(53, h.getProfiler().get("nbCall"));
+		Assert.assertEquals(49, h.getProfiler().get("#calls"));
 	}
 }

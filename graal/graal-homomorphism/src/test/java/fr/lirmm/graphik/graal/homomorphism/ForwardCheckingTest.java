@@ -100,7 +100,7 @@ public class ForwardCheckingTest {
 			results.next();
 		}
 		results.close();
-		Assert.assertEquals(7, profiler.get("nbCall"));
+		Assert.assertEquals(7, profiler.get("#calls"));
 	}
 
 	@Test
@@ -119,7 +119,7 @@ public class ForwardCheckingTest {
 			System.out.println(results.next());
 		}
 		results.close();
-		Assert.assertEquals(7, profiler.get("nbCall"));
+		Assert.assertEquals(7, profiler.get("#calls"));
 	}
 
 	@Test
@@ -142,7 +142,7 @@ public class ForwardCheckingTest {
 			++i;
 		}
 		results.close();
-		Assert.assertEquals(1, profiler.get("nbCall"));
+		Assert.assertEquals(1, profiler.get("#calls"));
 	}
 
 	@Test
@@ -165,7 +165,7 @@ public class ForwardCheckingTest {
 			++i;
 		}
 		results.close();
-		System.out.println(profiler.get("nbCall"));
+		System.out.println(profiler.get("#calls"));
 	}
 
 

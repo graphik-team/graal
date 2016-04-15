@@ -60,7 +60,7 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-class BenchRunner {
+public class BenchRunner {
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -72,15 +72,18 @@ class BenchRunner {
 	private final OutputStream  OUT;
 	private final int           NB_ITERATION;
 
+	private long                timeout;
+
 	public BenchRunner(GraalBench bench, OutputStream out) {
-		this(bench, out, 1);
+		this(bench, out, 1, 1000);
 	}
 
-	public BenchRunner(GraalBench bench, OutputStream out, int nbIteration) {
+	public BenchRunner(GraalBench bench, OutputStream out, int nbIteration, long timeout) {
 		super();
 		this.BENCH = bench;
 		this.OUT = out;
 		this.NB_ITERATION = nbIteration;
+		this.timeout = timeout;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -91,7 +94,9 @@ class BenchRunner {
 		return this.BENCH;
 	}
 
+
 	public void run(Map<String, ? extends Object> params) throws FileNotFoundException {
+		this.BENCH.init();
 		PrintStream writer = new PrintStream(OUT);
 		writer.format("%s,%s,%s,%s,%s,%s\n", "iteration", "query", "data instance", "parameter number", "data name",
 		    "data value");
@@ -108,28 +113,46 @@ class BenchRunner {
 					LOGGER.info("current instance: ", instance.getKey());
 				}
 
-				int q = 0;
-				CloseableIterator<Query> queries = BENCH.getQueries();
+				CloseableIterator<Map.Entry<String, Query>> queries = BENCH.getQueries();
 
 				while (queries.hasNext()) {
+					Map.Entry<String, Query> qe = queries.next();
+					Query query = qe.getValue();
 					if (LOGGER.isInfoEnabled()) {
-						LOGGER.info("## current query: ", q);
+						LOGGER.info("## current query: ", qe.getKey());
 					}
-					Query query = queries.next();
+
 
 					for (Entry<String, ? extends Object> p : params.entrySet()) {
-						Iterator<Map.Entry<String, Object>> data = BENCH.execute(query, instance.getValue(), p.getValue());
+						BENCH.setParams(query, instance.getValue(), p.getValue());
+						Thread thread = new Thread(BENCH);
+						thread.start();
+						try {
+							thread.join(timeout);
+						} catch (InterruptedException e1) {
 
-						while (data.hasNext()) {
-							Map.Entry<String, Object> e = data.next();
-							writer.format("%d,%d,%s,%s,%s,%s\n", iteration, q, instance.getKey(), p.getKey(),
-							    e.getKey(), e.getValue()
-							                                                                               .toString());
-							writer.flush();
 						}
+						if (thread.isAlive()) {
+							writer.format("%d,%s,%s,%s,%s,%s\n", iteration, qe.getKey(), instance.getKey(), p.getKey(),
+							    "info",
+							    "TO");
+								writer.flush();
+								thread.stop();
+						} else {
+							Iterator<Map.Entry<String, Object>> data = BENCH.getResults();
+
+							while (data.hasNext()) {
+								Map.Entry<String, Object> e = data.next();
+								writer.format("%d,%s,%s,%s,%s,%s\n", iteration, qe.getKey(), instance.getKey(),
+								    p.getKey(),
+								    e.getKey(), e.getValue().toString());
+								writer.flush();
+								}
+							}
+
+
 
 					}
-					++q;
 				}
 			}
 		}

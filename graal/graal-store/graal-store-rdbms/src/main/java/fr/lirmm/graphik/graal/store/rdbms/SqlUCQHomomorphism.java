@@ -55,7 +55,7 @@ import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.UnionOfConjunctiveQueries;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.UCQHomomorphism;
-import fr.lirmm.graphik.util.Profiler;
+import fr.lirmm.graphik.util.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
@@ -64,14 +64,12 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public final class SqlUCQHomomorphism implements UCQHomomorphism<RdbmsStore> {
+public final class SqlUCQHomomorphism extends AbstractProfilable implements UCQHomomorphism<RdbmsStore> {
 
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(SqlUCQHomomorphism.class);
 	
 	private static SqlUCQHomomorphism instance;
-
-	private Profiler                  profiler;
 
 	private SqlUCQHomomorphism() {
 	}
@@ -91,6 +89,9 @@ public final class SqlUCQHomomorphism implements UCQHomomorphism<RdbmsStore> {
 	public CloseableIterator<Substitution> execute(UnionOfConjunctiveQueries queries,
 			RdbmsStore store) throws HomomorphismException {
 		String sqlQuery = preprocessing(queries, store);
+		if (this.getProfiler().isProfilingEnabled()) {
+			this.getProfiler().put("SQLQuery", sqlQuery);
+		}
 		try {
 			if(LOGGER.isDebugEnabled()) {
 				LOGGER.debug(sqlQuery);
@@ -99,16 +100,6 @@ public final class SqlUCQHomomorphism implements UCQHomomorphism<RdbmsStore> {
 		} catch (Exception e) {
 			throw new HomomorphismException(e.getMessage(), e);
 		}
-	}
-
-	@Override
-	public void setProfiler(Profiler profiler) {
-		this.profiler = profiler;
-	}
-
-	@Override
-	public Profiler getProfiler() {
-		return this.profiler;
 	}
 
 	private static String preprocessing(UnionOfConjunctiveQueries queries, RdbmsStore store)

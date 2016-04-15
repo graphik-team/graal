@@ -45,6 +45,9 @@
  */
 package fr.lirmm.graphik.graal.homomorphism;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Query;
@@ -65,12 +68,17 @@ import fr.lirmm.graphik.util.stream.GIterator;
 public class UnionConjunctiveQueriesSubstitutionIterator extends AbstractProfilable implements
                                                                                    CloseableIterator<Substitution> {
 
+	private static final Logger                     LOGGER = LoggerFactory.getLogger(
+	    UnionConjunctiveQueriesSubstitutionIterator.class);
+
 	private AtomSet                                 atomSet;
 	private GIterator<ConjunctiveQuery>             cqueryIterator;
 	private CloseableIterator<Substitution>         tmpIt;
 	private boolean                                 hasNextCallDone = false;
 	private Homomorphism<ConjunctiveQuery, AtomSet> homomorphism;
 	private RulesCompilation                        compilation;
+
+	private int                                     i = 1;
 
 	public UnionConjunctiveQueriesSubstitutionIterator(UnionOfConjunctiveQueries queries, AtomSet atomSet) {
 		this(queries, atomSet, null, null);
@@ -94,12 +102,15 @@ public class UnionConjunctiveQueriesSubstitutionIterator extends AbstractProfila
 	public boolean hasNext() {
 		if (!this.hasNextCallDone) {
 			this.hasNextCallDone = true;
-
+			
+			if (this.tmpIt != null && !this.tmpIt.hasNext()) {
+				this.tmpIt.close();
+				this.tmpIt = null;
+				this.getProfiler().stop("SubQuery" + i++);
+			}
 			while ((this.tmpIt == null || !this.tmpIt.hasNext()) && this.cqueryIterator.hasNext()) {
-				if (this.tmpIt != null) {
-					this.tmpIt.close();
-				}
 				Query q = this.cqueryIterator.next();
+				this.getProfiler().start("SubQuery" + i);
 				Homomorphism solver = this.homomorphism;
 				try {
 					if (solver == null) {
@@ -136,7 +147,9 @@ public class UnionConjunctiveQueriesSubstitutionIterator extends AbstractProfila
 
 	@Override
 	public void close() {
-		this.tmpIt.close();
+		if (this.tmpIt != null) {
+			this.tmpIt.close();
+		}
 	}
 
 	@Override

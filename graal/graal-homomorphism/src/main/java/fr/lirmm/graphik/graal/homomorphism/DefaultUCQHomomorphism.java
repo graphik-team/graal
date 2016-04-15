@@ -78,14 +78,23 @@ public final class DefaultUCQHomomorphism implements UCQHomomorphismWithCompilat
 	@Override
 	public CloseableIterator<Substitution> execute(UnionOfConjunctiveQueries queries, AtomSet atomset)
 	    throws HomomorphismException {
-		return new UnionConjunctiveQueriesSubstitutionIterator(queries, atomset, homomorphism);
+		UnionConjunctiveQueriesSubstitutionIterator it = new UnionConjunctiveQueriesSubstitutionIterator(queries,
+		                                                                                                 atomset,
+		                                                                                                 homomorphism);
+		it.setProfiler(this.getProfiler());
+		return it;
 	}
 
 	@Override
 	public CloseableIterator<Substitution> execute(UnionOfConjunctiveQueries queries, AtomSet atomset,
 	    RulesCompilation rc)
 	    throws HomomorphismException {
-		return new UnionConjunctiveQueriesSubstitutionIterator(queries, atomset, homomorphism, rc);
+		UnionConjunctiveQueriesSubstitutionIterator it = new UnionConjunctiveQueriesSubstitutionIterator(queries,
+		                                                                                                 atomset,
+		                                                                                                 homomorphism,
+		                                                                                                 rc);
+		it.setProfiler(profiler);
+		return it;
 	}
 
 	@Override

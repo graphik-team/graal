@@ -9,9 +9,9 @@
 		<version>1.1.2-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>bench-homomorphism</artifactId>
+	<artifactId>bench-inf-homomorphism</artifactId>
 	<packaging>jar</packaging>
-	<name>fr.lirmm.graphik:bench-homomorphism</name>
+	<name>fr.lirmm.graphik:bench-inf-homomorphism</name>
 
 	<description></description>
 
@@ -41,6 +41,16 @@
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
+			<artifactId>graal-backward-chaining</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>fr.lirmm.graphik</groupId>
+			<artifactId>graal-io-owl</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-store-rdbms</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
@@ -64,7 +74,11 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>1.7.7</version>
 		</dependency>
-
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.1.3</version>
+		</dependency>
 		<!-- Test -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -81,14 +95,14 @@
 				<version>2.5.3</version>
 				<configuration>
 					<preparationGoals>compile</preparationGoals>
-					<finalName>bench-homo-${project.version}</finalName>
+					<finalName>bench-inf-homo-${project.version}</finalName>
 					<archive>
 						<manifestEntries>
 							<Built-On>${maven.build.timestamp}</Built-On>
 						</manifestEntries>
 						<manifest>
 							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-							<mainClass>fr.lirmm.graphik.graal.bench.homomorphism.BacktrackHomomorphismBench</mainClass>
+							<mainClass>fr.lirmm.graphik.graal.bench.homomorphism.BenchLauncher</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>

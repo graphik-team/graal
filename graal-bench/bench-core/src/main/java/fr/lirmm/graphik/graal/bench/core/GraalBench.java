@@ -56,19 +56,26 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface GraalBench {
+public interface GraalBench extends Runnable {
 
 	// /////////////////////////////////////////////////////////////////////////
 	// DATASET METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	CloseableIterator<Query> getQueries();
+	CloseableIterator<Map.Entry<String, Query>> getQueries();
 
 	CloseableIterator<Rule> getOntology();
 
 	CloseableIterator<Map.Entry<String, AtomSet>> getInstances();
 
-	Iterator<Entry<String, Object>> execute(Query q, AtomSet it, Object o);
+	void setParams(Query q, AtomSet it, Object o);
+
+	@Override
+	void run();
+
+	void init();
+
+	Iterator<Entry<String, Object>> getResults();
 	
 	// /////////////////////////////////////////////////////////////////////////
 	// RUN PARAMETERS
@@ -98,7 +105,6 @@ public interface GraalBench {
 	 */
 	OutputStream getOutputStream();
 
-	void run(Map<String, ? extends Object> params);
 
 
 }

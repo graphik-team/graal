@@ -46,12 +46,13 @@ import java.util.Map;
 
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.util.AbstractProfilable;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class NoBackJumping implements BackJumping {
+public class NoBackJumping extends AbstractProfilable implements BackJumping {
 
 	private static NoBackJumping instance;
 

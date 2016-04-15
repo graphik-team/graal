@@ -57,6 +57,7 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.TermValueComparator;
 import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.homorphism.utils.ProbaUtils;
 import fr.lirmm.graphik.util.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
@@ -69,17 +70,17 @@ import fr.lirmm.graphik.util.stream.GIterator;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class StarBootstrapper extends AbstractProfilable implements Bootstrapper {
+public class StatBootstrapper extends AbstractProfilable implements Bootstrapper {
 
-	private static StarBootstrapper instance;
+	private static StatBootstrapper instance;
 
-	protected StarBootstrapper() {
+	protected StatBootstrapper() {
 		super();
 	}
 
-	public static synchronized StarBootstrapper instance() {
+	public static synchronized StatBootstrapper instance() {
 		if (instance == null)
-			instance = new StarBootstrapper();
+			instance = new StatBootstrapper();
 
 		return instance;
 	}
@@ -90,7 +91,7 @@ public class StarBootstrapper extends AbstractProfilable implements Bootstrapper
 
 	@Override
 	public CloseableIterator<Term> exec(final Var v, InMemoryAtomSet query, final AtomSet data,
-	    RulesCompilation compilation) throws AtomSetException {
+	    RulesCompilation rc) throws AtomSetException {
 		Set<Term> terms = null;
 		
 		if(this.getProfiler() != null) {
@@ -118,11 +119,13 @@ public class StarBootstrapper extends AbstractProfilable implements Bootstrapper
 			}
 		}
 		if (constants != null && !constants.isEmpty()) {
-			int pos = aa.indexOf(v.value);
 			terms = new TreeSet<Term>(TermValueComparator.instance());
-			GIterator<Atom> match = data.match(aa);
-			while (match.hasNext()) {
-				terms.add(match.next().getTerm(pos));
+			for (Atom im : rc.getRewritingOf(aa)) {
+				int pos = im.indexOf(v.value);
+				GIterator<Atom> match = data.match(im);
+				while (match.hasNext()) {
+					terms.add(match.next().getTerm(pos));
+				}
 			}
 		}
 
@@ -131,23 +134,30 @@ public class StarBootstrapper extends AbstractProfilable implements Bootstrapper
 		}
 
 		if (terms == null) {
+			Atom a = null, tmp;
+			double probaA = 1.1;
+
 			it = v.postAtoms.iterator();
 			while (it.hasNext()) {
-				if (terms == null) {
-					terms = execOverRewritings(it.next(), v, data, compilation);
-				} else {
-					terms.retainAll(execOverRewritings(it.next(), v, data, compilation));
+				tmp = it.next();
+				double p = ProbaUtils.computeProba(tmp, data, rc);
+				if (p < probaA) {
+					a = tmp;
+					p = probaA;
 				}
 			}
 
 			it = v.preAtoms.iterator();
 			while (it.hasNext()) {
-				if (terms == null) {
-					terms = execOverRewritings(it.next(), v, data, compilation);
-				} else {
-					terms.retainAll(execOverRewritings(it.next(), v, data, compilation));
+				tmp = it.next();
+				double p = ProbaUtils.computeProba(tmp, data, rc);
+				if (p < probaA) {
+					a = tmp;
+					p = probaA;
 				}
 			}
+
+			terms = execOverRewritings(a, v, data, rc);
 		}
 		
 		if(this.getProfiler() != null) {

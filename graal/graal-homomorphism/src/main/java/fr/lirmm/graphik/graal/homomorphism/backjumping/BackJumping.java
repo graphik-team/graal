@@ -46,12 +46,13 @@ import java.util.Map;
 
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.util.Profilable;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface BackJumping {
+public interface BackJumping extends Profilable {
 
 	void init(Var[] vars, Map<Variable, Var> map);
 

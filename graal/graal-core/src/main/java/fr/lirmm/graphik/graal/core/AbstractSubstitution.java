@@ -223,6 +223,7 @@ public abstract class AbstractSubstitution implements Substitution {
 		return this.equals((Substitution) obj);
 	}
 
+	// TODO to check and improve
 	public boolean equals(Substitution other) { // NOPMD
 		Set<Term> termsThis = new TreeSet<Term>();
 		termsThis.addAll(this.getTerms());
@@ -247,6 +248,22 @@ public abstract class AbstractSubstitution implements Substitution {
 		}
 
 		return true;
+	}
+
+	@Override
+	public int compareTo(Substitution other) {
+		Set<Term> set = this.getTerms();
+		Set<Term> otherset = other.getTerms();
+		if (set.size() != otherset.size()) {
+			return set.size() - otherset.size();
+		}
+		for (Term t : set) {
+			int val = this.createImageOf(t).compareTo(other.createImageOf(t));
+			if (val != 0) {
+				return val;
+			}
+		}
+		return 0;
 	}
 
 };

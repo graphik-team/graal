@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,16 +40,60 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
+package fr.lirmm.graphik.homorphism.utils;
+
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
+import fr.lirmm.graphik.graal.api.core.Term;
+
+/**
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+ *
  */
-package fr.lirmm.graphik.graal.core.atomset.graph;
+public final class ProbaUtils {
 
-import java.util.Set;
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
 
+	private ProbaUtils() {
+	}
 
-interface Vertex {
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
-	Set<Edge> getEdges();
+	/**
+	 * Compute the probability to have one specific instance of the specified
+	 * atom over data
+	 * 
+	 * @param atom
+	 * @param data
+	 * @param domainSize
+	 * @param rc
+	 * @return
+	 */
+	public static double computeProba(Atom atom, AtomSet data, RulesCompilation rc) {
+		int count = 0;
+		for (Atom im : rc.getRewritingOf(atom)) {
+			count += data.count(im.getPredicate());
+		}
+
+		double probaA = count / Math.pow(data.getDomainSize(), atom.getPredicate().getArity());
+		for (Term t : atom.getTerms(Term.Type.CONSTANT)) {
+			probaA /= data.getDomainSize();
+		}
+
+		return probaA;
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// OBJECT OVERRIDE METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
 }

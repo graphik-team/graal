@@ -46,9 +46,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.util.AbstractProfilable;
 
 /**
  * Compute an order over variables from h. This scheduler put answer
@@ -58,7 +61,7 @@ import fr.lirmm.graphik.graal.api.core.Variable;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class DefaultScheduler implements Scheduler {
+public class DefaultScheduler extends AbstractProfilable implements Scheduler {
 
 	private static DefaultScheduler instance;
 
@@ -80,7 +83,7 @@ public class DefaultScheduler implements Scheduler {
 	 * @return
 	 */
 	@Override
-	public Var[] execute(InMemoryAtomSet h, List<Term> ans) {
+	public Var[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data, RulesCompilation rc) {
 		Set<Term> terms = h.getTerms(Term.Type.VARIABLE);
 		Var[] vars = new Var[terms.size() + 2];
 

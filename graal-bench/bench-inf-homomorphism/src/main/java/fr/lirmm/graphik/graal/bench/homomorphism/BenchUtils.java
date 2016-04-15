@@ -40,39 +40,61 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.homomorphism;
+package fr.lirmm.graphik.graal.bench.homomorphism;
 
-import java.util.List;
+import java.io.File;
 
-import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
-import fr.lirmm.graphik.graal.api.core.RulesCompilation;
-import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.util.Profilable;
+import org.apache.commons.io.FileUtils;
+
+import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.store.Store;
+import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
+import fr.lirmm.graphik.graal.store.rdbms.driver.DriverException;
+import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;
+import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
 
 /**
- * The Scheduler interface provides a way to manage the backtracking order. The
- * Var.previousLevel will be used when the backtracking algorithm is in a
- * failure state (allow backjumping).
- *
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface Scheduler extends Profilable {
+public final class BenchUtils {
 
-	/**
-	 * @param h
-	 * @param ans
-	 * @return an array of Var
-	 */
-	Var[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data, RulesCompilation rc);
+	private BenchUtils() {
+	}
 
-	/**
-	 * @param var
-	 * @param image
-	 * @return true if the specified image is not forbidden for the specified
-	 *         var
-	 */
-	boolean isAllowed(Var var, Term image);
+	private static final File   SQLITE_UNSAT   = new File("/tmp/lubm-ex-20-unsat");
+	private static final File   SQLITE_SEMISAT = new File("/tmp/lubm-ex-20-semisat");
+
+	private static final String MYSQL_UNSAT    = "jdbc:mysql://localhost/%s-unsat?user=root&password=root";
+	private static final String MYSQL_SEMISAT  = "jdbc:mysql://localhost/%s-semisat?user=root&password=root";
+
+	
+	public static Store getStoreUnsat(String system, String basename) throws AtomSetException, DriverException {
+		if ("SQLITE".equals(system)) {
+			if (SQLITE_UNSAT.exists())
+				FileUtils.deleteQuietly(SQLITE_UNSAT);
+			return new DefaultRdbmsStore(new SqliteDriver(SQLITE_UNSAT));
+		} else {
+			return new DefaultRdbmsStore(new MysqlDriver(String.format(MYSQL_UNSAT, basename)));
+		}
+	}
+
+	public static long sizeOfStoreUnsat() {
+		return FileUtils.sizeOf(SQLITE_UNSAT);
+	}
+
+	public static Store getStoreSat(String system, String basename) throws AtomSetException, DriverException {
+		if ("SQLITE".equals(system)) {
+			if (SQLITE_SEMISAT.exists())
+				FileUtils.deleteQuietly(SQLITE_SEMISAT);
+			return new DefaultRdbmsStore(new SqliteDriver(SQLITE_SEMISAT));
+		} else {
+			return new DefaultRdbmsStore(new MysqlDriver(String.format(MYSQL_SEMISAT, basename)));
+		}
+	}
+
+	public static long sizeOfStoreSemiSat() {
+		return FileUtils.sizeOf(SQLITE_SEMISAT);
+	}
 
 }
