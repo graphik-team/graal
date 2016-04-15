@@ -65,6 +65,7 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.RestrictedChaseStopCondition;
+import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.GIterator;
 
@@ -81,7 +82,7 @@ public class ExhaustiveRuleApplier<T extends AtomSet> implements RuleApplier<Rul
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExhaustiveRuleApplier.class);
 
 	private ChaseHaltingCondition haltingCondition;
-	private Homomorphism<ConjunctiveQuery, T> solver;
+	private Homomorphism<? super ConjunctiveQuery, ? super T> solver;
 	private VariableGenerator existentialGen;
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -95,7 +96,16 @@ public class ExhaustiveRuleApplier<T extends AtomSet> implements RuleApplier<Rul
 	public ExhaustiveRuleApplier(Homomorphism<ConjunctiveQuery, T> homomorphismSolver) {
 		this(homomorphismSolver, new RestrictedChaseStopCondition());
 	}
-
+	
+	/**
+	 * Construct a ExhaustiveRuleApplier with the given HaltingCondition.
+	 * 
+	 * @param haltingCondition
+	 */
+	public ExhaustiveRuleApplier(ChaseHaltingCondition haltingCondition) {
+		this(StaticHomomorphism.instance(), haltingCondition, new DefaultVariableGenerator("E"));
+	}
+	
 	/**
 	 * Construct a DefaultRuleApplier with the given HaltingCondition.
 	 * 
@@ -115,7 +125,7 @@ public class ExhaustiveRuleApplier<T extends AtomSet> implements RuleApplier<Rul
 	 * @param homomorphismSolver
 	 * @param existentialVarGenerator
 	 */
-	public ExhaustiveRuleApplier(Homomorphism<ConjunctiveQuery, T> homomorphismSolver,
+	public ExhaustiveRuleApplier(Homomorphism<? super ConjunctiveQuery, ? super T> homomorphismSolver,
 	        ChaseHaltingCondition haltingCondition, VariableGenerator existentialVarGenerator) {
 		this.haltingCondition = haltingCondition;
 		this.solver = homomorphismSolver;

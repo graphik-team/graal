@@ -54,6 +54,7 @@ import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.forward_chaining.AbstractChase;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
+import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 
@@ -77,13 +78,17 @@ public class ChaseWithGRD extends AbstractChase {
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 	
-	public ChaseWithGRD(GraphOfRuleDependencies grd, AtomSet atomSet) {
-		super(new DefaultRuleApplier());
+	public ChaseWithGRD(GraphOfRuleDependencies grd, AtomSet atomSet, RuleApplier ruleApplier) {
+		super(ruleApplier);
 		this.grd = grd;
 		this.atomSet = atomSet;
 		for(Rule r : grd.getRules()) {			
 			this.queue.add(r);
 		}
+	}
+	
+	public ChaseWithGRD(GraphOfRuleDependencies grd, AtomSet atomSet) {
+		this(grd, atomSet, new DefaultRuleApplier());
 	}
 	
 	// /////////////////////////////////////////////////////////////////////////
