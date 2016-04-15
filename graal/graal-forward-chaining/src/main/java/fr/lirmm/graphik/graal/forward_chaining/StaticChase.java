@@ -58,7 +58,7 @@ import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 public class StaticChase {
 	public static void executeChase(AtomSet atomSet, Iterable<Rule> ruleSet)
 			throws ChaseException {
-		Chase chase = new NaiveChase(ruleSet, atomSet);
+		Chase chase = new DefaultChase(ruleSet, atomSet);
 		chase.execute();
 	}
 
@@ -71,7 +71,7 @@ public class StaticChase {
 
 	public static void executeOneStepChase(AtomSet atomSet,
 			Iterable<Rule> ruleSet) throws ChaseException {
-		Chase chase = new NaiveChase(ruleSet, atomSet);
+		Chase chase = new DefaultChase(ruleSet, atomSet);
 		chase.next();
 	}
 

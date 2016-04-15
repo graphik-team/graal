@@ -61,7 +61,7 @@ import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.RuleUtils;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
-import fr.lirmm.graphik.graal.forward_chaining.NaiveChase;
+import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.FrontierRestrictedChaseHaltingCondition;
 import fr.lirmm.graphik.graal.homomorphism.RecursiveBacktrackHomomorphism;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
@@ -97,7 +97,7 @@ public final class MFAProperty extends RuleSetProperty.Default {
 	public int check(AnalyserRuleSet ruleSet) {
 		RuleSet R = translateToMFA(ruleSet);
 		AtomSet A = RuleUtils.criticalInstance(ruleSet);
-		NaiveChase chase = new NaiveChase(R,A,new FrontierRestrictedChaseHaltingCondition());
+		DefaultChase chase = new DefaultChase(R,A,new FrontierRestrictedChaseHaltingCondition());
 
 		DefaultConjunctiveQuery Q = new DefaultConjunctiveQuery();
 		DefaultAtom q = new DefaultAtom(C);

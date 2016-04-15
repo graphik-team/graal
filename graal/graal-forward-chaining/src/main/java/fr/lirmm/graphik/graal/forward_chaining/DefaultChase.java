@@ -45,14 +45,20 @@
  */
 package fr.lirmm.graphik.graal.forward_chaining;
 
+import java.util.Set;
+import java.util.TreeSet;
+
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.forward_chaining.AbstractChase;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
 import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
+import fr.lirmm.graphik.graal.core.DefaultRule;
+import fr.lirmm.graphik.graal.core.ruleset.IndexedByBodyPredicatesRuleSet;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
 import fr.lirmm.graphik.util.Verbosable;
 
@@ -63,52 +69,59 @@ import fr.lirmm.graphik.util.Verbosable;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class NaiveChase extends AbstractChase implements Verbosable {
+public class DefaultChase extends AbstractChase implements Verbosable {
 	
 //	private static final Logger LOGGER = LoggerFactory
 //			.getLogger(DefaultChase.class);
 
-	private Iterable<Rule> ruleSet;
+	private IndexedByBodyPredicatesRuleSet ruleSet;
 	private AtomSet atomSet;
-	boolean hasNext = true;
 	private boolean isVerbose = false;
+
+	private Set<Rule> rulesToCheck;
+	private Set<Rule> nextRulesToCheck;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 	
-	public NaiveChase(Iterable<Rule> ruleSet, AtomSet atomSet) {
-		super(new DefaultRuleApplier<AtomSet>());
-		this.ruleSet = ruleSet;
-		this.atomSet = atomSet;
+	public DefaultChase(Iterable<Rule> rules, AtomSet atomSet) {
+		this(rules, atomSet, new DefaultRuleApplier<AtomSet>());
 	}
 
-	public NaiveChase(Iterable<Rule> ruleSet, AtomSet atomSet,
+	public DefaultChase(Iterable<Rule> rules, AtomSet atomSet,
 			RuleApplier ruleApplier) {
 		super(ruleApplier);
-		this.ruleSet = ruleSet;
 		this.atomSet = atomSet;
+		this.ruleSet = new IndexedByBodyPredicatesRuleSet();
+		init(rules);
 	}
 	
-	public NaiveChase(Iterable<Rule> ruleSet, AtomSet atomSet,
+	public DefaultChase(Iterable<Rule> rules, AtomSet atomSet,
 			Homomorphism<ConjunctiveQuery, AtomSet> solver) {
-		super(new DefaultRuleApplier<AtomSet>(solver));
-		this.ruleSet = ruleSet;
-		this.atomSet = atomSet;
+		this(rules, atomSet, new DefaultRuleApplier<AtomSet>(solver));
 	}
 
-	public NaiveChase(Iterable<Rule> ruleSet, AtomSet atomSet, ChaseHaltingCondition haltingCondition) {
-		super(new DefaultRuleApplier<AtomSet>(haltingCondition));
-		this.ruleSet = ruleSet;
-		this.atomSet = atomSet;
+	public DefaultChase(Iterable<Rule> rules, AtomSet atomSet, ChaseHaltingCondition haltingCondition) {
+		this(rules, atomSet, new DefaultRuleApplier<AtomSet>(haltingCondition));
+
 	}
 
-	public NaiveChase(Iterable<Rule> ruleSet, AtomSet atomSet,
+	public DefaultChase(Iterable<Rule> rules, AtomSet atomSet,
             Homomorphism<ConjunctiveQuery, AtomSet> solver,
 			ChaseHaltingCondition haltingCondition) {
-		super(new DefaultRuleApplier<AtomSet>(solver, haltingCondition));
-		this.ruleSet = ruleSet;
-		this.atomSet = atomSet;
+		this(rules, atomSet, new DefaultRuleApplier<AtomSet>(solver, haltingCondition));
+	}
+
+	private void init(Iterable<Rule> rules) {
+		int i = 0;
+		this.nextRulesToCheck = new TreeSet<Rule>();
+		for (Rule r : rules) {
+			Rule copy = new DefaultRule(r);
+			copy.setLabel(Integer.toString(++i));
+			this.ruleSet.add(copy);
+			this.nextRulesToCheck.add(copy);
+		}
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -117,21 +130,27 @@ public class NaiveChase extends AbstractChase implements Verbosable {
 	
 	@Override
 	public void next() throws ChaseException {
+		this.rulesToCheck = this.nextRulesToCheck;
+		this.nextRulesToCheck = new TreeSet<Rule>();
 		try {
-    		if(this.hasNext) {
+			if (!this.rulesToCheck.isEmpty()) {
 				if (this.getProfiler().isProfilingEnabled()) {
 					this.getProfiler().start("saturationTime");
 				}
-    			this.hasNext = false;
-    			for (Rule rule : this.ruleSet) {
+				for (Rule rule : this.rulesToCheck) {
 					String key = null;
 					if (this.isVerbose && this.getProfiler().isProfilingEnabled()) {
 						key = "Rule " + rule.getLabel() + " application time";
 						this.getProfiler().clear(key);
+						this.getProfiler().trace(rule.toString());
 						this.getProfiler().start(key);
     				}
 					if (this.getRuleApplier().apply(rule, atomSet)) {
-    					this.hasNext = true;
+						for (Predicate p : rule.getHead().getPredicates()) {
+							for (Rule r : this.ruleSet.getRulesByBodyPredicate(p)) {
+								this.nextRulesToCheck.add(r);
+							}
+						}
     				}
 					if (this.isVerbose && this.getProfiler().isProfilingEnabled()) {
 						this.getProfiler().stop(key);
@@ -148,7 +167,7 @@ public class NaiveChase extends AbstractChase implements Verbosable {
 	
 	@Override
 	public boolean hasNext() {
-		return this.hasNext;
+		return !this.nextRulesToCheck.isEmpty();
 	}
 
 	////////////////////////////////////////////////////////////////////////////

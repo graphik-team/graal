@@ -57,7 +57,7 @@ import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
 import fr.lirmm.graphik.graal.api.io.ParseException;
-import fr.lirmm.graphik.graal.forward_chaining.NaiveChase;
+import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
@@ -115,7 +115,7 @@ public class OneStepForwardChaining {
 		driver = new MysqlDriver(options.databaseHost, options.database, options.databaseUser, options.databasePassword);
 		RdbmsStore atomSet = new DefaultRdbmsStore(driver);
 		
-		NaiveChase chase = null;
+		DefaultChase chase = null;
 		
 		DlgpParser parser = new DlgpParser(new File(options.file));
 		LinkedList<Rule> rules = new LinkedList<Rule>();
@@ -128,7 +128,7 @@ public class OneStepForwardChaining {
 			
 		RuleApplier<Rule, RdbmsStore> applier = new SQLRuleApplier<RdbmsStore>(
 				SqlHomomorphism.instance());
-		chase = new NaiveChase(rules, atomSet, applier);
+		chase = new DefaultChase(rules, atomSet, applier);
 
 		chase.enableVerbose(true);
 		PROFILER.start("forward chaining time");

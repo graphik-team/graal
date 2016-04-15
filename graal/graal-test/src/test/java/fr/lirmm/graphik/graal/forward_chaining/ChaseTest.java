@@ -95,7 +95,7 @@ public class ChaseTest {
 		LinkedList<Rule> ruleSet = new LinkedList<Rule>();
 		ruleSet.add(DlgpParser.parseRule("q(X,Y) :- p(X,Y)."));
 
-		Chase chase = new NaiveChase(ruleSet, atomSet);
+		Chase chase = new DefaultChase(ruleSet, atomSet);
 		chase.execute();
 		
 		ConjunctiveQuery query = DlgpParser.parseQuery("? :- p(X,Y),q(X,Y).");
@@ -110,7 +110,7 @@ public class ChaseTest {
 		LinkedList<Rule> ruleSet = new LinkedList<Rule>();
 		ruleSet.add(DlgpParser.parseRule("q(X,Z) :- p(X)."));
 
-		Chase chase = new NaiveChase(ruleSet, atomSet);
+		Chase chase = new DefaultChase(ruleSet, atomSet);
 		chase.execute();
 
 		int size = 0;
@@ -131,7 +131,7 @@ public class ChaseTest {
 		ruleSet.add(DlgpParser.parseRule("q(X,Z) :- r(X,Y)."));
 		ruleSet.add(DlgpParser.parseRule("s(X) :- q(Y,X)."));
 
-		Chase chase = new NaiveChase(ruleSet, atomSet);
+		Chase chase = new DefaultChase(ruleSet, atomSet);
 		chase.execute();
 		
 		int size = 0;
@@ -174,7 +174,7 @@ public class ChaseTest {
 		ruleSet.add(DlgpParser.parseRule("e(Z,Z) :- e(X,Y), e(Y,X)."));
 		ruleSet.add(DlgpParser.parseRule("e(X,Z), e(Z,Y) :- e(X,Y)."));
 
-		Chase chase = new NaiveChase(ruleSet, atomSet, RecursiveBacktrackHomomorphism.instance(),
+		Chase chase = new DefaultChase(ruleSet, atomSet, RecursiveBacktrackHomomorphism.instance(),
 		        new CoreChaseStopCondition());
 		chase.execute();
 
@@ -195,7 +195,7 @@ public class ChaseTest {
 		LinkedList<Rule> ruleSet = new LinkedList<Rule>();
 		ruleSet.add(DlgpParser.parseRule("e(X,Z) :- e(X,Y), e(Y,Z)."));
 
-		Chase chase = new NaiveChase(ruleSet, atomSet, RecursiveBacktrackHomomorphism.instance(),
+		Chase chase = new DefaultChase(ruleSet, atomSet, RecursiveBacktrackHomomorphism.instance(),
 		        new CoreChaseStopCondition());
 		chase.execute();
 

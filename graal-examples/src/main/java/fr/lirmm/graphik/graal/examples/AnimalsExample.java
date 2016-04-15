@@ -63,7 +63,7 @@ import fr.lirmm.graphik.graal.core.DefaultKnowledgeBase;
 import fr.lirmm.graphik.graal.core.DefaultUnionOfConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
-import fr.lirmm.graphik.graal.forward_chaining.NaiveChase;
+import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
@@ -168,7 +168,7 @@ public class AnimalsExample {
 		writer.flush();
 		waitEntry();
 
-		Chase chase = new NaiveChase(kb.getOntology(), kb.getFacts());
+		Chase chase = new DefaultChase(kb.getOntology(), kb.getFacts());
 		chase.execute();
 
 		writer.write("\n= Query =\n");

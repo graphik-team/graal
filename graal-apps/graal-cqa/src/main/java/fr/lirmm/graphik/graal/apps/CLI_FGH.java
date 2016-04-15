@@ -69,7 +69,7 @@ import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.cqa.AtomIndex;
 import fr.lirmm.graphik.graal.cqa.FGH;
 import fr.lirmm.graphik.graal.cqa.FGHRuleChaseCondition;
-import fr.lirmm.graphik.graal.forward_chaining.NaiveChase;
+import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.ExhaustiveRuleApplier;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
@@ -110,7 +110,7 @@ public class CLI_FGH {
 
 			ChaseHaltingCondition haltCondition = chaseCondition;
 			RuleApplier applier = new ExhaustiveRuleApplier<AtomSet>(solver, haltCondition);
-			NaiveChase chase = new NaiveChase(rules, atomset, applier);
+			DefaultChase chase = new DefaultChase(rules, atomset, applier);
 
 			if (options.input_file != "") {
 				System.out.println("Reading data from dlp file: " + options.input_file);

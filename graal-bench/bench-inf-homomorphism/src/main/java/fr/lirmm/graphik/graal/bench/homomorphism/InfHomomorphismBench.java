@@ -70,7 +70,7 @@ import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.core.compilation.IDCompilation;
 import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseWithGRD;
-import fr.lirmm.graphik.graal.forward_chaining.NaiveChase;
+import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.DefaultUCQHomomorphism;
@@ -439,7 +439,7 @@ public class InfHomomorphismBench extends AbstractGraalBench {
 			}
 
 			if (mode.equals(Mode.SEMI_SAT)) {
-				NaiveChase chase = new NaiveChase(rc.getSaturation(), instance);
+				DefaultChase chase = new DefaultChase(rc.getSaturation(), instance);
 				chase.enableVerbose(true);
 				chase.setProfiler(profiler);
 				try {

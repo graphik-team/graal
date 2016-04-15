@@ -65,7 +65,7 @@ import fr.lirmm.graphik.graal.core.DefaultUnionOfConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
-import fr.lirmm.graphik.graal.forward_chaining.NaiveChase;
+import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
 import fr.lirmm.graphik.graal.homomorphism.ComplexHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
@@ -134,7 +134,7 @@ public class CLI {
 		DlgpWriter writer = new DlgpWriter(System.out);
 		Homomorphism solver = new ComplexHomomorphism(SqlHomomorphism.instance());
 
-		NaiveChase chase = new NaiveChase(rules,atomset,solver);
+		DefaultChase chase = new DefaultChase(rules,atomset,solver);
 
 		if (k != 0) {
 			if (k < 0) {
