@@ -55,9 +55,10 @@ import fr.lirmm.graphik.graal.homomorphism.bootstrapper.Bootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.bootstrapper.StarBootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.ForwardChecking;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NoForwardChecking;
+import fr.lirmm.graphik.util.AbstractProfilable;
 import fr.lirmm.graphik.util.Profilable;
-import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.Utils;
 
 /**
  * This Backtrack is inspired by the Baget Jean-François Thesis (Chapter 5)
@@ -68,9 +69,10 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class BacktrackHomomorphism implements HomomorphismWithCompilation<ConjunctiveQuery, AtomSet>, Profilable {
+public class BacktrackHomomorphism extends AbstractProfilable implements
+                                                             HomomorphismWithCompilation<ConjunctiveQuery, AtomSet>,
+                                                             Profilable {
 
-	private Profiler        profiler = null;
 	private Scheduler       scheduler;
 	private Bootstrapper    bootstrapper;
 	private ForwardChecking fc;
@@ -154,37 +156,11 @@ public class BacktrackHomomorphism implements HomomorphismWithCompilation<Conjun
 	@Override
 	public <U1 extends ConjunctiveQuery, U2 extends AtomSet> CloseableIterator<Substitution> execute(U1 q, U2 a,
 	    RulesCompilation compilation) throws HomomorphismException {
-		// return new
-		// ArrayBlockingQueueToCloseableIteratorAdapter<Substitution>(new
-		// BT(q.getAtomSet(), a,
-		// q.getAnswerVariables(),
-		// compilation));
-		if (this.profiler != null) {
-			this.profiler.start("preprocessing");
-		}
 		BacktrackIterator backtrackIterator = new BacktrackIterator(q.getAtomSet(), a, q.getAnswerVariables(),
 		                                                            this.scheduler, this.bootstrapper, this.fc,
-		                                                            this.bj, compilation);
-		if (this.profiler != null) {
-			this.profiler.stop("preprocessing");
-			backtrackIterator.setProfiler(profiler);
-		}
-		return backtrackIterator;
-	}
-
-	// /////////////////////////////////////////////////////////////////////////
-	// PROFILABLE METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	@Override
-	public void setProfiler(Profiler profiler) {
-		this.profiler = profiler;
-		this.fc.setProfiler(profiler);
-	}
-
-	@Override
-	public Profiler getProfiler() {
-		return this.profiler;
+		                                                            this.bj, compilation, this.getProfiler());
+		//return new ArrayBlockingQueueToCloseableIteratorAdapter<Substitution>(backtrackIterator);
+		return Utils.uniq(backtrackIterator);
 	}
 
 }
