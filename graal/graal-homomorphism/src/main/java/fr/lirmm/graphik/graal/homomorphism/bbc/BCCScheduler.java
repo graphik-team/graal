@@ -63,6 +63,7 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.Scheduler;
 import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.homorphism.utils.ProbaUtils;
 import fr.lirmm.graphik.util.AbstractProfilable;
 import fr.lirmm.graphik.util.graph.DefaultDirectedEdge;
 import fr.lirmm.graphik.util.graph.DefaultGraph;
@@ -75,7 +76,6 @@ import fr.lirmm.graphik.util.graph.HyperGraph;
 class BCCScheduler extends AbstractProfilable implements Scheduler {
 
 	private final BCC           BCC;
-	private double              domainSize;
 	private Comparator<Integer> varComparator;
 	private Term[]              inverseMap;
 	boolean                     withForbiddenCandidate;
@@ -91,7 +91,6 @@ class BCCScheduler extends AbstractProfilable implements Scheduler {
 	@Override
 	public Var[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data, RulesCompilation rc) {
 
-		this.domainSize = data.getDomainSize();
 		Set<Term> variables = h.getTerms(Term.Type.VARIABLE);
 
 		// BCC
@@ -156,15 +155,7 @@ class BCCScheduler extends AbstractProfilable implements Scheduler {
 		}
 		
 		for (Atom a : h) {
-			int count = 0;
-			for (Atom im : rc.getRewritingOf(a)) {
-				count += data.count(im.getPredicate());
-			}
-
-			double probaA = count / Math.pow(this.domainSize, a.getPredicate().getArity());
-			for (Term t : a.getTerms(Term.Type.CONSTANT)) {
-				probaA /= data.getDomainSize();
-			}
+			double probaA = ProbaUtils.computeProba(a, data, rc);
 
 			for (Term t : a.getTerms(Term.Type.VARIABLE)) {
 				int i = map.get(t);
