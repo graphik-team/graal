@@ -122,7 +122,8 @@ class BCCScheduler extends AbstractProfilable implements Scheduler {
 			}
 
 			if (ans.contains(v.value)) {
-				lastAnswerVariable = i;
+				if (v.level > lastAnswerVariable)
+					lastAnswerVariable = v.level;
 			}
 		}
 
