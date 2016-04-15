@@ -1,0 +1,55 @@
+# RELEASE PROCESS
+#####################################################################
+
+## TO CHECK
+
+~~~
+mvn clean install
+mvn dependency:analyse
+mvn pmd:check
+mvn findbugs:check
+~~~
+
+---
+## RELEASE
+
+~~~
+mvn release:prepare
+git checkout graal-?.?.?
+mvn deploy
+~~~
+
+---
+## SITE
+
+~~~
+git checkout graal-?.?.?
+~~~
+
+### go to the subdirectory graal
+~~~
+cd graal
+~~~
+
+#### javadoc
+~~~
+mvn javadoc:javadoc javadoc:aggregate
+cp -r target/site/apidocs ../../graal-website-src/resources/?.?.?/javadocs
+~~~
+
+#### jar
+~~~
+cp $(find -name "*-?.?.?.jar") graal-website-src/resources/?.?.?/
+
+cd graal-distro
+mvn compile assembly:single
+cp target/graal-?.?.?-jar-with-dependencies.jar ../graal-website-src/resources/?.?.?/
+~~~
+
+#### check Links
+~~~
+linkchecker http://graphik-team.github.io/graal/
+~~~
+
+---
+## EXAMPLES
