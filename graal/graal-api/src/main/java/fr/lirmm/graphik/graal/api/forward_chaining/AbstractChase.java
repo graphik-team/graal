@@ -75,6 +75,10 @@ public abstract class AbstractChase implements Chase {
 		return this.ruleApplier;
 	}
 
+	protected void setRuleApplier(RuleApplier applier) {
+		this.ruleApplier = applier;
+	}
+
 	@Override
 	public void setProfiler(Profiler profiler) {
 		this.profiler = profiler;
