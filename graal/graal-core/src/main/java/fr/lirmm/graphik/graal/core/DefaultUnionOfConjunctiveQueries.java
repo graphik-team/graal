@@ -74,6 +74,10 @@ public class DefaultUnionOfConjunctiveQueries implements UnionOfConjunctiveQueri
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
+	public DefaultUnionOfConjunctiveQueries() {
+		this.queries = new LinkedList<ConjunctiveQuery>();
+	}
+
 	public DefaultUnionOfConjunctiveQueries(List<Term> ans) {
 		this.queries = new LinkedList<ConjunctiveQuery>();
 		this.ans = ans;
@@ -103,6 +107,10 @@ public class DefaultUnionOfConjunctiveQueries implements UnionOfConjunctiveQueri
 	@Override
 	public List<Term> getAnswerVariables() {
 		return this.ans;
+	}
+
+	public void setAnswerVariables(List<Term> ans) {
+		this.ans = ans;
 	}
 
 	@Override
