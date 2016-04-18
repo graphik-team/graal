@@ -48,9 +48,11 @@ package fr.lirmm.graphik.graal.core;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Query;
+import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.UnionOfConjunctiveQueries;
 import fr.lirmm.graphik.util.stream.GIterator;
 import fr.lirmm.graphik.util.stream.IteratorAdapter;
@@ -66,27 +68,29 @@ public class DefaultUnionOfConjunctiveQueries implements UnionOfConjunctiveQueri
 
 	private String label = "";
 	private Collection<ConjunctiveQuery> queries;
+	private List<Term> ans;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public DefaultUnionOfConjunctiveQueries() {
+	public DefaultUnionOfConjunctiveQueries(List<Term> ans) {
 		this.queries = new LinkedList<ConjunctiveQuery>();
+		this.ans = ans;
 	}
 
-	public DefaultUnionOfConjunctiveQueries(Collection<ConjunctiveQuery> queries) {
+	public DefaultUnionOfConjunctiveQueries(List<Term> ans, Collection<ConjunctiveQuery> queries) {
 		this.queries = queries;
 	}
 
-	public DefaultUnionOfConjunctiveQueries(Iterator<ConjunctiveQuery> queries) {
+	public DefaultUnionOfConjunctiveQueries(List<Term> ans, Iterator<ConjunctiveQuery> queries) {
 		this.queries = new LinkedList<ConjunctiveQuery>();
 		while (queries.hasNext()) {
 			this.queries.add(queries.next());
 		}
 	}
 
-	public DefaultUnionOfConjunctiveQueries(ConjunctiveQuery... queries) {
+	public DefaultUnionOfConjunctiveQueries(List<Term> ans, ConjunctiveQuery... queries) {
 		this.queries = new LinkedList<ConjunctiveQuery>();
 		for (ConjunctiveQuery cq : queries)
 			this.queries.add(cq);
@@ -95,6 +99,11 @@ public class DefaultUnionOfConjunctiveQueries implements UnionOfConjunctiveQueri
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
+
+	@Override
+	public List<Term> getAnswerVariables() {
+		return this.ans;
+	}
 
 	@Override
 	public boolean add(ConjunctiveQuery cquery) {
@@ -171,6 +180,7 @@ public class DefaultUnionOfConjunctiveQueries implements UnionOfConjunctiveQueri
 		this.label = label;
 	}
 
+	@Override
 	public String getLabel() {
 		return this.label;
 	}

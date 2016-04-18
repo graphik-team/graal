@@ -96,7 +96,7 @@ public final class SqlUCQHomomorphism extends AbstractProfilable implements UCQH
 			if(LOGGER.isDebugEnabled()) {
 				LOGGER.debug(sqlQuery);
 			}
-			return new ResultSetSubstitutionIterator(store, sqlQuery.toString(), queries.isBoolean());
+			return new ResultSetSubstitutionIterator(store, sqlQuery.toString(), queries.getAnswerVariables());
 		} catch (Exception e) {
 			throw new HomomorphismException(e.getMessage(), e);
 		}

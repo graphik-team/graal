@@ -139,7 +139,7 @@ public class Example0 {
 		// queries
 		QueryRewriter rewriter = new PureRewriter();
 		GIterator<ConjunctiveQuery> it = rewriter.execute(query, ontology);
-		DefaultUnionOfConjunctiveQueries ucq = new DefaultUnionOfConjunctiveQueries(it);
+		DefaultUnionOfConjunctiveQueries ucq = new DefaultUnionOfConjunctiveQueries(query.getAnswerVariables(), it);
 
 		// Print the set of facts in Dlgp
 		writer.write("\n= Facts =\n");

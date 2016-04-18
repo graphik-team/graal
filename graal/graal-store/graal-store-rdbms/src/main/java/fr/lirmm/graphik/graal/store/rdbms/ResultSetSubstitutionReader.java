@@ -46,12 +46,12 @@
 package fr.lirmm.graphik.graal.store.rdbms;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
-import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -59,34 +59,24 @@ import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
  */
 class ResultSetSubstitutionIterator extends AbstractResultSetIterator<Substitution> {
 
-	private boolean isBooleanQuery;
+	private List<Term> ans;
 
     // /////////////////////////////////////////////////////////////////////////
     //  CONSTRUCTORS
     // /////////////////////////////////////////////////////////////////////////
 
+
     /**
-     * @param store
-     * @param sqlQuery
-     * @throws SQLException
-     * @throws StoreException 
-     */
-	public ResultSetSubstitutionIterator(RdbmsStore store, String sqlQuery) throws SQLException {
-		this(store, sqlQuery, false);
-    }
-    
-    /**
-     * 
-     * @param store
-     * @param sqlQuery
-     * @param isBooleanQuery
-     * @throws SQLException
-     * @throws StoreException
-     */
-	public ResultSetSubstitutionIterator(RdbmsStore store, String sqlQuery,
- boolean isBooleanQuery) throws SQLException {
+	 * 
+	 * @param store
+	 * @param sqlQuery
+	 * @param ans
+	 * @throws SQLException
+	 * @throws StoreException
+	 */
+	public ResultSetSubstitutionIterator(RdbmsStore store, String sqlQuery, List<Term> ans) throws SQLException {
 		super(store, sqlQuery);
-		this.isBooleanQuery = isBooleanQuery;
+		this.ans = ans;
 	}
 
 
@@ -103,11 +93,13 @@ class ResultSetSubstitutionIterator extends AbstractResultSetIterator<Substituti
 	@Override
 	protected Substitution computeNext() throws SQLException, AtomSetException {
 		Substitution substitution = new TreeMapSubstitution();
-		if (!isBooleanQuery) {
-			for (int i = 1; i <= this.metaData.getColumnCount(); ++i) {
-				Term term = DefaultTermFactory.instance().createVariable(this.metaData.getColumnLabel(i));
-				Term substitut = this.store.getTerm(this.results.getString(i));
-				substitution.put(term, substitut);
+		if (!ans.isEmpty()) {
+			for (Term t : ans) {
+				if(!t.isConstant()) {
+					String value = this.results.getString(t.getLabel());
+					Term substitut = this.store.getTerm(value);
+					substitution.put(t, substitut);
+				}
 			}
 		}
 		return substitution;

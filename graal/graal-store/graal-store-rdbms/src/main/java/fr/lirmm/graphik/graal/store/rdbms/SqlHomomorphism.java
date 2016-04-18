@@ -87,7 +87,7 @@ public final class SqlHomomorphism implements Homomorphism<ConjunctiveQuery, Rdb
 	                                                                                        throws HomomorphismException {
         String sqlQuery = preprocessing(query, store);
         try {
-            return new ResultSetSubstitutionIterator(store, sqlQuery, query.isBoolean());
+			return new ResultSetSubstitutionIterator(store, sqlQuery, query.getAnswerVariables());
         } catch (Exception e) {
             throw new HomomorphismException(e.getMessage(), e);
         }

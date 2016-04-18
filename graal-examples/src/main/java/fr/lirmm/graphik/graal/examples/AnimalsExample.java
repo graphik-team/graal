@@ -45,7 +45,7 @@
  */
 package fr.lirmm.graphik.graal.examples;
 
-import java.io.File;
+import java.io.File;query.getAnswerVariables(),
 import java.io.IOException;
 import java.util.Scanner;
 
@@ -132,7 +132,7 @@ public class AnimalsExample {
 
 		QueryRewriter rewriter = new PureRewriter();
 		GIterator<ConjunctiveQuery> it = rewriter.execute(query, kb.getOntology());
-		DefaultUnionOfConjunctiveQueries ucq = new DefaultUnionOfConjunctiveQueries(it);
+		DefaultUnionOfConjunctiveQueries ucq = new DefaultUnionOfConjunctiveQueries(query.getAnswerVariables(), it);
 
 		writer.write("\n= Facts =\n");
 		writer.write(kb.getFacts());

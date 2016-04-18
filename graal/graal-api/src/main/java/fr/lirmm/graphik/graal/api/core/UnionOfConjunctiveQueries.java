@@ -42,6 +42,8 @@
  */
 package fr.lirmm.graphik.graal.api.core;
 
+import java.util.List;
+
 import fr.lirmm.graphik.util.stream.GIterator;
 
 
@@ -53,5 +55,19 @@ public interface UnionOfConjunctiveQueries extends Query, Iterable<ConjunctiveQu
 
 	@Override
 	GIterator<ConjunctiveQuery> iterator();
+
+	/**
+	 * Get the answer variables
+	 * 
+	 * @return an Collection of Term representing the answer variables.
+	 */
+	List<Term> getAnswerVariables();
+
+	/**
+	 * The label (the name) for this query.
+	 * 
+	 * @return
+	 */
+	String getLabel();
 
 }

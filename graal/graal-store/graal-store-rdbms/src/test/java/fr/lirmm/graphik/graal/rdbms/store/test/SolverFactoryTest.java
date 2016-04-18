@@ -86,7 +86,7 @@ public class SolverFactoryTest {
 
 		ConjunctiveQuery query1 = DlgpParser.parseQuery("?(X) :- p(X).");
 		ConjunctiveQuery query2 = DlgpParser.parseQuery("?(Y) :- q(Y).");
-		DefaultUnionOfConjunctiveQueries ucq = new DefaultUnionOfConjunctiveQueries(query1,
+		DefaultUnionOfConjunctiveQueries ucq = new DefaultUnionOfConjunctiveQueries(query1.getAnswerVariables(), query1,
 				query2);
 
 		Homomorphism solver = StaticHomomorphism.getSolverFactory().getSolver(ucq, atomSet);
