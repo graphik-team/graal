@@ -45,7 +45,7 @@
  */
 package fr.lirmm.graphik.graal.examples;
 
-import java.io.File;query.getAnswerVariables(),
+import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
 
