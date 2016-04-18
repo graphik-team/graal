@@ -61,6 +61,7 @@ import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
 import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
@@ -69,7 +70,7 @@ import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.cqa.AtomIndex;
 import fr.lirmm.graphik.graal.cqa.FGH;
 import fr.lirmm.graphik.graal.cqa.FGHRuleChaseCondition;
-import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
+import fr.lirmm.graphik.graal.forward_chaining.ConfigurableChase;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.ExhaustiveRuleApplier;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
@@ -110,7 +111,7 @@ public class CLI_FGH {
 
 			ChaseHaltingCondition haltCondition = chaseCondition;
 			RuleApplier applier = new ExhaustiveRuleApplier<AtomSet>(solver, haltCondition);
-			DefaultChase chase = new DefaultChase(rules, atomset, applier);
+			Chase chase = new ConfigurableChase(rules, atomset, applier);
 
 			if (options.input_file != "") {
 				System.out.println("Reading data from dlp file: " + options.input_file);

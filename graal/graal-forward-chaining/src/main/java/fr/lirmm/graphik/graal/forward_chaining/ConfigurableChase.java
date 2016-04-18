@@ -45,33 +45,22 @@
  */
 package fr.lirmm.graphik.graal.forward_chaining;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
+import java.util.Set;
+import java.util.TreeSet;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.AtomSetException;
-import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
-import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.forward_chaining.AbstractChase;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
-import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplicationHandler;
+import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
+import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
+import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.core.DefaultRule;
-import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByBodyPredicatesRuleSet;
-import fr.lirmm.graphik.graal.forward_chaining.halting_condition.ChaseStopConditionWithHandler;
-import fr.lirmm.graphik.graal.forward_chaining.halting_condition.RestrictedChaseStopCondition;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
-import fr.lirmm.graphik.graal.forward_chaining.rule_applier.TestRuleApplier;
 import fr.lirmm.graphik.util.Verbosable;
-import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
  * This chase (forward-chaining) algorithm iterates over all rules at each step.
@@ -80,37 +69,58 @@ import fr.lirmm.graphik.util.stream.GIterator;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class DefaultChase extends AbstractChase implements Verbosable {
+public class ConfigurableChase extends AbstractChase implements Verbosable {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultChase.class);
+//	private static final Logger LOGGER = LoggerFactory
+//			.getLogger(DefaultChase.class);
 
 	private IndexedByBodyPredicatesRuleSet ruleSet;
 	private AtomSet atomSet;
 	private boolean isVerbose = false;
 
-	private Map<Rule, AtomSet> rulesToCheck;
-	private Map<Rule, AtomSet> nextRulesToCheck;
-	private boolean firstCall = true;
+	private Set<Rule> rulesToCheck;
+	private Set<Rule> nextRulesToCheck;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 	
-	public DefaultChase(Iterable<Rule> rules, AtomSet atomSet) {
-		super(new DefaultRuleApplier<AtomSet>());
+	public ConfigurableChase(Iterable<Rule> rules, AtomSet atomSet) {
+		this(rules, atomSet, new DefaultRuleApplier<AtomSet>());
+	}
+
+	public ConfigurableChase(Iterable<Rule> rules, AtomSet atomSet,
+			RuleApplier ruleApplier) {
+		super(ruleApplier);
 		this.atomSet = atomSet;
 		this.ruleSet = new IndexedByBodyPredicatesRuleSet();
 		init(rules);
 	}
 
+	public ConfigurableChase(Iterable<Rule> rules, AtomSet atomSet,
+			Homomorphism<ConjunctiveQuery, AtomSet> solver) {
+		this(rules, atomSet, new DefaultRuleApplier<AtomSet>(solver));
+	}
+
+	public ConfigurableChase(Iterable<Rule> rules, AtomSet atomSet, ChaseHaltingCondition haltingCondition) {
+		this(rules, atomSet, new DefaultRuleApplier<AtomSet>(haltingCondition));
+
+	}
+
+	public ConfigurableChase(Iterable<Rule> rules, AtomSet atomSet,
+            Homomorphism<ConjunctiveQuery, AtomSet> solver,
+			ChaseHaltingCondition haltingCondition) {
+		this(rules, atomSet, new DefaultRuleApplier<AtomSet>(solver, haltingCondition));
+	}
+
 	private void init(Iterable<Rule> rules) {
 		int i = 0;
-		this.nextRulesToCheck = new TreeMap<Rule, AtomSet>();
+		this.nextRulesToCheck = new TreeSet<Rule>();
 		for (Rule r : rules) {
 			Rule copy = new DefaultRule(r);
 			copy.setLabel(Integer.toString(++i));
 			this.ruleSet.add(copy);
-			this.nextRulesToCheck.put(copy, atomSet);
+			this.nextRulesToCheck.add(copy);
 		}
 	}
 
@@ -118,42 +128,30 @@ public class DefaultChase extends AbstractChase implements Verbosable {
 	// PUBLICS METHODS
 	// /////////////////////////////////////////////////////////////////////////
 	
-	public void firstCall() {
-		super.setRuleApplier(
-		    new TestRuleApplier<AtomSet>(atomSet, new ChaseStopConditionWithHandler(new RestrictedChaseStopCondition(),
-		                                                                            new Handler())));
-	}
-
 	@Override
 	public void next() throws ChaseException {
-		if (firstCall) {
-			this.firstCall();
-			this.firstCall = false;
-		}
 		this.rulesToCheck = this.nextRulesToCheck;
-		this.nextRulesToCheck = new TreeMap<Rule, AtomSet>();
+		this.nextRulesToCheck = new TreeSet<Rule>();
 		try {
-			int i = 0;
 			if (!this.rulesToCheck.isEmpty()) {
-
 				if (this.getProfiler().isProfilingEnabled()) {
 					this.getProfiler().start("saturationTime");
 				}
-				for (Entry<Rule, AtomSet> e : this.rulesToCheck.entrySet()) {
-					if (LOGGER.isDebugEnabled())
-						LOGGER.debug("{}/{}", ++i, this.rulesToCheck.size());
-
+				for (Rule rule : this.rulesToCheck) {
 					String key = null;
-					Rule rule = e.getKey();
-					AtomSet data = e.getValue();
-
 					if (this.isVerbose && this.getProfiler().isProfilingEnabled()) {
 						key = "Rule " + rule.getLabel() + " application time";
 						this.getProfiler().clear(key);
 						this.getProfiler().trace(rule.toString());
 						this.getProfiler().start(key);
     				}
-					this.getRuleApplier().apply(rule, data);
+					if (this.getRuleApplier().apply(rule, atomSet)) {
+						for (Predicate p : rule.getHead().getPredicates()) {
+							for (Rule r : this.ruleSet.getRulesByBodyPredicate(p)) {
+								this.nextRulesToCheck.add(r);
+							}
+						}
+					}
 					if (this.isVerbose && this.getProfiler().isProfilingEnabled()) {
 						this.getProfiler().stop(key);
 					}
@@ -174,68 +172,11 @@ public class DefaultChase extends AbstractChase implements Verbosable {
 
 	////////////////////////////////////////////////////////////////////////////
 	// ABSTRACT METHODS IMPLEMENTATION
-	/////////////////////////////////////////////////////// rulesToCheck/////////////////////
+	////////////////////////////////////////////////////////////////////////////
 
 	@Override
 	public void enableVerbose(boolean enable) {
 		this.isVerbose = enable;
-	}
-
-	// /////////////////////////////////////////////////////////////////////////
-	// PRIVATE CLASS
-	// /////////////////////////////////////////////////////////////////////////
-
-	private class Handler implements RuleApplicationHandler {
-
-		Handler() {
-		}
-
-		@Override
-		public boolean preRuleApplication(Rule rule, Substitution substitution, AtomSet data) {
-			return true;
-		}
-
-		@Override
-		public GIterator<Atom> postRuleApplication(Rule rule, Substitution substitution, AtomSet data,
-		    GIterator<Atom> atomsToAdd) {
-			InMemoryAtomSet atomset = new LinkedListAtomSet(atomsToAdd);
-
-			for (Atom a : atomset) {
-				Predicate p = a.getPredicate();
-				for (Rule r : ruleSet.getRulesByBodyPredicate(p)) {
-					if (linearRuleCheck(r)) {
-						AtomSet set = nextRulesToCheck.get(r);
-						if (set == null) {
-							set = new LinkedListAtomSet();
-							nextRulesToCheck.put(r, set);
-						}
-						try {
-							set.add(a);
-						} catch (AtomSetException e) {
-							// TODO treat this exception
-							e.printStackTrace();
-							throw new Error("Untreated exception");
-						}
-					} else {
-						nextRulesToCheck.put(r, atomSet);
-					}
-				}
-			}
-
-			return atomset.iterator();
-		}
-
-	}
-
-	private static boolean linearRuleCheck(Rule r) {
-		Iterator<Atom> it = r.getBody().iterator();
-		if (it.hasNext()) {
-			it.next();
-		} else {
-			return false;
-		}
-		return !it.hasNext();
-
 	}
 
 }

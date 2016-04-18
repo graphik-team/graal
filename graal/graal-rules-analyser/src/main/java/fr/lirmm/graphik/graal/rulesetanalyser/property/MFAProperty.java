@@ -55,13 +55,14 @@ import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.RuleUtils;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
-import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
+import fr.lirmm.graphik.graal.forward_chaining.ConfigurableChase;
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.FrontierRestrictedChaseHaltingCondition;
 import fr.lirmm.graphik.graal.homomorphism.RecursiveBacktrackHomomorphism;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
@@ -97,7 +98,7 @@ public final class MFAProperty extends RuleSetProperty.Default {
 	public int check(AnalyserRuleSet ruleSet) {
 		RuleSet R = translateToMFA(ruleSet);
 		AtomSet A = RuleUtils.criticalInstance(ruleSet);
-		DefaultChase chase = new DefaultChase(R,A,new FrontierRestrictedChaseHaltingCondition());
+		Chase chase = new ConfigurableChase(R, A, new FrontierRestrictedChaseHaltingCondition());
 
 		DefaultConjunctiveQuery Q = new DefaultConjunctiveQuery();
 		DefaultAtom q = new DefaultAtom(C);
