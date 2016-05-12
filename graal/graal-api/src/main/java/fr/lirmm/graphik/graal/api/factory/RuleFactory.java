@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,67 +40,34 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.core.factory;
+package fr.lirmm.graphik.graal.api.factory;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
-import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public final class RuleFactory {
+public interface RuleFactory {
 
-	private static RuleFactory instance = new RuleFactory();
-	
-	private RuleFactory() {
-		super();
-	}
+	Rule create();
 
-	public static RuleFactory instance() {
-		return instance;
-	}
+	Rule create(Atom[] body, Atom[] head);
 
-	public Rule create() {
-		return new DefaultRule();
-	}
+	Rule create(GIterator<Atom> body, GIterator<Atom> head);
 
-	public Rule create(GIterator<Atom> body, GIterator<Atom> head) {
-		return new DefaultRule(body, head);
-	}
+	Rule create(String label, GIterator<Atom> body, GIterator<Atom> head);
 
-	public Rule create(String label, GIterator<Atom> body, GIterator<Atom> head) {
-		return new DefaultRule(label, body, head);
-	}
-	
-	public Rule create(InMemoryAtomSet body, InMemoryAtomSet head) {
-		return new DefaultRule(body, head);
-	}
-	
-	public Rule create(String label, InMemoryAtomSet body, InMemoryAtomSet head) {
-		return new DefaultRule(label, body, head);
-	}
+	Rule create(InMemoryAtomSet body, InMemoryAtomSet head);
 
-	public Rule create(Atom body, Atom head) {
-		InMemoryAtomSet bodySet = AtomSetFactory.instance().createAtomSet(body);
-		InMemoryAtomSet headSet = AtomSetFactory.instance().createAtomSet(head);
-		return new DefaultRule(bodySet, headSet);
-	}
+	Rule create(String label, InMemoryAtomSet body, InMemoryAtomSet head);
 
-	public Rule create(String label, Atom body, Atom head) {
-		InMemoryAtomSet bodySet = AtomSetFactory.instance().createAtomSet(body);
-		InMemoryAtomSet headSet = AtomSetFactory.instance().createAtomSet(head);
-		return new DefaultRule(label, bodySet, headSet);
-	}
+	Rule create(Atom body, Atom head);
 
-	public Rule create(Rule rule) {
-		return new DefaultRule(rule);
-	}
+	Rule create(String label, Atom body, Atom head);
 
+	Rule create(Rule rule);
 }

@@ -124,7 +124,7 @@ public class ConjunctiveQueryWithFixedVariables implements ConjunctiveQuery {
 	private static InMemoryAtomSet computeFixedQuery(/*ReadOnly*/AtomSet atomSet,
 			Iterable<Term> fixedTerms) {
 		// create a Substitution for fixed query
-		InMemoryAtomSet fixedQuery = AtomSetFactory.instance().createAtomSet();
+		InMemoryAtomSet fixedQuery = AtomSetFactory.instance().create();
 		Substitution fixSub = SubstitutionFactory.instance().createSubstitution();
 		for (Term t : fixedTerms) {
 			if (!t.isConstant())

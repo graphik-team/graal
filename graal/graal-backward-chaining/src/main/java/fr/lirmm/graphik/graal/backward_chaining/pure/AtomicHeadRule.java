@@ -49,7 +49,7 @@ import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
-import fr.lirmm.graphik.graal.core.factory.RuleFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 
 /**
  * rule with only one atom in its head
@@ -71,7 +71,7 @@ class AtomicHeadRule implements Rule {
 	 * @throws Exception
 	 */
 	public AtomicHeadRule(InMemoryAtomSet b, Atom h) {
-		this.rule = RuleFactory.instance().create(b, new AtomicAtomSet(h));
+		this.rule = DefaultRuleFactory.instance().create(b, new AtomicAtomSet(h));
 	}
 
 	@Override

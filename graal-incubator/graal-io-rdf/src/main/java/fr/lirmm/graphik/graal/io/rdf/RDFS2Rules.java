@@ -51,7 +51,7 @@ import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.io.Parser;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
-import fr.lirmm.graphik.graal.core.factory.RuleFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 
@@ -111,7 +111,7 @@ public class RDFS2Rules extends AbstractCloseableIterator<Object> implements Par
 			Atom a = (Atom) o;
 			String predicateLabel = a.getPredicate().toString();
 			if (RDFS_RANGE.equals(predicateLabel)) {
-				Rule rule = RuleFactory.instance().create();
+				Rule rule = DefaultRuleFactory.instance().create();
 				Predicate p = new Predicate(a.getTerm(0).toString(), 2);
 				rule.getBody().add(new DefaultAtom(p, X, Y));
 				p = new Predicate(a.getTerm(1).toString(), 1);
@@ -119,7 +119,7 @@ public class RDFS2Rules extends AbstractCloseableIterator<Object> implements Par
 				o = rule;
 
 			} else if (RDFS_DOMAIN.equals(predicateLabel)) {
-				Rule rule = RuleFactory.instance().create();
+				Rule rule = DefaultRuleFactory.instance().create();
 				Predicate p = new Predicate(a.getTerm(0).toString(), 2);
 				rule.getBody().add(new DefaultAtom(p, X, Y));
 				p = new Predicate(a.getTerm(1).toString(), 1);
@@ -127,7 +127,7 @@ public class RDFS2Rules extends AbstractCloseableIterator<Object> implements Par
 				o = rule;
 
 			} else if (RDFS_SUB_CLASS_OF.equals(predicateLabel)) {
-				Rule rule = RuleFactory.instance().create();
+				Rule rule = DefaultRuleFactory.instance().create();
 				Predicate p1 = new Predicate(a.getTerm(0).toString(), 1);
 				Predicate p2 = new Predicate(a.getTerm(1).toString(), 1);
 				rule.getBody().add(new DefaultAtom(p1, X));
@@ -135,7 +135,7 @@ public class RDFS2Rules extends AbstractCloseableIterator<Object> implements Par
 				o = rule;
 
 			} else if (RDFS_SUB_PROPERTY_OF.equals(predicateLabel)) {
-				Rule rule = RuleFactory.instance().create();
+				Rule rule = DefaultRuleFactory.instance().create();
 				Predicate p1 = new Predicate(a.getTerm(0).toString(), 2);
 				Predicate p2 = new Predicate(a.getTerm(1).toString(), 2);
 				rule.getBody().add(new DefaultAtom(p1, X, Y));

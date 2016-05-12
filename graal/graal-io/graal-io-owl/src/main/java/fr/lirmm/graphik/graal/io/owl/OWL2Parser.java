@@ -84,7 +84,7 @@ import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
-import fr.lirmm.graphik.graal.core.factory.RuleFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.ArrayBlockingStream;
@@ -428,7 +428,7 @@ public class OWL2Parser extends AbstractCloseableIterator<Object> implements Par
 			} else if (bodyIt.next().getPredicate().equals(Predicate.BOTTOM)) {
 				return null;
 			} else {
-				return RuleFactory.instance().create(body, head);
+				return DefaultRuleFactory.instance().create(body, head);
 			}
 		}
 	}

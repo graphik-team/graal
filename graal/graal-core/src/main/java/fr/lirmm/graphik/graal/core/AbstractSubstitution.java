@@ -59,7 +59,7 @@ import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
-import fr.lirmm.graphik.graal.core.factory.RuleFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
 
 /**
@@ -114,7 +114,7 @@ public abstract class AbstractSubstitution implements Substitution {
 
 	@Override
 	public InMemoryAtomSet createImageOf(AtomSet src) {
-		InMemoryAtomSet dest = AtomSetFactory.instance().createAtomSet();
+		InMemoryAtomSet dest = AtomSetFactory.instance().create();
 		this.apply(src, dest);
 		return dest;
 	}
@@ -135,7 +135,7 @@ public abstract class AbstractSubstitution implements Substitution {
 
 	@Override
 	public Rule createImageOf(Rule rule) {
-		Rule substitut = RuleFactory.instance().create();
+		Rule substitut = DefaultRuleFactory.instance().create();
 		this.apply(rule.getBody(), substitut.getBody());
 		this.apply(rule.getHead(), substitut.getHead());
 		return substitut;

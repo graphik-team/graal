@@ -86,7 +86,7 @@ public class GraalInterpreter {
 		writer.write("> ");
 		writer.flush();
 		
-		InMemoryAtomSet atomSet = AtomSetFactory.instance().createAtomSet();
+		InMemoryAtomSet atomSet = AtomSetFactory.instance().create();
 		RuleSet ruleSet = new LinkedListRuleSet();
 		
 		while (scan.hasNextLine()) {

@@ -50,7 +50,7 @@ import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.factory.RuleFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 import fr.lirmm.graphik.util.Partition;
 
 /**
@@ -196,7 +196,7 @@ class QueryUnifier {
 		for (Atom a : u.getRule().getHead()) {
 			h.add(a);
 		}
-		Rule rule = RuleFactory.instance().create(b, h);
+		Rule rule = DefaultRuleFactory.instance().create(b, h);
 		// we create the partition which is the join of the two partitions
 		Partition<Term> part = getPartition().join(u.getPartition());
 

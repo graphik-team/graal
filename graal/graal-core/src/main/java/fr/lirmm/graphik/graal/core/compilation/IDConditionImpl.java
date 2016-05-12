@@ -52,7 +52,7 @@ import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.TermValueComparator;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
-import fr.lirmm.graphik.graal.core.factory.RuleFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.Partition;
 
@@ -356,7 +356,7 @@ class IDConditionImpl implements IDCondition {
 					"X" + condHead[i]));
 		}
 
-		Rule r = RuleFactory.instance().create();
+		Rule r = DefaultRuleFactory.instance().create();
 		r.getBody().add(new DefaultAtom(bodyPredicate, body));
 		r.getHead().add(new DefaultAtom(headPredicate, head));
 

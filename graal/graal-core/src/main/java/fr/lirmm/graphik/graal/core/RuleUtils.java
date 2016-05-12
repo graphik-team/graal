@@ -67,7 +67,7 @@ import fr.lirmm.graphik.graal.core.atomset.AtomSetUtils;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
-import fr.lirmm.graphik.graal.core.factory.RuleFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 import fr.lirmm.graphik.util.EquivalentRelation;
 import fr.lirmm.graphik.util.TreeMapEquivalentRelation;
 
@@ -142,7 +142,7 @@ public final class RuleUtils {
 		for (Term e : existentials) {
 			if (tmpPieces.get(classes.getIdClass(e)) == null) {
 				tmpPieces.put(classes.getIdClass(e), AtomSetFactory
-						.instance().createAtomSet());
+						.instance().create());
 			}
 		}
 
@@ -161,7 +161,7 @@ public final class RuleUtils {
 				}
 			}
 			if (!isAffected) { // does not contain existential variable
-				atomset = AtomSetFactory.instance().createAtomSet();
+				atomset = AtomSetFactory.instance().create();
 				atomset.add(a);
 				pieces.add(atomset);
 			}
@@ -211,12 +211,12 @@ public final class RuleUtils {
 
 		if (label.isEmpty()) {
 			for (InMemoryAtomSet piece : getPieces(rule)) {
-				monoPiece.add(RuleFactory.instance().create(rule.getBody(), piece));
+				monoPiece.add(DefaultRuleFactory.instance().create(rule.getBody(), piece));
 			}
 		} else {
 			int i = -1;
 			for (InMemoryAtomSet piece : getPieces(rule)) {
-				monoPiece.add(RuleFactory.instance().create(label + "-p" + ++i, rule
+				monoPiece.add(DefaultRuleFactory.instance().create(label + "-p" + ++i, rule
 						.getBody(), piece));
 			}
 		}
@@ -244,16 +244,16 @@ public final class RuleUtils {
 			        rule.getTerms().toArray(new Term[rule.getTerms().size()]));
 
 			if (label.isEmpty()) {
-				atomicHead.add(RuleFactory.instance().create(rule.getBody(), new LinkedListAtomSet(aux)));
+				atomicHead.add(DefaultRuleFactory.instance().create(rule.getBody(), new LinkedListAtomSet(aux)));
 				for (Atom atom : rule.getHead()) {
-					atomicHead.add(RuleFactory.instance().create(aux, atom));
+					atomicHead.add(DefaultRuleFactory.instance().create(aux, atom));
 				}
 			} else {
 				int i = -1;
-				atomicHead.add(RuleFactory.instance().create(label + "-a" + ++i, rule.getBody(),
+				atomicHead.add(DefaultRuleFactory.instance().create(label + "-a" + ++i, rule.getBody(),
 				        new LinkedListAtomSet(aux)));
 				for (Atom atom : rule.getHead()) {
-					atomicHead.add(RuleFactory.instance().create(label + "-a" + ++i, aux, atom));
+					atomicHead.add(DefaultRuleFactory.instance().create(label + "-a" + ++i, aux, atom));
 				}
 			}
 		}

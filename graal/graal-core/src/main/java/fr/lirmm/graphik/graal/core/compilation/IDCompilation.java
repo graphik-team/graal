@@ -63,7 +63,7 @@ import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.core.RuleUtils;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.factory.RuleFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.Partition;
@@ -133,7 +133,7 @@ public class IDCompilation extends AbstractRulesCompilation {
 				}
 				InMemoryAtomSet body = new LinkedListAtomSet();
 				body.add(new DefaultAtom(p, terms));
-				saturation.add(RuleFactory.instance().create(body, e2.getValue()));
+				saturation.add(DefaultRuleFactory.instance().create(body, e2.getValue()));
 			}
 		}
 		return saturation;

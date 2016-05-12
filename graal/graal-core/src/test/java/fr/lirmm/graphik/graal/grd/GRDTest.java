@@ -52,7 +52,7 @@ import org.junit.Test;
 
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.core.TestUtils;
-import fr.lirmm.graphik.graal.core.factory.RuleFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -63,9 +63,9 @@ public class GRDTest {
 	@Test
 	public void atomErasingFilterTest() {
 		LinkedList<Rule> rules = new LinkedList<Rule>();
-		rules.add(RuleFactory.instance().create(TestUtils.sX, TestUtils.rX));
-		rules.add(RuleFactory.instance().create(TestUtils.rX, TestUtils.sX));
-		rules.add(RuleFactory.instance().create(TestUtils.rX, TestUtils.pXY));
+		rules.add(DefaultRuleFactory.instance().create(TestUtils.sX, TestUtils.rX));
+		rules.add(DefaultRuleFactory.instance().create(TestUtils.rX, TestUtils.sX));
+		rules.add(DefaultRuleFactory.instance().create(TestUtils.rX, TestUtils.pXY));
 
 		GraphOfRuleDependencies grd = new GraphOfRuleDependencies(rules, true, new AtomErasingFilter());
 		Assert.assertFalse(grd.existUnifier(rules.get(0), rules.get(1)));

@@ -147,7 +147,7 @@ import fr.lirmm.graphik.graal.api.core.VariableGenerator;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultNegativeConstraint;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.factory.RuleFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.MathUtils;
 import fr.lirmm.graphik.util.collections.CollectionsUtils;
@@ -414,7 +414,7 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 		a1 = arg.getSubProperty().accept(propertyVisitorXY);
 		a2 = arg.getSuperProperty().accept(propertyVisitorXY);
 
-		return Collections.singleton(RuleFactory.instance().create(a1, a2));
+		return Collections.singleton(DefaultRuleFactory.instance().create(a1, a2));
 	}
 
 	@Override
@@ -449,7 +449,7 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 		InMemoryAtomSet body = GraalUtils.createAtomSet(new DefaultAtom(
 				Predicate.TOP, glueVarX));
 
-		return Collections.singleton(RuleFactory.instance().create(body, head));
+		return Collections.singleton(DefaultRuleFactory.instance().create(body, head));
 	}
 
 	@Override
@@ -472,7 +472,7 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 		body.addAll(arg.getProperty().accept(propertyVisitorYZ));
 		InMemoryAtomSet head = arg.getProperty().accept(propertyVisitorXZ);
 
-		return Collections.singleton(RuleFactory.instance().create(body, head));
+		return Collections.singleton(DefaultRuleFactory.instance().create(body, head));
 	}
 
 	@Override
@@ -486,7 +486,7 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 		InMemoryAtomSet body = arg.getProperty().accept(propertyVisitorXY);
 		InMemoryAtomSet head = arg.getProperty().accept(propertyVisitorYX);
 
-		return Collections.singleton(RuleFactory.instance().create(body, head));
+		return Collections.singleton(DefaultRuleFactory.instance().create(body, head));
 	}
 
 	@Override
@@ -503,7 +503,7 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 		InMemoryAtomSet head = GraalUtils.createAtomSet(new DefaultAtom(
 				equalityPredicate, glueVarX, glueVarY));
 
-		return Collections.<Rule> singleton(RuleFactory.instance().create(body, head));
+		return Collections.<Rule> singleton(DefaultRuleFactory.instance().create(body, head));
 	}
 
 	@Override
@@ -515,8 +515,8 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 		a1 = it.next().accept(propertyVisitorXY);
 		a2 = it.next().accept(propertyVisitorYX);
 
-		rules.add(RuleFactory.instance().create(a1, a2));
-		rules.add(RuleFactory.instance().create(a2, a1));
+		rules.add(DefaultRuleFactory.instance().create(a1, a2));
+		rules.add(DefaultRuleFactory.instance().create(a2, a1));
 
 		return rules;
 	}
@@ -531,7 +531,7 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 		a1 = arg.getSubProperty().accept(propertyVisitorXY);
 		a2 = arg.getSuperProperty().accept(propertyVisitorXY);
 
-		return Collections.singleton(RuleFactory.instance().create(a1, a2));
+		return Collections.singleton(DefaultRuleFactory.instance().create(a1, a2));
 	}
 
 	@Override
@@ -557,7 +557,7 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 			}
 			return Collections.emptyList();
 		}
-		return Collections.singleton(RuleFactory.instance().create(body, head));
+		return Collections.singleton(DefaultRuleFactory.instance().create(body, head));
 	}
 
 	@Override
@@ -595,7 +595,7 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 		InMemoryAtomSet head = arg.getSuperProperty().accept(
 				new OWLPropertyExpressionVisitorImpl(firstVarInChain, varX));
 
-		return Collections.singleton(RuleFactory.instance().create(body, head));
+		return Collections.singleton(DefaultRuleFactory.instance().create(body, head));
 
 	}
 
@@ -653,7 +653,7 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 						glueVarY, var));
 			}
 
-			rules.add(RuleFactory.instance().create(body, head));
+			rules.add(DefaultRuleFactory.instance().create(body, head));
 		}
 
 		return rules;
@@ -833,7 +833,7 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 		InMemoryAtomSet head = GraalUtils.createAtomSet(new DefaultAtom(
 				equalityPredicate, glueVarY, glueVarZ));
 
-		return Collections.<Rule> singleton(RuleFactory.instance().create(body, head));
+		return Collections.<Rule> singleton(DefaultRuleFactory.instance().create(body, head));
 	}
 
 	private Iterable<? extends Object> equivalentPropertiesAxiom(
@@ -853,8 +853,8 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 				OWLPropertyExpression next = (OWLPropertyExpression) it2.next();
 				a2 = next.accept(propertyVisitorXY);
 
-				rules.add(RuleFactory.instance().create(a1, a2));
-				rules.add(RuleFactory.instance().create(a2, a1));
+				rules.add(DefaultRuleFactory.instance().create(a1, a2));
+				rules.add(DefaultRuleFactory.instance().create(a2, a1));
 			}
 		}
 		return rules;
@@ -953,7 +953,7 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 					body = new LinkedListAtomSet(bodyTemplate);
 					body.addAll(pair.getLeft().accept(classVisitorY));
 					body.addAll(pair.getRight().accept(classVisitorZ));
-					objects.add(RuleFactory.instance().create(body, head));
+					objects.add(DefaultRuleFactory.instance().create(body, head));
 				}
 
 			} else if (arg.getSuperClass() instanceof OWLDataMaxCardinality) {
@@ -971,7 +971,7 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 					body = new LinkedListAtomSet(bodyTemplate);
 					body.addAll(pair.getLeft().accept(dataRangeVisitorY));
 					body.addAll(pair.getRight().accept(dataRangeVisitorZ));
-					objects.add(RuleFactory.instance().create(body, head));
+					objects.add(DefaultRuleFactory.instance().create(body, head));
 				}
 			} else if (arg.getSuperClass() instanceof OWLDataAllValuesFrom) {
 				OWLDataAllValuesFrom allvalues = (OWLDataAllValuesFrom) arg
@@ -981,10 +981,10 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 						.getProperty());
 				body.add(GraalUtils.createAtom(p, glueVarX, glueVarY));
 				head = allvalues.getFiller().accept(dataRangeVisitorY);
-				objects.add(RuleFactory.instance().create(body, head));
+				objects.add(DefaultRuleFactory.instance().create(body, head));
 			} else {
 				head = arg.getSuperClass().accept(this.classVisitorX);
-				objects.add(RuleFactory.instance().create(body, head));
+				objects.add(DefaultRuleFactory.instance().create(body, head));
 			}
 		} catch (UnsupportedConstructor e) {
 			if (LOGGER.isWarnEnabled()) {

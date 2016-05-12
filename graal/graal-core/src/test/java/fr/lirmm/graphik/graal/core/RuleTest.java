@@ -54,7 +54,7 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.core.factory.RuleFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 
 /**
@@ -83,7 +83,7 @@ public class RuleTest {
 
 	@Test
 	public void piecesTest1() {
-		Rule rule = RuleFactory.instance().create();
+		Rule rule = DefaultRuleFactory.instance().create();
 		rule.getHead().add(atom1);
 		rule.getHead().add(atom2);
 		rule.getHead().add(atom3);
@@ -92,7 +92,7 @@ public class RuleTest {
 	
 	@Test
 	public void piecesTest2() {
-		Rule rule = RuleFactory.instance().create();
+		Rule rule = DefaultRuleFactory.instance().create();
 		rule.getBody().add(atom2);
 		rule.getHead().add(atom1);
 		rule.getHead().add(atom2);
@@ -102,7 +102,7 @@ public class RuleTest {
 	
 	@Test
 	public void piecesTest3() {
-		Rule rule = RuleFactory.instance().create();
+		Rule rule = DefaultRuleFactory.instance().create();
 		rule.getHead().add(atom3);
 		rule.getHead().add(atom3);
 		rule.getHead().add(atom3);

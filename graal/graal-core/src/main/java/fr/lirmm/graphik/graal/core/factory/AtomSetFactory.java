@@ -67,13 +67,22 @@ public final class AtomSetFactory implements InMemoryAtomSetFactory {
 	}
 
 	@Override
-	public InMemoryAtomSet createAtomSet() {
+	public InMemoryAtomSet create() {
 		return new LinkedListAtomSet();
 	}
 
 	@Override
-	public InMemoryAtomSet createAtomSet(AtomSet src) {
-		InMemoryAtomSet atomset = this.createAtomSet();
+	public InMemoryAtomSet create(Atom[] atoms) {
+		InMemoryAtomSet atomset = this.create();
+		for (Atom a : atoms) {
+			atomset.add(a);
+		}
+		return atomset;
+	}
+
+	@Override
+	public InMemoryAtomSet create(AtomSet src) {
+		InMemoryAtomSet atomset = this.create();
 		for (Atom a : src) {
 			atomset.add(a);
 		}
@@ -81,7 +90,7 @@ public final class AtomSetFactory implements InMemoryAtomSetFactory {
 	}
 
 	@Override
-	public InMemoryAtomSet createAtomSet(Atom atom) {
+	public InMemoryAtomSet create(Atom atom) {
 		return new LinkedListAtomSet(atom);
 	}
 }

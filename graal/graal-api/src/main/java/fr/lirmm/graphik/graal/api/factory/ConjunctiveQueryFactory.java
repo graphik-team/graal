@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,76 +40,41 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.core;
+package fr.lirmm.graphik.graal.api.factory;
 
 import java.util.Iterator;
+import java.util.List;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
-import fr.lirmm.graphik.graal.api.core.InMemoryKnowledgeBase;
-import fr.lirmm.graphik.graal.api.core.Rule;
-import fr.lirmm.graphik.graal.api.core.RuleSet;
-import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
-import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
+import fr.lirmm.graphik.graal.api.core.Term;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- * 
+ *
  */
-public class DefaultKnowledgeBase implements InMemoryKnowledgeBase {
+public interface ConjunctiveQueryFactory {
 
-	private RuleSet ruleset;
-	private InMemoryAtomSet atomset;
+	ConjunctiveQuery create();
 
-	// /////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTOR
-	// /////////////////////////////////////////////////////////////////////////
+	ConjunctiveQuery create(InMemoryAtomSet atomSet);
 
-	public DefaultKnowledgeBase() {
-		this.ruleset = new LinkedListRuleSet();
-		this.atomset = AtomSetFactory.instance().create();
-	}
+	ConjunctiveQuery create(InMemoryAtomSet atomSet, List<Term> ans);
 
-	public DefaultKnowledgeBase(RuleSet ontology, InMemoryAtomSet facts) {
-		this.ruleset = ontology;
-		this.atomset = facts;
-	}
-
-	// /////////////////////////////////////////////////////////////////////////
-	// GETTERS/SETTERS
-	// /////////////////////////////////////////////////////////////////////////
+	ConjunctiveQuery create(Iterator<Atom> atomSet, Iterator<Term> answerVariables);
 
 	/**
-	 * @return the ruleset
+	 * 
+	 * @param label
+	 *            the name of this query
+	 * @param atomSet
+	 *            the conjunction of atom representing the query
+	 * @param ans
+	 *            the list of answer variables
 	 */
-	@Override
-	public RuleSet getOntology() {
-		return ruleset;
-	}
+	ConjunctiveQuery create(String label, InMemoryAtomSet atomSet, List<Term> ans);
 
-	/**
-	 * @return the atomset
-	 */
-	@Override
-	public InMemoryAtomSet getFacts() {
-		return atomset;
-	}
+	ConjunctiveQuery create(ConjunctiveQuery query);
 
-	@Override
-	public void load(Iterator<Object> parser) throws AtomSetException {
-		Object o;
-		while (parser.hasNext()) {
-			o = parser.next();
-			if (o instanceof Rule) {
-				this.getOntology().add((Rule) o);
-			} else if (o instanceof Atom) {
-				this.getFacts().add((Atom) o);
-			}
-		}
-	}
-
-};
+}

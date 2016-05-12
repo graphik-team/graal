@@ -43,73 +43,80 @@
  /**
  * 
  */
-package fr.lirmm.graphik.graal.core;
-
-import java.util.Iterator;
+package fr.lirmm.graphik.graal.core.factory;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
-import fr.lirmm.graphik.graal.api.core.InMemoryKnowledgeBase;
 import fr.lirmm.graphik.graal.api.core.Rule;
-import fr.lirmm.graphik.graal.api.core.RuleSet;
-import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
-import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
+import fr.lirmm.graphik.graal.api.factory.RuleFactory;
+import fr.lirmm.graphik.graal.core.DefaultRule;
+import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- * 
+ *
  */
-public class DefaultKnowledgeBase implements InMemoryKnowledgeBase {
+public final class DefaultRuleFactory implements RuleFactory {
 
-	private RuleSet ruleset;
-	private InMemoryAtomSet atomset;
-
-	// /////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTOR
-	// /////////////////////////////////////////////////////////////////////////
-
-	public DefaultKnowledgeBase() {
-		this.ruleset = new LinkedListRuleSet();
-		this.atomset = AtomSetFactory.instance().create();
+	private static DefaultRuleFactory instance = new DefaultRuleFactory();
+	
+	private DefaultRuleFactory() {
+		super();
 	}
 
-	public DefaultKnowledgeBase(RuleSet ontology, InMemoryAtomSet facts) {
-		this.ruleset = ontology;
-		this.atomset = facts;
-	}
-
-	// /////////////////////////////////////////////////////////////////////////
-	// GETTERS/SETTERS
-	// /////////////////////////////////////////////////////////////////////////
-
-	/**
-	 * @return the ruleset
-	 */
-	@Override
-	public RuleSet getOntology() {
-		return ruleset;
-	}
-
-	/**
-	 * @return the atomset
-	 */
-	@Override
-	public InMemoryAtomSet getFacts() {
-		return atomset;
+	public static DefaultRuleFactory instance() {
+		return instance;
 	}
 
 	@Override
-	public void load(Iterator<Object> parser) throws AtomSetException {
-		Object o;
-		while (parser.hasNext()) {
-			o = parser.next();
-			if (o instanceof Rule) {
-				this.getOntology().add((Rule) o);
-			} else if (o instanceof Atom) {
-				this.getFacts().add((Atom) o);
-			}
-		}
+	public Rule create() {
+		return new DefaultRule();
 	}
 
-};
+	@Override
+	public Rule create(Atom[] body, Atom[] head) {
+		InMemoryAtomSet bodySet = AtomSetFactory.instance().create(body);
+		InMemoryAtomSet headSet = AtomSetFactory.instance().create(head);
+		return new DefaultRule(bodySet, headSet);
+	}
+
+	@Override
+	public Rule create(GIterator<Atom> body, GIterator<Atom> head) {
+		return new DefaultRule(body, head);
+	}
+
+	@Override
+	public Rule create(String label, GIterator<Atom> body, GIterator<Atom> head) {
+		return new DefaultRule(label, body, head);
+	}
+	
+	@Override
+	public Rule create(InMemoryAtomSet body, InMemoryAtomSet head) {
+		return new DefaultRule(body, head);
+	}
+	
+	@Override
+	public Rule create(String label, InMemoryAtomSet body, InMemoryAtomSet head) {
+		return new DefaultRule(label, body, head);
+	}
+
+	@Override
+	public Rule create(Atom body, Atom head) {
+		InMemoryAtomSet bodySet = AtomSetFactory.instance().create(body);
+		InMemoryAtomSet headSet = AtomSetFactory.instance().create(head);
+		return new DefaultRule(bodySet, headSet);
+	}
+
+	@Override
+	public Rule create(String label, Atom body, Atom head) {
+		InMemoryAtomSet bodySet = AtomSetFactory.instance().create(body);
+		InMemoryAtomSet headSet = AtomSetFactory.instance().create(head);
+		return new DefaultRule(label, bodySet, headSet);
+	}
+
+	@Override
+	public Rule create(Rule rule) {
+		return new DefaultRule(rule);
+	}
+
+}

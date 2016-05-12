@@ -109,7 +109,7 @@ public class SparqlConjunctiveQueryParser {
 			}
 		}
 
-		ElementVisitorImpl visitor = new ElementVisitorImpl(AtomSetFactory.instance().createAtomSet());
+		ElementVisitorImpl visitor = new ElementVisitorImpl(AtomSetFactory.instance().create());
 		sparql.getQueryPattern().visit(visitor);
 
 		this.query = ConjunctiveQueryFactory.instance().create(visitor.getAtomSet(), ans);

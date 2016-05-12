@@ -52,7 +52,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import fr.lirmm.graphik.graal.api.core.Rule;
-import fr.lirmm.graphik.graal.core.factory.RuleFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -62,13 +62,13 @@ public class MiscTest {
 	
 	private static ThreadMXBean timer = ManagementFactory.getThreadMXBean();
 
-	private static final Rule RULE_LIN1 = RuleFactory.instance().create();
-	private static final Rule RULE_LIN2 = RuleFactory.instance().create();
-	private static final Rule RULE_LIN3 = RuleFactory.instance().create();
-	private static final Rule RULE_LIN4 = RuleFactory.instance().create();
-	private static final Rule RULE_LIN5 = RuleFactory.instance().create();
-	private static final Rule RULE_LIN6 = RuleFactory.instance().create();
-	private static final Rule RULE_LIN7 = RuleFactory.instance().create();
+	private static final Rule RULE_LIN1 = DefaultRuleFactory.instance().create();
+	private static final Rule RULE_LIN2 = DefaultRuleFactory.instance().create();
+	private static final Rule RULE_LIN3 = DefaultRuleFactory.instance().create();
+	private static final Rule RULE_LIN4 = DefaultRuleFactory.instance().create();
+	private static final Rule RULE_LIN5 = DefaultRuleFactory.instance().create();
+	private static final Rule RULE_LIN6 = DefaultRuleFactory.instance().create();
+	private static final Rule RULE_LIN7 = DefaultRuleFactory.instance().create();
 	// private static final Rule RULE_LIN8 = new DefaultRule();
 	// private static final Rule RULE_LIN9 = new DefaultRule();
 	// private static final Rule RULE_LIN10 = new DefaultRule();

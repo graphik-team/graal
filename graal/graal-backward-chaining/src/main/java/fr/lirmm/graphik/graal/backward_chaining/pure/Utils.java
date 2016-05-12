@@ -67,7 +67,7 @@ import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetUtils;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
-import fr.lirmm.graphik.graal.core.factory.RuleFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 import fr.lirmm.graphik.graal.homomorphism.PureHomomorphism;
 import fr.lirmm.graphik.util.Profiler;
 
@@ -190,7 +190,7 @@ final class Utils {
 		substitution.apply(body, safeBody);
 		substitution.apply(head, safeHead);
 
-		return RuleFactory.instance().create(safeBody, safeHead);
+		return DefaultRuleFactory.instance().create(safeBody, safeHead);
 	}
 
 

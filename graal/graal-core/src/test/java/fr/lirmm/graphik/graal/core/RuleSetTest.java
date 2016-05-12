@@ -56,7 +56,7 @@ import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.core.factory.RuleFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 
@@ -82,11 +82,11 @@ public class RuleSetTest {
 		atom2 = new DefaultAtom(predicate, Arrays.asList(terms));
 
 		
-		rule1 = RuleFactory.instance().create();
+		rule1 = DefaultRuleFactory.instance().create();
 		rule1.getBody().add(atom1);
 		rule1.getHead().add(atom2);
 		
-		rule2 = RuleFactory.instance().create();
+		rule2 = DefaultRuleFactory.instance().create();
 		rule2.getBody().add(atom2);
 		rule2.getHead().add(atom1);
 	}

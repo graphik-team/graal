@@ -52,10 +52,12 @@ import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
  */
 public interface InMemoryAtomSetFactory {
 
-	InMemoryAtomSet createAtomSet();
+	InMemoryAtomSet create();
 
-	InMemoryAtomSet createAtomSet(AtomSet src);
+	InMemoryAtomSet create(Atom[] atoms);
 
-	InMemoryAtomSet createAtomSet(Atom atom);
+	InMemoryAtomSet create(AtomSet src);
+
+	InMemoryAtomSet create(Atom atom);
 
 }
