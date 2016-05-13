@@ -45,13 +45,11 @@
  */
 package fr.lirmm.graphik.graal.api.store;
 
-import fr.lirmm.graphik.graal.api.core.AbstractAtomSet;
-
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public abstract class AbstractTripleStore extends AbstractAtomSet implements
+public abstract class AbstractTripleStore extends AbstractStore implements
 		TripleStore {
 
 	protected static final String DEFAULT_PREFIX = "graal:";

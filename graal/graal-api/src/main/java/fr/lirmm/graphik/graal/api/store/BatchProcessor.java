@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,49 +40,28 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
 package fr.lirmm.graphik.graal.api.store;
 
+import java.io.Closeable;
+import java.util.Iterator;
+
 import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
-import fr.lirmm.graphik.graal.api.core.Predicate;
-import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
- * This interface represents a persistent AtomSet.
- * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface Store extends AtomSet {
-	
-	BatchProcessor createBatchProcessor() throws AtomSetException;
+public interface BatchProcessor extends Closeable {
+
+	public void addAll(Iterator<? extends Atom> it) throws AtomSetException;
+
+	public void add(Atom a) throws AtomSetException;
+
+	public void flush() throws AtomSetException;
+
+	public void commit() throws AtomSetException;
 
 	@Override
-	CloseableIterator<Atom> iterator();
-
-	@Override
-	CloseableIterator<Atom> match(Atom atom) throws AtomSetException;
-
-	@Override
-	CloseableIterator<Atom> atomsByPredicate(Predicate p) throws AtomSetException;
-
-	@Override
-	CloseableIterator<Term> termsByPredicatePosition(Predicate p, int position) throws AtomSetException;
-
-	@Override
-	CloseableIterator<Predicate> predicatesIterator() throws AtomSetException;
-
-	@Override
-	CloseableIterator<Term> termsIterator() throws AtomSetException;
-
-	@Override
-	CloseableIterator<Term> termsIterator(Term.Type type) throws AtomSetException;
-
-	void close();
-
+	public void close();
 }

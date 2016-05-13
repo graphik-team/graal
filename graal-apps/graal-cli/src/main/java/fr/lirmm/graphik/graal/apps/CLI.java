@@ -60,6 +60,7 @@ import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
+import fr.lirmm.graphik.graal.api.store.BatchProcessor;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultUnionOfConjunctiveQueries;
@@ -231,12 +232,13 @@ public class CLI {
 					if (verbose) System.out.println("Opening file "+inputFile+"...");
 					reader = new FileReader(inputFile);
 				}
+				BatchProcessor batch = atomset.createBatchProcessor();
 				DlgpParser parser = new DlgpParser(reader);
 				while (parser.hasNext()) {
 					Object o = parser.next();
 					if (o instanceof Atom) {
 						if (verbose) System.out.println("Adding atom " + (Atom)o);
-						atomset.addUnbatched((Atom)o);
+						batch.add((Atom) o);
 						if (verbose) System.out.println("Atom added!");
 					}
 					else if (o instanceof Rule) {
@@ -253,7 +255,7 @@ public class CLI {
 						if (verbose) System.out.println("Ignoring non recognized object: " + o);
 					}
 				}
-				atomset.commitAtoms();
+				batch.commit();
 			}
 			catch (Exception e) {
 				System.err.println("An error has occured: " +e);

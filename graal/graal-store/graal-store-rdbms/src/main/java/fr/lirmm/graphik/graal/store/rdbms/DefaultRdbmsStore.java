@@ -74,6 +74,7 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.VariableGenerator;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.api.store.BatchProcessor;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
@@ -315,6 +316,11 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
+
+	@Override
+	public BatchProcessor createBatchProcessor() throws AtomSetException {
+		return new DefaultRdbmsBatchProcessor(this);
+	}
 
 	@Override
 	public CloseableIterator<Atom> iterator() {
@@ -878,5 +884,24 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		this.removeAll(it);
 		it.close();
 	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE CLASSES
+	// /////////////////////////////////////////////////////////////////////////
+
+	private static class DefaultRdbmsBatchProcessor extends AbstractRdbmsBatchProcessor {
+
+		private DefaultRdbmsStore store;
+
+		public DefaultRdbmsBatchProcessor(DefaultRdbmsStore store) throws AtomSetException {
+			super(store.getConnection());
+			this.store = store;
+		}
+
+		@Override
+		protected void add(Statement statement, Atom a) throws AtomSetException {
+			store.add(statement, a);
+		}
+	};
 
 }

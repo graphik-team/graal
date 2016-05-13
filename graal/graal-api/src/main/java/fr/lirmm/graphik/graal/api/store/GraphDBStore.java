@@ -45,12 +45,10 @@
  */
 package fr.lirmm.graphik.graal.api.store;
 
-import fr.lirmm.graphik.graal.api.core.AbstractAtomSet;
-
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public abstract class GraphDBStore extends AbstractAtomSet implements Store {
+public abstract class GraphDBStore extends AbstractStore implements Store {
 
 }

@@ -53,9 +53,9 @@ import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.api.core.AbstractAtomSet;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.store.AbstractStore;
 import fr.lirmm.graphik.graal.homomorphism.DefaultHomomorphismFactory;
 import fr.lirmm.graphik.graal.store.rdbms.driver.DriverException;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
@@ -64,7 +64,7 @@ import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public abstract class AbstractRdbmsStore extends AbstractAtomSet implements
+public abstract class AbstractRdbmsStore extends AbstractStore implements
 		RdbmsStore {
 
 	static {
@@ -78,9 +78,6 @@ public abstract class AbstractRdbmsStore extends AbstractAtomSet implements
 			.getLogger(AbstractRdbmsStore.class);
 
 	private final RdbmsDriver driver;
-
-	private int unbatchedAtoms = 0;
-	private Statement unbatchedStatement = null;
 
 	protected static final int MAX_BATCH_SIZE = 1024;
 
@@ -132,38 +129,6 @@ public abstract class AbstractRdbmsStore extends AbstractAtomSet implements
 			}
 		}
 		return res;
-	}
-
-	public void addUnbatched(Atom a) {
-		try {
-			if (this.unbatchedStatement == null) {
-				this.unbatchedStatement = this.createStatement();
-			}
-			this.add(this.unbatchedStatement, a);
-			++this.unbatchedAtoms;
-			if (this.unbatchedAtoms >= MAX_BATCH_SIZE) {
-				if (LOGGER.isDebugEnabled()) {
-					LOGGER.debug("batch commit, size=" + MAX_BATCH_SIZE);
-				}
-				this.commitAtoms();
-			}
-		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
-		}
-	}
-
-	public void commitAtoms() {
-		try {
-			if (this.unbatchedStatement != null) {
-				this.unbatchedStatement.executeBatch();
-				this.getConnection().commit();
-				this.unbatchedAtoms = 0;
-				this.unbatchedStatement.close();
-				this.unbatchedStatement = null;
-			}
-		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
-		}
 	}
 
 	@Override
