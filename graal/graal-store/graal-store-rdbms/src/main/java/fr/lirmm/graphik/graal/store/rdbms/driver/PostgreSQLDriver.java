@@ -84,9 +84,26 @@ public class PostgreSQLDriver extends AbstractRdbmsDriver {
 		super(openConnection(host, dbName, user, password), "");
 	}
 
+	public PostgreSQLDriver(String uri) throws SQLException {
+		super(DriverManager.getConnection(uri), "");
+	}
+
 	private static Connection openConnection(String host, String dbName, String user,
 			String password) throws AtomSetException {
 		Connection connection;
+		try {
+			Class.forName("org.postgresql.Driver").newInstance();
+		} catch (InstantiationException e) {
+			LOGGER.error(e.getMessage(), e);
+			throw new AtomSetException(e.getMessage(), e);
+		} catch (IllegalAccessException e) {
+			LOGGER.error(e.getMessage(), e);
+			throw new AtomSetException(e.getMessage(), e);
+		} catch (ClassNotFoundException e) {
+			LOGGER.error(e.getMessage(), e);
+			throw new AtomSetException(e.getMessage(), e);
+		}
+
 		try {
 			connection = DriverManager.getConnection("jdbc:postgresql://" + host
 					+ "/" + dbName + "?user=" + user + "&password=" + password);
@@ -141,6 +158,9 @@ public class PostgreSQLDriver extends AbstractRdbmsDriver {
 		}
 		query.append("); ");
 		
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug(query.toString());
+		}
 		return query.toString();
 	}
 
