@@ -1,4 +1,4 @@
-package fr.lirmm.graphik.graal.io.chase_bench;
+package fr.lirmm.graphik.graal.chase_bench.io;
 
 import java.io.IOException;
 import java.io.Reader;

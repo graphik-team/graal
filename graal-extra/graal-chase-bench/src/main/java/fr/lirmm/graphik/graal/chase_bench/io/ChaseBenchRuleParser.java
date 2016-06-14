@@ -40,10 +40,10 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.io.chase_bench;
+/**
+* 
+*/
+package fr.lirmm.graphik.graal.chase_bench.io;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -55,17 +55,12 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Rule;
-import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.io.Parser;
-import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 
 /**
@@ -73,11 +68,9 @@ import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public final class ChaseBenchQueryParser extends AbstractCloseableIterator<ConjunctiveQuery>
-                                         implements Parser<ConjunctiveQuery> {
-	
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(ChaseBenchQueryParser.class);
+public final class ChaseBenchRuleParser extends AbstractCloseableIterator<Rule> implements Parser<Rule> {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(ChaseBenchRuleParser.class);
 
 	private Iterator<Rule> buffer;
 
@@ -90,7 +83,7 @@ public final class ChaseBenchQueryParser extends AbstractCloseableIterator<Conju
 	 * 
 	 * @param reader
 	 */
-	public ChaseBenchQueryParser(Reader reader) {
+	public ChaseBenchRuleParser(Reader reader) {
 		super();
 		LinkedHashSet<Rule> objects = new LinkedHashSet<Rule>();
 		CommonParser parser;
@@ -107,7 +100,7 @@ public final class ChaseBenchQueryParser extends AbstractCloseableIterator<Conju
 	/**
 	 * Constructor for parsing from the standard input.
 	 */
-	public ChaseBenchQueryParser() {
+	public ChaseBenchRuleParser() {
 		this(new InputStreamReader(System.in));
 	}
 
@@ -117,7 +110,7 @@ public final class ChaseBenchQueryParser extends AbstractCloseableIterator<Conju
 	 * @param file
 	 * @throws FileNotFoundException
 	 */
-	public ChaseBenchQueryParser(File file) throws FileNotFoundException {
+	public ChaseBenchRuleParser(File file) throws FileNotFoundException {
 		this(new FileReader(file));
 	}
 
@@ -126,7 +119,7 @@ public final class ChaseBenchQueryParser extends AbstractCloseableIterator<Conju
 	 * 
 	 * @param s
 	 */
-	public ChaseBenchQueryParser(String s) {
+	public ChaseBenchRuleParser(String s) {
 		this(new StringReader(s));
 	}
 
@@ -135,7 +128,7 @@ public final class ChaseBenchQueryParser extends AbstractCloseableIterator<Conju
 	 * 
 	 * @param in
 	 */
-	public ChaseBenchQueryParser(InputStream in) {
+	public ChaseBenchRuleParser(InputStream in) {
 		this(new InputStreamReader(in));
 	}
 
@@ -155,8 +148,8 @@ public final class ChaseBenchQueryParser extends AbstractCloseableIterator<Conju
 	}
 
 	@Override
-	public ConjunctiveQuery next() {
-		return ruleToQuery(buffer.next());
+	public Rule next() {
+		return buffer.next();
 	}
 
 	/**
@@ -167,13 +160,6 @@ public final class ChaseBenchQueryParser extends AbstractCloseableIterator<Conju
 	 */
 	@Override
 	public void close() {
-	}
-	
-	private ConjunctiveQuery ruleToQuery(Rule r) {
-		Atom head = r.getHead().iterator().next();
-		String label = head.getPredicate().getIdentifier().toString();
-		List<Term> ans = head.getTerms();
-		return new DefaultConjunctiveQuery(label, r.getBody(), ans);
 	}
 
 };

@@ -43,7 +43,7 @@
  /**
  * 
  */
-package fr.lirmm.graphik.graal.io.chase_bench;
+package fr.lirmm.graphik.graal.chase_bench.io;
 
 import java.io.File;
 import java.io.IOException;

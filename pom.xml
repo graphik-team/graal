@@ -58,6 +58,7 @@ algorithms, structural analysis of decidability properties of a rule set, a text
 		<module>graal-apps</module>
 		<module>graal-examples</module>
 		<module>graal-distro</module>
+		<module>graal-extra</module>
 		<module>graal-incubator</module>
 	</modules>
 
