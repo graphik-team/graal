@@ -49,6 +49,7 @@ import fr.lirmm.graphik.graal.api.core.AbstractAtomSet;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.ConstantGenerator;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.core.Term;
@@ -184,6 +185,11 @@ public class TransformAtomSet extends AbstractAtomSet implements AtomSet {
 	@Override
 	public CloseableIterator<Predicate> predicatesIterator() throws AtomSetException {
 		return new CloseableIteratorAdapter<Predicate>(this.getPredicates().iterator());
+	}
+
+	@Override
+	public ConstantGenerator getFreshSymbolGenerator() {
+		return this.getStore().getFreshSymbolGenerator();
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

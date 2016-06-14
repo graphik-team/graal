@@ -71,12 +71,14 @@ import com.hp.hpl.jena.update.UpdateRequest;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.ConstantGenerator;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.store.AbstractTripleStore;
 import fr.lirmm.graphik.graal.api.store.WrongArityException;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
+import fr.lirmm.graphik.graal.core.DefaultConstantGenerator;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.URIUtils;
@@ -414,6 +416,13 @@ public class JenaStore extends AbstractTripleStore {
 		}
 	}
 
+	private ConstantGenerator freshSymbolGenerator = new DefaultConstantGenerator("EE");
+
+	@Override
+	public ConstantGenerator getFreshSymbolGenerator() {
+		return freshSymbolGenerator;
+	}
+
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE CLASS
 	// /////////////////////////////////////////////////////////////////////////
@@ -565,6 +574,7 @@ public class JenaStore extends AbstractTripleStore {
 		}
 
 	}
+
 
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE STATIC METHODS

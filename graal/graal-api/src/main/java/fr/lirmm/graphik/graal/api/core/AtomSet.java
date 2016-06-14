@@ -234,4 +234,9 @@ public interface AtomSet extends GIterable<Atom> {
 	 */
 	int getDomainSize();
 
+	/**
+	 * @return
+	 */
+	ConstantGenerator getFreshSymbolGenerator();
+
 }

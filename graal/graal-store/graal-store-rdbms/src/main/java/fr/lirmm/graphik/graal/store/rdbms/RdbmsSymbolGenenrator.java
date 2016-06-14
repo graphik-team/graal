@@ -50,11 +50,11 @@ import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.graal.api.core.VariableGenerator;
+import fr.lirmm.graphik.graal.api.core.Constant;
+import fr.lirmm.graphik.graal.api.core.ConstantGenerator;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 
-public class RdbmsSymbolGenenrator implements VariableGenerator {
+public class RdbmsSymbolGenenrator implements ConstantGenerator {
 
     private Connection dbConnection;
     private final String counterName;
@@ -73,7 +73,7 @@ public class RdbmsSymbolGenenrator implements VariableGenerator {
     }
 
     @Override
-	public Variable getFreshVar() {
+	public Constant getFreshCst() {
         long value;
         PreparedStatement pstat = null;
         try {
@@ -100,7 +100,7 @@ public class RdbmsSymbolGenenrator implements VariableGenerator {
                 }
             }
         }
-		return DefaultTermFactory.instance().createVariable("X" + value);
+		return DefaultTermFactory.instance().createConstant("EE" + value);
     }
 
 }

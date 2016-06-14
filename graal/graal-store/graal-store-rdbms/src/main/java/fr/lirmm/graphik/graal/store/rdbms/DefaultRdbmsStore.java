@@ -67,12 +67,12 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.ConstantGenerator;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
-import fr.lirmm.graphik.graal.api.core.VariableGenerator;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.store.BatchProcessor;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
@@ -335,7 +335,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	}
 
 	@Override
-	public VariableGenerator getFreeVarGen() {
+	public ConstantGenerator getFreshSymbolGenerator() {
 		return new RdbmsSymbolGenenrator(this.getConnection(), MAX_VARIABLE_ID_COUNTER, GET_COUNTER_VALUE_QUERY,
 		                                 UPDATE_COUNTER_VALUE_QUERY);
 	}
@@ -689,7 +689,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			String query = this.getDriver().getInsertOrIgnoreStatement(TERM_TABLE_NAME, data);
 			statement.executeUpdate(query);
 		} catch (SQLException e) {
-			throw new AtomSetException("Error during insertion of a term", e);
+			throw new AtomSetException("Error during insertion of a term: " + term, e);
 		}
 	}
 

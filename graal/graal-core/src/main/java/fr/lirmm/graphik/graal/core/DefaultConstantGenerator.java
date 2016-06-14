@@ -40,62 +40,49 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- package fr.lirmm.graphik.graal.store.rdbms;
+ package fr.lirmm.graphik.graal.core;
 
-import java.util.Iterator;
-
-import fr.lirmm.graphik.graal.api.core.AtomSetException;
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.Constant;
 import fr.lirmm.graphik.graal.api.core.ConstantGenerator;
-import fr.lirmm.graphik.graal.api.core.Rule;
-import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.store.Store;
-import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 
 /**
+ * Generate fresh variables by appending an incremental counter to the specified
+ * prefix.
  * 
- * @author Clément Sipieter (INRIA) <clement@6pi.fr>
- * 
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+ *
  */
-public interface RdbmsStore extends Store {
-
-    /**
-     * @return
-     */
-    RdbmsDriver getDriver();
-
-	/**
-	 * Transform the conjunctive query into a SQL query
-	 * 
-	 * @param cquery
-	 * @return a string representing the generated SQL query
-	 * @throws StoreException
-	 * @throws Exception
-	 */
-	String transformToSQL(ConjunctiveQuery cquery) throws AtomSetException;
-
-	/**
-	 * Transform a rule into an "INSERT ... SELECT ..." SQL statement.
-	 * 
-	 * @param rangeRestrictedRule
-	 *            a range restricted rule (i.e. all variables that appear in the
-	 *            head also occur in the body).
-	 * @return a string representing the generated SQL statement. If the rule
-	 *         does not fulfill the range restricted condition the behavior is
-	 *         undefined.
-	 * @throws AtomSetException
-	 */
-	Iterator<String> transformToSQL(Rule rangeRestrictedRule)
-			throws AtomSetException;
-
-	/**
-	 * @param label
-	 * @return
-	 * @throws StoreException
-	 */
-	Term getTerm(String label) throws AtomSetException;
+public class DefaultConstantGenerator implements ConstantGenerator {
 	
+	private String prefix;
+	private int index;
+
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTOR
+	// /////////////////////////////////////////////////////////////////////////
+
+	public DefaultConstantGenerator(String prefix) {
+		this.index = 0;
+		this.prefix = prefix;
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
 	@Override
-	ConstantGenerator getFreshSymbolGenerator();
-    
-}
+	public Constant getFreshCst() {
+		return DefaultTermFactory.instance()
+		                         .createConstant(this.prefix + getFreshIndex());
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	private int getFreshIndex() {
+		return index++;
+	}
+
+};

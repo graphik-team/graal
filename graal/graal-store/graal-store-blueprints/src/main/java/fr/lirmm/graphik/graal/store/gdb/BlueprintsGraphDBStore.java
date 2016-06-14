@@ -58,11 +58,13 @@ import com.tinkerpop.blueprints.VertexQuery;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.ConstantGenerator;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.store.GraphDBStore;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
+import fr.lirmm.graphik.graal.core.DefaultConstantGenerator;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
@@ -290,6 +292,13 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 		GIterator<Vertex> it = new IteratorAdapter<Vertex>(this.graph.getVertices("class", "atom")
 				.iterator());
 		return new AtomIterator(it);
+	}
+
+	private ConstantGenerator freshSymbolGenerator = new DefaultConstantGenerator("EE");
+
+	@Override
+	public ConstantGenerator getFreshSymbolGenerator() {
+		return freshSymbolGenerator;
 	}
 
 	// //////////////////////////////////////////////////////////////////////////

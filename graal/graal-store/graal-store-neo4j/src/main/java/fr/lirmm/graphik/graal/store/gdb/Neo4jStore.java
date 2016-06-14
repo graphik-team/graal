@@ -67,11 +67,13 @@ import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.ConstantGenerator;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.store.GraphDBStore;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
+import fr.lirmm.graphik.graal.core.DefaultConstantGenerator;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -375,6 +377,13 @@ public class Neo4jStore extends GraphDBStore {
 		tx.close();
 		this.transactions.put(Thread.currentThread(), null);
 		this.graph.shutdown();
+	}
+
+	private ConstantGenerator freshSymbolGenerator = new DefaultConstantGenerator("EE");
+
+	@Override
+	public ConstantGenerator getFreshSymbolGenerator() {
+		return freshSymbolGenerator;
 	}
 
 	// //////////////////////////////////////////////////////////////////////////

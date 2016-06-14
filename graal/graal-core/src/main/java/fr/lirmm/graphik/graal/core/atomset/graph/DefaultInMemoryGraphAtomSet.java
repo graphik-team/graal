@@ -52,12 +52,14 @@ import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomComparator;
+import fr.lirmm.graphik.graal.api.core.ConstantGenerator;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.TermValueComparator;
 import fr.lirmm.graphik.graal.core.AtomMatcher;
+import fr.lirmm.graphik.graal.core.DefaultConstantGenerator;
 import fr.lirmm.graphik.graal.core.atomset.AbstractInMemoryAtomSet;
 import fr.lirmm.graphik.util.stream.GIterator;
 import fr.lirmm.graphik.util.stream.IteratorAdapter;
@@ -74,6 +76,7 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 	private TreeSet<AtomEdge>        atoms;
 
 	private TreeMap<Predicate, Set<Term>[]> termsByPredicatePosition;
+	private ConstantGenerator freshSymbolGenerator = new DefaultConstantGenerator("EE");
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -286,6 +289,11 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 		this.terms.clear();
 		this.predicates.clear();
 		this.atoms.clear();
+	}
+
+	@Override
+	public ConstantGenerator getFreshSymbolGenerator() {
+		return freshSymbolGenerator;
 	}
 
 }
