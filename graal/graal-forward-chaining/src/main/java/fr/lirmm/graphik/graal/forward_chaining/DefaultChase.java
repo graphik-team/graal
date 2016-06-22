@@ -70,7 +70,6 @@ import fr.lirmm.graphik.graal.forward_chaining.halting_condition.ChaseStopCondit
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.RestrictedChaseStopCondition;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.TestRuleApplier;
-import fr.lirmm.graphik.util.Verbosable;
 import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
@@ -80,13 +79,12 @@ import fr.lirmm.graphik.util.stream.GIterator;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class DefaultChase extends AbstractChase implements Verbosable {
+public class DefaultChase extends AbstractChase {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultChase.class);
 
 	private IndexedByBodyPredicatesRuleSet ruleSet;
 	private AtomSet atomSet;
-	private boolean isVerbose = false;
 
 	private Map<Rule, AtomSet> rulesToCheck;
 	private Map<Rule, AtomSet> nextRulesToCheck;
@@ -147,14 +145,14 @@ public class DefaultChase extends AbstractChase implements Verbosable {
 					Rule rule = e.getKey();
 					AtomSet data = e.getValue();
 
-					if (this.isVerbose && this.getProfiler().isProfilingEnabled()) {
+					if (this.getProfiler().isProfilingEnabled()) {
 						key = "Rule " + rule.getLabel() + " application time";
 						this.getProfiler().clear(key);
 						this.getProfiler().trace(rule.toString());
 						this.getProfiler().start(key);
     				}
 					this.getRuleApplier().apply(rule, data);
-					if (this.isVerbose && this.getProfiler().isProfilingEnabled()) {
+					if (this.getProfiler().isProfilingEnabled()) {
 						this.getProfiler().stop(key);
 					}
     			}
@@ -170,15 +168,6 @@ public class DefaultChase extends AbstractChase implements Verbosable {
 	@Override
 	public boolean hasNext() {
 		return !this.nextRulesToCheck.isEmpty();
-	}
-
-	////////////////////////////////////////////////////////////////////////////
-	// ABSTRACT METHODS IMPLEMENTATION
-	/////////////////////////////////////////////////////// rulesToCheck/////////////////////
-
-	@Override
-	public void enableVerbose(boolean enable) {
-		this.isVerbose = enable;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

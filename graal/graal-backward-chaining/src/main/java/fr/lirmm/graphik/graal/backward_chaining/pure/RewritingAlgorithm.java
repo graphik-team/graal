@@ -56,13 +56,12 @@ import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByHeadPredicatesRuleSet;
 import fr.lirmm.graphik.util.Profilable;
 import fr.lirmm.graphik.util.Profiler;
-import fr.lirmm.graphik.util.Verbosable;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-class RewritingAlgorithm implements Verbosable, Profilable {
+class RewritingAlgorithm implements Profilable {
 
 	private boolean verbose;
 	private Profiler          profiler;
@@ -208,12 +207,7 @@ class RewritingAlgorithm implements Verbosable, Profilable {
 	
 	// /////////////////////////////////////////////////////////////////////////
 	// 
-	// /////////////////////////////////////////////////////////////////////////
-
-	@Override
-	public void enableVerbose(boolean enable) {
-		this.verbose = enable;
-	}
+	// /////////////////////////////////////////////////////////////////////////}
 
 	@Override
 	public void setProfiler(Profiler profiler) {

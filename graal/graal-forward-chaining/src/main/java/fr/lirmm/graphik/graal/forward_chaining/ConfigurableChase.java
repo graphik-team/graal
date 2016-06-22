@@ -60,7 +60,6 @@ import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByBodyPredicatesRuleSet;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
-import fr.lirmm.graphik.util.Verbosable;
 
 /**
  * This chase (forward-chaining) algorithm iterates over all rules at each step.
@@ -69,14 +68,13 @@ import fr.lirmm.graphik.util.Verbosable;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class ConfigurableChase extends AbstractChase implements Verbosable {
+public class ConfigurableChase extends AbstractChase {
 	
 //	private static final Logger LOGGER = LoggerFactory
 //			.getLogger(DefaultChase.class);
 
 	private IndexedByBodyPredicatesRuleSet ruleSet;
 	private AtomSet atomSet;
-	private boolean isVerbose = false;
 
 	private Set<Rule> rulesToCheck;
 	private Set<Rule> nextRulesToCheck;
@@ -139,7 +137,7 @@ public class ConfigurableChase extends AbstractChase implements Verbosable {
 				}
 				for (Rule rule : this.rulesToCheck) {
 					String key = null;
-					if (this.isVerbose && this.getProfiler().isProfilingEnabled()) {
+					if (this.getProfiler().isProfilingEnabled()) {
 						key = "Rule " + rule.getLabel() + " application time";
 						this.getProfiler().clear(key);
 						this.getProfiler().trace(rule.toString());
@@ -152,7 +150,7 @@ public class ConfigurableChase extends AbstractChase implements Verbosable {
 							}
 						}
 					}
-					if (this.isVerbose && this.getProfiler().isProfilingEnabled()) {
+					if (this.getProfiler().isProfilingEnabled()) {
 						this.getProfiler().stop(key);
 					}
     			}
@@ -174,9 +172,5 @@ public class ConfigurableChase extends AbstractChase implements Verbosable {
 	// ABSTRACT METHODS IMPLEMENTATION
 	////////////////////////////////////////////////////////////////////////////
 
-	@Override
-	public void enableVerbose(boolean enable) {
-		this.isVerbose = enable;
-	}
 
 }

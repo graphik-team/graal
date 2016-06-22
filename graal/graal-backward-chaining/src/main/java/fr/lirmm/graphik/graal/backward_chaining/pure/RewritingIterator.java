@@ -52,7 +52,6 @@ import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.util.NoProfiler;
 import fr.lirmm.graphik.util.Profilable;
 import fr.lirmm.graphik.util.Profiler;
-import fr.lirmm.graphik.util.Verbosable;
 import fr.lirmm.graphik.util.stream.AbstractIterator;
 import fr.lirmm.graphik.util.stream.GIterator;
 import fr.lirmm.graphik.util.stream.IteratorAdapter;
@@ -61,14 +60,13 @@ import fr.lirmm.graphik.util.stream.IteratorAdapter;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-class RewritingIterator extends AbstractIterator<ConjunctiveQuery> implements Profilable, Verbosable {
+class RewritingIterator extends AbstractIterator<ConjunctiveQuery> implements Profilable {
 
 	private PureQuery                   pquery;
 	private LinkedListRuleSet           ruleset;
 	private RulesCompilation            compilation;
 	private GIterator<ConjunctiveQuery> rewrites  = null;
 
-	private boolean                     verbose;
 	private boolean                     unfolding = true;
 	private RewritingOperator           operator;
 	private Profiler                    profiler  = NoProfiler.instance();
@@ -130,11 +128,6 @@ class RewritingIterator extends AbstractIterator<ConjunctiveQuery> implements Pr
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public void enableVerbose(boolean enable) {
-		this.verbose = enable;
-	}
-
-	@Override
 	public void setProfiler(Profiler profiler) {
 		this.profiler = profiler;
 	}
@@ -157,7 +150,6 @@ class RewritingIterator extends AbstractIterator<ConjunctiveQuery> implements Pr
 		// rewriting
 		RewritingAlgorithm algo = new RewritingAlgorithm(this.operator);
 
-		algo.enableVerbose(this.verbose);
 		operator.setProfiler(this.getProfiler());
 		algo.setProfiler(this.getProfiler());
 

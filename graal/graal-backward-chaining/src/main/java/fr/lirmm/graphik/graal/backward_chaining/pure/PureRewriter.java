@@ -50,16 +50,14 @@ import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.util.AbstractProfilable;
-import fr.lirmm.graphik.util.Verbosable;
 import fr.lirmm.graphik.util.stream.GIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */
-public class PureRewriter extends AbstractProfilable implements QueryRewriterWithCompilation, Verbosable {
+public class PureRewriter extends AbstractProfilable implements QueryRewriterWithCompilation {
 
-	private boolean           verbose   = false;
 	private boolean           unfolding = true;
 	private RewritingOperator operator;
 
@@ -91,7 +89,6 @@ public class PureRewriter extends AbstractProfilable implements QueryRewriterWit
 	@Override
 	public GIterator<ConjunctiveQuery> execute(ConjunctiveQuery query, Iterable<Rule> rules) {
 		RewritingIterator it = new RewritingIterator(this.unfolding, query, rules, this.operator);
-		it.enableVerbose(this.verbose);
 		it.setProfiler(this.getProfiler());
 		return it;
 	}
@@ -100,14 +97,9 @@ public class PureRewriter extends AbstractProfilable implements QueryRewriterWit
 	public GIterator<ConjunctiveQuery> execute(ConjunctiveQuery query, Iterable<Rule> rules,
 	    RulesCompilation compilation) {
 		RewritingIterator it = new RewritingIterator(this.unfolding, query, rules, compilation, this.operator);
-		it.enableVerbose(this.verbose);
 		it.setProfiler(this.getProfiler());
 		return it;
 	}
 
-	@Override
-	public void enableVerbose(boolean enable) {
-		this.verbose = enable;
-	}
 
 }
