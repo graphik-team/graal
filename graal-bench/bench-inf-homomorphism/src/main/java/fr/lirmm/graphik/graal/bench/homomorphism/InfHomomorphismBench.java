@@ -51,7 +51,6 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
@@ -59,9 +58,11 @@ import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.api.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.UCQHomomorphismWithCompilation;
+import fr.lirmm.graphik.graal.api.store.BatchProcessor;
 import fr.lirmm.graphik.graal.api.store.Store;
 import fr.lirmm.graphik.graal.backward_chaining.pure.PureRewriter;
 import fr.lirmm.graphik.graal.bench.core.AbstractGraalBench;
@@ -70,7 +71,7 @@ import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.core.compilation.IDCompilation;
 import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseWithGRD;
-import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
+import fr.lirmm.graphik.graal.forward_chaining.ConfigurableChase;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.DefaultUCQHomomorphism;
@@ -84,7 +85,8 @@ import fr.lirmm.graphik.graal.io.owl.OWL2ParserException;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.SqlHomomorphism;
 import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;
-import fr.lirmm.graphik.util.DefaultProfiler;
+import fr.lirmm.graphik.util.Profiler;
+import fr.lirmm.graphik.util.RealTimeProfiler;
 import fr.lirmm.graphik.util.stream.AbstractIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
@@ -104,7 +106,7 @@ public class InfHomomorphismBench extends AbstractGraalBench {
 	private LinkedList<Rule>  onto     = new LinkedList<Rule>();
 	private RulesCompilation  rc;
 
-	DefaultProfiler           profiler = new DefaultProfiler(new PrintStream(this.getOutputStream()));
+	Profiler profiler = new RealTimeProfiler(new PrintStream(this.getOutputStream()));
 
 	private String            dataDir;
 
@@ -167,7 +169,7 @@ public class InfHomomorphismBench extends AbstractGraalBench {
 		Thread thread = new Thread(r);
 		thread.start();
 		try {
-			thread.join(3600000); // 10min
+			thread.join(3600000); // 60min
 		} catch (InterruptedException e1) {
 
 		}
@@ -202,6 +204,13 @@ public class InfHomomorphismBench extends AbstractGraalBench {
 		profiler.start("load-data");
 		int i;
 		File dir = new File(dataDir);
+
+		BatchProcessor batchProcessor = null;
+		if (data instanceof DefaultRdbmsStore) {
+			DefaultRdbmsStore store = (DefaultRdbmsStore) data;
+			batchProcessor = store.createBatchProcessor();
+		}
+
 		for (int univ = from; univ < to; ++univ) {
 			System.out.print(univ + " ");
 			i = -1;
@@ -220,18 +229,14 @@ public class InfHomomorphismBench extends AbstractGraalBench {
 					Object o = parser.next();
 					if (o instanceof AtomSet) {
 						if (data instanceof DefaultRdbmsStore) {
-							DefaultRdbmsStore store = (DefaultRdbmsStore) data;
-							for (Atom a : (AtomSet) o) {
-								store.addUnbatched(a);
-							}
+							batchProcessor.addAll(((AtomSet) o).iterator());
 						} else {
 							data.addAll((AtomSet) o);
 						}
 					}
 				}
 				if (data instanceof DefaultRdbmsStore) {
-					DefaultRdbmsStore store = (DefaultRdbmsStore) data;
-					store.commitAtoms();
+					batchProcessor.flush();
 				}
 
 				parser.close();
@@ -239,6 +244,10 @@ public class InfHomomorphismBench extends AbstractGraalBench {
 			}
 			System.out.println();
 
+		}
+
+		if (data instanceof DefaultRdbmsStore) {
+			batchProcessor.commit();
 		}
 
 		profiler.stop("load-data");
@@ -310,7 +319,7 @@ public class InfHomomorphismBench extends AbstractGraalBench {
 		AtomSet atomset = this.getAtomSet();
 		Object o = this.getExtra();
 
-		DefaultProfiler profiler = new DefaultProfiler();
+		Profiler profiler = new RealTimeProfiler();
 
 		if (q != null) {
 			BCC bcc = new BCC(new GraphBaseBackJumping(), false);
@@ -387,11 +396,11 @@ public class InfHomomorphismBench extends AbstractGraalBench {
 		@Override
 		public void run() {
 			PureRewriter pure = new PureRewriter(mode.equals(Mode.UCQ));
-			pure.enableVerbose(true);
 			pure.setProfiler(profiler);
 			GIterator<ConjunctiveQuery> it = pure.execute(this.query, this.onto, this.rc);
 
-			DefaultUnionOfConjunctiveQueries ucq = new DefaultUnionOfConjunctiveQueries(it);
+			DefaultUnionOfConjunctiveQueries ucq = new DefaultUnionOfConjunctiveQueries(this.query.getAnswerVariables(),
+			                                                                            it);
 			ucq.setLabel(this.query.getLabel());
 
 			this.ucq = ucq;
@@ -439,8 +448,8 @@ public class InfHomomorphismBench extends AbstractGraalBench {
 			}
 
 			if (mode.equals(Mode.SEMI_SAT)) {
-				DefaultChase chase = new DefaultChase(rc.getSaturation(), instance);
-				chase.enableVerbose(true);
+				// Chase chase = new DefaultChase(rc.getSaturation(), instance);
+				Chase chase = new ConfigurableChase(rc.getSaturation(), instance);
 				chase.setProfiler(profiler);
 				try {
 					chase.next();
