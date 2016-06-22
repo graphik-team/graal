@@ -3,7 +3,6 @@ package fr.lirmm.graphik.graal.chase_bench;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,25 +16,24 @@ import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Literal;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
-import fr.lirmm.graphik.graal.api.forward_chaining.Chase;
+import fr.lirmm.graphik.graal.api.core.UnionOfConjunctiveQueries;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.io.GraalWriter;
 import fr.lirmm.graphik.graal.api.io.Parser;
+import fr.lirmm.graphik.graal.backward_chaining.pure.PureRewriter;
 import fr.lirmm.graphik.graal.chase_bench.io.ChaseBenchDataParser;
 import fr.lirmm.graphik.graal.chase_bench.io.ChaseBenchQueryParser;
 import fr.lirmm.graphik.graal.chase_bench.io.ChaseBenchRuleParser;
 import fr.lirmm.graphik.graal.chase_bench.io.ChaseBenchWriter;
-import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
+import fr.lirmm.graphik.graal.core.DefaultUnionOfConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
+import fr.lirmm.graphik.graal.core.compilation.IDCompilation;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
-import fr.lirmm.graphik.graal.forward_chaining.ChaseWithGRD;
-import fr.lirmm.graphik.graal.forward_chaining.ConfigurableChase;
-import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
-import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.PostgreSQLDriver;
@@ -47,7 +45,7 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class ChaseBench {
+public class RewBench {
 
 	@Parameter(names = { "-m", "--mode" }, description = "MEM|SQL InMemory or PostgreSQL")
 	String mode = "MEM";
@@ -82,7 +80,7 @@ public class ChaseBench {
 	static String outputFilePath = "./output.txt";
 
 	public static void main(String args[]) throws ChaseException, AtomSetException, IOException, HomomorphismException {
-		ChaseBench options = new ChaseBench();
+		RewBench options = new RewBench();
 		JCommander commander = new JCommander(options, args);
 
 		if (options.help) {
@@ -90,8 +88,7 @@ public class ChaseBench {
 			System.exit(0);
 		}
 
-		RuleSet stTgdsSet = new LinkedListRuleSet();
-		RuleSet targetTgdsSet = new LinkedListRuleSet();
+		RuleSet rules = new LinkedListRuleSet();
 
 		Profiler prof = new RealTimeProfiler();
 		prof.setOutputStream(System.out);
@@ -107,7 +104,7 @@ public class ChaseBench {
 			atomSet = new DefaultRdbmsStore(new PostgreSQLDriver(options.databaseHost, options.databaseName,
 			                                                     options.databaseUser, options.databasePassword));
 		} else {
-			// Alternatively, you can use an in memory graph based AtomSet
+		// Alternatively, you can use an in memory graph based AtomSet
 			atomSet = new DefaultInMemoryGraphAtomSet();
 		}
 
@@ -124,47 +121,22 @@ public class ChaseBench {
 		// Loading rules //
 		prof.start("parsing/loading st-tgds");
 		Parser<Rule> ruleParser = new ChaseBenchRuleParser(new File(options.inputStTgdsFilePath));
-		stTgdsSet.addAll(ruleParser);
+		rules.addAll(ruleParser);
 		prof.stop("parsing/loading st-tgds");
 
 		prof.start("parsing/loading t-tgds");
 		ruleParser = new ChaseBenchRuleParser(new File(options.inputTargetTgdsFilePath));
-		targetTgdsSet.addAll(ruleParser);
+		rules.addAll(ruleParser);
 		prof.stop("parsing/loading t-tgds");
 
 		// Applying chase //
 		// The SimpleChase is a quickly optimized chase that works with the
 		// attached snapshot version
 		// condition.
-		prof.start("st-tgds chase");
-		Chase chase = new ConfigurableChase(stTgdsSet, atomSet);
-		chase.next();
-		prof.stop("st-tgds chase");
-
-		prof.start("Check linearity");
-		boolean isLinear = true;
-		for (Rule r : targetTgdsSet) {
-			if (!isLinear(r)) {
-				isLinear = false;
-				break;
-			}
-		}
-		prof.stop("Check linearity");
-		prof.trace("tgds set linearity: " + isLinear);
-
-		chase = null;
-		if (isLinear) {
-			chase = new DefaultChase(targetTgdsSet, atomSet);
-		} else {
-			prof.start("Graph of Rule Dependencies computing time");
-			GraphOfRuleDependencies grd = new GraphOfRuleDependencies(targetTgdsSet);
-			prof.stop("Graph of Rule Dependencies computing time");
-			chase = new ChaseWithGRD(grd, atomSet);
-		}
-
-		prof.start("t-tgds chase");
-		chase.execute();
-		prof.stop("t-tgds chase");
+		prof.start("Rules compilation");
+		RulesCompilation comp = new IDCompilation();
+		comp.compile(rules.iterator());
+		prof.stop("Rules compilation");
 
 		// Write data //
 		// Now, we can write our saturated data in a new file.
@@ -187,19 +159,24 @@ public class ChaseBench {
 			for (File f : files) {
 				Parser<ConjunctiveQuery> queryParser = new ChaseBenchQueryParser(f);
 				while (queryParser.hasNext()) {
-					ConjunctiveQuery q = queryParser.next();
-					q = new DefaultConjunctiveQuery(f.getName(), q.getAtomSet(), q.getAnswerVariables());
-					queries.add(q);
+					queries.add(queryParser.next());
 				}
 			}
 			prof.stop("load queries");
 
 			int i = 0;
+			
 
+			PureRewriter rewriter = new PureRewriter(true);
+			
 			for (ConjunctiveQuery q : queries) {
-				GraalWriter w = new ChaseBenchWriter(new File(q.getLabel()));
-				prof.start("query " + i);
-				CloseableIterator<Substitution> execute = StaticHomomorphism.instance().execute(q, atomSet);
+				GraalWriter w = new ChaseBenchWriter(new File("./query" + i + ".txt"));
+				prof.start("rew query " + i);
+				UnionOfConjunctiveQueries ucq = new DefaultUnionOfConjunctiveQueries(q.getAnswerVariables(),
+				                                                                     rewriter.execute(q, rules, comp));
+				prof.stop("rew query " + i);
+				prof.start("exec query " + i);
+				CloseableIterator<Substitution> execute = StaticHomomorphism.instance().execute(ucq, atomSet);
 				while (execute.hasNext()) {
 					Substitution s = execute.next();
 					for (Term t : q.getAnswerVariables()) {
@@ -208,7 +185,7 @@ public class ChaseBench {
 					}
 					w.write("\n");
 				}
-				prof.stop("query " + i);
+				prof.stop("exec query " + i);
 				w.close();
 				++i;
 			}
@@ -235,15 +212,5 @@ public class ChaseBench {
 		}
 	}
 
-	protected static boolean isLinear(Rule r) {
-		Iterator<Atom> it = r.getBody().iterator();
-		if (it.hasNext()) {
-			it.next();
-			return !it.hasNext();
-		} else {
-			return true;
-		}
-
-	}
 
 }
