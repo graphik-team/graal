@@ -13,7 +13,6 @@
 
 	<modules>
 		<module>bench-core</module>
-		<module>bench-homomorphism</module>
         <module>bench-inf-homomorphism</module>
 	</modules>
 
