@@ -46,8 +46,6 @@
 package fr.lirmm.graphik.util;
 
 import java.io.PrintStream;
-import java.lang.management.ManagementFactory;
-import java.lang.management.ThreadMXBean;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
@@ -64,7 +62,6 @@ public abstract class AbstractProfiler implements Profiler {
 	private PrintStream               out        = null;
 	private SimpleDateFormat          dateFormat = new SimpleDateFormat();
 
-	private final ThreadMXBean        bean       = ManagementFactory.getThreadMXBean();
 	private final Map<String, Long>   tmpMap     = new TreeMap<String, Long>();
 	private final Map<String, Object> map        = new TreeMap<String, Object>();
 
