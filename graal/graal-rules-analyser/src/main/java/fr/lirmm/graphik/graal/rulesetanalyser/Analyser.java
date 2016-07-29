@@ -12,6 +12,7 @@ import fr.lirmm.graphik.graal.rulesetanalyser.property.FESProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.FUSProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.RuleSetProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
+import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.graph.scc.StronglyConnectedComponentsGraph;
 
 public class Analyser {
@@ -50,7 +51,7 @@ public class Analyser {
 	 * @return true only if some property ensures the rule set is decidable
 	 */
 	public boolean isDecidable() {
-		return false; // TODO
+		throw new MethodNotImplementedError(); // TODO
 	}
 
 	public Map<String,Integer> ruleSetProperties() {

@@ -45,7 +45,6 @@
  */
 package fr.lirmm.graphik.graal.store.triplestore;
 
-import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -84,6 +83,7 @@ import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.URIUtils;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 import info.aduna.iteration.Iteration;
 
 /**
@@ -185,7 +185,7 @@ public class SailStore extends AbstractTripleStore {
 	}
 
 	@Override
-	public boolean addAll(Iterator<? extends Atom> atom) throws AtomSetException {
+	public boolean addAll(CloseableIterator<? extends Atom> atom) throws AtomSetException {
 		try {
 			this.connection.add(new StatementIterator(atom));
 		} catch (RepositoryException e) {
@@ -211,7 +211,7 @@ public class SailStore extends AbstractTripleStore {
 	}
 
 	@Override
-	public boolean removeAll(Iterator<? extends Atom> atom) throws AtomSetException {
+	public boolean removeAll(CloseableIterator<? extends Atom> atom) throws AtomSetException {
 		try {
 			this.connection.remove(new StatementIterator(atom));
 		} catch (RepositoryException e) {
@@ -302,9 +302,13 @@ public class SailStore extends AbstractTripleStore {
 	@Override
 	public Set<Predicate> getPredicates() throws AtomSetException {
 		TreeSet<Predicate> set = new TreeSet<Predicate>();
-		Iterator<Predicate> it = this.predicatesIterator();
-		while (it.hasNext()) {
-			set.add(it.next());
+		CloseableIterator<Predicate> it = this.predicatesIterator();
+		try {
+			while (it.hasNext()) {
+				set.add(it.next());
+			}
+		} catch (IteratorException e) {
+			throw new AtomSetException("An error occurs during iteration over predicates", e);
 		}
 		return set;
 	}
@@ -338,9 +342,13 @@ public class SailStore extends AbstractTripleStore {
 	@Override
 	public Set<Term> getTerms() throws AtomSetException {
 		TreeSet<Term> set = new TreeSet<Term>();
-		Iterator<Term> it = this.termsIterator();
-		while (it.hasNext()) {
-			set.add(it.next());
+		CloseableIterator<Term> it = this.termsIterator();
+		try {
+			while (it.hasNext()) {
+				set.add(it.next());
+			}
+		} catch (IteratorException e) {
+			throw new AtomSetException("An error occurs during iteration over terms", e);
 		}
 		return set;
 	}
@@ -473,15 +481,19 @@ public class SailStore extends AbstractTripleStore {
 
 	private class StatementIterator implements Iteration<Statement, RepositoryException> {
 
-		private Iterator<? extends Atom> it;
+		private CloseableIterator<? extends Atom> it;
 
-		public StatementIterator(Iterator<? extends Atom> iterator) {
+		public StatementIterator(CloseableIterator<? extends Atom> iterator) {
 			this.it = iterator;
 		}
 
 		@Override
 		public boolean hasNext() {
-			return it.hasNext();
+			try {
+				return it.hasNext();
+			} catch (IteratorException e) {
+				throw new RuntimeException("An errors occurs while iterating atoms", e);
+			}
 		}
 
 		@Override
@@ -489,13 +501,15 @@ public class SailStore extends AbstractTripleStore {
 			try {
 				return atomToStatement(it.next());
 			} catch (WrongArityException e) {
-				return null;
+				throw new RuntimeException("An errors occurs while translating atom to statement", e);
+			} catch (IteratorException e) {
+				throw new RuntimeException("An errors occurs while iterating atoms", e);
 			}
 		}
 
 		@Override
 		public void remove() {
-			it.remove();
+			throw new UnsupportedOperationException();
 		}
 
 	}
@@ -513,11 +527,12 @@ public class SailStore extends AbstractTripleStore {
 				this.it.close();
 			} catch (RepositoryException e) {
 				LOGGER.error("Error when closing SailStore iterator.");
+				throw new RuntimeException("An error occurs while closing SailStore iterator.", e);
 			}
 		}
 
 		@Override
-		public boolean hasNext() {
+		public boolean hasNext() throws IteratorException {
 			try {
 				if (it.hasNext()) {
 					return true;
@@ -526,30 +541,27 @@ public class SailStore extends AbstractTripleStore {
 					return false;
 				}
 			} catch (RepositoryException e) {
-				// TODO manage this Exception
 				LOGGER.error("Error on SailStore iterator.");
-				return false;
+				throw new IteratorException("An error occurs during iteration over sailStore", e);
 			}
 		}
 
 		@Override
-		public Atom next() {
+		public Atom next() throws IteratorException {
 			try {
 				return statementToAtom(this.it.next());
 			} catch (RepositoryException e) {
-				// TODO manage this Exception
 				LOGGER.error("Error on SailStore iterator.");
-				return null;
+				throw new IteratorException("An error occurs during iteration over sailStore", e);
 			}
 		}
 
-		@Override
-		public void remove() {
+		public void remove() throws IteratorException {
 			try {
 				this.it.remove();
 			} catch (RepositoryException e) {
-				// TODO manage this Exception
 				LOGGER.error("Error on SailStore iterator.");
+				throw new IteratorException("An error occurs while removing atom from sailStore iterator", e);
 			}
 		}
 	}
@@ -566,31 +578,19 @@ public class SailStore extends AbstractTripleStore {
 				if (LOGGER.isErrorEnabled()) {
 					LOGGER.error("Error during iteration closing", e);
 				}
+				throw new RuntimeException("An error occurs while closing iterator", e);
 			}
 		}
 
 		@Override
-		public boolean hasNext() {
+		public boolean hasNext() throws IteratorException {
 			try {
 				return this.it.hasNext();
 			} catch (QueryEvaluationException e) {
 				if (LOGGER.isErrorEnabled()) {
-					// TODO manage this Exception
 					LOGGER.error("Error during iteration", e);
 				}
-			}
-			return false;
-		}
-
-		@Override
-		public void remove() {
-			try {
-				this.it.remove();
-			} catch (QueryEvaluationException e) {
-				if (LOGGER.isErrorEnabled()) {
-					// TODO manage this Exception
-					LOGGER.error("Error during iteration", e);
-				}
+				throw new IteratorException("An error occurs during iteration", e);
 			}
 		}
 
@@ -603,16 +603,15 @@ public class SailStore extends AbstractTripleStore {
 		}
 
 		@Override
-		public Predicate next() {
+		public Predicate next() throws IteratorException {
 			try {
 				return valueToPredicate(this.it.next().getValue("p"));
 			} catch (QueryEvaluationException e) {
 				if (LOGGER.isErrorEnabled()) {
-					// TODO manage this Exception
 					LOGGER.error("Error during iteration", e);
 				}
+				throw new IteratorException(e);
 			}
-			return null;
 		}
 
 	}
@@ -631,16 +630,15 @@ public class SailStore extends AbstractTripleStore {
 		}
 
 		@Override
-		public Term next() {
+		public Term next() throws IteratorException {
 			try {
 				return valueToTerm(this.it.next().getValue(value));
 			} catch (QueryEvaluationException e) {
 				if (LOGGER.isErrorEnabled()) {
-					// TODO manage this Exception
 					LOGGER.error("Error during iteration", e);
 				}
+				throw new IteratorException(e);
 			}
-			return null;
 		}
 
 	}

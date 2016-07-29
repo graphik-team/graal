@@ -56,6 +56,7 @@ import org.slf4j.LoggerFactory;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
@@ -64,8 +65,9 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
-import fr.lirmm.graphik.util.stream.GIterator;
-import fr.lirmm.graphik.util.stream.IteratorAdapter;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -79,7 +81,7 @@ public class FrontierRestrictedChaseHaltingCondition implements ChaseHaltingCond
 	private int _currentRuleIndex = 0;
 
 	@Override
-	public GIterator<Atom> apply(Rule rule, Substitution substitution, AtomSet data)
+	public CloseableIterator<Atom> apply(Rule rule, Substitution substitution, AtomSet data)
 	                                                                                 throws HomomorphismFactoryException,
 	                                                                                 HomomorphismException {
 		Set<Term> fixedVars = substitution.getValues();
@@ -98,14 +100,18 @@ public class FrontierRestrictedChaseHaltingCondition implements ChaseHaltingCond
 			substitution.put(t,DefaultTermFactory.instance().createConstant("f_" + index + "_" + t.getIdentifier() + frontier));
 		}
 
-		AtomSet newFacts = substitution.createImageOf(rule.getHead());
+		InMemoryAtomSet newFacts = substitution.createImageOf(rule.getHead());
 		ConjunctiveQuery query = new ConjunctiveQueryWithFixedVariables(newFacts, fixedVars);
 
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Fixed Query:" + query);
 		}
-		if (StaticHomomorphism.instance().execute(query, data).hasNext()) {
-			return new IteratorAdapter<Atom>(Collections.<Atom> emptyList().iterator());
+		try {
+			if (StaticHomomorphism.instance().execute(query, data).hasNext()) {
+				return new CloseableIteratorAdapter<Atom>(Collections.<Atom> emptyList().iterator());
+			}
+		} catch (IteratorException e) {
+			throw new HomomorphismException("An errors occurs while iterating results", e);
 		}
 
 		return newFacts.iterator();

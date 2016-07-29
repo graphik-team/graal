@@ -48,14 +48,17 @@ package fr.lirmm.graphik.graal.rdbms.store.test;
 import java.io.IOException;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.experimental.theories.DataPoints;
+import org.junit.experimental.theories.Theories;
+import org.junit.experimental.theories.Theory;
+import org.junit.runner.RunWith;
 
-import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
+import fr.lirmm.graphik.graal.api.store.Store;
 import fr.lirmm.graphik.graal.core.DefaultUnionOfConjunctiveQueries;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
@@ -67,22 +70,27 @@ import fr.lirmm.graphik.graal.store.rdbms.driver.DriverException;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */
+@RunWith(Theories.class)
 public class SolverFactoryTest {
 
-	@Test
-	public void testSqlSolver() throws IOException, AtomSetException,
+	@DataPoints
+	public static Store[] atomset() {
+		return TestUtil.getStores();
+	}
+
+	@Theory
+	public void testSqlSolver(Store atomSet) throws IOException, AtomSetException,
 			HomomorphismFactoryException, DriverException {
-		AtomSet atomSet = TestUtil.getStore();
 
 		Query query = DlgpParser.parseQuery("?(X) :- p(X).");
 		Homomorphism solver = StaticHomomorphism.getSolverFactory().getSolver(query, atomSet);
 		Assert.assertTrue(solver instanceof SqlHomomorphism);
 	}
 
-	@Test
-	public void testUnionConjunctiveQuery() throws IOException, AtomSetException,
+	@Theory
+	public void testUnionConjunctiveQuery(Store atomSet)
+	    throws IOException, AtomSetException,
 			HomomorphismFactoryException, DriverException {
-		AtomSet atomSet = TestUtil.getStore();
 
 		ConjunctiveQuery query1 = DlgpParser.parseQuery("?(X) :- p(X).");
 		ConjunctiveQuery query2 = DlgpParser.parseQuery("?(Y) :- q(Y).");

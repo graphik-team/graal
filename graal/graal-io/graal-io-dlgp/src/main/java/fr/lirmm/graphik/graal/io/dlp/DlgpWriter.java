@@ -69,6 +69,7 @@ import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.PrefixManager;
 import fr.lirmm.graphik.util.URI;
 import fr.lirmm.graphik.util.URIUtils;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -155,7 +156,7 @@ public class DlgpWriter extends AbstractGraalWriter {
 
 	@Override
 	public DlgpWriter write(AtomSet atomset) throws IOException {
-		this.writeAtomSet(atomset, true);
+		this.writeAtomSet(atomset.iterator(), true);
 		this.writeln(".");
 
 		return this;
@@ -173,9 +174,9 @@ public class DlgpWriter extends AbstractGraalWriter {
 	public DlgpWriter write(Rule rule) throws IOException {
 		this.writeLabel(rule.getLabel());
 
-		this.writeAtomSet(rule.getHead(), false);
+		this.writeAtomSet(rule.getHead().iterator(), false);
 		this.write(" :- ");
-		this.writeAtomSet(rule.getBody(), false);
+		this.writeAtomSet(rule.getBody().iterator(), false);
 		this.write(".\n");
 
 		return this;
@@ -186,7 +187,7 @@ public class DlgpWriter extends AbstractGraalWriter {
 		this.writeLabel(constraint.getLabel());
 		
 		this.write(" ! :- ");
-		this.writeAtomSet(constraint.getBody(), false);
+		this.writeAtomSet(constraint.getBody().iterator(), false);
 		this.write(".\n");
 
 		return this;
@@ -214,7 +215,7 @@ public class DlgpWriter extends AbstractGraalWriter {
 			this.write(')');
 		}
 		this.write(" :- ");
-		this.writeAtomSet(query.getAtomSet(), false);
+		this.writeAtomSet(query.getAtomSet().iterator(), false);
 		this.write(".\n");
 
 		return this;
@@ -244,9 +245,10 @@ public class DlgpWriter extends AbstractGraalWriter {
 		}
 	}
 	
-	protected void writeAtomSet(Iterable<Atom> atomSet, boolean addCarriageReturn) throws IOException {
+	protected void writeAtomSet(CloseableIterator<Atom> atomsetIt, boolean addCarriageReturn) throws IOException {
 		boolean isFirst = true;
-		for(Atom a : atomSet) {
+		while (atomsetIt.hasNext()) {
+			Atom a = atomsetIt.next();
 			if(isFirst) {
 				isFirst = false;
 			} else {
@@ -324,7 +326,7 @@ public class DlgpWriter extends AbstractGraalWriter {
 		} else if (URIUtils.XSD_DECIMAL.equals(l.getDatatype())) {
 			this.write(l.getValue().toString());
 		} else if (URIUtils.XSD_DOUBLE.equals(l.getDatatype())) {
-			this.write(l.getValue().toString()); // FIXME
+			this.write(l.getValue().toString()); // FIXME ?
 		} else if (URIUtils.XSD_BOOLEAN.equals(l.getDatatype())) {
 			this.write(l.getValue().toString());
 		} else {

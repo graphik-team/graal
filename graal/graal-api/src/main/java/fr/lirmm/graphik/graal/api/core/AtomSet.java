@@ -42,11 +42,11 @@
  */
  package fr.lirmm.graphik.graal.api.core;
 
-import java.util.Iterator;
 import java.util.Set;
 
-import fr.lirmm.graphik.util.stream.GIterable;
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterable;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * This interface represents a set of atoms.
@@ -54,7 +54,7 @@ import fr.lirmm.graphik.util.stream.GIterator;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public interface AtomSet extends GIterable<Atom> {
+public interface AtomSet extends CloseableIterable<Atom> {
 
 	/**
 	 * Returns true if this atom set contains the specified atom.
@@ -73,7 +73,7 @@ public interface AtomSet extends GIterable<Atom> {
 	 * @return
 	 * @throws AtomSetException
 	 */
-	GIterator<Atom> match(Atom atom) throws AtomSetException;
+	CloseableIterator<Atom> match(Atom atom) throws AtomSetException;
 
 	/**
 	 * Returns an iterator over all atoms with the specified predicate.
@@ -82,14 +82,14 @@ public interface AtomSet extends GIterable<Atom> {
 	 * @return
 	 * @throws AtomSetException
 	 */
-	GIterator<Atom> atomsByPredicate(Predicate predicate) throws AtomSetException;
+	CloseableIterator<Atom> atomsByPredicate(Predicate predicate) throws AtomSetException;
 
 	/**
 	 * @param p
 	 * @param position
 	 * @return
 	 */
-	GIterator<Term> termsByPredicatePosition(Predicate p, int position) throws AtomSetException;
+	CloseableIterator<Term> termsByPredicatePosition(Predicate p, int position) throws AtomSetException;
 
 	/**
 	 * Returns a Set of all predicates in this atom set.
@@ -106,7 +106,7 @@ public interface AtomSet extends GIterable<Atom> {
 	 * @return
 	 * @throws AtomSetException
 	 */
-	GIterator<Predicate> predicatesIterator() throws AtomSetException;
+	CloseableIterator<Predicate> predicatesIterator() throws AtomSetException;
 
 	/**
 	 * Returns a Set of all terms in this atom set.
@@ -123,7 +123,7 @@ public interface AtomSet extends GIterable<Atom> {
 	 * @return
 	 * @throws AtomSetException
 	 */
-	GIterator<Term> termsIterator() throws AtomSetException;
+	CloseableIterator<Term> termsIterator() throws AtomSetException;
 	
 	/**
 	 * Returns a Set of all terms of the specified type in this atom set.
@@ -143,7 +143,7 @@ public interface AtomSet extends GIterable<Atom> {
 	 * @return
 	 * @throws AtomSetException
 	 */
-	GIterator<Term> termsIterator(Term.Type type) throws AtomSetException;
+	CloseableIterator<Term> termsIterator(Term.Type type) throws AtomSetException;
 
 	/**
 	 * Use AtomSets.contains instead.
@@ -179,7 +179,7 @@ public interface AtomSet extends GIterable<Atom> {
 	 * @return true if this atomset changed as a result of the call
 	 * @throws
 	 */
-	boolean addAll(Iterator<? extends Atom> atoms) throws AtomSetException;
+	boolean addAll(CloseableIterator<? extends Atom> atoms) throws AtomSetException;
 
 	/**
 	 * @param atoms
@@ -204,7 +204,7 @@ public interface AtomSet extends GIterable<Atom> {
 	 * @return true if this atomset changed as a result of the call
 	 * @throws AtomSetException
 	 */
-	boolean removeAll(Iterator<? extends Atom> atoms) throws AtomSetException;
+	boolean removeAll(CloseableIterator<? extends Atom> atoms) throws AtomSetException;
 
 	boolean removeAll(AtomSet atoms) throws AtomSetException;
 
@@ -219,7 +219,7 @@ public interface AtomSet extends GIterable<Atom> {
 	 * @return an iterator over the atoms in this atom set.
 	 */
 	@Override
-	GIterator<Atom> iterator();
+	CloseableIterator<Atom> iterator();
 
 	/**
 	 * Return the number of atoms related to the predicate p

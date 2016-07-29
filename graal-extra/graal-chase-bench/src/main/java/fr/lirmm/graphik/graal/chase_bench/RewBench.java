@@ -40,6 +40,7 @@ import fr.lirmm.graphik.graal.store.rdbms.driver.PostgreSQLDriver;
 import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.RealTimeProfiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorAdapter;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -121,12 +122,12 @@ public class RewBench {
 		// Loading rules //
 		prof.start("parsing/loading st-tgds");
 		Parser<Rule> ruleParser = new ChaseBenchRuleParser(new File(options.inputStTgdsFilePath));
-		rules.addAll(ruleParser);
+		rules.addAll(new IteratorAdapter<Rule>(ruleParser));
 		prof.stop("parsing/loading st-tgds");
 
 		prof.start("parsing/loading t-tgds");
 		ruleParser = new ChaseBenchRuleParser(new File(options.inputTargetTgdsFilePath));
-		rules.addAll(ruleParser);
+		rules.addAll(new IteratorAdapter<Rule>(ruleParser));
 		prof.stop("parsing/loading t-tgds");
 
 		// Applying chase //

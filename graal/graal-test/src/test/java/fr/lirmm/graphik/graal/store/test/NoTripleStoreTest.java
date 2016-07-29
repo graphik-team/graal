@@ -59,6 +59,8 @@ import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -73,13 +75,13 @@ public class NoTripleStoreTest {
 	}
 
 	@Theory
-	public void predicateArityTest(AtomSet store) throws AtomSetException {
+	public void predicateArityTest(AtomSet store) throws AtomSetException, IteratorException {
 		store.add(DlgpParser.parseAtom("p(a)."));
 		store.add(DlgpParser.parseAtom("p(a,b)."));
 		store.add(DlgpParser.parseAtom("p(a,c)."));
 
 		int i = 0;
-		for (Iterator<Predicate> it = store.predicatesIterator(); it.hasNext(); it.next()) {
+		for (CloseableIterator<Predicate> it = store.predicatesIterator(); it.hasNext(); it.next()) {
 			++i;
 		}
 
@@ -117,14 +119,16 @@ public class NoTripleStoreTest {
 	}
 
 	@Theory
-	public void termsOrder(AtomSet store) throws AtomSetException {
+	public void termsOrder(AtomSet store) throws AtomSetException, IteratorException {
 		Atom a1 = DlgpParser.parseAtom("p(a,b,c,d,e,f).");
 		Atom a2 = DlgpParser.parseAtom("p(f,e,d,c,b,a).");
 
 		store.add(a1);
 		store.add(a2);
 
-		for (Atom a : store) {
+		CloseableIterator<Atom> it = store.iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			Assert.assertTrue(a.equals(a1) || a.equals(a2));
 		}
 	}

@@ -50,7 +50,7 @@ import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.util.AbstractProfilable;
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -87,16 +87,16 @@ public class PureRewriter extends AbstractProfilable implements QueryRewriterWit
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public GIterator<ConjunctiveQuery> execute(ConjunctiveQuery query, Iterable<Rule> rules) {
-		RewritingIterator it = new RewritingIterator(this.unfolding, query, rules, this.operator);
+	public CloseableIteratorWithoutException<ConjunctiveQuery> execute(ConjunctiveQuery query, Iterable<Rule> rules) {
+		RewritinCloseableIterator it = new RewritinCloseableIterator(this.unfolding, query, rules, this.operator);
 		it.setProfiler(this.getProfiler());
 		return it;
 	}
 
 	@Override
-	public GIterator<ConjunctiveQuery> execute(ConjunctiveQuery query, Iterable<Rule> rules,
+	public CloseableIteratorWithoutException<ConjunctiveQuery> execute(ConjunctiveQuery query, Iterable<Rule> rules,
 	    RulesCompilation compilation) {
-		RewritingIterator it = new RewritingIterator(this.unfolding, query, rules, compilation, this.operator);
+		RewritinCloseableIterator it = new RewritinCloseableIterator(this.unfolding, query, rules, compilation, this.operator);
 		it.setProfiler(this.getProfiler());
 		return it;
 	}

@@ -45,7 +45,7 @@ package fr.lirmm.graphik.graal.api.factory;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -57,9 +57,9 @@ public interface RuleFactory {
 
 	Rule create(Atom[] body, Atom[] head);
 
-	Rule create(GIterator<Atom> body, GIterator<Atom> head);
+	Rule create(CloseableIteratorWithoutException<Atom> body, CloseableIteratorWithoutException<Atom> head);
 
-	Rule create(String label, GIterator<Atom> body, GIterator<Atom> head);
+	Rule create(String label, CloseableIteratorWithoutException<Atom> body, CloseableIteratorWithoutException<Atom> head);
 
 	Rule create(InMemoryAtomSet body, InMemoryAtomSet head);
 

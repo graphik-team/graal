@@ -57,8 +57,8 @@ import fr.lirmm.graphik.graal.api.core.AbstractTerm;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.util.stream.GIterator;
-import fr.lirmm.graphik.util.stream.IteratorAdapter;
+import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 abstract class AbstractTermVertex extends AbstractTerm implements TermVertex {
 
@@ -83,7 +83,7 @@ abstract class AbstractTermVertex extends AbstractTerm implements TermVertex {
 	}
 
 	@Override
-	public GIterator<Atom> getNeighbors(Predicate p, int position) {
+	public CloseableIteratorWithoutException<Atom> getNeighbors(Predicate p, int position) {
 		Iterator<Atom> it = null;
 		Collection<Atom>[] map = this.index.get(p);
 		if(map != null) {
@@ -95,7 +95,7 @@ abstract class AbstractTermVertex extends AbstractTerm implements TermVertex {
 		if (it == null) {
 			it = Collections.<Atom> emptyIterator();
 		}
-		return new IteratorAdapter<Atom>(it);
+		return new CloseableIteratorAdapter<Atom>(it);
 	}
 
 	@Override

@@ -46,7 +46,7 @@
 package fr.lirmm.graphik.graal.core.stream.filter;
 
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.filter.FilterIterator;
 
 /**
@@ -61,7 +61,7 @@ public class ConjunctiveQueryFilterIterator extends FilterIterator<Object, Conju
 	 * @param it
 	 * @param filter
 	 */
-	public ConjunctiveQueryFilterIterator(GIterator<Object> it) {
+	public ConjunctiveQueryFilterIterator(CloseableIterator<Object> it) {
 		super(it, ConjunctiveQueryFilter.instance());
 	}
 

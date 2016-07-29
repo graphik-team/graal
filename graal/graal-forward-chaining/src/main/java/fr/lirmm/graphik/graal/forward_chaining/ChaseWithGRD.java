@@ -97,9 +97,11 @@ public class ChaseWithGRD extends AbstractChase {
 
 	@Override
 	public void next() throws ChaseException {
+		System.out.println(queue);
 		Rule rule;
 		try {
 			rule = queue.pollFirst();
+			System.out.println(rule);
 			if(rule != null) {
 				String key = null;
 				if (this.getProfiler() != null && this.getProfiler().isProfilingEnabled()) {
@@ -113,6 +115,7 @@ public class ChaseWithGRD extends AbstractChase {
 						if(LOGGER.isDebugEnabled()) {
 							LOGGER.debug("-- -- Dependency: " + triggeredRule);
 						}
+						System.out.println("toAdd: " + triggeredRule);
 						this.queue.add(triggeredRule);
 					}
 				}

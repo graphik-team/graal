@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,96 +40,68 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.rulesetanalyser.property;
+package fr.lirmm.graphik.graal.rdbms.store.test;
 
-import java.util.LinkedList;
-import java.util.List;
+import org.junit.Assert;
+import org.junit.experimental.theories.DataPoints;
+import org.junit.experimental.theories.Theories;
+import org.junit.experimental.theories.Theory;
+import org.junit.runner.RunWith;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.rulesetanalyser.graph.MarkedVariableSet;
-import fr.lirmm.graphik.graal.rulesetanalyser.graph.MarkedVariableSet.MarkedRule;
-import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
-import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
+import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.RuleSet;
+import fr.lirmm.graphik.graal.api.forward_chaining.Chase;
+import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
+import fr.lirmm.graphik.graal.api.store.Store;
+import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
+import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
+import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
+import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 
 /**
- * Each marked variable occurs at most once in a rule body
- * (cf. {@link MarkedVariableSet}).
- * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- * @author Swan Rocher
- * 
+ *
  */
-public final class StickyProperty extends RuleSetProperty.Default {
-
-	private static StickyProperty instance = null;
-	
-	private StickyProperty() { }
-	
-	public static synchronized StickyProperty instance() {
-		if(instance == null) {
-			instance = new StickyProperty();
-		}
-		return instance;
-	}
-
-	@Override
-	public String getFullName() {
-		return "Sticky";
-	}
-
-	@Override
-	public String getDescription() {
-		return "Each marked variable occurs at most once in a rule body (cf. marked variable set).";
-	}
-	
+@RunWith(Theories.class)
+public class DefaultRdbmsStoreTest {
 
 	// /////////////////////////////////////////////////////////////////////////
-	// METHODS
+	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
-	@Override
-    public int check(AnalyserRuleSet ruleSet) {
-		if (this.check(ruleSet.getMarkedVariableSet())) return 1;
-		return -1;
+	@DataPoints
+	public static Store[] atomset() {
+		return TestUtil.getStores();
 	}
 
-	public boolean check(MarkedVariableSet markedVariableSet) {
-		int nbOccurence;
-		for (MarkedRule mrule : markedVariableSet.getMarkedRuleCollection()) {
-			for (Term mvar : mrule.markedVars) {
-				nbOccurence = 0;
-				CloseableIteratorWithoutException<Atom> it = mrule.rule.getBody().iterator();
-				while (it.hasNext()) {
-					Atom a = it.next();
-					for (Term t : a) {
-						if (mvar.equals(t)) {
-							++nbOccurence;
-							if (nbOccurence > 1) {
-								return false;
-							}
-						}
-					}
-				}
-			}
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	@Theory
+	public void test(Store store) throws AtomSetException {
+
+		RuleSet ruleSet = new LinkedListRuleSet();
+		ruleSet.add(DlgpParser.parseRule("q(X,Y) :- p(X)."));
+		ruleSet.add(DlgpParser.parseRule("r(Z,Y) :- q(X,Y)."));
+		Atom a = DlgpParser.parseAtom("p(a).");
+
+		store.add(a);
+		Chase chase = new DefaultChase(ruleSet, store);
+		try {
+			chase.execute();
+		} catch (ChaseException e) {
+			Assert.assertFalse(true);
 		}
-		return true;
+		System.out.println(DlgpWriter.writeToString(store));
 	}
+	// /////////////////////////////////////////////////////////////////////////
+	// OBJECT OVERRIDE METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
-	@Override
-	public String getLabel() {
-		return "s";
-	}
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
-	@Override
-	public Iterable<RuleSetProperty> getGeneralisations() {
-		List<RuleSetProperty> gen = new LinkedList<RuleSetProperty>();
-		gen.add(FUSProperty.instance());
-		return gen;
-	}
-
-};
-
+}

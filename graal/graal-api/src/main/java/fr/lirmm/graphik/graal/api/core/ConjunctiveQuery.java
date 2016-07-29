@@ -45,8 +45,10 @@
  */
 package fr.lirmm.graphik.graal.api.core;
 
-import java.util.Iterator;
 import java.util.List;
+
+import fr.lirmm.graphik.util.stream.CloseableIterableWithoutException;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
  * This interface represents a conjunctive query. A conjunctive query is
@@ -55,7 +57,7 @@ import java.util.List;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface ConjunctiveQuery extends Query, Iterable<Atom> {
+public interface ConjunctiveQuery extends Query, CloseableIterableWithoutException<Atom> {
 
 	/**
 	 * The label (the name) for this query.
@@ -82,6 +84,6 @@ public interface ConjunctiveQuery extends Query, Iterable<Atom> {
 	 * Return an iterator over the atoms conjunction of the query.
 	 */
 	@Override
-	Iterator<Atom> iterator();
+	CloseableIteratorWithoutException<Atom> iterator();
 	
 }

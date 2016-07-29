@@ -3,7 +3,6 @@ package fr.lirmm.graphik.graal.chase_bench;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -42,6 +41,8 @@ import fr.lirmm.graphik.graal.store.rdbms.driver.PostgreSQLDriver;
 import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.RealTimeProfiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
+import fr.lirmm.graphik.util.stream.IteratorAdapter;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -124,12 +125,12 @@ public class ChaseBench {
 		// Loading rules //
 		prof.start("parsing/loading st-tgds");
 		Parser<Rule> ruleParser = new ChaseBenchRuleParser(new File(options.inputStTgdsFilePath));
-		stTgdsSet.addAll(ruleParser);
+		stTgdsSet.addAll(new IteratorAdapter<Rule>(ruleParser));
 		prof.stop("parsing/loading st-tgds");
 
 		prof.start("parsing/loading t-tgds");
 		ruleParser = new ChaseBenchRuleParser(new File(options.inputTargetTgdsFilePath));
-		targetTgdsSet.addAll(ruleParser);
+		targetTgdsSet.addAll(new IteratorAdapter<Rule>(ruleParser));
 		prof.stop("parsing/loading t-tgds");
 
 		// Applying chase //
@@ -236,7 +237,7 @@ public class ChaseBench {
 	}
 
 	protected static boolean isLinear(Rule r) {
-		Iterator<Atom> it = r.getBody().iterator();
+		CloseableIteratorWithoutException<Atom> it = r.getBody().iterator();
 		if (it.hasNext()) {
 			it.next();
 			return !it.hasNext();

@@ -59,13 +59,16 @@ import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
 public class MultiThreadTest {
-	public static void main(String[] args) throws FileNotFoundException, AtomSetException, ChaseException {
+	public static void main(String[] args)
+	    throws FileNotFoundException, AtomSetException, ChaseException, IteratorException {
 		ArrayList<AtomSet> atomsets = new ArrayList<AtomSet>();
 		atomsets.add(new DefaultRdbmsStore(new MysqlDriver("localhost", "thread", "root", "root")));
 		atomsets.get(0).add(DlgpParser.parseAtom("child(a)."));
@@ -104,7 +107,9 @@ public class MultiThreadTest {
 		System.out.println(System.nanoTime());
 		
 		int i = 0;
-		for(Atom a : atomsets.get(0)) {
+		CloseableIterator<Atom> it = atomsets.get(0).iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			System.out.println(a);
 			++i;
 		}

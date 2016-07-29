@@ -63,14 +63,14 @@ import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionIterator2AtomIterator;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
-import fr.lirmm.graphik.util.stream.AbstractIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-class DefaultRdbmsAtomIterator extends AbstractIterator<Atom> implements CloseableIterator<Atom> {
+class DefaultRdbmsAtomIterator implements CloseableIterator<Atom> {
 
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(DefaultRdbmsAtomIterator.class);
@@ -98,7 +98,7 @@ class DefaultRdbmsAtomIterator extends AbstractIterator<Atom> implements Closeab
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public boolean hasNext() {
+	public boolean hasNext() throws IteratorException {
 		if (!this.hasNextCallDone) {
 			this.hasNextCallDone = true;
 			while (this.predicateIt.hasNext()
@@ -120,8 +120,7 @@ class DefaultRdbmsAtomIterator extends AbstractIterator<Atom> implements Closeab
 				try {
 					this.atomIt = new SubstitutionIterator2AtomIterator(atom, solver.execute(query, this.store));
 				} catch (HomomorphismException e) {
-					LOGGER.error(e.getMessage(), e);
-					return false;
+					throw new IteratorException(e);
 				}
 			}
 		}
@@ -129,7 +128,7 @@ class DefaultRdbmsAtomIterator extends AbstractIterator<Atom> implements Closeab
 	}
 
 	@Override
-	public Atom next() {
+	public Atom next() throws IteratorException {
 		if (!this.hasNextCallDone)
 			this.hasNext();
 		this.hasNextCallDone = false;

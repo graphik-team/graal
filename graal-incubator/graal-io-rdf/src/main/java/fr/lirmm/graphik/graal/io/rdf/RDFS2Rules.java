@@ -53,13 +53,13 @@ import fr.lirmm.graphik.graal.api.io.Parser;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
-import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public class RDFS2Rules extends AbstractCloseableIterator<Object> implements Parser<Object> {
+public class RDFS2Rules implements Parser<Object> {
 
 	public static final String RDFS_PREFIX = "http://www.w3.org/2000/01/rdf-schema#";
 
@@ -104,7 +104,7 @@ public class RDFS2Rules extends AbstractCloseableIterator<Object> implements Par
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public Object next() {
+	public Object next() throws IteratorException {
 		Object o = this.reader.next();
 
 		if (o instanceof Atom) {
@@ -149,7 +149,7 @@ public class RDFS2Rules extends AbstractCloseableIterator<Object> implements Par
 	}
 
 	@Override
-	public boolean hasNext() {
+	public boolean hasNext() throws IteratorException {
 		return this.reader.hasNext();
 	}
 	

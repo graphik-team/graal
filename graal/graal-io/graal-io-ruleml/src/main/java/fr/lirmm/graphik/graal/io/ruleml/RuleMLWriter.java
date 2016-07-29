@@ -52,7 +52,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -71,6 +70,8 @@ import fr.lirmm.graphik.graal.api.io.AbstractGraalWriter;
 import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
 import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.URI;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -152,7 +153,7 @@ public class RuleMLWriter extends AbstractGraalWriter {
 	public RuleMLWriter write(AtomSet atomset) throws IOException {
 		this.openBalise("Assert");
 		this.inFact = true;
-		this.writeAtomSet(atomset);
+		this.writeAtomSet(atomset.iterator());
 		this.inFact = false;
 		this.closeBaliseWithReturnLine("Assert");
 
@@ -165,7 +166,7 @@ public class RuleMLWriter extends AbstractGraalWriter {
 		Set<Term> universalVar = rule.getTerms(Type.VARIABLE);
 		universalVar.removeAll(existVar);
 
-		Iterator<Atom> it = rule.getHead().iterator();
+		CloseableIteratorWithoutException<Atom> it = rule.getHead().iterator();
 		if (it.hasNext()) {
 			it.next();
 		}
@@ -180,7 +181,7 @@ public class RuleMLWriter extends AbstractGraalWriter {
 		this.openBalise("Implies");
 		this.openBalise("if");
 		this.openBalise("And");
-		this.writeAtomSet(rule.getBody());
+		this.writeAtomSet(rule.getBody().iterator());
 		this.closeBaliseWithReturnLine("And");
 		this.closeBaliseWithReturnLine("if");
 		this.openBalise("then");
@@ -193,7 +194,7 @@ public class RuleMLWriter extends AbstractGraalWriter {
 		if (!isAtomicHead) {
 			this.openBalise("And");
 		}
-		this.writeAtomSet(rule.getHead());
+		this.writeAtomSet(rule.getHead().iterator());
 		if (!isAtomicHead) {
 			this.closeBaliseWithReturnLine("And");
 		}
@@ -222,7 +223,7 @@ public class RuleMLWriter extends AbstractGraalWriter {
 			this.writeTerm(t);
 		}
 		this.openBalise("And");
-		this.writeAtomSet(query.getAtomSet());
+		this.writeAtomSet(query.getAtomSet().iterator());
 		this.closeBaliseWithReturnLine("And");
 		this.closeBaliseWithReturnLine("Exists");
 		this.closeBaliseWithReturnLine("Query");
@@ -269,10 +270,12 @@ public class RuleMLWriter extends AbstractGraalWriter {
 		}
 	}
 	
-	protected void writeAtomSet(Iterable<Atom> atomSet) throws IOException {
-		for(Atom a : atomSet) {
+	protected void writeAtomSet(CloseableIterator<Atom> it) throws IOException {
+		while (it.hasNext()) {
+			Atom a = it.next();
 			this.writeAtom(a);
 		}
+		it.close();
 	}
 	
 	@Override

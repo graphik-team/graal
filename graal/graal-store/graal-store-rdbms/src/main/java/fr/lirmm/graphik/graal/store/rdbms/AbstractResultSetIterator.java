@@ -48,14 +48,14 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import fr.lirmm.graphik.util.stream.AbstractIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-abstract class AbstractResultSetIterator<T> extends AbstractIterator<T> implements CloseableIterator<T> {
+abstract class AbstractResultSetIterator<T> implements CloseableIterator<T> {
 
 	protected ResultSetMetaData metaData;
 	private Statement statement;
@@ -92,21 +92,21 @@ abstract class AbstractResultSetIterator<T> extends AbstractIterator<T> implemen
 	// ABSTRACT METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	protected abstract T computeNext() throws Exception;
+	protected abstract T computeNext() throws IteratorException;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public boolean hasNext() {
+	public boolean hasNext() throws IteratorException {
 		if (!this.hasNextCallDone) {
 			this.hasNextCallDone = true;
 
 			try {
 				this.hasNext = this.results.next();
 			} catch (SQLException e) {
-				// TODO
+				throw new IteratorException(e);
 			}
 		}
 
@@ -114,19 +114,13 @@ abstract class AbstractResultSetIterator<T> extends AbstractIterator<T> implemen
 	}
 
 	@Override
-	public T next() {
+	public T next() throws IteratorException {
 		if (!this.hasNextCallDone)
 			this.hasNext();
 
 		this.hasNextCallDone = false;
 
-		try {
-			return computeNext();
-
-		} catch (Exception e) {
-			// TODO
-			return null;
-		}
+		return computeNext();
 	}
 
 	@Override

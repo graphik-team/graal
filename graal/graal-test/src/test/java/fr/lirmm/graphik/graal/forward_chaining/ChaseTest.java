@@ -46,7 +46,6 @@
 package fr.lirmm.graphik.graal.forward_chaining;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.junit.Assert;
@@ -73,6 +72,8 @@ import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -87,7 +88,9 @@ public class ChaseTest {
 	}
 	
 	@Theory
-	public void test1(AtomSet atomSet) throws AtomSetException, HomomorphismFactoryException, HomomorphismException, ChaseException {
+	public void test1(AtomSet atomSet)
+	    throws AtomSetException, HomomorphismFactoryException, HomomorphismException, ChaseException,
+	    IteratorException {
 		atomSet.addAll(DlgpParser.parseAtomSet("p(X,a),q(a,a)."));
 
 		LinkedList<Rule> ruleSet = new LinkedList<Rule>();
@@ -102,7 +105,8 @@ public class ChaseTest {
 	
 	@Theory
 	public void restrictedChaseTest0(AtomSet atomSet)
-	    throws AtomSetException, HomomorphismFactoryException, HomomorphismException, ChaseException {
+	    throws AtomSetException, HomomorphismFactoryException, HomomorphismException, ChaseException,
+	    IteratorException {
 		atomSet.addAll(DlgpParser.parseAtomSet("p(a)."));
 
 		LinkedList<Rule> ruleSet = new LinkedList<Rule>();
@@ -112,7 +116,7 @@ public class ChaseTest {
 		chase.execute();
 
 		int size = 0;
-		for (Iterator<Atom> it = atomSet.iterator(); it.hasNext(); it.next()) {
+		for (CloseableIterator<Atom> it = atomSet.iterator(); it.hasNext(); it.next()) {
 			++size;
 		}
 
@@ -120,7 +124,9 @@ public class ChaseTest {
 	}
 
 	@Theory
-	public void restrictedChaseTest(AtomSet atomSet) throws AtomSetException, HomomorphismFactoryException, HomomorphismException, ChaseException {
+	public void restrictedChaseTest(AtomSet atomSet)
+	    throws AtomSetException, HomomorphismFactoryException, HomomorphismException, ChaseException,
+	    IteratorException {
 		atomSet.addAll(DlgpParser.parseAtomSet("p(a)."));
 		
 		LinkedList<Rule> ruleSet = new LinkedList<Rule>();
@@ -133,7 +139,7 @@ public class ChaseTest {
 		chase.execute();
 		
 		int size = 0;
-		for(Iterator<Atom> it = atomSet.iterator(); it.hasNext(); it.next()) {
+		for (CloseableIterator<Atom> it = atomSet.iterator(); it.hasNext(); it.next()) {
 			++size;
 		}
 		
@@ -142,7 +148,7 @@ public class ChaseTest {
 
 	@Theory
 	public void restrictedChaseTestWithGrd(InMemoryAtomSet atomSet) throws IOException, ChaseException, ParseException,
-	                                                               AtomSetException {
+	    AtomSetException, IteratorException {
 		atomSet.addAll(DlgpParser.parseAtomSet("p(a)."));
 
 		LinkedList<Rule> ruleSet = new LinkedList<Rule>();
@@ -156,7 +162,7 @@ public class ChaseTest {
 		chase.execute();
 		
 		int size = 0;
-		for(Iterator<Atom> it = atomSet.iterator(); it.hasNext(); it.next()) {
+		for (CloseableIterator<Atom> it = atomSet.iterator(); it.hasNext(); it.next()) {
 			++size;
 		}
 		
@@ -208,7 +214,8 @@ public class ChaseTest {
 	// }
 
 	@Theory
-	public void test2(InMemoryAtomSet atomSet) throws ChaseException, HomomorphismFactoryException, HomomorphismException {
+	public void test2(InMemoryAtomSet atomSet)
+	    throws ChaseException, HomomorphismFactoryException, HomomorphismException, IteratorException {
 
 		// add assertions into this atom set
 		atomSet.add(DlgpParser.parseAtom("p(a)."));
@@ -247,7 +254,9 @@ public class ChaseTest {
 //
 //		int size = 0;
 //		System.out.println("##################");
-//		for(Atom a : atomSet) {
+	// CloseableIteratorWithoutException<Atom> it = atomset.iterator();
+	// while (it.hasNext()) {
+	// Atom a = it.next();
 //			++size;
 //			System.out.println(a);
 //			if(a.getPredicate().getArity() == 2) {

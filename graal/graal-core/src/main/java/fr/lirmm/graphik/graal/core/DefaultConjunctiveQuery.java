@@ -42,7 +42,6 @@
  */
 package fr.lirmm.graphik.graal.core;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -52,7 +51,9 @@ import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * Class representing a conjunctive query. A conjunctive query is composed of a
@@ -84,7 +85,17 @@ public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 		this("", atomSet, ans);
 	}
 
-	public DefaultConjunctiveQuery(Iterator<Atom> atomSet, Iterator<Term> answerVariables) {
+	public DefaultConjunctiveQuery(CloseableIterator<Atom> atomSet, CloseableIterator<Term> answerVariables) throws IteratorException {
+		this.label = "";
+		this.atomSet = new LinkedListAtomSet(atomSet);
+		this.responseVariables = new LinkedList<Term>();
+		while (answerVariables.hasNext()) {
+			this.responseVariables.add(answerVariables.next());
+		}
+	}
+
+	public DefaultConjunctiveQuery(CloseableIteratorWithoutException<Atom> atomSet,
+	    CloseableIteratorWithoutException<Term> answerVariables) {
 		this.label = "";
 		this.atomSet = new LinkedListAtomSet(atomSet);
 		this.responseVariables = new LinkedList<Term>();
@@ -159,7 +170,7 @@ public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public GIterator<Atom> iterator() {
+	public CloseableIteratorWithoutException<Atom> iterator() {
 		return getAtomSet().iterator();
 	}
 

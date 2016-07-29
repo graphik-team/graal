@@ -136,8 +136,7 @@ public final class TestUtil {
 			try {
 				rdbmsStore.getDriver().getConnection().createStatement().executeQuery("DROP SCHEMA PUBLIC CASCADE");
 			} catch (SQLException e) {
-				// TODO treat this exception e.printStackTrace(); throw new
-				throw new Error("Untreated exception");
+				throw new Error(e);
 			}
 			rdbmsStore.close();
 		}
@@ -158,9 +157,8 @@ public final class TestUtil {
 
 			return new AtomSet[] { new DefaultInMemoryGraphAtomSet(), new LinkedListAtomSet(), rdbmsStore, graphStore,
 			        neo4jStore };
-		} catch (AtomSetException e) { // TODO treat this exception
-			                           // e.printStackTrace();
-			throw new Error("Untreated exception", e);
+		} catch (AtomSetException e) {
+			throw new Error(e);
 		}
 	}
 

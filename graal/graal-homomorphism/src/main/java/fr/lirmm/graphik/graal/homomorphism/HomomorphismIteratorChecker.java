@@ -54,6 +54,7 @@ import fr.lirmm.graphik.util.Profilable;
 import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -94,7 +95,7 @@ public class HomomorphismIteratorChecker extends AbstractCloseableIterator<Term>
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public boolean hasNext() {
+	public boolean hasNext() throws IteratorException {
 		try {
 			while (this.next == null && this.it.hasNext()) {
 				Term t = this.it.next();
@@ -103,15 +104,13 @@ public class HomomorphismIteratorChecker extends AbstractCloseableIterator<Term>
 				}
 			}
 		} catch (AtomSetException e) {
-			// TODO treat this exception
-			e.printStackTrace();
-			throw new Error("Untreated exception");
+			throw new IteratorException(e);
 		}
 		return this.next != null;
 	}
 
 	@Override
-	public Term next() {
+	public Term next() throws IteratorException {
 		this.hasNext();
 		Term t = this.next;
 		this.next = null;

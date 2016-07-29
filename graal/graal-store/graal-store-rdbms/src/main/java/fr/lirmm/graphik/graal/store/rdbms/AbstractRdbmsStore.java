@@ -40,42 +40,47 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
+/**
+* 
+*/
 package fr.lirmm.graphik.graal.store.rdbms;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Iterator;
+import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.store.AbstractStore;
 import fr.lirmm.graphik.graal.homomorphism.DefaultHomomorphismFactory;
 import fr.lirmm.graphik.graal.store.rdbms.driver.DriverException;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public abstract class AbstractRdbmsStore extends AbstractStore implements
-		RdbmsStore {
+public abstract class AbstractRdbmsStore extends AbstractStore implements RdbmsStore {
+
+	protected static final int VARCHAR_SIZE = 128;
+	// new table fields name
+	protected static final String PREFIX_TERM_FIELD = "term";
+
+	private TreeMap<Predicate, String> predicateMap = new TreeMap<Predicate, String>();
 
 	static {
-		DefaultHomomorphismFactory.instance().addChecker(
-				new SqlHomomorphismChecker());
-		DefaultHomomorphismFactory.instance().addChecker(
-				new SqlUCQHomomorphismChecker());
+		DefaultHomomorphismFactory.instance().addChecker(new SqlHomomorphismChecker());
+		DefaultHomomorphismFactory.instance().addChecker(new SqlUCQHomomorphismChecker());
 	}
 
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(AbstractRdbmsStore.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRdbmsStore.class);
 
 	private final RdbmsDriver driver;
 
@@ -89,7 +94,7 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements
 	public RdbmsDriver getDriver() {
 		return this.driver;
 	}
-	
+
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
@@ -101,17 +106,18 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements
 	public void close() {
 		this.driver.close();
 	}
-	
+
 	@Override
 	public boolean add(Atom atom) throws AtomSetException {
 		boolean res = false;
 		Statement statement = null;
+		System.out.println(atom);
 		try {
 			statement = this.createStatement();
 			this.add(statement, atom);
 			int[] ret = statement.executeBatch();
-			for(int i : ret) {
-				if(i>0) {
+			for (int i : ret) {
+				if (i > 0) {
 					res = true;
 					break;
 				}
@@ -175,7 +181,7 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements
 	}
 
 	@Override
-	public boolean addAll(Iterator<? extends Atom> stream) throws AtomSetException {
+	public boolean addAll(CloseableIterator<? extends Atom> stream) throws AtomSetException {
 		try {
 			int c = 0;
 			Statement statement = this.createStatement();
@@ -198,14 +204,14 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements
 			// }
 
 			this.getConnection().commit();
-		} catch (SQLException e) {
-			LOGGER.error(e.getMessage(), e);
+		} catch (Exception e) {
+			throw new AtomSetException(e);
 		}
 		return true;
 	}
 
 	@Override
-	public boolean removeAll(Iterator<? extends Atom> stream) throws AtomSetException {
+	public boolean removeAll(CloseableIterator<? extends Atom> stream) throws AtomSetException {
 		try {
 			int c = 0;
 			Statement statement = this.createStatement();
@@ -226,11 +232,25 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements
 			}
 
 			this.getConnection().commit();
-		} catch (SQLException e) {
-			LOGGER.error(e.getMessage(), e);
+		} catch (Exception e) {
+			throw new AtomSetException(e);
 		}
 		return true;
 	}
+
+	@Override
+	public CloseableIterator<Atom> iterator() {
+		try {
+			return new DefaultRdbmsAtomIterator(this);
+		} catch (AtomSetException e) {
+			if (LOGGER.isErrorEnabled()) {
+				LOGGER.error(e.getMessage(), e);
+			}
+			return null;
+		}
+	}
+
+
 
 	// /////////////////////////////////////////////////////////////////////////
 	// PROTECTED METHODS
@@ -243,19 +263,116 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements
 	protected Statement createStatement() throws AtomSetException {
 		try {
 			return this.driver.createStatement();
-		} catch(DriverException e) {
+		} catch (DriverException e) {
 			throw new AtomSetException(e);
 		}
 	}
 
-	protected abstract Statement add(Statement statement, Atom atom)
-			throws AtomSetException;
+	protected abstract Statement add(Statement statement, Atom atom) throws AtomSetException;
 
-	protected abstract Statement remove(Statement statement, Atom atom)
-			throws AtomSetException;
+	protected abstract Statement remove(Statement statement, Atom atom) throws AtomSetException;
 
 	protected abstract boolean testDatabaseSchema() throws AtomSetException;
 
 	protected abstract void createDatabaseSchema() throws AtomSetException;
+
+	/**
+	 * Get the table name of this predicate. If there is no table for it, a new
+	 * table is created.
+	 * 
+	 * @param predicate
+	 * @return
+	 * @throws SQLException
+	 * @throws AtomSetException
+	 */
+	protected String getPredicateTable(Predicate predicate) throws AtomSetException {
+
+		String tableName = this.getPredicateTableName(predicate);
+		if (tableName == null) {
+			if (tableName == null) {
+				tableName = this.createPredicateTable(predicate);
+			}
+		}
+
+		return tableName;
+	}
+
+	/**
+	 * @param predicate
+	 * @return the table name corresponding to this predicate or null if this
+	 *         predicate doesn't exist.
+	 * @throws SQLException
+	 */
+	protected abstract String predicateTableExist(Predicate predicate) throws AtomSetException;
+
+
+	/**
+	 * 
+	 * @param predicate
+	 * @return
+	 * @throws AtomSetException
+	 * @throws SQLException
+	 */
+	protected String createPredicateTable(Predicate predicate) throws AtomSetException {
+		String tableName = this.getFreshPredicateTableName(predicate);
+		if (predicate.getArity() >= 1) {
+			Statement stat = this.createStatement();
+			String query = generateCreateTablePredicateQuery(tableName, predicate.getArity());
+			try {
+				stat.executeUpdate(query);
+			} catch (SQLException e) {
+				throw new AtomSetException("Error during table creation: " + query, e);
+			}
+			if (stat != null) {
+				try {
+					stat.close();
+				} catch (SQLException e) {
+					throw new AtomSetException(e);
+				}
+			}
+
+			// add to the local map
+			this.predicateMap.put(predicate, tableName);
+		} else {
+			throw new AtomSetException("Unsupported arity 0"); // TODO Why ?!
+		}
+		return tableName;
+	}
+
+	protected abstract String getFreshPredicateTableName(Predicate predicate) throws AtomSetException;
+
+
+	protected String getPredicateTableName(Predicate predicate) throws AtomSetException {
+		// look in the local map
+		String tableName = this.predicateMap.get(predicate);
+		if (tableName == null) {
+			// look in the database
+			tableName = this.predicateTableExist(predicate);
+			this.predicateMap.put(predicate, tableName);
+		}
+		return tableName;
+	}
+
+
+	protected static String generateCreateTablePredicateQuery(String tableName, int arity) {
+		StringBuilder primaryKey = new StringBuilder("PRIMARY KEY (");
+		StringBuilder query = new StringBuilder("CREATE TABLE ");
+		query.append(tableName);
+
+		query.append('(').append(PREFIX_TERM_FIELD).append('0');
+		query.append(" varchar(").append(VARCHAR_SIZE).append(")");
+		primaryKey.append("term0");
+		for (int i = 1; i < arity; i++) {
+			query.append(", ").append(PREFIX_TERM_FIELD).append(i).append(" varchar(" + VARCHAR_SIZE + ")");
+			primaryKey.append(", term" + i);
+		}
+		primaryKey.append(")");
+
+		query.append(',');
+		query.append(primaryKey);
+		query.append(");");
+		return query.toString();
+	}
+
 
 }

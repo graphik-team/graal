@@ -60,6 +60,7 @@ import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.util.CPUTimeProfiler;
 import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -68,7 +69,7 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
 public class ForwardCheckingTest {
 
 	@Test
-	public void test1() throws HomomorphismException {
+	public void test1() throws HomomorphismException, IteratorException {
 		InMemoryAtomSet data = new DefaultInMemoryGraphAtomSet();
 
 		data.addAll(DlgpParser.parseAtomSet("p(a,b)."));
@@ -85,7 +86,7 @@ public class ForwardCheckingTest {
 	}
 
 	@Test
-	public void simpleFCTest1() throws HomomorphismException {
+	public void simpleFCTest1() throws HomomorphismException, IteratorException {
 		Profiler profiler = new CPUTimeProfiler();
 
 		InMemoryAtomSet data = new DefaultInMemoryGraphAtomSet();
@@ -104,7 +105,7 @@ public class ForwardCheckingTest {
 	}
 
 	@Test
-	public void FCTest2() throws HomomorphismException {
+	public void FCTest2() throws HomomorphismException, IteratorException {
 		Profiler profiler = new CPUTimeProfiler();
 
 		InMemoryAtomSet data = new DefaultInMemoryGraphAtomSet();
@@ -123,7 +124,7 @@ public class ForwardCheckingTest {
 	}
 
 	@Test
-	public void NFC2Test() throws HomomorphismException {
+	public void NFC2Test() throws HomomorphismException, IteratorException {
 		Profiler profiler = new CPUTimeProfiler();
 
 		Predicate[] predicates = { new Predicate("p2", 2), new Predicate("p3", 3), new Predicate("p4", 4)};
@@ -146,7 +147,7 @@ public class ForwardCheckingTest {
 	}
 
 	@Test
-	public void NFC2Test2() throws HomomorphismException {
+	public void NFC2Test2() throws HomomorphismException, IteratorException {
 		Profiler profiler = new CPUTimeProfiler();
 
 		Predicate[] predicates = { new Predicate("p", 2), new Predicate("q", 2), new Predicate("r", 2) };

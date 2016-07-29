@@ -50,7 +50,9 @@ import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.NegativeConstraint;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * A negative constraint prevents to have some set of atoms. Its logical
@@ -77,7 +79,11 @@ public class DefaultNegativeConstraint extends DefaultRule implements NegativeCo
 		super("", new LinkedListAtomSet(), HEAD);
 	}
 
-	public DefaultNegativeConstraint(GIterator<Atom> atomSet) {
+	public DefaultNegativeConstraint(CloseableIterator<Atom> atomSet) throws IteratorException {
+		super("", new LinkedListAtomSet(atomSet), HEAD);
+	}
+
+	public DefaultNegativeConstraint(CloseableIteratorWithoutException<Atom> atomSet) {
 		super("", new LinkedListAtomSet(atomSet), HEAD);
 	}
 
@@ -85,7 +91,11 @@ public class DefaultNegativeConstraint extends DefaultRule implements NegativeCo
 		super("", atomSet, HEAD);
 	}
 
-	public DefaultNegativeConstraint(String label, GIterator<Atom> atomSet) {
+	public DefaultNegativeConstraint(String label, CloseableIterator<Atom> atomSet) throws IteratorException {
+		super(label, new LinkedListAtomSet(atomSet), HEAD);
+	}
+
+	public DefaultNegativeConstraint(String label, CloseableIteratorWithoutException<Atom> atomSet) {
 		super(label, new LinkedListAtomSet(atomSet), HEAD);
 	}
 

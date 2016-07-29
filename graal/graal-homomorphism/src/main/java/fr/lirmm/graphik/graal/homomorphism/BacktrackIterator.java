@@ -56,7 +56,6 @@ import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
@@ -67,36 +66,39 @@ import fr.lirmm.graphik.util.Profilable;
 import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterableWithoutException;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-class BacktrackIterator extends AbstractCloseableIterator<Substitution> implements CloseableIterator<Substitution>,
-                                                                       Profilable {
+class BacktrackIterator extends AbstractCloseableIterator<Substitution>
+                        implements CloseableIterator<Substitution>, Profilable {
 
-	private Scheduler          scheduler;
-	private Bootstrapper       bootstrapper;
-	private ForwardChecking    fc;
-	private BackJumping        bj;
+	private Scheduler scheduler;
+	private Bootstrapper bootstrapper;
+	private ForwardChecking fc;
+	private BackJumping bj;
 
-	private InMemoryAtomSet    h;
-	private AtomSet            g;
-	private RulesCompilation   compilation;
-	private Substitution       next   = null;
+	private InMemoryAtomSet h;
+	private AtomSet g;
+	private RulesCompilation compilation;
+	private Substitution next = null;
 
-	private Var[]              vars;
+	private Var[] vars;
 	private Map<Variable, Var> index;
-	private Var                currentVar;
+	private Var currentVar;
 
-	private int                levelMax;
-	private int                level;
-	private boolean            goBack;
-	private List<Term>         ans;
+	private int levelMax;
+	private int level;
+	private boolean goBack;
+	private List<Term> ans;
 
-	private Profiler           profiler;
+	private Profiler profiler;
 
-	private int                nbCall = 0;
+	private int nbCall = 0;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -104,7 +106,6 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 
 	public BacktrackIterator(InMemoryAtomSet h, AtomSet g, List<Term> ans, Scheduler scheduler,
 	    Bootstrapper boostrapper, ForwardChecking fc, BackJumping bj, RulesCompilation compilation, Profiler profiler) {
-
 
 		this.h = h;
 		this.g = g;
@@ -135,8 +136,7 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 	 * @param g
 	 */
 	public BacktrackIterator(InMemoryAtomSet h, AtomSet g, List<Term> ans, Scheduler scheduler,
-	    Bootstrapper boostrapper, ForwardChecking fc,
-	    BackJumping bj, RulesCompilation compilation) {
+	    Bootstrapper boostrapper, ForwardChecking fc, BackJumping bj, RulesCompilation compilation) {
 		this(h, g, ans, scheduler, boostrapper, fc, bj, compilation, NoProfiler.instance());
 	}
 
@@ -179,20 +179,20 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public boolean hasNext() {
+	public boolean hasNext() throws IteratorException {
 		if (this.next == null) {
 			try {
 				this.next = computeNext();
-			} catch (HomomorphismException e) {
+			} catch (BacktrackException e) {
 				this.next = null;
-				// TODO
+				throw new IteratorException("An errors occurs during backtrack iteration", e);
 			}
 		}
 		return this.next != null;
 	}
 
 	@Override
-	public Substitution next() {
+	public Substitution next() throws IteratorException {
 		Substitution tmp = null;
 		if (this.hasNext()) {
 			tmp = this.next;
@@ -216,7 +216,7 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 
 	@Override
 	public void setProfiler(Profiler profiler) {
-		if(profiler == null) {
+		if (profiler == null) {
 			profiler = NoProfiler.instance();
 		}
 		this.profiler = profiler;
@@ -238,8 +238,7 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("{\n").append("\t{query->").append(h).append("},\n\t{level->")
-		  .append(level).append("},\n\t{");
+		sb.append("{\n").append("\t{query->").append(h).append("},\n\t{level->").append(level).append("},\n\t{");
 		int i = 0;
 		for (Var v : vars) {
 			if (i == level)
@@ -260,7 +259,7 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 	/*
 	 * level -1 : no more answers level 0 : not initialized
 	 */
-	private Substitution computeNext() throws HomomorphismException {
+	private Substitution computeNext() throws BacktrackException {
 		if (profiler != null) {
 			profiler.start("backtrackingTime");
 		}
@@ -293,7 +292,7 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 						goBack = true;
 
 						Substitution sol = solutionFound(vars, ans);
-						
+
 						int nextLevel = currentVar.previousLevel;
 						for (; level > nextLevel; --level) {
 							vars[level].image = null;
@@ -328,7 +327,7 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 					}
 				}
 			} catch (AtomSetException e) {
-				throw new HomomorphismException("Exception during backtracking", e);
+				throw new BacktrackException("Exception during backtracking", e);
 			}
 			--level;
 		}
@@ -358,33 +357,36 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 		return s;
 	}
 
-	private boolean getFirstValue(Var var, AtomSet g) throws AtomSetException {
+	private boolean getFirstValue(Var var, AtomSet g) throws BacktrackException {
 		if (fc.isInit(var)) {
 			var.domain = fc.getCandidatsIterator(g, var, this.index, this.compilation);
 		} else {
 			var.domain = new HomomorphismIteratorChecker(var, bootstrapper.exec(var, h, g, this.compilation),
-			                                             var.preAtoms, g,
-			                                             this.index, this.compilation);
+			                                             var.preAtoms, g, this.index, this.compilation);
 		}
 		return this.hasMoreValues(var, g);
 	}
 
-	private boolean hasMoreValues(Var var, AtomSet g) throws AtomSetException {
-		while (var.domain.hasNext()) {
-			// TODO explicit var.success
-			var.success = false;
-			var.image = var.domain.next();
+	private boolean hasMoreValues(Var var, AtomSet g) throws BacktrackException {
+		try {
+			while (var.domain.hasNext()) {
+				// TODO explicit var.success
+				var.success = false;
+				var.image = var.domain.next();
 
-			// Fix for existential variable in data
-			if (!var.image.isConstant()) {
-				var.image = DefaultTermFactory.instance().createConstant(var.image.getLabel());
-			}
+				// Fix for existential variable in data
+				if (!var.image.isConstant()) {
+					var.image = DefaultTermFactory.instance().createConstant(var.image.getLabel());
+				}
 
-			if (scheduler.isAllowed(var, var.image)) {
-				if (fc.checkForward(var, g, this.index, this.compilation)) {
-					return true;
+				if (scheduler.isAllowed(var, var.image)) {
+					if (fc.checkForward(var, g, this.index, this.compilation)) {
+						return true;
+					}
 				}
 			}
+		} catch (IteratorException e) {
+			throw new BacktrackException("An exception occurs during data iteration", e);
 		}
 		var.domain.close();
 		return false;
@@ -397,7 +399,7 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 	 * @param varsOrdered
 	 * @return
 	 */
-	private void computeAtomOrder(Iterable<Atom> atomset, Var[] vars) {
+	private void computeAtomOrder(CloseableIterableWithoutException<Atom> atomset, Var[] vars) {
 		int tmp, rank;
 
 		// initialisation preAtoms and postAtoms Collections
@@ -409,7 +411,9 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution> implemen
 		}
 
 		//
-		for (Atom a : atomset) {
+		CloseableIteratorWithoutException<Atom> it = atomset.iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			rank = 0;
 			for (Term t : a.getTerms(Type.VARIABLE)) {
 				tmp = this.index.get((Variable) t).level;

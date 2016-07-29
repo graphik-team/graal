@@ -51,17 +51,17 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
-import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.TermValueComparator;
+import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
 import fr.lirmm.graphik.graal.homomorphism.Var;
 import fr.lirmm.graphik.homorphism.utils.ProbaUtils;
 import fr.lirmm.graphik.util.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * This bootstrapper uses the star query around the variable to provide an
@@ -91,7 +91,7 @@ public class StatBootstrapper extends AbstractProfilable implements Bootstrapper
 
 	@Override
 	public CloseableIterator<Term> exec(final Var v, InMemoryAtomSet query, final AtomSet data,
-	    RulesCompilation rc) throws AtomSetException {
+	    RulesCompilation rc) throws BacktrackException {
 		Set<Term> terms = null;
 		
 		if(this.getProfiler() != null) {
@@ -118,74 +118,63 @@ public class StatBootstrapper extends AbstractProfilable implements Bootstrapper
 				aa = a;
 			}
 		}
-		if (constants != null && !constants.isEmpty()) {
-			terms = new TreeSet<Term>(TermValueComparator.instance());
-			for (Atom im : rc.getRewritingOf(aa)) {
-				int pos = im.indexOf(v.value);
-				GIterator<Atom> match = data.match(im);
-				while (match.hasNext()) {
-					terms.add(match.next().getTerm(pos));
-				}
-			}
-		}
-
-		if (this.getProfiler() != null) {
-			this.getProfiler().stop("BootstrapTimeFirstPart");
-		}
-
-		if (terms == null) {
-			Atom a = null, tmp;
-			double probaA = 1.1;
-
-			it = v.postAtoms.iterator();
-			while (it.hasNext()) {
-				tmp = it.next();
-				double p = ProbaUtils.computeProba(tmp, data, rc);
-				if (p < probaA) {
-					a = tmp;
-					p = probaA;
+		try {
+			if (constants != null && !constants.isEmpty()) {
+				terms = new TreeSet<Term>(TermValueComparator.instance());
+				for (Atom im : rc.getRewritingOf(aa)) {
+					int pos = im.indexOf(v.value);
+					CloseableIterator<Atom> match = data.match(im);
+					while (match.hasNext()) {
+						terms.add(match.next().getTerm(pos));
+					}
 				}
 			}
 
-			it = v.preAtoms.iterator();
-			while (it.hasNext()) {
-				tmp = it.next();
-				double p = ProbaUtils.computeProba(tmp, data, rc);
-				if (p < probaA) {
-					a = tmp;
-					p = probaA;
+			if (this.getProfiler() != null) {
+				this.getProfiler().stop("BootstrapTimeFirstPart");
+			}
+
+			if (terms == null) {
+				Atom a = null, tmp;
+				double probaA = 1.1;
+
+				it = v.postAtoms.iterator();
+				while (it.hasNext()) {
+					tmp = it.next();
+					double p = ProbaUtils.computeProba(tmp, data, rc);
+					if (p < probaA) {
+						a = tmp;
+						p = probaA;
+					}
 				}
+
+				it = v.preAtoms.iterator();
+				while (it.hasNext()) {
+					tmp = it.next();
+					double p = ProbaUtils.computeProba(tmp, data, rc);
+					if (p < probaA) {
+						a = tmp;
+						p = probaA;
+					}
+				}
+
+				terms = BootstrapperUtils.computeCandidatesOverRewritings(a, v, data, rc);
 			}
 
-			terms = execOverRewritings(a, v, data, rc);
-		}
-		
-		if(this.getProfiler() != null) {
-			this.getProfiler().stop("BootstrapTime");
-		}
-
-		if (terms == null) {
-			return new CloseableIteratorAdapter<Term>(data.termsIterator());
-		} else {
-			return new CloseableIteratorAdapter<Term>(terms.iterator());
-		}
-	}
-
-	private Set<Term> execOverRewritings(Atom a, Var v, AtomSet data, RulesCompilation compilation)
-	    throws AtomSetException {
-		Set<Term> terms = new TreeSet<Term>(TermValueComparator.instance());
-		final Iterator<Atom> rewritingOf = compilation.getRewritingOf(a).iterator();
-		while (rewritingOf.hasNext()) {
-			Atom im = rewritingOf.next();
-			Predicate predicate = im.getPredicate();
-			int pos = im.indexOf(v.value);
-
-			GIterator<Term> it = data.termsByPredicatePosition(predicate, pos);
-			while (it.hasNext()) {
-				terms.add(it.next());
+			if (this.getProfiler() != null) {
+				this.getProfiler().stop("BootstrapTime");
 			}
+
+			if (terms == null) {
+				return data.termsIterator();
+			} else {
+				return new CloseableIteratorAdapter<Term>(terms.iterator());
+			}
+		} catch (AtomSetException e) {
+			throw new BacktrackException(e);
+		} catch (IteratorException e) {
+			throw new BacktrackException(e);
 		}
-		return terms;
 	}
 
 }

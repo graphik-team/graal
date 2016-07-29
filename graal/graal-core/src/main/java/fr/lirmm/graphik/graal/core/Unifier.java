@@ -52,7 +52,6 @@ import java.util.Queue;
 import java.util.Set;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
@@ -60,6 +59,7 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.LinkedSet;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 import fr.lirmm.graphik.util.stream.filter.Filter;
 
 /**
@@ -102,15 +102,19 @@ public class Unifier {
 		Substitution s2 = Unifier.computeInitialAtomSetTermsSubstitution(set);
 
 		Rule r1 = s1.createImageOf(rule);
-		AtomSet atomset = s2.createImageOf(set);
+		InMemoryAtomSet atomset = s2.createImageOf(set);
 
 		Set<Substitution> unifiers = new LinkedSet<Substitution>();
 		Queue<Atom> atomQueue = new LinkedList<Atom>();
-		for (Atom a : atomset) {
+		CloseableIteratorWithoutException<Atom> it = atomset.iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			atomQueue.add(a);
 		}
 
-		for (Atom a : atomset) {
+		it = atomset.iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			Queue<Atom> tmp = new LinkedList<Atom>(atomQueue);
 			unifiers.addAll(extendUnifier(r1, tmp, a, new TreeMapSubstitution(), filter));
 		}
@@ -128,14 +132,18 @@ public class Unifier {
 		Substitution s2 = Unifier.computeInitialAtomSetTermsSubstitution(set);
 
 		Rule r1 = s1.createImageOf(rule);
-		AtomSet atomset = s2.createImageOf(set);
+		InMemoryAtomSet atomset = s2.createImageOf(set);
 
 		Queue<Atom> atomQueue = new LinkedList<Atom>();
-		for (Atom a : atomset) {
+		CloseableIteratorWithoutException<Atom> it = atomset.iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			atomQueue.add(a);
 		}
 
-		for (Atom a : atomset) {
+		it = atomset.iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			Queue<Atom> tmp = new LinkedList<Atom>(atomQueue);
 			if (existExtendedUnifier(r1, tmp, a, new TreeMapSubstitution(), filter)) {
 				return true;
@@ -181,14 +189,16 @@ public class Unifier {
 		Set<Term> frontierVars = rule.getFrontier();
 		Set<Term> existentialVars = rule.getExistentials();
 
-		for (Atom atom : rule.getHead()) {
+		CloseableIteratorWithoutException<Atom> it = rule.getHead().iterator();
+		while (it.hasNext()) {
+			Atom atom = it.next();
 			Substitution u = unifier(unifier, pieceElement, atom, frontierVars,
 					existentialVars);
 			if (u != null) {
-				Iterator<Atom> it = atomset.iterator();
+				Iterator<Atom> it2 = atomset.iterator();
 				Atom newPieceElement = null;
-				while (it.hasNext() && newPieceElement == null) {
-					Atom a = it.next();
+				while (it2.hasNext() && newPieceElement == null) {
+					Atom a = it2.next();
 
 					for (Term t1 : a) {
 						for (Term t2 : existentialVars) {
@@ -225,13 +235,15 @@ public class Unifier {
 		Set<Term> frontierVars = rule.getFrontier();
 		Set<Term> existentialVars = rule.getExistentials();
 
-		for (Atom atom : rule.getHead()) {
+		CloseableIteratorWithoutException<Atom> it = rule.getHead().iterator();
+		while (it.hasNext()) {
+			Atom atom = it.next();
 			Substitution u = unifier(unifier, pieceElement, atom, frontierVars, existentialVars);
 			if (u != null) {
-				Iterator<Atom> it = atomset.iterator();
+				Iterator<Atom> it2 = atomset.iterator();
 				Atom newPieceElement = null;
-				while (it.hasNext() && newPieceElement == null) {
-					Atom a = it.next();
+				while (it2.hasNext() && newPieceElement == null) {
+					Atom a = it2.next();
 
 					for (Term t1 : a) {
 						for (Term t2 : existentialVars) {

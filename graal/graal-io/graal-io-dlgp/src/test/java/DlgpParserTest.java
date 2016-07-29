@@ -41,8 +41,6 @@
  * knowledge of the CeCILL license and that you accept its terms.
  */
  
-import java.util.Iterator;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -52,6 +50,7 @@ import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.DefaultNegativeConstraint;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -94,7 +93,7 @@ public class DlgpParserTest {
 	public void parseNegativeConstraint() {
 		DefaultNegativeConstraint r = DlgpParser.parseNegativeConstraint("[N1]!:-p(X,Y), q(X,Y).");
 		
-		Iterator<Atom> it = r.getBody().iterator();
+		CloseableIteratorWithoutException<Atom> it = r.getBody().iterator();
 		Atom body = it.next();
 		Assert.assertEquals(Term.Type.VARIABLE, body.getTerm(0).getType());
 		Assert.assertEquals(Term.Type.VARIABLE, body.getTerm(1).getType());

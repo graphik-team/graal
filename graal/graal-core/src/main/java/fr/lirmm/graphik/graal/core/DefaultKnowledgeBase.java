@@ -45,8 +45,6 @@
  */
 package fr.lirmm.graphik.graal.core;
 
-import java.util.Iterator;
-
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
@@ -55,6 +53,8 @@ import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -100,15 +100,19 @@ public class DefaultKnowledgeBase implements InMemoryKnowledgeBase {
 	}
 
 	@Override
-	public void load(Iterator<Object> parser) throws AtomSetException {
+	public void load(CloseableIterator<Object> parser) throws AtomSetException {
 		Object o;
-		while (parser.hasNext()) {
-			o = parser.next();
-			if (o instanceof Rule) {
-				this.getOntology().add((Rule) o);
-			} else if (o instanceof Atom) {
-				this.getFacts().add((Atom) o);
+		try {
+			while (parser.hasNext()) {
+				o = parser.next();
+				if (o instanceof Rule) {
+					this.getOntology().add((Rule) o);
+				} else if (o instanceof Atom) {
+					this.getFacts().add((Atom) o);
+				}
 			}
+		} catch (IteratorException e) {
+			throw new AtomSetException(e);
 		}
 	}
 

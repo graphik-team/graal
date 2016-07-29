@@ -68,7 +68,7 @@ import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -131,7 +131,7 @@ public class AnimalsExample {
 		waitEntry();
 
 		QueryRewriter rewriter = new PureRewriter();
-		GIterator<ConjunctiveQuery> it = rewriter.execute(query, kb.getOntology());
+		CloseableIteratorWithoutException<ConjunctiveQuery> it = rewriter.execute(query, kb.getOntology());
 		DefaultUnionOfConjunctiveQueries ucq = new DefaultUnionOfConjunctiveQueries(query.getAnswerVariables(), it);
 
 		writer.write("\n= Facts =\n");
@@ -142,7 +142,9 @@ public class AnimalsExample {
 		// /////////////////////////////////////////////////////////////////////////
 		// Rewritings
 		writer.write("\n= Queries Union =\n");
-		for (ConjunctiveQuery q : ucq) {
+		CloseableIteratorWithoutException<ConjunctiveQuery> itUcq = ucq.iterator();
+		while (itUcq.hasNext()) {
+			ConjunctiveQuery q = itUcq.next();
 			writer.write(q);
 		}
 		waitEntry();

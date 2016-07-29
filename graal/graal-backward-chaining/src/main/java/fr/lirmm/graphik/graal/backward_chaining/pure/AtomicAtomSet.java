@@ -42,10 +42,9 @@
  */
  package fr.lirmm.graphik.graal.backward_chaining.pure;
 
-import java.util.Iterator;
-
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 @SuppressWarnings("unused")
 /**
@@ -75,7 +74,7 @@ class AtomicAtomSet extends LinkedListAtomSet {
 	 * Return the atom that compose this atomic fact
 	 */
 	public Atom getAtom() {
-		Iterator<Atom> it = this.iterator();
+		CloseableIteratorWithoutException<Atom> it = this.iterator();
 		if (it.hasNext())
 			return this.iterator().next();
 		else

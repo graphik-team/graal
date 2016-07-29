@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,21 +40,37 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.util.stream;
+package fr.lirmm.graphik.util.stream.filter;
 
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
- * @author Clément Sipieter (INRIA) <clement@6pi.fr>
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public abstract class AbstractIterator<T> implements GIterator<T> {
+public class FilterIteratorWithoutException<U, T> extends FilterIterator<U, T> implements CloseableIteratorWithoutException<T> {
 
-    @Override
-    public void remove() {
-        throw new UnsupportedOperationException();
-    }
+	public FilterIteratorWithoutException(CloseableIteratorWithoutException<U> it, Filter<U> filter) {
+		super(it, filter);
+	}
+
+	@Override
+	public boolean hasNext() {
+		try {
+			return super.hasNext();
+		} catch (IteratorException e) {
+			throw new Error("It should never happen.");
+		}
+	}
+
+	@Override
+	public T next() {
+		try {
+			return super.next();
+		} catch (IteratorException e) {
+			throw new Error("It should never happen.");
+		}
+	}
 
 }

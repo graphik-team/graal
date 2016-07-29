@@ -46,7 +46,7 @@
 package fr.lirmm.graphik.graal.core.stream.filter;
 
 import fr.lirmm.graphik.graal.api.core.Rule;
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.filter.FilterIterator;
 
 /**
@@ -61,7 +61,7 @@ public class RuleFilterIterator extends FilterIterator<Object, Rule> {
 	 * @param it
 	 * @param filter
 	 */
-	public RuleFilterIterator(GIterator<Object> it) {
+	public RuleFilterIterator(CloseableIterator<Object> it) {
 		super(it, RuleFilter.instance());
 	}
 

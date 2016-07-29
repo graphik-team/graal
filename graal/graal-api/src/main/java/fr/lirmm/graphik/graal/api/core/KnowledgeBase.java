@@ -45,7 +45,7 @@
  */
 package fr.lirmm.graphik.graal.api.core;
 
-import java.util.Iterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -67,5 +67,5 @@ public interface KnowledgeBase {
 	 */
 	AtomSet getFacts();
 
-	void load(Iterator<Object> parser) throws AtomSetException;
+	void load(CloseableIterator<Object> parser) throws AtomSetException;
 }

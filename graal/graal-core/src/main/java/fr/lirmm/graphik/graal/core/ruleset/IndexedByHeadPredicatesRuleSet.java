@@ -53,6 +53,7 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -98,7 +99,9 @@ public class IndexedByHeadPredicatesRuleSet extends LinkedListRuleSet {
 	@Override
 	public boolean add(Rule rule) {
 		super.add(rule);
-		for (Atom a : rule.getHead()) {
+		CloseableIteratorWithoutException<Atom> it = rule.getHead().iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			add(a.getPredicate(), rule);
 		}
 		return true;
@@ -108,7 +111,9 @@ public class IndexedByHeadPredicatesRuleSet extends LinkedListRuleSet {
 	public boolean addAll(Collection<? extends Rule> c) {
 		boolean res = super.addAll(c);
 		for (Rule rule : c) {
-			for (Atom a : rule.getHead()) {
+			CloseableIteratorWithoutException<Atom> it = rule.getHead().iterator();
+			while (it.hasNext()) {
+				Atom a = it.next();
 				add(a.getPredicate(), rule);
 			}
 		}
@@ -118,7 +123,9 @@ public class IndexedByHeadPredicatesRuleSet extends LinkedListRuleSet {
 	@Override
 	public boolean remove(Rule rule) {
 		boolean res = super.remove(rule);
-		for (Atom a : rule.getHead()) {
+		CloseableIteratorWithoutException<Atom> it = rule.getHead().iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			remove(a.getPredicate(), rule);
 		}
 		return res;

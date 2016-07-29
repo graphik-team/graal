@@ -57,6 +57,7 @@ import fr.lirmm.graphik.graal.api.core.TermValueComparator;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
 import fr.lirmm.graphik.util.Partition;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 public class HierarchicalCompilation extends AbstractRulesCompilation {
 
@@ -120,8 +121,8 @@ public class HierarchicalCompilation extends AbstractRulesCompilation {
 	 */
 	@Override
 	public boolean isCompilable(Rule rule) {
-		Iterator<Atom> headIt = rule.getHead().iterator();
-		Iterator<Atom> bodyIt = rule.getBody().iterator();
+		CloseableIteratorWithoutException<Atom> headIt = rule.getHead().iterator();
+		CloseableIteratorWithoutException<Atom> bodyIt = rule.getBody().iterator();
 		if (headIt.hasNext() && bodyIt.hasNext()) {
 			Atom father = headIt.next();
 			Atom son = bodyIt.next();
@@ -291,7 +292,7 @@ public class HierarchicalCompilation extends AbstractRulesCompilation {
 
 		for (Rule rule : ruleset) {
 			// count the number of new pred in r
-			Iterator<Predicate> it = rule.getBody().predicatesIterator();
+			CloseableIteratorWithoutException<Predicate> it = rule.getBody().predicatesIterator();
 			while (it.hasNext()) {
 				this.addPredicate(it.next());
 			}

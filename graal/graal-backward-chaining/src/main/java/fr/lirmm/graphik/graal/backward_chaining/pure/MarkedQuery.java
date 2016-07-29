@@ -52,6 +52,7 @@ import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 class MarkedQuery extends DefaultConjunctiveQuery {
 
@@ -130,8 +131,11 @@ class MarkedQuery extends DefaultConjunctiveQuery {
 	 */
 	public void markAll() {
 		markedAtoms = new ArrayList<Atom>();
-		for (Atom a : this.getAtomSet())
+		CloseableIteratorWithoutException<Atom> it = this.getAtomSet().iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			markedAtoms.add(a);
+		}
 	}
 
 	public void clear() {
@@ -143,7 +147,9 @@ class MarkedQuery extends DefaultConjunctiveQuery {
 	public String toString() {
 
 		String s = "(MQ| ";
-		for (Atom a : this) {
+		CloseableIteratorWithoutException<Atom> it = this.iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			if (isMarked(a))
 				s += a.toString().toUpperCase() + " ";
 		}

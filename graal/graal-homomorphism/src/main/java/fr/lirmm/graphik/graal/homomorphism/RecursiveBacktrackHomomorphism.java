@@ -55,6 +55,7 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
@@ -63,6 +64,8 @@ import fr.lirmm.graphik.graal.core.HashMapSubstitution;
 import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
+import fr.lirmm.graphik.util.stream.CloseableIterableWithoutException;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
  * Recursive implementation of a backtrack solving algorithm.
@@ -144,17 +147,18 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
 	/**
 	 * 
 	 * @param atomSet1
-	 * @param atomSet2
+	 * @param data
 	 * @return
 	 * @throws HomomorphismException
 	 */
-	public boolean exist(AtomSet atomSet1, AtomSet atomSet2) throws HomomorphismException {
+	public boolean exist(ConjunctiveQuery query, AtomSet data) throws HomomorphismException {
 		try {
+			InMemoryAtomSet atomSet1 = query.getAtomSet();
 			List<Term> orderedVars = order(atomSet1.getTerms(Term.Type.VARIABLE));
 			Collection<Atom>[] queryAtomRanked = getAtomRank(atomSet1, orderedVars);
 
-			if (isHomomorphism(queryAtomRanked[0], atomSet2, new HashMapSubstitution())) {
-				return existHomomorphism(atomSet1, queryAtomRanked, atomSet2, new HashMapSubstitution(), orderedVars, 1);
+			if (isHomomorphism(queryAtomRanked[0], data, new HashMapSubstitution())) {
+				return existHomomorphism(atomSet1, queryAtomRanked, data, new HashMapSubstitution(), orderedVars, 1);
 			} else {
 				return false;
 			}
@@ -284,7 +288,7 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
 	 * @param varsOrdered
 	 * @return
 	 */
-	private static Collection<Atom>[] getAtomRank(Iterable<Atom> atomset, List<Term> varsOrdered) {
+	private static Collection<Atom>[] getAtomRank(CloseableIterableWithoutException<Atom> atomset, List<Term> varsOrdered) {
 		int tmp, rank;
 
 		Collection<Atom>[] atomRank = new LinkedList[varsOrdered.size() + 1];
@@ -292,7 +296,9 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
 			atomRank[i] = new LinkedList<Atom>();
 
 		//
-		for (Atom a : atomset) {
+		CloseableIteratorWithoutException<Atom> it = atomset.iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			rank = 0;
 			for (Term t : a.getTerms()) {
 				tmp = varsOrdered.indexOf(t) + 1;

@@ -50,6 +50,8 @@ import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.factory.InMemoryAtomSetFactory;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -81,12 +83,23 @@ public final class AtomSetFactory implements InMemoryAtomSetFactory {
 	}
 
 	@Override
-	public InMemoryAtomSet create(AtomSet src) {
+	public InMemoryAtomSet create(AtomSet src) throws IteratorException {
 		InMemoryAtomSet atomset = this.create();
-		for (Atom a : src) {
+		CloseableIterator<Atom> it = src.iterator();
+		while(it.hasNext()) {
+			Atom a = it.next();
 			atomset.add(a);
 		}
 		return atomset;
+	}
+
+	@Override
+	public InMemoryAtomSet create(InMemoryAtomSet src) {
+		try {
+			return create((AtomSet) src);
+		} catch (IteratorException e) {
+			throw new Error("Should never happen");
+		}
 	}
 
 	@Override

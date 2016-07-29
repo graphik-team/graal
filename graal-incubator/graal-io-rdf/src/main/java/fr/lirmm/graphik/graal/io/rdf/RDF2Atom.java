@@ -45,7 +45,6 @@
  */
 package fr.lirmm.graphik.graal.io.rdf;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +61,8 @@ import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -102,7 +103,7 @@ public class RDF2Atom extends AbstractCloseableIterator<Object> implements Parse
 
 	private Object object = null;
 	//private Map<String, LinkedList<Atom>> atomPendingBlankNodeResolution = new TreeMap<String, LinkedList<Atom>>();
-	private Iterator<Object>                reader;
+	private CloseableIterator<Object> reader;
 	
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -123,7 +124,7 @@ public class RDF2Atom extends AbstractCloseableIterator<Object> implements Parse
 	 * @see fr.lirmm.graphik.util.stream.ObjectReader#hasNext()
 	 */
 	@Override
-	public boolean hasNext() {
+	public boolean hasNext() throws IteratorException {
 		while (this.object == null && this.reader.hasNext()) {
 			Object o = this.reader.next();
 			if(o instanceof Prefix) {
@@ -172,6 +173,7 @@ public class RDF2Atom extends AbstractCloseableIterator<Object> implements Parse
 	/**
 	 * @param term
 	 * @return
+	 * @throws IteratorException
 	 */
 	/*private boolean isBlankNode(Term term) {
 		return term.toString().startsWith("_:");
@@ -183,7 +185,7 @@ public class RDF2Atom extends AbstractCloseableIterator<Object> implements Parse
 	 * @see fr.lirmm.graphik.util.stream.ObjectReader#next()
 	 */
 	@Override
-	public Object next() {
+	public Object next() throws IteratorException {
 		if (this.object == null)
 			this.hasNext();
 		

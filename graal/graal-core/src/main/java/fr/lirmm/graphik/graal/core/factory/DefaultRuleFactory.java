@@ -50,7 +50,7 @@ import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.factory.RuleFactory;
 import fr.lirmm.graphik.graal.core.DefaultRule;
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -81,12 +81,12 @@ public final class DefaultRuleFactory implements RuleFactory {
 	}
 
 	@Override
-	public Rule create(GIterator<Atom> body, GIterator<Atom> head) {
+	public Rule create(CloseableIteratorWithoutException<Atom> body, CloseableIteratorWithoutException<Atom> head) {
 		return new DefaultRule(body, head);
 	}
 
 	@Override
-	public Rule create(String label, GIterator<Atom> body, GIterator<Atom> head) {
+	public Rule create(String label, CloseableIteratorWithoutException<Atom> body, CloseableIteratorWithoutException<Atom> head) {
 		return new DefaultRule(label, body, head);
 	}
 	

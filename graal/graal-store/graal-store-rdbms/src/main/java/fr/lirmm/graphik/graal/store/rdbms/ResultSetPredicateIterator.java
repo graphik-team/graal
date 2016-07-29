@@ -48,6 +48,7 @@ package fr.lirmm.graphik.graal.store.rdbms;
 import java.sql.SQLException;
 
 import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -79,8 +80,12 @@ class ResultSetPredicateIterator extends AbstractResultSetIterator<Predicate> {
 	 * @throws SQLException 
 	 */
 	@Override
-	protected Predicate computeNext() throws SQLException {
-		return new Predicate(results.getString(1), results.getInt(2));
+	protected Predicate computeNext() throws IteratorException {
+		try {
+			return new Predicate(results.getString(1), results.getInt(2));
+		} catch (SQLException e) {
+			throw new IteratorException(e);
+		}
 	}
 
 }

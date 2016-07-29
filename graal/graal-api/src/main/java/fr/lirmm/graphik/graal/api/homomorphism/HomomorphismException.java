@@ -53,12 +53,16 @@ public class HomomorphismException extends Exception {
 
 	private static final long serialVersionUID = -961880040919174316L;
 
-	/**
-     * @param message
-     * @param e
-     */
-    public HomomorphismException(String message, Exception e) {
-        super(message, e);
-    }
+	public HomomorphismException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	public HomomorphismException(String message) {
+		super(message);
+	}
+
+	public HomomorphismException(Throwable e) {
+		super(e);
+	}
 
 }

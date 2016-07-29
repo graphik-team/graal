@@ -66,7 +66,7 @@ public class CloseableIteratorAggregator<E> extends AbstractCloseableIterator<E>
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public boolean hasNext() {
+	public boolean hasNext() throws IteratorException {
 		while (next == null && (this.metaIt.hasNext() || (this.it != null && this.it.hasNext()))) {
 			if (this.it == null) {
 				this.it = this.metaIt.next();
@@ -83,7 +83,7 @@ public class CloseableIteratorAggregator<E> extends AbstractCloseableIterator<E>
 	}
 
 	@Override
-	public E next() {
+	public E next() throws IteratorException {
 		if (next == null)
 			this.hasNext();
 

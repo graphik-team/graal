@@ -58,6 +58,7 @@ import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.URIUtils;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -125,10 +126,14 @@ public class SparqlRuleTest {
 		               + "	?x a :A  ."
 		               + "}";
 		Rule rule = new SparqlRuleParser(query).getRule();
-		for (Atom a : rule.getBody()) {
+		CloseableIteratorWithoutException<Atom> it = rule.getBody().iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			Assert.assertEquals(A, a.getPredicate());
 		}
-		for (Atom a : rule.getHead()) {
+		it = rule.getHead().iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			Assert.assertEquals(B, a.getPredicate());
 		}
 	}
@@ -148,11 +153,15 @@ public class SparqlRuleTest {
 		               + "	?x :p 7 ."
 		               + "}";
 		Rule rule = new SparqlRuleParser(query).getRule();
-		for (Atom a : rule.getBody()) {
+		CloseableIteratorWithoutException<Atom> it = rule.getBody().iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			Assert.assertEquals(P, a.getPredicate());
 			Assert.assertEquals(INTEGER, a.getTerm(1));
 		}
-		for (Atom a : rule.getHead()) {
+		it = rule.getHead().iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			Assert.assertEquals(Q, a.getPredicate());
 			Assert.assertEquals(INTEGER, a.getTerm(1));
 		}
@@ -173,11 +182,15 @@ public class SparqlRuleTest {
 		               + "	?x :p 'toto' ."
 		               + "}";
 		Rule rule = new SparqlRuleParser(query).getRule();
-		for (Atom a : rule.getBody()) {
+		CloseableIteratorWithoutException<Atom> it = rule.getBody().iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			Assert.assertEquals(P, a.getPredicate());
 			Assert.assertEquals(STRING, a.getTerm(1));
 		}
-		for (Atom a : rule.getHead()) {
+		it = rule.getHead().iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			Assert.assertEquals(Q, a.getPredicate());
 			Assert.assertEquals(STRING, a.getTerm(1));
 		}

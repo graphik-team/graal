@@ -50,9 +50,13 @@ import java.io.Closeable;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface CloseableIterator<T> extends GIterator<T>, Closeable {
+public interface CloseableIterator<T> extends Closeable {
 
-	@Override
-    public void close();
+	boolean hasNext() throws IteratorException;
+
+	T next() throws IteratorException;
+
+    @Override
+	public void close();
 
 }

@@ -80,7 +80,8 @@ import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.URI;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.ArrayBlockingStream;
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
  * 
@@ -108,7 +109,9 @@ public final class DlgpParser extends AbstractCloseableIterator<Object> implemen
 		@Override
 		protected void createAtomSet(InMemoryAtomSet atomset) {
 			FreshVarSubstitution s = new FreshVarSubstitution(freeVarGen);
-			for (Atom a : atomset) {
+			CloseableIteratorWithoutException<Atom> it = atomset.iterator();
+			while (it.hasNext()) {
+				Atom a = it.next();
 				this.set.write(s.createImageOf(a));
 			}
 		}
@@ -345,7 +348,7 @@ public final class DlgpParser extends AbstractCloseableIterator<Object> implemen
 		return (Atom) new DlgpParser(s).next();
 	}
 	
-	public static GIterator<Atom> parseAtomSet(String s) {
+	public static CloseableIterator<Atom> parseAtomSet(String s) {
 		return new AtomFilterIterator(new DlgpParser(s));
 	}
 	

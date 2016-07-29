@@ -46,7 +46,6 @@
 package fr.lirmm.graphik.graal.store.test;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -61,6 +60,8 @@ import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -78,13 +79,13 @@ public class StoreTest {
 	}
 
 	@Theory
-	public void getPredicates(AtomSet store) throws AtomSetException {
+	public void getPredicates(AtomSet store) throws AtomSetException, IteratorException {
 		store.add(DlgpParser.parseAtom("r(a,b)."));
 		store.add(DlgpParser.parseAtom("s(a,b)."));
 		store.add(DlgpParser.parseAtom("s(a,c)."));
 
 		int i = 0;
-		for (Iterator<Predicate> it = store.predicatesIterator(); it.hasNext(); it
+		for (CloseableIterator<Predicate> it = store.predicatesIterator(); it.hasNext(); it
 				.next()) {
 			++i;
 		}
@@ -93,12 +94,12 @@ public class StoreTest {
 	}
 
 	@Theory
-	public void addAndContains(AtomSet store) throws AtomSetException {
+	public void addAndContains(AtomSet store) throws AtomSetException, IteratorException {
 		store.add(DlgpParser.parseAtom("p(a,b)."));
 		store.add(DlgpParser.parseAtom("q(b,c)."));
 
 		int i = 0;
-		for (Iterator<Atom> it = store.iterator(); it.hasNext(); it.next()) {
+		for (CloseableIterator<Atom> it = store.iterator(); it.hasNext(); it.next()) {
 			++i;
 		}
 
@@ -123,7 +124,7 @@ public class StoreTest {
 	}
 
 	@Theory
-	public void match(AtomSet store) throws AtomSetException {
+	public void match(AtomSet store) throws AtomSetException, IteratorException {
 		store.add(DlgpParser.parseAtom("p(b,a)."));
 		store.add(DlgpParser.parseAtom("p(a,a)."));
 		store.add(DlgpParser.parseAtom("p(b,b)."));
@@ -133,7 +134,7 @@ public class StoreTest {
 
 		Atom a = DlgpParser.parseAtom("p(a,X).");
 
-		Iterator<?> it = store.match(a);
+		CloseableIterator<?> it = store.match(a);
 		int cpt = 0;
 		while (it.hasNext()) {
 			++cpt;
@@ -165,14 +166,14 @@ public class StoreTest {
 	// }
 
 	@Theory
-	public void termsByPredicatePosition(AtomSet store) throws AtomSetException {
+	public void termsByPredicatePosition(AtomSet store) throws AtomSetException, IteratorException {
 		store.add(DlgpParser.parseAtom("p(b,a)."));
 		store.add(DlgpParser.parseAtom("p(a,a)."));
 		store.add(DlgpParser.parseAtom("p(b,b)."));
 		store.add(DlgpParser.parseAtom("p(d,c)."));
 		store.add(DlgpParser.parseAtom("q(e,e)."));
 
-		Iterator<?> it = store.termsByPredicatePosition(new Predicate("p", 2), 1);
+		CloseableIterator<?> it = store.termsByPredicatePosition(new Predicate("p", 2), 1);
 		int cpt = 0;
 		while (it.hasNext()) {
 			++cpt;

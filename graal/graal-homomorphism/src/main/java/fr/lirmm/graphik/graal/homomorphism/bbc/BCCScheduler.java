@@ -72,6 +72,7 @@ import fr.lirmm.graphik.util.graph.DefaultHyperGraph;
 import fr.lirmm.graphik.util.graph.DirectedEdge;
 import fr.lirmm.graphik.util.graph.Graph;
 import fr.lirmm.graphik.util.graph.HyperGraph;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 class BCCScheduler extends AbstractProfilable implements Scheduler {
 
@@ -155,7 +156,9 @@ class BCCScheduler extends AbstractProfilable implements Scheduler {
 			proba[i] = -1.;
 		}
 		
-		for (Atom a : h) {
+		CloseableIteratorWithoutException<Atom> it = h.iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			double probaA = ProbaUtils.computeProba(a, data, rc);
 
 			for (Term t : a.getTerms(Term.Type.VARIABLE)) {
@@ -294,7 +297,9 @@ class BCCScheduler extends AbstractProfilable implements Scheduler {
 		}
 
 		HyperGraph graph = new DefaultHyperGraph(variables.size() + 1);
-		for (Atom a : h) {
+		CloseableIteratorWithoutException<Atom> it = h.iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			DefaultHyperEdge edge = new DefaultHyperEdge();
 			for (Term t : a.getTerms(Term.Type.VARIABLE)) {
 				edge.addVertice(map.get(t));

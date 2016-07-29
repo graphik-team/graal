@@ -49,6 +49,7 @@ import java.util.Set;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
  * All atoms in the head contain either all or none variables from the body.
@@ -88,7 +89,9 @@ public class DomainRestrictedProperty extends RuleSetProperty.Local {
 
 		Set<Term> bodyVars = rule.getBody().getTerms(Term.Type.VARIABLE);
 
-		for (Atom a : rule.getHead()) {
+		CloseableIteratorWithoutException<Atom> it = rule.getHead().iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			all = none = true;
 			for (Term t : bodyVars) {
 				if (a.getTerms().contains(t)) {

@@ -51,12 +51,13 @@ import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
 import fr.lirmm.graphik.graal.homomorphism.Var;
 import fr.lirmm.graphik.util.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAggregator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -83,13 +84,15 @@ public class DefaultBootstrapper extends AbstractProfilable implements Bootstrap
 
 	@Override
 	public CloseableIterator<Term> exec(final Var v, InMemoryAtomSet query, final AtomSet data,
-	    RulesCompilation compilation) throws AtomSetException {
+	    RulesCompilation compilation) throws BacktrackException {
 		Iterator<Atom> it = v.postAtoms.iterator();
 		if (it.hasNext()) {
 			Atom a = it.next();
 			final Iterator<Atom> rewritingOf = compilation.getRewritingOf(a).iterator();
 
-			AbstractCloseableIterator<CloseableIterator<Term>> metaIt = new AbstractCloseableIterator<CloseableIterator<Term>>() {
+			// TODO refactor the following code using converter Iterator or
+			// create a private class?
+			CloseableIterator<CloseableIterator<Term>> metaIt = new AbstractCloseableIterator<CloseableIterator<Term>>() {
 
 				CloseableIterator<Term> next = null;
 
@@ -100,23 +103,23 @@ public class DefaultBootstrapper extends AbstractProfilable implements Bootstrap
 				}
 
 				@Override
-				public boolean hasNext() {
+				public boolean hasNext() throws IteratorException {
 					try {
 						if (next == null && rewritingOf.hasNext()) {
 							Atom im = rewritingOf.next();
 							Predicate predicate = im.getPredicate();
 							int pos = im.indexOf(v.value);
-							next = new CloseableIteratorAdapter<Term>(data.termsByPredicatePosition(predicate, pos));
+							next = data.termsByPredicatePosition(predicate, pos);
 						}
 					} catch (AtomSetException e) {
-
+						throw new IteratorException("An errors occurs while getting terms by predicate position", e);
 					}
 
 					return next != null;
 				}
 
 				@Override
-				public CloseableIterator<Term> next() {
+				public CloseableIterator<Term> next() throws IteratorException {
 					if (next == null)
 						this.hasNext();
 
@@ -129,7 +132,11 @@ public class DefaultBootstrapper extends AbstractProfilable implements Bootstrap
 
 			return new CloseableIteratorAggregator<Term>(metaIt);
 		} else {
-			return new CloseableIteratorAdapter<Term>(data.termsIterator());
+			try {
+				return data.termsIterator();
+			} catch (AtomSetException e) {
+				throw new BacktrackException(e);
+			}
 		}
 	}
 

@@ -42,32 +42,37 @@
  */
 package fr.lirmm.graphik.util.stream.converter;
 
-import fr.lirmm.graphik.util.stream.AbstractIterator;
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class ConverterIterator<U, T> extends AbstractIterator<T> {
+public class ConverterIterator<U, T> implements CloseableIterator<T> {
 
-	private final GIterator<U> it;
+	private final CloseableIterator<U> it;
 	private final Converter<U, T> converter;
 
-	public ConverterIterator(GIterator<U> it, Converter<U, T> converter) {
+	public ConverterIterator(CloseableIterator<U> it, Converter<U, T> converter) {
 		super();
 		this.converter = converter;
 		this.it = it;
 	}
 
 	@Override
-	public boolean hasNext() {
+	public boolean hasNext() throws IteratorException {
 		return this.it.hasNext();
 	}
 
 	@Override
-	public T next() {
+	public T next() throws IteratorException {
 		return this.converter.convert(this.it.next());
+	}
+
+	@Override
+	public void close() {
+		this.it.close();
 	}
 
 }

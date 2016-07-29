@@ -58,6 +58,7 @@ import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.PredicatePosition;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
  * The marked variable set is built from a rule set by the following marking
@@ -128,7 +129,9 @@ public class MarkedVariableSet {
 	private void firstStep() {
 		for (MarkedRule markedRule : this.markedRuleSet) {
 			// put rule in the map
-			for (Atom atom : markedRule.rule.getHead()) {
+			CloseableIteratorWithoutException<Atom> it = markedRule.rule.getHead().iterator();
+			while (it.hasNext()) {
+				Atom atom = it.next();
 				Predicate p = atom.getPredicate();
 				LinkedList<MarkedRule> set = map.get(p);
 				if (set == null) {
@@ -146,7 +149,9 @@ public class MarkedVariableSet {
 	private void testRule(MarkedRule mrule) {
 		Set<Term> bodyVars = mrule.rule.getBody().getTerms(Term.Type.VARIABLE);
 		for (Term v : bodyVars) {
-			for (Atom a : mrule.rule.getHead()) {
+			CloseableIteratorWithoutException<Atom> it = mrule.rule.getHead().iterator();
+			while (it.hasNext()) {
+				Atom a = it.next();
 				if (!a.getTerms().contains(v)) {
 					mark(v, mrule);
 				}
@@ -157,7 +162,9 @@ public class MarkedVariableSet {
 	private void mark(Term v, MarkedRule mrule) {
 		if (!mrule.markedVars.contains(v)) {
 			mrule.markedVars.add(v);
-			for (Atom a : mrule.rule.getBody()) {
+			CloseableIteratorWithoutException<Atom> it = mrule.rule.getBody().iterator();
+			while (it.hasNext()) {
+				Atom a = it.next();
 				int i = 0;
 				for (Term t : a) {
 					if (v.equals(t)) {
@@ -185,7 +192,9 @@ public class MarkedVariableSet {
 			mrList = this.map.get(mpos.predicate);
 			if (mrList != null) {
 				for (MarkedRule mr : mrList) {
-					for (Atom a : mr.rule.getHead()) {
+					CloseableIteratorWithoutException<Atom> it = mr.rule.getHead().iterator();
+					while (it.hasNext()) {
+						Atom a = it.next();
 						if (a.getPredicate().equals(mpos.predicate)) {
 							v = a.getTerm(mpos.position);
 							if (v.getType().equals(Term.Type.VARIABLE)) {

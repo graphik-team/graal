@@ -51,6 +51,7 @@ import fr.lirmm.graphik.graal.rulesetanalyser.graph.GraphPositionDependencies;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.MarkedVariableSet;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.MarkedVariableSet.MarkedRule;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
  * This class does not belong to any abstract class defined earlier. It is a
@@ -106,7 +107,9 @@ public final class WeaklyStickyProperty extends RuleSetProperty.Default {
 			for (Term mvar : mrule.markedVars) {
 				nbOccurence = 0;
 				thereIsAFiniteRank = false;
-				for (Atom a : mrule.rule.getBody()) {
+				CloseableIteratorWithoutException<Atom> it = mrule.rule.getBody().iterator();
+				while (it.hasNext()) {
+					Atom a = it.next();
 					position = -1;
 					for (Term t : a) {
 						++position;

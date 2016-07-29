@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,52 +40,26 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.trash;
-
-import java.util.Iterator;
-
-import fr.lirmm.graphik.util.stream.AbstractIterator;
+package fr.lirmm.graphik.graal.homomorphism;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class Counter<T> extends AbstractIterator<T> {
-	
-	//private final Object lock = new Object();
-	private Iterator<T> objects;
-	private int count = 0;
-	
-	public Counter() {
+public class BacktrackException extends Exception {
+
+	private static final long serialVersionUID = -3343596852822258586L;
+
+	public BacktrackException(String message, Throwable cause) {
+		super(message, cause);
 	}
 
-	public Counter(Iterator<T> objects) {
-		this.objects = objects;
-	}
-	
-	public void setIterator(Iterator<T> objects) {
-		this.objects = objects;
+	public BacktrackException(String message) {
+		super(message);
 	}
 
-	@Override
-	public boolean hasNext() {
-		return objects != null && this.objects.hasNext();
+	public BacktrackException(Throwable e) {
+		super(e);
 	}
-
-	@Override
-	public T next() {
-		++count;
-		return this.objects.next();
-	}
-	
-	public int count() {
-		return this.count;
-	}
-	
-	
-	
 
 }

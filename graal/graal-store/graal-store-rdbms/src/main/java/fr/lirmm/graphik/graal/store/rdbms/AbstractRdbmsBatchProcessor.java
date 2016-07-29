@@ -45,7 +45,6 @@ package fr.lirmm.graphik.graal.store.rdbms;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Iterator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +52,7 @@ import org.slf4j.LoggerFactory;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.store.BatchProcessor;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -92,9 +92,13 @@ public abstract class AbstractRdbmsBatchProcessor implements BatchProcessor {
 	protected abstract void add(Statement statement, Atom a) throws AtomSetException;
 
 	@Override
-	public void addAll(Iterator<? extends Atom> it) throws AtomSetException {
-		while (it.hasNext())
-			this.add(it.next());
+	public void addAll(CloseableIterator<? extends Atom> it) throws AtomSetException {
+		try {
+			while (it.hasNext())
+				this.add(it.next());
+		} catch (Exception e) {
+			throw new AtomSetException(e);
+		}
 	}
 
 	@Override

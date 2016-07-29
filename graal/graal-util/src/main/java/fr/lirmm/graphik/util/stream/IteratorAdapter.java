@@ -42,28 +42,41 @@
  */
  package fr.lirmm.graphik.util.stream;
 
+import java.util.Iterator;
 
-public class IteratorAdapter<T> extends AbstractIterator<T> {
-	
-	protected java.util.Iterator<T> iterator;
-	
-	public IteratorAdapter(java.util.Iterator<T> iterator) {
+public class IteratorAdapter<T> implements Iterator<T> {
+
+	protected CloseableIterator<T> iterator;
+
+	public IteratorAdapter(CloseableIterator<T> iterator) {
 		this.iterator = iterator;
 	}
-
-	@Override
-	public void remove() {
-		this.iterator.remove();
-	}
-
+	
 	@Override
 	public boolean hasNext() {
-		return this.iterator.hasNext();
+		try {
+			return this.iterator.hasNext();
+		} catch (IteratorException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override
 	public T next() {
-		return this.iterator.next();
+		try {
+			return this.iterator.next();
+		} catch (IteratorException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
+	@Override
+	protected void finalize() throws Throwable {
+		this.iterator.close();
+	}
+
+	@Override
+	public void remove() {
+		throw new UnsupportedOperationException();
+	}
 }

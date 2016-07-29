@@ -42,12 +42,12 @@
  */
  package fr.lirmm.graphik.graal.rulesetanalyser.property;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
  * The body contains only one atom.
@@ -81,7 +81,7 @@ public final class LinearProperty extends RuleSetProperty.Local {
 	
 	@Override
 	public int check(Rule rule) {
-		Iterator<Atom> it = rule.getBody().iterator();
+		CloseableIteratorWithoutException<Atom> it = rule.getBody().iterator();
 		if(it.hasNext())
 			it.next();
 		if (it.hasNext()) return -1;

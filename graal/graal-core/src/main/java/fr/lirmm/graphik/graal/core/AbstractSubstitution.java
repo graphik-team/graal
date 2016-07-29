@@ -61,6 +61,9 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -113,7 +116,14 @@ public abstract class AbstractSubstitution implements Substitution {
 	}
 
 	@Override
-	public InMemoryAtomSet createImageOf(AtomSet src) {
+	public InMemoryAtomSet createImageOf(AtomSet src) throws AtomSetException {
+		InMemoryAtomSet dest = AtomSetFactory.instance().create();
+		this.apply(src, dest);
+		return dest;
+	}
+
+	@Override
+	public InMemoryAtomSet createImageOf(InMemoryAtomSet src) {
 		InMemoryAtomSet dest = AtomSetFactory.instance().create();
 		this.apply(src, dest);
 		return dest;
@@ -121,14 +131,22 @@ public abstract class AbstractSubstitution implements Substitution {
 
 	@Override
 	public void apply(AtomSet src, AtomSet dest) throws AtomSetException {
-		for (Atom a : src) {
-			dest.add(this.createImageOf(a));
+		CloseableIterator<Atom> it = src.iterator();
+		try {
+			while (it.hasNext()) {
+				Atom a = it.next();
+				dest.add(this.createImageOf(a));
+			}
+		} catch (IteratorException e) {
+			throw new AtomSetException("Error during the iteration over src");
 		}
 	}
 
 	@Override
-	public void apply(AtomSet src, InMemoryAtomSet dest) {
-		for (Atom a : src) {
+	public void apply(InMemoryAtomSet src, InMemoryAtomSet dest) {
+		CloseableIteratorWithoutException<Atom> it = src.iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			dest.add(this.createImageOf(a));
 		}
 	}

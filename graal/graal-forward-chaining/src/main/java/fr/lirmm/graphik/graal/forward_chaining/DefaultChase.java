@@ -45,7 +45,6 @@
  */
 package fr.lirmm.graphik.graal.forward_chaining;
 
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -63,6 +62,7 @@ import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.forward_chaining.AbstractChase;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplicationHandler;
+import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplicationHandlerException;
 import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByBodyPredicatesRuleSet;
@@ -70,7 +70,9 @@ import fr.lirmm.graphik.graal.forward_chaining.halting_condition.ChaseStopCondit
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.RestrictedChaseStopCondition;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.TestRuleApplier;
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * This chase (forward-chaining) algorithm iterates over all rules at each step.
@@ -185,11 +187,18 @@ public class DefaultChase extends AbstractChase {
 		}
 
 		@Override
-		public GIterator<Atom> postRuleApplication(Rule rule, Substitution substitution, AtomSet data,
-		    GIterator<Atom> atomsToAdd) {
-			InMemoryAtomSet atomset = new LinkedListAtomSet(atomsToAdd);
+		public CloseableIterator<Atom> postRuleApplication(Rule rule, Substitution substitution, AtomSet data,
+		    CloseableIterator<Atom> atomsToAdd) throws RuleApplicationHandlerException {
+			InMemoryAtomSet atomset = null;
+			try {
+				atomset = new LinkedListAtomSet(atomsToAdd);
+			} catch (IteratorException e) {
+				throw new RuleApplicationHandlerException("An errors occurs during iteration over data", e);
+			}
 
-			for (Atom a : atomset) {
+			CloseableIteratorWithoutException<Atom> it = atomset.iterator();
+			while (it.hasNext()) {
+				Atom a = it.next();
 				Predicate p = a.getPredicate();
 				for (Rule r : ruleSet.getRulesByBodyPredicate(p)) {
 					if (linearRuleCheck(r)) {
@@ -201,9 +210,7 @@ public class DefaultChase extends AbstractChase {
 						try {
 							set.add(a);
 						} catch (AtomSetException e) {
-							// TODO treat this exception
-							e.printStackTrace();
-							throw new Error("Untreated exception");
+							throw new RuleApplicationHandlerException(e);
 						}
 					} else {
 						nextRulesToCheck.put(r, atomSet);
@@ -217,7 +224,7 @@ public class DefaultChase extends AbstractChase {
 	}
 
 	private static boolean linearRuleCheck(Rule r) {
-		Iterator<Atom> it = r.getBody().iterator();
+		CloseableIteratorWithoutException<Atom> it = r.getBody().iterator();
 		if (it.hasNext()) {
 			it.next();
 		} else {

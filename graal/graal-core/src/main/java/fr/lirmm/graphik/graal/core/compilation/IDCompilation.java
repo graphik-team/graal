@@ -60,7 +60,7 @@ import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
-import fr.lirmm.graphik.graal.core.RuleUtils;
+import fr.lirmm.graphik.graal.core.Rules;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
@@ -161,7 +161,7 @@ public class IDCompilation extends AbstractRulesCompilation {
 		}
 
 		this.extractCompilable(ruleSet); // compilable rules are removed
-		Iterator<Rule> monoPiecesaturation = RuleUtils
+		Iterator<Rule> monoPiecesaturation = Rules
 				.computeSinglePiece(saturation);
 		this.createIDCondition(monoPiecesaturation);
 
@@ -202,7 +202,7 @@ public class IDCompilation extends AbstractRulesCompilation {
 	 */
 	@Override
 	public boolean isCompilable(Rule r) {
-		return RuleUtils.hasAtomicBody(r) && RuleUtils.hasAtomicHead(r)
+		return Rules.hasAtomicBody(r) && Rules.hasAtomicHead(r)
 				&& r.getExistentials().isEmpty()
 				&& r.getTerms(Term.Type.CONSTANT).isEmpty();
 	}

@@ -54,12 +54,14 @@ import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackUtils;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismIteratorChecker;
 import fr.lirmm.graphik.graal.homomorphism.Var;
 import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * NFC2 is a ForwardChecking implementation for HyperGraph with immediate local
@@ -117,7 +119,7 @@ public class NFC2WithLimit extends NFC2 implements ForwardChecking {
 
 	@Override
 	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Map<Variable, Var> map, RulesCompilation rc)
-	    throws AtomSetException {
+	    throws BacktrackException {
 		HomomorphismIteratorChecker tmp;
 		if (this.data[var.level].last.init) {
 			this.dataWithLimit[var.level].atomsToCheck.addAll(this.data[var.level].toCheckAfterAssignment);
@@ -127,8 +129,11 @@ public class NFC2WithLimit extends NFC2 implements ForwardChecking {
 			        this.dataWithLimit[var.level].atomsToCheck, g, map, rc
 			    );
 		} else {
-			tmp = new HomomorphismIteratorChecker(var, new CloseableIteratorAdapter<Term>(g.termsIterator()),
-			                                       var.preAtoms, g, map, rc);
+			try {
+				tmp = new HomomorphismIteratorChecker(var, g.termsIterator(), var.preAtoms, g, map, rc);
+			} catch (AtomSetException e) {
+				throw new BacktrackException(e);
+			}
 		}
 		tmp.setProfiler(this.getProfiler());
 		return tmp;
@@ -140,7 +145,7 @@ public class NFC2WithLimit extends NFC2 implements ForwardChecking {
 
 	@Override
     protected boolean select(Atom atom, Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc)
-	    throws AtomSetException {
+	    throws AtomSetException, IteratorException {
 		boolean contains = false;
 		int nbAns = 0;
 		Iterator<Atom> rewIt = rc.getRewritingOf(atom).iterator();
@@ -159,7 +164,7 @@ public class NFC2WithLimit extends NFC2 implements ForwardChecking {
 			}
 			
 			int cpt = 0;
-			Iterator<? extends Atom> it = g.match(im);
+			CloseableIterator<? extends Atom> it = g.match(im);
 			while (it.hasNext() && nbAns < LIMIT) {
 				++nbAns;
 				++cpt;

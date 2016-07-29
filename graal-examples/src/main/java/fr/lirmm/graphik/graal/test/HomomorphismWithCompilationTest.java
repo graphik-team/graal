@@ -56,6 +56,7 @@ import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -63,7 +64,7 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
  */
 public class HomomorphismWithCompilationTest {
 
-	public static void main(String[] args) throws HomomorphismException {
+	public static void main(String[] args) throws HomomorphismException, IteratorException {
 		InMemoryAtomSet store = new LinkedListAtomSet();
 
 		store.add(DlgpParser.parseAtom("p(a,b)."));

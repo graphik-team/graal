@@ -112,6 +112,6 @@ public interface RulesCompilation extends Profilable {
 	 * @param atomSet
 	 * @return
 	 */
-	InMemoryAtomSet getIrredondant(AtomSet atomSet);
+	InMemoryAtomSet getIrredondant(InMemoryAtomSet atomSet);
 
 }

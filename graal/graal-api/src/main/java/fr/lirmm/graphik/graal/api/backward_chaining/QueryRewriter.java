@@ -48,7 +48,7 @@ package fr.lirmm.graphik.graal.api.backward_chaining;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.util.Profilable;
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -56,6 +56,6 @@ import fr.lirmm.graphik.util.stream.GIterator;
  */
 public interface QueryRewriter extends Profilable {
 
-	GIterator<ConjunctiveQuery> execute(ConjunctiveQuery query, Iterable<Rule> rules);
+	CloseableIteratorWithoutException<ConjunctiveQuery> execute(ConjunctiveQuery query, Iterable<Rule> rules);
 
 }

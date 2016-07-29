@@ -47,7 +47,6 @@ package fr.lirmm.graphik.graal.examples;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.Scanner;
 
 import fr.lirmm.graphik.graal.api.backward_chaining.QueryRewriter;
@@ -72,7 +71,7 @@ import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.HSQLDBDriver;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 public class Example0 {
 
@@ -138,7 +137,7 @@ public class Example0 {
 		// 7 - Rewrite the original query (backward chaining) in an union of
 		// queries
 		QueryRewriter rewriter = new PureRewriter();
-		GIterator<ConjunctiveQuery> it = rewriter.execute(query, ontology);
+		CloseableIteratorWithoutException<ConjunctiveQuery> it = rewriter.execute(query, ontology);
 		DefaultUnionOfConjunctiveQueries ucq = new DefaultUnionOfConjunctiveQueries(query.getAnswerVariables(), it);
 
 		// Print the set of facts in Dlgp
@@ -186,7 +185,7 @@ public class Example0 {
 		writer.close();
 	}
 
-	private static void printAnswers(Iterator<Substitution> results) throws IOException {
+	private static void printAnswers(CloseableIterator<Substitution> results) throws IOException {
 		if (results.hasNext()) {
 			while (results.hasNext()) {
 				writer.write(results.next().toString());

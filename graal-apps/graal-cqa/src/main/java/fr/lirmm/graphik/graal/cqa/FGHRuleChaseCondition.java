@@ -51,6 +51,7 @@ import java.util.Set;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
@@ -63,8 +64,9 @@ import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.ConjunctiveQueryWithFixedVariables;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.GIterator;
-import fr.lirmm.graphik.util.stream.IteratorAdapter;
+import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -85,7 +87,7 @@ public class FGHRuleChaseCondition implements ChaseHaltingCondition {
 	}
 
 	@Override
-	public GIterator<Atom> apply(Rule rule, Substitution substitution, AtomSet data)
+	public CloseableIterator<Atom> apply(Rule rule, Substitution substitution, AtomSet data)
 	                                                                                throws HomomorphismFactoryException,
 	                                                                                HomomorphismException {
 		Set<Term> fixedVars = substitution.getValues();
@@ -96,27 +98,37 @@ public class FGHRuleChaseCondition implements ChaseHaltingCondition {
 		}
 
 		LinkedList<Integer> causes = new LinkedList<Integer>();
-		for (Atom a : substitution.createImageOf(rule.getBody())) {
+		CloseableIteratorWithoutException<Atom> it = substitution.createImageOf(rule.getBody()).iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			causes.add(new Integer(this.index.get(a)));
 		}
 
-		AtomSet newFacts = substitution.createImageOf(rule.getHead());
+		InMemoryAtomSet newFacts = substitution.createImageOf(rule.getHead());
 		Query query = new ConjunctiveQueryWithFixedVariables(newFacts, fixedVars);
 		CloseableIterator<Substitution> executeQuery = StaticHomomorphism.instance().execute(query, data);
 
-		if (executeQuery.hasNext()) {
-			while (executeQuery.hasNext()) {
-				Substitution next = executeQuery.next();
-				for (Atom a : newFacts) {
-					this.fgh.add(causes, this.index.get(next.createImageOf(a)));
+		try {
+			if (executeQuery.hasNext()) {
+				while (executeQuery.hasNext()) {
+					Substitution next = executeQuery.next();
+					CloseableIteratorWithoutException<Atom> itNew = newFacts.iterator();
+					while (itNew.hasNext()) {
+						Atom a = itNew.next();
+						this.fgh.add(causes, this.index.get(next.createImageOf(a)));
+					}
 				}
+				return new CloseableIteratorAdapter<Atom>(Collections.<Atom> emptyList().iterator());
+			} else {
+				CloseableIteratorWithoutException<Atom> itNew = newFacts.iterator();
+				while (itNew.hasNext()) {
+					Atom a = itNew.next();
+					this.fgh.add(causes, this.index.get(a));
+				}
+				return newFacts.iterator();
 			}
-			return new IteratorAdapter<Atom>(Collections.<Atom> emptyList().iterator());
-		} else {
-			for (Atom a : newFacts) {
-				this.fgh.add(causes, this.index.get(a));
-			}
-			return newFacts.iterator();
+		} catch (IteratorException e) {
+			throw new HomomorphismException(e);
 		}
 
 	}

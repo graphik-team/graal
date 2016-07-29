@@ -42,13 +42,13 @@
  */
 package fr.lirmm.graphik.graal.api.factory;
 
-import java.util.Iterator;
 import java.util.List;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -62,7 +62,7 @@ public interface ConjunctiveQueryFactory {
 
 	ConjunctiveQuery create(InMemoryAtomSet atomSet, List<Term> ans);
 
-	ConjunctiveQuery create(Iterator<Atom> atomSet, Iterator<Term> answerVariables);
+	ConjunctiveQuery create(CloseableIteratorWithoutException<Atom> atomSet, CloseableIteratorWithoutException<Term> answerVariables);
 
 	/**
 	 * 

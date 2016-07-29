@@ -45,7 +45,7 @@ package fr.lirmm.graphik.graal.api.backward_chaining;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -53,7 +53,7 @@ import fr.lirmm.graphik.util.stream.GIterator;
  */
 public interface QueryRewriterWithCompilation extends QueryRewriter {
 
-	GIterator<ConjunctiveQuery> execute(ConjunctiveQuery query, Iterable<Rule> rules,
+	CloseableIterator<ConjunctiveQuery> execute(ConjunctiveQuery query, Iterable<Rule> rules,
 	    RulesCompilation compilation);
 
 }

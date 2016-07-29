@@ -85,6 +85,8 @@ import fr.lirmm.graphik.util.URIUtils;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -176,13 +178,17 @@ public class JenaStore extends AbstractTripleStore {
 	}
 
 	@Override
-	public boolean addAll(Iterator<? extends Atom> atoms) throws AtomSetException {
+	public boolean addAll(CloseableIterator<? extends Atom> atoms) throws AtomSetException {
 		dataset.begin(ReadWrite.WRITE);
 		try {
 			GraphStore graphStore = GraphStoreFactory.create(dataset);
 			UpdateRequest request = UpdateFactory.create();
-			while (atoms.hasNext()) {
-				add(request, atoms.next());
+			try {
+				while (atoms.hasNext()) {
+					add(request, atoms.next());
+				}
+			} catch (IteratorException e) {
+				throw new AtomSetException("An errors occurs while iterating atoms to add", e);
 			}
 			UpdateProcessor proc = UpdateExecutionFactory.create(request, graphStore);
 			proc.execute();
@@ -222,13 +228,18 @@ public class JenaStore extends AbstractTripleStore {
 	}
 
 	@Override
-	public boolean removeAll(Iterator<? extends Atom> atoms) throws AtomSetException {
+	public boolean removeAll(CloseableIterator<? extends Atom> atoms) throws AtomSetException {
 		dataset.begin(ReadWrite.WRITE);
 		try {
 			GraphStore graphStore = GraphStoreFactory.create(dataset);
 			UpdateRequest request = UpdateFactory.create();
-			while (atoms.hasNext()) {
-				remove(request, atoms.next());
+			try {
+				while (atoms.hasNext()) {
+					remove(request, atoms.next());
+				}
+			} catch (IteratorException e) {
+				throw new AtomSetException("An errors occurs while iterating atoms to remove", e);
+
 			}
 			UpdateProcessor proc = UpdateExecutionFactory.create(request, graphStore);
 			proc.execute();
@@ -477,7 +488,6 @@ public class JenaStore extends AbstractTripleStore {
 			this.dataset.end();
 		}
 
-		@Override
 		public void remove() {
 			this.rs.remove();
 		}
@@ -552,7 +562,6 @@ public class JenaStore extends AbstractTripleStore {
 			this.dataset.end();
 		}
 
-		@Override
 		public void remove() {
 			this.rs.remove();
 		}

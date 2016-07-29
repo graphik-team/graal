@@ -53,7 +53,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
@@ -67,6 +66,7 @@ import fr.lirmm.graphik.graal.core.ruleset.IndexedByHeadPredicatesRuleSet;
 import fr.lirmm.graphik.util.Partition;
 import fr.lirmm.graphik.util.Profilable;
 import fr.lirmm.graphik.util.Profiler;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
  * @author Mélanie KÖNIG Query Rewriting Engine that rewrites query using only
@@ -135,10 +135,10 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 			LinkedList<Term> sep = AtomSetUtils.sep(p, q.getAtomSet());
 			// compute sticky variable
 			LinkedList<Term> sticky = TermPartitionUtils.getStickyVariable(partition, sep, copy);
-			AtomSet pBar = AtomSetUtils.minus(q.getAtomSet(), p);
+			InMemoryAtomSet pBar = AtomSetUtils.minus(q.getAtomSet(), p);
 			while (partition != null && !sticky.isEmpty()) {
 
-				Iterator<Atom> ia = pBar.iterator();
+				CloseableIteratorWithoutException<Atom> ia = pBar.iterator();
 				while (partition != null && ia.hasNext()) {
 
 					Atom a = ia.next();
@@ -199,8 +199,12 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 		Rule ruleCopy = Utils.getSafeCopy(r);
 		HashMap<Atom, LinkedList<Partition<Term>>> possibleUnification = new HashMap<Atom, LinkedList<Partition<Term>>>();
 		// compute possible unification between atoms of Q and head(R)
-		for (Atom a : q) {
-			for (Atom b : ruleCopy.getHead()) {
+		CloseableIteratorWithoutException<Atom> it = q.iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
+			CloseableIteratorWithoutException<Atom> it2 = ruleCopy.getHead().iterator();
+			while (it2.hasNext()) {
+				Atom b = it2.next();
 				// TODO use isMappable instead of isUnifiable because
 				// isUnifiable just made a call to isMappable
 				if (compilation.isMappable(a.getPredicate(), b.getPredicate())) {
@@ -234,7 +238,7 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 		return u;
 	}
 
-	protected Collection<Rule> getUnifiableRules(Iterator<Predicate> preds,
+	protected Collection<Rule> getUnifiableRules(CloseableIteratorWithoutException<Predicate> preds,
 			IndexedByHeadPredicatesRuleSet ruleSet, RulesCompilation compilation) {
 		TreeSet<Rule> res = new TreeSet<Rule>(RuleOrder.instance());
 		TreeSet<Predicate> unifiablePreds = new TreeSet<Predicate>();
@@ -264,12 +268,18 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 	 */
 	protected LinkedList<Atom> getUnifiableAtoms(ConjunctiveQuery query, Rule r, RulesCompilation compilation) {
 		LinkedList<Atom> answer = new LinkedList<Atom>();
-		for (Atom a : query)
-			for (Atom b : r.getHead())
+		CloseableIteratorWithoutException<Atom> it = query.iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
+			CloseableIteratorWithoutException<Atom> it2 = r.getHead().iterator();
+			while (it2.hasNext()) {
+				Atom b = it2.next();
 				// TODO use isMappable instead of isUnifiable because
 				// isUnifiable just made a call to isMappable
 				if (compilation.isMappable(a.getPredicate(), b.getPredicate()))
 					answer.add(a);
+			}
+		}
 		return answer;
 	}
 
@@ -375,13 +385,16 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 			// variables
 			InMemoryAtomSet pBar = AtomSetUtils.minus(q.getAtomSet(), p);
 			InMemoryAtomSet pExt = new LinkedListAtomSet();
+			InMemoryAtomSet toRemove = new LinkedListAtomSet();
 			for (Term t : sticky) {
-				Iterator<Atom> ib = pBar.iterator();
+				pBar.removeAll(toRemove);
+				toRemove.clear();
+				CloseableIteratorWithoutException<Atom> ib = pBar.iterator();
 				while (ib.hasNext()) {
 					Atom b = ib.next();
 					if (b.getTerms().contains(t)) {
 						pExt.add(b);
-						ib.remove();
+						toRemove.add(b);
 					}
 				}
 			}
@@ -402,7 +415,9 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 	private LinkedList<Partition<Term>> preUnifier(InMemoryAtomSet p, Rule r,
 	    HashMap<Atom, LinkedList<Partition<Term>>> possibleUnification) {
 		LinkedList<Partition<Term>> res = new LinkedList<Partition<Term>>();
-		for (Atom a : p) {
+		CloseableIteratorWithoutException<Atom> it = p.iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			if (possibleUnification.get(a) != null)
 				for (Partition<Term> ua : possibleUnification.get(a)) {
 					InMemoryAtomSet fa = new LinkedListAtomSet();

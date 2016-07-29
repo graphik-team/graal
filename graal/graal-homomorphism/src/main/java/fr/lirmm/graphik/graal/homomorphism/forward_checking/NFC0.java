@@ -51,7 +51,9 @@ import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
 import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * NFC0 is a ForwardChecking implementation for HyperGraph with delayed local
@@ -74,7 +76,8 @@ public class NFC0 extends AbstractNFC implements ForwardChecking {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc) throws AtomSetException {
+	public boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc)
+	    throws BacktrackException {
 
 		// clear all computed candidats for post variables
 		for (Var z : v.postVars) {
@@ -97,8 +100,14 @@ public class NFC0 extends AbstractNFC implements ForwardChecking {
 			}
 
 			if (checkThisAtom) {
-				if (!select(atom, v, g, map, rc)) {
-					return false;
+				try {
+					if (!select(atom, v, g, map, rc)) {
+						return false;
+					}
+				} catch (IteratorException e) {
+					throw new BacktrackException("An error occurs while selecting candidates for next steps ");
+				} catch (AtomSetException e) {
+					throw new BacktrackException("An error occurs while selecting candidates for next steps ");
 				}
 			}
 		}

@@ -15,13 +15,14 @@ import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 import fr.lirmm.graphik.graal.io.iris_dtg.IrisDtgWriter;
 import fr.lirmm.graphik.graal.io.owl.OWL2Parser;
 import fr.lirmm.graphik.graal.io.ruleml.RuleMLWriter;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 
 public class GraalConverter {
 	
 	public static final String   PROGRAM_NAME   = "graal-converter";
 
-	public static void main(String args[]) {
+	public static void main(String args[]) throws IteratorException {
 		GraalConverter options = new GraalConverter();
 
 		JCommander commander = new JCommander(options,args);

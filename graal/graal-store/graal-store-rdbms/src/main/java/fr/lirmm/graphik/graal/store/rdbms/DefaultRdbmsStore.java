@@ -82,6 +82,8 @@ import fr.lirmm.graphik.graal.core.stream.SubstitutionIterator2AtomIterator;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 import fr.lirmm.graphik.util.string.StringUtils;
 
 /**
@@ -93,7 +95,6 @@ import fr.lirmm.graphik.util.string.StringUtils;
 public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	private static final Logger        LOGGER                     = LoggerFactory.getLogger(DefaultRdbmsStore.class);
 
-	private static final int           VARCHAR_SIZE               = 128;
 
 	private static final String        MAX_VARIABLE_ID_COUNTER    = "max_variable_id";
 	private static final String        MAX_PREDICATE_ID_COUNTER   = "max_predicate_id";
@@ -105,8 +106,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	static final String                EMPTY_TABLE_NAME           = "empty";
 	static final String                TEST_TABLE_NAME            = "test";
 
-	// table fields name
-	static final String                PREFIX_TERM_FIELD          = "term";
+
 
 	// queries
 	private static final String        GET_ALL_PREDICATES_QUERY   = "SELECT * FROM "
@@ -156,7 +156,6 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 
 	private PreparedStatement          getTermsByTypeStatement;
 
-	private TreeMap<Predicate, String> predicateMap               = new TreeMap<Predicate, String>();
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
@@ -320,18 +319,6 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	@Override
 	public BatchProcessor createBatchProcessor() throws AtomSetException {
 		return new DefaultRdbmsBatchProcessor(this);
-	}
-
-	@Override
-	public CloseableIterator<Atom> iterator() {
-		try {
-			return new DefaultRdbmsAtomIterator(this);
-		} catch (AtomSetException e) {
-			if (LOGGER.isErrorEnabled()) {
-				LOGGER.error(e.getMessage(), e);
-			}
-			return null;
-		}
 	}
 
 	@Override
@@ -507,30 +494,38 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		TreeMap<Term, String> columns = new TreeMap<Term, String>();
 
 		int count = -1;
-		for (Atom atom : atomSet) {
-			String tableName = "atom" + ++count;
-			tableNames.put(atom, tableName);
-		}
-
-		// Create WHERE clause
-		for (Atom atom : atomSet) {
-			String currentAtom = tableNames.get(atom) + ".";
-
-			int position = 0;
-			for (Term term : atom.getTerms()) {
-				String thisTerm = currentAtom + PREFIX_TERM_FIELD + position;
-				if (term.isConstant()) {
-					constants.add(thisTerm + " = '" + term + "'");
-				} else {
-					if (lastOccurrence.containsKey(term.toString())) {
-						equivalences.add(lastOccurrence.get(term.toString()) + " = " + thisTerm);
-					}
-					lastOccurrence.put(term.toString(), thisTerm);
-					if (cquery.getAnswerVariables().contains(term))
-						columns.put(term, thisTerm + " as " + term);
-				}
-				++position;
+		CloseableIterator<Atom> it = atomSet.iterator();
+		try {
+			while (it.hasNext()) {
+				Atom atom = it.next();
+				String tableName = "atom" + ++count;
+				tableNames.put(atom, tableName);
 			}
+
+			// Create WHERE clause
+			it = atomSet.iterator();
+			while (it.hasNext()) {
+				Atom atom = it.next();
+				String currentAtom = tableNames.get(atom) + ".";
+
+				int position = 0;
+				for (Term term : atom.getTerms()) {
+					String thisTerm = currentAtom + PREFIX_TERM_FIELD + position;
+					if (term.isConstant()) {
+						constants.add(thisTerm + " = '" + term + "'");
+					} else {
+						if (lastOccurrence.containsKey(term.toString())) {
+							equivalences.add(lastOccurrence.get(term.toString()) + " = " + thisTerm);
+						}
+						lastOccurrence.put(term.toString(), thisTerm);
+						if (cquery.getAnswerVariables().contains(term))
+							columns.put(term, thisTerm + " as " + term);
+					}
+					++position;
+				}
+			}
+		} catch (IteratorException e) {
+			throw new AtomSetException(e);
 		}
 
 		for (String equivalence : equivalences) {
@@ -598,11 +593,17 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	public Iterator<String> transformToSQL(Rule rangeRestrictedRule) throws AtomSetException {
 		Collection<String> queries = new LinkedList<String>();
 		InMemoryAtomSet body = rangeRestrictedRule.getBody();
-		for (Atom headAtom : rangeRestrictedRule.getHead()) {
-			String tableName = this.getPredicateTable(headAtom.getPredicate());
-			ConjunctiveQuery query = ConjunctiveQueryFactory.instance().create(body, headAtom.getTerms());
-			String selectQuery = this.transformToSQL(query);
-			queries.add(this.getDriver().getInsertOrIgnoreStatement(tableName, selectQuery));
+		CloseableIterator<Atom> it = rangeRestrictedRule.getHead().iterator();
+		try {
+			while (it.hasNext()) {
+				Atom headAtom = it.next();
+				String tableName = this.getPredicateTable(headAtom.getPredicate());
+				ConjunctiveQuery query = ConjunctiveQueryFactory.instance().create(body, headAtom.getTerms());
+				String selectQuery = this.transformToSQL(query);
+				queries.add(this.getDriver().getInsertOrIgnoreStatement(tableName, selectQuery));
+			}
+		} catch (IteratorException e) {
+			throw new AtomSetException(e);
 		}
 		return queries.iterator();
 	}
@@ -693,81 +694,24 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		}
 	}
 
-	/**
-	 * Get the table name of this predicate. If there is no table for this, a
-	 * new table is created.
-	 * 
-	 * @param predicate
-	 * @return
-	 * @throws SQLException
-	 * @throws AtomSetException
-	 */
-	private String getPredicateTable(Predicate predicate) throws AtomSetException {
-		// look in the local map
-		String tableName = this.predicateMap.get(predicate);
-
-		if (tableName == null) {
-			// look in the database
-			tableName = this.predicateTableExist(predicate);
-			if (tableName == null) {
-				try {
-					tableName = this.createPredicateTable(predicate);
-				} catch (SQLException e) {
-					throw new AtomSetException("Error during the creation of a table for a predicate", e);
-				}
-			}
-
-			// add to the local map
-			this.predicateMap.put(predicate, tableName);
+	@Override
+	protected String getFreshPredicateTableName(Predicate predicate) throws AtomSetException {
+		try {
+			return "pred" + this.getFreePredicateId();
+		} catch (SQLException e) {
+			throw new AtomSetException("Error during generation of a new predicate name", e);
 		}
-
-		return tableName;
 	}
 
-	/**
-	 * 
-	 * @param predicate
-	 * @return
-	 * @throws AtomSetException
-	 * @throws SQLException
-	 */
-	private String createPredicateTable(Predicate predicate) throws SQLException, AtomSetException {
-		String tableName = "pred" + this.getFreePredicateId();
-		if (predicate.getArity() >= 1) {
-			Statement stat = this.createStatement();
-			stat.executeUpdate(generateCreateTablePredicateQuery(tableName, predicate));
-			if (stat != null) {
-				try {
-					stat.close();
-				} catch (SQLException e) {
-					throw new AtomSetException(e);
-				}
-			}
-			insertPredicate(tableName, predicate);
-		} else {
-			throw new AtomSetException("Unsupported arity 0"); // TODO Why ?!
+	@Override
+	protected String createPredicateTable(Predicate predicate) throws AtomSetException {
+		String tableName = super.createPredicateTable(predicate);
+		try {
+			this.insertPredicate(tableName, predicate);
+		} catch (SQLException e) {
+			throw new AtomSetException("Error during insertion of new predicate table", e);
 		}
 		return tableName;
-	}
-
-	private static String generateCreateTablePredicateQuery(String tableName, Predicate predicate) {
-		StringBuilder primaryKey = new StringBuilder("PRIMARY KEY (");
-		StringBuilder query = new StringBuilder("CREATE TABLE ");
-		query.append(tableName);
-
-		query.append('(').append(PREFIX_TERM_FIELD).append('0');
-		query.append(" varchar(").append(VARCHAR_SIZE).append(")");
-		primaryKey.append("term0");
-		for (int i = 1; i < predicate.getArity(); i++) {
-			query.append(", ").append(PREFIX_TERM_FIELD).append(i).append(" varchar(" + VARCHAR_SIZE + ")");
-			primaryKey.append(", term" + i);
-		}
-		primaryKey.append(")");
-
-		query.append(',');
-		query.append(primaryKey);
-		query.append(");");
-		return query.toString();
 	}
 
 	/**
@@ -783,15 +727,8 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		this.insertPredicateStatement.execute();
 	}
 
-	/**
-	 * 
-	 * @param dbConnection
-	 * @param predicate
-	 * @return the table name corresponding to this predicate or null if this
-	 *         predicate doesn't exist.
-	 * @throws SQLException
-	 */
-	private String predicateTableExist(Predicate predicate) throws AtomSetException {
+	@Override
+	protected String predicateTableExist(Predicate predicate) throws AtomSetException {
 		String predicateTableName = null;
 
 		try {
@@ -812,7 +749,6 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 
 	/**
 	 * 
-	 * @param dbConnection
 	 * @return
 	 * @throws SQLException
 	 */
@@ -843,9 +779,13 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	@Override
 	public Set<Predicate> getPredicates() throws AtomSetException {
 		TreeSet<Predicate> set = new TreeSet<Predicate>();
-		Iterator<Predicate> it = this.predicatesIterator();
-		while (it.hasNext()) {
-			set.add(it.next());
+		try {
+			CloseableIterator<Predicate> it = this.predicatesIterator();
+			while (it.hasNext()) {
+				set.add(it.next());
+			}
+		} catch (IteratorException e) {
+			throw new AtomSetException(e);
 		}
 		return set;
 	}

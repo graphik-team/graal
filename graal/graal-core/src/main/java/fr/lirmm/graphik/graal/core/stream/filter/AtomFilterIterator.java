@@ -46,7 +46,7 @@
 package fr.lirmm.graphik.graal.core.stream.filter;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.filter.FilterIterator;
 
 /**
@@ -61,7 +61,7 @@ public class AtomFilterIterator extends FilterIterator<Object, Atom> {
 	 * @param it
 	 * @param filter
 	 */
-	public AtomFilterIterator(GIterator<Object> it) {
+	public AtomFilterIterator(CloseableIterator<Object> it) {
 		super(it, AtomFilter.instance());
 	}
 

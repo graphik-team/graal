@@ -58,6 +58,7 @@ import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.Substitutions;
+import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackUtils;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismIteratorChecker;
 import fr.lirmm.graphik.graal.homomorphism.Var;
@@ -65,6 +66,7 @@ import fr.lirmm.graphik.util.AbstractProfilable;
 import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -123,7 +125,7 @@ public abstract class AbstractNFC extends AbstractProfilable implements ForwardC
 
 	@Override
 	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Map<Variable, Var> map, RulesCompilation rc)
-	    throws AtomSetException {
+	    throws BacktrackException {
 		HomomorphismIteratorChecker tmp;
 		if (this.data[var.level].last.init) {
 			tmp = new HomomorphismIteratorChecker(
@@ -132,8 +134,11 @@ public abstract class AbstractNFC extends AbstractProfilable implements ForwardC
 			                                                                         this.data[var.level].last.candidats.iterator()),
 			                                      this.data[var.level].toCheckAfterAssignment, g, map, rc);
 		} else {
-			tmp = new HomomorphismIteratorChecker(var, new CloseableIteratorAdapter<Term>(g.termsIterator()),
-			                                      var.preAtoms, g, map, rc);
+			try {
+				tmp = new HomomorphismIteratorChecker(var, g.termsIterator(), var.preAtoms, g, map, rc);
+			} catch (AtomSetException e) {
+				throw new BacktrackException(e);
+			}
 		}
 		tmp.setProfiler(this.getProfiler());
 		return tmp;
@@ -178,7 +183,7 @@ public abstract class AbstractNFC extends AbstractProfilable implements ForwardC
 	}
 
 	protected boolean select(Atom atom, Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc)
-	    throws AtomSetException {
+	    throws AtomSetException, IteratorException {
 		boolean contains = false;
 		Set<Var> postVarsFromThisAtom = new TreeSet<Var>();
 
@@ -193,7 +198,7 @@ public abstract class AbstractNFC extends AbstractProfilable implements ForwardC
 				profiler.start("SelectTime");
 			}
 			int nbAns = 0;
-			Iterator<? extends Atom> it = g.match(im);
+			CloseableIterator<? extends Atom> it = g.match(im);
 			while (it.hasNext()) {
 				++nbAns;
 				int i = -1;

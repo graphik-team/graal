@@ -56,6 +56,7 @@ import fr.lirmm.graphik.graal.homomorphism.forward_checking.NoForwardChecking;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.util.CPUTimeProfiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 
 /**
@@ -74,7 +75,7 @@ public class BackjumpTest {
 	 *            b  d  a  a  a  a
 	 */
 	@Test
-	public void test1() throws HomomorphismException {
+	public void test1() throws HomomorphismException, IteratorException {
 		InMemoryAtomSet data = new DefaultInMemoryGraphAtomSet();
 		
 		data.addAll(DlgpParser.parseAtomSet("p12(a,a), p12(b,b), p12(b,c), p12(b,d)."));

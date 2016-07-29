@@ -52,7 +52,7 @@ import fr.lirmm.graphik.graal.backward_chaining.pure.PureRewriter;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -77,7 +77,7 @@ public class PureRewritingExample {
 		rules.add(DlgpParser.parseRule("r(X) :- s(X)."));
 		
 		QueryRewriter bc = new PureRewriter();
-		GIterator<ConjunctiveQuery> it = bc.execute(query, rules);
+		CloseableIterator<ConjunctiveQuery> it = bc.execute(query, rules);
 		
 		while (it.hasNext()) {
 			System.out.println(it.next());

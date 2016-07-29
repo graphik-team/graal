@@ -42,7 +42,6 @@
  */
  package fr.lirmm.graphik.graal.transformation;
 
-import java.util.Iterator;
 import java.util.Set;
 
 import fr.lirmm.graphik.graal.api.core.AbstractAtomSet;
@@ -61,7 +60,7 @@ import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 public class TransformAtomSet extends AbstractAtomSet implements AtomSet {
 
@@ -98,6 +97,8 @@ public class TransformAtomSet extends AbstractAtomSet implements AtomSet {
 			return StaticHomomorphism.instance().execute(query, this).hasNext();
 		} catch (HomomorphismException e) {
 			throw new AtomSetException(e);
+		} catch (IteratorException e) {
+			throw new AtomSetException(e);
 		}
 	}
 
@@ -107,12 +108,12 @@ public class TransformAtomSet extends AbstractAtomSet implements AtomSet {
 	}
 
 	@Override
-	public GIterator<Atom> atomsByPredicate(Predicate predicate) throws AtomSetException {
+	public CloseableIterator<Atom> atomsByPredicate(Predicate predicate) throws AtomSetException {
 		throw new MethodNotImplementedError();
 	}
 
 	@Override
-	public GIterator<Term> termsByPredicatePosition(Predicate p, int position) throws AtomSetException {
+	public CloseableIterator<Term> termsByPredicatePosition(Predicate p, int position) throws AtomSetException {
 		throw new MethodNotImplementedError();
 	}
 
@@ -159,14 +160,14 @@ public class TransformAtomSet extends AbstractAtomSet implements AtomSet {
 	}
 
 	@Override
-	public boolean addAll(Iterator<? extends Atom> atoms)
+	public boolean addAll(CloseableIterator<? extends Atom> atoms)
 			throws AtomSetException {
 		return this.getStore().addAll(
 				this.getAtomTransformator().transform(atoms));
 	}
 
 	@Override
-	public boolean removeAll(Iterator<? extends Atom> stream)
+	public boolean removeAll(CloseableIterator<? extends Atom> stream)
 			throws AtomSetException {
 		return this.getStore().removeAll(
 				this.getAtomTransformator().transform(stream));

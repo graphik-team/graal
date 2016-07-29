@@ -52,8 +52,9 @@ import fr.lirmm.graphik.graal.api.core.Literal;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
-import fr.lirmm.graphik.util.Iterators;
 import fr.lirmm.graphik.util.URIUtils;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
+import fr.lirmm.graphik.util.stream.Iterators;
 
 /**
  * 
@@ -69,29 +70,31 @@ public class SparqlConjunctiveQueryTest {
 	private static final Predicate A = new Predicate(URIUtils.createURI(PREFIX + "A"), 1);
 	private static final Predicate P = new Predicate(URIUtils.createURI(PREFIX + "p"), 2);
 	private static final Predicate Q = new Predicate(URIUtils.createURI(PREFIX + "q"), 2);
-	private static final Constant TOTO = DefaultTermFactory.instance().createConstant(
-			URIUtils.createURI(PREFIX + "toto"));
-	private static final Constant TITI = DefaultTermFactory.instance().createConstant(
-			URIUtils.createURI(PREFIX + "titi"));
+	private static final Constant TOTO = DefaultTermFactory.instance()
+	                                                       .createConstant(URIUtils.createURI(PREFIX + "toto"));
+	private static final Constant TITI = DefaultTermFactory.instance()
+	                                                       .createConstant(URIUtils.createURI(PREFIX + "titi"));
 	private static final Literal STRING = DefaultTermFactory.instance().createLiteral(URIUtils.XSD_STRING, "toto");
 	private static final Literal INTEGER = DefaultTermFactory.instance().createLiteral(URIUtils.XSD_INTEGER, 7);
 
 	@Test
 	public void test1() throws ParseException {
 		String query = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
-					   + "PREFIX : <"
-					   + PREFIX
-					   + ">"
-					   + "SELECT DISTINCT ?0 "
-					   + "WHERE"
-					   + "{"
-					   + "	?0 :p ?1  ."
-					   + "	?1 :q ?2 "
-					   + "}";
+		               + "PREFIX : <"
+		               + PREFIX
+		               + ">"
+		               + "SELECT DISTINCT ?0 "
+		               + "WHERE"
+		               + "{"
+		               + "	?0 :p ?1  ."
+		               + "	?1 :q ?2 "
+		               + "}";
 		ConjunctiveQuery cq = new SparqlConjunctiveQueryParser(query).getConjunctiveQuery();
 		Assert.assertEquals(1, cq.getAnswerVariables().size());
 		int nbTriple = 0;
-		for (Atom a : cq.getAtomSet()) {
+		CloseableIteratorWithoutException<Atom> it = cq.getAtomSet().iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			++nbTriple;
 			Assert.assertTrue("Unrecognized triple", P.equals(a.getPredicate()) || Q.equals(a.getPredicate()));
 		}
@@ -101,13 +104,13 @@ public class SparqlConjunctiveQueryTest {
 	@Test
 	public void test2() throws ParseException {
 		String query = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
-					   + "PREFIX : <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#>"
-					   + "SELECT DISTINCT ?0 ?1 ?2"
-					   + "WHERE"
-					   + "{"
-					   + "	?0  :worksFor ?1  ."
-					   + "	?1  :affiliatedOrganizationOf ?2 "
-					   + "}";
+		               + "PREFIX : <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#>"
+		               + "SELECT DISTINCT ?0 ?1 ?2"
+		               + "WHERE"
+		               + "{"
+		               + "	?0  :worksFor ?1  ."
+		               + "	?1  :affiliatedOrganizationOf ?2 "
+		               + "}";
 		ConjunctiveQuery cq = new SparqlConjunctiveQueryParser(query).getConjunctiveQuery();
 		Assert.assertEquals(3, cq.getAnswerVariables().size());
 		Assert.assertEquals(2, Iterators.count(cq.getAtomSet().iterator()));
@@ -116,20 +119,22 @@ public class SparqlConjunctiveQueryTest {
 	@Test
 	public void test3() throws ParseException {
 		String query = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
-					   + "PREFIX : <"
-					   + PREFIX
-					   + ">"
-					   + "SELECT DISTINCT ?x ?y "
-					   + "WHERE"
-					   + "{"
-					   + "	?x :p :toto  ."
-					   + "	:titi :q ?y "
-					   + "}";
+		               + "PREFIX : <"
+		               + PREFIX
+		               + ">"
+		               + "SELECT DISTINCT ?x ?y "
+		               + "WHERE"
+		               + "{"
+		               + "	?x :p :toto  ."
+		               + "	:titi :q ?y "
+		               + "}";
 
 		ConjunctiveQuery cq = new SparqlConjunctiveQueryParser(query).getConjunctiveQuery();
 		Assert.assertEquals(2, cq.getAnswerVariables().size());
 		int nbTriple = 0;
-		for (Atom a : cq.getAtomSet()) {
+		CloseableIteratorWithoutException<Atom> it = cq.getAtomSet().iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			++nbTriple;
 			if (P.equals(a.getPredicate())) {
 				Assert.assertEquals(a.getTerm(1), TOTO);
@@ -145,16 +150,18 @@ public class SparqlConjunctiveQueryTest {
 	@Test
 	public void testRDFType() throws ParseException {
 		String query = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
-					   + "PREFIX : <"
-					   + PREFIX
-					   + ">"
-					   + "SELECT DISTINCT ?x ?y "
-					   + "WHERE"
-					   + "{"
-					   + "	?x a :A  ."
-					   + "}";
+		               + "PREFIX : <"
+		               + PREFIX
+		               + ">"
+		               + "SELECT DISTINCT ?x ?y "
+		               + "WHERE"
+		               + "{"
+		               + "	?x a :A  ."
+		               + "}";
 		ConjunctiveQuery cq = new SparqlConjunctiveQueryParser(query).getConjunctiveQuery();
-		for (Atom a : cq.getAtomSet()) {
+		CloseableIteratorWithoutException<Atom> it = cq.getAtomSet().iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			Assert.assertEquals(A, a.getPredicate());
 		}
 	}
@@ -162,32 +169,34 @@ public class SparqlConjunctiveQueryTest {
 	@Test
 	public void testStar() throws ParseException {
 		String query = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
-					   + "PREFIX : <"
-					   + PREFIX
-					   + ">"
-					   + "SELECT DISTINCT * "
-					   + "WHERE"
-					   + "{"
-					   + "	?0 :p ?1  ."
-					   + "	?1 :q ?2 "
-					   + "}";
+		               + "PREFIX : <"
+		               + PREFIX
+		               + ">"
+		               + "SELECT DISTINCT * "
+		               + "WHERE"
+		               + "{"
+		               + "	?0 :p ?1  ."
+		               + "	?1 :q ?2 "
+		               + "}";
 		ConjunctiveQuery cq = new SparqlConjunctiveQueryParser(query).getConjunctiveQuery();
 		Assert.assertEquals(3, cq.getAnswerVariables().size());
 	}
-	
+
 	@Test
 	public void testIntegerLiteral() throws ParseException {
 		String query = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
-					   + "PREFIX : <"
-					   + PREFIX
-					   + ">"
-					   + "SELECT DISTINCT ?x ?y "
-					   + "WHERE"
-					   + "{"
-					   + "	?x :p 7 ."
-					   + "}";
+		               + "PREFIX : <"
+		               + PREFIX
+		               + ">"
+		               + "SELECT DISTINCT ?x ?y "
+		               + "WHERE"
+		               + "{"
+		               + "	?x :p 7 ."
+		               + "}";
 		ConjunctiveQuery cq = new SparqlConjunctiveQueryParser(query).getConjunctiveQuery();
-		for (Atom a : cq.getAtomSet()) {
+		CloseableIteratorWithoutException<Atom> it = cq.getAtomSet().iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			Assert.assertEquals(P, a.getPredicate());
 			Assert.assertEquals(INTEGER, a.getTerm(1));
 		}
@@ -196,16 +205,18 @@ public class SparqlConjunctiveQueryTest {
 	@Test
 	public void testStringLiteral() throws ParseException {
 		String query = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
-					   + "PREFIX : <"
-					   + PREFIX
-					   + ">"
-					   + "SELECT DISTINCT ?x ?y "
-					   + "WHERE"
-					   + "{"
-					   + "	?x :p 'toto' ."
-					   + "}";
+		               + "PREFIX : <"
+		               + PREFIX
+		               + ">"
+		               + "SELECT DISTINCT ?x ?y "
+		               + "WHERE"
+		               + "{"
+		               + "	?x :p 'toto' ."
+		               + "}";
 		ConjunctiveQuery cq = new SparqlConjunctiveQueryParser(query).getConjunctiveQuery();
-		for (Atom a : cq.getAtomSet()) {
+		CloseableIteratorWithoutException<Atom> it = cq.getAtomSet().iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			Assert.assertEquals(P, a.getPredicate());
 			Assert.assertEquals(STRING, a.getTerm(1));
 		}

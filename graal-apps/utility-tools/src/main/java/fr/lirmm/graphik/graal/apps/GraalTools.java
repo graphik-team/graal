@@ -10,7 +10,7 @@ import com.beust.jcommander.Parameter;
 
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
-import fr.lirmm.graphik.graal.core.RuleUtils;
+import fr.lirmm.graphik.graal.core.Rules;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.io.dlp.Directive;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
@@ -83,7 +83,7 @@ public class GraalTools {
 		if (options.atomic) {
 			Rule r;
 			System.out.println("%%%%% ATOMIC HEAD %%%%");
-			Iterator<Rule> it = RuleUtils.computeAtomicHead(rules.iterator());
+			Iterator<Rule> it = Rules.computeAtomicHead(rules.iterator());
 			while (it.hasNext()) {
 				r = it.next();
 				if (options.labeler) {
@@ -94,7 +94,7 @@ public class GraalTools {
 		} else if (options.singlepiece) {
 			Rule r;
 			System.out.println("%%%% SINGLE PIECE %%%%");
-			Iterator<Rule> it = RuleUtils.computeSinglePiece(rules.iterator());
+			Iterator<Rule> it = Rules.computeSinglePiece(rules.iterator());
 			while (it.hasNext()) {
 				r = it.next();
 				if (options.labeler) {
@@ -112,7 +112,7 @@ public class GraalTools {
 		if (options.critical_instance) {
 			if (options.verbose)
 				System.err.println("Building critical instance...");
-			writer.write(RuleUtils.criticalInstance(rules));
+			writer.write(Rules.criticalInstance(rules));
 			if (options.verbose)
 				System.err.println("Building critical instance...");
 		}

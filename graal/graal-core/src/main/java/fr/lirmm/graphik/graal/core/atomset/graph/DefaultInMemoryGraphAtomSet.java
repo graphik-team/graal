@@ -61,10 +61,10 @@ import fr.lirmm.graphik.graal.api.core.TermValueComparator;
 import fr.lirmm.graphik.graal.core.AtomMatcher;
 import fr.lirmm.graphik.graal.core.DefaultConstantGenerator;
 import fr.lirmm.graphik.graal.core.atomset.AbstractInMemoryAtomSet;
-import fr.lirmm.graphik.util.stream.GIterator;
-import fr.lirmm.graphik.util.stream.IteratorAdapter;
+import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 import fr.lirmm.graphik.util.stream.filter.Filter;
-import fr.lirmm.graphik.util.stream.filter.FilterIterator;
+import fr.lirmm.graphik.util.stream.filter.FilterIteratorWithoutException;
 
 /**
  * Implementation of a graph in memory. Inherits directly from Fact.
@@ -97,20 +97,22 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 	@Override
 	public Set<Predicate> getPredicates() {
 		Set<Predicate> predicates = new TreeSet<Predicate>();
-		for (Atom a : this) {
+		CloseableIteratorWithoutException<Atom> it = this.iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			predicates.add(a.getPredicate());
 		}
 		return predicates;
 	}
 
 	@Override
-	public GIterator<Predicate> predicatesIterator() {
-		return new IteratorAdapter<Predicate>(this.getPredicates().iterator());
+	public CloseableIteratorWithoutException<Predicate> predicatesIterator() {
+		return new CloseableIteratorAdapter<Predicate>(this.getPredicates().iterator());
 	}
 
 	@Override
-	public GIterator<Atom> iterator() {
-		return new IteratorAdapter<Atom>(new TreeSet<Atom>(this.atoms).iterator());
+	public CloseableIteratorWithoutException<Atom> iterator() {
+		return new CloseableIteratorAdapter<Atom>(new TreeSet<Atom>(this.atoms).iterator());
 	}
 
 	@Override
@@ -125,9 +127,9 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 	}
 
 	@Override
-	public GIterator<Atom> match(Atom atom) {
+	public CloseableIteratorWithoutException<Atom> match(Atom atom) {
 		final AtomMatcher matcher = new AtomMatcher(atom);
-		GIterator<Atom> it = null;
+		CloseableIteratorWithoutException<Atom> it = null;
 		int i = -1;
 		for (Term t : atom.getTerms()) {
 			++i;
@@ -135,7 +137,7 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 				it = this.getTermVertex(t).getNeighbors(atom.getPredicate(), i);
 			}
 		}
-		return new FilterIterator<Atom, Atom>(it, new Filter<Atom>() {
+		return new FilterIteratorWithoutException<Atom, Atom>(it, new Filter<Atom>() {
 			@Override
 			public boolean filter(Atom a) {
 				return matcher.check((Atom) a);
@@ -144,8 +146,10 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 	}
 
 	@Override
-	public GIterator<Atom> atomsByPredicate(Predicate p) {
-		return new FilterIterator<Edge, Atom>(new IteratorAdapter<Edge>(this.getPredicateVertex(p).getEdges()
+	public CloseableIteratorWithoutException<Atom> atomsByPredicate(Predicate p) {
+		return new FilterIteratorWithoutException<Edge, Atom>(new CloseableIteratorAdapter<Edge>(this.getPredicateVertex(
+		    p)
+		                                                                                    .getEdges()
 		                                                                    .iterator()), new Filter<Edge>() {
 			@Override
 			public boolean filter(Edge e) {
@@ -166,12 +170,12 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 	}
 
 	@Override
-	public GIterator<Term> termsByPredicatePosition(Predicate p, int position) {
+	public CloseableIteratorWithoutException<Term> termsByPredicatePosition(Predicate p, int position) {
 		Set<Term>[] sets = this.termsByPredicatePosition.get(p);
 		if(sets == null) {
-			return new IteratorAdapter<Term>(Collections.<Term>emptyIterator());
+			return new CloseableIteratorAdapter<Term>(Collections.<Term> emptyIterator());
 		} else {
-			return new IteratorAdapter<Term>(sets[position].iterator());
+			return new CloseableIteratorAdapter<Term>(sets[position].iterator());
 		}
 	}
 
@@ -181,8 +185,8 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 	}
 
 	@Override
-	public GIterator<Term> termsIterator() {
-		return new IteratorAdapter<Term>(this.getTerms().iterator());
+	public CloseableIteratorWithoutException<Term> termsIterator() {
+		return new CloseableIteratorAdapter<Term>(this.getTerms().iterator());
 	}
 
 	@Override
@@ -196,8 +200,8 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 	}
 
 	@Override
-	public GIterator<Term> termsIterator(Term.Type type) {
-		return new IteratorAdapter<Term>(this.getTerms(type).iterator());
+	public CloseableIteratorWithoutException<Term> termsIterator(Term.Type type) {
+		return new CloseableIteratorAdapter<Term>(this.getTerms(type).iterator());
 	}
 
 	/**

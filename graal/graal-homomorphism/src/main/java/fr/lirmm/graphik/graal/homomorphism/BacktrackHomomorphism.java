@@ -58,7 +58,8 @@ import fr.lirmm.graphik.graal.homomorphism.forward_checking.NoForwardChecking;
 import fr.lirmm.graphik.util.AbstractProfilable;
 import fr.lirmm.graphik.util.Profilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.Utils;
+import fr.lirmm.graphik.util.stream.IteratorException;
+import fr.lirmm.graphik.util.stream.Iterators;
 
 /**
  * This Backtrack is inspired by the Baget Jean-François Thesis (Chapter 5)
@@ -160,7 +161,12 @@ public class BacktrackHomomorphism extends AbstractProfilable implements
 		                                                            this.scheduler, this.bootstrapper, this.fc,
 		                                                            this.bj, compilation, this.getProfiler());
 		//return new ArrayBlockingQueueToCloseableIteratorAdapter<Substitution>(backtrackIterator);
-		return Utils.uniq(backtrackIterator);
+		try {
+			return Iterators.uniq(backtrackIterator);
+		} catch (IteratorException e) {
+			throw new HomomorphismException("An errors occurs during homomorphism", e);
+		}
+
 	}
 
 }

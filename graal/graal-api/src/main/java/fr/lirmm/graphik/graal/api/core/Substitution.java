@@ -104,7 +104,17 @@ public interface Substitution extends Comparable<Substitution>, AppendableToStri
 	 * @return
 	 * @throws AtomSetException
 	 */
-	InMemoryAtomSet createImageOf(AtomSet src);
+	InMemoryAtomSet createImageOf(AtomSet src) throws AtomSetException;
+
+	/**
+	 * Apply this substitution on an atom set.
+	 * 
+	 * @param src
+	 *            (const)
+	 * @return
+	 * @throws AtomSetException
+	 */
+	InMemoryAtomSet createImageOf(InMemoryAtomSet src);
 
 	/**
 	 * Apply this substitution on the given rule.
@@ -135,7 +145,7 @@ public interface Substitution extends Comparable<Substitution>, AppendableToStri
 	 *            (const)
 	 * @param dest
 	 */
-	void apply(AtomSet src, InMemoryAtomSet target);
+	void apply(InMemoryAtomSet src, InMemoryAtomSet target);
 
 	/**
 	 * The composition of a substitution is more complex that just put an other

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,27 +40,38 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.util;
+package fr.lirmm.graphik.util.stream.converter;
 
-import java.util.Iterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public final class Iterators {
+public class ConverterIteratorWithoutException<U, T> extends ConverterIterator<U, T>
+                                              implements CloseableIteratorWithoutException<T> {
 
-	private Iterators(){}
-	
-	public static int count(Iterator<?> it) {
-		int i = 0;
-		while(it.hasNext()) {
-			++i;
-			it.next();
-		}
-		return i;
+	public ConverterIteratorWithoutException(CloseableIteratorWithoutException<U> it, Converter<U, T> converter) {
+		super(it, converter);
 	}
+
+	@Override
+	public boolean hasNext() {
+		try {
+			return super.hasNext();
+		} catch (IteratorException e) {
+			throw new Error("It should never happen");
+		}
+	}
+
+	@Override
+	public T next() {
+		try {
+			return super.next();
+		} catch (IteratorException e) {
+			throw new Error("It should never happen");
+		}
+	}
+
 }

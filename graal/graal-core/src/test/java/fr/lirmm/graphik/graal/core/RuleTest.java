@@ -87,7 +87,7 @@ public class RuleTest {
 		rule.getHead().add(atom1);
 		rule.getHead().add(atom2);
 		rule.getHead().add(atom3);
-		Assert.assertEquals(1, RuleUtils.getPieces(rule).size());
+		Assert.assertEquals(1, Rules.getPieces(rule).size());
 	}
 	
 	@Test
@@ -97,7 +97,7 @@ public class RuleTest {
 		rule.getHead().add(atom1);
 		rule.getHead().add(atom2);
 		rule.getHead().add(atom3);
-		Assert.assertEquals(3, RuleUtils.getPieces(rule).size());
+		Assert.assertEquals(3, Rules.getPieces(rule).size());
 	}
 	
 	@Test
@@ -106,6 +106,6 @@ public class RuleTest {
 		rule.getHead().add(atom3);
 		rule.getHead().add(atom3);
 		rule.getHead().add(atom3);
-		Assert.assertEquals(1, RuleUtils.getPieces(rule).size());
+		Assert.assertEquals(1, Rules.getPieces(rule).size());
 	}
 }

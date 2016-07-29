@@ -64,7 +64,7 @@ public interface GraalBench extends Runnable {
 
 	CloseableIterator<Map.Entry<String, Query>> getQueries();
 
-	CloseableIterator<Rule> getOntology();
+	Iterator<Rule> getOntology();
 
 	CloseableIterator<Map.Entry<String, AtomSet>> getInstances();
 

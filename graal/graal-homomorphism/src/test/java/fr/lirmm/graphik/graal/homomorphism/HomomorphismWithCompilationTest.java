@@ -62,6 +62,7 @@ import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -76,7 +77,8 @@ public class HomomorphismWithCompilationTest {
 	}
 
 	@Theory
-	public void test1(HomomorphismWithCompilation<ConjunctiveQuery, AtomSet> h) throws HomomorphismException {
+	public void test1(HomomorphismWithCompilation<ConjunctiveQuery, AtomSet> h)
+	    throws HomomorphismException, IteratorException {
 		InMemoryAtomSet store = new LinkedListAtomSet();
 
 		store.add(DlgpParser.parseAtom("p(a)."));
@@ -97,7 +99,8 @@ public class HomomorphismWithCompilationTest {
 	}
 
 	@Theory
-	public void test2(HomomorphismWithCompilation<ConjunctiveQuery, AtomSet> h) throws HomomorphismException {
+	public void test2(HomomorphismWithCompilation<ConjunctiveQuery, AtomSet> h)
+	    throws HomomorphismException, IteratorException {
 		InMemoryAtomSet store = new LinkedListAtomSet();
 
 		store.add(DlgpParser.parseAtom("p(a,b)."));

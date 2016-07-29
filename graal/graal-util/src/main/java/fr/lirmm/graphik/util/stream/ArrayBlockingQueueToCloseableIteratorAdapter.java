@@ -42,8 +42,6 @@
  */
 package fr.lirmm.graphik.util.stream;
 
-import java.io.IOException;
-
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
@@ -106,8 +104,10 @@ public class ArrayBlockingQueueToCloseableIteratorAdapter<T> extends AbstractClo
 		@Override
 		public void run() {
 			try {
-				this.buffer.write(it);
-			} catch (IOException e) {
+				while (it.hasNext()) {
+					this.buffer.write(it.next());
+				}
+			} catch (IteratorException e) {
 				throw new Error("Untreated exception");
 			} finally {
 				it.close();

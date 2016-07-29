@@ -50,13 +50,14 @@ import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackUtils;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismIteratorChecker;
 import fr.lirmm.graphik.graal.homomorphism.Var;
 import fr.lirmm.graphik.util.AbstractProfilable;
 import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * SimpleFC is a simple ForwardChecking implementation for HyperGraph with
@@ -81,7 +82,8 @@ public class SimpleFC extends AbstractProfilable implements ForwardChecking {
 	}
 
 	@Override
-	public boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc) throws AtomSetException {
+	public boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc)
+	    throws BacktrackException {
 
 		Profiler profiler = this.getProfiler();
 		for (Atom atom : v.postAtoms) {
@@ -93,9 +95,15 @@ public class SimpleFC extends AbstractProfilable implements ForwardChecking {
 				profiler.start("selectOneTime");
 			}
 			for (Atom a : rc.getRewritingOf(im)) {
-				if (g.match(a).hasNext()) {
-					contains = true;
-					break;
+				try {
+					if (g.match(a).hasNext()) {
+						contains = true;
+						break;
+					}
+				} catch (IteratorException e) {
+					throw new BacktrackException(e);
+				} catch (AtomSetException e) {
+					throw new BacktrackException(e);
 				}
 			}
 			if (profiler != null) {
@@ -117,12 +125,13 @@ public class SimpleFC extends AbstractProfilable implements ForwardChecking {
 
 	@Override
 	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Map<Variable, Var> map, RulesCompilation rc)
-	    throws AtomSetException {
-		HomomorphismIteratorChecker tmp = new HomomorphismIteratorChecker(
-		                                                                  var,
-		                                                                  new CloseableIteratorAdapter<Term>(
-		                                                                                                     g.termsIterator()),
-		                                                                  var.preAtoms, g, map, rc);
+	    throws BacktrackException {
+		HomomorphismIteratorChecker tmp;
+		try {
+			tmp = new HomomorphismIteratorChecker(var, g.termsIterator(), var.preAtoms, g, map, rc);
+		} catch (AtomSetException e) {
+			throw new BacktrackException(e);
+		}
 		tmp.setProfiler(this.getProfiler());
 		return tmp;
 	}

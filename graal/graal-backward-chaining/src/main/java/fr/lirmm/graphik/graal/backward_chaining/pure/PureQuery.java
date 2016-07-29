@@ -46,7 +46,6 @@
 package fr.lirmm.graphik.graal.backward_chaining.pure;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
@@ -57,7 +56,9 @@ import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
+import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -104,15 +105,17 @@ class PureQuery extends DefaultConjunctiveQuery {
 	
 	public static void removeAnswerPredicate(ConjunctiveQuery query) {
 		Term[] ans = new Term[query.getAnswerVariables().size()];
-		Iterator<Atom> ita = query.getAtomSet().iterator();
+		CloseableIteratorWithoutException<Atom> ita = query.getAtomSet().iterator();
+		InMemoryAtomSet toRemove = new LinkedListAtomSet();
 		while (ita.hasNext()) {
 			Atom a = ita.next();
 			if (a.getPredicate().equals(ansPredicate)) {
 				ans[(Integer) ((Literal) a.getTerm(0)).getValue()] = a
 						.getTerm(1);
-				ita.remove();
+				toRemove.add(a);
 			}
 		}
+		query.getAtomSet().removeAll(toRemove);
 		query.setAnswerVariables(Arrays.asList(ans));
 	}
 

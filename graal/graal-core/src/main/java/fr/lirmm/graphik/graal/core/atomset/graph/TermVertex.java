@@ -50,7 +50,7 @@ import java.util.Set;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -58,7 +58,7 @@ import fr.lirmm.graphik.util.stream.GIterator;
  */
 interface TermVertex extends Term, Vertex {
 
-	GIterator<Atom> getNeighbors(Predicate p, int position);
+	CloseableIteratorWithoutException<Atom> getNeighbors(Predicate p, int position);
 
 	void add(Atom a);
 

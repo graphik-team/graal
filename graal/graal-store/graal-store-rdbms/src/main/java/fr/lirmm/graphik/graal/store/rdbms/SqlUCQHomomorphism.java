@@ -45,8 +45,6 @@
  */
 package fr.lirmm.graphik.graal.store.rdbms;
 
-import java.util.Iterator;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +54,7 @@ import fr.lirmm.graphik.graal.api.core.UnionOfConjunctiveQueries;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.UCQHomomorphism;
 import fr.lirmm.graphik.util.AbstractProfilable;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
@@ -104,7 +103,7 @@ public final class SqlUCQHomomorphism extends AbstractProfilable implements UCQH
 
 	private static String preprocessing(UnionOfConjunctiveQueries queries, RdbmsStore store)
 	    throws HomomorphismException {
-		Iterator<ConjunctiveQuery> it = queries.iterator();
+		CloseableIterator<ConjunctiveQuery> it = queries.iterator();
 		StringBuilder sqlQuery = new StringBuilder();
 		try {
 			if (it.hasNext()) {

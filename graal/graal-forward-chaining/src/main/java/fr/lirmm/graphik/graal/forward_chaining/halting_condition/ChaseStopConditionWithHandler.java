@@ -50,10 +50,11 @@ import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
 import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplicationHandler;
+import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplicationHandlerException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
-import fr.lirmm.graphik.util.stream.GIterator;
-import fr.lirmm.graphik.util.stream.IteratorAdapter;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 
 public class ChaseStopConditionWithHandler implements ChaseHaltingCondition {
 
@@ -68,14 +69,18 @@ public class ChaseStopConditionWithHandler implements ChaseHaltingCondition {
 	}
 
 	@Override
-	public GIterator<Atom> apply(Rule rule, Substitution substitution, AtomSet data)
+	public CloseableIterator<Atom> apply(Rule rule, Substitution substitution, AtomSet data)
 	                                                                                 throws HomomorphismFactoryException,
 	                                                                                 HomomorphismException {
-		if (this.handler.preRuleApplication(rule, substitution, data)) {
-			GIterator<Atom> atomsToAdd = this.realHaltingCondition.apply(rule, substitution, data);
-			return this.handler.postRuleApplication(rule, substitution, data, atomsToAdd);
+		try {
+			if (this.handler.preRuleApplication(rule, substitution, data)) {
+				CloseableIterator<Atom> atomsToAdd = this.realHaltingCondition.apply(rule, substitution, data);
+				return this.handler.postRuleApplication(rule, substitution, data, atomsToAdd);
+			}
+		} catch (RuleApplicationHandlerException e) {
+			throw new HomomorphismException("An errors occurs into the RuleApplicationHandler", e);
 		}
-		return new IteratorAdapter<Atom>(Collections.<Atom> emptyList().iterator());
+		return new CloseableIteratorAdapter<Atom>(Collections.<Atom> emptyList().iterator());
 	}
 
 	public void setHandler(RuleApplicationHandler h) {

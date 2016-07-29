@@ -45,7 +45,6 @@
  */
 package fr.lirmm.graphik.graal.core.atomset;
 
-import java.util.Iterator;
 import java.util.Set;
 
 import fr.lirmm.graphik.graal.api.core.AbstractAtomSet;
@@ -56,6 +55,7 @@ import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -73,7 +73,7 @@ public abstract class AbstractInMemoryAtomSet extends AbstractAtomSet implements
 	}
 
 	@Override
-	public boolean addAll(Iterator<? extends Atom> atoms) {
+	public boolean addAll(CloseableIterator<? extends Atom> atoms) {
 		try {
 			return super.addAll(atoms);
 		} catch (AtomSetException e) {
@@ -91,7 +91,7 @@ public abstract class AbstractInMemoryAtomSet extends AbstractAtomSet implements
 	}
 
 	@Override
-	public boolean removeAll(Iterator<? extends Atom> atoms) {
+	public boolean removeAll(CloseableIterator<? extends Atom> atoms) {
 		try {
 			return super.removeAll(atoms);
 		} catch (AtomSetException e) {
@@ -130,6 +130,24 @@ public abstract class AbstractInMemoryAtomSet extends AbstractAtomSet implements
 	public Set<Predicate> getPredicates() {
 		try {
 			return super.getPredicates();
+		} catch (AtomSetException e) {
+			throw new Error("It should never happen.");
+		}
+	}
+
+	@Override
+	public boolean isSubSetOf(AtomSet atomset) {
+		try {
+			return super.isSubSetOf(atomset);
+		} catch (AtomSetException e) {
+			throw new Error("It should never happen.");
+		}
+	}
+
+	@Override
+	public boolean isEmpty() {
+		try {
+			return super.isEmpty();
 		} catch (AtomSetException e) {
 			throw new Error("It should never happen.");
 		}

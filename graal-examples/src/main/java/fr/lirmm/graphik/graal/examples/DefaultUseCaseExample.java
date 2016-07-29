@@ -101,8 +101,10 @@ public class DefaultUseCaseExample {
 		DlgpWriter writer = new DlgpWriter(System.out);
 		writer.write(atomSet);
 		// equivalent code:
-		// for(Atom a : atomSet) {
-		//	   writer.write(a);
+		// CloseableIteratorWithoutException<Atom> it = atomSet.iterator();
+		// while (it.hasNext()) {
+		// Atom a = it.next();
+		// writer.write(a);
 		// }
 		
 		// /////////////////////////////////////////////////////////////////////

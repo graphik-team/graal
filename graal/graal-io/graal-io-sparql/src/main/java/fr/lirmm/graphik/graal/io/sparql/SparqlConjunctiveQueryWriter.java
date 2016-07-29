@@ -57,6 +57,7 @@ import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.io.ConjunctiveQueryWriter;
 import fr.lirmm.graphik.util.Prefix;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -109,7 +110,9 @@ public class SparqlConjunctiveQueryWriter extends AbstractSparqlWriter implement
 
 		this.write("\nWHERE\n{\n");
 		boolean isFirst = true;
-		for(Atom a : query.getAtomSet()) {
+		CloseableIteratorWithoutException<Atom> it = query.getAtomSet().iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			if(!isFirst) {
 				this.write(" .\n");
 			} else {

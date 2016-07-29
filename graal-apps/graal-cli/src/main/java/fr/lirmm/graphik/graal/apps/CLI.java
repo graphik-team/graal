@@ -77,6 +77,7 @@ import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.SqlHomomorphism;
 import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 public class CLI {
 
@@ -179,8 +180,11 @@ public class CLI {
 		if (args.get(PRINTFACT) != null) {
 			if (verbose) System.out.println("Printing fact...");
 			try {
-				for (Atom a : atomset)
+				CloseableIterator<Atom> it = atomset.iterator();
+				while (it.hasNext()) {
+					Atom a = it.next();
 					System.out.println(a);
+				}
 			}
 			catch (Exception e) {
 				System.err.println("An error occurs while printing fact : " 
@@ -390,7 +394,9 @@ public class CLI {
 	public ConjunctiveQuery prepareConjunctiveQuery(ConjunctiveQuery q) {
 		DefaultConjunctiveQuery qRw = new DefaultConjunctiveQuery(new LinkedListAtomSet());
 		qRw.setAnswerVariables(q.getAnswerVariables());
-		for (Atom a : q) {
+		CloseableIteratorWithoutException<Atom> it = q.iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			Atom a2 = new DefaultAtom(a.getPredicate());
 			int i = 0;
 			for (Term t : a) {

@@ -54,7 +54,7 @@ import fr.lirmm.graphik.graal.io.sparql.SparqlConjunctiveQueryParser;
 import fr.lirmm.graphik.graal.io.sparql.SparqlConjunctiveQueryWriter;
 import fr.lirmm.graphik.graal.io.sparql.SparqlRuleParser;
 import fr.lirmm.graphik.util.Prefix;
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -93,7 +93,7 @@ public class SPARQLRewriting {
 
 		// 3 - Execute the query rewriter
 		bc = new PureRewriter();
-		GIterator<ConjunctiveQuery> it = bc.execute(query, ontology);
+		CloseableIterator<ConjunctiveQuery> it = bc.execute(query, ontology);
 
 		while (it.hasNext()) {
 			// 4 - Print the query as SPARQL

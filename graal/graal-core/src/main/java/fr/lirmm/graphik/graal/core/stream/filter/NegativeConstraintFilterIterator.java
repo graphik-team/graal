@@ -46,7 +46,7 @@
 package fr.lirmm.graphik.graal.core.stream.filter;
 
 import fr.lirmm.graphik.graal.api.core.NegativeConstraint;
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.filter.FilterIterator;
 
 /**
@@ -61,7 +61,7 @@ public class NegativeConstraintFilterIterator extends FilterIterator<Object, Neg
 	 * @param it
 	 * @param filter
 	 */
-	public NegativeConstraintFilterIterator(GIterator<Object> it) {
+	public NegativeConstraintFilterIterator(CloseableIterator<Object> it) {
 		super(it, NegativeConstraintFilter.instance());
 	}
 

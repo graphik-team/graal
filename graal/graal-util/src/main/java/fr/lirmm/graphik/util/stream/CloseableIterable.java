@@ -43,17 +43,11 @@
 package fr.lirmm.graphik.util.stream;
 
 /**
- * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
- * @param <T>
  */
-public interface GIterator<T> extends java.util.Iterator<T> {
+public interface CloseableIterable<T> {
 
-	@Override
-	boolean hasNext();
-
-	@Override
-	T next();
+	CloseableIterator<T> iterator();
 
 }

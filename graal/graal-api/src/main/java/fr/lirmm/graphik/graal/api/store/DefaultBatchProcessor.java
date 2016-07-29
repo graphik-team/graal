@@ -42,13 +42,12 @@
  */
 package fr.lirmm.graphik.graal.api.store;
 
-import java.util.Iterator;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -74,7 +73,7 @@ public class DefaultBatchProcessor implements BatchProcessor {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public void addAll(Iterator<? extends Atom> it) throws AtomSetException {
+	public void addAll(CloseableIterator<? extends Atom> it) throws AtomSetException {
 		this.store.addAll(it);
 	}
 

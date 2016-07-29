@@ -45,6 +45,7 @@ package fr.lirmm.graphik.graal.bench.homomorphism;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -87,10 +88,9 @@ import fr.lirmm.graphik.graal.store.rdbms.SqlHomomorphism;
 import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;
 import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.RealTimeProfiler;
-import fr.lirmm.graphik.util.stream.AbstractIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 import fr.lirmm.graphik.util.stream.converter.Converter;
 import fr.lirmm.graphik.util.stream.converter.ConverterCloseableIterator;
 
@@ -294,8 +294,8 @@ public class InfHomomorphismBench extends AbstractGraalBench {
 	}
 
 	@Override
-	public CloseableIterator<Rule> getOntology() {
-		return new CloseableIteratorAdapter<Rule>(onto.iterator());
+	public Iterator<Rule> getOntology() {
+		return onto.iterator();
 	}
 
 	@Override
@@ -397,7 +397,7 @@ public class InfHomomorphismBench extends AbstractGraalBench {
 		public void run() {
 			PureRewriter pure = new PureRewriter(mode.equals(Mode.UCQ));
 			pure.setProfiler(profiler);
-			GIterator<ConjunctiveQuery> it = pure.execute(this.query, this.onto, this.rc);
+			CloseableIteratorWithoutException<ConjunctiveQuery> it = pure.execute(this.query, this.onto, this.rc);
 
 			DefaultUnionOfConjunctiveQueries ucq = new DefaultUnionOfConjunctiveQueries(this.query.getAnswerVariables(),
 			                                                                            it);
@@ -412,9 +412,7 @@ public class InfHomomorphismBench extends AbstractGraalBench {
 		}
 	}
 
-	private class InstanceIterator extends AbstractIterator<Map.Entry<String, AtomSet>>
-	                                                                                   implements
-	                                                                                   CloseableIterator<Map.Entry<String, AtomSet>> {
+	private class InstanceIterator implements CloseableIterator<Map.Entry<String, AtomSet>> {
 
 		/**
          * 

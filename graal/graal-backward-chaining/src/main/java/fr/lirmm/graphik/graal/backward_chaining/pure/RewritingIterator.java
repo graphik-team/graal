@@ -45,27 +45,26 @@ package fr.lirmm.graphik.graal.backward_chaining.pure;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
-import fr.lirmm.graphik.graal.core.RuleUtils;
+import fr.lirmm.graphik.graal.core.Rules;
 import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByHeadPredicatesRuleSet;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.util.NoProfiler;
 import fr.lirmm.graphik.util.Profilable;
 import fr.lirmm.graphik.util.Profiler;
-import fr.lirmm.graphik.util.stream.AbstractIterator;
-import fr.lirmm.graphik.util.stream.GIterator;
-import fr.lirmm.graphik.util.stream.IteratorAdapter;
+import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-class RewritingIterator extends AbstractIterator<ConjunctiveQuery> implements Profilable {
+class RewritinCloseableIterator implements CloseableIteratorWithoutException<ConjunctiveQuery>, Profilable {
 
 	private PureQuery                   pquery;
 	private LinkedListRuleSet           ruleset;
 	private RulesCompilation            compilation;
-	private GIterator<ConjunctiveQuery> rewrites  = null;
+	private CloseableIteratorWithoutException<ConjunctiveQuery> rewrites = null;
 
 	private boolean                     unfolding = true;
 	private RewritingOperator           operator;
@@ -75,24 +74,24 @@ class RewritingIterator extends AbstractIterator<ConjunctiveQuery> implements Pr
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public RewritingIterator(boolean unfolding, ConjunctiveQuery query, Iterable<Rule> rules) {
+	public RewritinCloseableIterator(boolean unfolding, ConjunctiveQuery query, Iterable<Rule> rules) {
 		this(unfolding, query, rules, NoCompilation.instance());
 	}
 
-	public RewritingIterator(boolean unfolding, ConjunctiveQuery query, Iterable<Rule> rules, RewritingOperator operator) {
+	public RewritinCloseableIterator(boolean unfolding, ConjunctiveQuery query, Iterable<Rule> rules, RewritingOperator operator) {
 		this(unfolding, query, rules, NoCompilation.instance(), operator);
 	}
 
-	public RewritingIterator(boolean unfolding, ConjunctiveQuery query, Iterable<Rule> rules,
+	public RewritinCloseableIterator(boolean unfolding, ConjunctiveQuery query, Iterable<Rule> rules,
 	    RulesCompilation compilation) {
 		this(unfolding, query, rules, compilation, new AggregSingleRuleOperator());
 	}
 
-	public RewritingIterator(boolean unfolding, ConjunctiveQuery query, Iterable<Rule> rules,
+	public RewritinCloseableIterator(boolean unfolding, ConjunctiveQuery query, Iterable<Rule> rules,
 	    RulesCompilation compilation, RewritingOperator operator) {
 		this.unfolding = unfolding;
 		this.pquery = new PureQuery(query);
-		this.ruleset = new LinkedListRuleSet(RuleUtils.computeSinglePiece(rules.iterator()));
+		this.ruleset = new LinkedListRuleSet(Rules.computeSinglePiece(rules.iterator()));
 		this.compilation = compilation;
 		this.operator = operator;
 	}
@@ -107,6 +106,10 @@ class RewritingIterator extends AbstractIterator<ConjunctiveQuery> implements Pr
 			this.compute();
 		}
 		return this.rewrites.hasNext();
+	}
+
+	@Override
+	public void close() {
 	}
 
 	@Override
@@ -159,7 +162,8 @@ class RewritingIterator extends AbstractIterator<ConjunctiveQuery> implements Pr
 			queries = Utils.unfold(queries, this.compilation, this.getProfiler());
 		}
 
-		this.rewrites = new IteratorAdapter<ConjunctiveQuery>(queries.iterator());
+		this.rewrites = new CloseableIteratorAdapter<ConjunctiveQuery>(queries.iterator());
 	}
+
 
 }

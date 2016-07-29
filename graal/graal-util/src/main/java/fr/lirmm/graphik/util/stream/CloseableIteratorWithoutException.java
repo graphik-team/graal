@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -46,9 +46,12 @@ package fr.lirmm.graphik.util.stream;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface GIterable<T> extends java.lang.Iterable<T> {
+public interface CloseableIteratorWithoutException<T> extends CloseableIterator<T> {
 
 	@Override
-	GIterator<T> iterator();
+	boolean hasNext();
+
+	@Override
+	T next();
 
 }

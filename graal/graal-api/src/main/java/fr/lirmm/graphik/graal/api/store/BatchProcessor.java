@@ -43,10 +43,10 @@
 package fr.lirmm.graphik.graal.api.store;
 
 import java.io.Closeable;
-import java.util.Iterator;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -54,7 +54,7 @@ import fr.lirmm.graphik.graal.api.core.AtomSetException;
  */
 public interface BatchProcessor extends Closeable {
 
-	public void addAll(Iterator<? extends Atom> it) throws AtomSetException;
+	public void addAll(CloseableIterator<? extends Atom> it) throws AtomSetException;
 
 	public void add(Atom a) throws AtomSetException;
 

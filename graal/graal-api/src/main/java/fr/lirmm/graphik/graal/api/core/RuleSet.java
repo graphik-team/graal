@@ -58,6 +58,6 @@ public interface RuleSet extends ImmutableRuleSet {
     public boolean contains(Rule rule);
 
 	@Override
-    public Iterator<Rule> iterator();
+	public Iterator<Rule> iterator();
 
 };

@@ -50,13 +50,13 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.PredicatePosition;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
  * The affected position set is built from a rule set by the following
@@ -126,11 +126,13 @@ public class AffectedPositionSet {
 	 * @param body
 	 * @return
 	 */
-	private Set<Term> getAllAffectedVariables(Set<Term> vars, AtomSet body) {
+	private Set<Term> getAllAffectedVariables(Set<Term> vars, InMemoryAtomSet body) {
 		Set<Term> affectedVars = new TreeSet<Term>();
 		affectedVars.addAll(vars);
 		int i;
-		for (Atom atom : body) {
+		CloseableIteratorWithoutException<Atom> it = body.iterator();
+		while (it.hasNext()) {
+			Atom atom = it.next();
 			i = -1;
 			for (Term t : atom) {
 				++i;
@@ -159,7 +161,9 @@ public class AffectedPositionSet {
 
 		for (Rule rule : ruleSet) {
 			existentials = rule.getExistentials();
-			for (Atom atom : rule.getHead()) {
+			CloseableIteratorWithoutException<Atom> it = rule.getHead().iterator();
+			while (it.hasNext()) {
+				Atom atom = it.next();
 				i = -1;
 				for (Term t : atom) {
 					++i;
@@ -179,10 +183,10 @@ public class AffectedPositionSet {
 	 * affected.
 	 */
 	private void step2() {
-		AtomSet body;
+		InMemoryAtomSet body;
 		boolean isAffected;
 		int i;
-		Iterator<Atom> atomIt;
+		CloseableIteratorWithoutException<Atom> atomIt;
 		Iterator<Term> termIt;
 		Atom a;
 		Term t;
@@ -227,8 +231,10 @@ public class AffectedPositionSet {
 		int i;
 		PredicatePosition predicatePosition;
 		boolean addSomeAffectedPosition = false;
-
-		for (Atom atom : rule.getHead()) {
+		
+		CloseableIteratorWithoutException<Atom> it = rule.getHead().iterator();
+		while (it.hasNext()) {
+			Atom atom = it.next();
 			i = -1;
 			for (Term t : atom) {
 				++i;

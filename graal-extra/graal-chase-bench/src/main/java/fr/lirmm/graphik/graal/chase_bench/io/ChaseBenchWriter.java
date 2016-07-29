@@ -66,6 +66,7 @@ import fr.lirmm.graphik.graal.api.io.RuleWriter;
 import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.Prefix;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -133,7 +134,9 @@ public class ChaseBenchWriter extends AbstractGraalWriter {
 
 	@Override
 	public AtomSetWriter write(AtomSet atomSet) throws IOException {
-		for (Atom a : atomSet) {
+		CloseableIterator<Atom> it = atomSet.iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			this.write(a);
 		}
 		return this;

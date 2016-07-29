@@ -139,7 +139,9 @@ public class CLI_FGH {
 
 			System.out.println("Adding initial facts to index...");
 			int init_size = 0;
-			for (Atom a : atomset) {
+			CloseableIterator<Atom> it = atomset.iterator();
+			while (it.hasNext()) {
+				Atom a = it.next();
 				index.get(a);
 				++init_size;
 			}
@@ -153,8 +155,11 @@ public class CLI_FGH {
 
 			System.out.println("Counting atoms...");
 			int nbAtoms = 0;
-			for (Atom a : atomset)
+			CloseableIterator<Atom> it2 = atomset.iterator();
+			while (it2.hasNext()) {
+				Atom a = it2.next();
 				++nbAtoms;
+			}
 			System.out.println("Done: "+nbAtoms);
 
 			if (options.computingBasicWeights) {
@@ -202,11 +207,17 @@ public class CLI_FGH {
 						Substitution s = execute.next();
 						AtomSet conflict = s.createImageOf(q.getAtomSet());
 						int conflict_size = 0;
-						for (Atom a : conflict)
+						CloseableIterator<Atom> itConflict = conflict.iterator();
+						while (itConflict.hasNext()) {
+							Atom a = itConflict.next();
 							++conflict_size;
+						}
 						out.write(conflict_size);
 						out.write(' ');
-						for (Atom a : conflict) {
+
+						itConflict = conflict.iterator();
+						while (itConflict.hasNext()) {
+							Atom a = itConflict.next();
 							out.write(index.get(a));
 							out.write(' ');
 						}
@@ -225,11 +236,16 @@ public class CLI_FGH {
 						Substitution s = execute.next();
 						AtomSet conflict = s.createImageOf(q.getAtomSet());
 						int conflict_size = 0;
-						for (Atom a : conflict)
+						CloseableIterator<Atom> itConflict = conflict.iterator();
+						while (itConflict.hasNext()) {
+							Atom a = itConflict.next();
 							++conflict_size;
+						}
 						out.write(conflict_size);
 						out.write(' ');
-						for (Atom a : conflict) {
+						itConflict = conflict.iterator();
+						while (itConflict.hasNext()) {
+							Atom a = itConflict.next();
 							out.write(index.get(a));
 							out.write(' ');
 						}

@@ -57,6 +57,7 @@ import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.io.RuleWriter;
 import fr.lirmm.graphik.util.Prefix;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -122,7 +123,9 @@ public class SparqlRuleWriter extends AbstractSparqlWriter implements RuleWriter
 	private void writeAtomSet(InMemoryAtomSet atomset) throws IOException {
 		this.write(" {\n");
 		boolean isFirst = true;
-		for (Atom a : atomset) {
+		CloseableIteratorWithoutException<Atom> it = atomset.iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			if (!isFirst) {
 				this.write(" .\n");
 			} else {

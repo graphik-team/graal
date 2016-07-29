@@ -51,16 +51,16 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
-import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.TermValueComparator;
+import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
 import fr.lirmm.graphik.graal.homomorphism.Var;
 import fr.lirmm.graphik.util.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * This bootstrapper uses the star query around the variable to provide an
@@ -90,7 +90,7 @@ public class StarBootstrapper extends AbstractProfilable implements Bootstrapper
 
 	@Override
 	public CloseableIterator<Term> exec(final Var v, InMemoryAtomSet query, final AtomSet data,
-	    RulesCompilation compilation) throws AtomSetException {
+	    RulesCompilation compilation) throws BacktrackException {
 		Set<Term> terms = null;
 		
 		if(this.getProfiler() != null) {
@@ -117,65 +117,59 @@ public class StarBootstrapper extends AbstractProfilable implements Bootstrapper
 				aa = a;
 			}
 		}
-		if (constants != null && !constants.isEmpty()) {
-			int pos = aa.indexOf(v.value);
-			terms = new TreeSet<Term>(TermValueComparator.instance());
-			GIterator<Atom> match = data.match(aa);
-			while (match.hasNext()) {
-				terms.add(match.next().getTerm(pos));
-			}
-		}
-
-		if (this.getProfiler() != null) {
-			this.getProfiler().stop("BootstrapTimeFirstPart");
-		}
-
-		if (terms == null) {
-			it = v.postAtoms.iterator();
-			while (it.hasNext()) {
-				if (terms == null) {
-					terms = execOverRewritings(it.next(), v, data, compilation);
-				} else {
-					terms.retainAll(execOverRewritings(it.next(), v, data, compilation));
-				}
-			}
-
-			it = v.preAtoms.iterator();
-			while (it.hasNext()) {
-				if (terms == null) {
-					terms = execOverRewritings(it.next(), v, data, compilation);
-				} else {
-					terms.retainAll(execOverRewritings(it.next(), v, data, compilation));
-				}
-			}
-		}
 		
-		if(this.getProfiler() != null) {
-			this.getProfiler().stop("BootstrapTime");
-		}
-
-		if (terms == null) {
-			return new CloseableIteratorAdapter<Term>(data.termsIterator());
-		} else {
-			return new CloseableIteratorAdapter<Term>(terms.iterator());
-		}
-	}
-
-	private Set<Term> execOverRewritings(Atom a, Var v, AtomSet data, RulesCompilation compilation)
-	    throws AtomSetException {
-		Set<Term> terms = new TreeSet<Term>(TermValueComparator.instance());
-		final Iterator<Atom> rewritingOf = compilation.getRewritingOf(a).iterator();
-		while (rewritingOf.hasNext()) {
-			Atom im = rewritingOf.next();
-			Predicate predicate = im.getPredicate();
-			int pos = im.indexOf(v.value);
-
-			GIterator<Term> it = data.termsByPredicatePosition(predicate, pos);
-			while (it.hasNext()) {
-				terms.add(it.next());
+		try {
+			if (constants != null && !constants.isEmpty()) {
+				int pos = aa.indexOf(v.value);
+				terms = new TreeSet<Term>(TermValueComparator.instance());
+				CloseableIterator<Atom> match = data.match(aa);
+				while (match.hasNext()) {
+					terms.add(match.next().getTerm(pos));
+				}
 			}
+
+			if (this.getProfiler() != null) {
+				this.getProfiler().stop("BootstrapTimeFirstPart");
+			}
+
+			if (terms == null) {
+				it = v.postAtoms.iterator();
+				while (it.hasNext()) {
+					if (terms == null) {
+						terms = BootstrapperUtils.computeCandidatesOverRewritings(it.next(), v, data, compilation);
+					} else {
+						terms.retainAll(
+						    BootstrapperUtils.computeCandidatesOverRewritings(it.next(), v, data, compilation));
+					}
+				}
+
+				it = v.preAtoms.iterator();
+				while (it.hasNext()) {
+					if (terms == null) {
+						terms = BootstrapperUtils.computeCandidatesOverRewritings(it.next(), v, data, compilation);
+					} else {
+						terms.retainAll(
+						    BootstrapperUtils.computeCandidatesOverRewritings(it.next(), v, data, compilation));
+					}
+				}
+			}
+
+			if (this.getProfiler() != null) {
+				this.getProfiler().stop("BootstrapTime");
+			}
+
+			if (terms == null) {
+				return data.termsIterator();
+			} else {
+				return new CloseableIteratorAdapter<Term>(terms.iterator());
+			}
+		} catch (AtomSetException e) {
+			throw new BacktrackException(e);
+		} catch (IteratorException e) {
+			throw new BacktrackException(e);
 		}
-		return terms;
 	}
+
+
 
 }

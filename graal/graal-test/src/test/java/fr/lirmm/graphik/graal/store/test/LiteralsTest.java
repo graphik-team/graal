@@ -58,11 +58,8 @@ import org.junit.runner.RunWith;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
@@ -84,7 +81,7 @@ public class LiteralsTest {
 	}
 
 	@Theory
-	public void string(AtomSet store) throws AtomSetException, HomomorphismFactoryException, HomomorphismException {
+	public void string(AtomSet store) throws Exception {
 		Atom a = DlgpParser.parseAtom("name(a,\"john\").");
 		store.add(a);
 
@@ -96,7 +93,7 @@ public class LiteralsTest {
 	}
 
 	@Theory
-	public void integer(AtomSet store) throws AtomSetException, HomomorphismFactoryException, HomomorphismException {
+	public void integer(AtomSet store) throws Exception {
 		Atom a = DlgpParser.parseAtom("age(a,1).");
 		store.add(a);
 
@@ -108,7 +105,7 @@ public class LiteralsTest {
 	}
 
 	@Theory
-	public void decimal(AtomSet store) throws AtomSetException, HomomorphismFactoryException, HomomorphismException {
+	public void decimal(AtomSet store) throws Exception {
 		Atom a = DlgpParser.parseAtom("age(a,-5.1).");
 		store.add(a);
 
@@ -120,7 +117,7 @@ public class LiteralsTest {
 	}
 
 	@Theory
-	public void ddouble(AtomSet store) throws AtomSetException, HomomorphismFactoryException, HomomorphismException {
+	public void ddouble(AtomSet store) throws Exception {
 		Atom a = DlgpParser.parseAtom("age(a,5.2E20).");
 		store.add(a);
 
@@ -132,7 +129,7 @@ public class LiteralsTest {
 	}
 
 	@Theory
-	public void bool(AtomSet store) throws AtomSetException, HomomorphismFactoryException, HomomorphismException {
+	public void bool(AtomSet store) throws Exception {
 		Atom a = DlgpParser.parseAtom("ishuman(a,true).");
 		store.add(a);
 

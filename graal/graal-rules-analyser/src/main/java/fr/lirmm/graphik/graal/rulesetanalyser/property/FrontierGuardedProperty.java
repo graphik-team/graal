@@ -49,6 +49,7 @@ import java.util.Set;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
  * At least one atom in the body (called a frontier-guard) contains all the
@@ -87,7 +88,9 @@ public final class FrontierGuardedProperty extends RuleSetProperty.Local {
 		Set<Term> frontier = rule.getFrontier();
 		boolean isGuarded = true;
 
-		for (Atom a : rule.getBody()) {
+		CloseableIteratorWithoutException<Atom> it = rule.getBody().iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			isGuarded = true;
 			for (Term v : frontier) {
 				if (!a.getTerms().contains(v)) {

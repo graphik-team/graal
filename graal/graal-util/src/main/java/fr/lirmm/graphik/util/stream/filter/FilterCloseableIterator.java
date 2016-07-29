@@ -47,6 +47,7 @@ package fr.lirmm.graphik.util.stream.filter;
 
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 
 /**
@@ -66,7 +67,7 @@ public class FilterCloseableIterator<U, T> extends AbstractCloseableIterator<T> 
 	}
 
 	@Override
-	public boolean hasNext() {
+	public boolean hasNext() throws IteratorException {
 		while (this.next == null && this.it.hasNext()) {
 			U o = this.it.next();
 			if(this.filter.filter(o)) {
@@ -77,7 +78,7 @@ public class FilterCloseableIterator<U, T> extends AbstractCloseableIterator<T> 
 	}
 
 	@Override
-	public T next() {
+	public T next() throws IteratorException {
 		this.hasNext();
 		T t = this.next;
 		this.next = null;

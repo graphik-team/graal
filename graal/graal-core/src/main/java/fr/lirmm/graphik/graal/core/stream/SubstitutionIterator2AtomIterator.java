@@ -47,14 +47,14 @@ package fr.lirmm.graphik.graal.core.stream;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.util.stream.AbstractIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public class SubstitutionIterator2AtomIterator extends AbstractIterator<Atom> implements CloseableIterator<Atom> {
+public class SubstitutionIterator2AtomIterator implements CloseableIterator<Atom> {
 
 	private Atom atom;
 	private CloseableIterator<Substitution> iterator;
@@ -73,12 +73,12 @@ public class SubstitutionIterator2AtomIterator extends AbstractIterator<Atom> im
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public boolean hasNext() {
+	public boolean hasNext() throws IteratorException {
 		return this.iterator.hasNext();
 	}
 
 	@Override
-	public Atom next() {
+	public Atom next() throws IteratorException {
 		return this.iterator.next().createImageOf(atom);
 	}
 

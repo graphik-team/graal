@@ -42,10 +42,11 @@
  */
  package fr.lirmm.graphik.graal.api.core;
 
-import java.util.Iterator;
 import java.util.Set;
 
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterableWithoutException;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
  * This interface represents an InMemory AtomSet. So, AtomSet methods are
@@ -54,37 +55,40 @@ import fr.lirmm.graphik.util.stream.GIterator;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface InMemoryAtomSet extends AtomSet {
+public interface InMemoryAtomSet extends AtomSet, CloseableIterableWithoutException<Atom> {
 	
 	@Override
 	boolean contains(Atom atom);
 
 	@Override
-	GIterator<Atom> match(Atom atom);
+	CloseableIteratorWithoutException<Atom> match(Atom atom);
 
 	@Override
-	GIterator<Atom> atomsByPredicate(Predicate p);
+	CloseableIteratorWithoutException<Atom> atomsByPredicate(Predicate p);
 
 	@Override
-	GIterator<Term> termsByPredicatePosition(Predicate p, int position);
+	CloseableIteratorWithoutException<Term> termsByPredicatePosition(Predicate p, int position);
 
 	@Override
 	Set<Predicate> getPredicates();
 
 	@Override
-	GIterator<Predicate> predicatesIterator();
+	CloseableIteratorWithoutException<Predicate> predicatesIterator();
 
 	@Override
 	Set<Term> getTerms();
 
 	@Override
-	GIterator<Term> termsIterator();
+	CloseableIteratorWithoutException<Term> termsIterator();
 	
 	@Override
 	Set<Term> getTerms(Term.Type type);
 
 	@Override
-	GIterator<Term> termsIterator(Term.Type type);
+	CloseableIteratorWithoutException<Term> termsIterator(Term.Type type);
+
+	@Override
+	CloseableIteratorWithoutException<Atom> iterator();
 
 	@Override
 	@Deprecated
@@ -97,7 +101,7 @@ public interface InMemoryAtomSet extends AtomSet {
 	boolean add(Atom atom);
 
 	@Override
-	boolean addAll(Iterator<? extends Atom> atoms);
+	boolean addAll(CloseableIterator<? extends Atom> atoms);
 
 	@Override
 	boolean addAll(AtomSet atoms);
@@ -106,7 +110,7 @@ public interface InMemoryAtomSet extends AtomSet {
 	boolean remove(Atom atom);
 
 	@Override
-	boolean removeAll(Iterator<? extends Atom> atoms);
+	boolean removeAll(CloseableIterator<? extends Atom> atoms);
 
 	@Override
 	boolean removeAll(AtomSet atoms);

@@ -52,7 +52,7 @@ import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * The ChaseHaltingCondition interface provides a way to control when a
@@ -80,6 +80,6 @@ public interface ChaseHaltingCondition {
 	 * @throws HomomorphismFactoryException
 	 * @throws HomomorphismException
 	 */
-	GIterator<Atom> apply(Rule rule, Substitution substitution, AtomSet data) throws HomomorphismFactoryException,
+	CloseableIterator<Atom> apply(Rule rule, Substitution substitution, AtomSet data) throws HomomorphismFactoryException,
 	                                                                          HomomorphismException;
 }

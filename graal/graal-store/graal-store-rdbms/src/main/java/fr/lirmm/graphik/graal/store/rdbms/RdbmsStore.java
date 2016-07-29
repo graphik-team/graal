@@ -46,7 +46,6 @@ import java.util.Iterator;
 
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.api.core.ConstantGenerator;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.store.Store;
@@ -94,8 +93,5 @@ public interface RdbmsStore extends Store {
 	 * @throws StoreException
 	 */
 	Term getTerm(String label) throws AtomSetException;
-	
-	@Override
-	ConstantGenerator getFreshSymbolGenerator();
-    
+
 }

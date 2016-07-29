@@ -46,19 +46,18 @@
 package fr.lirmm.graphik.graal.grd;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.LinkedList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.graph.DefaultDirectedGraph;
-import org.jgrapht.traverse.DepthFirstIterator;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Predicate;
@@ -69,6 +68,7 @@ import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.Unifier;
 import fr.lirmm.graphik.util.LinkedSet;
 import fr.lirmm.graphik.util.graph.scc.StronglyConnectedComponentsGraph;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 import fr.lirmm.graphik.util.stream.filter.Filter;
 
 /**
@@ -341,7 +341,9 @@ public class GraphOfRuleDependencies {
 		// preprocess
 		Map<Predicate, List<Rule>> index = new TreeMap<Predicate,List<Rule>>();
 		for (Rule r : this.graph.vertexSet()) {
-			for (Atom a : r.getBody()) {
+			CloseableIteratorWithoutException<Atom> it = r.getBody().iterator();
+			while (it.hasNext()) {
+				Atom a = it.next();
 				if (index.get(a.getPredicate()) == null)
 					index.put(a.getPredicate(),new LinkedList<Rule>());
 				index.get(a.getPredicate()).add(r);
@@ -352,7 +354,9 @@ public class GraphOfRuleDependencies {
 		Set<String> marked = new TreeSet<String>();
 		for (Rule r1 : this.graph.vertexSet()) {
 			marked.clear();
-			for (Atom a : r1.getHead()) {
+			CloseableIteratorWithoutException<Atom> it = r1.getHead().iterator();
+			while (it.hasNext()) {
+				Atom a = it.next();
 				candidates = index.get(a.getPredicate());
 				if (candidates != null) {
 					for (Rule r2 : candidates) {

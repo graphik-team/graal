@@ -126,16 +126,6 @@ import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
-import uk.ac.manchester.cs.owl.owlapi.OWLDataMaxCardinalityImpl;
-import uk.ac.manchester.cs.owl.owlapi.OWLDataMinCardinalityImpl;
-import uk.ac.manchester.cs.owl.owlapi.OWLDataSomeValuesFromImpl;
-import uk.ac.manchester.cs.owl.owlapi.OWLObjectIntersectionOfImpl;
-import uk.ac.manchester.cs.owl.owlapi.OWLObjectMaxCardinalityImpl;
-import uk.ac.manchester.cs.owl.owlapi.OWLObjectMinCardinalityImpl;
-import uk.ac.manchester.cs.owl.owlapi.OWLObjectOneOfImpl;
-import uk.ac.manchester.cs.owl.owlapi.OWLObjectSomeValuesFromImpl;
-import uk.ac.manchester.cs.owl.owlapi.OWLSubClassOfAxiomImpl;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
@@ -151,6 +141,16 @@ import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.MathUtils;
 import fr.lirmm.graphik.util.collections.CollectionsUtils;
+import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
+import uk.ac.manchester.cs.owl.owlapi.OWLDataMaxCardinalityImpl;
+import uk.ac.manchester.cs.owl.owlapi.OWLDataMinCardinalityImpl;
+import uk.ac.manchester.cs.owl.owlapi.OWLDataSomeValuesFromImpl;
+import uk.ac.manchester.cs.owl.owlapi.OWLObjectIntersectionOfImpl;
+import uk.ac.manchester.cs.owl.owlapi.OWLObjectMaxCardinalityImpl;
+import uk.ac.manchester.cs.owl.owlapi.OWLObjectMinCardinalityImpl;
+import uk.ac.manchester.cs.owl.owlapi.OWLObjectOneOfImpl;
+import uk.ac.manchester.cs.owl.owlapi.OWLObjectSomeValuesFromImpl;
+import uk.ac.manchester.cs.owl.owlapi.OWLSubClassOfAxiomImpl;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -944,7 +944,7 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 				body.addAll(maxCard.getProperty().accept(this.propertyVisitorXY));
 				body.addAll(maxCard.getProperty().accept(this.propertyVisitorXZ));
 
-				AtomSet bodyTemplate = body;
+				InMemoryAtomSet bodyTemplate = body;
 				head = GraalUtils.createAtomSet(GraalUtils.createAtom(
 						Predicate.EQUALITY, glueVarY, glueVarZ));
 				OWLClassExpression expr = OWLAPIUtils.classExpressionDisjunctiveNormalForm(maxCard.getFiller());
@@ -963,7 +963,7 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 				Predicate p = GraalUtils.createPredicate(maxCard.getProperty());
 				body.add(GraalUtils.createAtom(p, glueVarX, glueVarY));
 				body.add(GraalUtils.createAtom(p, glueVarX, glueVarZ));
-				AtomSet bodyTemplate = body;
+				InMemoryAtomSet bodyTemplate = body;
 				head = GraalUtils.createAtomSet(GraalUtils.createAtom(
 						Predicate.EQUALITY, glueVarY, glueVarZ));
 				OWLDataRange expr = OWLAPIUtils.dataRangeDisjunctiveNormalForm(maxCard.getFiller());

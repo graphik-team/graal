@@ -54,7 +54,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
@@ -70,6 +69,7 @@ import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 import fr.lirmm.graphik.graal.homomorphism.PureHomomorphism;
 import fr.lirmm.graphik.util.Profiler;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -127,8 +127,8 @@ final class Utils {
 	 *         and q
 	 */
 	public static ConjunctiveQuery rewrite(ConjunctiveQuery q, QueryUnifier u) {
-		AtomSet ajout = u.getImageOf(u.getRule().getBody());
-		AtomSet restant = u.getImageOf(AtomSetUtils.minus(q.getAtomSet(),
+		InMemoryAtomSet ajout = u.getImageOf(u.getRule().getBody());
+		InMemoryAtomSet restant = u.getImageOf(AtomSetUtils.minus(q.getAtomSet(),
 				u.getPiece()));
 		ConjunctiveQuery rew = null;
 		if (ajout != null && restant != null) { // FIXME
@@ -155,8 +155,8 @@ final class Utils {
 	 */
 	public static MarkedQuery rewriteWithMark(ConjunctiveQuery q, QueryUnifier u) {
 
-		AtomSet ajout = u.getImageOf(u.getRule().getBody());
-		AtomSet restant = u.getImageOf(AtomSetUtils.minus(q.getAtomSet(),
+		InMemoryAtomSet ajout = u.getImageOf(u.getRule().getBody());
+		InMemoryAtomSet restant = u.getImageOf(AtomSetUtils.minus(q.getAtomSet(),
 				u.getPiece()));
 		MarkedQuery rew = null;
 		if (ajout != null && restant != null) { // FIXME
@@ -166,8 +166,11 @@ final class Utils {
 			rew = new MarkedQuery(res, ansVar);
 
 			ArrayList<Atom> markedAtoms = new ArrayList<Atom>();
-			for (Atom a : ajout)
+			CloseableIteratorWithoutException<Atom> it = ajout.iterator();
+			while (it.hasNext()) {
+				Atom a = it.next();
 				markedAtoms.add(a);
+			}
 
 			rew.setMarkedAtom(markedAtoms);
 		}
@@ -361,9 +364,11 @@ final class Utils {
 
 			// we will build all the possible fact from the rewriting of the
 			// atoms
-			for (Atom a : originalQuery) {
+			CloseableIteratorWithoutException<Atom> it = originalQuery.iterator();
+			while (it.hasNext()) {
+				Atom a = it.next();
 				atomsRewritings = compilation.getRewritingOf(a);
-				for (AtomSet q : newQueriesBefore) {
+				for (InMemoryAtomSet q : newQueriesBefore) {
 					// for each possible atom at the next position clone the
 					// query and add the atom
 					for (Atom atom : atomsRewritings) {//

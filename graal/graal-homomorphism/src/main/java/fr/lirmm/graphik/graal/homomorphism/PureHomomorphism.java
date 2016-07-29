@@ -58,6 +58,7 @@ import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
@@ -67,6 +68,11 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
 import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
 import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterable;
+import fr.lirmm.graphik.util.stream.CloseableIterableWithoutException;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * A simple implementation of an algorithm to find if there exist an
@@ -78,7 +84,7 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
  * 
  */
 public class PureHomomorphism implements
- HomomorphismWithCompilation<AtomSet, AtomSet> {
+                              HomomorphismWithCompilation<InMemoryAtomSet, AtomSet> {
 
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(PureHomomorphism.class);
@@ -102,12 +108,13 @@ public class PureHomomorphism implements
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public CloseableIterator<Substitution> execute(AtomSet source, AtomSet target) throws HomomorphismException {
+	public CloseableIterator<Substitution> execute(InMemoryAtomSet source, AtomSet target)
+	    throws HomomorphismException {
 		return null;
 	}
 
 	@Override
-	public CloseableIterator<Substitution> execute(AtomSet source, AtomSet target, RulesCompilation compilation)
+	public CloseableIterator<Substitution> execute(InMemoryAtomSet source, AtomSet target, RulesCompilation compilation)
 	    throws HomomorphismException {
 		return null;
 	}
@@ -116,7 +123,7 @@ public class PureHomomorphism implements
 	 * return true iff exist an homomorphism from the query to the fact else
 	 * return false
 	 */
-	public boolean exist(AtomSet source, AtomSet target)
+	public boolean exist(InMemoryAtomSet source, AtomSet target)
 			throws HomomorphismException {
 		return exist(source, target, NoCompilation.instance());
 	}
@@ -125,7 +132,8 @@ public class PureHomomorphism implements
 	 * return true iff exist an homomorphism from the query to the fact else
 	 * return false
 	 */
-	public boolean exist(AtomSet source, AtomSet target, RulesCompilation compilation) throws HomomorphismException {
+	public boolean exist(InMemoryAtomSet source, AtomSet target, RulesCompilation compilation)
+	    throws HomomorphismException {
 
 		Homomorphism homomorphism = new Homomorphism();
 		homomorphism.compilation = compilation;
@@ -176,9 +184,11 @@ public class PureHomomorphism implements
 
 	/**
 	 * Initialise attribute for homomorphism
+	 * 
+	 * @throws HomomorphismException
 	 */
 	protected boolean initialiseHomomorphism(Homomorphism homomorphism,
-			Iterable<Atom> source, Iterable<Atom> target) {
+	    CloseableIterableWithoutException<Atom> source, CloseableIterable<Atom> target) throws HomomorphismException {
 		homomorphism.sourceAtoms = new ArrayList<Atom>();
 		homomorphism.firstOccurence = computeFirstOccurence(source,
 				homomorphism.sourceAtoms);
@@ -190,7 +200,11 @@ public class PureHomomorphism implements
 			homomorphism.currentImages.add(-1);
 			homomorphism.availableImage.add(null);
 		}
-		return initialiseAvailableImage(homomorphism, target);
+		try {
+			return initialiseAvailableImage(homomorphism, target);
+		} catch (IteratorException e) {
+			throw new HomomorphismException("An errors occurs while initializing available images for homomorphism", e);
+		}
 	}
 
 	protected static boolean backtrack(Homomorphism homomorphism) {
@@ -221,12 +235,14 @@ public class PureHomomorphism implements
 	 * @param sourceAtoms2
 	 */
 	protected static ArrayList<LinkedList<Term>> computeFirstOccurence(
-			Iterable<Atom> source, ArrayList<Atom> sourceAtoms) {
+	    CloseableIterableWithoutException<Atom> source, ArrayList<Atom> sourceAtoms) {
 		ArrayList<LinkedList<Term>> firstOccurenceArray = new ArrayList<LinkedList<Term>>();
 		Set<Term> alreadySeen = new TreeSet<Term>();
 		LinkedList<Term> firstOccurence;
 
-		for (Atom a : source) {
+		CloseableIteratorWithoutException<Atom> it = source.iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			sourceAtoms.add(a);
 			firstOccurence = new LinkedList<Term>();
 			firstOccurenceArray.add(firstOccurence);
@@ -320,13 +336,17 @@ public class PureHomomorphism implements
 	/**
 	 * Found the possible image of each atom in the source fact into the atoms
 	 * of the target fact
+	 * 
+	 * @throws IteratorException
 	 */
 	protected boolean initialiseAvailableImage(Homomorphism homomorphism,
-			Iterable<Atom> target) {
+	    CloseableIterable<Atom> target) throws IteratorException {
 		LinkedList<Atom> images;
 		for (int i = 0; i < homomorphism.sourceAtoms.size(); ++i) {
 			images = new LinkedList<Atom>();
-			for (Atom im : target) {
+			CloseableIterator<Atom> it = target.iterator();
+			while (it.hasNext()) {
+				Atom im = it.next();
 				if (isMappable(homomorphism.sourceAtoms.get(i).getPredicate(), im.getPredicate(),
 				    homomorphism.compilation)) {
 					images.add(im);

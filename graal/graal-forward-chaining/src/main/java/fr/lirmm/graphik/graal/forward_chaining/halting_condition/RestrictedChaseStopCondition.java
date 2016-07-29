@@ -64,8 +64,9 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
-import fr.lirmm.graphik.util.stream.GIterator;
-import fr.lirmm.graphik.util.stream.IteratorAdapter;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -81,14 +82,18 @@ public class RestrictedChaseStopCondition implements ChaseHaltingCondition {
 	}
 
 	@Override
-	public GIterator<Atom> apply(Rule rule, Substitution substitution, AtomSet data)
+	public CloseableIterator<Atom> apply(Rule rule, Substitution substitution, AtomSet data)
 	                                                                                 throws HomomorphismFactoryException,
 	                                                                                 HomomorphismException {
 		InMemoryAtomSet newFacts = substitution.createImageOf(rule.getHead());
 		ConjunctiveQuery query = new DefaultConjunctiveQuery(newFacts);
 
-		if (StaticHomomorphism.instance().execute(query, data).hasNext()) {
-			return new IteratorAdapter<Atom>(Collections.<Atom> emptyList().iterator());
+		try {
+			if (StaticHomomorphism.instance().execute(query, data).hasNext()) {
+				return new CloseableIteratorAdapter<Atom>(Collections.<Atom> emptyList().iterator());
+			}
+		} catch (IteratorException e) {
+			throw new HomomorphismException("An errors occurs while iterating results", e);
 		}
 		
 		// replace variables by fresh symbol

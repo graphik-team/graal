@@ -49,12 +49,12 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.util.Profiler;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -75,10 +75,11 @@ public abstract class AbstractRulesCompilation implements RulesCompilation {
 	}
 
 	@Override
-	public InMemoryAtomSet getIrredondant(AtomSet atomSet) {
+	public InMemoryAtomSet getIrredondant(InMemoryAtomSet atomSet) {
 		InMemoryAtomSet irr = new LinkedListAtomSet(atomSet);
-		Iterator<Atom> i = irr.iterator();
-		Iterator<Atom> j;
+		CloseableIteratorWithoutException<Atom> i = irr.iterator();
+		CloseableIteratorWithoutException<Atom> j;
+		InMemoryAtomSet toRemove = new LinkedListAtomSet();
 		Atom origin;
 		Atom target;
 		boolean isSubsumed;
@@ -88,13 +89,14 @@ public abstract class AbstractRulesCompilation implements RulesCompilation {
 			isSubsumed = false;
 			while (j.hasNext() && !isSubsumed) {
 				origin = j.next();
-				if (target != origin && this.isImplied(target, origin)) {
+				if (target != origin && !toRemove.contains(origin) && this.isImplied(target, origin)) {
 					isSubsumed = true;
-					i.remove();
+					toRemove.add(target);
 				}
 			}
 		}
 
+		irr.removeAll(toRemove);
 		return irr;
 	}
 

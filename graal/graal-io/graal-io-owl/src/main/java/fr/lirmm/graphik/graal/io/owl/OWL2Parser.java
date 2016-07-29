@@ -88,6 +88,7 @@ import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.ArrayBlockingStream;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 import fr.lirmm.graphik.util.stream.transformator.Transformator;
 
 /**
@@ -392,15 +393,16 @@ public class OWL2Parser extends AbstractCloseableIterator<Object> implements Par
 			InMemoryAtomSet body = r.getBody();
 			InMemoryAtomSet head = r.getHead();
 
-			Iterator<Atom> bodyIt = body.iterator();
+			CloseableIteratorWithoutException<Atom> bodyIt = body.iterator();
 
 			// Remove equality in body
 			Substitution s = new TreeMapSubstitution();
+			InMemoryAtomSet toRemove = new LinkedListAtomSet();
 			while (bodyIt.hasNext()) {
 				Atom a = bodyIt.next();
 				if (a.getPredicate().equals(Predicate.EQUALITY)
 					&& (!a.getTerm(0).isConstant() || !a.getTerm(1).isConstant())) {
-					bodyIt.remove();
+					toRemove.add(a);
 					if (a.getTerm(0).isConstant()) {
 						s.put(a.getTerm(1), a.getTerm(0));
 					} else {
@@ -408,12 +410,13 @@ public class OWL2Parser extends AbstractCloseableIterator<Object> implements Par
 					}
 				}
 			}
+			body.removeAll(toRemove);
 
 			body = removeUselessTopInBody(removeUselessBottom(s.createImageOf(body)));
 			bodyIt = body.iterator();
 
 			head = removeUselessTopInHead(removeUselessBottom(s.createImageOf(head)));
-			Iterator<Atom> headIt = head.iterator();
+			CloseableIteratorWithoutException<Atom> headIt = head.iterator();
 
 			// USELESS STATEMENT
 			if (!headIt.hasNext()) {
@@ -440,7 +443,7 @@ public class OWL2Parser extends AbstractCloseableIterator<Object> implements Par
 	 * @return
 	 */
 	private static InMemoryAtomSet removeUselessBottom(InMemoryAtomSet atomset) {
-		Iterator<Atom> it = atomset.iterator();
+		CloseableIteratorWithoutException<Atom> it = atomset.iterator();
 		Atom a;
 		while (it.hasNext()) {
 			a = it.next();
@@ -454,7 +457,7 @@ public class OWL2Parser extends AbstractCloseableIterator<Object> implements Par
 
 	private static InMemoryAtomSet removeUselessTopInHead(InMemoryAtomSet atomset) {
 		InMemoryAtomSet newAtomset = new LinkedListAtomSet();
-		Iterator<Atom> it = atomset.iterator();
+		CloseableIteratorWithoutException<Atom> it = atomset.iterator();
 		Atom a;
 		while (it.hasNext()) {
 			a = it.next();
@@ -468,17 +471,19 @@ public class OWL2Parser extends AbstractCloseableIterator<Object> implements Par
 
 	private static InMemoryAtomSet removeUselessTopInBody(InMemoryAtomSet atomset) {
 		InMemoryAtomSet newAtomset = new DefaultInMemoryGraphAtomSet();
-		Iterator<Atom> it = atomset.iterator();
+		CloseableIteratorWithoutException<Atom> it = atomset.iterator();
+		InMemoryAtomSet toRemove = new LinkedListAtomSet();
 		Atom a;
 		while (it.hasNext()) {
 			a = it.next();
 			if (!a.getPredicate().equals(Predicate.TOP)) {
 				newAtomset.add(a);
-				it.remove();
+				toRemove.add(a);
 			} else {
 
 			}
 		}
+		atomset.removeAll(toRemove);
 
 		// for each top predicate
 		Set<Term> terms = newAtomset.getTerms();

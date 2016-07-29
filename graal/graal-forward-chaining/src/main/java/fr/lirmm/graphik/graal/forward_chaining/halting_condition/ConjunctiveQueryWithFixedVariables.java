@@ -45,12 +45,10 @@
  */
 package fr.lirmm.graphik.graal.forward_chaining.halting_condition;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Substitution;
@@ -58,6 +56,7 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
 import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 
 /**
@@ -69,12 +68,12 @@ public class ConjunctiveQueryWithFixedVariables implements ConjunctiveQuery {
 	private InMemoryAtomSet atomSet;
 	private List<Term> answerVariables;
 
-	public ConjunctiveQueryWithFixedVariables(AtomSet atomSet, Iterable<Term> fixedTerms) {
+	public ConjunctiveQueryWithFixedVariables(InMemoryAtomSet atomSet, Iterable<Term> fixedTerms) {
 		this.atomSet = computeFixedQuery(atomSet, fixedTerms);
         this.answerVariables = new LinkedList(this.atomSet.getTerms(Term.Type.VARIABLE));
     }
 
-	public ConjunctiveQueryWithFixedVariables(/*ReadOnly*/AtomSet atomSet,
+	public ConjunctiveQueryWithFixedVariables(InMemoryAtomSet atomSet,
 			List<Term> responseVariables, Iterable<Term> fixedTerms) {
 
 		this.atomSet = computeFixedQuery(atomSet, fixedTerms);
@@ -85,7 +84,9 @@ public class ConjunctiveQueryWithFixedVariables implements ConjunctiveQuery {
 	}
 
 	@Override
-	public Iterator<Atom> iterator() { return getAtomSet().iterator(); }
+	public CloseableIteratorWithoutException<Atom> iterator() {
+		return getAtomSet().iterator();
+	}
 	
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
@@ -121,7 +122,7 @@ public class ConjunctiveQueryWithFixedVariables implements ConjunctiveQuery {
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
 	
-	private static InMemoryAtomSet computeFixedQuery(/*ReadOnly*/AtomSet atomSet,
+	private static InMemoryAtomSet computeFixedQuery(InMemoryAtomSet atomset,
 			Iterable<Term> fixedTerms) {
 		// create a Substitution for fixed query
 		InMemoryAtomSet fixedQuery = AtomSetFactory.instance().create();
@@ -135,7 +136,9 @@ public class ConjunctiveQueryWithFixedVariables implements ConjunctiveQuery {
 		}
 
 		// apply substitution
-		for (Atom a : atomSet) {
+		CloseableIteratorWithoutException<Atom> it = atomset.iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			fixedQuery.add(fixSub.createImageOf(a));
 		}
 		

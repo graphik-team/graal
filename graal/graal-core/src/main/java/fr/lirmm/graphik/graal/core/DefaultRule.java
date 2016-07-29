@@ -55,7 +55,7 @@ import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -79,11 +79,11 @@ public class DefaultRule implements Rule {
 		this("", new LinkedListAtomSet(), new LinkedListAtomSet());
 	}
 
-	public DefaultRule(GIterator<Atom> body, GIterator<Atom> head) {
+	public DefaultRule(CloseableIteratorWithoutException<Atom> body, CloseableIteratorWithoutException<Atom> head) {
 		this("", body, head);
 	}
 
-	public DefaultRule(String label, GIterator<Atom> body, GIterator<Atom> head) {
+	public DefaultRule(String label, CloseableIteratorWithoutException<Atom> body, CloseableIteratorWithoutException<Atom> head) {
 		this(label, new LinkedListAtomSet(body), new LinkedListAtomSet(head));
 	}
 

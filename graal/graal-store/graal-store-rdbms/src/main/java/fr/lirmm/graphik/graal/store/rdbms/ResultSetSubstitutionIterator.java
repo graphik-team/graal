@@ -52,6 +52,7 @@ import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -91,18 +92,29 @@ class ResultSetSubstitutionIterator extends AbstractResultSetIterator<Substituti
 	 * @throws SQLException
 	 */
 	@Override
-	protected Substitution computeNext() throws SQLException, AtomSetException {
-		Substitution substitution = new TreeMapSubstitution();
-		if (!ans.isEmpty()) {
-			for (Term t : ans) {
-				if(!t.isConstant()) {
-					String value = this.results.getString(t.getLabel());
-					Term substitut = this.store.getTerm(value);
-					substitution.put(t, substitut);
+	protected Substitution computeNext() throws IteratorException {
+		try {
+			Substitution substitution = new TreeMapSubstitution();
+			if (!ans.isEmpty()) {
+				for (Term t : ans) {
+					if (!t.isConstant()) {
+						String value = this.results.getString(t.getLabel());
+						Term substitut;
+						if (value == null) {
+							substitut = this.store.getFreshSymbolGenerator().getFreshCst();
+						} else {
+							substitut = this.store.getTerm(value);
+						}
+						substitution.put(t, substitut);
+					}
 				}
 			}
+			return substitution;
+		} catch (SQLException e) {
+			throw new IteratorException(e);
+		} catch (AtomSetException e) {
+			throw new IteratorException(e);
 		}
-		return substitution;
 	}
     
 }

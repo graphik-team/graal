@@ -49,10 +49,22 @@ import java.io.IOException;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class CloseableIteratorAdapter<T> extends IteratorAdapter<T> implements CloseableIterator<T> {
+public class CloseableIteratorAdapter<T> implements CloseableIteratorWithoutException<T> {
+
+	protected java.util.Iterator<T> iterator;
 
 	public CloseableIteratorAdapter(java.util.Iterator<T> iterator) {
-		super(iterator);
+		this.iterator = iterator;
+	}
+	
+	@Override
+	public boolean hasNext() {
+		return this.iterator.hasNext();
+	}
+
+	@Override
+	public T next() {
+		return this.iterator.next();
 	}
 
 	@Override

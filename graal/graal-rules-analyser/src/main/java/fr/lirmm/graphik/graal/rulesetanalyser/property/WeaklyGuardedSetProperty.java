@@ -51,7 +51,7 @@ import java.util.Set;
 
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.core.RuleUtils;
+import fr.lirmm.graphik.graal.core.Rules;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.AffectedPositionSet;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
 
@@ -100,7 +100,7 @@ public final class WeaklyGuardedSetProperty extends RuleSetProperty.Default {
 		for (Rule r : affectedPositionSet.getRules()) {
 			Set<Term> affectedVars = affectedPositionSet
 					.getAllAffectedVariables(r.getBody());
-			if (!RuleUtils.isThereOneAtomThatContainsAllVars(r.getBody(),
+			if (!Rules.isThereOneAtomThatContainsAllVars(r.getBody(),
 					affectedVars)) {
 				return false;
 			}

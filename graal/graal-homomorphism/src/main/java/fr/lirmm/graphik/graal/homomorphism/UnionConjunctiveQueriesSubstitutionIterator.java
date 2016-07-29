@@ -59,7 +59,8 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
 import fr.lirmm.graphik.util.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -72,7 +73,7 @@ public class UnionConjunctiveQueriesSubstitutionIterator extends AbstractProfila
 	    UnionConjunctiveQueriesSubstitutionIterator.class);
 
 	private AtomSet                                 atomSet;
-	private GIterator<ConjunctiveQuery>             cqueryIterator;
+	private CloseableIterator<ConjunctiveQuery>             cqueryIterator;
 	private CloseableIterator<Substitution>         tmpIt;
 	private boolean                                 hasNextCallDone = false;
 	private Homomorphism<ConjunctiveQuery, AtomSet> homomorphism;
@@ -99,7 +100,7 @@ public class UnionConjunctiveQueriesSubstitutionIterator extends AbstractProfila
 	}
 
 	@Override
-	public boolean hasNext() {
+	public boolean hasNext() throws IteratorException {
 		if (!this.hasNextCallDone) {
 			this.hasNextCallDone = true;
 			
@@ -136,7 +137,7 @@ public class UnionConjunctiveQueriesSubstitutionIterator extends AbstractProfila
 	}
 
 	@Override
-	public Substitution next() {
+	public Substitution next() throws IteratorException {
 		if (!this.hasNextCallDone)
 			this.hasNext();
 
@@ -150,11 +151,6 @@ public class UnionConjunctiveQueriesSubstitutionIterator extends AbstractProfila
 		if (this.tmpIt != null) {
 			this.tmpIt.close();
 		}
-	}
-
-	@Override
-	public void remove() {
-		throw new UnsupportedOperationException();
 	}
 
 }

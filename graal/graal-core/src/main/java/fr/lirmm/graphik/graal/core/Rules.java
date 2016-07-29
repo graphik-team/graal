@@ -57,7 +57,6 @@ import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.GraalConstant;
 import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
@@ -70,14 +69,16 @@ import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 import fr.lirmm.graphik.util.EquivalentRelation;
 import fr.lirmm.graphik.util.TreeMapEquivalentRelation;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
+import fr.lirmm.graphik.util.stream.CloseableIterableWithoutException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public final class RuleUtils {
+public final class Rules {
 
-	private RuleUtils() {
+	private Rules() {
 	}
 
 	/**
@@ -102,8 +103,11 @@ public final class RuleUtils {
 		return AtomSetUtils.isSingleton(rule.getHead());
 	}
 
-	public static boolean isThereOneAtomThatContainsAllVars(Iterable<Atom> atomset, Collection<Term> terms) {
-		for (Atom atom : atomset) {
+	public static boolean isThereOneAtomThatContainsAllVars(CloseableIterableWithoutException<Atom> atomset,
+	    Collection<Term> terms) {
+		CloseableIteratorWithoutException<Atom> it = atomset.iterator();
+		while (it.hasNext()) {
+			Atom atom = it.next();
 			if (atom.getTerms(Type.VARIABLE).containsAll(terms)) {
 				return true;
 			}
@@ -125,7 +129,9 @@ public final class RuleUtils {
 
 		// compute equivalent classes
 		EquivalentRelation<Term> classes = new TreeMapEquivalentRelation<Term>();
-		for (Atom a : rule.getHead()) {
+		CloseableIteratorWithoutException<Atom> it = rule.getHead().iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			Term representant = null;
 			for (Term t : a) {
 				if (existentials.contains(t)) {
@@ -150,11 +156,13 @@ public final class RuleUtils {
 		boolean isAffected;
 		InMemoryAtomSet atomset;
 		Term e;
-		for (Atom a : rule.getHead()) {
+		it = rule.getHead().iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			isAffected = false;
-			Iterator<Term> it = existentials.iterator();
-			while (it.hasNext() && !isAffected) {
-				e = it.next();
+			Iterator<Term> it2 = existentials.iterator();
+			while (it2.hasNext() && !isAffected) {
+				e = it2.next();
 				if (a.getTerms().contains(e)) {
 					tmpPieces.get(classes.getIdClass(e)).add(a);
 					isAffected = true;
@@ -245,14 +253,18 @@ public final class RuleUtils {
 
 			if (label.isEmpty()) {
 				atomicHead.add(DefaultRuleFactory.instance().create(rule.getBody(), new LinkedListAtomSet(aux)));
-				for (Atom atom : rule.getHead()) {
+				CloseableIteratorWithoutException<Atom> it = rule.getHead().iterator();
+				while (it.hasNext()) {
+					Atom atom = it.next();
 					atomicHead.add(DefaultRuleFactory.instance().create(aux, atom));
 				}
 			} else {
 				int i = -1;
 				atomicHead.add(DefaultRuleFactory.instance().create(label + "-a" + ++i, rule.getBody(),
 				        new LinkedListAtomSet(aux)));
-				for (Atom atom : rule.getHead()) {
+				CloseableIteratorWithoutException<Atom> it = rule.getHead().iterator();
+				while (it.hasNext()) {
+					Atom atom = it.next();
 					atomicHead.add(DefaultRuleFactory.instance().create(label + "-a" + ++i, aux, atom));
 				}
 			}
@@ -370,7 +382,7 @@ public final class RuleUtils {
 			return false;
 		if (!AtomSetUtils.hasSize2(r.getHead()))
 			return false;
-		Iterator<Atom> h = r.getHead().iterator();
+		CloseableIteratorWithoutException<Atom> h = r.getHead().iterator();
 		Atom P1 = r.getBody().iterator().next();
 		Atom P2 = h.next();
 		Atom P3 = h.next();
@@ -395,7 +407,7 @@ public final class RuleUtils {
 			return false;
 		if (!AtomSetUtils.hasSize2(r.getHead()))
 			return false;
-		Iterator<Atom> h = r.getHead().iterator();
+		CloseableIteratorWithoutException<Atom> h = r.getHead().iterator();
 		Atom P1 = r.getBody().iterator().next();
 		Atom P2 = h.next();
 		Atom P3 = h.next();
@@ -420,7 +432,7 @@ public final class RuleUtils {
 			return false;
 		if (!AtomSetUtils.isSingleton(r.getHead()))
 			return false;
-		Iterator<Atom> b = r.getBody().iterator();
+		CloseableIteratorWithoutException<Atom> b = r.getBody().iterator();
 		Atom P1 = b.next();
 		Atom P2 = b.next();
 		Atom P3 = r.getHead().iterator().next();
@@ -439,7 +451,7 @@ public final class RuleUtils {
 	public static boolean isTransitivity(Rule r) {
 		if (!isRoleComposition(r))
 			return false;
-		Iterator<Atom> b = r.getBody().iterator();
+		CloseableIteratorWithoutException<Atom> b = r.getBody().iterator();
 		Atom P1 = b.next();
 		Atom P2 = b.next();
 		Atom P3 = r.getHead().iterator().next();
@@ -463,7 +475,7 @@ public final class RuleUtils {
 			return false;
 		if (!isNegativeConstraint(r))
 			return false;
-		Iterator<Atom> b = r.getBody().iterator();
+		CloseableIteratorWithoutException<Atom> b = r.getBody().iterator();
 		Atom C1 = b.next();
 		Atom C2 = b.next();
 		if (!isConcept(C1))
@@ -478,7 +490,7 @@ public final class RuleUtils {
 			return false;
 		if (!isNegativeConstraint(r))
 			return false;
-		Iterator<Atom> b = r.getBody().iterator();
+		CloseableIteratorWithoutException<Atom> b = r.getBody().iterator();
 		Atom P1 = b.next();
 		Atom P2 = b.next();
 		if (!isRole(P1))
@@ -492,7 +504,7 @@ public final class RuleUtils {
 	public static boolean isDisjointInverseRole(Rule r) {
 		if (!isDisjointRole(r))
 			return false;
-		Iterator<Atom> b = r.getBody().iterator();
+		CloseableIteratorWithoutException<Atom> b = r.getBody().iterator();
 		Atom P1 = b.next();
 		Atom P2 = b.next();
 		return P1.getTerm(1).equals(P2.getTerm(0)) && P1.getTerm(0).equals(P2.getTerm(1));
@@ -522,7 +534,7 @@ public final class RuleUtils {
 			if (currentMonoPiece.isEmpty()) {
 				currentRule = it.next();
 				currentMonoPiece
-						.addAll(RuleUtils.computeSinglePiece(currentRule));
+						.addAll(Rules.computeSinglePiece(currentRule));
 			}
 			return currentMonoPiece.poll();
 		}
@@ -553,7 +565,7 @@ public final class RuleUtils {
 		public Rule next() {
 			if (currentAtomicHead.isEmpty()) {
 				currentRule = it.next();
-				currentAtomicHead.addAll(RuleUtils.computeAtomicHead(currentRule));
+				currentAtomicHead.addAll(Rules.computeAtomicHead(currentRule));
 			}
 			return currentAtomicHead.poll();
 		}
@@ -579,12 +591,14 @@ public final class RuleUtils {
 	 * using all predicates occuring in R, all constants occurring in the body of a rule in R, and one
 	 * special fresh constant.
 	 */
-	public static void criticalInstance(final Iterable<Rule> rules, AtomSet A) {
+	public static void criticalInstance(final Iterable<Rule> rules, InMemoryAtomSet A) {
 		Set<Term> terms = new TreeSet<Term>();
 		terms.add(GraalConstant.freshConstant());
 		Set<Predicate> predicates = new TreeSet<Predicate>();
 		for (Rule r : rules) {
-			for (Atom b : r.getBody()) {
+			CloseableIteratorWithoutException<Atom> it = r.getBody().iterator();
+			while (it.hasNext()) {
+				Atom b = it.next();
 				predicates.add(b.getPredicate());
 				for (Term t : b.getTerms())
 					if (t.getType() == Term.Type.CONSTANT)
@@ -601,12 +615,10 @@ public final class RuleUtils {
 		}
 	}
 
-	private static void generateCriticalInstance(AtomSet A, Set<Term> terms, Predicate p, int position, DefaultAtom a) {
+	private static void generateCriticalInstance(InMemoryAtomSet A, Set<Term> terms, Predicate p, int position,
+	    DefaultAtom a) {
 		if (position >= p.getArity()) {
-			try { A.add(a); }
-			catch (Exception e) {
-				// TODO
-			}
+			A.add(a);
 			return;
 		}
 

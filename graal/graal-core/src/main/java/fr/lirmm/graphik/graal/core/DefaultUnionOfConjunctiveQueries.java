@@ -46,7 +46,6 @@
 package fr.lirmm.graphik.graal.core;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -54,8 +53,8 @@ import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.UnionOfConjunctiveQueries;
-import fr.lirmm.graphik.util.stream.GIterator;
-import fr.lirmm.graphik.util.stream.IteratorAdapter;
+import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
  * This class represents query which is the union of conjunctive queries.
@@ -63,8 +62,7 @@ import fr.lirmm.graphik.util.stream.IteratorAdapter;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class DefaultUnionOfConjunctiveQueries implements UnionOfConjunctiveQueries,
-		Collection<ConjunctiveQuery> {
+public class DefaultUnionOfConjunctiveQueries implements UnionOfConjunctiveQueries {
 
 	private String label = "";
 	private Collection<ConjunctiveQuery> queries;
@@ -87,7 +85,8 @@ public class DefaultUnionOfConjunctiveQueries implements UnionOfConjunctiveQueri
 		this.queries = queries;
 	}
 
-	public DefaultUnionOfConjunctiveQueries(List<Term> ans, Iterator<ConjunctiveQuery> queries) {
+	public DefaultUnionOfConjunctiveQueries(List<Term> ans,
+	    CloseableIteratorWithoutException<ConjunctiveQuery> queries) {
 		this.queries = new LinkedList<ConjunctiveQuery>();
 		while (queries.hasNext()) {
 			this.queries.add(queries.next());
@@ -113,69 +112,33 @@ public class DefaultUnionOfConjunctiveQueries implements UnionOfConjunctiveQueri
 		this.ans = ans;
 	}
 
-	@Override
 	public boolean add(ConjunctiveQuery cquery) {
 		return this.queries.add(cquery);
 	}
 
-	@Override
 	public boolean addAll(Collection<? extends ConjunctiveQuery> queries) {
 		return this.queries.addAll(queries);
 	}
 
-	@Override
 	public void clear() {
 		this.queries.clear();
 	}
 
 	@Override
-	public GIterator<ConjunctiveQuery> iterator() {
-		return new IteratorAdapter<ConjunctiveQuery>(this.queries.iterator());
+	public CloseableIteratorWithoutException<ConjunctiveQuery> iterator() {
+		return new CloseableIteratorAdapter<ConjunctiveQuery>(this.queries.iterator());
 	}
 
-	@Override
 	public boolean isEmpty() {
 		return this.queries.isEmpty();
 	}
 
-	@Override
-	public boolean remove(Object o) {
+	public boolean remove(ConjunctiveQuery o) {
 		return this.queries.remove(o);
 	}
 
-	@Override
-	public boolean removeAll(Collection<?> c) {
-		return this.queries.removeAll(c);
-	}
-
-	@Override
-	public boolean retainAll(Collection<?> c) {
-		return this.queries.retainAll(c);
-	}
-
-	@Override
 	public int size() {
 		return this.queries.size();
-	}
-
-	@Override
-	public Object[] toArray() {
-		return this.queries.toArray();
-	}
-
-	@Override
-	public <T> T[] toArray(T[] a) {
-		return this.queries.toArray(a);
-	}
-
-	@Override
-	public boolean contains(Object o) {
-		return this.queries.contains(o);
-	}
-
-	@Override
-	public boolean containsAll(Collection<?> c) {
-		return this.queries.containsAll(c);
 	}
 
 	@Override

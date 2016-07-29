@@ -43,7 +43,6 @@
  package fr.lirmm.graphik.graal.backward_chaining.pure;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
@@ -52,6 +51,7 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 import fr.lirmm.graphik.util.Partition;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
  * An unifier describe how to unify a piece of a fact with a part of an head
@@ -143,7 +143,7 @@ class QueryUnifier {
 	 * 
 	 * @return the image of a given fact,
 	 */
-	public AtomSet getImageOf(InMemoryAtomSet f) {
+	public InMemoryAtomSet getImageOf(InMemoryAtomSet f) {
 		InMemoryAtomSet atomset = null;
 
 		if (associatedSubstitution == null) {
@@ -185,17 +185,31 @@ class QueryUnifier {
 		// we create a rule that is the aggregation of the two rules
 		InMemoryAtomSet b = new LinkedListAtomSet();
 		InMemoryAtomSet h = new LinkedListAtomSet();
-		for (Atom a : getRule().getBody())
-			b.add(a);
-		for (Atom a : getRule().getHead())
-			h.add(a);
 
-		for (Atom a : u.getRule().getBody()) {
+		CloseableIteratorWithoutException<Atom> it = getRule().getBody().iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			b.add(a);
 		}
-		for (Atom a : u.getRule().getHead()) {
+
+		it = getRule().getHead().iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			h.add(a);
 		}
+
+		it = u.getRule().getBody().iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
+			b.add(a);
+		}
+
+		it = u.getRule().getHead().iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
+			h.add(a);
+		}
+
 		Rule rule = DefaultRuleFactory.instance().create(b, h);
 		// we create the partition which is the join of the two partitions
 		Partition<Term> part = getPartition().join(u.getPartition());
@@ -214,8 +228,12 @@ class QueryUnifier {
 	public boolean isCompatible(QueryUnifier u) {
 		// if the pieces of the two unifiers have atom in common the unifiers
 		// are not compatible
-		for (Atom a1 : u.getPiece()) {
-			for (Atom a2 : this.getPiece()) {
+		CloseableIteratorWithoutException<Atom> it1 = u.getPiece().iterator();
+		CloseableIteratorWithoutException<Atom> it2 = this.getPiece().iterator();
+		while (it1.hasNext()) {
+			Atom a1 = it1.next();
+			while (it2.hasNext()) {
+				Atom a2 = it2.next();
 				if (a1.equals(a2)) {
 					return false;
 				}

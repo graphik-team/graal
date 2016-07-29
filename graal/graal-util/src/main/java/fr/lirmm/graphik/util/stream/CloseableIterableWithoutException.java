@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,38 +40,14 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.homomorphism.forward_checking;
-
-import java.util.Map;
-
-import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.AtomSetException;
-import fr.lirmm.graphik.graal.api.core.RulesCompilation;
-import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
-import fr.lirmm.graphik.graal.homomorphism.Var;
-import fr.lirmm.graphik.util.Profilable;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
+package fr.lirmm.graphik.util.stream;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface ForwardChecking extends Profilable {
+public interface CloseableIterableWithoutException<T> extends CloseableIterable<T> {
 
-	void init(Var[] vars, Map<Variable, Var> map);
-
-	boolean isInit(Var v);
-
-	boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc) throws BacktrackException;
-
-	/**
-	 * @param var
-	 * @return
-	 * @throws AtomSetException
-	 */
-	CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Map<Variable, Var> map, RulesCompilation rc)
-	    throws BacktrackException;
-
+	@Override
+	CloseableIteratorWithoutException<T> iterator();
 }

@@ -53,9 +53,26 @@ import java.util.TreeSet;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public final class Utils {
+public final class Iterators {
 
-	private Utils() {
+	private Iterators() {
+	}
+
+	public static int count(CloseableIterator<?> it) throws IteratorException {
+		int i = 0;
+		while (it.hasNext()) {
+			++i;
+			it.next();
+		}
+		return i;
+	}
+
+	public static int count(CloseableIteratorWithoutException<?> it) {
+		try {
+			return Iterators.count((CloseableIterator<?>) it);
+		} catch (IteratorException e) {
+			throw new Error("Should never happen");
+		}
 	}
 
 	/**
@@ -64,24 +81,18 @@ public final class Utils {
 	 * @return
 	 */
 	public static <T> CloseableIterator<T> uniqLocaly(CloseableIterator<T> it) {
-		return new CloseableIteratorAdapter<T>(new UniqIterator<T>(it));
-	}
-
-	/**
-	 * Remove adjacent equals elements.
-	 * @param it
-	 * @return
-	 */
-	public static <T> Iterator<T> uniqLocaly(Iterator<T> it) {
 		return new UniqIterator<T>(it);
 	}
 
 	/**
 	 * Return an iterator over sorted elements from the specified iterator.
+	 * 
 	 * @param it
 	 * @return
+	 * @throws IteratorException
 	 */
-	public static <T extends Comparable<T>> CloseableIterator<T> sort(CloseableIterator<T> it) {
+	public static <T extends Comparable<T>> CloseableIterator<T> sort(CloseableIterator<T> it)
+	    throws IteratorException {
 		List<T> substitutionList = new LinkedList<T>();
 		while (it.hasNext()) {
 			substitutionList.add(it.next());
@@ -111,8 +122,10 @@ public final class Utils {
 	 * 
 	 * @param it
 	 * @return
+	 * @throws IteratorException
 	 */
-	public static <T extends Comparable<T>> CloseableIterator<T> uniq(CloseableIterator<T> it) {
+	public static <T extends Comparable<T>> CloseableIterator<T> uniq(CloseableIterator<T> it)
+	    throws IteratorException {
 		Set<T> substitutionSet = new TreeSet<T>();
 		while (it.hasNext()) {
 			substitutionSet.add(it.next());
@@ -135,18 +148,22 @@ public final class Utils {
 		return substitutionSet.iterator();
 	}
 
-	private static class UniqIterator<T> implements Iterator<T> {
+	private static class UniqIterator<T> implements CloseableIterator<T> {
 
-		private Iterator<T> it;
+		private CloseableIterator<T> it;
 		private T           previous;
 		private T           next;
 
 		public UniqIterator(Iterator<T> it) {
+			this.it = new CloseableIteratorAdapter<T>(it);
+		}
+
+		public UniqIterator(CloseableIterator<T> it) {
 			this.it = it;
 		}
 
 		@Override
-		public boolean hasNext() {
+		public boolean hasNext() throws IteratorException {
 			while (this.next == null && this.it.hasNext()) {
 				T current = this.it.next();
 				if (!current.equals(this.previous)) {
@@ -164,9 +181,10 @@ public final class Utils {
 		}
 
 		@Override
-		public void remove() {
-			throw new UnsupportedOperationException();
+		public void close() {
+			this.it.close();
 		}
+
 	}
 
 }

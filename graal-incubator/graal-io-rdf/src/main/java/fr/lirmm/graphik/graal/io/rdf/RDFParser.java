@@ -54,6 +54,7 @@ import org.openrdf.rio.RDFFormat;
 
 import fr.lirmm.graphik.graal.api.io.Parser;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -84,12 +85,12 @@ public class RDFParser extends AbstractCloseableIterator<Object> implements Pars
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public boolean hasNext() {
+	public boolean hasNext() throws IteratorException {
 		return this.rdf2atom.hasNext();
 	}
 
 	@Override
-	public Object next() {
+	public Object next() throws IteratorException {
 		return this.rdf2atom.next();
 	}
 

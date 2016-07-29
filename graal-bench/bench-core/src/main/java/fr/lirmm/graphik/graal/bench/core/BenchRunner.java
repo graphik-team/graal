@@ -55,6 +55,7 @@ import org.slf4j.LoggerFactory;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -95,7 +96,7 @@ public class BenchRunner {
 	}
 
 
-	public void run(Map<String, ? extends Object> params) throws FileNotFoundException {
+	public void run(Map<String, ? extends Object> params) throws FileNotFoundException, IteratorException {
 		this.BENCH.init();
 		PrintStream writer = new PrintStream(OUT);
 		writer.format("%s,%s,%s,%s,%s,%s\n", "iteration", "query", "data instance", "parameter number", "data name",

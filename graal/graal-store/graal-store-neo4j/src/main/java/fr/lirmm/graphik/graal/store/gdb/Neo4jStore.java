@@ -77,6 +77,8 @@ import fr.lirmm.graphik.graal.core.DefaultConstantGenerator;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -163,14 +165,16 @@ public class Neo4jStore extends GraphDBStore {
 	}
 	
 	@Override
-	public boolean addAll(Iterator<? extends Atom> it) {
+	public boolean addAll(CloseableIterator<? extends Atom> it) throws AtomSetException {
 		boolean isChanged = false;
 		this.checkTransaction();
 		try {
-			while(it.hasNext()) {
+			while (it.hasNext()) {
 				isChanged = this.add(it.next(), null) || isChanged;
 			}
 			this.successTransaction();
+		} catch (IteratorException e) {
+			throw new AtomSetException("An errors occurs while iterating atoms to add", e);
 		} finally {
 			this.reloadTransaction();
 		}
@@ -211,7 +215,7 @@ public class Neo4jStore extends GraphDBStore {
 	}
 	
 	@Override
-	public boolean removeAll(Iterator<? extends Atom> it) {
+	public boolean removeAll(CloseableIterator<? extends Atom> it) throws AtomSetException {
 		boolean isChanged = false;
 		this.checkTransaction();
 		try {
@@ -219,6 +223,8 @@ public class Neo4jStore extends GraphDBStore {
 				isChanged = this.remove(it.next(), null) || isChanged;
 			}
 			this.successTransaction();
+		} catch (IteratorException e) {
+			throw new AtomSetException("An errors occurs while iterating atoms to remove", e);
 		} finally {
 			this.reloadTransaction();
 		}
@@ -254,8 +260,12 @@ public class Neo4jStore extends GraphDBStore {
 	public Set<Term> getTerms() throws AtomSetException {
 		TreeSet<Term> set = new TreeSet<Term>();
 		CloseableIterator<Term> it = this.termsIterator();
-		while (it.hasNext()) {
-			set.add(it.next());
+		try {
+			while (it.hasNext()) {
+				set.add(it.next());
+			}
+		} catch (IteratorException e) {
+			throw new AtomSetException("An errors occurs while iterating terms", e);
 		}
 		it.close();
 		return set;
@@ -274,9 +284,13 @@ public class Neo4jStore extends GraphDBStore {
 	@Override
 	public Set<Term> getTerms(Type type) throws AtomSetException {
 		TreeSet<Term> set = new TreeSet<Term>();
-		Iterator<Term> it = this.termsIterator(type);
-		while (it.hasNext()) {
-			set.add(it.next());
+		CloseableIterator<Term> it = this.termsIterator(type);
+		try {
+			while (it.hasNext()) {
+				set.add(it.next());
+			}
+		} catch (IteratorException e) {
+			throw new AtomSetException("An errors occurs while iterating terms", e);
 		}
 		return set;
 	}
@@ -292,9 +306,13 @@ public class Neo4jStore extends GraphDBStore {
 	@Override
 	public Set<Predicate> getPredicates() throws AtomSetException {
 		TreeSet<Predicate> set = new TreeSet<Predicate>();
-		Iterator<Predicate> it = this.predicatesIterator();
-		while (it.hasNext()) {
-			set.add(it.next());
+		CloseableIterator<Predicate> it = this.predicatesIterator();
+		try {
+			while (it.hasNext()) {
+				set.add(it.next());
+			}
+		} catch (IteratorException e) {
+			throw new AtomSetException("An errors occurs while iterating predicates", e);
 		}
 		return set;
 	}
@@ -577,7 +595,6 @@ public class Neo4jStore extends GraphDBStore {
 			}
 		}
 
-		@Override
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}

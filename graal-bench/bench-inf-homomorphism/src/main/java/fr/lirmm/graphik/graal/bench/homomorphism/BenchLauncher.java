@@ -52,6 +52,7 @@ import com.beust.jcommander.Parameter;
 
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.bench.core.BenchRunner;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -113,7 +114,7 @@ public class BenchLauncher {
 
 	public static final String PROGRAM_NAME   = "bench-homo";
 
-	public static void main(String args[]) throws HomomorphismException, FileNotFoundException {
+	public static void main(String args[]) throws HomomorphismException, FileNotFoundException, IteratorException {
 
 		BenchLauncher options = new BenchLauncher();
 

@@ -42,11 +42,6 @@
  */
  package fr.lirmm.graphik.graal.backward_chaining;
 
-/**
- * 
- */
-
-import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Assert;
@@ -71,8 +66,10 @@ import fr.lirmm.graphik.graal.core.compilation.IDCompilation;
 import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
-import fr.lirmm.graphik.util.Iterators;
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
+import fr.lirmm.graphik.util.stream.IteratorException;
+import fr.lirmm.graphik.util.stream.Iterators;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -96,9 +93,11 @@ public class BackwardChainingTest {
 	
 	/**
 	 * Test 1
+	 * 
+	 * @throws IteratorException
 	 */
 	@Theory
-	public void Test1(RulesCompilation compilation, RewritingOperator operator) {
+	public void Test1(RulesCompilation compilation, RewritingOperator operator) throws IteratorException {
 		RuleSet rules = new LinkedListRuleSet();
 		rules.add(DlgpParser.parseRule("q(X1,X2), ppp(X2) :- r(X1)."));
 		rules.add(DlgpParser.parseRule("pp(X) :- ppp(X)."));
@@ -109,7 +108,7 @@ public class BackwardChainingTest {
 
 		compilation.compile(rules.iterator());
 		PureRewriter bc = new PureRewriter(operator, true);
-		GIterator<? extends ConjunctiveQuery> it = bc.execute(query, rules, compilation);
+		CloseableIterator<? extends ConjunctiveQuery> it = bc.execute(query, rules, compilation);
 		
 		int i = Iterators.count(it);
 		Assert.assertEquals(4, i);
@@ -117,9 +116,11 @@ public class BackwardChainingTest {
 	
 	/**
 	 * Test 2
+	 * 
+	 * @throws IteratorException
 	 */
 	@Theory
-	public void Test2(RulesCompilation compilation, RewritingOperator operator) {
+	public void Test2(RulesCompilation compilation, RewritingOperator operator) throws IteratorException {
 		RuleSet rules = new LinkedListRuleSet();
 		rules.add(DlgpParser.parseRule("p(X,Y) :- q(X,Y)."));
 		rules.add(DlgpParser.parseRule("q(X,Y) :- p(Y,X)."));
@@ -128,7 +129,7 @@ public class BackwardChainingTest {
 
 		compilation.compile(rules.iterator());
 		PureRewriter bc = new PureRewriter(operator, true);
-		GIterator<? extends ConjunctiveQuery> it = bc.execute(query, rules, compilation);
+		CloseableIterator<? extends ConjunctiveQuery> it = bc.execute(query, rules, compilation);
 		
 		int i = Iterators.count(it);
 		Assert.assertEquals(4, i);
@@ -136,9 +137,12 @@ public class BackwardChainingTest {
 
 	/**
 	 * folding on answer variables
+	 * 
+	 * @throws IteratorException
 	 */
 	@Theory
-	public void forbiddenFoldingTest(RulesCompilation compilation, RewritingOperator operator) {
+	public void forbiddenFoldingTest(RulesCompilation compilation, RewritingOperator operator)
+	    throws IteratorException {
 		RuleSet rules = new LinkedListRuleSet();
 		rules.add(DlgpParser.parseRule("q(Y,X) :- p(X,Y)."));
 		rules.add(DlgpParser.parseRule("p(X,Y) :- q(Y,X)."));
@@ -147,14 +151,14 @@ public class BackwardChainingTest {
 
 		compilation.compile(rules.iterator());
 		PureRewriter bc = new PureRewriter(operator, true);
-		GIterator<? extends ConjunctiveQuery> it = bc.execute(query, rules, compilation);
+		CloseableIterator<? extends ConjunctiveQuery> it = bc.execute(query, rules, compilation);
 		
 		int i = Iterators.count(it);
 		Assert.assertEquals(4, i);
 	}
 	
 	@Theory
-	public void queriesCover(RulesCompilation compilation, RewritingOperator operator) {
+	public void queriesCover(RulesCompilation compilation, RewritingOperator operator) throws IteratorException {
 		RuleSet rules = new LinkedListRuleSet();
 		rules.add(DlgpParser.parseRule("p(X) :- r(Y, X)."));
 
@@ -162,7 +166,7 @@ public class BackwardChainingTest {
 
 		compilation.compile(rules.iterator());
 		PureRewriter bc = new PureRewriter(operator, true);
-		GIterator<? extends ConjunctiveQuery> it = bc.execute(query, rules, compilation);
+		CloseableIterator<? extends ConjunctiveQuery> it = bc.execute(query, rules, compilation);
 		
 		int i = Iterators.count(it);
 		Assert.assertEquals(1, i);
@@ -183,12 +187,12 @@ public class BackwardChainingTest {
 
 		compilation.compile(rules.iterator());
 		PureRewriter bc = new PureRewriter(operator, true);
-		GIterator<? extends ConjunctiveQuery> rewIt = bc.execute(query, rules, compilation);
+		CloseableIteratorWithoutException<? extends ConjunctiveQuery> rewIt = bc.execute(query, rules, compilation);
 		
 		boolean isFound = false;
 		while(rewIt.hasNext()) {
 			ConjunctiveQuery rew = rewIt.next();
-			Iterator<Atom> it = rew.getAtomSet().iterator();
+			CloseableIteratorWithoutException<Atom> it = rew.getAtomSet().iterator();
 			if(it.hasNext()) {
 				Atom a = it.next();
 				if(a.getPredicate().equals(new Predicate("q", 3))) {
@@ -217,12 +221,12 @@ public class BackwardChainingTest {
 
 		compilation.compile(rules.iterator());
 		PureRewriter bc = new PureRewriter(operator, true);
-		GIterator<? extends ConjunctiveQuery> rewIt = bc.execute(query, rules, compilation);
+		CloseableIteratorWithoutException<? extends ConjunctiveQuery> rewIt = bc.execute(query, rules, compilation);
 
 		boolean isFound = false;
 		while (rewIt.hasNext()) {
 			ConjunctiveQuery rew = rewIt.next();
-			Iterator<Atom> it = rew.getAtomSet().iterator();
+			CloseableIteratorWithoutException<Atom> it = rew.getAtomSet().iterator();
 			if (it.hasNext()) {
 				Atom a = it.next();
 				if (a.getPredicate().equals(new Predicate("q", 2))) {
@@ -241,10 +245,12 @@ public class BackwardChainingTest {
 	 * c(X) :- p(X,Y,X). p(X,Y,X) :- a(X).
 	 *
 	 * ?(X) :- c(X).
+	 * 
+	 * @throws IteratorException
 	 */
 	@Theory
 	public void getUnification(RulesCompilation compilation,
-			RewritingOperator operator) {
+	    RewritingOperator operator) throws IteratorException {
 		RuleSet rules = new LinkedListRuleSet();
 		rules.add(DlgpParser.parseRule("p(X) :- q(X,Y,X)."));
 		rules.add(DlgpParser.parseRule("q(X,Y,X) :- s(X)."));
@@ -253,7 +259,7 @@ public class BackwardChainingTest {
 
 		compilation.compile(rules.iterator());
 		PureRewriter bc = new PureRewriter(operator, true);
-		GIterator<? extends ConjunctiveQuery> it = bc.execute(query, rules, compilation);
+		CloseableIterator<? extends ConjunctiveQuery> it = bc.execute(query, rules, compilation);
 		
 		int i = Iterators.count(it);
 		Assert.assertEquals(3, i);
@@ -261,7 +267,7 @@ public class BackwardChainingTest {
 
 
 	@Theory
-	public void issue22(RulesCompilation compilation, RewritingOperator operator) {
+	public void issue22(RulesCompilation compilation, RewritingOperator operator) throws IteratorException {
 		RuleSet rules = new LinkedListRuleSet();
 		rules.add(DlgpParser.parseRule("p(X,Y) :- q(X,Y)."));
 		rules.add(DlgpParser.parseRule("q(X,Y) :- a(X), p(X,Y)."));
@@ -270,7 +276,7 @@ public class BackwardChainingTest {
 
 		compilation.compile(rules.iterator());
 		PureRewriter bc = new PureRewriter(operator, true);
-		GIterator<? extends ConjunctiveQuery> it = bc.execute(query, rules, compilation);
+		CloseableIterator<? extends ConjunctiveQuery> it = bc.execute(query, rules, compilation);
 		
 		int i = Iterators.count(it);
 		Assert.assertEquals(4, i);

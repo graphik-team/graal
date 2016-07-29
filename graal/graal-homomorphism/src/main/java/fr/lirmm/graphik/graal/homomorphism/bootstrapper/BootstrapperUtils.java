@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,38 +40,46 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.homomorphism.forward_checking;
+package fr.lirmm.graphik.graal.homomorphism.bootstrapper;
 
-import java.util.Map;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.TreeSet;
 
+import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
+import fr.lirmm.graphik.graal.api.core.TermValueComparator;
 import fr.lirmm.graphik.graal.homomorphism.Var;
-import fr.lirmm.graphik.util.Profilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface ForwardChecking extends Profilable {
+class BootstrapperUtils {
 
-	void init(Var[] vars, Map<Variable, Var> map);
+	private BootstrapperUtils() {
+	}
 
-	boolean isInit(Var v);
+	public static Set<Term> computeCandidatesOverRewritings(Atom a, Var v, AtomSet data, RulesCompilation compilation)
+	    throws AtomSetException, IteratorException {
+		Set<Term> terms = new TreeSet<Term>(TermValueComparator.instance());
+		final Iterator<Atom> rewritingOf = compilation.getRewritingOf(a).iterator();
+		while (rewritingOf.hasNext()) {
+			Atom im = rewritingOf.next();
+			Predicate predicate = im.getPredicate();
+			int pos = im.indexOf(v.value);
 
-	boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc) throws BacktrackException;
-
-	/**
-	 * @param var
-	 * @return
-	 * @throws AtomSetException
-	 */
-	CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Map<Variable, Var> map, RulesCompilation rc)
-	    throws BacktrackException;
-
+			CloseableIterator<Term> it = data.termsByPredicatePosition(predicate, pos);
+			while (it.hasNext()) {
+				terms.add(it.next());
+			}
+		}
+		return terms;
+	}
 }

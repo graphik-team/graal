@@ -44,17 +44,18 @@ package fr.lirmm.graphik.graal.api.core;
 
 import java.util.List;
 
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterable;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface UnionOfConjunctiveQueries extends Query, Iterable<ConjunctiveQuery> {
+public interface UnionOfConjunctiveQueries extends Query, CloseableIterable<ConjunctiveQuery> {
 
 	@Override
-	GIterator<ConjunctiveQuery> iterator();
+	CloseableIterator<ConjunctiveQuery> iterator();
 
 	/**
 	 * Get the answer variables

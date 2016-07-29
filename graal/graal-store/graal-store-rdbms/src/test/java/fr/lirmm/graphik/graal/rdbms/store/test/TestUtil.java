@@ -62,29 +62,25 @@ public class TestUtil {
 	}
 
 	private static final String HSQLDB_TEST = "test";
+
 	private static DefaultRdbmsStore rdbmsStore = null;
 
-	public static Store getStore() {
+	public static Store[] getStores() {
 		if (rdbmsStore != null) {
 			try {
 				rdbmsStore.getDriver().getConnection().createStatement()
 						.executeQuery("DROP SCHEMA PUBLIC CASCADE");
 			} catch (SQLException e) {
-				// TODO treat this exception
-				e.printStackTrace();
-				throw new Error("Untreated exception");
+				throw new Error(e);
 			}
 			rdbmsStore.close();
 		}
 		try {
-			rdbmsStore = new DefaultRdbmsStore(new HSQLDBDriver(HSQLDB_TEST,
-					null));
+			rdbmsStore = new DefaultRdbmsStore(new HSQLDBDriver(HSQLDB_TEST, null));
 		} catch (AtomSetException e) {
-			// TODO treat this exception
-			e.printStackTrace();
-			throw new Error("Untreated exception");
+			throw new Error(e);
 		}
-		return rdbmsStore;
+		return new Store[] { rdbmsStore };
 	}
 
 }

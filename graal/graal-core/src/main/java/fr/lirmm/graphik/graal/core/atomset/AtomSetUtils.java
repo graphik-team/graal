@@ -45,7 +45,6 @@
  */
 package fr.lirmm.graphik.graal.core.atomset;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
@@ -54,6 +53,9 @@ import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -64,16 +66,25 @@ public final class AtomSetUtils {
 	private AtomSetUtils() {
 	}
 	
-	public static boolean isSingleton(AtomSet a) {
-		Iterator<Atom> i = a.iterator();
+	public static boolean isSingleton(AtomSet a) throws IteratorException {
+		CloseableIterator<Atom> i = a.iterator();
 		if (!i.hasNext())
 			return false;
 		i.next();
 		return !i.hasNext();
 	}
 
-	public static boolean hasSize2(AtomSet a) {
-		Iterator<Atom> i = a.iterator();
+	public static boolean isSingleton(InMemoryAtomSet a) {
+		try {
+			return isSingleton((AtomSet) a);
+		} catch (IteratorException e) {
+			throw new Error("Should never happen");
+		}
+		
+	}
+
+	public static boolean hasSize2(AtomSet a) throws IteratorException {
+		CloseableIterator<Atom> i = a.iterator();
 		if (!i.hasNext())
 			return false;
 		i.next();
@@ -81,6 +92,14 @@ public final class AtomSetUtils {
 			return false;
 		i.next();
 		return !i.hasNext();
+	}
+
+	public static boolean hasSize2(InMemoryAtomSet a) {
+		try {
+			return hasSize2((AtomSet) a);
+		} catch (IteratorException e) {
+			throw new Error("Should never happen");
+		}
 	}
 
 	/**
@@ -90,8 +109,10 @@ public final class AtomSetUtils {
 	 * @return true if a1 contains a2, false otherwise.
 	 */
 	public static boolean contains(InMemoryAtomSet a1, InMemoryAtomSet a2) {
-		for (Atom atom : a2) {
-			if (!a1.contains(atom)) {
+		CloseableIteratorWithoutException<Atom> it = a2.iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
+			if (!a1.contains(a)) {
 				return false;
 			}
 		}
@@ -101,7 +122,9 @@ public final class AtomSetUtils {
 
 	public static InMemoryAtomSet minus(InMemoryAtomSet a1, InMemoryAtomSet a2) {
 		InMemoryAtomSet atomset = AtomSetFactory.instance().create();
-		for (Atom a : a1) {
+		CloseableIteratorWithoutException<Atom> it = a1.iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			if (!a2.contains(a)) {
 				atomset.add(a);
 			}
@@ -123,12 +146,16 @@ public final class AtomSetUtils {
 		return sep;
 	}
 	
-	public static InMemoryAtomSet union(AtomSet a1, AtomSet a2) {
+	public static InMemoryAtomSet union(InMemoryAtomSet a1, InMemoryAtomSet a2) {
 		InMemoryAtomSet atomset = AtomSetFactory.instance().create();
-		for (Atom a : a1) {
+		CloseableIteratorWithoutException<Atom> it = a1.iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			atomset.add(new DefaultAtom(a));
 		}
-		for (Atom a : a2) {
+		it = a2.iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			if (!atomset.contains(a)) {
 				atomset.add(new DefaultAtom(a));
 			}				

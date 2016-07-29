@@ -7,11 +7,11 @@ import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismIteratorChecker;
 import fr.lirmm.graphik.graal.homomorphism.Var;
 import fr.lirmm.graphik.util.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
@@ -91,12 +91,13 @@ public class NoForwardChecking extends AbstractProfilable implements ForwardChec
 
 	@Override
 	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Map<Variable, Var> map, RulesCompilation rc)
-	    throws AtomSetException {
-		HomomorphismIteratorChecker tmp = new HomomorphismIteratorChecker(
-		        var,
-		        new CloseableIteratorAdapter<Term>(g.termsIterator()),
-		        var.preAtoms, g, map, rc
-		    );
+	    throws BacktrackException {
+		HomomorphismIteratorChecker tmp;
+		try {
+			tmp = new HomomorphismIteratorChecker(var, g.termsIterator(), var.preAtoms, g, map, rc);
+		} catch (AtomSetException e) {
+			throw new BacktrackException(e);
+		}
 		tmp.setProfiler(this.getProfiler());
 		return tmp;
 

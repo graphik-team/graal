@@ -40,19 +40,21 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- package fr.lirmm.graphik.graal.api.forward_chaining;
+package fr.lirmm.graphik.graal.api.forward_chaining;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 public interface RuleApplicationHandler {
 
-	public boolean preRuleApplication(Rule rule, Substitution substitution, AtomSet data);
+	public boolean preRuleApplication(Rule rule, Substitution substitution, AtomSet data)
+	    throws RuleApplicationHandlerException;
 
-	public GIterator<Atom> postRuleApplication(Rule rule, Substitution substitution, AtomSet data, GIterator<Atom> atomsToAdd);
+	public CloseableIterator<Atom> postRuleApplication(Rule rule, Substitution substitution, AtomSet data,
+	    CloseableIterator<Atom> atomsToAdd) throws RuleApplicationHandlerException;
 
 	public static RuleApplicationHandler DEFAULT = new RuleApplicationHandler() {
 
@@ -62,11 +64,11 @@ public interface RuleApplicationHandler {
 		}
 
 		@Override
-		public GIterator<Atom> postRuleApplication(Rule rule, Substitution substitution, AtomSet data, GIterator<Atom> atomsToAdd) {
+		public CloseableIterator<Atom> postRuleApplication(Rule rule, Substitution substitution, AtomSet data,
+	        CloseableIterator<Atom> atomsToAdd) {
 			return atomsToAdd;
 		}
 
 	};
 
 };
-

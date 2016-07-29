@@ -59,7 +59,7 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultRule;
-import fr.lirmm.graphik.graal.core.RuleUtils;
+import fr.lirmm.graphik.graal.core.Rules;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
@@ -93,7 +93,7 @@ public final class MSAProperty extends RuleSetProperty.Default {
 	@Override
 	public int check(AnalyserRuleSet ruleSet) {
 		RuleSet R = translateToMSA(ruleSet);
-		AtomSet A = RuleUtils.criticalInstance(ruleSet);
+		AtomSet A = Rules.criticalInstance(ruleSet);
 
 		try { StaticChase.executeChase(A,R); }
 		catch (Exception e) {
@@ -107,7 +107,7 @@ public final class MSAProperty extends RuleSetProperty.Default {
 		Q.getAtomSet().add(q);
 
 		try { 
-			if (RecursiveBacktrackHomomorphism.instance().exist(Q.getAtomSet(),A))
+			if (RecursiveBacktrackHomomorphism.instance().exist(Q, A))
 				return -1;
 			return 1;
 		}

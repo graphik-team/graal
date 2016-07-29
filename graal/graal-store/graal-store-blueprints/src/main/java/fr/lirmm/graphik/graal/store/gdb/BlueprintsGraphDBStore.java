@@ -70,8 +70,8 @@ import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
-import fr.lirmm.graphik.util.stream.GIterator;
-import fr.lirmm.graphik.util.stream.IteratorAdapter;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * BlueprintsGraphDBStore wrap Blueprints API {@link http
@@ -159,7 +159,7 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 		query.has("class", "atom");
 		query.has("predicate", predicateToString(p));
 		Set<Term> terms = new TreeSet<Term>();
-		Iterator<Term> it = new AtomToTermIterator(query.vertices().iterator(), position);
+		AtomToTermIterator it = new AtomToTermIterator(query.vertices().iterator(), position);
 		while (it.hasNext()) {
 			terms.add(it.next());
 		}
@@ -172,11 +172,15 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 	}
 
 	@Override
-	public Set<Predicate> getPredicates() {
+	public Set<Predicate> getPredicates() throws AtomSetException {
 		TreeSet<Predicate> set = new TreeSet<Predicate>();
-		GIterator<Predicate> it = this.predicatesIterator();
-		while (it.hasNext()) {
-			set.add(it.next());
+		CloseableIterator<Predicate> it = this.predicatesIterator();
+		try {
+			while (it.hasNext()) {
+				set.add(it.next());
+			}
+		} catch (IteratorException e) {
+			throw new AtomSetException("An error occurs while iterating predicates", e);
 		}
 		return set;
 	}
@@ -289,8 +293,7 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 
 	@Override
 	public CloseableIterator<Atom> iterator() {
-		GIterator<Vertex> it = new IteratorAdapter<Vertex>(this.graph.getVertices("class", "atom")
-				.iterator());
+		Iterator<Vertex> it = this.graph.getVertices("class", "atom").iterator();
 		return new AtomIterator(it);
 	}
 
@@ -363,7 +366,6 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 			return vertexToAtom(this.it.next());
 		}
 
-		@Override
 		public void remove() {
 			this.it.remove();
 		}
@@ -391,7 +393,6 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 			return vertexToPredicate(this.it.next());
 		}
 
-		@Override
 		public void remove() {
 			this.it.remove();
 		}
@@ -424,7 +425,6 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 			return vertexToTerm(query.vertices().iterator().next());
 		}
 
-		@Override
 		public void remove() {
 			this.it.remove();
 		}

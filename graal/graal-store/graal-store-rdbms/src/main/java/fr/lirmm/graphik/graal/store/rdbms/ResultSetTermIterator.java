@@ -50,6 +50,7 @@ import java.sql.SQLException;
 
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -80,8 +81,13 @@ class ResultSetTermIterator extends AbstractResultSetIterator<Term> {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	protected Term computeNext() throws Exception {
-		return DefaultTermFactory.instance().createTerm(results.getString(1), Term.Type.valueOf(results.getString(2)));
+	protected Term computeNext() throws IteratorException {
+		try {
+			return DefaultTermFactory.instance().createTerm(results.getString(1),
+			    Term.Type.valueOf(results.getString(2)));
+		} catch (SQLException e) {
+			throw new IteratorException(e);
+		}
 
 	}
 

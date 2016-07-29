@@ -45,11 +45,11 @@
  */
 package fr.lirmm.graphik.graal.transformation;
 
-import java.util.Iterator;
-
 import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -59,14 +59,14 @@ public class TransformatorIterator extends AbstractCloseableIterator<Atom> {
 
     private boolean hasNextCallDone;
     private AtomTransformator transformator;
-	private Iterator<? extends Atom> atomIterator;
-	private Iterator<Atom> tmpIterator;
+	private CloseableIterator<? extends Atom> atomIterator;
+	private CloseableIteratorWithoutException<Atom> tmpIterator;
 
     // /////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR
     // /////////////////////////////////////////////////////////////////////////
 
-	public TransformatorIterator(Iterator<? extends Atom> atoms,
+	public TransformatorIterator(CloseableIterator<? extends Atom> atoms,
             AtomTransformator transformator) {
 		this.atomIterator = atoms;
         this.transformator = transformator;
@@ -78,13 +78,7 @@ public class TransformatorIterator extends AbstractCloseableIterator<Atom> {
     // /////////////////////////////////////////////////////////////////////////
 
     @Override
-    public void remove() {
-        // TODO implement this method
-        throw new MethodNotImplementedError();
-    }
-
-    @Override
-    public boolean hasNext() {
+	public boolean hasNext() throws IteratorException {
         if (!this.hasNextCallDone) {
             this.hasNextCallDone = true;
 
@@ -97,7 +91,7 @@ public class TransformatorIterator extends AbstractCloseableIterator<Atom> {
     }
 
     @Override
-    public Atom next() {
+	public Atom next() throws IteratorException {
         if (!this.hasNextCallDone)
             this.hasNext();
 

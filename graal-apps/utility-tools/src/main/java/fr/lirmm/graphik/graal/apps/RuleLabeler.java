@@ -43,7 +43,7 @@
  package fr.lirmm.graphik.graal.apps;
 
 import fr.lirmm.graphik.graal.api.core.Rule;
-import fr.lirmm.graphik.graal.core.RuleUtils;
+import fr.lirmm.graphik.graal.core.Rules;
 
 public final class RuleLabeler {
 
@@ -84,37 +84,37 @@ public final class RuleLabeler {
 
 	public static String computeBaseLabel(Rule r) {
 		String label = LABEL_PREFIX;
-		if (RuleUtils.isConceptInclusion(r))
+		if (Rules.isConceptInclusion(r))
 			label = updateLabel(label, LABEL_CONCEPT_INCLUSION);
-		if (RuleUtils.isRoleInclusion(r))
+		if (Rules.isRoleInclusion(r))
 			label = updateLabel(label, LABEL_ROLE_INCLUSION);
-		if (RuleUtils.isInverseRole(r))
+		if (Rules.isInverseRole(r))
 			label = updateLabel(label, LABEL_INVERSE_ROLE);
-		if (RuleUtils.isDomain(r))
+		if (Rules.isDomain(r))
 			label = updateLabel(label, LABEL_DOMAIN);
-		if (RuleUtils.isRange(r))
+		if (Rules.isRange(r))
 			label = updateLabel(label, LABEL_RANGE);
-		if (RuleUtils.isMandatoryRole(r))
+		if (Rules.isMandatoryRole(r))
 			label = updateLabel(label, LABEL_MANDATORY_ROLE);
-		if (RuleUtils.isInvMandatoryRole(r))
+		if (Rules.isInvMandatoryRole(r))
 			label = updateLabel(label, LABEL_INVERSE_MANDATORY_ROLE);
-		if (RuleUtils.isExistRC(r))
+		if (Rules.isExistRC(r))
 			label = updateLabel(label, LABEL_EXIST_RC);
-		if (RuleUtils.isInvExistRC(r))
+		if (Rules.isInvExistRC(r))
 			label = updateLabel(label, LABEL_INV_EXIST_RC);
-		if (RuleUtils.isTransitivity(r))
+		if (Rules.isTransitivity(r))
 			label = updateLabel(label, LABEL_TRANSITIVITY);
-		if (RuleUtils.isRoleComposition(r))
+		if (Rules.isRoleComposition(r))
 			label = updateLabel(label, LABEL_ROLE_COMPOSITION);
-		if (RuleUtils.isFunctional(r))
+		if (Rules.isFunctional(r))
 			label = updateLabel(label, LABEL_FUNCTIONAL);
-		if (RuleUtils.isDisjointConcept(r))
+		if (Rules.isDisjointConcept(r))
 			label = updateLabel(label, LABEL_DISJOINT_CONCEPT);
-		if (RuleUtils.isDisjointRole(r))
+		if (Rules.isDisjointRole(r))
 			label = updateLabel(label, LABEL_DISJOINT_ROLE);
-		if (RuleUtils.isDisjointInverseRole(r))
+		if (Rules.isDisjointInverseRole(r))
 			label = updateLabel(label, LABEL_INVERSE_ROLE);
-		if (RuleUtils.isNegativeConstraint(r))
+		if (Rules.isNegativeConstraint(r))
 			label = updateLabel(label, LABEL_NEGATIVE_CONSTRAINT);
 		label += LABEL_SUFFIX;
 		return label;

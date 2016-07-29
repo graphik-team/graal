@@ -68,7 +68,7 @@ import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
 import fr.lirmm.graphik.util.Apps;
 import fr.lirmm.graphik.util.CPUTimeProfiler;
 import fr.lirmm.graphik.util.Profiler;
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -170,7 +170,7 @@ public class GraalQuery {
 		if (options.verbose) {
 			PROFILER.start("answering time");
 		}
-		GIterator<Substitution> subr = solver.execute(ucq, store);
+		CloseableIterator<Substitution> subr = solver.execute(ucq, store);
 		if (options.verbose) {
 			PROFILER.stop("answering time");
 			WRITER.writeComment("answers");

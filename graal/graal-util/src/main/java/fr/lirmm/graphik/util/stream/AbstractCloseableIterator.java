@@ -46,7 +46,7 @@ package fr.lirmm.graphik.util.stream;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public abstract class AbstractCloseableIterator<E> extends AbstractIterator<E> implements CloseableIterator<E> {
+public abstract class AbstractCloseableIterator<E> implements CloseableIterator<E> {
 
 	@Override
 	protected void finalize() throws Throwable {

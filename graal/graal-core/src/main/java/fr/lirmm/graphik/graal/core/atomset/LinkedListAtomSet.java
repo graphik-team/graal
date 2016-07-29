@@ -42,8 +42,6 @@
  */
 package fr.lirmm.graphik.graal.core.atomset;
 
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.TreeSet;
@@ -57,19 +55,20 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.AtomMatcher;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultConstantGenerator;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
-import fr.lirmm.graphik.util.stream.GIterator;
-import fr.lirmm.graphik.util.stream.IteratorAdapter;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
+import fr.lirmm.graphik.util.stream.IteratorException;
 import fr.lirmm.graphik.util.stream.converter.Converter;
-import fr.lirmm.graphik.util.stream.converter.ConverterIterator;
+import fr.lirmm.graphik.util.stream.converter.ConverterIteratorWithoutException;
 import fr.lirmm.graphik.util.stream.filter.Filter;
-import fr.lirmm.graphik.util.stream.filter.FilterIterator;
+import fr.lirmm.graphik.util.stream.filter.FilterIteratorWithoutException;
 
 /**
  * 
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  */
-public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements InMemoryAtomSet, Collection<Atom> {
+public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements InMemoryAtomSet {
 
 	private LinkedList<Atom> linkedList;
 	private ConstantGenerator freshSymbolGenerator = new DefaultConstantGenerator("EE");
@@ -83,10 +82,10 @@ public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements InMemo
 	}
 
 	@Override
-	public GIterator<Atom> match(Atom atom) {
+	public CloseableIteratorWithoutException<Atom> match(Atom atom) {
 		final AtomMatcher matcher = new AtomMatcher(atom);
 
-		return new FilterIterator<Atom, Atom>(this.iterator(), new Filter<Atom>() {
+		return new FilterIteratorWithoutException<Atom, Atom>(this.iterator(), new Filter<Atom>() {
 			@Override
 			public boolean filter(Atom a) {
 				return matcher.check(a);
@@ -95,8 +94,8 @@ public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements InMemo
 	}
 
 	@Override
-	public GIterator<Atom> atomsByPredicate(final Predicate p) {
-		return new FilterIterator<Atom, Atom>(this.iterator(), new Filter<Atom>() {
+	public CloseableIteratorWithoutException<Atom> atomsByPredicate(final Predicate p) {
+		return new FilterIteratorWithoutException<Atom, Atom>(this.iterator(), new Filter<Atom>() {
 			@Override
 			public boolean filter(Atom a) {
 				return a.getPredicate().equals(p);
@@ -105,9 +104,10 @@ public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements InMemo
 	}
 
 	@Override
-	public GIterator<Term> termsByPredicatePosition(Predicate p, final int position) {
+	public CloseableIteratorWithoutException<Term> termsByPredicatePosition(Predicate p, final int position) {
 		Set<Term> terms = new TreeSet<Term>();
-		GIterator<Term> it = new ConverterIterator<Atom, Term>(this.atomsByPredicate(p), new Converter<Atom, Term>() {
+		CloseableIteratorWithoutException<Term> it = new ConverterIteratorWithoutException<Atom, Term>(this.atomsByPredicate(
+		    p), new Converter<Atom, Term>() {
 			@Override
 			public Term convert(Atom atom) {
 				return atom.getTerm(position);
@@ -116,7 +116,7 @@ public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements InMemo
 		while (it.hasNext()) {
 			terms.add(it.next());
 		}
-		return new IteratorAdapter<Term>(terms.iterator());
+		return new CloseableIteratorAdapter<Term>(terms.iterator());
 	}
 
 	public LinkedListAtomSet(LinkedList<Atom> list) {
@@ -129,7 +129,14 @@ public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements InMemo
 			this.linkedList.add(a);
 	}
 
-	public LinkedListAtomSet(Iterator<Atom> it) {
+	public LinkedListAtomSet(CloseableIterator<Atom> it) throws IteratorException {
+		this();
+		while (it.hasNext()) {
+			this.linkedList.add(it.next());
+		}
+	}
+
+	public LinkedListAtomSet(CloseableIteratorWithoutException<Atom> it) {
 		this();
 		while (it.hasNext()) {
 			this.linkedList.add(it.next());
@@ -138,11 +145,27 @@ public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements InMemo
 
 	/**
 	 * copy constructor
+	 * 
+	 * @throws IteratorException
 	 */
-	public LinkedListAtomSet(AtomSet atomset) {
+	public LinkedListAtomSet(AtomSet atomset) throws IteratorException {
 		this();
-		for (Atom atom : atomset) {
-			this.add(new DefaultAtom(atom));
+		CloseableIterator<Atom> it = atomset.iterator();
+		while (it.hasNext()) {
+			this.add(new DefaultAtom(it.next()));
+		}
+	}
+
+	/**
+	 * copy constructor
+	 * 
+	 * @throws IteratorException
+	 */
+	public LinkedListAtomSet(InMemoryAtomSet atomset) {
+		this();
+		CloseableIteratorWithoutException<Atom> it = atomset.iterator();
+		while (it.hasNext()) {
+			this.add(new DefaultAtom(it.next()));
 		}
 	}
 
@@ -153,14 +176,16 @@ public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements InMemo
 	@Override
 	public Set<Predicate> getPredicates() {
 		Set<Predicate> predicates = new TreeSet<Predicate>();
-		for (Atom a : this) {
+		CloseableIteratorWithoutException<Atom> it = this.iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			predicates.add(a.getPredicate());
 		}
 		return predicates;
 	}
 
 	@Override
-	public GIterator<Predicate> predicatesIterator() {
+	public CloseableIteratorWithoutException<Predicate> predicatesIterator() {
 		return new CloseableIteratorAdapter<Predicate>(this.getPredicates().iterator());
 	}
 
@@ -170,11 +195,6 @@ public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements InMemo
 			return false;
 
 		return this.linkedList.add(atom);
-	}
-
-	@Override
-	public boolean addAll(Collection<? extends Atom> c) {
-		return this.addAll(new IteratorAdapter(c.iterator()));
 	}
 
 	@Override
@@ -192,8 +212,8 @@ public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements InMemo
 	}
 
 	@Override
-	public GIterator<Term> termsIterator() {
-		return new IteratorAdapter<Term>(this.getTerms().iterator());
+	public CloseableIteratorWithoutException<Term> termsIterator() {
+		return new CloseableIteratorAdapter<Term>(this.getTerms().iterator());
 	}
 
 	@Override
@@ -206,8 +226,8 @@ public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements InMemo
 	}
 
 	@Override
-	public GIterator<Term> termsIterator(Term.Type type) {
-		return new IteratorAdapter<Term>(this.getTerms(type).iterator());
+	public CloseableIteratorWithoutException<Term> termsIterator(Term.Type type) {
+		return new CloseableIteratorAdapter<Term>(this.getTerms(type).iterator());
 	}
 
 	@Override
@@ -216,8 +236,8 @@ public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements InMemo
 	}
 
 	@Override
-	public GIterator<Atom> iterator() {
-		return new IteratorAdapter<Atom>(this.linkedList.iterator());
+	public CloseableIteratorWithoutException<Atom> iterator() {
+		return new CloseableIteratorAdapter<Atom>(this.linkedList.iterator());
 	}
 
 	@Override
@@ -230,7 +250,6 @@ public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements InMemo
 		return this.linkedList.isEmpty();
 	}
 
-	@Override
 	public int size() {
 		return this.linkedList.size();
 	}
@@ -238,44 +257,6 @@ public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements InMemo
 	@Override
 	public void clear() {
 		this.linkedList.clear();
-	}
-
-	@Override
-	public boolean contains(Object o) {
-		if (o instanceof Atom)
-			this.contains((Atom) o);
-
-		return false;
-	}
-
-	@Override
-	public boolean containsAll(Collection<?> c) {
-		return this.linkedList.containsAll(c);
-	}
-
-	@Override
-	public boolean remove(Object o) {
-		return this.linkedList.remove(o);
-	}
-
-	@Override
-	public boolean removeAll(Collection<?> c) {
-		return this.linkedList.removeAll(c);
-	}
-
-	@Override
-	public boolean retainAll(Collection<?> c) {
-		return this.linkedList.retainAll(c);
-	}
-
-	@Override
-	public Object[] toArray() {
-		return this.linkedList.toArray();
-	}
-
-	@Override
-	public <T> T[] toArray(T[] t) {
-		return this.linkedList.toArray(t);
 	}
 
 };

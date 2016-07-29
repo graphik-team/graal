@@ -56,8 +56,9 @@ import fr.lirmm.graphik.graal.core.BuiltInPredicate;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.util.Profiler;
-import fr.lirmm.graphik.util.stream.AbstractIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 
 public class ComplexHomomorphism<Q extends ConjunctiveQuery, F extends AtomSet> implements Homomorphism<Q,F> {
@@ -75,7 +76,9 @@ public class ComplexHomomorphism<Q extends ConjunctiveQuery, F extends AtomSet> 
 			throws HomomorphismException {
     	InMemoryAtomSet rawAtoms = new LinkedListAtomSet();
 		this.builtInAtoms = new LinkedList<Atom>();
-		for (Atom a : q) {
+		CloseableIteratorWithoutException<Atom> it = q.iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			if (a.getPredicate() instanceof BuiltInPredicate) {
 				this.builtInAtoms.add(a);
 			}
@@ -88,29 +91,28 @@ public class ComplexHomomorphism<Q extends ConjunctiveQuery, F extends AtomSet> 
 		return new BuiltInSubstitutionIterator(this.rawSolver.execute(rawQuery,f));
 	}
 
-	protected class BuiltInSubstitutionIterator extends AbstractIterator<Substitution> implements
-	        CloseableIterator<Substitution> {
+	protected class BuiltInSubstitutionIterator implements CloseableIterator<Substitution> {
 
 		public BuiltInSubstitutionIterator(CloseableIterator<Substitution> reader) {
 			this.rawReader = reader;
 		}
 
 		@Override
-    	public boolean hasNext() {
+		public boolean hasNext() throws IteratorException {
 			if(this.next == null)
 				this.next = this.computeNext();
 			return this.next != null;
 		}
 
 		@Override
-		public Substitution next() {
+		public Substitution next() throws IteratorException {
 			hasNext();
 			Substitution res = this.next;
 			this.next = null;
 			return res;
 		}
 
-		protected Substitution computeNext() {
+		protected Substitution computeNext() throws IteratorException {
 			if (this.rawReader.hasNext()) {
 				Substitution res = this.rawReader.next();
 				if (check(res)) {

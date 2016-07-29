@@ -61,6 +61,8 @@ import fr.lirmm.graphik.graal.api.store.TripleStore;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -75,7 +77,7 @@ public class TripleStoreTest {
 	}
 
 	@Theory
-	public void simpleTest(TripleStore store) throws AtomSetException {
+	public void simpleTest(TripleStore store) throws AtomSetException, IteratorException {
 		Term t1 = DefaultTermFactory.instance()
 				.createConstant("http://to.to/b");
 		Term t2 = DefaultTermFactory.instance()
@@ -86,7 +88,7 @@ public class TripleStoreTest {
 		store.add(atom1);
 
 		int i = 0;
-		for (Iterator<Atom> it = store.iterator(); it.hasNext(); it.next()) {
+		for (CloseableIterator<Atom> it = store.iterator(); it.hasNext(); it.next()) {
 			++i;
 		}
 
@@ -94,13 +96,13 @@ public class TripleStoreTest {
 	}
 
 	@Theory
-	public void getPredicates(TripleStore store) throws AtomSetException {
+	public void getPredicates(TripleStore store) throws AtomSetException, IteratorException {
 		store.add(DlgpParser.parseAtom("r(a,b)."));
 		store.add(DlgpParser.parseAtom("s(a,b)."));
 		store.add(DlgpParser.parseAtom("s(a,c)."));
 
 		int i = 0;
-		for (Iterator<Predicate> it = store.predicatesIterator(); it.hasNext(); it
+		for (CloseableIterator<Predicate> it = store.predicatesIterator(); it.hasNext(); it
 				.next()) {
 			++i;
 		}
@@ -109,12 +111,12 @@ public class TripleStoreTest {
 	}
 
 	@Theory
-	public void addAndContains(TripleStore store) throws AtomSetException {
+	public void addAndContains(TripleStore store) throws AtomSetException, IteratorException {
 		store.add(DlgpParser.parseAtom("p(a,b)."));
 		store.add(DlgpParser.parseAtom("q(b,c)."));
 
 		int i = 0;
-		for (Iterator<Atom> it = store.iterator(); it.hasNext(); it.next()) {
+		for (CloseableIterator<Atom> it = store.iterator(); it.hasNext(); it.next()) {
 			++i;
 		}
 
