@@ -122,41 +122,29 @@ public class HSQLDBDriver extends AbstractRdbmsDriver {
 	}
 	
 	@Override
-	public String getInsertOrIgnoreStatement(String tableName,
+	public String createInsertOrIgnoreStatement(String tableName,
 			Map<String, Object> data) {
-		StringBuilder fields = new StringBuilder();
 		StringBuilder values = new StringBuilder();
-		StringBuilder whereClause = new StringBuilder();
+		StringBuilder as = new StringBuilder();
+		StringBuilder on = new StringBuilder();
+
 
 		boolean first = true;
-		fields.append(" (");
 		for (Map.Entry<String, Object> e : data.entrySet()) {
 			if (!first) {
-				fields.append(", ");
 				values.append(", ");
-				whereClause.append(" AND ");
+				as.append(", ");
+				on.append(" AND ");
 			}
-			fields.append(e.getKey());
+			as.append(e.getKey());
 			values.append('\'').append(e.getValue()).append('\'');
-			whereClause.append(e.getKey()).append(" = ").append('\'')
-					.append(e.getValue()).append('\'');
+			on.append("t.").append(e.getKey()).append(" = ").append("vals.").append(e.getKey());
 			first = false;
 		}
-		fields.append(") ");
 
-		StringBuilder query = new StringBuilder();
-		query.append("INSERT INTO ").append(tableName).append(fields)
-				.append(" (SELECT ").append(values);
-
-		// Where not exist
-		query.append(" FROM test ")
-				.append(" AS t WHERE NOT EXISTS (SELECT 1 FROM ")
-				.append(tableName)
-				.append(" WHERE ")
-				.append(whereClause)
-				.append(")); ");
-
-		return query.toString();
+		return String.format(
+		    "MERGE INTO %s AS t USING (VALUES(%s)) AS vals(%s) ON (%s) WHEN NOT MATCHED THEN INSERT VALUES %s;",
+		    tableName, values, as, on, as);
 	}
 
 	@Override

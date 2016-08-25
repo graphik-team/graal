@@ -1,0 +1,28 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>fr.lirmm.graphik</groupId>
+		<artifactId>graal-store</artifactId>
+		<version>1.2.1-SNAPSHOT</version>
+	</parent>
+	
+	<artifactId>graal-store-rdbms</artifactId>
+	<name>fr.lirmm.graphik:graal-store-rdbms</name>
+	<packaging>pom</packaging>
+
+	<developers>
+		<developer>
+			<name>Clément SIPIETER</name>
+			<email>clement@6pi.fr</email>
+			<organization>INRIA</organization>
+		</developer>
+	</developers>
+
+	<modules>
+    <module>rdbms-common</module>
+		<module>rdbms-default</module>
+		<module>rdbms-plain-table</module>
+	</modules>
+
+</project>

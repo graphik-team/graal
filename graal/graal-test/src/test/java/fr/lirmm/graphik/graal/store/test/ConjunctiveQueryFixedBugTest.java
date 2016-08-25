@@ -86,9 +86,9 @@ public class ConjunctiveQueryFixedBugTest {
 	@Theory
 	public void HomomorphismAnsVarOverwritingBug(Homomorphism h, AtomSet store) {
 		try {
-			store.addAll(DlgpParser.parseAtomSet("p(a,b)."));
+			store.addAll(DlgpParser.parseAtomSet("<P>(a,b)."));
 
-			ConjunctiveQuery query = DlgpParser.parseQuery("?(Y) :- p(X,Y).");
+			ConjunctiveQuery query = DlgpParser.parseQuery("?(Y) :- <P>(X,Y).");
 
 			CloseableIterator<Substitution> subReader;
 			Substitution sub;
@@ -118,7 +118,7 @@ public class ConjunctiveQueryFixedBugTest {
 	public void GraphAtomSetQuery(Homomorphism h, AtomSet store) {
 		try {
 			InMemoryAtomSet atomset = new DefaultInMemoryGraphAtomSet();
-			atomset.add(DlgpParser.parseAtom("p(X)."));
+			atomset.add(DlgpParser.parseAtom("<P>(X)."));
 			ConjunctiveQuery query = new DefaultConjunctiveQuery(atomset);
 
 			CloseableIterator<Substitution> subReader;

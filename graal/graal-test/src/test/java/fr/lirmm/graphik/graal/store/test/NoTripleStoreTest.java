@@ -45,8 +45,6 @@
  */
 package fr.lirmm.graphik.graal.store.test;
 
-import java.util.Iterator;
-
 import org.junit.Assert;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
@@ -56,8 +54,6 @@ import org.junit.runner.RunWith;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
-import fr.lirmm.graphik.graal.api.core.Predicate;
-import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
@@ -74,55 +70,35 @@ public class NoTripleStoreTest {
 		return TestUtil.getAtomSet();
 	}
 
-	@Theory
-	public void predicateArityTest(AtomSet store) throws AtomSetException, IteratorException {
-		store.add(DlgpParser.parseAtom("p(a)."));
-		store.add(DlgpParser.parseAtom("p(a,b)."));
-		store.add(DlgpParser.parseAtom("p(a,c)."));
-
-		int i = 0;
-		for (CloseableIterator<Predicate> it = store.predicatesIterator(); it.hasNext(); it.next()) {
-			++i;
-		}
-
-		Assert.assertEquals(2, i);
-	}
-
-	@Theory
-	public void getTerms(AtomSet store) throws AtomSetException {
-		store.add(DlgpParser.parseAtom("p(a,b)."));
-		store.add(DlgpParser.parseAtom("p(b,c)."));
-		store.add(DlgpParser.parseAtom("p(b,c,X,Y)."));
-
-		int i = 0;
-		for (Iterator<Term> it = store.getTerms().iterator(); it.hasNext(); it
-				.next()) {
-			++i;
-		}
-
-		Assert.assertEquals("Wrong number of terms", 5, i);
-
-		i = 0;
-		for (Iterator<Term> it = store.getTerms(Term.Type.CONSTANT).iterator(); it
-				.hasNext(); it.next()) {
-			++i;
-		}
-
-		Assert.assertEquals("Wrong number of constant", 3, i);
-
-		i = 0;
-		for (Iterator<Term> it = store.getTerms(Term.Type.VARIABLE).iterator(); it
-				.hasNext(); it.next()) {
-			++i;
-		}
-		Assert.assertEquals("Wrong number of variable", 2, i);
-	}
+	/*
+	 * @Theory public void getTerms(AtomSet store) throws AtomSetException {
+	 * store.add(DlgpParser.parseAtom("p(a,b)."));
+	 * store.add(DlgpParser.parseAtom("p(b,c).")); Atom a =
+	 * DlgpParser.parseAtom("q(b,c,X,Y).");
+	 * store.add(DlgpParser.parseAtom("q(b,c,X,Y)."));
+	 * 
+	 * int i = 0; for (Iterator<Term> it = store.getTerms().iterator();
+	 * it.hasNext(); it .next()) { ++i; }
+	 * 
+	 * Assert.assertEquals("Wrong number of terms", 5, i);
+	 * 
+	 * i = 0; for (Iterator<Term> it =
+	 * store.getTerms(Term.Type.CONSTANT).iterator(); it .hasNext(); it.next())
+	 * { ++i; }
+	 * 
+	 * Assert.assertEquals("Wrong number of constant", 3, i);
+	 * 
+	 * i = 0; for (Iterator<Term> it =
+	 * store.getTerms(Term.Type.VARIABLE).iterator(); it .hasNext(); it.next())
+	 * { ++i; } Assert.assertEquals("Wrong number of variable", 2, i); }
+	 */
 
 	@Theory
 	public void termsOrder(AtomSet store) throws AtomSetException, IteratorException {
-		Atom a1 = DlgpParser.parseAtom("p(a,b,c,d,e,f).");
-		Atom a2 = DlgpParser.parseAtom("p(f,e,d,c,b,a).");
+		Atom a1 = DlgpParser.parseAtom("<P>(a,b,c,d,e,f).");
+		Atom a2 = DlgpParser.parseAtom("<P>(f,e,d,c,b,a).");
 
+		store.add(a1);
 		store.add(a1);
 		store.add(a2);
 

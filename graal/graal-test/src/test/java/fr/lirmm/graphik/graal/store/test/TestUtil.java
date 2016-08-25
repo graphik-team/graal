@@ -59,22 +59,14 @@ import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.store.TripleStore;
-import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
-import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphism;
-import fr.lirmm.graphik.graal.homomorphism.RecursiveBacktrackHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.GraphBaseBackJumping;
 import fr.lirmm.graphik.graal.homomorphism.bbc.BCC;
-import fr.lirmm.graphik.graal.homomorphism.bootstrapper.StarBootstrapper;
-import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC0;
-import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2;
-import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2WithLimit;
-import fr.lirmm.graphik.graal.homomorphism.forward_checking.SimpleFC;
 import fr.lirmm.graphik.graal.store.gdb.BlueprintsGraphDBStore;
 import fr.lirmm.graphik.graal.store.gdb.Neo4jStore;
 import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.HSQLDBDriver;
+import fr.lirmm.graphik.graal.store.rdbms.natural.PlainTableRDBMSStore;
 import fr.lirmm.graphik.graal.store.triplestore.JenaStore;
 import fr.lirmm.graphik.graal.store.triplestore.SailStore;
 
@@ -87,7 +79,8 @@ public final class TestUtil {
 	private TestUtil() {
 	}
 
-	public static final String           HSQLDB_TEST = "test";
+	public static final String PLAIN_TABLE_RDBMS_TEST = "plainTable";
+	public static final String DEFAULT_RDBMS_TEST = "default";
 
 	public static final String           JENA_TEST;
 	public static final String           NEO4J_TEST;
@@ -107,7 +100,8 @@ public final class TestUtil {
 
 	}
 
-	public static DefaultRdbmsStore      rdbmsStore  = null;
+	public static DefaultRdbmsStore defaultRDBMSStore = null;
+	public static PlainTableRDBMSStore plainTableRDBMSStore = null;
 	public static BlueprintsGraphDBStore graphStore  = null;
 	public static JenaStore              jenaStore   = null;
 	public static Neo4jStore             neo4jStore  = null;
@@ -119,7 +113,7 @@ public final class TestUtil {
 		BCC bcc1 = new BCC(new GraphBaseBackJumping(), false);
 		BCC bcc2 = new BCC(new GraphBaseBackJumping(), false);
 
-		return new Homomorphism[] { StaticHomomorphism.instance(), RecursiveBacktrackHomomorphism.instance(),
+		return new Homomorphism[] { StaticHomomorphism.instance(), /*RecursiveBacktrackHomomorphism.instance(),
 		        new BacktrackHomomorphism(),
 		        new BacktrackHomomorphism(bcc0.getBCCScheduler(), bcc0.getBCCBackJumping()),
 		        new BacktrackHomomorphism(bcc1.getBCCScheduler(), bcc1.getBCCBackJumping()),
@@ -127,18 +121,28 @@ public final class TestUtil {
 		        new BacktrackHomomorphism(new NFC2()), new BacktrackHomomorphism(new SimpleFC()),
 		        new BacktrackHomomorphism(new NFC2WithLimit(8)),
 		        new BacktrackHomomorphism(bcc2.getBCCScheduler(), StarBootstrapper.instance(), new NFC2(),
-		                                  bcc2.getBCCBackJumping()) };
+		                                  bcc2.getBCCBackJumping())*/ };
 
 	}
 
 	public static AtomSet[] getAtomSet() {
-		if (rdbmsStore != null) {
+		if (defaultRDBMSStore != null) {
 			try {
-				rdbmsStore.getDriver().getConnection().createStatement().executeQuery("DROP SCHEMA PUBLIC CASCADE");
+				defaultRDBMSStore.getDriver().getConnection().createStatement().executeQuery("DROP SCHEMA PUBLIC CASCADE");
 			} catch (SQLException e) {
 				throw new Error(e);
 			}
-			rdbmsStore.close();
+			defaultRDBMSStore.close();
+		}
+
+		if (plainTableRDBMSStore != null) {
+			try {
+				plainTableRDBMSStore.getDriver().getConnection().createStatement()
+				                    .executeQuery("DROP SCHEMA PUBLIC CASCADE");
+			} catch (SQLException e) {
+				throw new Error(e);
+			}
+			plainTableRDBMSStore.close();
 		}
 
 		if (graphStore != null) {
@@ -150,13 +154,21 @@ public final class TestUtil {
 		}
 
 		try {
-			rdbmsStore = new DefaultRdbmsStore(new HSQLDBDriver(HSQLDB_TEST, null));
+			defaultRDBMSStore = new DefaultRdbmsStore(new HSQLDBDriver(DEFAULT_RDBMS_TEST, null));
+			plainTableRDBMSStore = new PlainTableRDBMSStore(new HSQLDBDriver(PLAIN_TABLE_RDBMS_TEST, null));
+
 			graphStore = new BlueprintsGraphDBStore(new TinkerGraph());
 			rm(NEO4J_TEST);
 			neo4jStore = new Neo4jStore(NEO4J_TEST);
 
-			return new AtomSet[] { new DefaultInMemoryGraphAtomSet(), new LinkedListAtomSet(), rdbmsStore, graphStore,
-			        neo4jStore };
+			return new AtomSet[] { /*
+			                        * new DefaultInMemoryGraphAtomSet(), new
+			                        * LinkedListAtomSet(), defaultRDBMSStore,
+			                        */
+			                       plainTableRDBMSStore/*
+			                                            * , graphStore,
+			                                            * neo4jStore
+			                                            */ };
 		} catch (AtomSetException e) {
 			throw new Error(e);
 		}

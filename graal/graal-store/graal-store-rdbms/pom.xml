@@ -1,5 +1,4 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -7,10 +6,10 @@
 		<artifactId>graal-store</artifactId>
 		<version>1.2.1-SNAPSHOT</version>
 	</parent>
-
+	
 	<artifactId>graal-store-rdbms</artifactId>
-	<packaging>jar</packaging>
 	<name>fr.lirmm.graphik:graal-store-rdbms</name>
+	<packaging>pom</packaging>
 
 	<developers>
 		<developer>
@@ -20,59 +19,11 @@
 		</developer>
 	</developers>
 
-	<dependencies>
-		<dependency>
-			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-api</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-util</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-core</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-forward-chaining</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-homomorphism</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<!-- Jdbc Driver -->
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.6</version>
-		</dependency>
-		<dependency>
-			<groupId>postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>9.1-901-1.jdbc4</version>
-		</dependency>
-		<dependency>
-			<groupId>org.xerial</groupId>
-			<artifactId>sqlite-jdbc</artifactId>
-			<version>3.7.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.hsqldb</groupId>
-			<artifactId>hsqldb</artifactId>
-			<version>2.3.4</version>
-		</dependency>
-		<!-- Test -->
-		<dependency>
-			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-io-dlgp</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-	</dependencies>
+	<modules>
+    <module>rdbms-common</module>
+		<module>rdbms-default</module>
+		<module>rdbms-plain-table</module>
+    <module>rdbms-test</module>
+	</modules>
 
 </project>

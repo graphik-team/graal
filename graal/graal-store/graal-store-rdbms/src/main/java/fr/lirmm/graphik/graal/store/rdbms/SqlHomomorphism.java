@@ -45,6 +45,8 @@
  */
 package fr.lirmm.graphik.graal.store.rdbms;
 
+import java.util.Collections;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,8 +54,10 @@ import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -84,13 +88,18 @@ public final class SqlHomomorphism implements Homomorphism<ConjunctiveQuery, Rdb
 	
     @Override
 	public CloseableIterator<Substitution> execute(ConjunctiveQuery query, RdbmsStore store)
-	                                                                                        throws HomomorphismException {
-        String sqlQuery = preprocessing(query, store);
-        try {
-			return new ResultSetSubstitutionIterator(store, sqlQuery, query.getAnswerVariables());
-        } catch (Exception e) {
-            throw new HomomorphismException(e.getMessage(), e);
-        }
+	    throws HomomorphismException {
+		if (isEmpty(query)) {
+			return new CloseableIteratorAdapter<Substitution>(Collections.<Substitution> singleton(
+			    new TreeMapSubstitution()).iterator());
+		} else {
+			String sqlQuery = preprocessing(query, store);
+			try {
+				return new ResultSetSubstitutionIterator(store, sqlQuery, query.getAnswerVariables());
+			} catch (Exception e) {
+				throw new HomomorphismException(e.getMessage(), e);
+			}
+		}
     }
     
 	@Override
@@ -119,5 +128,9 @@ public final class SqlHomomorphism implements Homomorphism<ConjunctiveQuery, Rdb
         }
         return sqlQuery;
     }
+
+	private static boolean isEmpty(ConjunctiveQuery q) {
+		return !q.getAtomSet().iterator().hasNext();
+	}
 
 }

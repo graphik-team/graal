@@ -81,8 +81,8 @@ public class LiteralsTest {
 	}
 
 	@Theory
-	public void string(AtomSet store) throws Exception {
-		Atom a = DlgpParser.parseAtom("name(a,\"john\").");
+	public void stringType(AtomSet store) throws Exception {
+		Atom a = DlgpParser.parseAtom("<NAME>(a,\"john\").");
 		store.add(a);
 
 		ConjunctiveQuery q = new DefaultConjunctiveQuery(new LinkedListAtomSet(a), Collections.<Term> emptyList());
@@ -93,8 +93,8 @@ public class LiteralsTest {
 	}
 
 	@Theory
-	public void integer(AtomSet store) throws Exception {
-		Atom a = DlgpParser.parseAtom("age(a,1).");
+	public void integerType(AtomSet store) throws Exception {
+		Atom a = DlgpParser.parseAtom("<AGE>(a,1).");
 		store.add(a);
 
 		ConjunctiveQuery q = new DefaultConjunctiveQuery(new LinkedListAtomSet(a), Collections.<Term> emptyList());
@@ -105,8 +105,8 @@ public class LiteralsTest {
 	}
 
 	@Theory
-	public void decimal(AtomSet store) throws Exception {
-		Atom a = DlgpParser.parseAtom("age(a,-5.1).");
+	public void decimalType(AtomSet store) throws Exception {
+		Atom a = DlgpParser.parseAtom("<AGE>(a,-5.1).");
 		store.add(a);
 
 		ConjunctiveQuery q = new DefaultConjunctiveQuery(new LinkedListAtomSet(a), Collections.<Term> emptyList());
@@ -117,8 +117,9 @@ public class LiteralsTest {
 	}
 
 	@Theory
-	public void ddouble(AtomSet store) throws Exception {
-		Atom a = DlgpParser.parseAtom("age(a,5.2E20).");
+	public void doubleType(AtomSet store) throws Exception
+	{
+		Atom a = DlgpParser.parseAtom("<AGE>(a,5.2E20).");
 		store.add(a);
 
 		ConjunctiveQuery q = new DefaultConjunctiveQuery(new LinkedListAtomSet(a), Collections.<Term> emptyList());
@@ -129,8 +130,8 @@ public class LiteralsTest {
 	}
 
 	@Theory
-	public void bool(AtomSet store) throws Exception {
-		Atom a = DlgpParser.parseAtom("ishuman(a,true).");
+	public void booleanType(AtomSet store) throws Exception {
+		Atom a = DlgpParser.parseAtom("<IS_HUMAN>(a,true).");
 		store.add(a);
 
 		ConjunctiveQuery q = new DefaultConjunctiveQuery(new LinkedListAtomSet(a), Collections.<Term> emptyList());

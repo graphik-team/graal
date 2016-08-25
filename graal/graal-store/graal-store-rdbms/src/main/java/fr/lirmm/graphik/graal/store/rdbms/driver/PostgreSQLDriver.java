@@ -119,7 +119,7 @@ public class PostgreSQLDriver extends AbstractRdbmsDriver {
 	// /////////////////////////////////////////////////////////////////////////
 	
 	@Override
-	public String getInsertOrIgnoreStatement(String tableName,
+	public String createInsertOrIgnoreStatement(String tableName,
 			Map<String, Object> data) {
 		StringBuilder fields = new StringBuilder("(");
 		StringBuilder values = new StringBuilder("");

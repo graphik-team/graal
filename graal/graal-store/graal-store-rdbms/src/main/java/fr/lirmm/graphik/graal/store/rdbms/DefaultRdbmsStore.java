@@ -630,7 +630,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 				++i;
 				data.put("term" + i, StringUtils.addSlashes(t.toString()));
 			}
-			String query = this.getDriver().getInsertOrIgnoreStatement(tableName, data);
+			String query = this.getDriver().createInsertOrIgnoreStatement(tableName, data);
 
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug(atom.toString() + " : " + query.toString());
@@ -686,7 +686,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			Map<String, Object> data = new TreeMap<String, Object>();
 			data.put("term", StringUtils.addSlashes(term.getIdentifier().toString()));
 			data.put("term_type", term.getType());
-			String query = this.getDriver().getInsertOrIgnoreStatement(TERM_TABLE_NAME, data);
+			String query = this.getDriver().createInsertOrIgnoreStatement(TERM_TABLE_NAME, data);
 			statement.executeUpdate(query);
 		} catch (SQLException e) {
 			throw new AtomSetException("Error during insertion of a term: " + term, e);
@@ -789,33 +789,6 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		return set;
 	}
 
-	/**
-	 * Return a SQL query like below:
-	 * "select 0, …, 0 from (select 0) as t where 0;"
-	 * 
-	 * @param nbAnswerVars
-	 *            number of column needed
-	 * @return
-	 */
-	private String createEmptyQuery(List<Term> answerVars) {
-		StringBuilder s = new StringBuilder("select ");
-
-		boolean first = true;
-		for (Term t : answerVars) {
-			if (!first) {
-				s.append(", ");
-			}
-			s.append("'' as ").append(t.getLabel());
-			first = false;
-		}
-		if (first) {
-			s.append("'' ");
-		}
-
-		s.append(" from ").append(EMPTY_TABLE_NAME).append(';');
-		return s.toString();
-
-	}
 
 	@Override
 	public void clear() throws AtomSetException {
@@ -841,6 +814,11 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		protected void add(Statement statement, Atom a) throws AtomSetException {
 			store.add(statement, a);
 		}
+	}
+
+	@Override
+	protected String getEmptyTableName() throws AtomSetException {
+		return EMPTY_TABLE_NAME;
 	};
 
 }

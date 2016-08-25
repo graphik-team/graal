@@ -48,6 +48,7 @@ package fr.lirmm.graphik.graal.store.rdbms;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 import java.util.TreeMap;
 
 import org.slf4j.Logger;
@@ -56,11 +57,11 @@ import org.slf4j.LoggerFactory;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.store.AbstractStore;
 import fr.lirmm.graphik.graal.homomorphism.DefaultHomomorphismFactory;
 import fr.lirmm.graphik.graal.store.rdbms.driver.DriverException;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
@@ -111,7 +112,6 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements RdbmsS
 	public boolean add(Atom atom) throws AtomSetException {
 		boolean res = false;
 		Statement statement = null;
-		System.out.println(atom);
 		try {
 			statement = this.createStatement();
 			this.add(statement, atom);
@@ -205,6 +205,13 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements RdbmsS
 
 			this.getConnection().commit();
 		} catch (Exception e) {
+			try {
+				this.getConnection().commit();
+			} catch (SQLException e1) {
+				// TODO treat this exception
+				e1.printStackTrace();
+				throw new Error("Untreated exception");
+			}
 			throw new AtomSetException(e);
 		}
 		return true;
@@ -353,6 +360,35 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements RdbmsS
 		return tableName;
 	}
 
+	/**
+	 * Return a SQL query like below:
+	 * "select 0, …, 0 from (select 0) as t where 0;"
+	 * 
+	 * @param nbAnswerVars
+	 *            number of column needed
+	 * @return
+	 * @throws AtomSetException
+	 */
+	protected String createEmptyQuery(List<Term> answerVars) throws AtomSetException {
+		StringBuilder s = new StringBuilder("select ");
+
+		boolean first = true;
+		for (Term t : answerVars) {
+			if (!first) {
+				s.append(", ");
+			}
+			s.append("'' as ").append(t.getLabel());
+			first = false;
+		}
+		if (first) {
+			s.append("'' ");
+		}
+
+		s.append(" from ").append(this.getEmptyTableName()).append(" WHERE 0=1;");
+		return s.toString();
+	}
+
+	protected abstract String getEmptyTableName() throws AtomSetException;
 
 	protected static String generateCreateTablePredicateQuery(String tableName, int arity) {
 		StringBuilder primaryKey = new StringBuilder("PRIMARY KEY (");
@@ -373,6 +409,7 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements RdbmsS
 		query.append(");");
 		return query.toString();
 	}
+
 
 
 }

@@ -80,9 +80,9 @@ public class StoreTest {
 
 	@Theory
 	public void getPredicates(AtomSet store) throws AtomSetException, IteratorException {
-		store.add(DlgpParser.parseAtom("r(a,b)."));
-		store.add(DlgpParser.parseAtom("s(a,b)."));
-		store.add(DlgpParser.parseAtom("s(a,c)."));
+		store.add(DlgpParser.parseAtom("<R>(a,b)."));
+		store.add(DlgpParser.parseAtom("<S>(a,b)."));
+		store.add(DlgpParser.parseAtom("<S>(a,c)."));
 
 		int i = 0;
 		for (CloseableIterator<Predicate> it = store.predicatesIterator(); it.hasNext(); it
@@ -95,8 +95,8 @@ public class StoreTest {
 
 	@Theory
 	public void addAndContains(AtomSet store) throws AtomSetException, IteratorException {
-		store.add(DlgpParser.parseAtom("p(a,b)."));
-		store.add(DlgpParser.parseAtom("q(b,c)."));
+		store.add(DlgpParser.parseAtom("<P>(a,b)."));
+		store.add(DlgpParser.parseAtom("<Q>(b,c)."));
 
 		int i = 0;
 		for (CloseableIterator<Atom> it = store.iterator(); it.hasNext(); it.next()) {
@@ -105,34 +105,31 @@ public class StoreTest {
 
 		Assert.assertEquals("Store does not contains exactly 2 atoms", 2, i);
 
-		Assert.assertTrue("Store does not contains p(a,b)",
-				store.contains(DlgpParser.parseAtom("p(a,b).")));
-		Assert.assertTrue("Store does not contains q(b,c)",
-				store.contains(DlgpParser.parseAtom("q(b,c).")));
+		Assert.assertTrue("Store does not contains <P>(a,b)", store.contains(DlgpParser.parseAtom("<P>(a,b).")));
+		Assert.assertTrue("Store does not contains <Q>(b,c)", store.contains(DlgpParser.parseAtom("<Q>(b,c).")));
 
-		Assert.assertFalse("Store contains q(c, b)",
-				store.contains(DlgpParser.parseAtom("q(c,b).")));
+		Assert.assertFalse("Store contains <Q>(c, b)", store.contains(DlgpParser.parseAtom("<Q>(c,b).")));
 	}
 
 	@Theory
 	public void isEmpty(AtomSet store) throws AtomSetException {
 		Assert.assertTrue("Store is empty but isEmpty return false",
 				store.isEmpty());
-		store.add(DlgpParser.parseAtom("p(a,b)."));
+		store.add(DlgpParser.parseAtom("<P>(a,b)."));
 		Assert.assertFalse("Store is not empty but isEmpty return true",
 				store.isEmpty());
 	}
 
 	@Theory
 	public void match(AtomSet store) throws AtomSetException, IteratorException {
-		store.add(DlgpParser.parseAtom("p(b,a)."));
-		store.add(DlgpParser.parseAtom("p(a,a)."));
-		store.add(DlgpParser.parseAtom("p(b,b)."));
-		store.add(DlgpParser.parseAtom("p(a,c)."));
-		store.add(DlgpParser.parseAtom("q(a,a)."));
-		store.add(DlgpParser.parseAtom("q(a,b)."));
+		store.add(DlgpParser.parseAtom("<P>(b,a)."));
+		store.add(DlgpParser.parseAtom("<P>(a,a)."));
+		store.add(DlgpParser.parseAtom("<P>(b,b)."));
+		store.add(DlgpParser.parseAtom("<P>(a,c)."));
+		store.add(DlgpParser.parseAtom("<Q>(a,a)."));
+		store.add(DlgpParser.parseAtom("<Q>(a,b)."));
 
-		Atom a = DlgpParser.parseAtom("p(a,X).");
+		Atom a = DlgpParser.parseAtom("<P>(a,X).");
 
 		CloseableIterator<?> it = store.match(a);
 		int cpt = 0;
@@ -167,13 +164,13 @@ public class StoreTest {
 
 	@Theory
 	public void termsByPredicatePosition(AtomSet store) throws AtomSetException, IteratorException {
-		store.add(DlgpParser.parseAtom("p(b,a)."));
-		store.add(DlgpParser.parseAtom("p(a,a)."));
-		store.add(DlgpParser.parseAtom("p(b,b)."));
-		store.add(DlgpParser.parseAtom("p(d,c)."));
-		store.add(DlgpParser.parseAtom("q(e,e)."));
+		store.add(DlgpParser.parseAtom("<P>(d,a)."));
+		store.add(DlgpParser.parseAtom("<P>(d,a)."));
+		store.add(DlgpParser.parseAtom("<P>(d,b)."));
+		store.add(DlgpParser.parseAtom("<P>(d,c)."));
+		store.add(DlgpParser.parseAtom("<Q>(e,e)."));
 
-		CloseableIterator<?> it = store.termsByPredicatePosition(new Predicate("p", 2), 1);
+		CloseableIterator<?> it = store.termsByPredicatePosition(new Predicate("P", 2), 1);
 		int cpt = 0;
 		while (it.hasNext()) {
 			++cpt;
@@ -185,18 +182,17 @@ public class StoreTest {
 
 	@Theory
 	public void contains(AtomSet store) throws AtomSetException {
-		store.add(DlgpParser.parseAtom("p(b,a)."));
-		store.add(DlgpParser.parseAtom("p(a,a)."));
-		store.add(DlgpParser.parseAtom("p(b,b)."));
-		store.add(DlgpParser.parseAtom("p(a,c)."));
-		store.add(DlgpParser.parseAtom("q(a,a)."));
-		store.add(DlgpParser.parseAtom("q(a,b)."));
+		store.add(DlgpParser.parseAtom("<P>(b,a)."));
+		store.add(DlgpParser.parseAtom("<P>(a,a)."));
+		store.add(DlgpParser.parseAtom("<P>(b,b)."));
+		store.add(DlgpParser.parseAtom("<P>(a,c)."));
+		store.add(DlgpParser.parseAtom("<Q>(a,a)."));
+		store.add(DlgpParser.parseAtom("<Q>(a,b)."));
 
-		System.out.println(store.getClass());
-		Atom a = DlgpParser.parseAtom("p(a,X).");
+		Atom a = DlgpParser.parseAtom("<P>(a,X).");
 		Assert.assertFalse(store.contains(a));
 
-		a = DlgpParser.parseAtom("p(a,a).");
+		a = DlgpParser.parseAtom("<P>(a,a).");
 		Assert.assertTrue(store.contains(a));
 	}
 

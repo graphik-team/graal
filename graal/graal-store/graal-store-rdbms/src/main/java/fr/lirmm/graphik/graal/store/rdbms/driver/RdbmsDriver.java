@@ -66,7 +66,7 @@ public interface RdbmsDriver {
 	 * @param values
 	 * @return
 	 */
-	String getInsertOrIgnoreStatement(String tableName, Map<String, Object> data);
+	String createInsertOrIgnoreStatement(String tableName, Map<String, Object> data);
 
 	/**
 	 * Generate an INSERT OR IGNORE SQL statement.

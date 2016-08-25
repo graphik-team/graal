@@ -110,7 +110,7 @@ public abstract class AbstractRdbmsDriver implements RdbmsDriver {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public String getInsertOrIgnoreStatement(String tableName, Map<String, Object> data) {
+	public String createInsertOrIgnoreStatement(String tableName, Map<String, Object> data) {
 		StringBuilder fields = new StringBuilder(" (");
 		StringBuilder values = new StringBuilder("");
 

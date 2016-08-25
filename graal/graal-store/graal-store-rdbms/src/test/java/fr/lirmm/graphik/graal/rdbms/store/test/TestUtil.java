@@ -62,6 +62,7 @@ public class TestUtil {
 	}
 
 	private static final String HSQLDB_TEST = "test";
+	private static int suffix = 0;
 
 	private static DefaultRdbmsStore rdbmsStore = null;
 
