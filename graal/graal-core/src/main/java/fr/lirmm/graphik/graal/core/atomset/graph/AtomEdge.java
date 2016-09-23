@@ -51,6 +51,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import fr.lirmm.graphik.graal.api.core.AbstractAtom;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
@@ -111,18 +113,12 @@ class AtomEdge extends AbstractAtom implements Edge {
 
 	@Override
 	public int indexOf(Term t) {
-		int i = -1;
-		for (; i < this.terms.length; ++i) {
-			if (t.equals(this.terms[i])) {
-				return i;
-			}
-		}
-		return i;
+		return ArrayUtils.indexOf(terms, t);
 	}
 
 	@Override
 	public boolean contains(Term t) {
-		return this.indexOf(t) >= 0;
+		return ArrayUtils.contains(terms, t);
 	}
 
 	@Override

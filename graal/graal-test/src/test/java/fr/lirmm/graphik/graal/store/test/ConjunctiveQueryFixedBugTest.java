@@ -53,8 +53,11 @@ import org.junit.runner.RunWith;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
+import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
+import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -97,6 +100,30 @@ public class ConjunctiveQueryFixedBugTest {
 			Assert.assertEquals(1, sub.getTerms().size());
 			Assert.assertEquals(DefaultTermFactory.instance().createConstant("b"),
 			    sub.createImageOf(DefaultTermFactory.instance().createVariable("Y")));
+
+			Assert.assertFalse(subReader.hasNext());
+			subReader.close();
+		} catch (Exception e) {
+			Assert.assertTrue(e.getMessage(), false);
+		}
+	}
+
+	/**
+	 * Query using an DefaultInMemoryGraphAtomSet.
+	 * 
+	 * @param h
+	 * @param store
+	 */
+	@Theory
+	public void GraphAtomSetQuery(Homomorphism h, AtomSet store) {
+		try {
+			InMemoryAtomSet atomset = new DefaultInMemoryGraphAtomSet();
+			atomset.add(DlgpParser.parseAtom("p(X)."));
+			ConjunctiveQuery query = new DefaultConjunctiveQuery(atomset);
+
+			CloseableIterator<Substitution> subReader;
+
+			subReader = h.execute(query, store);
 
 			Assert.assertFalse(subReader.hasNext());
 			subReader.close();
