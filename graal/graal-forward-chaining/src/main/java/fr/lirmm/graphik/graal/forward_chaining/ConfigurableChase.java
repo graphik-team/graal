@@ -57,7 +57,6 @@ import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
 import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
-import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByBodyPredicatesRuleSet;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
 
@@ -112,13 +111,10 @@ public class ConfigurableChase extends AbstractChase {
 	}
 
 	private void init(Iterable<Rule> rules) {
-		int i = 0;
 		this.nextRulesToCheck = new TreeSet<Rule>();
 		for (Rule r : rules) {
-			Rule copy = new DefaultRule(r);
-			copy.setLabel(Integer.toString(++i));
-			this.ruleSet.add(copy);
-			this.nextRulesToCheck.add(copy);
+			this.ruleSet.add(r);
+			this.nextRulesToCheck.add(r);
 		}
 	}
 

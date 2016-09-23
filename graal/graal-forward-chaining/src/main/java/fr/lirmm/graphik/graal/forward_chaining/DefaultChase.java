@@ -63,7 +63,6 @@ import fr.lirmm.graphik.graal.api.forward_chaining.AbstractChase;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplicationHandler;
 import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplicationHandlerException;
-import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByBodyPredicatesRuleSet;
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.ChaseStopConditionWithHandler;
@@ -104,13 +103,10 @@ public class DefaultChase extends AbstractChase {
 	}
 
 	private void init(Iterable<Rule> rules) {
-		int i = 0;
 		this.nextRulesToCheck = new TreeMap<Rule, AtomSet>();
 		for (Rule r : rules) {
-			Rule copy = new DefaultRule(r);
-			copy.setLabel(Integer.toString(++i));
-			this.ruleSet.add(copy);
-			this.nextRulesToCheck.put(copy, atomSet);
+			this.ruleSet.add(r);
+			this.nextRulesToCheck.put(r, atomSet);
 		}
 	}
 

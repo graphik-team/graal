@@ -61,7 +61,7 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public class DefaultRule implements Rule {
+public class DefaultRule extends AbstractRule {
 
 	private String label;
 	private InMemoryAtomSet body;
@@ -170,63 +170,6 @@ public class DefaultRule implements Rule {
 		return this.existentials;
 	}
 
-
-	@Override
-	public int compareTo(Rule other) {
-		return this.label.compareTo(other.getLabel());
-	}
-
-	// /////////////////////////////////////////////////////////////////////////
-	// OBJECT OVERRIDE METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		this.appendTo(builder);
-		return builder.toString();
-	}
-	
-	@Override
-	public void appendTo(StringBuilder builder) {
-		if (!this.label.isEmpty()) {
-			builder.append('[');
-			builder.append(this.label);
-			builder.append("] ");
-		}
-		builder.append(this.body.toString());
-		builder.append(" -> ");
-		builder.append(this.head);
-	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (!(obj instanceof Rule)) {
-			return false;
-		}
-		return this.equals((Rule) obj);
-	}
-
-	public boolean equals(Rule other) { // NOPMD
-		if(this.label.compareTo(other.getLabel()) != 0)
-			return false;
-		if(!other.getHead().equals(this.getHead()))
-			return false;
-		if(!other.getBody().equals(this.getBody()))
-			return false;
-		return true;
-	}
-
-	@Override
-	public int hashCode() {
-		return this.label.hashCode();
-	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
