@@ -66,6 +66,19 @@ class BootstrapperUtils {
 	private BootstrapperUtils() {
 	}
 
+	/**
+	 * This methods returns the superset of possible candidates to the
+	 * affectation of the variable v in the atom a. It make the union of subset
+	 * from each rewritings of a by the rules compilation.
+	 * 
+	 * @param a
+	 * @param v
+	 * @param data
+	 * @param compilation
+	 * @return
+	 * @throws AtomSetException
+	 * @throws IteratorException
+	 */
 	public static Set<Term> computeCandidatesOverRewritings(Atom a, Var v, AtomSet data, RulesCompilation compilation)
 	    throws AtomSetException, IteratorException {
 		Set<Term> terms = new TreeSet<Term>(TermValueComparator.instance());
