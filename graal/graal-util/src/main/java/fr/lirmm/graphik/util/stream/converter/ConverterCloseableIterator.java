@@ -44,6 +44,7 @@ package fr.lirmm.graphik.util.stream.converter;
 
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
@@ -59,6 +60,10 @@ public class ConverterCloseableIterator<U, T> extends AbstractCloseableIterator<
 		super();
 		this.converter = converter;
 		this.it = it;
+	}
+
+	public ConverterCloseableIterator(java.util.Iterator<U> it, Converter<U, T> converter) {
+		this(new CloseableIteratorAdapter<U>(it), converter);
 	}
 
 	@Override
