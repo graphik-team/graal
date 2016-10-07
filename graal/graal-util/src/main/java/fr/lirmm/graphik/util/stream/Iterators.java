@@ -55,7 +55,25 @@ import java.util.TreeSet;
  */
 public final class Iterators {
 
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
+
 	private Iterators() {
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Construct and return an empty iterator. The hasNext method will always
+	 * return false and the next method will always return null.
+	 * 
+	 * @return An instance of a {@link CloseableIteratorWithoutException}
+	 */
+	public static <T> CloseableIteratorWithoutException<T> emptyIterator() {
+		return new EmptyCloseableIteratorWithoutException<T>();
 	}
 
 	public static int count(CloseableIterator<?> it) throws IteratorException {
@@ -77,6 +95,7 @@ public final class Iterators {
 
 	/**
 	 * Remove adjacent equals elements.
+	 * 
 	 * @param it
 	 * @return
 	 */
@@ -148,11 +167,15 @@ public final class Iterators {
 		return substitutionSet.iterator();
 	}
 
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE CLASSES
+	// /////////////////////////////////////////////////////////////////////////
+
 	private static class UniqIterator<T> implements CloseableIterator<T> {
 
 		private CloseableIterator<T> it;
-		private T           previous;
-		private T           next;
+		private T previous;
+		private T next;
 
 		public UniqIterator(Iterator<T> it) {
 			this.it = new CloseableIteratorAdapter<T>(it);
