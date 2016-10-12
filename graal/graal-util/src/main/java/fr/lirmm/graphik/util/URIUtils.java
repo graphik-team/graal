@@ -44,6 +44,7 @@ package fr.lirmm.graphik.util;
 
 
 import java.net.URISyntaxException;
+import java.util.regex.Pattern;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -77,6 +78,9 @@ public final class URIUtils {
 	
 	// DERIVED XSD DATATYPES
 	public static final URI XSD_INTEGER = URIUtils.createURI(Prefix.XSD, "integer");
+
+	// OTHERS
+	public static final Pattern LITERAL_PATTERN = Pattern.compile("\"(.*)\"\\^\\^<(.*)>");;
 
 	// /////////////////////////////////////////////////////////////////////////
 	//

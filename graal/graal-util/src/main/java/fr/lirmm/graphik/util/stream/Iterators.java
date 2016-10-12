@@ -76,6 +76,10 @@ public final class Iterators {
 		return new EmptyCloseableIteratorWithoutException<T>();
 	}
 
+	public static <E> CloseableIteratorWithoutException<E> singletonIterator(E e) {
+		return new SingletonCloseableIteratorWithoutException<E>(e);
+	}
+
 	public static int count(CloseableIterator<?> it) throws IteratorException {
 		int i = 0;
 		while (it.hasNext()) {

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,66 +40,25 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.core.term;
-
-import java.util.regex.Matcher;
-
-import org.apache.commons.lang3.StringUtils;
-
-import fr.lirmm.graphik.graal.api.core.AbstractTerm;
-import fr.lirmm.graphik.graal.api.core.Literal;
-import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.util.URI;
-import fr.lirmm.graphik.util.URIUtils;
+package fr.lirmm.graphik.util.stream;
 
 /**
- * Not immutable but it is not possible with an Object as constructor parameter
- * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-final class DefaultLiteral extends AbstractTerm implements Literal {
+public class SingletonCloseableIteratorWithoutException<E> implements CloseableIteratorWithoutException<E> {
 
-	private static final long serialVersionUID = -8168240181900479256L;
-
-
-	private final Object      value;
-	private final URI         datatype;
-	private final String      identifier;
+	private E next;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public DefaultLiteral(Literal lit) {
-		this(lit.getDatatype(), lit.getValue());
-	}
-
-	public DefaultLiteral(Object value) {
-		boolean test = false;
-		Matcher m = null;
-		if(value instanceof String) {
-			m = URIUtils.LITERAL_PATTERN.matcher((String) value);
-			test = m.matches();
-		}
-		if (test) {
-			this.datatype = URIUtils.createURI(m.group(2));
-			this.value = m.group(1);
-		} else {
-			this.datatype = URIUtils.createURI("java:"
-				+ StringUtils.reverseDelimited(value.getClass().getCanonicalName(), '.'));
-			this.value = value;
-		}
-		this.identifier = "\"" + this.value.toString() + "\"^^<" + this.getDatatype().toString() + ">";
-	}
-
-	public DefaultLiteral(URI datatype, Object value) {
-		this.datatype = datatype;
-		this.value = value;
-		this.identifier = "\"" + this.value.toString() + "\"^^<" + this.getDatatype().toString() + ">";
+	/**
+	 * @param e
+	 */
+	public SingletonCloseableIteratorWithoutException(E e) {
+		this.next = e;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -107,38 +66,27 @@ final class DefaultLiteral extends AbstractTerm implements Literal {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public boolean isConstant() {
-		return true;
+	public boolean hasNext() {
+		return this.next != null;
 	}
 
 	@Override
-	public Term.Type getType() {
-		return Term.Type.LITERAL;
+	public E next() {
+		E tmp = next;
+		next = null;
+		return tmp;
 	}
 
 	@Override
-	public Object getValue() {
-		return this.value;
-	}
-
-	@Override
-	public String getLabel() {
-		return this.value.toString();
-	}
-
-	@Override
-	public URI getDatatype() {
-		return this.datatype;
-	}
-
-	@Override
-	public String getIdentifier() {
-		return this.identifier;
+	public void close() {
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// OBJECT OVERRIDE METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
 }

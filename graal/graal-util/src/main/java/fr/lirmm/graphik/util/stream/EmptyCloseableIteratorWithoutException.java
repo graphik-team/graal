@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,58 +40,20 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.core;
+package fr.lirmm.graphik.util.stream;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.graal.api.core.Term;
-
-/**
- * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- *
- */
-public final class Substitutions {
-
-	// /////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	// /////////////////////////////////////////////////////////////////////////
-
-	private Substitutions() {
+class EmptyCloseableIteratorWithoutException<T> implements CloseableIteratorWithoutException<T> {
+	@Override
+	public void close() {
 	}
 
-	// /////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	public static Substitution emptySubstitution() {
-		return new TreeMapSubstitution();
+	@Override
+	public boolean hasNext() {
+		return false;
 	}
 
-	/**
-	 * Create a new Atom which is the image of the specified atom by replacing
-	 * the specified term by the specified image.
-	 * 
-	 * @param atom
-	 * @param term
-	 *            the term to replace
-	 * @param image
-	 *            the image of the specified term
-	 * @return a new Atom which is the image of the specified atom.
-	 */
-	public static Atom createImageOf(Atom atom, Term term, Term image) {
-		List<Term> termsSubstitut = new LinkedList<Term>();
-		for (Term t : atom.getTerms()) {
-			if (term.equals(t)) {
-				termsSubstitut.add(image);
-			} else {
-				termsSubstitut.add(t);
-			}
-		}
-
-		return new DefaultAtom(atom.getPredicate(), termsSubstitut);
+	@Override
+	public T next() {
+		return null;
 	}
-
 }
