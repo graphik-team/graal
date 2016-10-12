@@ -54,7 +54,7 @@ import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.BuiltInPredicate;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
@@ -86,7 +86,7 @@ public class ComplexHomomorphism<Q extends ConjunctiveQuery, F extends AtomSet> 
 				rawAtoms.add(a);
 			}
 		}
-		ConjunctiveQuery rawQuery = ConjunctiveQueryFactory.instance().create(rawAtoms);
+		ConjunctiveQuery rawQuery = DefaultConjunctiveQueryFactory.instance().create(rawAtoms);
 		rawQuery.setAnswerVariables(q.getAnswerVariables());
 		return new BuiltInSubstitutionIterator(this.rawSolver.execute(rawQuery,f));
 	}

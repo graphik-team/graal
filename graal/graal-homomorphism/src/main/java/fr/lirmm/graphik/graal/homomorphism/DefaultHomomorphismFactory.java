@@ -54,9 +54,9 @@ import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismChecker;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactory;
-import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
-import fr.lirmm.graphik.graal.homomorphism.checker.DefaultUnionConjunctiveQueriesChecker;
+import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.homomorphism.checker.BacktrackChecker;
+import fr.lirmm.graphik.graal.homomorphism.checker.DefaultUnionConjunctiveQueriesChecker;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -67,7 +67,7 @@ public final class DefaultHomomorphismFactory implements HomomorphismFactory {
 	private SortedSet<HomomorphismChecker> elements;
 	
 	private static DefaultHomomorphismFactory instance = null;
-	private static ConjunctiveQuery emptyConjunctiveQuery = ConjunctiveQueryFactory.instance().create();
+	private static ConjunctiveQuery emptyConjunctiveQuery = DefaultConjunctiveQueryFactory.instance().create();
 	
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR

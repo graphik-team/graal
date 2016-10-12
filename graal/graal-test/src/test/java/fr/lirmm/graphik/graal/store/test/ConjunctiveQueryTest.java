@@ -60,7 +60,7 @@ import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.forward_chaining.StaticChase;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
@@ -91,7 +91,7 @@ public class ConjunctiveQueryTest {
 	public void emptyQueryAndEmptyAtomSetTest(Homomorphism h, AtomSet store) {
 		try {
 			InMemoryAtomSet queryAtomSet = new LinkedListAtomSet();
-			ConjunctiveQuery query = ConjunctiveQueryFactory.instance().create(queryAtomSet);
+			ConjunctiveQuery query = DefaultConjunctiveQueryFactory.instance().create(queryAtomSet);
 
 			CloseableIterator<Substitution> subReader;
 			Substitution sub;
@@ -118,7 +118,7 @@ public class ConjunctiveQueryTest {
 			store.addAll(DlgpParser.parseAtomSet("p(a,b), p(b,c), q(a,c,d)."));
 
 			InMemoryAtomSet queryAtomSet = new LinkedListAtomSet();
-			ConjunctiveQuery query = ConjunctiveQueryFactory.instance().create(queryAtomSet);
+			ConjunctiveQuery query = DefaultConjunctiveQueryFactory.instance().create(queryAtomSet);
 
 			CloseableIterator<Substitution> subReader;
 			Substitution sub;
@@ -248,7 +248,7 @@ public class ConjunctiveQueryTest {
 
 			InMemoryAtomSet queryAtomSet = new LinkedListAtomSet();
 			queryAtomSet.add(DlgpParser.parseAtom("q(a,c,d)."));
-			ConjunctiveQuery query = ConjunctiveQueryFactory.instance().create(queryAtomSet);
+			ConjunctiveQuery query = DefaultConjunctiveQueryFactory.instance().create(queryAtomSet);
 
 			CloseableIterator<Substitution> subReader;
 			Substitution sub;
@@ -274,7 +274,7 @@ public class ConjunctiveQueryTest {
 		try {
 			InMemoryAtomSet queryAtomSet = new LinkedListAtomSet();
 			queryAtomSet.add(DlgpParser.parseAtom("q(a,c,d)."));
-			ConjunctiveQuery query = ConjunctiveQueryFactory.instance().create(queryAtomSet);
+			ConjunctiveQuery query = DefaultConjunctiveQueryFactory.instance().create(queryAtomSet);
 
 			CloseableIterator<Substitution> subReader;
 			Substitution sub;

@@ -72,8 +72,8 @@ import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.DefaultConstantGenerator;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultPredicateFactory;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionIterator2AtomIterator;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
@@ -138,7 +138,7 @@ public class PlainTableRDBMSStore extends AbstractRdbmsStore {
 	
 	@Override
 	public CloseableIterator<Atom> match(Atom atom) throws AtomSetException {
-		ConjunctiveQuery query = ConjunctiveQueryFactory.instance().create(new LinkedListAtomSet(atom));
+		ConjunctiveQuery query = DefaultConjunctiveQueryFactory.instance().create(new LinkedListAtomSet(atom));
 		SqlHomomorphism solver = SqlHomomorphism.instance();
 
 		try {
@@ -165,7 +165,7 @@ public class PlainTableRDBMSStore extends AbstractRdbmsStore {
 			terms.add(DefaultTermFactory.instance().createVariable(i));
 		}
 		Atom atom = DefaultAtomFactory.instance().create(p, terms);
-		ConjunctiveQuery query = ConjunctiveQueryFactory.instance().create(new LinkedListAtomSet(atom));
+		ConjunctiveQuery query = DefaultConjunctiveQueryFactory.instance().create(new LinkedListAtomSet(atom));
 		SqlHomomorphism solver = SqlHomomorphism.instance();
 
 		try {

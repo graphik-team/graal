@@ -65,7 +65,7 @@ import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetUtils;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 import fr.lirmm.graphik.graal.homomorphism.PureHomomorphism;
 import fr.lirmm.graphik.util.Profiler;
@@ -135,7 +135,7 @@ final class Utils {
 			InMemoryAtomSet res = AtomSetUtils.union(ajout, restant);
 			List<Term> ansVar = new LinkedList<Term>();
 			ansVar.addAll(q.getAnswerVariables());
-			rew = ConjunctiveQueryFactory.instance().create(res, ansVar);
+			rew = DefaultConjunctiveQueryFactory.instance().create(res, ansVar);
 		}
 		return rew;
 	}
@@ -385,7 +385,8 @@ final class Utils {
 				newQueriesAfter.clear();
 			}
 			for (InMemoryAtomSet a : newQueriesBefore) {
-				unfoldingRewritingSet.add(ConjunctiveQueryFactory.instance().create(a,
+				unfoldingRewritingSet.add(
+				    DefaultConjunctiveQueryFactory.instance().create(a,
 				    originalQuery.getAnswerVariables()));
 			}
 		}

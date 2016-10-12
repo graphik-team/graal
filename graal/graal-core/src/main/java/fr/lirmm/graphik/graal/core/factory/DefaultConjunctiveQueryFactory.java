@@ -58,6 +58,27 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
  */
 public class DefaultConjunctiveQueryFactory implements ConjunctiveQueryFactory {
 
+	// /////////////////////////////////////////////////////////////////////////
+	// SINGLETON
+	// /////////////////////////////////////////////////////////////////////////
+
+	private static DefaultConjunctiveQueryFactory instance;
+
+	protected DefaultConjunctiveQueryFactory() {
+		super();
+	}
+
+	public static synchronized DefaultConjunctiveQueryFactory instance() {
+		if (instance == null)
+			instance = new DefaultConjunctiveQueryFactory();
+
+		return instance;
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
 	@Override
 	public ConjunctiveQuery create() {
 		return new DefaultConjunctiveQuery();

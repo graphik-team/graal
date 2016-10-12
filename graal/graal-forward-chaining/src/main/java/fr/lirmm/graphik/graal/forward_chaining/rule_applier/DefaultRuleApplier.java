@@ -63,10 +63,9 @@ import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
-import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.RestrictedChaseStopCondition;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
@@ -134,7 +133,7 @@ public class DefaultRuleApplier<T extends AtomSet> implements RuleApplier<Rule, 
 	@Override
 	public boolean apply(Rule rule, T atomSet) throws RuleApplicationException {
 		boolean isChanged = false;
-		ConjunctiveQuery query = ConjunctiveQueryFactory.instance().create(rule.getBody(),
+		ConjunctiveQuery query = DefaultConjunctiveQueryFactory.instance().create(rule.getBody(),
 		        new LinkedList<Term>(rule.getFrontier()));
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Rule to execute: " + rule);

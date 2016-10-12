@@ -61,7 +61,7 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultNegativeConstraint;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 
@@ -135,7 +135,8 @@ abstract class AbstractDlgpListener implements ParserListener {
 	public void endsConjunction(OBJECT_TYPE objectType) {
 		switch (objectType) {
 		case QUERY:
-			this.createQuery(ConjunctiveQueryFactory.instance().create(this.label,
+				this.createQuery(
+				    DefaultConjunctiveQueryFactory.instance().create(this.label,
 					this.atomSet, this.answerVars));
 			break;
 		case NEG_CONSTRAINT:

@@ -55,7 +55,7 @@ import com.hp.hpl.jena.query.QueryFactory;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
-import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.Prefix;
 
@@ -112,7 +112,7 @@ public class SparqlConjunctiveQueryParser {
 		ElementVisitorImpl visitor = new ElementVisitorImpl(AtomSetFactory.instance().create());
 		sparql.getQueryPattern().visit(visitor);
 
-		this.query = ConjunctiveQueryFactory.instance().create(visitor.getAtomSet(), ans);
+		this.query = DefaultConjunctiveQueryFactory.instance().create(visitor.getAtomSet(), ans);
 	}
 
 }

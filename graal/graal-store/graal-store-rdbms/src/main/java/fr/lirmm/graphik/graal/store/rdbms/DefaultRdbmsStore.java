@@ -76,12 +76,11 @@ import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.store.BatchProcessor;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionIterator2AtomIterator;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
 import fr.lirmm.graphik.util.string.StringUtils;
@@ -386,7 +385,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	@Override
 	public CloseableIterator<Atom> match(Atom atom) throws AtomSetException {
 
-		ConjunctiveQuery query = ConjunctiveQueryFactory.instance().create(new LinkedListAtomSet(atom));
+		ConjunctiveQuery query = DefaultConjunctiveQueryFactory.instance().create(new LinkedListAtomSet(atom));
 		SqlHomomorphism solver = SqlHomomorphism.instance();
 
 		try {
@@ -403,7 +402,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			terms.add(DefaultTermFactory.instance().createVariable("X" + i));
 		}
 		Atom atom = DefaultAtomFactory.instance().create(p, terms);
-		ConjunctiveQuery query = ConjunctiveQueryFactory.instance().create(new LinkedListAtomSet(atom));
+		ConjunctiveQuery query = DefaultConjunctiveQueryFactory.instance().create(new LinkedListAtomSet(atom));
 		SqlHomomorphism solver = SqlHomomorphism.instance();
 
 		try {
@@ -598,7 +597,7 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 			while (it.hasNext()) {
 				Atom headAtom = it.next();
 				String tableName = this.getPredicateTable(headAtom.getPredicate());
-				ConjunctiveQuery query = ConjunctiveQueryFactory.instance().create(body, headAtom.getTerms());
+				ConjunctiveQuery query = DefaultConjunctiveQueryFactory.instance().create(body, headAtom.getTerms());
 				String selectQuery = this.transformToSQL(query);
 				queries.add(this.getDriver().getInsertOrIgnoreStatement(tableName, selectQuery));
 			}

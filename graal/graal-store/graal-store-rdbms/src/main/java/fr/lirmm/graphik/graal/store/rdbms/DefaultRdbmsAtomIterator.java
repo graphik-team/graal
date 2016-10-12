@@ -60,7 +60,7 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionIterator2AtomIterator;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -114,7 +114,7 @@ class DefaultRdbmsAtomIterator implements CloseableIterator<Atom> {
 				Atom atom = new DefaultAtom(p, terms);
 				atomSet.add(atom);
 				
-				ConjunctiveQuery query = ConjunctiveQueryFactory.instance().create(atomSet);
+				ConjunctiveQuery query = DefaultConjunctiveQueryFactory.instance().create(atomSet);
 				
 				SqlHomomorphism solver = SqlHomomorphism.instance();
 				try {

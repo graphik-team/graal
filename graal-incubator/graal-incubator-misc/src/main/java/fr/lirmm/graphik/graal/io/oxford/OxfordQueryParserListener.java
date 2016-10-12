@@ -53,7 +53,7 @@ import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 
 /**
@@ -84,7 +84,7 @@ class OxfordQueryParserListener {
 	
 
 	public void endOfQuery() {
-		this.cquery = ConjunctiveQueryFactory.instance().create(this.body, this.awsweredVariables);
+		this.cquery = DefaultConjunctiveQueryFactory.instance().create(this.body, this.awsweredVariables);
 	}
 	
 

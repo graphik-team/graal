@@ -49,7 +49,7 @@ import fr.lirmm.graphik.graal.api.backward_chaining.QueryRewriter;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.backward_chaining.pure.PureRewriter;
-import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -63,7 +63,8 @@ public class PureRewritingExample {
 	public static void main(String args[]) throws Exception {
 		
 		// Query
-		ConjunctiveQuery query = ConjunctiveQueryFactory.instance().create(DlgpParser.parseQuery("?(X) :- f(X)."));
+		ConjunctiveQuery query = DefaultConjunctiveQueryFactory.instance()
+		                                                       .create(DlgpParser.parseQuery("?(X) :- f(X)."));
 		
 		// RuleSet
 		RuleSet rules = new LinkedListRuleSet();

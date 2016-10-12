@@ -56,15 +56,44 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
  */
 public interface ConjunctiveQueryFactory {
 
+	/**
+	 * Create an empty query
+	 * 
+	 * @return
+	 */
 	ConjunctiveQuery create();
 
+	/**
+	 * Create a query from the specified atom set. All variables appearing in
+	 * the atom set will be considered as answer variables.
+	 * 
+	 * @param atomSet
+	 * @return
+	 */
 	ConjunctiveQuery create(InMemoryAtomSet atomSet);
 
+	/**
+	 * Create a query from the specified atom set and the specified answer
+	 * variables.
+	 * 
+	 * @param atomSet
+	 * @param ans
+	 * @return
+	 */
 	ConjunctiveQuery create(InMemoryAtomSet atomSet, List<Term> ans);
 
+	/**
+	 * Create a query from the specified atom set and the specified answer
+	 * variables.
+	 * 
+	 * @param atomSet
+	 * @param answerVariables
+	 * @return
+	 */
 	ConjunctiveQuery create(CloseableIteratorWithoutException<Atom> atomSet, CloseableIteratorWithoutException<Term> answerVariables);
 
 	/**
+	 * Create a query from the specified atom set, answer variables and label.
 	 * 
 	 * @param label
 	 *            the name of this query
@@ -75,6 +104,12 @@ public interface ConjunctiveQueryFactory {
 	 */
 	ConjunctiveQuery create(String label, InMemoryAtomSet atomSet, List<Term> ans);
 
+	/**
+	 * Copy
+	 * 
+	 * @param query
+	 * @return
+	 */
 	ConjunctiveQuery create(ConjunctiveQuery query);
 
 }
