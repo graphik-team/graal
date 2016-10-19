@@ -44,7 +44,6 @@
 
 import java.util.Set;
 
-import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
@@ -85,8 +84,12 @@ public interface AtomSet extends CloseableIterable<Atom> {
 	CloseableIterator<Atom> atomsByPredicate(Predicate predicate) throws AtomSetException;
 
 	/**
+	 * Returns an iterator over terms which are in a specific position in at
+	 * least one atom with the specified predicate.
+	 * 
 	 * @param p
 	 * @param position
+	 *            the term position in atoms, positions starts from 0.
 	 * @return
 	 */
 	CloseableIterator<Term> termsByPredicatePosition(Predicate p, int position) throws AtomSetException;
