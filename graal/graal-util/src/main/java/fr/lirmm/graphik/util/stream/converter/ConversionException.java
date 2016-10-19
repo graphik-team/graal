@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -42,41 +42,24 @@
  */
 package fr.lirmm.graphik.util.stream.converter;
 
-import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.IteratorException;
-
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class ConverterIterator<U, T> implements CloseableIterator<T> {
+public class ConversionException extends Exception {
 
-	private final CloseableIterator<U> it;
-	private final Converter<U, T> converter;
+	private static final long serialVersionUID = -1833794780850504432L;
 
-	public ConverterIterator(CloseableIterator<U> it, Converter<U, T> converter) {
-		super();
-		this.converter = converter;
-		this.it = it;
+	public ConversionException(String message, Throwable cause) {
+		super(message, cause);
 	}
 
-	@Override
-	public boolean hasNext() throws IteratorException {
-		return this.it.hasNext();
+	public ConversionException(String message) {
+		super(message);
 	}
 
-	@Override
-	public T next() throws IteratorException {
-		try {
-			return this.converter.convert(this.it.next());
-		} catch (ConversionException e) {
-			throw new IteratorException(e);
-		}
-	}
-
-	@Override
-	public void close() {
-		this.it.close();
+	public ConversionException(Throwable e) {
+		super(e);
 	}
 
 }

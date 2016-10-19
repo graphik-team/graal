@@ -46,12 +46,19 @@
 package fr.lirmm.graphik.util.stream.filter;
 
 /**
- * Check if an element should be filtered.
+ * Check if an element must be filtered.
  * 
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
 public interface Filter<E> {
 
+	/**
+	 * Return true if the element must be kept, false if it must be filtered
+	 * 
+	 * @param e
+	 *            the element to check
+	 * @return
+	 */
 	boolean filter(E e);
 }

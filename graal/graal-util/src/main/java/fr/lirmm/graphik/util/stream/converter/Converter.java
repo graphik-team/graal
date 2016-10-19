@@ -48,6 +48,6 @@ package fr.lirmm.graphik.util.stream.converter;
  */
 public interface Converter<U, T> {
 
-	T convert(U object);
+	T convert(U object) throws ConversionException;
 
 }

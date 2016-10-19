@@ -73,7 +73,11 @@ public class ConverterCloseableIterator<U, T> extends AbstractCloseableIterator<
 
 	@Override
 	public T next() throws IteratorException {
-		return this.converter.convert(this.it.next());
+		try {
+			return this.converter.convert(this.it.next());
+		} catch (ConversionException e) {
+			throw new IteratorException(e);
+		}
 	}
 
 	@Override
