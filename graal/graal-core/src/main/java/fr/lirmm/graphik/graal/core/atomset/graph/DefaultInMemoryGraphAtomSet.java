@@ -144,18 +144,27 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 				}
 			}
 		}
-		return new FilterIteratorWithoutException<Atom, Atom>(it, new Filter<Atom>() {
-			@Override
-			public boolean filter(Atom a) {
-				return matcher.check((Atom) a);
-			}
-		});
+		if (it == null) {
+			return this.atomsByPredicate(atom.getPredicate());
+		} else {
+			return new FilterIteratorWithoutException<Atom, Atom>(it, new Filter<Atom>() {
+				@Override
+				public boolean filter(Atom a) {
+					return matcher.check((Atom) a);
+				}
+			});
+		}
 	}
 
 	@Override
 	public CloseableIteratorWithoutException<Atom> atomsByPredicate(Predicate p) {
-		return new FilterIteratorWithoutException<Edge, Atom>(new CloseableIteratorAdapter<Edge>(this.getPredicateVertex(
-		    p).getEdges().iterator()), new Filter<Edge>() {
+		PredicateVertex pv = this.getPredicateVertex(p);
+		if (pv == null) {
+			return Iterators.<Atom> emptyIterator();
+		}
+		return new FilterIteratorWithoutException<Edge, Atom>(new CloseableIteratorAdapter<Edge>(pv.getEdges()
+		                                                                                           .iterator()),
+		                                                      new Filter<Edge>() {
 			    @Override
 			    public boolean filter(Edge e) {
 				    return true;
