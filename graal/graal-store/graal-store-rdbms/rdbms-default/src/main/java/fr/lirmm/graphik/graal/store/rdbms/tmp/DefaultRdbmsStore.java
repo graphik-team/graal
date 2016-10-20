@@ -154,6 +154,8 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	                                                                + PREDICATE_TABLE_NAME
 	                                                                + " LIMIT 1";
 
+	private static final String TRUNCATE_TABLE = "TRUNCATE TABLE %s;";
+
 	private PreparedStatement          getPredicateTableStatement;
 	private PreparedStatement          insertPredicateStatement;
 
@@ -427,6 +429,36 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 		}
 	}
 
+	@Override
+	public void clear() throws AtomSetException {
+		try {
+			Statement stat = null;
+			CloseableIterator<Predicate> it = this.predicatesIterator();
+			try {
+				stat = this.createStatement();
+				while (it.hasNext()) {
+					Predicate p = it.next();
+					this.removePredicate(stat, p);
+				}
+				stat.execute(String.format(TRUNCATE_TABLE, PREDICATE_TABLE_NAME));
+				stat.execute(String.format(TRUNCATE_TABLE, TERMS_TABLE));
+				stat.close();
+				this.getConnection().commit();
+			} catch (IteratorException e) {
+				this.getConnection().rollback();
+				throw new AtomSetException(e);
+			} catch (SQLException e) {
+				this.getConnection().rollback();
+				throw new AtomSetException(e);
+			} finally {
+				if (stat != null)
+					stat.close();
+			}
+		} catch (SQLException e) {
+			throw new AtomSetException(e);
+		}
+	}
+
 
 	// /////////////////////////////////////////////////////////////////////////
 	// PROTECTED METHODS
@@ -589,19 +621,6 @@ public class DefaultRdbmsStore extends AbstractRdbmsStore {
 	@Override
 	protected DBTable getPredicateTable(Predicate p) throws AtomSetException {
 		return super.getPredicateTable(p); // for package visibility
-	}
-
-	@Override
-	protected void removePredicate(Statement stat, Predicate p) throws AtomSetException {
-		super.removePredicate(stat, p);
-		try {
-			String query = String.format(
-			    "DELETE FROM " + PREDICATE_TABLE_NAME + " WHERE PREDICATE_LABEL = '%s' AND PREDICATE_ARITY = %s",
-			    p.getIdentifier(), p.getArity());
-			stat.execute(query);
-		} catch (SQLException e) {
-			throw new AtomSetException(e);
-		}
 	}
 
 }

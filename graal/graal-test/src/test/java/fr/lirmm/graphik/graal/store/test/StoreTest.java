@@ -62,6 +62,7 @@ import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
+import fr.lirmm.graphik.util.stream.Iterators;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -141,26 +142,20 @@ public class StoreTest {
 		Assert.assertEquals(2, cpt);
 	}
 
-	// @Theory
-	// public void atomByPredicate(AtomSet store) throws AtomSetException {
-	// store.add(DlgpParser.parseAtom("p(b,a)."));
-	// store.add(DlgpParser.parseAtom("p(a,a)."));
-	// store.add(DlgpParser.parseAtom("p(b,b)."));
-	// store.add(DlgpParser.parseAtom("p(a,c)."));
-	// store.add(DlgpParser.parseAtom("q(a,a)."));
-	// store.add(DlgpParser.parseAtom("q(a,b)."));
-	//
-	// Atom a = DlgpParser.parseAtom("p(a,X).");
-	//
-	// Iterator<?> it = store.atomsByPredicate(new Predicate("p", 2));
-	// int cpt = 0;
-	// while (it.hasNext()) {
-	// ++cpt;
-	// it.next();
-	// }
-	//
-	// Assert.assertEquals(4, cpt);
-	// }
+	@Theory
+	public void atomByPredicate(AtomSet store) throws AtomSetException, IteratorException {
+		store.add(DlgpParser.parseAtom("<P>(b,a)."));
+		store.add(DlgpParser.parseAtom("<P>(a,a)."));
+		store.add(DlgpParser.parseAtom("<P>(b,b)."));
+		store.add(DlgpParser.parseAtom("<P>(a,c)."));
+		store.add(DlgpParser.parseAtom("<Q>(a,a)."));
+		store.add(DlgpParser.parseAtom("<Q>(a,b)."));
+
+		CloseableIterator<Atom> it = store.atomsByPredicate(new Predicate("P", 2));
+		int count = Iterators.count(it);
+
+		Assert.assertEquals(4, count);
+	}
 
 	@Theory
 	public void termsByPredicatePosition(AtomSet store) throws AtomSetException, IteratorException {
@@ -194,6 +189,28 @@ public class StoreTest {
 
 		a = DlgpParser.parseAtom("<P>(a,a).");
 		Assert.assertTrue(store.contains(a));
+	}
+
+	@Theory
+	public void caseSensitivityTest(AtomSet store) throws AtomSetException, IteratorException {
+		Atom toAdd = DlgpParser.parseAtom("<P>(a,b).");
+		Atom toCheck = DlgpParser.parseAtom("<p>(a,b).");
+		Predicate predicateToCheck = new Predicate("p", 2);
+
+		store.add(toAdd);
+
+		Assert.assertTrue(store.contains(toAdd));
+		Assert.assertFalse(store.contains(toCheck));
+
+		CloseableIterator<?> it = store.termsByPredicatePosition(predicateToCheck, 0);
+		Assert.assertFalse(it.hasNext());
+
+		it = store.atomsByPredicate(predicateToCheck);
+		Assert.assertFalse(it.hasNext());
+
+		it = store.match(DlgpParser.parseAtom("<p>(X,Y)."));
+		Assert.assertFalse(it.hasNext());
+
 	}
 
 }
