@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,62 +40,26 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.rdbms.store.test;
+package fr.lirmm.graphik.graal.store.rdbms.adhoc;
 
-import java.sql.SQLException;
+import java.sql.Connection;
+import java.sql.Statement;
 
+import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
-import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
-import fr.lirmm.graphik.graal.store.rdbms.adhoc.AdHocRdbmsStore;
-import fr.lirmm.graphik.graal.store.rdbms.driver.HSQLDBDriver;
-import fr.lirmm.graphik.graal.store.rdbms.natural.NaturalRDBMSStore;
+import fr.lirmm.graphik.graal.store.rdbms.AbstractRdbmsBatchProcessor;
 
-/**
- * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- *
- */
-public class TestUtil {
+class AdHocRdbmsBatchProcessor extends AbstractRdbmsBatchProcessor {
 
-	private TestUtil() {
+	private AdHocRdbmsStore store;
+
+	public AdHocRdbmsBatchProcessor(AdHocRdbmsStore store, Connection con) throws AtomSetException {
+		super(con);
+		this.store = store;
 	}
 
-	private static final String DEFAULT_TEST = "test_default";
-	private static final String PLAIN_TABLE_TEST = "test_plaintable";
-
-	private static AdHocRdbmsStore defaultRdbms = null;
-	private static NaturalRDBMSStore plainTableRdbms = null;
-
-	public static RdbmsStore[] getStores() {
-		if (defaultRdbms != null) {
-			try {
-				defaultRdbms.getDriver().getConnection().createStatement()
-						.executeQuery("DROP SCHEMA PUBLIC CASCADE");
-			} catch (SQLException e) {
-				throw new Error(e);
-			}
-			defaultRdbms.close();
-		}
-		if (plainTableRdbms != null) {
-			try {
-				plainTableRdbms.getDriver().getConnection().createStatement()
-				               .executeQuery("DROP SCHEMA PUBLIC CASCADE");
-			} catch (SQLException e) {
-				throw new Error(e);
-			}
-			plainTableRdbms.close();
-		}
-		try {
-			defaultRdbms = new AdHocRdbmsStore(new HSQLDBDriver(DEFAULT_TEST, null));
-			plainTableRdbms = new NaturalRDBMSStore(new HSQLDBDriver(PLAIN_TABLE_TEST, null));
-		} catch (AtomSetException e) {
-			throw new Error(e);
-		} catch (SQLException e) {
-			throw new Error(e);
-		}
-		return new RdbmsStore[] { defaultRdbms, plainTableRdbms };
+	@Override
+	protected void add(Statement statement, Atom a) throws AtomSetException {
+		store.add(statement, a);
 	}
-
 }

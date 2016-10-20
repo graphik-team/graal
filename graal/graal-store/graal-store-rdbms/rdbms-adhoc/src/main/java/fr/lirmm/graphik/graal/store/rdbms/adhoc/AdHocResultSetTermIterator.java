@@ -40,62 +40,78 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
+/**
  * 
  */
-package fr.lirmm.graphik.graal.rdbms.store.test;
+package fr.lirmm.graphik.graal.store.rdbms.adhoc;
 
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 
-import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
-import fr.lirmm.graphik.graal.store.rdbms.adhoc.AdHocRdbmsStore;
-import fr.lirmm.graphik.graal.store.rdbms.driver.HSQLDBDriver;
-import fr.lirmm.graphik.graal.store.rdbms.natural.NaturalRDBMSStore;
+import fr.lirmm.graphik.graal.store.rdbms.util.ResultSetCloseableIterator;
+import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
+import fr.lirmm.graphik.util.stream.converter.ConversionException;
 
 /**
- * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- *
+ * @author Clément Sipieter (INRIA) <clement@6pi.fr>
+ * 
  */
-public class TestUtil {
+class AdHocResultSetTermIterator extends AbstractCloseableIterator<Term> {
 
-	private TestUtil() {
+	private static final AdHocResultSet2TermConverter converter = new AdHocResultSet2TermConverter();
+	private ResultSetCloseableIterator it;
+	private Statement statement = null;
+
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * @param store
+	 * @param sqlQuery
+	 * @throws SQLException
+	 * @throws StoreException
+	 */
+	public AdHocResultSetTermIterator(RdbmsStore store, String sqlQuery) throws SQLException {
+		this.statement = store.getDriver().createStatement();
+		this.it = new ResultSetCloseableIterator(statement.executeQuery(sqlQuery));
 	}
 
-	private static final String DEFAULT_TEST = "test_default";
-	private static final String PLAIN_TABLE_TEST = "test_plaintable";
+	public AdHocResultSetTermIterator(PreparedStatement st) throws SQLException {
+		this.it = new ResultSetCloseableIterator(st.executeQuery());
+	}
 
-	private static AdHocRdbmsStore defaultRdbms = null;
-	private static NaturalRDBMSStore plainTableRdbms = null;
+	// /////////////////////////////////////////////////////////////////////////
+	// METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
-	public static RdbmsStore[] getStores() {
-		if (defaultRdbms != null) {
-			try {
-				defaultRdbms.getDriver().getConnection().createStatement()
-						.executeQuery("DROP SCHEMA PUBLIC CASCADE");
-			} catch (SQLException e) {
-				throw new Error(e);
-			}
-			defaultRdbms.close();
-		}
-		if (plainTableRdbms != null) {
-			try {
-				plainTableRdbms.getDriver().getConnection().createStatement()
-				               .executeQuery("DROP SCHEMA PUBLIC CASCADE");
-			} catch (SQLException e) {
-				throw new Error(e);
-			}
-			plainTableRdbms.close();
-		}
+	@Override
+	public boolean hasNext() throws IteratorException {
+		return it.hasNext();
+	}
+
+	@Override
+	public Term next() throws IteratorException {
 		try {
-			defaultRdbms = new AdHocRdbmsStore(new HSQLDBDriver(DEFAULT_TEST, null));
-			plainTableRdbms = new NaturalRDBMSStore(new HSQLDBDriver(PLAIN_TABLE_TEST, null));
-		} catch (AtomSetException e) {
-			throw new Error(e);
-		} catch (SQLException e) {
-			throw new Error(e);
+			return converter.convert(it.next());
+		} catch (ConversionException e) {
+			throw new IteratorException(e);
 		}
-		return new RdbmsStore[] { defaultRdbms, plainTableRdbms };
+	}
+
+	@Override
+	public void close() {
+		this.it.close();
+		if (statement != null) {
+			try {
+				this.statement.close();
+			} catch (SQLException e) {
+			}
+		}
 	}
 
 }

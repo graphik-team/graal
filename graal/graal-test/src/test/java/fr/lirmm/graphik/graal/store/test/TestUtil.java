@@ -73,9 +73,9 @@ import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2WithLimit;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.SimpleFC;
 import fr.lirmm.graphik.graal.store.gdb.BlueprintsGraphDBStore;
 import fr.lirmm.graphik.graal.store.gdb.Neo4jStore;
+import fr.lirmm.graphik.graal.store.rdbms.adhoc.AdHocRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.HSQLDBDriver;
-import fr.lirmm.graphik.graal.store.rdbms.natural.PlainTableRDBMSStore;
-import fr.lirmm.graphik.graal.store.rdbms.tmp.DefaultRdbmsStore;
+import fr.lirmm.graphik.graal.store.rdbms.natural.NaturalRDBMSStore;
 import fr.lirmm.graphik.graal.store.triplestore.JenaStore;
 import fr.lirmm.graphik.graal.store.triplestore.SailStore;
 
@@ -109,8 +109,8 @@ public final class TestUtil {
 
 	}
 
-	public static DefaultRdbmsStore defaultRDBMSStore = null;
-	public static PlainTableRDBMSStore plainTableRDBMSStore = null;
+	public static AdHocRdbmsStore defaultRDBMSStore = null;
+	public static NaturalRDBMSStore plainTableRDBMSStore = null;
 	public static BlueprintsGraphDBStore graphStore = null;
 	public static JenaStore jenaStore = null;
 	public static Neo4jStore neo4jStore = null;
@@ -153,8 +153,8 @@ public final class TestUtil {
 				plainTableRDBMSStore.close();
 			}
 
-			defaultRDBMSStore = new DefaultRdbmsStore(new HSQLDBDriver(DEFAULT_RDBMS_TEST, null));
-			plainTableRDBMSStore = new PlainTableRDBMSStore(new HSQLDBDriver(PLAIN_TABLE_RDBMS_TEST, null));
+			defaultRDBMSStore = new AdHocRdbmsStore(new HSQLDBDriver(DEFAULT_RDBMS_TEST, null));
+			plainTableRDBMSStore = new NaturalRDBMSStore(new HSQLDBDriver(PLAIN_TABLE_RDBMS_TEST, null));
 
 			defaultRDBMSStore.clear();
 			plainTableRDBMSStore.clear();

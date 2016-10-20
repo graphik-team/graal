@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,62 +40,56 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.rdbms.store.test;
+package fr.lirmm.graphik.graal.store.rdbms.natural;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
-import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
-import fr.lirmm.graphik.graal.store.rdbms.adhoc.AdHocRdbmsStore;
-import fr.lirmm.graphik.graal.store.rdbms.driver.HSQLDBDriver;
-import fr.lirmm.graphik.graal.store.rdbms.natural.NaturalRDBMSStore;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.store.rdbms.RdbmsConjunctiveQueryTranslator;
+import fr.lirmm.graphik.util.stream.converter.ConversionException;
+import fr.lirmm.graphik.util.stream.converter.Converter;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class TestUtil {
+class NaturalResultSet2TermConverter implements Converter<ResultSet, Term> {
 
-	private TestUtil() {
+	private RdbmsConjunctiveQueryTranslator translator;
+	private int sqlColType;
+
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
+
+	public NaturalResultSet2TermConverter(RdbmsConjunctiveQueryTranslator translator, int sqlType) {
+		this.translator = translator;
+		this.sqlColType = sqlType;
 	}
 
-	private static final String DEFAULT_TEST = "test_default";
-	private static final String PLAIN_TABLE_TEST = "test_plaintable";
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
-	private static AdHocRdbmsStore defaultRdbms = null;
-	private static NaturalRDBMSStore plainTableRdbms = null;
-
-	public static RdbmsStore[] getStores() {
-		if (defaultRdbms != null) {
-			try {
-				defaultRdbms.getDriver().getConnection().createStatement()
-						.executeQuery("DROP SCHEMA PUBLIC CASCADE");
-			} catch (SQLException e) {
-				throw new Error(e);
-			}
-			defaultRdbms.close();
-		}
-		if (plainTableRdbms != null) {
-			try {
-				plainTableRdbms.getDriver().getConnection().createStatement()
-				               .executeQuery("DROP SCHEMA PUBLIC CASCADE");
-			} catch (SQLException e) {
-				throw new Error(e);
-			}
-			plainTableRdbms.close();
-		}
+	@Override
+	public Term convert(ResultSet result) throws ConversionException {
 		try {
-			defaultRdbms = new AdHocRdbmsStore(new HSQLDBDriver(DEFAULT_TEST, null));
-			plainTableRdbms = new NaturalRDBMSStore(new HSQLDBDriver(PLAIN_TABLE_TEST, null));
+			return this.translator.createTermFromColumnType(this.sqlColType, result.getString(1));
 		} catch (AtomSetException e) {
-			throw new Error(e);
+			throw new ConversionException(e);
 		} catch (SQLException e) {
-			throw new Error(e);
+			throw new ConversionException(e);
 		}
-		return new RdbmsStore[] { defaultRdbms, plainTableRdbms };
 	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// OBJECT OVERRIDE METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
 }

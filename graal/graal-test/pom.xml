@@ -59,23 +59,20 @@
 			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>rdbms-common</artifactId>
 			<version>${project.parent.version}</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>rdbms-default</artifactId>
+			<artifactId>rdbms-adhoc</artifactId>
 			<version>${project.parent.version}</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>rdbms-plain-table</artifactId>
+			<artifactId>rdbms-natural</artifactId>
 			<version>${project.parent.version}</version>
+			<scope>test</scope>
 		</dependency>
-		<dependency>
-      <groupId>org.hsqldb</groupId>
-      <artifactId>hsqldb</artifactId>
-      <version>2.3.4</version>
-      <scope>test</scope>
-    </dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-store-jenaTDB</artifactId>
