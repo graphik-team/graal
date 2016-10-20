@@ -54,7 +54,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
-import fr.lirmm.graphik.graal.store.rdbms.DBTable;
+import fr.lirmm.graphik.graal.store.rdbms.util.DBTable;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
 
 /**

@@ -59,6 +59,7 @@ import fr.lirmm.graphik.graal.core.Substitutions;
 import fr.lirmm.graphik.graal.store.rdbms.RdbmsConjunctiveQueryTranslator;
 import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.util.ResultSetCloseableIterator;
+import fr.lirmm.graphik.graal.store.rdbms.util.SQLQuery;
 import fr.lirmm.graphik.util.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.Iterators;

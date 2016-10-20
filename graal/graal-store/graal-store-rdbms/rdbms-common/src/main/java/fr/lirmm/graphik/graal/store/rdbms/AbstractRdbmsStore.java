@@ -63,9 +63,11 @@ import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.store.AbstractStore;
 import fr.lirmm.graphik.graal.homomorphism.DefaultHomomorphismFactory;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
-import fr.lirmm.graphik.graal.store.rdbms.homomorphism.SQLQuery;
 import fr.lirmm.graphik.graal.store.rdbms.homomorphism.SqlHomomorphismChecker;
 import fr.lirmm.graphik.graal.store.rdbms.homomorphism.SqlUCQHomomorphismChecker;
+import fr.lirmm.graphik.graal.store.rdbms.util.DBColumn;
+import fr.lirmm.graphik.graal.store.rdbms.util.DBTable;
+import fr.lirmm.graphik.graal.store.rdbms.util.SQLQuery;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
@@ -86,9 +88,9 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements RdbmsS
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRdbmsStore.class);
 
-	private final RdbmsDriver driver;
-
 	protected static final int MAX_BATCH_SIZE = 1024;
+
+	private final RdbmsDriver driver;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -209,17 +211,6 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements RdbmsS
 				if (stat != null)
 					stat.close();
 			}
-		} catch (SQLException e) {
-			throw new AtomSetException(e);
-		}
-	}
-
-	protected void removePredicate(Statement stat, Predicate p) throws AtomSetException {
-		try {
-			DBTable table = this.getPredicateTable(p);
-			String query = String.format("DROP TABLE %s", table.getName());
-			stat.execute(query);
-			this.predicateMap.remove(p);
 		} catch (SQLException e) {
 			throw new AtomSetException(e);
 		}
@@ -372,10 +363,6 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements RdbmsS
 		return statement;
 	}
 
-	protected abstract boolean testDatabaseSchema() throws AtomSetException;
-
-	protected abstract void createDatabaseSchema() throws AtomSetException;
-
 	/**
 	 * Get the table informations associated to the specified predicate. If
 	 * there is no table for it, a new table is created.
@@ -393,16 +380,6 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements RdbmsS
 
 		return tableName;
 	}
-
-	/**
-	 * Ask the database for table informations associated to the specified
-	 * predicate. If there is no table for it, return null.
-	 * 
-	 * @param predicate
-	 * @return
-	 * @throws AtomSetException
-	 */
-	protected abstract DBTable getPredicateTableIfExist(Predicate predicate) throws AtomSetException;
 
 	/**
 	 * Get the table informations associated to the specified predicate. If
@@ -459,6 +436,17 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements RdbmsS
 		return table;
 	}
 
+	protected void removePredicate(Statement stat, Predicate p) throws AtomSetException {
+		try {
+			DBTable table = this.getPredicateTable(p);
+			String query = String.format("DROP TABLE %s", table.getName());
+			stat.execute(query);
+			this.predicateMap.remove(p);
+		} catch (SQLException e) {
+			throw new AtomSetException(e);
+		}
+	}
+
 	private static DBTable generateNewDBTableData(String tableName, int arity) {
 		List<DBColumn> columns = new ArrayList<DBColumn>();
 		for (int i = 0; i < arity; ++i) {
@@ -472,5 +460,19 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements RdbmsS
 	// /////////////////////////////////////////////////////////////////////////
 
 	protected abstract String getFreshPredicateTableName(Predicate predicate) throws AtomSetException;
+
+	protected abstract boolean testDatabaseSchema() throws AtomSetException;
+
+	protected abstract void createDatabaseSchema() throws AtomSetException;
+
+	/**
+	 * Ask the database for table informations associated to the specified
+	 * predicate. If there is no table for it, return null.
+	 * 
+	 * @param predicate
+	 * @return
+	 * @throws AtomSetException
+	 */
+	protected abstract DBTable getPredicateTableIfExist(Predicate predicate) throws AtomSetException;
 
 }

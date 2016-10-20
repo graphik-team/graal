@@ -52,8 +52,8 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
 
-import fr.lirmm.graphik.graal.store.rdbms.DBColumn;
-import fr.lirmm.graphik.graal.store.rdbms.DBTable;
+import fr.lirmm.graphik.graal.store.rdbms.util.DBColumn;
+import fr.lirmm.graphik.graal.store.rdbms.util.DBTable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**

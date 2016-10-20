@@ -50,7 +50,9 @@ import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.store.rdbms.homomorphism.SQLQuery;
+import fr.lirmm.graphik.graal.store.rdbms.util.DBColumn;
+import fr.lirmm.graphik.graal.store.rdbms.util.DBTable;
+import fr.lirmm.graphik.graal.store.rdbms.util.SQLQuery;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -104,6 +106,15 @@ public interface RdbmsConjunctiveQueryTranslator {
 	SQLQuery translateTermsByPredicatePositionQuery(Predicate p, int position) throws AtomSetException;
 
 	/**
+	 * Produces a SQL Query which remove the specified atom.
+	 * 
+	 * @param atom
+	 * @return
+	 * @throws AtomSetException
+	 */
+	SQLQuery translateRemove(Atom atom) throws AtomSetException;
+
+	/**
 	 * Produces a CREATE TABLE Query.
 	 * 
 	 * @param table
@@ -135,12 +146,5 @@ public interface RdbmsConjunctiveQueryTranslator {
 	 * @throws AtomSetException
 	 */
 	Term createTermFromColumnType(int sqlType, String value) throws AtomSetException;
-
-	/**
-	 * @param atom
-	 * @return
-	 * @throws AtomSetException
-	 */
-	SQLQuery translateRemove(Atom atom) throws AtomSetException;
 
 }

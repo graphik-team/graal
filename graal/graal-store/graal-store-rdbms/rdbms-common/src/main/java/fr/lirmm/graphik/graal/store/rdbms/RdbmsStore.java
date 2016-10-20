@@ -80,6 +80,14 @@ public interface RdbmsStore extends Store {
 	 */
 	boolean check(Atom a) throws AtomSetException;
 
+	/**
+	 * Check if the specified predicate has a format accepted by the store.
+	 * 
+	 * @param p
+	 * @return
+	 * @throws AtomSetException
+	 */
+	boolean check(Predicate p) throws AtomSetException;
 
 	/**
 	 * @param label
@@ -87,12 +95,5 @@ public interface RdbmsStore extends Store {
 	 * @throws StoreException
 	 */
 	Term getTerm(String label) throws AtomSetException;
-
-	/**
-	 * @param p
-	 * @return
-	 * @throws AtomSetException
-	 */
-	boolean check(Predicate p) throws AtomSetException;
 
 }

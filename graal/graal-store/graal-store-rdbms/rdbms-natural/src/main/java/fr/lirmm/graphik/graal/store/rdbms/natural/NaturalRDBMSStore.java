@@ -67,6 +67,7 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.UnsupportedAtomTypeException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.api.store.BatchProcessor;
 import fr.lirmm.graphik.graal.core.DefaultConstantGenerator;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
@@ -74,12 +75,12 @@ import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.stream.SubstitutionIterator2AtomIterator;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.store.rdbms.AbstractRdbmsStore;
-import fr.lirmm.graphik.graal.store.rdbms.DBColumn;
-import fr.lirmm.graphik.graal.store.rdbms.DBTable;
 import fr.lirmm.graphik.graal.store.rdbms.RdbmsConjunctiveQueryTranslator;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
-import fr.lirmm.graphik.graal.store.rdbms.homomorphism.SQLQuery;
 import fr.lirmm.graphik.graal.store.rdbms.homomorphism.SqlHomomorphism;
+import fr.lirmm.graphik.graal.store.rdbms.util.DBColumn;
+import fr.lirmm.graphik.graal.store.rdbms.util.DBTable;
+import fr.lirmm.graphik.graal.store.rdbms.util.SQLQuery;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.IteratorException;
@@ -259,6 +260,11 @@ public class NaturalRDBMSStore extends AbstractRdbmsStore {
 		} catch (SQLException e) {
 			throw new AtomSetException(e);
 		}
+	}
+
+	@Override
+	public BatchProcessor createBatchProcessor() throws AtomSetException {
+		return new NaturalBatchProcessor(this);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

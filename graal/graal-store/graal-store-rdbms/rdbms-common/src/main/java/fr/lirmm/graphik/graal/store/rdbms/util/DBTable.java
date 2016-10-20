@@ -40,12 +40,14 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.store.rdbms;
+package fr.lirmm.graphik.graal.store.rdbms.util;
 
 import java.util.Collections;
 import java.util.List;
 
 /**
+ * This class represents a database table.
+ * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */

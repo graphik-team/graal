@@ -57,7 +57,7 @@ import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
 import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
-import fr.lirmm.graphik.graal.store.rdbms.homomorphism.SQLQuery;
+import fr.lirmm.graphik.graal.store.rdbms.util.SQLQuery;
 
 /**
  * SQLRuleApplier transform rules into INSERT ... SELECT SQL statement when it

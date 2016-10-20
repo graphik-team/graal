@@ -46,8 +46,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import fr.lirmm.graphik.graal.store.rdbms.DBColumn;
-import fr.lirmm.graphik.graal.store.rdbms.DBTable;
+import fr.lirmm.graphik.graal.store.rdbms.util.DBColumn;
+import fr.lirmm.graphik.graal.store.rdbms.util.DBTable;
 import fr.lirmm.graphik.util.stream.converter.ConversionException;
 import fr.lirmm.graphik.util.stream.converter.Converter;
 

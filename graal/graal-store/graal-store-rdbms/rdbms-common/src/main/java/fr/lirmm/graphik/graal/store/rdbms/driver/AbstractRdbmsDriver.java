@@ -56,8 +56,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.store.rdbms.DBColumn;
-import fr.lirmm.graphik.graal.store.rdbms.DBTable;
+import fr.lirmm.graphik.graal.store.rdbms.util.DBColumn;
+import fr.lirmm.graphik.graal.store.rdbms.util.DBTable;
 import fr.lirmm.graphik.graal.store.rdbms.util.ResultSetCloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.converter.ConversionException;

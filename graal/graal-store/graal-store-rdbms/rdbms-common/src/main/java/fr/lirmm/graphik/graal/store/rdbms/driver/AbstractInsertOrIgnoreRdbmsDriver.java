@@ -46,7 +46,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 
-import fr.lirmm.graphik.graal.store.rdbms.DBTable;
+import fr.lirmm.graphik.graal.store.rdbms.util.DBTable;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}

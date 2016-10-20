@@ -44,7 +44,7 @@ package fr.lirmm.graphik.graal.store.rdbms.natural;
 
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.core.factory.DefaultPredicateFactory;
-import fr.lirmm.graphik.graal.store.rdbms.DBTable;
+import fr.lirmm.graphik.graal.store.rdbms.util.DBTable;
 import fr.lirmm.graphik.util.stream.converter.Converter;
 
 /**
