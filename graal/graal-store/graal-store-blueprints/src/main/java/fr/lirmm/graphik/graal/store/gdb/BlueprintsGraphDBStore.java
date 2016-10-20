@@ -70,7 +70,6 @@ import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
@@ -219,6 +218,10 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 
 	@Override
 	public boolean add(Atom atom) {
+		if (this.contains(atom)) {
+			return false;
+		}
+
 		Vertex atomVertex = graph.addVertex(null);
 		atomVertex.setProperty("class", "atom");
 		atomVertex.setProperty("predicate",
