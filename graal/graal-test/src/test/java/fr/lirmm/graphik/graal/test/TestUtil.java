@@ -43,7 +43,7 @@
 /**
  * 
  */
-package fr.lirmm.graphik.graal.store.test;
+package fr.lirmm.graphik.graal.test;
 
 import java.io.File;
 import java.io.IOError;
@@ -58,7 +58,6 @@ import com.tinkerpop.blueprints.impls.tg.TinkerGraph;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
-import fr.lirmm.graphik.graal.api.store.TripleStore;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphism;
@@ -163,35 +162,31 @@ public final class TestUtil {
 			rm(NEO4J_TEST);
 			neo4jStore = new Neo4jStore(NEO4J_TEST);
 
+			if (jenaStore != null) {
+				jenaStore.clear();
+				jenaStore.close();
+			}
+
+			if (sailStore != null) {
+				sailStore.close();
+			}
+
+			rm(JENA_TEST);
+			jenaStore = new JenaStore(JENA_TEST);
+
+			try {
+				sailStore = new SailStore();
+			} catch (AtomSetException e) {
+				Assert.assertTrue("Error while creating SailStore", false);
+			}
+
 			return new AtomSet[] { new DefaultInMemoryGraphAtomSet(), new LinkedListAtomSet(), defaultRDBMSStore,
-			                       plainTableRDBMSStore, graphStore, neo4jStore };
+			                       plainTableRDBMSStore, graphStore, neo4jStore, jenaStore, sailStore };
 		} catch (SQLException e) {
 			throw new Error(e);
 		} catch (AtomSetException e) {
 			throw new Error(e);
 		}
-	}
-
-	public static TripleStore[] getTripleStores() {
-		if (jenaStore != null) {
-			jenaStore.clear();
-			jenaStore.close();
-		}
-
-		if (sailStore != null) {
-			sailStore.close();
-		}
-
-		rm(JENA_TEST);
-		jenaStore = new JenaStore(JENA_TEST);
-
-		try {
-			sailStore = new SailStore();
-		} catch (AtomSetException e) {
-			Assert.assertTrue("Error while creating SailStore", false);
-		}
-
-		return new TripleStore[] { jenaStore, sailStore };
 	}
 
 	private static void rm(String path) {

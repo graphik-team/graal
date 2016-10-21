@@ -48,12 +48,14 @@ package fr.lirmm.graphik.graal.store.test;
 import java.util.Iterator;
 
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
@@ -61,6 +63,7 @@ import fr.lirmm.graphik.graal.api.store.TripleStore;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
+import fr.lirmm.graphik.graal.test.TestUtil;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
@@ -72,12 +75,14 @@ import fr.lirmm.graphik.util.stream.IteratorException;
 public class TripleStoreTest {
 
 	@DataPoints
-	public static TripleStore[] getTriplesStores() {
-		return TestUtil.getTripleStores();
+	public static AtomSet[] getAtomSet() {
+		return TestUtil.getAtomSet();
 	}
 
 	@Theory
-	public void simpleTest(TripleStore store) throws AtomSetException, IteratorException {
+	public void simpleTest(AtomSet store) throws AtomSetException, IteratorException {
+		Assume.assumeTrue(store instanceof TripleStore);
+
 		Term t1 = DefaultTermFactory.instance()
 				.createConstant("http://to.to/b");
 		Term t2 = DefaultTermFactory.instance()
@@ -96,7 +101,9 @@ public class TripleStoreTest {
 	}
 
 	@Theory
-	public void getPredicates(TripleStore store) throws AtomSetException, IteratorException {
+	public void getPredicates(AtomSet store) throws AtomSetException, IteratorException {
+		Assume.assumeTrue(store instanceof TripleStore);
+
 		store.add(DlgpParser.parseAtom("r(a,b)."));
 		store.add(DlgpParser.parseAtom("s(a,b)."));
 		store.add(DlgpParser.parseAtom("s(a,c)."));
@@ -111,7 +118,9 @@ public class TripleStoreTest {
 	}
 
 	@Theory
-	public void addAndContains(TripleStore store) throws AtomSetException, IteratorException {
+	public void addAndContains(AtomSet store) throws AtomSetException, IteratorException {
+		Assume.assumeTrue(store instanceof TripleStore);
+
 		store.add(DlgpParser.parseAtom("p(a,b)."));
 		store.add(DlgpParser.parseAtom("q(b,c)."));
 
@@ -132,7 +141,9 @@ public class TripleStoreTest {
 	}
 
 	@Theory
-	public void getTerms(TripleStore store) throws AtomSetException {
+	public void getTerms(AtomSet store) throws AtomSetException {
+		Assume.assumeTrue(store instanceof TripleStore);
+
 		store.add(DlgpParser.parseAtom("p(a,b)."));
 		store.add(DlgpParser.parseAtom("p(b,c)."));
 		store.add(DlgpParser.parseAtom("p(e,f)."));
@@ -156,7 +167,9 @@ public class TripleStoreTest {
 	}
 
 	@Theory
-	public void isEmpty(TripleStore store) throws AtomSetException {
+	public void isEmpty(AtomSet store) throws AtomSetException {
+		Assume.assumeTrue(store instanceof TripleStore);
+
 		Assert.assertTrue("Store is empty but isEmpty return false",
 				store.isEmpty());
 		store.add(DlgpParser.parseAtom("p(a,b)."));

@@ -46,6 +46,7 @@
 package fr.lirmm.graphik.graal.store.test;
 
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
@@ -55,8 +56,10 @@ import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
+import fr.lirmm.graphik.graal.api.store.TripleStore;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
+import fr.lirmm.graphik.graal.test.TestUtil;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
@@ -79,9 +82,9 @@ public class ConjunctiveQuery2Test {
 	@Theory
 	public void tttTrueQueryTest(Homomorphism h, AtomSet store) {
 		try {
-			store.addAll(DlgpParser.parseAtomSet("<P>(a,b),<Q>(a,c,d),<Q>(d,c,a)."));
+			store.addAll(DlgpParser.parseAtomSet("<P>(a,b),<Q>(a,c),<Q>(d,c)."));
 
-			ConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y) :- <Q>(a,c,d),<P>(X,Y).");
+			ConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y) :- <Q>(a,c),<P>(X,Y).");
 
 			CloseableIterator<Substitution> subReader;
 			Substitution sub;
@@ -109,9 +112,9 @@ public class ConjunctiveQuery2Test {
 	@Theory
 	public void tttFalseQueryTest(Homomorphism h, AtomSet store) {
 		try {
-			store.addAll(DlgpParser.parseAtomSet("<P>(a,b),<P>(b,c),<Q>(a,c,d),<Q>(d,c,a)."));
+			store.addAll(DlgpParser.parseAtomSet("<P>(a,b),<P>(b,c),<Q>(a,c),<Q>(d,c)."));
 
-			ConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y) :- <Q>(a,f,d),<P>(X,Y).");
+			ConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y) :- <Q>(a,f),<P>(X,Y).");
 
 			CloseableIterator<Substitution> subReader;
 			subReader = h.execute(query, store);
@@ -166,6 +169,8 @@ public class ConjunctiveQuery2Test {
 
 	@Theory
 	public void wrongArityQuery(Homomorphism h, AtomSet store) {
+		Assume.assumeFalse(store instanceof TripleStore);
+
 		try {
 			store.add(DlgpParser.parseAtom("<P>(a,b)."));
 			ConjunctiveQuery query = DlgpParser.parseQuery("? :- <P>(X).");
@@ -181,6 +186,8 @@ public class ConjunctiveQuery2Test {
 
 	@Theory
 	public void wrongArityQuery2(Homomorphism h, AtomSet store) {
+		Assume.assumeFalse(store instanceof TripleStore);
+
 		try {
 			store.add(DlgpParser.parseAtom("<P>(a,b)."));
 			ConjunctiveQuery query = DlgpParser.parseQuery("? :- <P>(X,Y,Z).");
@@ -197,8 +204,8 @@ public class ConjunctiveQuery2Test {
 	@Theory
 	public void diffLiteralQueryTest(Homomorphism h, AtomSet store) {
 		try {
-			store.add(DlgpParser.parseAtom("<P>(\"literal\")."));
-			ConjunctiveQuery query = DlgpParser.parseQuery("? :- <P>(\"otherLiteral\").");
+			store.add(DlgpParser.parseAtom("<P>(a,\"literal\")."));
+			ConjunctiveQuery query = DlgpParser.parseQuery("? :- <P>(a,\"otherLiteral\").");
 
 			CloseableIterator<Substitution> subReader;
 			subReader = h.execute(query, store);
@@ -212,8 +219,8 @@ public class ConjunctiveQuery2Test {
 	@Theory
 	public void sameLiteralQueryTest(Homomorphism h, AtomSet store) {
 		try {
-			store.add(DlgpParser.parseAtom("<P>(\"literal\")."));
-			ConjunctiveQuery query = DlgpParser.parseQuery("? :- <P>(\"literal\").");
+			store.add(DlgpParser.parseAtom("<P>(a,\"literal\")."));
+			ConjunctiveQuery query = DlgpParser.parseQuery("? :- <P>(a,\"literal\").");
 
 			CloseableIterator<Substitution> subReader;
 			subReader = h.execute(query, store);
@@ -264,6 +271,8 @@ public class ConjunctiveQuery2Test {
 
 	@Theory
 	public void NFC2Test(Homomorphism h, AtomSet store) {
+		Assume.assumeFalse(store instanceof TripleStore);
+
 		try {
 
 			store.addAll(DlgpParser.parseAtomSet("<P>(a,b,c)."));

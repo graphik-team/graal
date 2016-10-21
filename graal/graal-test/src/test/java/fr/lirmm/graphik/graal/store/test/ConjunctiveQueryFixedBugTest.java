@@ -60,6 +60,7 @@ import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
+import fr.lirmm.graphik.graal.test.TestUtil;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
@@ -70,14 +71,15 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
 public class ConjunctiveQueryFixedBugTest {
 
 	@DataPoints
+	public static Homomorphism[] homomorphisms() {
+		return TestUtil.getHomomorphisms();
+	}
+
+	@DataPoints
 	public static AtomSet[] atomset() {
 		return TestUtil.getAtomSet();
 	}
 
-	@DataPoints
-	public static Homomorphism[] homomorphisms() {
-		return TestUtil.getHomomorphisms();
-	}
 
 	/**
 	 * Overwriting of answer variable values before creating substitution to

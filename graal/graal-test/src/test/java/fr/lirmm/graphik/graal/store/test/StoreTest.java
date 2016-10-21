@@ -45,10 +45,6 @@
  */
 package fr.lirmm.graphik.graal.store.test;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.junit.Assert;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
@@ -60,6 +56,7 @@ import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
+import fr.lirmm.graphik.graal.test.TestUtil;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
 import fr.lirmm.graphik.util.stream.Iterators;
@@ -73,10 +70,16 @@ public class StoreTest {
 
 	@DataPoints
 	public static AtomSet[] getAtomset() {
-		List<AtomSet> list = new LinkedList<AtomSet>();
-		list.addAll(Arrays.asList(TestUtil.getAtomSet()));
-		list.addAll(Arrays.asList(TestUtil.getTripleStores()));
-		return list.toArray(new AtomSet[list.size()]);
+		return TestUtil.getAtomSet();
+	}
+
+	@Theory
+	public void atomUnicity(AtomSet store) throws AtomSetException, IteratorException {
+		store.add(DlgpParser.parseAtom("<R>(a,b)."));
+		store.add(DlgpParser.parseAtom("<R>(a,b)."));
+
+		int i = Iterators.count(store.iterator());
+		Assert.assertEquals(1, i);
 	}
 
 	@Theory
@@ -210,7 +213,6 @@ public class StoreTest {
 
 		it = store.match(DlgpParser.parseAtom("<p>(X,Y)."));
 		Assert.assertFalse(it.hasNext());
-
 	}
 
 }
