@@ -84,7 +84,6 @@ public class NFC0 extends AbstractNFC implements ForwardChecking {
 			this.clear(v, z);
 		}
 
-		Var varToAssign = null;
 		boolean checkThisAtom = true;
 		for (Atom atom : v.postAtoms) {
 			int i = 0;
@@ -92,7 +91,6 @@ public class NFC0 extends AbstractNFC implements ForwardChecking {
 				Var z = map.get(t);
 				if (z.level > v.level) {
 					++i;
-					varToAssign = z;
 					if (i > 1) {
 						checkThisAtom = false;
 					}
