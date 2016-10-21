@@ -477,7 +477,12 @@ public class AdHocRdbmsStore extends AbstractRdbmsStore {
 		}
 		try {
 			for (Term t : atom.getTerms()) {
-				this.add(statement, t);
+				if (this.getTerm(t.getLabel()) == null) { // FIXME Quick fix for
+				                                          // VARIABLE and
+				                                          // CONSTANT with same
+				                                          // label conflict
+					this.add(statement, t);
+				}
 			}
 			DBTable table = this.createPredicateTableIfNotExist(atom.getPredicate());
 			Map<String, String> data = new TreeMap<String, String>();
