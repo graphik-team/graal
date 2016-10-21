@@ -189,7 +189,7 @@ public abstract class AbstractNFC extends AbstractProfilable implements ForwardC
 
 		for (Atom a : rc.getRewritingOf(atom)) {
 
-			Var postV[] = this.computePostVariablesPosition(a, v, map, postVarsFromThisAtom);
+			Var postV[] = this.computePostVariablesPosition(a, v.level, map, postVarsFromThisAtom);
 			Atom im = BacktrackUtils.createImageOf(a, map);
 
 			Profiler profiler = this.getProfiler();
@@ -237,15 +237,31 @@ public abstract class AbstractNFC extends AbstractProfilable implements ForwardC
 		return contains && !isThereAnEmptiedList;
 	}
 
-	protected Var[] computePostVariablesPosition(Atom a, Var v, Map<Variable, Var> map, Set<Var> postVarsFromThisAtom) {
-		Var postV[] = new Var[a.getPredicate().getArity()];
+	/**
+	 * Return an array containing the corresponding instance of Var class for
+	 * each position of a variable in the specified atom with a higher level
+	 * than the specified level. Constant, literal and lower or equals level
+	 * variable postions contain null value.
+	 * 
+	 * @param atom
+	 * @param level
+	 * @param map
+	 *            Correspondence between Variable instance and Var instance.
+	 * @param postVars
+	 *            output parameter that is a Set in which must be added higher
+	 *            level variables from this atom.
+	 * @return
+	 */
+	protected Var[] computePostVariablesPosition(Atom atom, int level, Map<Variable, Var> map,
+	    Set<Var> postVars) {
+		Var postV[] = new Var[atom.getPredicate().getArity()];
 		int i = -1;
-		for (Term t : a) {
+		for (Term t : atom) {
 			++i;
 			Var z = map.get(t);
-			if (!t.isConstant() && z.level > v.level) {
+			if (!t.isConstant() && z.level > level) {
 				postV[i] = z;
-				postVarsFromThisAtom.add(z);
+				postVars.add(z);
 			}
 		}
 		return postV;

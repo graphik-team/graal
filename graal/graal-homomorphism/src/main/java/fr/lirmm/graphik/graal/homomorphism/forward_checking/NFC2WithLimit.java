@@ -154,7 +154,7 @@ public class NFC2WithLimit extends NFC2 implements ForwardChecking {
 		while (rewIt.hasNext() && nbAns < LIMIT) {
 			Atom a = rewIt.next();
 			
-			Var[] postV = this.computePostVariablesPosition(a, v, map, postVarsFromThisAtom);
+			Var[] postV = this.computePostVariablesPosition(a, v.level, map, postVarsFromThisAtom);
 			Atom im = BacktrackUtils.createImageOf(a, map);
 
 			Profiler profiler = this.getProfiler();
