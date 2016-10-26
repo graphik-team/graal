@@ -18,12 +18,14 @@
 /com/google/inject/guice/4.0-beta/guice-4.0-beta.jar
 /com/tinkerpop/blueprints/blueprints-core/2.6.0/blueprints-core-2.6.0.jar
 /fr/lirmm/graphik/dlgp2-parser/1.0.0/dlgp2-parser-1.0.0.jar
+/fr/lirmm/graphik/rdbms-common/1.2.1-SNAPSHOT/rdbms-common-1.2.1-SNAPSHOT.jar
 /javax/inject/javax.inject/1/javax.inject-1.jar
 /net/sf/opencsv/opencsv/2.3/opencsv-2.3.jar
 /net/sf/trove4j/trove4j/3.0.3/trove4j-3.0.3.jar
 /net/sourceforge/owlapi/owlapi-apibinding/4.0.1/owlapi-apibinding-4.0.1.jar
 /org/apache/commons/commons-csv/1.0/commons-csv-1.0.jar
 /org/apache/commons/commons-lang3/3.3.2/commons-lang3-3.3.2.jar
+/org/apache/commons/commons-lang3/3.4/commons-lang3-3.4.jar
 /org/apache/directory/studio/org.apache.commons.io/2.4/org.apache.commons.io-2.4.jar
 /org/apache/geronimo/specs/geronimo-jta_1.1_spec/1.1.1/geronimo-jta_1.1_spec-1.1.1.jar
 /org/apache/httpcomponents/httpclient-cache/4.2.6/httpclient-cache-4.2.6.jar
@@ -42,7 +44,7 @@
 /org/apache/thrift/libthrift/0.9.1/libthrift-0.9.1.jar
 /org/apache/thrift/libthrift/0.9.2/libthrift-0.9.2.jar
 /org/codehaus/jettison/jettison/1.3.3/jettison-1.3.3.jar
-/org/hsqldb/hsqldb/2.3.2/hsqldb-2.3.2.jar
+/org/hsqldb/hsqldb/2.3.4/hsqldb-2.3.4.jar
 /org/jgrapht/jgrapht-core/0.9.0/jgrapht-core-0.9.0.jar
 /org/neo4j/neo4j-cypher-commons/2.1.7/neo4j-cypher-commons-2.1.7.jar
 /org/neo4j/neo4j-cypher-compiler-1.9/2.0.3/neo4j-cypher-compiler-1.9-2.0.3.jar
