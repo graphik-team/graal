@@ -65,6 +65,7 @@ import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetUtils;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
 import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 import fr.lirmm.graphik.graal.homomorphism.PureHomomorphism;
@@ -101,13 +102,7 @@ final class Utils {
 
 		if (profiler != null) {
 			profiler.stop("Unfolding time");
-			Iterator<?> it = unfoldingRewritingSet.iterator();
-			int i = 0;
-			while (it.hasNext()) {
-				it.next();
-				++i;
-			}
-			profiler.put("Unfolded rewritings", i);
+			profiler.put("Unfolded rewritings", unfoldingRewritingSet.size());
 		}
 
 		return unfoldingRewritingSet;
@@ -213,8 +208,7 @@ final class Utils {
 			moreGen = true;
 		} else {
 			try {
-				moreGen = PureHomomorphism.instance().exist(
-						h, f, compilation);
+				moreGen = PureHomomorphism.instance().exist(h, f, compilation);
 			} catch (HomomorphismException e) {
 			}
 		}
@@ -223,8 +217,7 @@ final class Utils {
 	}
 
 	public static boolean isMoreGeneralThan(InMemoryAtomSet h, InMemoryAtomSet f) {
-
-		return isMoreGeneralThan(h, f, null);
+		return isMoreGeneralThan(h, f, NoCompilation.instance());
 	}
 
 	/**
@@ -302,35 +295,7 @@ final class Utils {
 	 * @throws Exception
 	 */
 	public static void computeCover(Iterable<ConjunctiveQuery> set) {
-		computeCover(set, null);
-	}
-
-	/**
-	 * Remove the queries that are not the most general in the given set of
-	 * queries
-	 * 
-	 * @param comp
-	 * @throws Exception
-	 */
-	public static void computeCoverAtomSet(Iterable<InMemoryAtomSet> set) {
-
-		Iterator<InMemoryAtomSet> beg = set.iterator();
-		Iterator<InMemoryAtomSet> end;
-		InMemoryAtomSet q;
-		InMemoryAtomSet o;
-		boolean finished;
-		while (beg.hasNext()) {
-			q = beg.next();
-			finished = false;
-			end = set.iterator();
-			while (!finished && end.hasNext()) {
-				o = end.next();
-				if (o != q && Utils.isMoreGeneralThan(o, q)) {
-					finished = true;
-					beg.remove();
-				}
-			}
-		}
+		computeCover(set, NoCompilation.instance());
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
