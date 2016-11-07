@@ -54,6 +54,8 @@ import fr.lirmm.graphik.graal.api.core.Term;
  */
 public interface AtomFactory {
 
+	Atom createEquality(Term t1, Term t2);
+
 	Atom create(Predicate predicate);
 
 	Atom create(Predicate predicate, List<Term> terms);
