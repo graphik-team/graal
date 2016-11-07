@@ -68,5 +68,15 @@ public interface Homomorphism<T1 extends Object, T2 extends AtomSet> extends Pro
 	<U1 extends T1, U2 extends T2> CloseableIterator<Substitution> execute(U1 q, U2 a)
 			throws HomomorphismException;
 
+	/**
+	 * Look if there exists an homomorphism from q into a.
+	 * 
+	 * @param q
+	 * @param a
+	 * @return
+	 * @throws HomomorphismException
+	 */
+	<U1 extends T1, U2 extends T2> boolean exist(U1 q, U2 a) throws HomomorphismException;
+
 };
 

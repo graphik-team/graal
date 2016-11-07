@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,57 +40,48 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-/**
- * 
- */
 package fr.lirmm.graphik.graal.homomorphism;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.graal.api.core.UnionOfConjunctiveQueries;
-import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.api.homomorphism.UCQHomomorphismWithCompilation;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
+import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
- * @author Clément Sipieter (INRIA) <clement@6pi.fr>
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public final class DefaultUCQHomomorphism extends
-                                          AbstractHomomorphismWithCompilation<UnionOfConjunctiveQueries, AtomSet>
-                                          implements UCQHomomorphismWithCompilation<AtomSet> {
+public abstract class AbstractHomomorphismWithCompilation<T1 extends Object, T2 extends AtomSet>
+                                                extends AbstractHomomorphism<T1, T2>
+                                                implements HomomorphismWithCompilation<T1, T2> {
 
-	private Homomorphism homomorphism;
 
-	/**
-	 * @param queries
-	 * @param atomSet
-	 */
-	public DefaultUCQHomomorphism() {
-	}
-
-	public DefaultUCQHomomorphism(Homomorphism h) {
-		this.homomorphism = h;
+	@Override
+	public <U1 extends T1, U2 extends T2> CloseableIterator<Substitution> execute(U1 q, U2 a) throws HomomorphismException {
+		return this.execute(q, a, NoCompilation.instance());
 	}
 
 	@Override
-	public CloseableIterator<Substitution> execute(UnionOfConjunctiveQueries queries, AtomSet atomset,
-	    RulesCompilation rc)
+	public <U1 extends T1, U2 extends T2> boolean exist(U1 q, U2 a, RulesCompilation compilation)
 	    throws HomomorphismException {
-		UnionConjunctiveQueriesSubstitutionIterator it = new UnionConjunctiveQueriesSubstitutionIterator(queries,
-		                                                                                                 atomset,
-		                                                                                                 homomorphism,
-		                                                                                                 rc);
-		it.setProfiler(this.getProfiler());
-		return it;
+		CloseableIterator<Substitution> results = this.execute(q, a, compilation);
+		boolean val;
+		try {
+			val = results.hasNext();
+		} catch (IteratorException e) {
+			throw new HomomorphismException(e);
+		}
+		results.close();
+		return val;
 	}
 
 	@Override
-	public <U1 extends UnionOfConjunctiveQueries, U2 extends AtomSet> boolean exist(U1 q, U2 a,
-	    RulesCompilation compilation) throws HomomorphismException {
-		return this.exist(q, a, compilation);
+	public <U1 extends T1, U2 extends T2> boolean exist(U1 source, U2 target) throws HomomorphismException {
+		return this.exist(source, target, NoCompilation.instance());
 	}
 
 }

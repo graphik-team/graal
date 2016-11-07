@@ -56,10 +56,10 @@ import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.Substitutions;
+import fr.lirmm.graphik.graal.homomorphism.AbstractHomomorphism;
 import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.util.ResultSetCloseableIterator;
 import fr.lirmm.graphik.graal.store.rdbms.util.SQLQuery;
-import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.Iterators;
 import fr.lirmm.graphik.util.stream.converter.ConverterCloseableIterator;
@@ -68,13 +68,12 @@ import fr.lirmm.graphik.util.stream.converter.ConverterCloseableIterator;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public final class SqlHomomorphism implements Homomorphism<ConjunctiveQuery, RdbmsStore> {
+public final class SqlHomomorphism extends AbstractHomomorphism<ConjunctiveQuery, RdbmsStore>
+                                   implements Homomorphism<ConjunctiveQuery, RdbmsStore> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SqlHomomorphism.class);
 
 	private static SqlHomomorphism instance;
-
-	private Profiler profiler;
 
 	private SqlHomomorphism() {
 	}
@@ -116,16 +115,6 @@ public final class SqlHomomorphism implements Homomorphism<ConjunctiveQuery, Rdb
 				throw new HomomorphismException(e.getMessage(), e);
 			}
 		}
-	}
-
-	@Override
-	public void setProfiler(Profiler profiler) {
-		this.profiler = profiler;
-	}
-
-	@Override
-	public Profiler getProfiler() {
-		return this.profiler;
 	}
 
 }

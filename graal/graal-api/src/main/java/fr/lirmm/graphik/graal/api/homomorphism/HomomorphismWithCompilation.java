@@ -62,11 +62,22 @@ public interface HomomorphismWithCompilation<T1 extends Object, T2 extends AtomS
 	 * 
 	 * @param q
 	 * @param a
+	 * @param compilation
 	 * @return
 	 * @throws HomomorphismException
 	 */
 	<U1 extends T1, U2 extends T2> CloseableIterator<Substitution> execute(U1 q, U2 a, RulesCompilation compilation)
 			throws HomomorphismException;
 
+	/**
+	 * Look if there exists an homomorphism from q into a.
+	 * 
+	 * @param q
+	 * @param a
+	 * @param compilation
+	 * @return
+	 * @throws HomomorphismException
+	 */
+	<U1 extends T1, U2 extends T2> boolean exist(U1 q, U2 a, RulesCompilation compilation) throws HomomorphismException;
 };
 

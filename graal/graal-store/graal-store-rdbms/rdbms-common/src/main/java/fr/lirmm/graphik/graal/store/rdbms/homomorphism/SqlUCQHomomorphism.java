@@ -56,11 +56,11 @@ import fr.lirmm.graphik.graal.api.core.UnionOfConjunctiveQueries;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.UCQHomomorphism;
 import fr.lirmm.graphik.graal.core.Substitutions;
+import fr.lirmm.graphik.graal.homomorphism.AbstractHomomorphism;
 import fr.lirmm.graphik.graal.store.rdbms.RdbmsConjunctiveQueryTranslator;
 import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.util.ResultSetCloseableIterator;
 import fr.lirmm.graphik.graal.store.rdbms.util.SQLQuery;
-import fr.lirmm.graphik.util.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.Iterators;
 import fr.lirmm.graphik.util.stream.converter.ConverterCloseableIterator;
@@ -71,7 +71,8 @@ import fr.lirmm.graphik.util.stream.converter.ConverterCloseableIterator;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public final class SqlUCQHomomorphism extends AbstractProfilable implements UCQHomomorphism<RdbmsStore> {
+public final class SqlUCQHomomorphism extends AbstractHomomorphism<UnionOfConjunctiveQueries, RdbmsStore>
+                                      implements UCQHomomorphism<RdbmsStore> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SqlUCQHomomorphism.class);
 

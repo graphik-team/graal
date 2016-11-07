@@ -48,14 +48,12 @@ import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
-import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.NoBackJumping;
 import fr.lirmm.graphik.graal.homomorphism.bootstrapper.Bootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.bootstrapper.StarBootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.ForwardChecking;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NoForwardChecking;
-import fr.lirmm.graphik.util.AbstractProfilable;
 import fr.lirmm.graphik.util.Profilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
@@ -70,7 +68,8 @@ import fr.lirmm.graphik.util.stream.Iterators;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class BacktrackHomomorphism extends AbstractProfilable implements
+public class BacktrackHomomorphism extends AbstractHomomorphismWithCompilation<ConjunctiveQuery, AtomSet>
+                                   implements
                                                              HomomorphismWithCompilation<ConjunctiveQuery, AtomSet>,
                                                              Profilable {
 
@@ -147,12 +146,6 @@ public class BacktrackHomomorphism extends AbstractProfilable implements
 	// /////////////////////////////////////////////////////////////////////////
 	// HOMOMORPHISM METHODS
 	// /////////////////////////////////////////////////////////////////////////
-
-	@Override
-	public <U1 extends ConjunctiveQuery, U2 extends AtomSet> CloseableIterator<Substitution> execute(U1 q, U2 a)
-	    throws HomomorphismException {
-		return this.execute(q, a, NoCompilation.instance());
-	}
 
 	@Override
 	public <U1 extends ConjunctiveQuery, U2 extends AtomSet> CloseableIterator<Substitution> execute(U1 q, U2 a,
