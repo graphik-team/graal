@@ -40,22 +40,24 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- package fr.lirmm.graphik.graal.api.core;
+package fr.lirmm.graphik.graal.api.core;
 
 import java.util.Iterator;
 
 public interface RuleSet extends ImmutableRuleSet {
 
 	public boolean add(Rule rule);
-	
+
 	public boolean addAll(Iterator<Rule> ruleIterator);
 
 	public boolean remove(Rule rule);
-	
+
 	public boolean removeAll(Iterator<Rule> ruleIterator);
 
 	@Override
-    public boolean contains(Rule rule);
+	public boolean contains(Rule rule);
+
+	public int size();
 
 	@Override
 	public Iterator<Rule> iterator();

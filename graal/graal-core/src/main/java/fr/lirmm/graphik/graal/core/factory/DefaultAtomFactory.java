@@ -79,6 +79,11 @@ public final class DefaultAtomFactory implements AtomFactory {
 	}
 
 	@Override
+	public Atom createEquality(Term t1, Term t2) {
+		return this.create(Predicate.EQUALITY, t1, t2);
+	}
+
+	@Override
     public Atom create(Predicate predicate) {
 		return new DefaultAtom(predicate);
 	}
