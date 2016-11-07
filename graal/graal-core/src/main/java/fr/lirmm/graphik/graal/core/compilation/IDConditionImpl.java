@@ -40,20 +40,30 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- package fr.lirmm.graphik.graal.core.compilation;
+package fr.lirmm.graphik.graal.core.compilation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.TermValueComparator;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
+import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.Partition;
 
 /**
@@ -158,27 +168,6 @@ class IDConditionImpl implements IDCondition {
 	}
 
 	/**
-	 * Return true iff the given term fulfills the condition on the head term of
-	 * this
-	 */
-	@Override
-	public boolean checkHead(List<Term> head) {
-		if (head.size() != condHead.length)
-			return false;
-
-		Term[] check = new Term[condBody.length];
-		for (int i = 0; i < condHead.length; i++) {
-			if (check[condHead[i]] == null) {
-				check[condHead[i]] = head.get(i);
-			} else if (!check[condHead[i]].equals(head.get(i))) {
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	/**
 	 * Return true iff the given term fulfills the condition on the body term of
 	 * this
 	 */
@@ -199,67 +188,133 @@ class IDConditionImpl implements IDCondition {
 		return true;
 	}
 
-	/**
-	 * Return the term of the body according to the given term of the head
-	 */
 	@Override
-	public List<Term> generateBody(List<Term> head) {
-		List<Term> body = new ArrayList<Term>(condBody.length);
+	public Pair<List<Term>, Substitution> generateBody(List<Term> head) {
+		Substitution s = SubstitutionFactory.instance().createSubstitution();
+		Set<Variable> toRemoveFromPartition = new TreeSet<Variable>();
 
-		// initialize
-		for (int i = 0; i < condBody.length; i++) {
-			body.add(DefaultTermFactory.instance().createVariable(
-					"X" + condBody[i]));
-		}
-
-		// pick frontier variables from the head
-		for (int i = 0; i < head.size(); i++) {
-			Term rep = head.get(i);
-			for (int j = 0; j < condBody.length; ++j) {
-				if (condBody[j] == condHead[i]) {
-					body.set(j, rep);
-				}
+		for (int i = 0; i < condHead.length; i++) {
+			Variable v = DefaultTermFactory.instance().createVariable(condHead[i]);
+			toRemoveFromPartition.add(v);
+			if (!s.aggregate(v, head.get(i))) {
+				return null;
 			}
-
 		}
 
-		return body;
+		List<Term> body = new ArrayList<Term>(condBody.length);
+		for (int i = 0; i < condBody.length; i++) {
+			Variable v = DefaultTermFactory.instance().createVariable(condBody[i]);
+			toRemoveFromPartition.add(v);
+			body.add(s.createImageOf(v));
+		}
+
+		for (Variable v : toRemoveFromPartition) {
+			s.remove(v);
+		}
+
+		return new ImmutablePair<List<Term>, Substitution>(body, s);
 	}
 
 	@Override
 	public List<Term> generateHead() {
 		List<Term> head = new LinkedList<Term>();
 		for (int i = 0; i < this.condHead.length; ++i) {
-			head.add(DefaultTermFactory.instance().createVariable(
-					"X" + this.condHead[i]));
+			head.add(DefaultTermFactory.instance().createVariable("X" + this.condHead[i]));
 		}
 		return head;
 	}
 
 	/**
 	 * Return the partition that unify the term of head with the term of body
-	 * according to this
+	 * according to this. This method returns null the unification is not
+	 * possible (two constants in the same partition class)
+	 * 
 	 */
+
 	@Override
 	public Partition<Term> generateUnification(List<Term> body, List<Term> head) {
 		Partition<Term> res = new Partition<Term>();
 		Term[] map = new Term[body.size()];
+		Term[] containedConstant = new Term[body.size()];
 
 		// put together term of body that must be unify according to this
 		for (int i = 0; i < condBody.length; ++i) {
+			Term t = body.get(i);
 			if (map[condBody[i]] == null) {
-				map[condBody[i]] = body.get(i);
+				map[condBody[i]] = t;
 			} else {
-				res.add(map[condBody[i]], body.get(i));
+				res.add(map[condBody[i]], t);
 			}
 		}
 
 		// put term of head into the class of the corresponding term of body
 		// according this
 		for (int i = 0; i < condHead.length; i++) {
-			res.add(head.get(i), map[condHead[i]]);
+			Term t = head.get(i);
+			res.add(map[condHead[i]], t);
+		}
+
+		// check validity (does not contains two different constants)
+		for (ArrayList<Term> classs : res) {
+			Term cst = null;
+			for (Term t : classs) {
+				if (t.isConstant()) {
+					if (cst == null)
+						cst = t;
+					else if (!cst.equals(t))
+						return null;
+				}
+			}
 		}
 		return res;
+	}
+
+	/**
+	 * @param terms
+	 * @param terms2
+	 * @return
+	 */
+	@Override
+	public Substitution homomorphism(List<Term> head, List<Term> to) {
+		if (!checkBody(to)) {
+			return null;
+		}
+
+		Pair<List<Term>, Substitution> ret = this.generateBody(head);
+		if (ret == null) {
+			return null;
+		}
+		Substitution s = ret.getRight();
+		Substitution homo = SubstitutionFactory.instance().createSubstitution();
+		List<Term> generatedBody = ret.getLeft();
+
+		// check for a simple homomorphism from generated body into 'to'
+		Iterator<Term> itFrom = generatedBody.iterator();
+		Iterator<Term> itTo = to.iterator();
+		while (itFrom.hasNext() && itTo.hasNext()) {
+			Term termFrom = itFrom.next();
+			Term termTo = itTo.next();
+			if (termFrom.isConstant()) {
+				if (!termFrom.equals(termTo)) {
+					return null;
+				}
+			} else {
+				if (!homo.put((Variable) termFrom, termTo)) {
+					return null;
+				}
+			}
+		}
+		if (itFrom.hasNext() || itTo.hasNext()) {
+			throw new Error("Wrong term number");
+		}
+
+		// apply homo found over Substitution s from generateBody and add it to
+		// homo
+		for (Variable t : s.getTerms()) {
+			homo.put(t, homo.createImageOf(s.createImageOf(t)));
+		}
+
+		return homo;
 	}
 
 	@Override
@@ -267,13 +322,13 @@ class IDConditionImpl implements IDCondition {
 		if (condition2 instanceof IDConditionImpl) {
 			return composeWith((IDConditionImpl) condition2);
 		}
-		return null;
+		throw new MethodNotImplementedError();
 	}
 
 	public IDCondition composeWith(IDConditionImpl condition) {
 		int[] newCondBody = new int[this.condBody.length];
 		int[] newCondHead = new int[condition.condHead.length];
-		
+
 		// generate a partition representing variables to unify
 		Partition<Integer> partition = new Partition<Integer>();
 		for (int i = 0; i < this.condHead.length; ++i) {
@@ -287,8 +342,7 @@ class IDConditionImpl implements IDCondition {
 
 		// generate new head
 		for (int i = 0; i < newCondHead.length; ++i) {
-			newCondHead[i] = partition
-					.getRepresentant(condition.condHead[i] * 2 + 1);
+			newCondHead[i] = partition.getRepresentant(condition.condHead[i] * 2 + 1);
 		}
 
 		// normalize index
@@ -306,7 +360,7 @@ class IDConditionImpl implements IDCondition {
 		for (int i = 0; i < newCondHead.length; ++i) {
 			newCondHead[i] = map[newCondHead[i]];
 		}
-		
+
 		return new IDConditionImpl(newCondBody, newCondHead);
 	}
 
@@ -347,13 +401,11 @@ class IDConditionImpl implements IDCondition {
 
 		// initialize body with fresh variable
 		for (int i = 0; i < condBody.length; i++)
-			body.add(DefaultTermFactory.instance().createVariable(
-					"X" + condBody[i]));
+			body.add(DefaultTermFactory.instance().createVariable("X" + condBody[i]));
 
 		// pick frontier variables from the head
 		for (int i = 0; i < this.condHead.length; i++) {
-			head.add(DefaultTermFactory.instance().createVariable(
-					"X" + condHead[i]));
+			head.add(DefaultTermFactory.instance().createVariable("X" + condHead[i]));
 		}
 
 		Rule r = DefaultRuleFactory.instance().create();
@@ -373,9 +425,7 @@ class IDConditionImpl implements IDCondition {
 		}
 		IDConditionImpl other = (IDConditionImpl) obj;
 
-		return Arrays.equals(this.condBody, other.condBody) &&
- Arrays.equals(this.condHead, other.condHead);
+		return Arrays.equals(this.condBody, other.condBody) && Arrays.equals(this.condHead, other.condHead);
 	}
 
 }
-

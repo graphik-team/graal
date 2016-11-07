@@ -48,13 +48,18 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.TreeMap;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.TermValueComparator;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
+import fr.lirmm.graphik.graal.core.Substitutions;
 import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
 import fr.lirmm.graphik.util.Partition;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
@@ -160,7 +165,7 @@ public class HierarchicalCompilation extends AbstractRulesCompilation {
 	}
 
 	@Override
-	public Collection<Substitution> getMapping(Atom father, Atom son) {
+	public Collection<Substitution> homomorphism(Atom father, Atom son) {
 		LinkedList<Substitution> res = new LinkedList<Substitution>();
 		if (isMappable(father.getPredicate(), son.getPredicate())) {
 			Substitution sub = SubstitutionFactory.instance().createSubstitution();
@@ -171,8 +176,13 @@ public class HierarchicalCompilation extends AbstractRulesCompilation {
 			while (fatherTermsIt.hasNext() && sonTermsIt.hasNext()) {
 				fatherTerm = fatherTermsIt.next();
 				sonTerm = sonTermsIt.next();
-				if (sub.createImageOf(fatherTerm).equals(fatherTerm))
-					sub.put(fatherTerm, sonTerm);
+
+				if (fatherTerm.isConstant()) {
+					if (!fatherTerm.equals(sonTerm)) {
+						return res;
+					}
+				} else if (!sub.getTerms().contains(fatherTerm))
+					sub.put((Variable) fatherTerm, sonTerm);
 				else if (!sub.createImageOf(fatherTerm).equals(sonTerm))
 					return res;
 			}
@@ -218,9 +228,9 @@ public class HierarchicalCompilation extends AbstractRulesCompilation {
 	}
 
 	@Override
-	public Collection<Atom> getRewritingOf(Atom father) {
-		LinkedList<Atom> res = new LinkedList<Atom>();
-		res.add(father);
+	public Collection<Pair<Atom, Substitution>> getRewritingOf(Atom father) {
+		LinkedList<Pair<Atom, Substitution>> res = new LinkedList<Pair<Atom, Substitution>>();
+		res.add(new ImmutablePair<Atom, Substitution>(father, Substitutions.emptySubstitution()));
 
 		Integer index = predicateIndex.get(father.getPredicate());
 		if (index != null)
@@ -228,7 +238,7 @@ public class HierarchicalCompilation extends AbstractRulesCompilation {
 				if (order[index][i] == 1) {
 					Atom a = new DefaultAtom(father);
 					a.setPredicate(indexPredicate.get(i));
-					res.add(a);
+					res.add(new ImmutablePair<Atom, Substitution>(a, Substitutions.emptySubstitution()));
 				}
 			}
 

@@ -52,6 +52,9 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
@@ -64,6 +67,7 @@ import fr.lirmm.graphik.graal.core.Rules;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
+import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.Partition;
@@ -219,14 +223,18 @@ public class IDCompilation extends AbstractRulesCompilation {
 	}
 
 	@Override
-	public LinkedList<Substitution> getMapping(Atom father, Atom son) {
+	public LinkedList<Substitution> homomorphism(Atom father, Atom son) {
 		LinkedList<Substitution> res = new LinkedList<Substitution>();
 		Predicate predB = son.getPredicate();
 		Predicate predH = father.getPredicate();
 		List<IDCondition> conds = getConditions(predB, predH);
 		for (IDCondition cond : conds) {
-			if (cond.checkBody(son.getTerms()))
-				res.add(new TreeMapSubstitution(cond.generateUnification(son.getTerms(), father.getTerms())));
+			if (cond.checkBody(son.getTerms())) {
+				Substitution homo = cond.homomorphism(father.getTerms(), son.getTerms());
+				if (homo != null) {
+					res.add(new TreeMapSubstitution(homo));
+				}
+			}
 		}
 		return res;
 	}
@@ -273,9 +281,9 @@ public class IDCompilation extends AbstractRulesCompilation {
 	 * Return all possible rewritings of this Atom by this compilation.
 	 */
 	@Override
-	public Collection<Atom> getRewritingOf(Atom atom) {
-		TreeSet<Atom> res = new TreeSet<Atom>();
-		res.add(atom);
+	public Collection<Pair<Atom, Substitution>> getRewritingOf(Atom atom) {
+		TreeSet<Pair<Atom, Substitution>> res = new TreeSet<Pair<Atom, Substitution>>();
+		res.add(new ImmutablePair<Atom, Substitution>(atom, SubstitutionFactory.instance().createSubstitution()));
 
 		Predicate predH = atom.getPredicate();
 		Map<Predicate, LinkedList<IDCondition>> condH = this.conditions
@@ -288,9 +296,12 @@ public class IDCompilation extends AbstractRulesCompilation {
 				predB = entry.getKey();
 				conds = entry.getValue();
 				for (IDCondition cond : conds) {
-					if (cond.checkHead(atom.getTerms()))
-						res.add(new DefaultAtom(predB, cond.generateBody(atom
-								.getTerms())));
+					Pair<List<Term>, Substitution> ret = cond.generateBody(atom.getTerms());
+					if (ret != null) {
+						List<Term> generatedBody = ret.getLeft();
+						res.add(new ImmutablePair<Atom, Substitution>(new DefaultAtom(predB, generatedBody),
+						                                              ret.getRight()));
+					}
 				}
 			}
 		}

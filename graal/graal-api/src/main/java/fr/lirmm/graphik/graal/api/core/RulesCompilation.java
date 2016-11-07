@@ -45,6 +45,8 @@
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import fr.lirmm.graphik.util.Partition;
 import fr.lirmm.graphik.util.Profilable;
 
@@ -83,7 +85,7 @@ public interface RulesCompilation extends Profilable {
 	 * e. return all the homomorphisms that map father with a fact implied from
 	 * the atom son with compiled rules
 	 */
-	public Collection<Substitution> getMapping(Atom father, Atom son);
+	public Collection<Substitution> homomorphism(Atom father, Atom son);
 
 	/**
 	 * Return the list of c-unifier from the atom father to the atom son
@@ -101,7 +103,7 @@ public interface RulesCompilation extends Profilable {
 	 * Return the list of atom that are R-rewriting of the atom father by
 	 * compiled rules
 	 */
-	public Collection<Atom> getRewritingOf(Atom father);
+	public Collection<Pair<Atom, Substitution>> getRewritingOf(Atom father);
 
 	/**
 	 * Return a collection of predicate unifiable with the given one

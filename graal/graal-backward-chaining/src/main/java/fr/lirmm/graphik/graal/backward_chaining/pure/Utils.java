@@ -40,9 +40,9 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
+/**
+* 
+*/
 package fr.lirmm.graphik.graal.backward_chaining.pure;
 
 import java.util.ArrayList;
@@ -52,6 +52,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
@@ -63,12 +66,14 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
+import fr.lirmm.graphik.graal.core.Substitutions;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetUtils;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
 import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
+import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
 import fr.lirmm.graphik.graal.homomorphism.PureHomomorphism;
 import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
@@ -80,7 +85,8 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 final class Utils {
 
 	private static DefaultVariableGenerator varGen = new DefaultVariableGenerator("X"
-			+ Integer.toString(Utils.class.hashCode()));
+	                                                                              + Integer.toString(
+	                                                                                  Utils.class.hashCode()));
 
 	private Utils() {
 	}
@@ -124,8 +130,7 @@ final class Utils {
 	 */
 	public static ConjunctiveQuery rewrite(ConjunctiveQuery q, QueryUnifier u) {
 		InMemoryAtomSet ajout = u.getImageOf(u.getRule().getBody());
-		InMemoryAtomSet restant = u.getImageOf(AtomSetUtils.minus(q.getAtomSet(),
-				u.getPiece()));
+		InMemoryAtomSet restant = u.getImageOf(AtomSetUtils.minus(q.getAtomSet(), u.getPiece()));
 		ConjunctiveQuery rew = null;
 		if (ajout != null && restant != null) { // FIXME
 			InMemoryAtomSet res = AtomSetUtils.union(ajout, restant);
@@ -152,24 +157,22 @@ final class Utils {
 	public static MarkedQuery rewriteWithMark(ConjunctiveQuery q, QueryUnifier u) {
 
 		InMemoryAtomSet ajout = u.getImageOf(u.getRule().getBody());
-		InMemoryAtomSet restant = u.getImageOf(AtomSetUtils.minus(q.getAtomSet(),
-				u.getPiece()));
+		InMemoryAtomSet restant = u.getImageOf(AtomSetUtils.minus(q.getAtomSet(), u.getPiece()));
 		MarkedQuery rew = null;
-		if (ajout != null && restant != null) { // FIXME
-			InMemoryAtomSet res = AtomSetUtils.union(ajout, restant);
-			List<Term> ansVar = new LinkedList<Term>();
-			ansVar.addAll(q.getAnswerVariables());
-			rew = new MarkedQuery(res, ansVar);
 
-			ArrayList<Atom> markedAtoms = new ArrayList<Atom>();
-			CloseableIteratorWithoutException<Atom> it = ajout.iterator();
-			while (it.hasNext()) {
-				Atom a = it.next();
-				markedAtoms.add(a);
-			}
+		InMemoryAtomSet res = AtomSetUtils.union(ajout, restant);
+		List<Term> ansVar = new LinkedList<Term>();
+		ansVar.addAll(q.getAnswerVariables());
+		rew = new MarkedQuery(res, ansVar);
 
-			rew.setMarkedAtom(markedAtoms);
+		ArrayList<Atom> markedAtoms = new ArrayList<Atom>();
+		CloseableIteratorWithoutException<Atom> it = ajout.iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
+			markedAtoms.add(a);
 		}
+
+		rew.setMarkedAtom(markedAtoms);
 
 		return rew;
 	}
@@ -192,6 +195,16 @@ final class Utils {
 		return DefaultRuleFactory.instance().create(safeBody, safeHead);
 	}
 
+	public static InMemoryAtomSet getSafeCopy(InMemoryAtomSet atomSet) {
+		Substitution substitution = new TreeMapSubstitution();
+		for (Term t : atomSet.getTerms(Term.Type.VARIABLE)) {
+			substitution.put((Variable) t, varGen.getFreshVar());
+		}
+
+		InMemoryAtomSet safe = new LinkedListAtomSet();
+		substitution.apply(atomSet, safe);
+		return safe;
+	}
 
 	/**
 	 * Returns true if AtomSet h is more general than AtomSet f, and mark all
@@ -201,15 +214,15 @@ final class Utils {
 	 */
 	public static boolean testInclu = true;
 
-	public static boolean isMoreGeneralThan(InMemoryAtomSet h, InMemoryAtomSet f,
-			RulesCompilation compilation) {
+	public static boolean isMoreGeneralThan(InMemoryAtomSet h, InMemoryAtomSet f, RulesCompilation compilation) {
 
 		boolean moreGen = false;
 		if (testInclu && AtomSetUtils.contains(f, h)) {
 			moreGen = true;
 		} else {
 			try {
-				moreGen = PureHomomorphism.instance().exist(h, f, compilation);
+				InMemoryAtomSet fCopy = Utils.getSafeCopy(f);
+				moreGen = PureHomomorphism.instance().exist(h, fCopy, compilation);
 			} catch (HomomorphismException e) {
 			}
 		}
@@ -236,8 +249,7 @@ final class Utils {
 		Atom h1 = r1.getHead().iterator().next();
 		Atom h2 = r2.getHead().iterator().next();
 
-		if (b1.getPredicate().equals(b2.getPredicate())
-				&& h1.getPredicate().equals(h2.getPredicate())) {
+		if (b1.getPredicate().equals(b2.getPredicate()) && h1.getPredicate().equals(h2.getPredicate())) {
 			Map<Term, Term> s = new TreeMap<Term, Term>();
 			Term term;
 			for (int i = 0; i < b1.getPredicate().getArity(); i++) {
@@ -259,7 +271,7 @@ final class Utils {
 
 		return false;
 	}
-	
+
 	/**
 	 * Remove the fact that are not the most general (taking account of compiled
 	 * rules) in the given facts
@@ -267,8 +279,7 @@ final class Utils {
 	 * @param comp
 	 * @throws Exception
 	 */
-	public static void computeCover(Iterable<ConjunctiveQuery> set,
-			RulesCompilation comp) {
+	public static void computeCover(Iterable<ConjunctiveQuery> set, RulesCompilation comp) {
 		Iterator<ConjunctiveQuery> beg = set.iterator();
 		Iterator<ConjunctiveQuery> end;
 		InMemoryAtomSet q;
@@ -313,10 +324,10 @@ final class Utils {
 	private static Collection<ConjunctiveQuery> developpRewriting(Iterable<ConjunctiveQuery> rewritingSet,
 	    RulesCompilation compilation) {
 		Collection<ConjunctiveQuery> unfoldingRewritingSet = new LinkedList<ConjunctiveQuery>();
-		LinkedList<InMemoryAtomSet> newQueriesBefore = new LinkedList<InMemoryAtomSet>();
-		LinkedList<InMemoryAtomSet> newQueriesAfter = new LinkedList<InMemoryAtomSet>();
-		LinkedList<InMemoryAtomSet> newQueriesTmp;
-		Iterable<Atom> atomsRewritings;
+		LinkedList<Pair<InMemoryAtomSet, Substitution>> newQueriesBefore = new LinkedList<Pair<InMemoryAtomSet, Substitution>>();
+		LinkedList<Pair<InMemoryAtomSet, Substitution>> newQueriesAfter = new LinkedList<Pair<InMemoryAtomSet, Substitution>>();
+		LinkedList<Pair<InMemoryAtomSet, Substitution>> newQueriesTmp;
+		Iterable<Pair<Atom, Substitution>> atomsRewritings;
 		InMemoryAtomSet copy;
 
 		// ConjunctiveQuery q;
@@ -326,7 +337,9 @@ final class Utils {
 			// for all atom of the query we will build a list of all the
 			// rewriting
 			newQueriesBefore.clear();
-			newQueriesBefore.add(new LinkedListAtomSet());
+			newQueriesBefore.add(
+			    new ImmutablePair<InMemoryAtomSet, Substitution>(new LinkedListAtomSet(),
+			                                                     SubstitutionFactory.instance().createSubstitution()));
 
 			// we will build all the possible fact from the rewriting of the
 			// atoms
@@ -334,13 +347,17 @@ final class Utils {
 			while (it.hasNext()) {
 				Atom a = it.next();
 				atomsRewritings = compilation.getRewritingOf(a);
-				for (InMemoryAtomSet q : newQueriesBefore) {
+				for (Pair<InMemoryAtomSet, Substitution> before : newQueriesBefore) {
 					// for each possible atom at the next position clone the
 					// query and add the atom
-					for (Atom atom : atomsRewritings) {//
-						copy = new LinkedListAtomSet(q);
-						copy.add(atom);
-						newQueriesAfter.add(copy);
+					for (Pair<Atom, Substitution> rew : atomsRewritings) {//
+						Atom atom = rew.getLeft();
+						copy = new LinkedListAtomSet(before.getLeft());
+						copy.add(rew.getLeft());
+						Substitution newSub = Substitutions.aggregate(before.getRight(), rew.getRight());
+						if (newSub != null) {
+							newQueriesAfter.add(new ImmutablePair<InMemoryAtomSet, Substitution>(copy, newSub));
+						}
 					}
 				}
 
@@ -350,10 +367,13 @@ final class Utils {
 				newQueriesAfter = newQueriesTmp;
 				newQueriesAfter.clear();
 			}
-			for (InMemoryAtomSet a : newQueriesBefore) {
+			for (Pair<InMemoryAtomSet, Substitution> before : newQueriesBefore) {
+				Substitution s = before.getRight();
+				InMemoryAtomSet atomset = before.getLeft();
+				atomset = s.createImageOf(atomset);
+				List<Term> ans = s.createImageOf(originalQuery.getAnswerVariables());
 				unfoldingRewritingSet.add(
-				    DefaultConjunctiveQueryFactory.instance().create(a,
-				    originalQuery.getAnswerVariables()));
+				    DefaultConjunctiveQueryFactory.instance().create(atomset, ans));
 			}
 		}
 

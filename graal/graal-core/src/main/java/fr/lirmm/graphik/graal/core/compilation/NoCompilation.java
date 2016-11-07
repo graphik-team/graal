@@ -50,12 +50,18 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomComparator;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.graal.core.Substitutions;
+import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
 import fr.lirmm.graphik.util.Partition;
 
 /**
@@ -105,8 +111,30 @@ public class NoCompilation extends AbstractRulesCompilation {
 	}
 
 	@Override
-	public Collection<Substitution> getMapping(Atom father, Atom son) {
-		return Collections.emptyList();
+	public Collection<Substitution> homomorphism(Atom father, Atom son) {
+		LinkedList<Substitution> res = new LinkedList<Substitution>();
+		if (father.getPredicate().equals(son.getPredicate())) {
+			Substitution sub = SubstitutionFactory.instance().createSubstitution();
+			Iterator<Term> fatherTermsIt = father.getTerms().iterator();
+			Iterator<Term> sonTermsIt = son.getTerms().iterator();
+
+			Term fatherTerm, sonTerm;
+			while (fatherTermsIt.hasNext() && sonTermsIt.hasNext()) {
+				fatherTerm = fatherTermsIt.next();
+				sonTerm = sonTermsIt.next();
+				
+				if (fatherTerm.isConstant()) {
+					if (!fatherTerm.equals(sonTerm)) {
+						return res;
+					}
+				} else if (!sub.getTerms().contains(fatherTerm))
+					sub.put((Variable) fatherTerm, sonTerm);
+				else if (!sub.createImageOf(fatherTerm).equals(sonTerm))
+					return res;
+			}
+			res.add(sub);
+		}
+		return res;
 	}
 
 	@Override
@@ -124,8 +152,9 @@ public class NoCompilation extends AbstractRulesCompilation {
 	}
 
 	@Override
-	public Collection<Atom> getRewritingOf(Atom father) {
-		return Collections.singleton(father);
+	public Collection<Pair<Atom, Substitution>> getRewritingOf(Atom father) {
+		return Collections.<Pair<Atom, Substitution>> singleton(
+		    new ImmutablePair<Atom, Substitution>(father, Substitutions.emptySubstitution()));
 	}
 
 	@Override

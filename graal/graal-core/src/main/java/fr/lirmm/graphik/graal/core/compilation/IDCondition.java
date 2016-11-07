@@ -47,8 +47,11 @@ package fr.lirmm.graphik.graal.core.compilation;
 
 import java.util.List;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.util.Partition;
 
@@ -67,12 +70,6 @@ interface IDCondition {
 	boolean imply(List<Term> body, List<Term> head);
 
 	/**
-	 * @param head
-	 * @return true iff the given terms fulfills the condition on the head
-	 */
-	boolean checkHead(List<Term> head);
-
-	/**
 	 * 
 	 * @param body
 	 * @return true iff the given terms fulfills the condition on the body
@@ -83,9 +80,9 @@ interface IDCondition {
 	 * Generate body according to the given terms of the head
 	 * 
 	 * @param head
-	 * @return a Term list.
+	 * @return a Term list
 	 */
-	List<Term> generateBody(List<Term> head);
+	Pair<List<Term>, Substitution> generateBody(List<Term> head);
 
 	/**
 	 * Generate head
@@ -128,5 +125,12 @@ interface IDCondition {
 	 * @return
 	 */
 	boolean isIdentity();
+
+	/**
+	 * @param terms
+	 * @param terms2
+	 * @return
+	 */
+	Substitution homomorphism(List<Term> head, List<Term> body);
 
 }
