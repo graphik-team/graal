@@ -87,7 +87,7 @@ public class DBColumn implements Comparable<DBColumn> {
 
 	@Override
 	public int compareTo(DBColumn o) {
-		int cmp = Integer.compare(this.type, o.type);
+		int cmp = Integer.valueOf(this.type).compareTo(o.type);
 		if (cmp == 0) {
 			cmp = this.name.compareTo(o.name);
 		}

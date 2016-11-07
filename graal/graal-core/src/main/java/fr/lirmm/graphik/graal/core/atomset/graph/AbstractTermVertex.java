@@ -93,7 +93,7 @@ abstract class AbstractTermVertex extends AbstractTerm implements TermVertex {
 			}
 		}
 		if (it == null) {
-			it = Collections.<Atom> emptyIterator();
+			it = Collections.<Atom> emptyList().iterator();
 		}
 		return new CloseableIteratorAdapter<Atom>(it);
 	}

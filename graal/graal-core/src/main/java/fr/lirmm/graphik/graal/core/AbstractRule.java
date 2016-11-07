@@ -60,7 +60,7 @@ public abstract class AbstractRule implements Rule {
 
 	@Override
 	public int compareTo(Rule other) {
-		return Integer.compare(this.hashCode(), other.hashCode());
+		return Integer.valueOf(this.hashCode()).compareTo(other.hashCode());
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

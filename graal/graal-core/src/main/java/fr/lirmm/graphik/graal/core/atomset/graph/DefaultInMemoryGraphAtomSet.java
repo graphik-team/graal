@@ -187,7 +187,7 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 	public CloseableIteratorWithoutException<Term> termsByPredicatePosition(Predicate p, int position) {
 		Set<Term>[] sets = this.termsByPredicatePosition.get(p);
 		if (sets == null) {
-			return new CloseableIteratorAdapter<Term>(Collections.<Term> emptyIterator());
+			return new CloseableIteratorAdapter<Term>(Collections.<Term> emptyList().iterator());
 		} else {
 			return new CloseableIteratorAdapter<Term>(sets[position].iterator());
 		}
