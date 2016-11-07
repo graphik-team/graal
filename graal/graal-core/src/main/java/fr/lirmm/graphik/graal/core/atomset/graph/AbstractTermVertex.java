@@ -125,11 +125,6 @@ abstract class AbstractTermVertex extends AbstractTerm implements TermVertex {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public boolean isConstant() {
-		return this.getTerm().isConstant();
-	}
-
-	@Override
 	public Type getType() {
 		return this.getTerm().getType();
 	}

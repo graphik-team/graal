@@ -107,12 +107,7 @@ final class DefaultLiteral extends AbstractTerm implements Literal {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public boolean isConstant() {
-		return true;
-	}
-
-	@Override
-	public Term.Type getType() {
+	public final Term.Type getType() {
 		return Term.Type.LITERAL;
 	}
 

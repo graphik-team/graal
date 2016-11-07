@@ -40,9 +40,9 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
+/**
+* 
+*/
 package fr.lirmm.graphik.graal.api.core;
 
 import java.io.Serializable;
@@ -57,16 +57,39 @@ public interface Term extends Comparable<Term>, Serializable {
 	 * The enumeration of term types.
 	 */
 	public static enum Type {
-		CONSTANT, VARIABLE, LITERAL
+							 CONSTANT(false), VARIABLE(true), LITERAL(false);
+
+		private boolean isVariable;
+
+		Type(boolean isVariable) {
+			this.isVariable = isVariable;
+		}
+
+		boolean isConstant() {
+			return !this.isVariable;
+		}
+
+		boolean isVariable() {
+			return this.isVariable;
+		}
 	}
 
+	/**
+	 * 
+	 * @return this.getType().isConstant();
+	 */
 	boolean isConstant();
+
+	/**
+	 * 
+	 * @return this.getType().isVariable();
+	 */
+	boolean isVariable();
 
 	String getLabel();
 
 	Object getIdentifier();
 
 	Type getType();
-
 
 }

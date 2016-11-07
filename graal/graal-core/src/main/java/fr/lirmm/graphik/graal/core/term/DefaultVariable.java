@@ -80,12 +80,7 @@ final class DefaultVariable extends AbstractTerm implements Variable {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public boolean isConstant() {
-		return false;
-	}
-
-	@Override
-	public Term.Type getType() {
+	public final Term.Type getType() {
 		return Term.Type.VARIABLE;
 	}
 

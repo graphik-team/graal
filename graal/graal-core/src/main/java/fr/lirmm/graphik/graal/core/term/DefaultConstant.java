@@ -79,12 +79,7 @@ final class DefaultConstant extends AbstractTerm implements Constant {
 	// /////////////////////////////////////////////////////////////////////////
 	
 	@Override
-	public boolean isConstant() {
-		return true;
-	}
-	
-	@Override
-	public Term.Type getType() {
+	public final Term.Type getType() {
 		return Term.Type.CONSTANT;
 	}
 

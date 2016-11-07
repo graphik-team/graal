@@ -67,6 +67,16 @@ public abstract class AbstractTerm implements Term {
 		return this.getIdentifier().toString();
 	}
 
+	@Override
+	public final boolean isConstant() {
+		return this.getType().isConstant();
+	}
+
+	@Override
+	public final boolean isVariable() {
+		return this.getType().isVariable();
+	}
+
 	// /////////////////////////////////////////////////////////////////////////
 	// OBJECT OVERRIDE METHODS
 	// /////////////////////////////////////////////////////////////////////////
