@@ -191,4 +191,21 @@ public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 		sb.append(this.atomSet);
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof ConjunctiveQuery)) {
+			return false;
+		}
+		ConjunctiveQuery other = (ConjunctiveQuery) obj;
+		return this.equals(other);
+	}
+
+	public boolean equals(ConjunctiveQuery other) {
+		return this.getAnswerVariables().equals(other.getAnswerVariables())
+		       && this.getAtomSet().equals(other.getAtomSet());
+	}
+
 }
