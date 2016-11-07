@@ -50,6 +50,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
@@ -153,7 +155,8 @@ public abstract class AbstractNFC extends AbstractProfilable implements ForwardC
 		
 		// FIXME bug with p(X,Y,Z) -> q(X,Y) in the compilation
 		boolean contains = false;
-		for (Atom a : rc.getRewritingOf(im)) {
+		for (Pair<Atom, Substitution> rew : rc.getRewritingOf(im)) {
+			Atom a = rew.getLeft();
 			Set<Term> candidats = this.data[varToCompute.level].candidats.get(currentVar).candidats;
 			Iterator<Term> it = candidats.iterator();
 			while (it.hasNext()) {
@@ -187,8 +190,8 @@ public abstract class AbstractNFC extends AbstractProfilable implements ForwardC
 		boolean contains = false;
 		Set<Var> postVarsFromThisAtom = new TreeSet<Var>();
 
-		for (Atom a : rc.getRewritingOf(atom)) {
-
+		for (Pair<Atom, Substitution> rew : rc.getRewritingOf(atom)) {
+			Atom a = rew.getLeft();
 			Var postV[] = this.computePostVariablesPosition(a, v.level, map, postVarsFromThisAtom);
 			Atom im = BacktrackUtils.createImageOf(a, map);
 

@@ -42,9 +42,12 @@
  */
 package fr.lirmm.graphik.homorphism.utils;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 
 /**
@@ -76,8 +79,8 @@ public final class ProbaUtils {
 	 */
 	public static double computeProba(Atom atom, AtomSet data, RulesCompilation rc) {
 		int count = 0;
-		for (Atom im : rc.getRewritingOf(atom)) {
-			count += data.count(im.getPredicate());
+		for (Pair<Atom, Substitution> im : rc.getRewritingOf(atom)) {
+			count += data.count(im.getLeft().getPredicate());
 		}
 
 		double probaA = count / Math.pow(data.getDomainSize(), atom.getPredicate().getArity());

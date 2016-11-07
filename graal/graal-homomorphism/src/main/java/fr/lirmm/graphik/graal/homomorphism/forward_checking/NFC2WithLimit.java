@@ -48,10 +48,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
@@ -148,11 +151,11 @@ public class NFC2WithLimit extends NFC2 implements ForwardChecking {
 	    throws AtomSetException, IteratorException {
 		boolean contains = false;
 		int nbAns = 0;
-		Iterator<Atom> rewIt = rc.getRewritingOf(atom).iterator();
+		Iterator<Pair<Atom, Substitution>> rewIt = rc.getRewritingOf(atom).iterator();
 		Set<Var> postVarsFromThisAtom = new TreeSet<Var>();
 
 		while (rewIt.hasNext() && nbAns < LIMIT) {
-			Atom a = rewIt.next();
+			Atom a = rewIt.next().getLeft();
 			
 			Var[] postV = this.computePostVariablesPosition(a, v.level, map, postVarsFromThisAtom);
 			Atom im = BacktrackUtils.createImageOf(a, map);

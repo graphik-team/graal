@@ -47,11 +47,14 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.TermValueComparator;
@@ -121,9 +124,9 @@ public class StatBootstrapper extends AbstractProfilable implements Bootstrapper
 		try {
 			if (constants != null && !constants.isEmpty()) {
 				terms = new TreeSet<Term>(TermValueComparator.instance());
-				for (Atom im : rc.getRewritingOf(aa)) {
-					int pos = im.indexOf(v.value);
-					CloseableIterator<Atom> match = data.match(im);
+				for (Pair<Atom, Substitution> im : rc.getRewritingOf(aa)) {
+					int pos = im.getLeft().indexOf(v.value);
+					CloseableIterator<Atom> match = data.match(im.getLeft());
 					while (match.hasNext()) {
 						terms.add(match.next().getTerm(pos));
 					}

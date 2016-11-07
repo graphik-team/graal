@@ -44,12 +44,15 @@ package fr.lirmm.graphik.graal.homomorphism.bootstrapper;
 
 import java.util.Iterator;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
 import fr.lirmm.graphik.graal.homomorphism.Var;
@@ -88,7 +91,7 @@ public class DefaultBootstrapper extends AbstractProfilable implements Bootstrap
 		Iterator<Atom> it = v.postAtoms.iterator();
 		if (it.hasNext()) {
 			Atom a = it.next();
-			final Iterator<Atom> rewritingOf = compilation.getRewritingOf(a).iterator();
+			final Iterator<Pair<Atom, Substitution>> rewritingOf = compilation.getRewritingOf(a).iterator();
 
 			// TODO refactor the following code using converter Iterator or
 			// create a private class?
@@ -106,7 +109,7 @@ public class DefaultBootstrapper extends AbstractProfilable implements Bootstrap
 				public boolean hasNext() throws IteratorException {
 					try {
 						if (next == null && rewritingOf.hasNext()) {
-							Atom im = rewritingOf.next();
+							Atom im = rewritingOf.next().getLeft();
 							Predicate predicate = im.getPredicate();
 							int pos = im.indexOf(v.value);
 							next = data.termsByPredicatePosition(predicate, pos);

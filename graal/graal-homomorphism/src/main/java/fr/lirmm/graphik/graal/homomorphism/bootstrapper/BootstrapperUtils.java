@@ -42,15 +42,17 @@
  */
 package fr.lirmm.graphik.graal.homomorphism.bootstrapper;
 
-import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.TermValueComparator;
 import fr.lirmm.graphik.graal.homomorphism.Var;
@@ -82,11 +84,11 @@ class BootstrapperUtils {
 	public static Set<Term> computeCandidatesOverRewritings(Atom a, Var v, AtomSet data, RulesCompilation compilation)
 	    throws AtomSetException, IteratorException {
 		Set<Term> terms = new TreeSet<Term>(TermValueComparator.instance());
-		final Iterator<Atom> rewritingOf = compilation.getRewritingOf(a).iterator();
-		while (rewritingOf.hasNext()) {
-			Atom im = rewritingOf.next();
+		for (Pair<Atom, Substitution> rew : compilation.getRewritingOf(a)) {
+			Atom im = rew.getLeft();
+			Substitution sub = rew.getRight();
 			Predicate predicate = im.getPredicate();
-			int pos = im.indexOf(v.value);
+			int pos = im.indexOf(sub.createImageOf(v.value));
 
 			CloseableIterator<Term> it = data.termsByPredicatePosition(predicate, pos);
 			while (it.hasNext()) {

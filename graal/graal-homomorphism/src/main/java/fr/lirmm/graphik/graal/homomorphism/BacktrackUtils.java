@@ -47,6 +47,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
@@ -89,8 +91,8 @@ public final class BacktrackUtils {
 			Atom image = BacktrackUtils.createImageOf(atom, index);
 			boolean contains = false;
 
-			for (Atom a : rc.getRewritingOf(image)) {
-				if (atomsTo.contains(a)) {
+			for (Pair<Atom, Substitution> p : rc.getRewritingOf(image)) {
+				if (atomsTo.contains(p.getLeft())) {
 					contains = true;
 					break;
 				}

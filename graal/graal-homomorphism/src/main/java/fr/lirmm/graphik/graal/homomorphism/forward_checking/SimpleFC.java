@@ -44,10 +44,13 @@ package fr.lirmm.graphik.graal.homomorphism.forward_checking;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
@@ -94,7 +97,8 @@ public class SimpleFC extends AbstractProfilable implements ForwardChecking {
 				profiler.incr("#selectOne", 1);
 				profiler.start("selectOneTime");
 			}
-			for (Atom a : rc.getRewritingOf(im)) {
+			for (Pair<Atom, Substitution> rew : rc.getRewritingOf(im)) {
+				Atom a = rew.getLeft();
 				try {
 					if (g.match(a).hasNext()) {
 						contains = true;
