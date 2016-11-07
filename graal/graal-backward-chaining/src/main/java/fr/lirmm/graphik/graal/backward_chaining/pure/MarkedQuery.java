@@ -151,7 +151,9 @@ class MarkedQuery extends DefaultConjunctiveQuery {
 		while (it.hasNext()) {
 			Atom a = it.next();
 			if (isMarked(a))
-				s += a.toString().toUpperCase() + " ";
+				s += "*";
+
+			s += a.toString() + " ";
 		}
 		s += ")";
 		return s;
