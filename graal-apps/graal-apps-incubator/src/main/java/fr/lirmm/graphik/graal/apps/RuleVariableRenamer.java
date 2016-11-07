@@ -56,6 +56,7 @@ import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.HashMapSubstitution;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
@@ -100,7 +101,7 @@ public class RuleVariableRenamer {
 					substitution = new HashMapSubstitution();
 					for(Term var : vars) {
 						substitution.put(
-								var,
+						    (Variable) var,
 								DefaultTermFactory.instance().createVariable(
 										var.toString() + "_" + objectNumber));
 					}

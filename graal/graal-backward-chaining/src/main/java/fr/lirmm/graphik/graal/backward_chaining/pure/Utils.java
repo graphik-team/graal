@@ -60,6 +60,7 @@ import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
@@ -176,7 +177,7 @@ final class Utils {
 	public static Rule getSafeCopy(Rule rule) {
 		Substitution substitution = new TreeMapSubstitution();
 		for (Term t : rule.getTerms(Term.Type.VARIABLE)) {
-			substitution.put(t, varGen.getFreshVar());
+			substitution.put((Variable) t, varGen.getFreshVar());
 		}
 
 		InMemoryAtomSet body = rule.getBody();

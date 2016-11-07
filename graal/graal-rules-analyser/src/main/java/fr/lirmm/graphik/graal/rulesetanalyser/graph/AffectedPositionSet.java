@@ -55,6 +55,7 @@ import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.PredicatePosition;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
@@ -107,11 +108,15 @@ public class AffectedPositionSet {
 		return this.affectedPosition.contains(pp);
 	}
 
-	public Set<Term> getAllAffectedVariables(InMemoryAtomSet body) {
-		return this.getAllAffectedVariables(body.getTerms(Type.VARIABLE), body);
+	public Set<Variable> getAllAffectedVariables(InMemoryAtomSet body) {
+		Set<Variable> set = new TreeSet<Variable>();
+		for (Term t : body.getTerms(Type.VARIABLE)) {
+				set.add((Variable) t);
+		}
+		return this.getAllAffectedVariables(set, body);
 	}
 
-	public Set<Term> getAllAffectedFrontierVariables(Rule rule) {
+	public Set<Variable> getAllAffectedFrontierVariables(Rule rule) {
 		return this.getAllAffectedVariables(rule.getFrontier(), rule.getBody());
 	}
 
@@ -126,8 +131,8 @@ public class AffectedPositionSet {
 	 * @param body
 	 * @return
 	 */
-	private Set<Term> getAllAffectedVariables(Set<Term> vars, InMemoryAtomSet body) {
-		Set<Term> affectedVars = new TreeSet<Term>();
+	private Set<Variable> getAllAffectedVariables(Set<Variable> vars, InMemoryAtomSet body) {
+		Set<Variable> affectedVars = new TreeSet<Variable>();
 		affectedVars.addAll(vars);
 		int i;
 		CloseableIteratorWithoutException<Atom> it = body.iterator();
@@ -156,7 +161,7 @@ public class AffectedPositionSet {
 	 */
 	private void step1() {
 		int i;
-		Set<Term> existentials;
+		Set<Variable> existentials;
 		PredicatePosition predicatePosition;
 
 		for (Rule rule : ruleSet) {

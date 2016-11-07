@@ -61,6 +61,7 @@ import org.slf4j.LoggerFactory;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
@@ -186,7 +187,8 @@ public class GRDParser {
 		Substitution unificator = new TreeMapSubstitution();
 		Pattern pattern = Pattern.compile("(\\S+)\\s*->\\s*(\\S+)");
 		String src, dest;
-		Term termSrc, termDest;
+		Variable termSrc;
+		Term termDest;
 
 		for (String termSub : unificatorString.split("\\s*,\\s*")) {
 			Matcher matcher = pattern.matcher(termSub);
@@ -196,7 +198,7 @@ public class GRDParser {
 				if (Character.isUpperCase(src.charAt(0))) {
 					termSrc = DefaultTermFactory.instance().createVariable(src);
 				} else {
-					termSrc = DefaultTermFactory.instance().createConstant(src);
+					throw new Error("The domain of the substitution can not contain a constant.");
 				}
 				if (Character.isUpperCase(dest.charAt(0))) {
 					termDest = DefaultTermFactory.instance().createVariable(

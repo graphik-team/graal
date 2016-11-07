@@ -56,6 +56,7 @@ import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultRule;
@@ -213,7 +214,7 @@ public final class MSAProperty extends RuleSetProperty.Default {
 
 	public static Substitution buildMSASubstitution(final Rule r) {
 		Substitution s = new TreeMapSubstitution();
-		for (Term yi : r.getExistentials())
+		for (Variable yi : r.getExistentials())
 			s.put(yi,GraalConstant.freshConstant());
 		return s;
 	}

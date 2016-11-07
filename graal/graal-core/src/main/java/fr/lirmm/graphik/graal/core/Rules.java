@@ -62,6 +62,7 @@ import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetUtils;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
@@ -69,8 +70,8 @@ import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 import fr.lirmm.graphik.util.EquivalentRelation;
 import fr.lirmm.graphik.util.TreeMapEquivalentRelation;
-import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 import fr.lirmm.graphik.util.stream.CloseableIterableWithoutException;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -104,7 +105,7 @@ public final class Rules {
 	}
 
 	public static boolean isThereOneAtomThatContainsAllVars(CloseableIterableWithoutException<Atom> atomset,
-	    Collection<Term> terms) {
+	    Collection<Variable> terms) {
 		CloseableIteratorWithoutException<Atom> it = atomset.iterator();
 		while (it.hasNext()) {
 			Atom atom = it.next();
@@ -124,7 +125,7 @@ public final class Rules {
 	 * @return
 	 */
 	public static Collection<InMemoryAtomSet> getPieces(Rule rule) {
-		Set<Term> existentials = rule.getExistentials();
+		Set<Variable> existentials = rule.getExistentials();
 		Collection<InMemoryAtomSet> pieces = new LinkedList<InMemoryAtomSet>();
 
 		// compute equivalent classes
@@ -160,7 +161,7 @@ public final class Rules {
 		while (it.hasNext()) {
 			Atom a = it.next();
 			isAffected = false;
-			Iterator<Term> it2 = existentials.iterator();
+			Iterator<Variable> it2 = existentials.iterator();
 			while (it2.hasNext() && !isAffected) {
 				e = it2.next();
 				if (a.getTerms().contains(e)) {

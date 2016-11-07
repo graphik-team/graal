@@ -42,52 +42,104 @@
  */
  package fr.lirmm.graphik.graal.api.core;
 
+import java.util.List;
 import java.util.Set;
 
 import fr.lirmm.graphik.util.string.AppendableToStringBuilder;
 
 /**
- * A substitution is a syntactic transformation of a logical expression. This
- * transformation replace some variables by other terms.
+ * A substitution is an application from a set of variables into a set of terms.
  * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  */
 public interface Substitution extends Comparable<Substitution>, AppendableToStringBuilder {
 
-	/** 
-	 * Get all terms that have a substitute.
+	/**
+	 * Get the domain of this substitution.
+	 * 
 	 * @return
 	 */
-	Set<Term> getTerms();
+	Set<Variable> getTerms();
 	
 	/**
-	 * Get all substitutes of this substitution.
+	 * Get the codomain of this substitution.
+	 * 
 	 * @return
 	 */
 	Set<Term> getValues();
 
 	/**
-	 * Get the image of the given term by this substitution.
+	 * Get the image of the given term by this substitution, if there is no
+	 * image specified return the term itself.
 	 * 
 	 * @param term
-	 * @return the substitute.
+	 * @return the image of the specified term.
 	 */
 	Term createImageOf(Term term);
 
 	/**
-	 * Add a term substitution.
-	 * @param term the term to substitute.
-	 * @param substitut its substitute.
-	 * @return false if a constant term is substituted by another constant term,
-	 *         true otherwise.
+	 * Get the image of each terms of the specified list.
+	 * 
+	 * @param terms
+	 * @return A list of images of each terms.
 	 */
-	boolean put(Term term, Term substitut);
+	List<Term> createImageOf(List<Term> terms);
 
 	/**
-	 * Add all term substitution of an other substitution instance.
-	 * @param s
+	 * Adds a mapping from the specified variable into the specified image to
+	 * this substitution. Returns false if there already exists an other image
+	 * for this variable, true otherwise.
+	 * 
+	 * @param var
+	 * @param image
+	 * 
 	 */
-	void put(Substitution s);
+	boolean put(Variable var, Term image);
+
+	/**
+	 * Add all mappings from an other substitution instance. Returns false if
+	 * there already exists an other image for a variable from the demain of s,
+	 * true otherwise.
+	 * 
+	 * @param s
+	 * @return
+	 */
+	boolean put(Substitution s);
+
+	/**
+	 * Remove the mapping for the specified variable.
+	 * 
+	 * @param var
+	 * @return true if there was a mapping.
+	 */
+	boolean remove(Variable var);
+
+	/**
+	 * The aggregation of a substitution is more complex that just add an new
+	 * mapping for a new variable. Especially, it does not conserve the domain
+	 * and codomain. It choose a representative term for each connected
+	 * component by successive application of the mapping.
+	 * 
+	 * For example, if the current substitution is {X -> Y} and you add a
+	 * mapping {Y -> 'a'}, the result is {X -> 'a', Y -> 'a'}.
+	 * 
+	 * 
+	 * @param var
+	 * @param image
+	 * @return false, if the aggregation put two constants into a same connected
+	 *         component.
+	 */
+	boolean aggregate(Variable var, Term image);
+
+	/**
+	 * (const) This method construct a new Substitution which is the aggregation
+	 * of this substitution with the specified one.
+	 * 
+	 * @param s
+	 * @return null, if the aggregation put two constants into a same connected
+	 *         component.
+	 */
+	Substitution aggregate(Substitution s);
 
 	/**
 	 * Apply this substitution on an atom.
@@ -146,31 +198,5 @@ public interface Substitution extends Comparable<Substitution>, AppendableToStri
 	 * @param dest
 	 */
 	void apply(InMemoryAtomSet src, InMemoryAtomSet target);
-
-	/**
-	 * The composition of a substitution is more complex that just put an other
-	 * term substitution. If the current substitution is {X -> Y} and you add
-	 * a term substitution {Y -> 'a'}, the result is {X -> 'a', Y -> 'a'}.
-	 * 
-	 * An other example is {X -> 'a'} + {X -> Y} => {Y -> 'a', X -> 'a'}.
-	 * 
-	 * @param term
-	 * @param substitut
-	 * @return false if the composition imply a substitution of a constant term
-	 *         by another constant term, true otherwise.
-	 * @throws SubstitutionException
-	 */
-	boolean compose(Term term, Term substitut);
-
-	/**
-	 * (const)
-	 * 
-	 * @param s
-	 * @return null if the composition imply a substitution of a constant term
-	 *         by another constant term, the result of the composition
-	 *         otherwise.
-	 * @throws SubstitutionException
-	 */
-	Substitution compose(Substitution s);
 
 };

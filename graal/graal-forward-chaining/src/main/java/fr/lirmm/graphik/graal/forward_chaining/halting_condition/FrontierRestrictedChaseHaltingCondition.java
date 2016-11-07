@@ -60,6 +60,7 @@ import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
@@ -96,8 +97,9 @@ public class FrontierRestrictedChaseHaltingCondition implements ChaseHaltingCond
 			frontier += "_";
 			frontier += t.getIdentifier();
 		}
-		for (Term t : rule.getExistentials()) {
-			substitution.put(t,DefaultTermFactory.instance().createConstant("f_" + index + "_" + t.getIdentifier() + frontier));
+		for (Variable t : rule.getExistentials()) {
+			substitution.put(t,
+			    DefaultTermFactory.instance().createConstant("f_" + index + "_" + t.getIdentifier() + frontier));
 		}
 
 		InMemoryAtomSet newFacts = substitution.createImageOf(rule.getHead());

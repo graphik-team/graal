@@ -66,4 +66,8 @@ public final class SubstitutionFactory {
 	public Substitution createSubstitution() {
 		return new HashMapSubstitution();
 	}
+
+	public Substitution createSubstitution(Substitution s) {
+		return new HashMapSubstitution(s);
+	}
 }

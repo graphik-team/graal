@@ -47,6 +47,7 @@ import java.util.Map;
 
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
 
 /**
  * An implementation of Substitution using a {@link HashMap}.
@@ -56,7 +57,7 @@ import fr.lirmm.graphik.graal.api.core.Term;
  */
 public class HashMapSubstitution extends AbstractSubstitution {
 
-	private HashMap<Term, Term> map = new HashMap<Term, Term>();
+	private HashMap<Variable, Term> map = new HashMap<Variable, Term>();
 
 	public HashMapSubstitution() {
 		super();
@@ -64,12 +65,12 @@ public class HashMapSubstitution extends AbstractSubstitution {
 
 	public HashMapSubstitution(Substitution substitution) {
 		super();
-		for (Term term : substitution.getTerms())
+		for (Variable term : substitution.getTerms())
 			this.map.put(term, substitution.createImageOf(term));
 	}
 
 	@Override
-	protected Map<Term, Term> getMap() {
+	protected Map<Variable, Term> getMap() {
 		return this.map;
 	}
 

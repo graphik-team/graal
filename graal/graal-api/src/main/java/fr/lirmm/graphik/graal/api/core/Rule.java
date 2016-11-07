@@ -87,14 +87,14 @@ public interface Rule extends Comparable<Rule>, AppendableToStringBuilder {
 	 * 
 	 * @return
 	 */
-	Set<Term> getFrontier();
+	Set<Variable> getFrontier();
 
 	/**
 	 * Compute and return the set of existential variables of this rule.
 	 * 
 	 * @return
 	 */
-	Set<Term> getExistentials();
+	Set<Variable> getExistentials();
 
 	/**
 	 * Get terms by Type.

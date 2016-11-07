@@ -50,7 +50,7 @@ import java.util.List;
 import java.util.Set;
 
 import fr.lirmm.graphik.graal.api.core.Rule;
-import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.Rules;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.AffectedPositionSet;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
@@ -98,7 +98,7 @@ public final class WeaklyFrontierGuardedSetProperty extends RuleSetProperty.Defa
 	
 	private boolean check(AffectedPositionSet affectedPositionSet) {
 		for (Rule r : affectedPositionSet.getRules()) {
-			Set<Term> affectedVars = affectedPositionSet
+			Set<Variable> affectedVars = affectedPositionSet
 					.getAllAffectedFrontierVariables(r);
 			if (!Rules.isThereOneAtomThatContainsAllVars(r.getBody(),
 					affectedVars)) {

@@ -78,6 +78,7 @@ import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.io.Parser;
 import fr.lirmm.graphik.graal.core.DefaultNegativeConstraint;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
@@ -105,7 +106,7 @@ public class OWL2Parser extends AbstractCloseableIterator<Object> implements Par
 	private static final InMemoryAtomSet BOTTOM_ATOMSET = new LinkedListAtomSet(DefaultAtomFactory.instance()
 	        .getBottom());
 
-	private ArrayBlockingStream<Object> buffer = new ArrayBlockingStream<Object>(512);
+	private ArrayBlockingStream<Object> buffer = new ArrayBlockingStream<>(512);
 
 	private InputStream inputStream = null;
 	private OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
@@ -233,7 +234,7 @@ public class OWL2Parser extends AbstractCloseableIterator<Object> implements Par
 
 			Map<String, String> prefixMap = prefixFormat.getPrefixName2PrefixMap();
 
-			Set<String> forbiddenPrefix = new TreeSet<String>();
+			Set<String> forbiddenPrefix = new TreeSet<>();
 			forbiddenPrefix.add("xml:");
 			forbiddenPrefix.add("rdf:");
 			forbiddenPrefix.add("rdfs:");
@@ -401,12 +402,12 @@ public class OWL2Parser extends AbstractCloseableIterator<Object> implements Par
 			while (bodyIt.hasNext()) {
 				Atom a = bodyIt.next();
 				if (a.getPredicate().equals(Predicate.EQUALITY)
-					&& (!a.getTerm(0).isConstant() || !a.getTerm(1).isConstant())) {
+				    && (a.getTerm(0).isVariable() || a.getTerm(1).isVariable())) {
 					toRemove.add(a);
-					if (a.getTerm(0).isConstant()) {
-						s.put(a.getTerm(1), a.getTerm(0));
+					if (a.getTerm(1).isVariable()) {
+						s.put((Variable) a.getTerm(1), a.getTerm(0));
 					} else {
-						s.put(a.getTerm(0), a.getTerm(1));
+						s.put((Variable) a.getTerm(0), a.getTerm(1));
 					}
 				}
 			}

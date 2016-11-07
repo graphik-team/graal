@@ -54,6 +54,7 @@ import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
@@ -68,8 +69,8 @@ public class DefaultRule extends AbstractRule {
 	private InMemoryAtomSet head;
 
 	private Set<Term> terms = null;
-	private Set<Term> frontier = null;
-	private Set<Term> existentials = null;
+	private Set<Variable> frontier = null;
+	private Set<Variable> existentials = null;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
@@ -153,7 +154,7 @@ public class DefaultRule extends AbstractRule {
 	}
 
 	@Override
-	public Set<Term> getFrontier() {
+	public Set<Variable> getFrontier() {
 		if (this.frontier == null) {
 			this.computeFrontierAndExistentials();
 		}
@@ -162,7 +163,7 @@ public class DefaultRule extends AbstractRule {
 	}
 
 	@Override
-	public Set<Term> getExistentials() {
+	public Set<Variable> getExistentials() {
 		if (this.existentials == null) {
 			this.computeFrontierAndExistentials();
 		}
@@ -176,20 +177,20 @@ public class DefaultRule extends AbstractRule {
 	// /////////////////////////////////////////////////////////////////////////
 
 	private void computeFrontierAndExistentials() {
-		this.frontier = new TreeSet<Term>();
-		this.existentials = new TreeSet<Term>();
+		this.frontier = new TreeSet<Variable>();
+		this.existentials = new TreeSet<Variable>();
 		Collection<Term> body = this.getBody().getTerms(Type.VARIABLE);
 
 		for (Term termHead : this.getHead().getTerms(Type.VARIABLE)) {
 			boolean isExistential = true;
 			for (Term termBody : body) {
 				if (termBody.equals(termHead)) {
-					this.frontier.add(termHead);
+					this.frontier.add((Variable) termHead);
 					isExistential = false;
 				}
 			}
 			if (isExistential) {
-				this.existentials.add(termHead);
+				this.existentials.add((Variable) termHead);
 			}
 		}
 	}

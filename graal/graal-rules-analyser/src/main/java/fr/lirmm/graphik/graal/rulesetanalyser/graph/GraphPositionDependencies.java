@@ -58,6 +58,7 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.PredicatePosition;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
@@ -177,7 +178,7 @@ public class GraphPositionDependencies {
 
 	private void init() {
 		int bodyTermIndex, headTermIndex;
-		Set<Term> existentials;
+		Set<Variable> existentials;
 
 		for (Rule r : this.rules) {
 			existentials = r.getExistentials();

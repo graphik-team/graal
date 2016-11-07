@@ -48,6 +48,9 @@ import java.util.List;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
+import fr.lirmm.graphik.util.Partition;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -70,21 +73,39 @@ public final class Substitutions {
 		return new TreeMapSubstitution();
 	}
 
+	public static Substitution add(Substitution s1, Substitution s2) {
+		Substitution newSub = new TreeMapSubstitution(s1);
+		for (Variable term : s2.getTerms()) {
+			if (!newSub.put(term, s2.createImageOf(term))) {
+				return null;
+			}
+		}
+		return newSub;
+	}
+
+	public static Partition<Term> toPartition(Substitution s) {
+		Partition<Term> partition = new Partition<Term>();
+		for (Variable v : s.getTerms()) {
+			partition.add(v, s.createImageOf(v));
+		}
+		return partition;
+	}
+
 	/**
 	 * Create a new Atom which is the image of the specified atom by replacing
 	 * the specified term by the specified image.
 	 * 
 	 * @param atom
-	 * @param term
-	 *            the term to replace
+	 * @param var
+	 *            the variable to replace
 	 * @param image
 	 *            the image of the specified term
 	 * @return a new Atom which is the image of the specified atom.
 	 */
-	public static Atom createImageOf(Atom atom, Term term, Term image) {
+	public static Atom createImageOf(Atom atom, Variable var, Term image) {
 		List<Term> termsSubstitut = new LinkedList<Term>();
 		for (Term t : atom.getTerms()) {
-			if (term.equals(t)) {
+			if (var.equals(t)) {
 				termsSubstitut.add(image);
 			} else {
 				termsSubstitut.add(t);
@@ -92,6 +113,16 @@ public final class Substitutions {
 		}
 
 		return new DefaultAtom(atom.getPredicate(), termsSubstitut);
+	}
+
+	public static Substitution aggregate(Substitution s1, Substitution s2) {
+		Substitution newSub = SubstitutionFactory.instance().createSubstitution(s1);
+		for (Variable term : s2.getTerms()) {
+			if (!newSub.aggregate(term, s2.createImageOf(term))) {
+				return null;
+			}
+		}
+		return newSub;
 	}
 
 }

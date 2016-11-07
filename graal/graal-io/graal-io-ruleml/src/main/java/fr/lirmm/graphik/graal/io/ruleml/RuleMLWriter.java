@@ -66,6 +66,7 @@ import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.io.AbstractGraalWriter;
 import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
 import fr.lirmm.graphik.util.Prefix;
@@ -162,7 +163,7 @@ public class RuleMLWriter extends AbstractGraalWriter {
 	
 	@Override
 	public RuleMLWriter write(Rule rule) throws IOException {
-		Set<Term> existVar = rule.getExistentials();
+		Set<Variable> existVar = rule.getExistentials();
 		Set<Term> universalVar = rule.getTerms(Type.VARIABLE);
 		universalVar.removeAll(existVar);
 

@@ -56,7 +56,7 @@ import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.core.VariableGenerator;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
@@ -97,7 +97,7 @@ public class RestrictedChaseStopCondition implements ChaseHaltingCondition {
 		}
 		
 		// replace variables by fresh symbol
-		for (Term t : rule.getExistentials()) {
+		for (Variable t : rule.getExistentials()) {
 			substitution.put(t, data.getFreshSymbolGenerator().getFreshCst());
 		}
 		

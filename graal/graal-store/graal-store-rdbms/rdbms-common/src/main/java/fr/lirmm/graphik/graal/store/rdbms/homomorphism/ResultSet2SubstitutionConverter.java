@@ -49,6 +49,7 @@ import java.util.List;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.store.rdbms.RdbmsConjunctiveQueryTranslator;
 import fr.lirmm.graphik.util.stream.converter.ConversionException;
@@ -83,12 +84,12 @@ public class ResultSet2SubstitutionConverter implements Converter<ResultSet, Sub
 			Substitution substitution = new TreeMapSubstitution();
 			if (!ans.isEmpty()) {
 				for (Term t : ans) {
-					if (!t.isConstant()) {
+					if (t.isVariable()) {
 						int i = result.findColumn(t.getLabel());
 						int type = result.getMetaData().getColumnType(i);
 						String value = result.getString(i);
 						Term substitut = this.queryTranslator.createTermFromColumnType(type, value);
-						substitution.put(t, substitut);
+						substitution.put((Variable) t, substitut);
 					}
 				}
 			}

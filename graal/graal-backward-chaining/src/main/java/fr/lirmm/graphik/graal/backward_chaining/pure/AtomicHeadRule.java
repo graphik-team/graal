@@ -49,6 +49,7 @@ import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 
 /**
@@ -100,12 +101,12 @@ class AtomicHeadRule implements Rule {
 	}
 
 	@Override
-	public Set<Term> getFrontier() {
+	public Set<Variable> getFrontier() {
 		return this.rule.getFrontier();
 	}
 
 	@Override
-	public Set<Term> getExistentials() {
+	public Set<Variable> getExistentials() {
 		return this.rule.getExistentials();
 	}
 

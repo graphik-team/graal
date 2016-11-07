@@ -65,8 +65,8 @@ import fr.lirmm.graphik.util.NoProfiler;
 import fr.lirmm.graphik.util.Profilable;
 import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterableWithoutException;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
@@ -345,8 +345,6 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution>
 			if (t instanceof Variable) {
 				Var v = this.index.get((Variable) t);
 				s.put(v.value, v.image);
-			} else {
-				s.put(t, t);
 			}
 		}
 

@@ -42,14 +42,12 @@
  */
 package fr.lirmm.graphik.graal.core;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.util.Partition;
+import fr.lirmm.graphik.graal.api.core.Variable;
 
 /**
  * An implementation of Susbstitution using a {@link TreeMap}
@@ -59,7 +57,7 @@ import fr.lirmm.graphik.util.Partition;
  */
 public class TreeMapSubstitution extends AbstractSubstitution {
 
-	private TreeMap<Term, Term> map = new TreeMap<Term, Term>();
+	private TreeMap<Variable, Term> map = new TreeMap<Variable, Term>();
 
 	public TreeMapSubstitution() {
 		super();
@@ -67,30 +65,24 @@ public class TreeMapSubstitution extends AbstractSubstitution {
 
 	public TreeMapSubstitution(Substitution substitution) {
 		super();
-		for (Term term : substitution.getTerms())
+		for (Variable term : substitution.getTerms())
 			this.map.put(term, substitution.createImageOf(term));
 	}
 
-	public TreeMapSubstitution(Partition<Term> partition) {
-		super();
-		Iterator<ArrayList<Term>> it = partition.iterator();
-		while (it.hasNext()) {
-			ArrayList<Term> a = it.next();
-			Iterator<Term> it2 = a.iterator();
-
-			Term representant = null;
-			if (it2.hasNext()) {
-				representant = it2.next();
-				while (it2.hasNext()) {
-					this.put(it2.next(), representant);
-				}
-			}
-
-		}
-	}
+	/*
+	 * public TreeMapSubstitution(Partition<Term> partition) { throw new
+	 * MethodNotImplementedError(); /* super(); Iterator<ArrayList<Term>> it =
+	 * partition.iterator(); while (it.hasNext()) { ArrayList<Term> a =
+	 * it.next(); Iterator<Term> it2 = a.iterator();
+	 * 
+	 * Term representant = null; if (it2.hasNext()) { representant = it2.next();
+	 * while (it2.hasNext()) { this.put(it2.next(), representant); } }
+	 *
+	 * }
+	 */
 
 	@Override
-	protected Map<Term, Term> getMap() {
+	protected Map<Variable, Term> getMap() {
 		return this.map;
 	}
 

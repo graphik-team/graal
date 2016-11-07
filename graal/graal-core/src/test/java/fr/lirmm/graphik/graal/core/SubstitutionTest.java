@@ -53,6 +53,7 @@ import org.junit.runner.RunWith;
 
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 
 /**
@@ -62,11 +63,11 @@ import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 @RunWith(Theories.class)
 public class SubstitutionTest {
 	
-	private static final Term X = DefaultTermFactory.instance().createVariable(
+	private static final Variable X = DefaultTermFactory.instance().createVariable(
 			"X");
-	private static final Term Y = DefaultTermFactory.instance().createVariable(
+	private static final Variable Y = DefaultTermFactory.instance().createVariable(
 			"Y");
-	private static final Term Z = DefaultTermFactory.instance().createVariable(
+	private static final Variable Z = DefaultTermFactory.instance().createVariable(
 			"Z");
 	
 	private static final Term A = DefaultTermFactory.instance().createConstant(
@@ -76,7 +77,7 @@ public class SubstitutionTest {
 	
 	@DataPoints
 	public static Substitution[] substitution() {
-		return new Substitution[] {new HashMapSubstitution()};
+		return new Substitution[] { new HashMapSubstitution(), new TreeMapSubstitution() };
 	}
 
 	@Theory
@@ -87,28 +88,28 @@ public class SubstitutionTest {
 		s2.put(X,Y);
 		s2.put(Y,Z);
 		
-		Substitution composition = s1.compose(s2);
-		Assert.assertNotNull(composition);
+		Substitution aggregation = s1.aggregate(s2);
+		Assert.assertNotNull(aggregation);
 
-		Assert.assertEquals(A, composition.createImageOf(X));
-		Assert.assertEquals(A, composition.createImageOf(Y));
-		Assert.assertEquals(A, composition.createImageOf(Z));
+		Assert.assertEquals(A, aggregation.createImageOf(X));
+		Assert.assertEquals(A, aggregation.createImageOf(Y));
+		Assert.assertEquals(A, aggregation.createImageOf(Z));
 	}
 	
 	@Theory
 	public void aggregateTest1Inverse(Substitution s1, Substitution s2)  {
-		s1.put(X,Y);
+		s1.put(X,Z);
 		s1.put(Y,Z);
 		
 		s2.put(Z,A);
 		s2.put(Y,A);
 		
-		Substitution composition = s1.compose(s2);
-		Assert.assertNotNull(composition);
+		Substitution aggregation = s1.aggregate(s2);
+		Assert.assertNotNull(aggregation);
 		
-		Assert.assertEquals(A, composition.createImageOf(X));
-		Assert.assertEquals(A, composition.createImageOf(Y));
-		Assert.assertEquals(A, composition.createImageOf(Z));
+		Assert.assertEquals(A, aggregation.createImageOf(X));
+		Assert.assertEquals(A, aggregation.createImageOf(Y));
+		Assert.assertEquals(A, aggregation.createImageOf(Z));
 	}
 
 	@Theory
@@ -119,12 +120,12 @@ public class SubstitutionTest {
 		s2.put(Y,X);
 		s2.put(Z,X);
 		
-		Substitution composition = s1.compose(s2);
-		Assert.assertNotNull(composition);
+		Substitution aggregation = s1.aggregate(s2);
+		Assert.assertNotNull(aggregation);
 		
-		Assert.assertEquals(A, composition.createImageOf(X));
-		Assert.assertEquals(A, composition.createImageOf(Y));
-		Assert.assertEquals(A, composition.createImageOf(Z));
+		Assert.assertEquals(A, aggregation.createImageOf(X));
+		Assert.assertEquals(A, aggregation.createImageOf(Y));
+		Assert.assertEquals(A, aggregation.createImageOf(Z));
 	}
 	
 	@Theory
@@ -135,18 +136,18 @@ public class SubstitutionTest {
 		s2.put(Y,A);
 		s2.put(Z,A);
 		
-		Substitution composition = s1.compose(s2);
-		Assert.assertNotNull(composition);
+		Substitution aggregation = s1.aggregate(s2);
+		Assert.assertNotNull(aggregation);
 		
-		Assert.assertEquals(A, composition.createImageOf(X));
-		Assert.assertEquals(A, composition.createImageOf(Y));
-		Assert.assertEquals(A, composition.createImageOf(Z));
+		Assert.assertEquals(A, aggregation.createImageOf(X));
+		Assert.assertEquals(A, aggregation.createImageOf(Y));
+		Assert.assertEquals(A, aggregation.createImageOf(Z));
 	}
 	
 	@Theory
 	public void aggregateTest3(Substitution s1)  {
 		s1.put(X,A);
-		s1.compose(X,Y);
+		s1.aggregate(X,Y);
 		
 		Assert.assertNotNull(s1);
 		
@@ -159,8 +160,8 @@ public class SubstitutionTest {
 		s1.put(X,A);
 		s2.put(X,B);
 		
-		Substitution composition = s1.compose(s2);
-		Assert.assertNull(composition);
+		Substitution aggregation = s1.aggregate(s2);
+		Assert.assertNull(aggregation);
 	}
 	
 }

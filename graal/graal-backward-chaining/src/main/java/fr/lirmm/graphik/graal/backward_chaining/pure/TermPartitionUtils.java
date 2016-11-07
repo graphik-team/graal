@@ -50,6 +50,7 @@ import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
 import fr.lirmm.graphik.util.Partition;
 
@@ -134,41 +135,44 @@ final class TermPartitionUtils {
 	 */
 	public static Substitution getAssociatedSubstitution(Partition<Term> partition, ConjunctiveQuery context) {
 		Substitution substitution = SubstitutionFactory.instance().createSubstitution();
-		// we will choose a representant for all the equivalence set of the
+		// we will choose a representative for all the equivalence set of the
 		// partition
 		for (Collection<Term> set : partition) {
 
 			Iterator<Term> i = set.iterator();
-			Term representant = i.next();
+			Term representative = i.next();
 			while (i.hasNext()) {
 				Term t = i.next();
-				// t and the current representant are different
-				if (!representant.equals(t)) {
+				// t and the current representative are different
+				if (representative.equals(t)) {
+					i.remove();
+				} else {
 					if (t.isConstant()) {
-						// representant is a different constant
-						if (representant.isConstant()) {
+						// representative is a different constant
+						if (representative.isConstant()) {
 							return null;
 						} else {
-							representant = t;
+							representative = t;
 						}
-					}// the current representant is a variable
-					else if (!representant.isConstant()) {
+					} else if (representative.isVariable()) {
 						// t is a variable from the answer
 						if (context != null
-						    && !context.getAnswerVariables().contains(representant)
+						    && !context.getAnswerVariables().contains(representative)
 						    && context.getAtomSet().getTerms().contains(t)) {
-							representant = t;
+							representative = t;
 						}
 					}
-				} else {
-					i.remove();
 				}
 			}
 			// all the terms in the equivalence set have as image the
-			// representant of the equivalence set
-			for (Term t : set)
-				if (!t.equals(representant))
-					substitution.put(t, representant);
+			// representative of the equivalence set
+			for (Term t : set) {
+				if (!t.equals(representative)) {
+					if (t.isVariable()) {
+						substitution.put((Variable) t, representative);
+					}
+				}
+			}
 
 		}
 		return substitution;

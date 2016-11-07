@@ -45,6 +45,7 @@
  */
 package fr.lirmm.graphik.graal.core;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +59,7 @@ import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
@@ -71,10 +73,10 @@ import fr.lirmm.graphik.util.stream.IteratorException;
  */
 public abstract class AbstractSubstitution implements Substitution {
 
-	protected abstract Map<Term, Term> getMap();
+	protected abstract Map<Variable, Term> getMap();
 
 	@Override
-	public Set<Term> getTerms() {
+	public Set<Variable> getTerms() {
 		return this.getMap().keySet();
 	}
 
@@ -90,20 +92,37 @@ public abstract class AbstractSubstitution implements Substitution {
 	}
 
 	@Override
-	public boolean put(Term term, Term substitut) {
-		if (term.isConstant() && substitut.isConstant()
-				&& !term.equals(substitut)) {
+	public List<Term> createImageOf(List<Term> terms) {
+		List<Term> l = new ArrayList<Term>(terms.size());
+		for (Term t : terms) {
+			l.add(this.createImageOf(t));
+		}
+		return l;
+	}
+
+	@Override
+	public boolean put(Variable term, Term substitute) {
+		Term actualSubstitute = this.getMap().get(term);
+		if (actualSubstitute != null && !actualSubstitute.equals(substitute)) {
 			return false;
 		}
-		this.getMap().put(term, substitut);
+		this.getMap().put(term, substitute);
 		return true;
 	}
 
 	@Override
-	public void put(Substitution substitution) {
-		for (Term term : substitution.getTerms()) {
-			this.put(term, substitution.createImageOf(term));
+	public boolean remove(Variable term) {
+		return this.getMap().remove(term) != null;
+	}
+
+	@Override
+	public boolean put(Substitution substitution) {
+		for (Variable term : substitution.getTerms()) {
+			if (!this.put(term, substitution.createImageOf(term))) {
+				return false;
+			}
 		}
+		return true;
 	}
 
 	@Override
@@ -160,41 +179,39 @@ public abstract class AbstractSubstitution implements Substitution {
 	}
 
 	@Override
-	public boolean compose(Term term, Term substitut) {
+	public boolean aggregate(Variable term, Term substitut) {
 		Term termSubstitut = this.createImageOf(term);
 		Term substitutSubstitut = this.createImageOf(substitut);
 
-		if (Term.Type.CONSTANT.equals(termSubstitut.getType())) {
-			Term tmp = termSubstitut;
-			termSubstitut = substitutSubstitut;
-			substitutSubstitut = tmp;
-		}
-
-		for (Term t : this.getTerms()) {
-			if (termSubstitut.equals(this.createImageOf(t))) {
-				if (!this.put(t, substitutSubstitut)) {
-					return false;
+		if (!termSubstitut.equals(substitutSubstitut)) {
+			if (termSubstitut.isConstant()) {
+				if (substitutSubstitut.isConstant()) {
+					return substitutSubstitut.equals(termSubstitut);
+				} else {
+					Term tmp = termSubstitut;
+					termSubstitut = substitutSubstitut;
+					substitutSubstitut = tmp;
 				}
 			}
-		}
 
-		if (!this.put(termSubstitut, substitutSubstitut)) {
-			return false;
+			for (Variable t : this.getTerms()) {
+				Term image = this.createImageOf(t);
+				if (termSubstitut.equals(image) && !t.equals(substitutSubstitut)) {
+					this.getMap().put(t, substitutSubstitut);
+				}
+			}
+
+			this.getMap().put((Variable) termSubstitut, substitutSubstitut);
 		}
 		return true;
 	}
 
 	@Override
-	public Substitution compose(Substitution s) {
+	public Substitution aggregate(Substitution s) {
 		Substitution newSub = SubstitutionFactory.instance()
-				.createSubstitution();
-		for (Term term : this.getTerms()) {
-			if (!newSub.compose(term, this.createImageOf(term))) {
-				return null;
-			}
-		}
-		for (Term term : s.getTerms()) {
-			if (!newSub.compose(term, s.createImageOf(term))) {
+		                                         .createSubstitution(this);
+		for (Variable term : s.getTerms()) {
+			if (!newSub.aggregate(term, s.createImageOf(term))) {
 				return null;
 			}
 		}
@@ -270,8 +287,8 @@ public abstract class AbstractSubstitution implements Substitution {
 
 	@Override
 	public int compareTo(Substitution other) {
-		Set<Term> set = this.getTerms();
-		Set<Term> otherset = other.getTerms();
+		Set<Variable> set = this.getTerms();
+		Set<Variable> otherset = other.getTerms();
 		if (set.size() != otherset.size()) {
 			return set.size() - otherset.size();
 		}

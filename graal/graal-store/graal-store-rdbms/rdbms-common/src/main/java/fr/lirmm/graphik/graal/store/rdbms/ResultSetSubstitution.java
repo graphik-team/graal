@@ -46,6 +46,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 
@@ -63,7 +64,7 @@ class ResultSetSubstitution extends TreeMapSubstitution {
 		try {
 			for (int i = 1; i <= metaData.getColumnCount(); ++i) {
 
-				Term term = DefaultTermFactory.instance().createVariable(metaData.getColumnLabel(i));
+				Variable term = DefaultTermFactory.instance().createVariable(metaData.getColumnLabel(i));
 				Term substitut = store.getTerm(results.getString(i));
 				this.put(term, substitut);
 			}

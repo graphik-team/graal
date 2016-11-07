@@ -49,6 +49,7 @@ import java.util.Set;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
@@ -85,7 +86,7 @@ public final class FrontierGuardedProperty extends RuleSetProperty.Local {
 	
 	@Override
 	public int check(Rule rule) {
-		Set<Term> frontier = rule.getFrontier();
+		Set<Variable> frontier = rule.getFrontier();
 		boolean isGuarded = true;
 
 		CloseableIteratorWithoutException<Atom> it = rule.getBody().iterator();

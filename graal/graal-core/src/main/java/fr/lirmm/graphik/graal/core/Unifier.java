@@ -56,6 +56,7 @@ import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.LinkedSet;
@@ -157,7 +158,7 @@ public class Unifier {
 
 		for (Term t1 : rule.getTerms(Term.Type.VARIABLE)) {
 			Term t1b = DefaultTermFactory.instance().createVariable("D::" + t1.getIdentifier().toString());
-			s.put(t1, t1b);
+			s.put((Variable) t1, t1b);
 		}
 
 		return s;
@@ -168,7 +169,7 @@ public class Unifier {
 
 		for (Term t2 : set.getTerms(Term.Type.VARIABLE)) {
 			Term t2b = DefaultTermFactory.instance().createVariable("R::" + t2.getIdentifier().toString());
-			s.put(t2, t2b);
+			s.put((Variable) t2, t2b);
 		}
 
 		return s;
@@ -186,8 +187,8 @@ public class Unifier {
 	                                                      Filter<Substitution> filter) {
 		atomset.remove(pieceElement);
 		Collection<Substitution> unifierCollection = new LinkedList<Substitution>();
-		Set<Term> frontierVars = rule.getFrontier();
-		Set<Term> existentialVars = rule.getExistentials();
+		Set<Variable> frontierVars = rule.getFrontier();
+		Set<Variable> existentialVars = rule.getExistentials();
 
 		CloseableIteratorWithoutException<Atom> it = rule.getHead().iterator();
 		while (it.hasNext()) {
@@ -232,8 +233,8 @@ public class Unifier {
 	                                            Filter<Substitution> filter) {
 		atomset.remove(pieceElement);
 		Collection<Substitution> unifierCollection = new LinkedList<Substitution>();
-		Set<Term> frontierVars = rule.getFrontier();
-		Set<Term> existentialVars = rule.getExistentials();
+		Set<Variable> frontierVars = rule.getFrontier();
+		Set<Variable> existentialVars = rule.getExistentials();
 
 		CloseableIteratorWithoutException<Atom> it = rule.getHead().iterator();
 		while (it.hasNext()) {
@@ -271,7 +272,7 @@ public class Unifier {
 	}
 
 	private static Substitution unifier(Substitution baseUnifier, Atom a1,
-			Atom a2, Set<Term> frontierVars, Set<Term> existentialVars) {
+	    Atom a2, Set<Variable> frontierVars, Set<Variable> existentialVars) {
 		if (a1.getPredicate().equals(a2.getPredicate())) {
 			boolean error = false;
 			Substitution u = SubstitutionFactory.instance().createSubstitution();
@@ -290,8 +291,8 @@ public class Unifier {
 		return null;
 	}
 
-	private static boolean compose(Substitution u, Set<Term> frontierVars,
-			Set<Term> existentials, Term term, Term substitut) {
+	private static boolean compose(Substitution u, Set<Variable> frontierVars, Set<Variable> existentials, Term term,
+	    Term substitut) {
 		Term termSubstitut = u.createImageOf(term);
 		Term substitutSubstitut = u.createImageOf(substitut);
 
@@ -317,8 +318,8 @@ public class Unifier {
 		return true;
 	}
 
-	private static boolean put(Substitution u, Set<Term> frontierVars,
-			Set<Term> existentials, Term term, Term substitut) {
+	private static boolean put(Substitution u, Set<Variable> frontierVars, Set<Variable> existentials, Term term,
+	    Term substitut) {
 		if (!term.equals(substitut)) {
 			// two (constant | existentials vars)
 			if (term.isConstant()
@@ -329,8 +330,9 @@ public class Unifier {
 					&& existentials.contains(substitut)) {
 				return false;
 			}
+			u.put((Variable) term, substitut);
 		}
-		return u.put(term, substitut);
+		return true;
 	}
 
 }

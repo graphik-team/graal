@@ -58,13 +58,14 @@ import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.HashMapSubstitution;
 import fr.lirmm.graphik.util.Profiler;
+import fr.lirmm.graphik.util.stream.CloseableIterableWithoutException;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
-import fr.lirmm.graphik.util.stream.CloseableIterableWithoutException;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
@@ -151,6 +152,7 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
 	 * @return
 	 * @throws HomomorphismException
 	 */
+	@Override
 	public boolean exist(ConjunctiveQuery query, AtomSet data) throws HomomorphismException {
 		try {
 			InMemoryAtomSet atomSet1 = query.getAtomSet();
@@ -202,18 +204,22 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
 		if (orderedVars.size() == 0) {
 			Substitution filteredSub = new HashMapSubstitution();
 			for (Term var : query.getAnswerVariables()) {
-				filteredSub.put(var, substitution.createImageOf(var));
+				if (var.isVariable()) {
+					filteredSub.put((Variable) var, substitution.createImageOf(var));
+				}
 			}
 			substitutionList.add(filteredSub);
 		} else {
 			Term var = orderedVars.remove(0);
-			for (Term substitut : domain) {
-				Substitution tmpSubstitution = new HashMapSubstitution(substitution);
-				tmpSubstitution.put(var, substitut);
-				// Test partial homomorphism
-				if (isHomomorphism(queryAtomRanked[rank], facts, tmpSubstitution))
-					substitutionList.addAll(homomorphism(query, queryAtomRanked, facts, tmpSubstitution,
-							new LinkedList<Term>(orderedVars), rank + 1));
+			if (var.isVariable()) {
+				for (Term substitut : domain) {
+					Substitution tmpSubstitution = new HashMapSubstitution(substitution);
+					tmpSubstitution.put((Variable) var, substitut);
+					// Test partial homomorphism
+					if (isHomomorphism(queryAtomRanked[rank], facts, tmpSubstitution))
+						substitutionList.addAll(homomorphism(query, queryAtomRanked, facts, tmpSubstitution,
+						    new LinkedList<Term>(orderedVars), rank + 1));
+				}
 			}
 
 		}
@@ -244,17 +250,18 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
 			Set<Term> domaine = atomSet2.getTerms();
 
 			var = orderedVars.remove(0);
-			for (Term substitut : domaine) {
-				Substitution tmpSubstitution = new HashMapSubstitution(substitution);
-				tmpSubstitution.put(var, substitut);
-				// Test partial homomorphism
-				if (isHomomorphism(queryAtomRanked[rank], atomSet2, tmpSubstitution))
-					if (existHomomorphism(atomSet1, queryAtomRanked, atomSet2, tmpSubstitution, new LinkedList<Term>(
-							orderedVars), rank + 1)) {
-						return true;
-					}
+			if (var.isVariable()) {
+				for (Term substitut : domaine) {
+					Substitution tmpSubstitution = new HashMapSubstitution(substitution);
+					tmpSubstitution.put((Variable) var, substitut);
+					// Test partial homomorphism
+					if (isHomomorphism(queryAtomRanked[rank], atomSet2, tmpSubstitution))
+						if (existHomomorphism(atomSet1, queryAtomRanked, atomSet2, tmpSubstitution,
+						    new LinkedList<Term>(orderedVars), rank + 1)) {
+							return true;
+						}
+				}
 			}
-
 		}
 		return false;
 	}
