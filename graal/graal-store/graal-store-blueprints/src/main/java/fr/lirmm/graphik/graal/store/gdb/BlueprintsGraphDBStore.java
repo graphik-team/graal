@@ -162,6 +162,7 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 		while (it.hasNext()) {
 			terms.add(it.next());
 		}
+		it.close();
 		return new CloseableIteratorAdapter<Term>(terms.iterator());
 	}
 

@@ -116,6 +116,7 @@ public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements InMemo
 		while (it.hasNext()) {
 			terms.add(it.next());
 		}
+		it.close();
 		return new CloseableIteratorAdapter<Term>(terms.iterator());
 	}
 
