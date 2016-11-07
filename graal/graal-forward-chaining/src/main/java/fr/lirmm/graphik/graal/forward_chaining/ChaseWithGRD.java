@@ -45,7 +45,8 @@
  */
 package fr.lirmm.graphik.graal.forward_chaining;
 
-import java.util.TreeSet;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +73,7 @@ public class ChaseWithGRD extends AbstractChase {
 	
 	private GraphOfRuleDependencies grd;
 	private AtomSet atomSet;
-	private TreeSet<Rule> queue = new TreeSet<Rule>();
+	private Queue<Rule> queue = new LinkedList<Rule>();
 	
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
@@ -97,11 +98,9 @@ public class ChaseWithGRD extends AbstractChase {
 
 	@Override
 	public void next() throws ChaseException {
-		System.out.println(queue);
 		Rule rule;
 		try {
-			rule = queue.pollFirst();
-			System.out.println(rule);
+			rule = queue.poll();
 			if(rule != null) {
 				String key = null;
 				if (this.getProfiler() != null && this.getProfiler().isProfilingEnabled()) {
@@ -115,8 +114,9 @@ public class ChaseWithGRD extends AbstractChase {
 						if(LOGGER.isDebugEnabled()) {
 							LOGGER.debug("-- -- Dependency: " + triggeredRule);
 						}
-						System.out.println("toAdd: " + triggeredRule);
-						this.queue.add(triggeredRule);
+						if (!this.queue.contains(triggeredRule)) {
+							this.queue.add(triggeredRule);
+						}
 					}
 				}
 				if (this.getProfiler() != null && this.getProfiler().isProfilingEnabled()) {
