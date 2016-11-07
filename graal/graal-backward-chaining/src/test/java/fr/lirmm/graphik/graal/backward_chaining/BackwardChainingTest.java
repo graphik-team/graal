@@ -40,9 +40,10 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- package fr.lirmm.graphik.graal.backward_chaining;
+package fr.lirmm.graphik.graal.backward_chaining;
 
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.experimental.theories.DataPoints;
@@ -52,6 +53,7 @@ import org.junit.runner.RunWith;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
@@ -77,6 +79,8 @@ import fr.lirmm.graphik.util.stream.Iterators;
  */
 @RunWith(Theories.class)
 public class BackwardChainingTest {
+
+	private static final boolean DEBUG = false;
 
 	@DataPoints
 	public static RulesCompilation[] compilations() {
@@ -147,16 +151,15 @@ public class BackwardChainingTest {
 		rules.add(DlgpParser.parseRule("q(Y,X) :- p(X,Y)."));
 		rules.add(DlgpParser.parseRule("p(X,Y) :- q(Y,X)."));
 
-		ConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y,Z) :- p(X, Y), q(Y,Z).");
+		ConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y,Z) :- p(X,Y), q(Y,Z).");
 
 		compilation.compile(rules.iterator());
 		PureRewriter bc = new PureRewriter(operator, true);
 		CloseableIterator<? extends ConjunctiveQuery> it = bc.execute(query, rules, compilation);
-		
-		int i = Iterators.count(it);
+		int i = count(it);
 		Assert.assertEquals(4, i);
 	}
-	
+
 	@Theory
 	public void queriesCover(RulesCompilation compilation, RewritingOperator operator) throws IteratorException {
 		RuleSet rules = new LinkedListRuleSet();
@@ -260,12 +263,27 @@ public class BackwardChainingTest {
 		compilation.compile(rules.iterator());
 		PureRewriter bc = new PureRewriter(operator, true);
 		CloseableIterator<? extends ConjunctiveQuery> it = bc.execute(query, rules, compilation);
-		
+
 		int i = Iterators.count(it);
 		Assert.assertEquals(3, i);
 	}
 
-
+	/**
+	 * Given 
+	 *     p(X,Y) :- q(X,Y). 
+	 *     q(X,Y) :- a(X), p(X,Y). 
+	 * Then rewrite(?(X) :-
+	 *     q(X,Y), p(Y,Z).) 
+	 * Return 
+	 *     ?(X) :- q(X,Y), p(Y,Z). 
+	 *     ?(X) :- a(X), p(X,Y), p(Y,Z). 
+	 *     ?(X) :- q(X,Y), q(Y,Z). 
+	 *     ?(X) :- a(X), p(X,Y), q(Y,Z).
+	 * 
+	 * @param compilation
+	 * @param operator
+	 * @throws IteratorException
+	 */
 	@Theory
 	public void issue22(RulesCompilation compilation, RewritingOperator operator) throws IteratorException {
 		RuleSet rules = new LinkedListRuleSet();
@@ -277,9 +295,103 @@ public class BackwardChainingTest {
 		compilation.compile(rules.iterator());
 		PureRewriter bc = new PureRewriter(operator, true);
 		CloseableIterator<? extends ConjunctiveQuery> it = bc.execute(query, rules, compilation);
-		
-		int i = Iterators.count(it);
+
+		int i = count(it);
 		Assert.assertEquals(4, i);
+	}
+
+	@Theory
+	public void issue34_1(RulesCompilation compilation, RewritingOperator operator) throws IteratorException {
+		try {
+			RuleSet rules = new LinkedListRuleSet();
+			rules.add(DlgpParser.parseRule("p(X,Y) :- q(Y,X)."));
+			rules.add(DlgpParser.parseRule("r(X,Z) :- p(X,Y)."));
+			rules.add(DlgpParser.parseRule("r(X,Z) :- q(X,Y)."));
+
+			ConjunctiveQuery query = DlgpParser.parseQuery("? :- r(a,Y).");
+
+			compilation.compile(rules.iterator());
+			PureRewriter bc = new PureRewriter(operator, true);
+			CloseableIterator<? extends ConjunctiveQuery> it = bc.execute(query, rules, compilation);
+
+			int i = Iterators.count(it);
+			Assert.assertEquals(4, i);
+		} catch (Throwable t) {
+			Assert.assertFalse("There is an error.", true);
+		}
+	}
+
+	@Theory
+	public void issue34_2(RulesCompilation compilation, RewritingOperator operator) throws IteratorException {
+		try {
+			System.out.println(compilation.getClass() + "//" + operator.getClass());
+			RuleSet rules = new LinkedListRuleSet();
+			rules.add(DlgpParser.parseRule("q(X,Y,X) :- p(X,Y)."));
+			rules.add(DlgpParser.parseRule("r(Z,T) :- q(X,Y,Z)."));
+
+			ConjunctiveQuery query = DlgpParser.parseQuery("? :- r(a,X),p(a,b).");
+
+			compilation.compile(rules.iterator());
+			PureRewriter bc = new PureRewriter(operator, true);
+			CloseableIterator<? extends ConjunctiveQuery> it = bc.execute(query, rules, compilation);
+
+			int i = Iterators.count(it);
+			Assert.assertEquals(1, i);
+		} catch (Throwable t) {
+			Assert.assertFalse("There is an error.", true);
+		}
+	}
+
+	@Theory
+	public void issue35(RulesCompilation compilation, RewritingOperator operator) throws IteratorException {
+		try {
+			RuleSet rules = new LinkedListRuleSet();
+			Predicate p = new Predicate("p", 2);
+			Predicate q = new Predicate("q", 3);
+			Predicate r = new Predicate("r", 2);
+
+			rules.add(DlgpParser.parseRule("q(X,Y,X) :- p(X,Y)."));
+
+			ConjunctiveQuery query = DlgpParser.parseQuery("? :- q(X,Y,Y), r(X,Y).");
+
+			compilation.compile(rules.iterator());
+			PureRewriter bc = new PureRewriter(operator, true);
+			CloseableIterator<? extends ConjunctiveQuery> it = bc.execute(query, rules, compilation);
+
+			int i = 0;
+			while (it.hasNext()) {
+				ConjunctiveQuery next = it.next();
+				InMemoryAtomSet atomSet = next.getAtomSet();
+				Set<Predicate> predicates = atomSet.getPredicates();
+				Assert.assertTrue(predicates.contains(r));
+				if (predicates.contains(p)) {
+					Assert.assertEquals(1, atomSet.getTerms().size());
+				} else if (predicates.contains(q)) {
+					Assert.assertEquals(query, next);
+				} else {
+					Assert.assertFalse(true);
+				}
+				++i;
+			}
+			Assert.assertEquals(2, i);
+		} catch (Exception e) {
+			Assert.assertFalse("There is an error.", true);
+		}
+	}
+
+	public static int count(CloseableIterator<?> it) throws IteratorException {
+		if (DEBUG) {
+			System.out.println("###############################################");
+		}
+		int i = 0;
+		while (it.hasNext()) {
+			Object next = it.next();
+			if (DEBUG) {
+				System.out.println(next);
+			}
+			++i;
+		}
+		return i;
 	}
 
 }

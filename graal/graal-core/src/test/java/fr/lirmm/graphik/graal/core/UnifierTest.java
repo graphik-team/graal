@@ -62,6 +62,10 @@ import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
  */
 public class UnifierTest {
 	
+	/**
+	 * Given s(X) -> p(X,Y), p(Y,Z). and p(U,V),p(V,W). computePieceUnifier
+	 * should return {X->U, Y->V, Z->W}
+	 */
 	@Test
 	public void pieceUnifierTest1() {
 		Rule rule = DefaultRuleFactory.instance().create();

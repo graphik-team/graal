@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -49,20 +49,15 @@ import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
-import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
-import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.compilation.IDCompilation;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
-import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
@@ -70,63 +65,16 @@ import fr.lirmm.graphik.util.stream.IteratorException;
  *
  */
 @RunWith(Theories.class)
-public class HomomorphismWithCompilationTest {
+public class PureHomomorphismTest {
 
 	@DataPoints
-	public static HomomorphismWithCompilation[] homomorphisms() {
-		return TestUtil.getHomomorphismsWithCompilation();
+	public static HomomorphismWithCompilation[] writeableStore() {
+		HomomorphismWithCompilation[] array = {PureHomomorphism.instance()};
+		return array;
 	}
 
 	@Theory
-	public void test1(HomomorphismWithCompilation<ConjunctiveQuery, AtomSet> h)
-	    throws HomomorphismException, IteratorException {
-		InMemoryAtomSet store = new LinkedListAtomSet();
-
-		store.add(DlgpParser.parseAtom("p(a)."));
-
-		RuleSet rules = new LinkedListRuleSet();
-		rules.add(DlgpParser.parseRule("q(X) :- p(X)."));
-
-		RulesCompilation comp = new IDCompilation();
-		comp.compile(rules.iterator());
-
-		CloseableIterator<Substitution> results = h.execute(DlgpParser.parseQuery("?(X) :- q(X)."), store, comp);
-		Assert.assertTrue(results.hasNext());
-		Substitution next = results.next();
-		Assert.assertEquals(DefaultTermFactory.instance().createConstant("a"),
-		    next.createImageOf(DefaultTermFactory.instance().createVariable("X")));
-		Assert.assertFalse(results.hasNext());
-		results.close();
-	}
-
-	@Theory
-	public void test2(HomomorphismWithCompilation<ConjunctiveQuery, AtomSet> h)
-	    throws HomomorphismException, IteratorException {
-		InMemoryAtomSet store = new LinkedListAtomSet();
-
-		store.add(DlgpParser.parseAtom("p(a,b)."));
-
-		RuleSet rules = new LinkedListRuleSet();
-		rules.add(DlgpParser.parseRule("q(X,Y) :- p(Y,X)."));
-
-		RulesCompilation comp = new IDCompilation();
-		comp.compile(rules.iterator());
-
-		CloseableIterator<Substitution> results = h.execute(DlgpParser.parseQuery("?(X,Y) :- q(X,Y)."), store, comp);
-
-		Assert.assertTrue(results.hasNext());
-		Substitution next = results.next();
-		Assert.assertEquals(DefaultTermFactory.instance().createConstant("a"),
-		    next.createImageOf(DefaultTermFactory.instance().createVariable("Y")));
-		Assert.assertEquals(DefaultTermFactory.instance().createConstant("b"),
-		    next.createImageOf(DefaultTermFactory.instance().createVariable("X")));
-		Assert.assertFalse(results.hasNext());
-
-		results.close();
-	}
-
-	@Theory
-	public void issue34(HomomorphismWithCompilation<ConjunctiveQuery, AtomSet> h)
+	public void issue34(HomomorphismWithCompilation<InMemoryAtomSet, AtomSet> h)
 	    throws HomomorphismException, IteratorException {
 		InMemoryAtomSet query1 = new LinkedListAtomSet();
 		query1.add(DlgpParser.parseAtom("p(a,Y)."));
@@ -140,30 +88,7 @@ public class HomomorphismWithCompilationTest {
 		RulesCompilation comp = new IDCompilation();
 		comp.compile(rules.iterator());
 
-		CloseableIterator<Substitution> results = h.execute(new DefaultConjunctiveQuery(query1), facts, comp);
-
-		Assert.assertFalse(results.hasNext());
-		results.close();
-	}
-
-	@Theory
-	public void issue35(HomomorphismWithCompilation<ConjunctiveQuery, AtomSet> h)
-	    throws HomomorphismException, IteratorException {
-		InMemoryAtomSet facts = new LinkedListAtomSet();
-		facts.addAll(DlgpParser.parseAtomSet("p(a,a), r(a,b,b)."));
-
-		RuleSet rules = new LinkedListRuleSet();
-		rules.add(DlgpParser.parseRule("q(X,Y,X) :- p(X,Y)."));
-
-		ConjunctiveQuery query = DlgpParser.parseQuery("? :- q(X,Y,Y), r(X,Y,Z).");
-		RulesCompilation comp = new IDCompilation();
-		comp.compile(rules.iterator());
-
-		CloseableIterator<Substitution> results = h.execute(new DefaultConjunctiveQuery(query), facts, comp);
-
-		Assert.assertFalse(results.hasNext());
-		results.close();
-
+		Assert.assertFalse(h.exist(query1, facts, comp));
 	}
 
 }
