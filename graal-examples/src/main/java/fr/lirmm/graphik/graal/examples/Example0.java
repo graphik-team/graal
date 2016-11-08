@@ -47,6 +47,7 @@ package fr.lirmm.graphik.graal.examples;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Scanner;
 
 import fr.lirmm.graphik.graal.api.backward_chaining.QueryRewriter;
@@ -68,7 +69,7 @@ import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
-import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
+import fr.lirmm.graphik.graal.store.rdbms.adhoc.AdHocRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.HSQLDBDriver;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
@@ -80,7 +81,7 @@ public class Example0 {
 
 	public static void main(String args[]) throws ChaseException, IOException,
  HomomorphismFactoryException,
-	                                      HomomorphismException, AtomSetException {
+	    HomomorphismException, AtomSetException, SQLException {
 
 		// 0 - Create a Dlgp writer and a structure to store rules.
 		writer = new DlgpWriter();
@@ -88,7 +89,7 @@ public class Example0 {
 
 		// 1 - Create a relational database store with HSQLDB (An InMemory Java
 		// database system),
-		AtomSet store = new DefaultRdbmsStore(new HSQLDBDriver("test", null));
+		AtomSet store = new AdHocRdbmsStore(new HSQLDBDriver("test", null));
 
 		// 2 - Parse Animals.dlp (A Dlgp file with rules and facts)
 		DlgpParser dlgpParser = new DlgpParser(new File("./src/main/resources/animals.dlp"));

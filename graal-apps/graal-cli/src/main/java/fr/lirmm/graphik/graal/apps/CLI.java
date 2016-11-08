@@ -73,9 +73,9 @@ import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 import fr.lirmm.graphik.graal.store.rdbms.AbstractRdbmsStore;
-import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
-import fr.lirmm.graphik.graal.store.rdbms.SqlHomomorphism;
+import fr.lirmm.graphik.graal.store.rdbms.adhoc.AdHocRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
+import fr.lirmm.graphik.graal.store.rdbms.homomorphism.SqlHomomorphism;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
@@ -216,7 +216,7 @@ public class CLI {
 		if (verbose) System.out.println("Opening database...");
 		try {
 			File f = new File(database);
-			atomset = new DefaultRdbmsStore(new SqliteDriver(f));
+			atomset = new AdHocRdbmsStore(new SqliteDriver(f));
 		}
 		catch (Exception e) {
 			System.err.println("An error has occured while opening database: " +e);

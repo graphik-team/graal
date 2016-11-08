@@ -46,6 +46,7 @@
 package fr.lirmm.graphik.graal.test;
 
 import java.io.FileNotFoundException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -57,7 +58,7 @@ import fr.lirmm.graphik.graal.api.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
-import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
+import fr.lirmm.graphik.graal.store.rdbms.adhoc.AdHocRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
@@ -68,12 +69,12 @@ import fr.lirmm.graphik.util.stream.IteratorException;
  */
 public class MultiThreadTest {
 	public static void main(String[] args)
-	    throws FileNotFoundException, AtomSetException, ChaseException, IteratorException {
-		ArrayList<AtomSet> atomsets = new ArrayList<AtomSet>();
-		atomsets.add(new DefaultRdbmsStore(new MysqlDriver("localhost", "thread", "root", "root")));
+	    throws FileNotFoundException, AtomSetException, ChaseException, IteratorException, SQLException {
+		ArrayList<AtomSet> atomsets = new ArrayList<>();
+		atomsets.add(new AdHocRdbmsStore(new MysqlDriver("localhost", "thread", "root", "root")));
 		atomsets.get(0).add(DlgpParser.parseAtom("child(a)."));
 		
-		LinkedList<Rule> rules = new LinkedList<Rule>();
+		LinkedList<Rule> rules = new LinkedList<>();
 		rules.add(DlgpParser.parseRule("father(X,Y) :- child(X)."));
 		rules.add(DlgpParser.parseRule("mother(X,Y) :- child(X)."));
 		rules.add(DlgpParser.parseRule("parent(Y) :- father(X,Y)."));
@@ -92,9 +93,9 @@ public class MultiThreadTest {
 		
 		atomsets.get(0).addAll(stream);*/
 		
-		atomsets.add(new DefaultRdbmsStore(new MysqlDriver("localhost", "thread", "root", "root")));
-		atomsets.add(new DefaultRdbmsStore(new MysqlDriver("localhost", "thread", "root", "root")));
-		atomsets.add(new DefaultRdbmsStore(new MysqlDriver("localhost", "thread", "root", "root")));
+		atomsets.add(new AdHocRdbmsStore(new MysqlDriver("localhost", "thread", "root", "root")));
+		atomsets.add(new AdHocRdbmsStore(new MysqlDriver("localhost", "thread", "root", "root")));
+		atomsets.add(new AdHocRdbmsStore(new MysqlDriver("localhost", "thread", "root", "root")));
 
 		
 		//Chase chase = new MultiThreadsChase(rules, atomsets, 4);

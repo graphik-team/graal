@@ -47,6 +47,7 @@ package fr.lirmm.graphik.graal.apps;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.sql.SQLException;
 import java.util.LinkedList;
 
 import com.beust.jcommander.JCommander;
@@ -60,11 +61,11 @@ import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
 import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.forward_chaining.ConfigurableChase;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
-import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
-import fr.lirmm.graphik.graal.store.rdbms.SqlHomomorphism;
+import fr.lirmm.graphik.graal.store.rdbms.adhoc.AdHocRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
+import fr.lirmm.graphik.graal.store.rdbms.homomorphism.SqlHomomorphism;
 import fr.lirmm.graphik.graal.store.rdbms.rule_applier.SQLRuleApplier;
 import fr.lirmm.graphik.util.CPUTimeProfiler;
 import fr.lirmm.graphik.util.Profiler;
@@ -102,7 +103,8 @@ public class OneStepForwardChaining {
 
 	private static final Profiler PROFILER         = new CPUTimeProfiler(System.out);
 	
-	public static void main(String[] args) throws AtomSetException, FileNotFoundException, ChaseException, ParseException {
+	public static void main(String[] args)
+	    throws AtomSetException, FileNotFoundException, ChaseException, ParseException, SQLException {
 		OneStepForwardChaining options = new OneStepForwardChaining();
 		JCommander commander = new JCommander(options, args);
 
@@ -114,12 +116,12 @@ public class OneStepForwardChaining {
 		// Driver
 		RdbmsDriver driver;
 		driver = new MysqlDriver(options.databaseHost, options.database, options.databaseUser, options.databasePassword);
-		RdbmsStore atomSet = new DefaultRdbmsStore(driver);
+		RdbmsStore atomSet = new AdHocRdbmsStore(driver);
 		
 		Chase chase = null;
 		
 		DlgpParser parser = new DlgpParser(new File(options.file));
-		LinkedList<Rule> rules = new LinkedList<Rule>();
+		LinkedList<Rule> rules = new LinkedList<>();
 		while (parser.hasNext()) {
 			Object o = parser.next();
 			if(o instanceof Rule) {
@@ -127,7 +129,7 @@ public class OneStepForwardChaining {
 			}
 		}
 			
-		RuleApplier<Rule, RdbmsStore> applier = new SQLRuleApplier<RdbmsStore>(
+		RuleApplier<Rule, RdbmsStore> applier = new SQLRuleApplier<>(
 				SqlHomomorphism.instance());
 		chase = new ConfigurableChase(rules, atomSet, applier);
 

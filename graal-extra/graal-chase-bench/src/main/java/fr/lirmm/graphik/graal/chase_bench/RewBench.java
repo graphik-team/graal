@@ -3,6 +3,7 @@ package fr.lirmm.graphik.graal.chase_bench;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,7 +36,7 @@ import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.core.compilation.IDCompilation;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
-import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
+import fr.lirmm.graphik.graal.store.rdbms.adhoc.AdHocRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.PostgreSQLDriver;
 import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.RealTimeProfiler;
@@ -80,7 +81,8 @@ public class RewBench {
 
 	static String outputFilePath = "./output.txt";
 
-	public static void main(String args[]) throws ChaseException, AtomSetException, IOException, HomomorphismException {
+	public static void main(String args[])
+	    throws ChaseException, AtomSetException, IOException, HomomorphismException, SQLException {
 		RewBench options = new RewBench();
 		JCommander commander = new JCommander(options, args);
 
@@ -102,7 +104,7 @@ public class RewBench {
 		if ("SQL".equals(options.mode)) {
 			// atomSet = new DefaultRdbmsStore(new PostgreSQLDriver("localhost",
 			// "papotti", "clement", "clement"));
-			atomSet = new DefaultRdbmsStore(new PostgreSQLDriver(options.databaseHost, options.databaseName,
+			atomSet = new AdHocRdbmsStore(new PostgreSQLDriver(options.databaseHost, options.databaseName,
 			                                                     options.databaseUser, options.databasePassword));
 		} else {
 		// Alternatively, you can use an in memory graph based AtomSet

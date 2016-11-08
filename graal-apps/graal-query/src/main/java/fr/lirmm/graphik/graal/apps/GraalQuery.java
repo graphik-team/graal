@@ -47,6 +47,7 @@ package fr.lirmm.graphik.graal.apps;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -58,13 +59,12 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.DefaultUnionOfConjunctiveQueries;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
-import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
-import fr.lirmm.graphik.graal.store.rdbms.SqlUCQHomomorphism;
-import fr.lirmm.graphik.graal.store.rdbms.driver.DriverException;
+import fr.lirmm.graphik.graal.store.rdbms.adhoc.AdHocRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
 import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
+import fr.lirmm.graphik.graal.store.rdbms.homomorphism.SqlUCQHomomorphism;
 import fr.lirmm.graphik.util.Apps;
 import fr.lirmm.graphik.util.CPUTimeProfiler;
 import fr.lirmm.graphik.util.Profiler;
@@ -122,7 +122,7 @@ public class GraalQuery {
 	// 
 	////////////////////////////////////////////////////////////////////////////
 	
-	public static void main(String[] args) throws AtomSetException, HomomorphismException, IOException, DriverException {
+	public static void main(String[] args) throws AtomSetException, HomomorphismException, IOException, SQLException {
 		GraalQuery options = new GraalQuery();
 		JCommander commander = new JCommander(options, args);
 
@@ -150,7 +150,7 @@ public class GraalQuery {
 				System.err.println("Unrecognized database driver: " + options.driver);
 				System.exit(1);
 		}
-		RdbmsStore store = new DefaultRdbmsStore(driver);
+		RdbmsStore store = new AdHocRdbmsStore(driver);
 
 		DlgpParser parser = new DlgpParser(new File(options.file));
 		DefaultUnionOfConjunctiveQueries ucq = new DefaultUnionOfConjunctiveQueries();

@@ -47,6 +47,7 @@ package fr.lirmm.graphik.graal.apps;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.sql.SQLException;
 import java.util.LinkedList;
 
 import com.beust.jcommander.JCommander;
@@ -62,7 +63,7 @@ import fr.lirmm.graphik.graal.forward_chaining.ChaseWithGRDAndUnfiers;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.grd.GRDParser;
-import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
+import fr.lirmm.graphik.graal.store.rdbms.adhoc.AdHocRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
 
@@ -100,7 +101,8 @@ public class ForwardChaining {
 
 	
 	
-	public static void main(String... args) throws AtomSetException, FileNotFoundException, ChaseException, ParseException {
+	public static void main(String... args)
+	    throws AtomSetException, FileNotFoundException, ChaseException, ParseException, SQLException {
 		ForwardChaining options = new ForwardChaining();
 		JCommander commander = new JCommander(options, args);
 
@@ -112,7 +114,7 @@ public class ForwardChaining {
 		// Driver
 		RdbmsDriver driver;
 		driver = new MysqlDriver(options.databaseHost, options.database, options.databaseUser, options.databasePassword);
-		AtomSet atomSet = new DefaultRdbmsStore(driver);
+		AtomSet atomSet = new AdHocRdbmsStore(driver);
 		
 		Chase chase = null;
 		GraphOfRuleDependencies grd = null;

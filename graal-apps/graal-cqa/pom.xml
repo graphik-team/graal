@@ -33,7 +33,7 @@
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-store-rdbms</artifactId>
+			<artifactId>rdbms-adhoc</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>

@@ -45,6 +45,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -69,8 +70,7 @@ import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
 import fr.lirmm.graphik.graal.io.grd.GRDParser;
 import fr.lirmm.graphik.graal.io.oxford.OxfordQueryParser;
-import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
-import fr.lirmm.graphik.graal.store.rdbms.driver.DriverException;
+import fr.lirmm.graphik.graal.store.rdbms.adhoc.AdHocRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.MysqlDriver;
 import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -88,9 +88,11 @@ public class MelanieQueryTest {
 	public static final String GRD_FILE = "./src/test/resources/u/u.grd";
 	public static final String FACT_FILE = "./src/test/resources/u/University0_0.dlp";
 	
-	private static List<Query> queries = new LinkedList<Query>(); 
+	private static List<Query> queries = new LinkedList<>(); 
 	
-	public static void main(String[] args) throws AtomSetException, IOException, ChaseException, HomomorphismFactoryException, HomomorphismException, ParseException {
+	public static void main(String[] args)
+	    throws AtomSetException, IOException, ChaseException, HomomorphismFactoryException, HomomorphismException,
+	    ParseException, SQLException {
 		
 		
 		AtomSet atomSet = getMysqlAtomSet(true, "univ_bench");
@@ -141,18 +143,20 @@ public class MelanieQueryTest {
 		atomset.addAll(new AtomFilterIterator(parser));
 	}
 	
-	public static AtomSet getSqliteAtomSet(boolean deleteIfExist, String base ) throws IOException, AtomSetException, DriverException {
+	public static AtomSet getSqliteAtomSet(boolean deleteIfExist, String base)
+	    throws IOException, AtomSetException, SQLException {
 		File f = new File(base);
 		if(deleteIfExist) {
 			f.delete();
 			f.createNewFile();
 		}
-		return  new DefaultRdbmsStore(new SqliteDriver(f));
+		return new AdHocRdbmsStore(new SqliteDriver(f));
 	}
 	
-	public static AtomSet getMysqlAtomSet(boolean deleteIfExist, String base) throws IOException, AtomSetException {
+	public static AtomSet getMysqlAtomSet(boolean deleteIfExist, String base)
+	    throws IOException, AtomSetException, SQLException {
 		
-		return  new DefaultRdbmsStore(new MysqlDriver("localhost", base, "root", "root"));
+		return new AdHocRdbmsStore(new MysqlDriver("localhost", base, "root", "root"));
 	}
 		
 	

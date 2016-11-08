@@ -73,9 +73,9 @@ import fr.lirmm.graphik.graal.cqa.FGHRuleChaseCondition;
 import fr.lirmm.graphik.graal.forward_chaining.ConfigurableChase;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.ExhaustiveRuleApplier;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
-import fr.lirmm.graphik.graal.store.rdbms.DefaultRdbmsStore;
-import fr.lirmm.graphik.graal.store.rdbms.SqlHomomorphism;
+import fr.lirmm.graphik.graal.store.rdbms.adhoc.AdHocRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.SqliteDriver;
+import fr.lirmm.graphik.graal.store.rdbms.homomorphism.SqlHomomorphism;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 public class CLI_FGH {
@@ -94,7 +94,7 @@ public class CLI_FGH {
 		try {
 			System.out.println("Initialising database file...");
 			File f = new File(options.db_file);
-			AtomSet atomset = new DefaultRdbmsStore(new SqliteDriver(f));
+			AtomSet atomset = new AdHocRdbmsStore(new SqliteDriver(f));
 			System.out.println("Done!");
 
 			RuleSet rules = new LinkedListRuleSet();
