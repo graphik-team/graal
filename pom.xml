@@ -3,9 +3,9 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>fr.lirmm.graphik</groupId>
-	<artifactId>graal-main-project</artifactId>
+	<artifactId>graal</artifactId>
 	<version>1.2.1-SNAPSHOT</version>
-	<name>fr.lirmm.graphik:graal-main-project</name>
+	<name>fr.lirmm.graphik:graal</name>
 	<packaging>pom</packaging>
 
 	<description>Graal is a java toolkit dedicated to ontological query answering in the framework of existential rules. We consider knowledge bases composed of data and an ontology expressed by existential rules. The main features of Graal are the following: a basic layer that provides generic interfaces to store and query various kinds of data, forward chaining and query rewriting
@@ -55,15 +55,31 @@ algorithms, structural analysis of decidability properties of a rule set, a text
 	</properties>
 
 	<modules>
-		<module>graal</module>
-		<module>graal-apps</module>
-		<module>graal-examples</module>
-		<module>graal-distro</module>
-		<module>graal-extra</module>
-		<module>graal-incubator</module>
+		<module>graal-api</module>
+		<module>graal-core</module>
+		<module>graal-homomorphism</module>
+		<module>graal-io</module>
+		<module>graal-forward-chaining</module>
+		<module>graal-store</module>
+		<module>graal-backward-chaining</module>
+		<module>graal-rules-analyser</module>
+		<module>graal-util</module>
+		<module>graal-test</module>
 	</modules>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.7</version>
+		</dependency>
+		<!-- Test -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<profiles>
