@@ -51,21 +51,22 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import fr.lirmm.graphik.graal.api.core.ImmutableRuleSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.grd.AtomErasingFilter;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.AffectedPositionSet;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.GraphPositionDependencies;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.MarkedVariableSet;
+import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.graph.scc.StronglyConnectedComponentsGraph;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class AnalyserRuleSet implements ImmutableRuleSet {
+public class AnalyserRuleSet implements RuleSet {
 
 	private Collection<Rule> ruleset;
 	private GraphOfRuleDependencies grd;
@@ -218,5 +219,33 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 		this.markedVariableSet = new MarkedVariableSet(this);
 	}
 
+	@Override
+	public boolean add(Rule rule) {
+		// TODO implement this method
+		throw new MethodNotImplementedError();
+	}
+
+	@Override
+	public boolean addAll(Iterator<Rule> ruleIterator) {
+		// TODO implement this method
+		throw new MethodNotImplementedError();
+	}
+
+	@Override
+	public boolean remove(Rule rule) {
+		// TODO implement this method
+		throw new MethodNotImplementedError();
+	}
+
+	@Override
+	public boolean removeAll(Iterator<Rule> ruleIterator) {
+		// TODO implement this method
+		throw new MethodNotImplementedError();
+	}
+
+	@Override
+	public int size() {
+		return this.ruleset.size();
+	}
 
 }

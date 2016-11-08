@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,17 +40,26 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.api.core;
-
-import fr.lirmm.graphik.graal.api.kb.KnowledgeBase;
+package fr.lirmm.graphik.graal.api.kb;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface InMemoryKnowledgeBase extends KnowledgeBase {
+public class KnowledgeBaseException extends Exception {
 
-	@Override
-	InMemoryAtomSet getFacts();
+	private static final long serialVersionUID = -3194363997763431939L;
+
+	public KnowledgeBaseException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	public KnowledgeBaseException(String message) {
+		super(message);
+	}
+
+	public KnowledgeBaseException(Throwable e) {
+		super(e);
+	}
 
 }

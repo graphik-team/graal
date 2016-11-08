@@ -1,12 +1,30 @@
 package fr.lirmm.graphik.graal.rulesetanalyser;
 
-import java.util.List;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import fr.lirmm.graphik.graal.rulesetanalyser.property.AGRDProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.BTSProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.DisconnectedProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.DomainRestrictedProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.FESProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.FUSProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.FrontierGuardedProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.FrontierOneProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.GBTSProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.LinearProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.MFAProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.MSAProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.RangeRestrictedProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.RuleSetProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.StickyProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.WeaklyAcyclicProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.WeaklyFrontierGuardedSetProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.WeaklyGuardedSetProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.WeaklyStickyProperty;
 
 public class RuleSetPropertyHierarchy {
 
@@ -16,7 +34,10 @@ public class RuleSetPropertyHierarchy {
 
 	private boolean specialisations[][];
 
-	public RuleSetPropertyHierarchy() { }
+	public RuleSetPropertyHierarchy() {
+		this.setProperties(generatePropertyMap().values());
+	}
+
 	public RuleSetPropertyHierarchy(Iterable<RuleSetProperty> pties) {
 		this.setProperties(pties);
 	}
@@ -133,6 +154,41 @@ public class RuleSetPropertyHierarchy {
 			}
 		}
 		return mod;
+	}
+
+	/**
+	 * Prepare the list of rule set properties. If you have implemented a new
+	 * rule set property, and you want an easy way to test it, you are in the
+	 * right place. Just add a line that will add an instance of your new class,
+	 * compile, and everything will (should) work!
+	 * 
+	 * @return
+	 */
+	public static final Map<String, RuleSetProperty> generatePropertyMap() {
+		Map<String, RuleSetProperty> propertyMap = new TreeMap<String, RuleSetProperty>();
+		addToPropertyMap(propertyMap, AGRDProperty.instance());
+		addToPropertyMap(propertyMap, BTSProperty.instance());
+		addToPropertyMap(propertyMap, DisconnectedProperty.instance());
+		addToPropertyMap(propertyMap, DomainRestrictedProperty.instance());
+		addToPropertyMap(propertyMap, FESProperty.instance());
+		addToPropertyMap(propertyMap, FrontierGuardedProperty.instance());
+		addToPropertyMap(propertyMap, FrontierOneProperty.instance());
+		addToPropertyMap(propertyMap, FUSProperty.instance());
+		addToPropertyMap(propertyMap, GBTSProperty.instance());
+		addToPropertyMap(propertyMap, LinearProperty.instance());
+		addToPropertyMap(propertyMap, MFAProperty.instance());
+		addToPropertyMap(propertyMap, MSAProperty.instance());
+		addToPropertyMap(propertyMap, RangeRestrictedProperty.instance());
+		addToPropertyMap(propertyMap, StickyProperty.instance());
+		addToPropertyMap(propertyMap, WeaklyAcyclicProperty.instance());
+		addToPropertyMap(propertyMap, WeaklyFrontierGuardedSetProperty.instance());
+		addToPropertyMap(propertyMap, WeaklyGuardedSetProperty.instance());
+		addToPropertyMap(propertyMap, WeaklyStickyProperty.instance());
+		return propertyMap;
+	}
+
+	private static final void addToPropertyMap(Map<String, RuleSetProperty> map, RuleSetProperty p) {
+		map.put(p.getLabel(), p);
 	}
 
 };

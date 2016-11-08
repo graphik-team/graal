@@ -83,6 +83,25 @@ public interface ConjunctiveQueryFactory {
 	ConjunctiveQuery create(InMemoryAtomSet atomSet, List<Term> ans);
 
 	/**
+	 * Create a query from the specified atom set. All variables appearing in
+	 * the atom set will be considered as answer variables.
+	 * 
+	 * @param atom
+	 * @return
+	 */
+	ConjunctiveQuery create(Atom atom);
+
+	/**
+	 * Create a query from the specified atom and the specified answer
+	 * variables.
+	 * 
+	 * @param atom
+	 * @param ans
+	 * @return
+	 */
+	ConjunctiveQuery create(Atom atom, List<Term> ans);
+
+	/**
 	 * Create a query from the specified atom set and the specified answer
 	 * variables.
 	 * 

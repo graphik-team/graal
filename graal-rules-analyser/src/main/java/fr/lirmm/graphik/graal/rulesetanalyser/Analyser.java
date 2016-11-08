@@ -12,7 +12,6 @@ import fr.lirmm.graphik.graal.rulesetanalyser.property.FESProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.FUSProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.RuleSetProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
-import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.graph.scc.StronglyConnectedComponentsGraph;
 
 public class Analyser {
@@ -27,7 +26,15 @@ public class Analyser {
 	private List<Map<String,Integer>>   sccProperties;
 	private List<Map<String, Integer>>  ruleProperties;
 	private Map<String,Integer>         ruleSetProperties;
-	public Analyser() { }
+
+	public Analyser() {
+		this.hierarchy = new RuleSetPropertyHierarchy();
+	}
+
+	public Analyser(AnalyserRuleSet rules) {
+		this();
+		this.ruleSet = rules;
+	}
 
 	public void setRuleSet(AnalyserRuleSet rules) {
 		this.ruleSet = rules;
@@ -51,7 +58,33 @@ public class Analyser {
 	 * @return true only if some property ensures the rule set is decidable
 	 */
 	public boolean isDecidable() {
-		throw new MethodNotImplementedError(); // TODO
+		return this.combineFES() != null;
+	}
+
+	public boolean isFES() {
+		int combine[] = this.combineFES();
+		if (combine == null) {
+			return false;
+		}
+
+		for (int i = 0; i < combine.length; ++i) {
+			if ((combine[i] & Analyser.COMBINE_FES) == 0)
+				return false;
+		}
+		return true;
+	}
+
+	public boolean isFUS() {
+		int combine[] = this.combineFUS();
+		if (combine == null) {
+			return false;
+		}
+
+		for (int i = 0; i < combine.length; ++i) {
+			if ((combine[i] & Analyser.COMBINE_FUS) == 0)
+				return false;
+		}
+		return true;
 	}
 
 	public Map<String,Integer> ruleSetProperties() {

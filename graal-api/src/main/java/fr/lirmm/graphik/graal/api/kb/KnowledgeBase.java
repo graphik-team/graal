@@ -43,77 +43,67 @@
  /**
  * 
  */
-package fr.lirmm.graphik.graal.core;
+package fr.lirmm.graphik.graal.api.kb;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.AtomSetException;
-import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
-import fr.lirmm.graphik.graal.api.core.InMemoryKnowledgeBase;
-import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
-import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
-import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
+import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.api.forward_chaining.Chase;
+import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
+import fr.lirmm.graphik.util.Profilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */
-public class DefaultKnowledgeBase implements InMemoryKnowledgeBase {
-
-	private RuleSet ruleset;
-	private InMemoryAtomSet atomset;
-
-	// /////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTOR
-	// /////////////////////////////////////////////////////////////////////////
-
-	public DefaultKnowledgeBase() {
-		this.ruleset = new LinkedListRuleSet();
-		this.atomset = AtomSetFactory.instance().create();
-	}
-
-	public DefaultKnowledgeBase(RuleSet ontology, InMemoryAtomSet facts) {
-		this.ruleset = ontology;
-		this.atomset = facts;
-	}
-
-	// /////////////////////////////////////////////////////////////////////////
-	// GETTERS/SETTERS
-	// /////////////////////////////////////////////////////////////////////////
+public interface KnowledgeBase extends Profilable {
 
 	/**
-	 * @return the ruleset
+	 * Get the ontology attached to this knowledge base.
+	 * 
+	 * @return a RuleSet representing the ontology.
 	 */
-	@Override
-	public RuleSet getOntology() {
-		return ruleset;
-	}
+	RuleSet getOntology();
 
 	/**
-	 * @return the atomset
+	 * Get the facts attached to this knowledgebase.
+	 * 
+	 * @return an AtomSet representing a conjunction of facts.
 	 */
-	@Override
-	public InMemoryAtomSet getFacts() {
-		return atomset;
-	}
+	AtomSet getFacts();
 
-	@Override
-	public void load(CloseableIterator<Object> parser) throws AtomSetException {
-		Object o;
-		try {
-			while (parser.hasNext()) {
-				o = parser.next();
-				if (o instanceof Rule) {
-					this.getOntology().add((Rule) o);
-				} else if (o instanceof Atom) {
-					this.getFacts().add((Atom) o);
-				}
-			}
-		} catch (IteratorException e) {
-			throw new AtomSetException(e);
-		}
-	}
+	/**
+	 * Return true if this knowledge base is consistent, false otherwise.
+	 * 
+	 * @return
+	 * @throws KnowledgeBaseException
+	 */
+	boolean isConsistent() throws KnowledgeBaseException;
 
-};
+	/**
+	 * Saturate this knowledge base with a specific chase.
+	 * 
+	 * @param chase
+	 */
+	void saturate(Chase chase);
+
+	/**
+	 * Saturate this knowledge base.
+	 * 
+	 * @throws KnowledgeBaseException
+	 */
+	void saturate() throws KnowledgeBaseException;
+
+	CloseableIterator<Substitution> homomorphism(Query query) throws KnowledgeBaseException;
+
+	CloseableIterator<Substitution> query(Query query);
+
+	/**
+	 * @throws ChaseException
+	 * 
+	 */
+	void semiSaturate() throws KnowledgeBaseException;
+
+}

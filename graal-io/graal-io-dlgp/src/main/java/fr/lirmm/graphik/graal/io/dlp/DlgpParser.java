@@ -58,10 +58,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
-import fr.lirmm.graphik.graal.api.core.KnowledgeBase;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.VariableGenerator;
 import fr.lirmm.graphik.graal.api.io.ParseException;
@@ -321,26 +319,6 @@ public final class DlgpParser extends AbstractCloseableIterator<Object> implemen
 		} catch (ClassCastException e) {
 			throw new ParseException("Cannot cast parsed object into DefaultNegativeConstraint.", e);
 		}
-	}
-	
-	/**
-	 * Parse a DLP content and store data into the KnowledgeBase target.
-	 * 
-	 * @param src
-	 * @param target
-	 * @throws AtomSetException 
-	 */
-	public static void parseKnowledgeBase(Reader src, KnowledgeBase target) throws AtomSetException {
-		DlgpParser parser = new DlgpParser(src);
-		while (parser.hasNext()) {
-			Object o = parser.next();
-			if (o instanceof Rule) {
-				target.getOntology().add((Rule) o);
-			} else if (o instanceof Atom) {
-				target.getFacts().add((Atom) o);
-			}
-		}
-		parser.close();
 	}
 
 };

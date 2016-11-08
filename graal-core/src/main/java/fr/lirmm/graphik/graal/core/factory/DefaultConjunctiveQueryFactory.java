@@ -42,6 +42,7 @@
  */
 package fr.lirmm.graphik.graal.core.factory;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
@@ -50,6 +51,7 @@ import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
+import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
@@ -87,6 +89,20 @@ public class DefaultConjunctiveQueryFactory implements ConjunctiveQueryFactory {
 	@Override
 	public ConjunctiveQuery create(InMemoryAtomSet atomSet) {
 		return new DefaultConjunctiveQuery(atomSet);
+	}
+
+	@Override
+	public ConjunctiveQuery create(Atom atom) {
+		LinkedList<Atom> list = new LinkedList<Atom>();
+		list.add(atom);
+		return new DefaultConjunctiveQuery(new LinkedListAtomSet(list));
+	}
+
+	@Override
+	public ConjunctiveQuery create(Atom atom, List<Term> ans) {
+		LinkedList<Atom> list = new LinkedList<Atom>();
+		list.add(atom);
+		return new DefaultConjunctiveQuery(new LinkedListAtomSet(list), ans);
 	}
 
 	@Override

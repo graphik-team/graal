@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,32 +40,12 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.api.core;
-
-import fr.lirmm.graphik.util.stream.CloseableIterator;
+package fr.lirmm.graphik.graal.kb;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- * 
+ *
  */
-public interface KnowledgeBase {
-
-	/**
-	 * Get the ontology attached to this knowledge base.
-	 * 
-	 * @return a RuleSet representing the ontology.
-	 */
-	RuleSet getOntology();
-
-	/**
-	 * Get the facts attached to this knowledgebase.
-	 * 
-	 * @return an AtomSet representing a conjunction of facts.
-	 */
-	AtomSet getFacts();
-
-	void load(CloseableIterator<Object> parser) throws AtomSetException;
+enum Priority {
+			   FES, FUS;
 }

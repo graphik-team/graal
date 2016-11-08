@@ -50,7 +50,11 @@ import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.util.profiler.AbstractProfilable;
+import fr.lirmm.graphik.util.profiler.NoProfiler;
+import fr.lirmm.graphik.util.stream.CloseableIterable;
+import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
+import fr.lirmm.graphik.util.stream.IterableAdapter;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -100,6 +104,12 @@ public class PureRewriter extends AbstractProfilable implements QueryRewriterWit
 		it.setProfiler(this.getProfiler());
 		return it;
 	}
-
+	
+	public static CloseableIteratorWithoutException<ConjunctiveQuery> unfold(
+	    CloseableIterable<ConjunctiveQuery> pivotRewritingSet,
+	    RulesCompilation compilation) {
+		return new CloseableIteratorAdapter<ConjunctiveQuery>(Utils.unfold(new IterableAdapter(pivotRewritingSet),
+		    compilation, NoProfiler.instance()).iterator());
+	}
 
 }
