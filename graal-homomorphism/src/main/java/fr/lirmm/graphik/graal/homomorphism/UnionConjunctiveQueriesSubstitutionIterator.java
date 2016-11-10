@@ -59,7 +59,6 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
 import fr.lirmm.graphik.util.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
@@ -81,6 +80,8 @@ public class UnionConjunctiveQueriesSubstitutionIterator extends AbstractProfila
 
 	private int                                     i = 1;
 
+	private boolean isBooleanQuery;
+
 	public UnionConjunctiveQueriesSubstitutionIterator(UnionOfConjunctiveQueries queries, AtomSet atomSet) {
 		this(queries, atomSet, null, null);
 	}
@@ -93,6 +94,7 @@ public class UnionConjunctiveQueriesSubstitutionIterator extends AbstractProfila
 	public UnionConjunctiveQueriesSubstitutionIterator(UnionOfConjunctiveQueries queries, AtomSet atomSet,
 	    Homomorphism<ConjunctiveQuery, AtomSet> homomorphism, RulesCompilation rc) {
 		this.cqueryIterator = queries.iterator();
+		this.isBooleanQuery = queries.isBoolean();
 		this.atomSet = atomSet;
 		this.tmpIt = null;
 		this.homomorphism = homomorphism;
@@ -126,6 +128,9 @@ public class UnionConjunctiveQueriesSubstitutionIterator extends AbstractProfila
 						this.tmpIt = ((HomomorphismWithCompilation) solver).execute(q, this.atomSet, this.compilation);
 					} else {
 						this.tmpIt = solver.execute(q, this.atomSet);
+					}
+					if (this.isBooleanQuery && this.tmpIt.hasNext()) {
+						this.cqueryIterator.close();
 					}
 
 				} catch (HomomorphismException e) {

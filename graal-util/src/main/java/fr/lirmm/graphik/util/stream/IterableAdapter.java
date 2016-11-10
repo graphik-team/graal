@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -42,48 +42,23 @@
  */
 package fr.lirmm.graphik.util.stream;
 
-import java.io.Closeable;
-import java.io.IOException;
+import java.util.Iterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class CloseableIteratorAdapter<T> implements CloseableIteratorWithoutException<T> {
+public class IterableAdapter<T> implements Iterable {
 
-	protected java.util.Iterator<T> iterator;
-	protected boolean isClosed = false;
+	protected CloseableIterable<T> iterable;
 
-	public CloseableIteratorAdapter(java.util.Iterator<T> iterator) {
-		this.iterator = iterator;
-	}
-	
-	@Override
-	public boolean hasNext() {
-		if (isClosed) {
-			return false;
-		}
-		return this.iterator.hasNext();
+	public IterableAdapter(CloseableIterable<T> iterator) {
+		this.iterable = iterable;
 	}
 
 	@Override
-	public T next() {
-		if (isClosed) {
-			return null;
-		}
-		return this.iterator.next();
-	}
-
-	@Override
-	public void close() {
-		this.isClosed = true;
-		if (iterator instanceof Closeable) {
-			try {
-				((Closeable) iterator).close();
-			} catch (IOException e) {
-				throw new Error("Untreated exception", e);
-			}
-		}
+	public Iterator iterator() {
+		return new IteratorAdapter<T>(this.iterable.iterator());
 	}
 
 }
