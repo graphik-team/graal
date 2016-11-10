@@ -246,7 +246,10 @@ public class IDCompilation extends AbstractRulesCompilation {
 		Predicate predH = father.getPredicate();
 		List<IDCondition> conds = getConditions(predB, predH);
 		for (IDCondition cond : conds) {
-			res.add(cond.generateUnification(son.getTerms(), father.getTerms()));
+			Partition<Term> unif = cond.generateUnification(son.getTerms(), father.getTerms());
+			if (unif != null) {
+				res.add(unif);
+			}
 		}
 		return res;
 	}

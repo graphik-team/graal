@@ -205,8 +205,6 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 			CloseableIteratorWithoutException<Atom> it2 = ruleCopy.getHead().iterator();
 			while (it2.hasNext()) {
 				Atom b = it2.next();
-				// TODO use isMappable instead of isUnifiable because
-				// isUnifiable just made a call to isMappable
 				if (compilation.isMappable(a.getPredicate(), b.getPredicate())) {
 					Collection<Partition<Term>> unification = compilation.getUnification(a, b);
 					for (Partition<Term> partition : unification) {
