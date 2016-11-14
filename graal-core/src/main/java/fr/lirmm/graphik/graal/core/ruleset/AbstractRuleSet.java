@@ -40,15 +40,18 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
+/**
+* 
+*/
 package fr.lirmm.graphik.graal.core.ruleset;
 
 import java.util.Iterator;
 
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
+import fr.lirmm.graphik.graal.api.core.RuleSetException;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -59,21 +62,47 @@ public abstract class AbstractRuleSet implements RuleSet {
 	@Override
 	public boolean addAll(Iterator<Rule> ruleIterator) {
 		boolean isChanged = false;
-		while(ruleIterator.hasNext()) {
+		while (ruleIterator.hasNext()) {
 			isChanged = this.add(ruleIterator.next()) || isChanged;
 		}
 		return isChanged;
 	}
-	
+
+	@Override
+	public boolean addAll(CloseableIterator<Rule> ruleIterator) throws RuleSetException {
+		try {
+			boolean isChanged = false;
+			while (ruleIterator.hasNext()) {
+				isChanged = this.add(ruleIterator.next()) || isChanged;
+			}
+			return isChanged;
+		} catch (IteratorException e) {
+			throw new RuleSetException(e);
+		}
+	}
+
 	@Override
 	public boolean removeAll(Iterator<Rule> ruleIterator) {
 		boolean isChanged = false;
-		while(ruleIterator.hasNext()) {
+		while (ruleIterator.hasNext()) {
 			isChanged = this.remove(ruleIterator.next()) || isChanged;
 		}
 		return isChanged;
 	}
-	
+
+	@Override
+	public boolean removeAll(CloseableIterator<Rule> ruleIterator) throws RuleSetException {
+		try {
+			boolean isChanged = false;
+			while (ruleIterator.hasNext()) {
+				isChanged = this.remove(ruleIterator.next()) || isChanged;
+			}
+			return isChanged;
+		} catch (IteratorException e) {
+			throw new RuleSetException(e);
+		}
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

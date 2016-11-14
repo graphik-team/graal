@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,27 +40,15 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.api.core;
-
-import java.util.Iterator;
+package fr.lirmm.graphik.graal.api.kb;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
+ * {@link Priority} defines the priority for query answering, i. e. when the algorithm have the choice for a rule,
+ * if it rewrite with this rule or if it saturation with.
  */
-public interface ImmutableRuleSet extends Iterable<Rule> {
-	
-    public boolean contains(Rule rule);
-
-	@Override
-	public Iterator<Rule> iterator();
-
-	/**
-	 * @return
-	 */
-	int size();
-
+public enum Priority {
+	SATURATION,
+	REWRITING;
 }

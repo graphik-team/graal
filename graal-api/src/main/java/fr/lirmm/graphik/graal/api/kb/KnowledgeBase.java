@@ -45,20 +45,21 @@
  */
 package fr.lirmm.graphik.graal.api.kb;
 
+import java.io.Closeable;
+
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.graal.api.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
-import fr.lirmm.graphik.util.Profilable;
+import fr.lirmm.graphik.util.profiler.Profilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */
-public interface KnowledgeBase extends Profilable {
+public interface KnowledgeBase extends Profilable, Closeable {
 
 	/**
 	 * Get the ontology attached to this knowledge base.
@@ -68,7 +69,7 @@ public interface KnowledgeBase extends Profilable {
 	RuleSet getOntology();
 
 	/**
-	 * Get the facts attached to this knowledgebase.
+	 * Get the facts attached to this knowledgeBase.
 	 * 
 	 * @return an AtomSet representing a conjunction of facts.
 	 */
@@ -83,27 +84,50 @@ public interface KnowledgeBase extends Profilable {
 	boolean isConsistent() throws KnowledgeBaseException;
 
 	/**
-	 * Saturate this knowledge base with a specific chase.
-	 * 
-	 * @param chase
-	 */
-	void saturate(Chase chase);
-
-	/**
 	 * Saturate this knowledge base.
 	 * 
 	 * @throws KnowledgeBaseException
 	 */
 	void saturate() throws KnowledgeBaseException;
 
+	/**
+	 * Find an homomorphism of the query in the fact base associated with this knowledge base. 
+	 * @param query
+	 * @return An iterator over substitutions which represents founded homomorphisms.
+	 * @throws KnowledgeBaseException
+	 */
 	CloseableIterator<Substitution> homomorphism(Query query) throws KnowledgeBaseException;
 
-	CloseableIterator<Substitution> query(Query query);
+	/**
+	 * Execute the query over this Knowledge Base. This method uses the graal-rules-analyser module (Kiabora) to 
+	 * find a decidable way to answer.
+	 * @param query
+	 * @return
+	 * @throws KnowledgeBaseException
+	 */
+	CloseableIterator<Substitution> query(Query query) throws KnowledgeBaseException;
+	
+	/**
+	 * 
+	 * @param query
+	 * @param timeout in seconds
+	 * @return
+	 * @throws KnowledgeBaseException
+	 */
+	CloseableIterator<Substitution> query(Query query, int timeout) throws KnowledgeBaseException;
 
 	/**
 	 * @throws ChaseException
 	 * 
 	 */
 	void semiSaturate() throws KnowledgeBaseException;
+
+	/**
+	 * Returns the defined priority of this KnowledgeBase (i.e saturation or rewriting)
+	 * @return
+	 */
+	Priority getPriority();
+
+	void close();
 
 }

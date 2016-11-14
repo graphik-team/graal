@@ -40,12 +40,43 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.kb;
+package fr.lirmm.graphik.graal.core.mapper;
+
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.Mapper;
+import fr.lirmm.graphik.util.stream.converter.Converter;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-enum Priority {
-			   FES, FUS;
+public class MapperAtomConverter implements Converter<Atom, Atom> {
+
+	private Mapper mapper;
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
+	
+	public MapperAtomConverter(Mapper mapper) {
+		this.mapper = mapper;
+	}
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	@Override
+	public Atom convert(Atom atom) {
+		return this.mapper.map(atom);
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// OBJECT OVERRIDE METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
 }

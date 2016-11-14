@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,27 +40,34 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
 package fr.lirmm.graphik.graal.api.core;
-
-import java.util.Iterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface ImmutableRuleSet extends Iterable<Rule> {
-	
-    public boolean contains(Rule rule);
+public interface Mapper {
 
-	@Override
-	public Iterator<Rule> iterator();
+	Predicate map(Predicate predicate);
 
-	/**
-	 * @return
-	 */
-	int size();
+	Predicate unmap(Predicate predicate);
+
+	Atom map(Atom atom);
+
+	Atom unmap(Atom atom);
+
+	ConjunctiveQuery map(ConjunctiveQuery cq);
+
+	ConjunctiveQuery unmap(ConjunctiveQuery cq);
+
+	Rule map(Rule rule);
+
+	Rule unmap(Rule rule);
+
+	InMemoryAtomSet map(InMemoryAtomSet atomset);
+
+	InMemoryAtomSet unmap(InMemoryAtomSet atomset);
+
+	Mapper inverse();
 
 }

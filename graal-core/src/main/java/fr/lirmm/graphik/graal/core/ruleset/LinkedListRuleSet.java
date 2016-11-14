@@ -115,11 +115,6 @@ public class LinkedListRuleSet extends AbstractRuleSet implements
 		return this.ruleList.contains(o);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.util.Collection#containsAll(java.util.Collection)
-	 */
 	@Override
 	public boolean containsAll(Collection<?> c) {
 		return this.ruleList.containsAll(c);
@@ -160,4 +155,17 @@ public class LinkedListRuleSet extends AbstractRuleSet implements
 		return this.ruleList.toArray(a);
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("[\n");
+		Iterator<Rule> it = this.iterator();
+		while (it.hasNext()) {
+			sb.append("\t");
+			sb.append(it.next());
+			sb.append("\n");
+		}
+		sb.append("]\n");
+		return sb.toString();
+	}
 };

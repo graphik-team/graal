@@ -45,8 +45,13 @@
 */
 package fr.lirmm.graphik.graal.kb;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
@@ -68,6 +73,7 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
 import fr.lirmm.graphik.graal.api.io.Parser;
 import fr.lirmm.graphik.graal.api.kb.KnowledgeBase;
 import fr.lirmm.graphik.graal.api.kb.KnowledgeBaseException;
+import fr.lirmm.graphik.graal.api.kb.Priority;
 import fr.lirmm.graphik.graal.backward_chaining.pure.PureRewriter;
 import fr.lirmm.graphik.graal.core.DefaultUnionOfConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
@@ -83,8 +89,8 @@ import fr.lirmm.graphik.graal.homomorphism.DefaultHomomorphismFactory;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.rulesetanalyser.Analyser;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
-import fr.lirmm.graphik.util.AbstractProfilable;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
+import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 import fr.lirmm.graphik.util.stream.IteratorException;
@@ -95,6 +101,8 @@ import fr.lirmm.graphik.util.stream.IteratorException;
  */
 public class DefaultKnowledgeBase extends AbstractProfilable implements KnowledgeBase {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultKnowledgeBase.class);
+	
 	private static final ConjunctiveQuery BOTTOM_QUERY = DefaultConjunctiveQueryFactory.instance().create(
 	    DefaultAtomFactory.instance().create(Predicate.BOTTOM,
 	        Collections.<Term> singletonList(DefaultTermFactory.instance().createVariable("X"))));
@@ -115,7 +123,7 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 	private RuleSet fusRuleSet;
 	private GraphOfRuleDependencies fesGRD;
 
-	private Priority priority = Priority.FUS;
+	private Priority priority = Priority.REWRITING;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
@@ -145,6 +153,12 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 		// this.grd = new GraphOfRuleDependencies(this.ruleset);
 	}
 
+	@Override
+	protected void finalize() throws Throwable {
+		this.close();
+		super.finalize();
+	}
+
 	// /////////////////////////////////////////////////////////////////////////
 	// GETTERS/SETTERS
 	// /////////////////////////////////////////////////////////////////////////
@@ -168,7 +182,10 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 	@Override
 	public boolean isConsistent() throws KnowledgeBaseException {
 		try {
-			return !this.query(BOTTOM_QUERY).hasNext();
+			CloseableIterator<Substitution> results = this.query(BOTTOM_QUERY);
+			boolean res = !results.hasNext();
+			results.close();
+			return res;
 		} catch (IteratorException e) {
 			throw new KnowledgeBaseException(e);
 		}
@@ -233,40 +250,77 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 	}
 
 	@Override
-	public CloseableIterator<Substitution> query(Query query) {
-		try {
-			if (query instanceof ConjunctiveQuery) {
-				ConjunctiveQuery cq = (ConjunctiveQuery) query;
-
+	public CloseableIterator<Substitution> query(Query query) throws KnowledgeBaseException {
+		if (query instanceof ConjunctiveQuery) {
+			ConjunctiveQuery cq = (ConjunctiveQuery) query;
+			if (this.isSaturated) {
+				Homomorphism solver = DefaultHomomorphismFactory.instance().getSolver(cq, this.store);
+				try {
+					return solver.execute(cq, this.store);
+				} catch (HomomorphismException e) {
+					throw new KnowledgeBaseException(e);
+				}
+			} else {
 				this.analyse();
 				if (this.analyse.isDecidable()) {
-					this.fesSaturate();
-					this.compileRule();
-					RuleSet fusRuleSet = this.getFUSRuleSet();
+					try {
+						this.fesSaturate();
+						this.compileRule();
+						RuleSet fusRuleSet = this.getFUSRuleSet();
 
-					PureRewriter pure = new PureRewriter(false);
-					CloseableIteratorWithoutException<ConjunctiveQuery> it = pure.execute(cq, fusRuleSet,
-					    this.ruleCompilation);
-					UnionOfConjunctiveQueries ucq = new DefaultUnionOfConjunctiveQueries(cq.getAnswerVariables(), it);
+						PureRewriter pure = new PureRewriter(false);
+						CloseableIteratorWithoutException<ConjunctiveQuery> it = pure.execute(cq, fusRuleSet,
+						    this.ruleCompilation);
+						UnionOfConjunctiveQueries ucq = new DefaultUnionOfConjunctiveQueries(cq.getAnswerVariables(),
+						                                                                     it);
 
-					Homomorphism solver = DefaultHomomorphismFactory.instance().getSolver(ucq, this.store);
-					if (solver instanceof HomomorphismWithCompilation) {
-						return ((HomomorphismWithCompilation) solver).execute(ucq, this.store, this.ruleCompilation);
-					} else {
-						it = PureRewriter.unfold(ucq, this.ruleCompilation);
-						ucq = new DefaultUnionOfConjunctiveQueries(cq.getAnswerVariables(), it);
-						return solver.execute(ucq, this.store);
+						Homomorphism solver = DefaultHomomorphismFactory.instance().getSolver(ucq, this.store);
+						if (solver instanceof HomomorphismWithCompilation) {
+							return ((HomomorphismWithCompilation) solver).execute(ucq, this.store,
+							    this.ruleCompilation);
+						} else {
+							if (this.getProfiler().equals(Priority.REWRITING)) {
+								it = PureRewriter.unfold(ucq, this.ruleCompilation);
+								ucq = new DefaultUnionOfConjunctiveQueries(cq.getAnswerVariables(), it);
+							} else {
+								this.semiSaturate();
+							}
+							return solver.execute(ucq, this.store);
+						}
+					} catch (ChaseException e) {
+						throw new KnowledgeBaseException(e);
+					} catch (HomomorphismException e) {
+						throw new KnowledgeBaseException(e);
 					}
-
 				} else {
 					throw new KnowledgeBaseException("No decidable combinaison found.");
 				}
-			} else {
-				return StaticHomomorphism.instance().execute(query, this.store);
 			}
-		} catch (Exception e) {
-			throw new Error(e);
+		} else {
+			throw new KnowledgeBaseException("No implementation found for this kind of query: " + query.getClass());
 		}
+	}
+	
+	@Override
+	public CloseableIterator<Substitution> query(Query query, int timeout) throws KnowledgeBaseException {
+		// TODO implement this method
+		throw new MethodNotImplementedError();
+	}
+
+	@Override
+	public void close() {
+		if (this.store instanceof Closeable) {
+			try {
+				((Closeable) this.store).close();
+			} catch (IOException e) {
+				LOGGER.warn("Error while closing KnowledgeBase: ", e);
+			}
+		}
+	}
+
+	@Override
+	public Priority getPriority() {
+		return this.priority;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -276,6 +330,7 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 	void setPriority(Priority p) {
 		this.priority = p;
 	}
+
 
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
@@ -320,7 +375,7 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 	}
 
 	private int[] getDecidableCombination() {
-		if (priority == Priority.FES) {
+		if (priority == Priority.SATURATION) {
 			return this.analyse.combineFES();
 		} else {
 			return this.analyse.combineFUS();
@@ -357,12 +412,6 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 		} catch (IteratorException e) {
 			throw new AtomSetException(e);
 		}
-	}
-
-	@Override
-	public void saturate(Chase chase) {
-		// TODO implement this method
-		throw new MethodNotImplementedError();
 	}
 
 };

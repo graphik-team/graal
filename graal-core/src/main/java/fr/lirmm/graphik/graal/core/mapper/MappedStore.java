@@ -1,0 +1,162 @@
+/*
+ * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
+ * (Université de Montpellier & CNRS) (2014 - 2015)
+ *
+ * Contributors :
+ *
+ * Clément SIPIETER <clement.sipieter@inria.fr>
+ * Mélanie KÖNIG
+ * Swan ROCHER
+ * Jean-François BAGET
+ * Michel LECLÈRE
+ * Marie-Laure MUGNIER <mugnier@lirmm.fr>
+ *
+ *
+ * This file is part of Graal <https://graphik-team.github.io/graal/>.
+ *
+ * This software is governed by the CeCILL  license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * "http://www.cecill.info".
+ *
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL license and that you accept its terms.
+ */
+package fr.lirmm.graphik.graal.core.mapper;
+
+import java.io.Closeable;
+import java.io.IOException;
+
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.ConstantGenerator;
+import fr.lirmm.graphik.graal.api.core.Mapper;
+import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Term.Type;
+import fr.lirmm.graphik.graal.api.store.AbstractStore;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.converter.ConverterCloseableIterator;
+
+/**
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+ *
+ */
+public class MappedStore extends AbstractStore {
+
+	private AtomSet atomset;
+	private Mapper mapper;
+	private MapperAtomConverter unconverter;
+	private MapperPredicateConverter predicateUnconverter;
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
+	
+	public MappedStore(AtomSet atomset, Mapper mapper) {
+		this.atomset = atomset;
+		this.mapper = mapper;
+		this.unconverter = new MapperAtomConverter(this.mapper.inverse());
+		this.predicateUnconverter = new MapperPredicateConverter(this.mapper.inverse());
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
+		
+	@Override
+	public CloseableIterator<Atom> iterator() {
+		return new ConverterCloseableIterator<Atom, Atom>(atomset.iterator(), unconverter);
+	}
+
+	@Override
+	public CloseableIterator<Atom> match(Atom atom) throws AtomSetException {
+		CloseableIterator<Atom> match = atomset.match(mapper.map(atom));
+		return new ConverterCloseableIterator<Atom, Atom>(match, unconverter);
+	}
+
+	@Override
+	public CloseableIterator<Atom> atomsByPredicate(Predicate p) throws AtomSetException {
+		CloseableIterator<Atom> atomsByPredicate = atomset.atomsByPredicate(mapper.map(p));
+		return new ConverterCloseableIterator<Atom, Atom>(atomsByPredicate, unconverter);
+	}
+
+	@Override
+	public CloseableIterator<Term> termsByPredicatePosition(Predicate p, int position) throws AtomSetException {
+		return atomset.termsByPredicatePosition(mapper.map(p), position);
+	}
+
+	@Override
+	public CloseableIterator<Predicate> predicatesIterator() throws AtomSetException {
+		return new ConverterCloseableIterator<Predicate, Predicate>(atomset.predicatesIterator(), predicateUnconverter);
+	}
+
+	@Override
+	public CloseableIterator<Term> termsIterator() throws AtomSetException {
+		return atomset.termsIterator();
+	}
+
+	@Override
+	public CloseableIterator<Term> termsIterator(Type type) throws AtomSetException {
+		return atomset.termsIterator(type);
+	}
+
+	@Override
+	public void close() {
+		if(atomset instanceof Closeable) {
+			try {
+				((Closeable) atomset).close();
+			} catch (IOException e) {
+			}
+		}
+	}
+
+	@Override
+	public boolean add(Atom atom) throws AtomSetException {
+		return atomset.add(mapper.map(atom));
+	}
+
+	@Override
+	public boolean remove(Atom atom) throws AtomSetException {
+		return atomset.remove(mapper.map(atom));
+
+	}
+
+	@Override
+	public void clear() throws AtomSetException {
+		atomset.clear();
+	}
+
+	@Override
+	public ConstantGenerator getFreshSymbolGenerator() {
+		return atomset.getFreshSymbolGenerator();
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// OBJECT OVERRIDE METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+}

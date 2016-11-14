@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,27 +40,65 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.api.core;
+package fr.lirmm.graphik.graal.core.mapper;
 
-import java.util.Iterator;
+import java.util.HashMap;
+
+import fr.lirmm.graphik.graal.api.core.MutableMapper;
+import fr.lirmm.graphik.graal.api.core.Predicate;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface ImmutableRuleSet extends Iterable<Rule> {
-	
-    public boolean contains(Rule rule);
+public class HashMapMapper extends AbstractMapper implements MutableMapper {
+
+	private HashMap<Predicate, Predicate> map;
+	private HashMap<Predicate, Predicate> unmap;
+
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
+
+	public HashMapMapper() {
+		this.map = new HashMap<Predicate, Predicate>();
+		this.unmap = new HashMap<Predicate, Predicate>();
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public Iterator<Rule> iterator();
+	public void addMapping(Predicate fromPredicate, Predicate toPredicate) {
+		this.map.put(fromPredicate, toPredicate);
+		this.unmap.put(toPredicate, fromPredicate);
+	}
 
-	/**
-	 * @return
-	 */
-	int size();
+	@Override
+	public Predicate map(Predicate predicate) {
+		Predicate res = this.map.get(predicate);
+		if (res == null) {
+			res = predicate;
+		}
+		return res;
+	}
+
+	@Override
+	public Predicate unmap(Predicate predicate) {
+		Predicate res = this.unmap.get(predicate);
+		if (res == null) {
+			res = predicate;
+		}
+		return res;
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// OBJECT OVERRIDE METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
 }

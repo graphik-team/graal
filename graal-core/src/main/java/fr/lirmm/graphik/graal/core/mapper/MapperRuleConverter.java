@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,27 +40,43 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.api.core;
+package fr.lirmm.graphik.graal.core.mapper;
 
-import java.util.Iterator;
+import fr.lirmm.graphik.graal.api.core.Mapper;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.util.stream.converter.Converter;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface ImmutableRuleSet extends Iterable<Rule> {
+public class MapperRuleConverter implements Converter<Rule, Rule> {
+
+	private Mapper mapper;
 	
-    public boolean contains(Rule rule);
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
+	
+	public MapperRuleConverter(Mapper mapper) {
+		this.mapper = mapper;
+	}
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public Iterator<Rule> iterator();
+	public Rule convert(Rule rule) {
+		return this.mapper.map(rule);
+	}
 
-	/**
-	 * @return
-	 */
-	int size();
+	// /////////////////////////////////////////////////////////////////////////
+	// OBJECT OVERRIDE METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
 }

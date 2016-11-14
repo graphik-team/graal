@@ -52,17 +52,18 @@ public interface RuleSet extends ImmutableRuleSet {
 
 	public boolean addAll(Iterator<Rule> ruleIterator);
 
-	public boolean addAll(CloseableIterator<Rule> ruleIterator);
+	public boolean addAll(CloseableIterator<Rule> ruleIterator) throws RuleSetException;
 
 	public boolean remove(Rule rule);
 
 	public boolean removeAll(Iterator<Rule> ruleIterator);
 
-	public boolean removeAll(CloseableIterator<Rule> ruleIterator);
+	public boolean removeAll(CloseableIterator<Rule> ruleIterator) throws RuleSetException;;
 
 	@Override
 	public boolean contains(Rule rule);
 
+	@Override
 	public int size();
 
 	@Override

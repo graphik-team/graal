@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,27 +40,26 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.api.core;
-
-import java.util.Iterator;
+package fr.lirmm.graphik.util;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface ImmutableRuleSet extends Iterable<Rule> {
+public class ShouldNeverHappenedError extends Error {
 	
-    public boolean contains(Rule rule);
+	private static final long serialVersionUID = -7036541675105544732L;
 
-	@Override
-	public Iterator<Rule> iterator();
+	public ShouldNeverHappenedError(String message, Throwable cause) {
+		super(message, cause);
+	}
 
-	/**
-	 * @return
-	 */
-	int size();
+	public ShouldNeverHappenedError(String message) {
+		super(message);
+	}
+
+	public ShouldNeverHappenedError(Throwable e) {
+		super(e);
+	}
 
 }

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,27 +40,95 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.api.core;
+package fr.lirmm.graphik.graal.core.mapper;
 
-import java.util.Iterator;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.Mapper;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Rule;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface ImmutableRuleSet extends Iterable<Rule> {
-	
-    public boolean contains(Rule rule);
+public class IdentityMapper implements Mapper {
+
+	// /////////////////////////////////////////////////////////////////////////
+	// SINGLETON
+	// /////////////////////////////////////////////////////////////////////////
+
+	private static IdentityMapper instance;
+
+	protected IdentityMapper() {
+		super();
+	}
+
+	public static synchronized IdentityMapper instance() {
+		if (instance == null)
+			instance = new IdentityMapper();
+
+		return instance;
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public Iterator<Rule> iterator();
+	public Atom map(Atom atom) {
+		return atom;
+	}
 
-	/**
-	 * @return
-	 */
-	int size();
+	@Override
+	public ConjunctiveQuery map(ConjunctiveQuery cq) {
+		return cq;
+	}
+
+	@Override
+	public Rule map(Rule rule) {
+		return rule;
+	}
+
+	@Override
+	public InMemoryAtomSet map(InMemoryAtomSet atomset) {
+		return atomset;
+	}
+
+	@Override
+	public Predicate map(Predicate predicate) {
+		return predicate;
+	}
+
+	@Override
+	public Predicate unmap(Predicate predicate) {
+		return predicate;
+	}
+
+	@Override
+	public Atom unmap(Atom atom) {
+		return atom;
+	}
+
+	@Override
+	public ConjunctiveQuery unmap(ConjunctiveQuery cq) {
+		return cq;
+	}
+
+	@Override
+	public Rule unmap(Rule rule) {
+		return rule;
+	}
+
+	@Override
+	public InMemoryAtomSet unmap(InMemoryAtomSet atomset) {
+		return atomset;
+	}
+
+	@Override
+	public Mapper inverse() {
+		return this;
+	}
 
 }

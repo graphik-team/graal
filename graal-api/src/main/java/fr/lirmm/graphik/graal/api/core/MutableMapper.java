@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,27 +40,22 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
 package fr.lirmm.graphik.graal.api.core;
-
-import java.util.Iterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface ImmutableRuleSet extends Iterable<Rule> {
-	
-    public boolean contains(Rule rule);
-
-	@Override
-	public Iterator<Rule> iterator();
+public interface MutableMapper extends Mapper {
 
 	/**
-	 * @return
+	 * Add a mapping from fromPredicate to toPredicate. <br>
+	 * map(fromPredicate) will return toPredicate and unmap(toPredicate) will
+	 * return fromPredicate.
+	 * 
+	 * @param from
+	 * @param to
 	 */
-	int size();
+	public void addMapping(Predicate fromPredicate, Predicate toPredicate);
 
 }
