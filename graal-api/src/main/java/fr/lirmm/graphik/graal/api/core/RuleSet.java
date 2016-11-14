@@ -44,15 +44,21 @@ package fr.lirmm.graphik.graal.api.core;
 
 import java.util.Iterator;
 
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+
 public interface RuleSet extends ImmutableRuleSet {
 
 	public boolean add(Rule rule);
 
 	public boolean addAll(Iterator<Rule> ruleIterator);
 
+	public boolean addAll(CloseableIterator<Rule> ruleIterator);
+
 	public boolean remove(Rule rule);
 
 	public boolean removeAll(Iterator<Rule> ruleIterator);
+
+	public boolean removeAll(CloseableIterator<Rule> ruleIterator);
 
 	@Override
 	public boolean contains(Rule rule);
