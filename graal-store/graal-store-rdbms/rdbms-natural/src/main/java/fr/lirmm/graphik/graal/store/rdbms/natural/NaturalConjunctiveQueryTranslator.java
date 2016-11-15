@@ -175,7 +175,13 @@ class NaturalConjunctiveQueryTranslator extends AbstractRdbmsConjunctiveQueryTra
 				if (fields.length() != 0)
 					fields.append(", ");
 
-				fields.append(columns.get(t));
+				if (t.isConstant()) {
+					fields.append("'");
+					fields.append(t.getIdentifier());
+					fields.append("'");
+				} else {
+					fields.append(columns.get(t));
+				}
 			}
 
 			StringBuilder query = new StringBuilder("SELECT DISTINCT ");
