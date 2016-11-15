@@ -151,7 +151,7 @@ public class Predicate implements Comparable<Predicate>, Serializable, Appendabl
 
 	@Override
 	public void appendTo(StringBuilder sb) {
-		sb.append(this.getIdentifier()).append('[').append(this.getArity()).append("]");
+		sb.append(this.getIdentifier()).append('\\').append(this.getArity());
 	}
 
 };

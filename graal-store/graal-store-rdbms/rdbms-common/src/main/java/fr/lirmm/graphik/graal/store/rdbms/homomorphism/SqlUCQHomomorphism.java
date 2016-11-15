@@ -135,7 +135,7 @@ public final class SqlUCQHomomorphism extends AbstractHomomorphism<UnionOfConjun
 				SQLQuery query = translator.translate(it.next());
 				if (!query.hasSchemaError()) {
 					if (ucq.length() > 0)
-						ucq.append(" UNION ");
+						ucq.append("\nUNION\n");
 
 					ucq.append(query.toString());
 				} else if (query.isEmpty()) {

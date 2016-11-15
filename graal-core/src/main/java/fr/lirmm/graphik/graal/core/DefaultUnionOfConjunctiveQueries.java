@@ -171,7 +171,7 @@ public class DefaultUnionOfConjunctiveQueries implements UnionOfConjunctiveQueri
 	public void appendTo(StringBuilder sb) {
 		for (Query q : this.queries) {
 			sb.append(q);
-			sb.append(" | ");
+			sb.append("\n| ");
 		}
 	}
 

@@ -184,8 +184,14 @@ public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 	@Override
 	public void appendTo(StringBuilder sb) {
 		sb.append("ANS(");
-		for (Term t : this.responseVariables)
-			sb.append(t).append(',');
+		boolean first = true;
+		for (Term t : this.responseVariables) {
+			if(!first) {
+				sb.append(',');
+			}
+			first = false;
+			sb.append(t);
+		}
 
 		sb.append(") : ");
 		sb.append(this.atomSet);
