@@ -74,19 +74,22 @@ public class DefaultUnionOfConjunctiveQueries implements UnionOfConjunctiveQueri
 
 	public DefaultUnionOfConjunctiveQueries() {
 		this.queries = new LinkedList<ConjunctiveQuery>();
+		this.ans = new LinkedList<Term>();
 	}
 
 	public DefaultUnionOfConjunctiveQueries(List<Term> ans) {
-		this.queries = new LinkedList<ConjunctiveQuery>();
 		this.ans = ans;
+		this.queries = new LinkedList<ConjunctiveQuery>();
 	}
 
 	public DefaultUnionOfConjunctiveQueries(List<Term> ans, Collection<ConjunctiveQuery> queries) {
+		this.ans = ans;
 		this.queries = queries;
 	}
 
 	public DefaultUnionOfConjunctiveQueries(List<Term> ans,
 	    CloseableIteratorWithoutException<ConjunctiveQuery> queries) {
+		this.ans = ans;
 		this.queries = new LinkedList<ConjunctiveQuery>();
 		while (queries.hasNext()) {
 			this.queries.add(queries.next());
@@ -94,6 +97,7 @@ public class DefaultUnionOfConjunctiveQueries implements UnionOfConjunctiveQueri
 	}
 
 	public DefaultUnionOfConjunctiveQueries(List<Term> ans, ConjunctiveQuery... queries) {
+		this.ans = ans;
 		this.queries = new LinkedList<ConjunctiveQuery>();
 		for (ConjunctiveQuery cq : queries)
 			this.queries.add(cq);

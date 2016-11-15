@@ -87,7 +87,7 @@ public class SQLQuery {
 	 * @return
 	 */
 	public boolean isEmpty() {
-		return this.query.isEmpty();
+		return !this.hasSchemaError && this.query.isEmpty();
 	}
 
 	/**
