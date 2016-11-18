@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,39 +40,37 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.api.io;
+package fr.lirmm.graphik.graal.io.dlp;
 
-import java.io.IOException;
+import java.io.Reader;
 
+import fr.lirmm.graphik.dlgp2.parser.DLGP2Parser;
+import fr.lirmm.graphik.dlgp2.parser.ParseException;
+import fr.lirmm.graphik.graal.api.io.ParseError;
+import fr.lirmm.graphik.util.stream.InMemoryStream;
 
-/**
- * @author Clément Sipieter (INRIA) <clement@6pi.fr>
- *
- */
-public class ParseException extends IOException {
+class Producer implements Runnable {
 
-	private static final long serialVersionUID = -4455111019098315998L;
-	
-	/**
-	 * @param message
-	 * @param e
-	 */
-	public ParseException(String message, Throwable e) {
-		super(message, e);
+	private Reader reader;
+	private InMemoryStream<Object> buffer;
+
+	Producer(Reader reader, InMemoryStream<Object> buffer) {
+		this.reader = reader;
+		this.buffer = buffer;
 	}
 
-	/**
-	 * @param message
-	 */
-	public ParseException(String message) {
-		super(message);
-	}
+	@Override
+	public void run() {
+		DLGP2Parser parser = new DLGP2Parser(new InternalTermFactory(), reader);
+		parser.addParserListener(new DlgpListener(buffer));
+		parser.setDefaultBase("");
 
-	public ParseException(Throwable e) {
-		super(e);
+		try {
+			parser.document();
+		} catch (ParseException e) {
+			throw new ParseError("An error occured while parsing", e);
+		} finally {
+			buffer.close();
+		}
 	}
-
 }

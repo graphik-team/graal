@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,39 +40,20 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.api.io;
+package fr.lirmm.graphik.util.stream;
 
-import java.io.IOException;
-
+import java.util.Iterator;
 
 /**
- * @author Clément Sipieter (INRIA) <clement@6pi.fr>
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class ParseException extends IOException {
+public interface InMemoryStream<T> extends Stream<T>, CloseableIteratorWithoutException<T> {
 
-	private static final long serialVersionUID = -4455111019098315998L;
-	
-	/**
-	 * @param message
-	 * @param e
-	 */
-	public ParseException(String message, Throwable e) {
-		super(message, e);
-	}
+	@Override
+	void write(T object);
 
-	/**
-	 * @param message
-	 */
-	public ParseException(String message) {
-		super(message);
-	}
-
-	public ParseException(Throwable e) {
-		super(e);
-	}
+	@Override
+	void write(Iterator<T> objects);
 
 }

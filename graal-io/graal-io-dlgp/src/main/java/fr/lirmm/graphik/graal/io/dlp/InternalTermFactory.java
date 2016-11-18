@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,39 +40,35 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.api.io;
+package fr.lirmm.graphik.graal.io.dlp;
 
-import java.io.IOException;
+import fr.lirmm.graphik.dlgp2.parser.TermFactory;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.util.DefaultURI;
+import fr.lirmm.graphik.util.URI;
 
+class InternalTermFactory implements TermFactory {
 
-/**
- * @author Clément Sipieter (INRIA) <clement@6pi.fr>
- *
- */
-public class ParseException extends IOException {
-
-	private static final long serialVersionUID = -4455111019098315998L;
-	
-	/**
-	 * @param message
-	 * @param e
-	 */
-	public ParseException(String message, Throwable e) {
-		super(message, e);
+	@Override
+	public Object createIRI(String s) {
+		if (s.indexOf(':') == -1) {
+			return s;
+		}
+		return new DefaultURI(s);
 	}
 
-	/**
-	 * @param message
-	 */
-	public ParseException(String message) {
-		super(message);
+	@Override
+	public Object createLiteral(Object datatype, String stringValue,
+			String langTag) {
+		if (langTag != null) {
+			stringValue += "@" + langTag;
+		}
+		return DefaultTermFactory.instance().createLiteral((URI) datatype,
+				stringValue);
 	}
 
-	public ParseException(Throwable e) {
-		super(e);
+	@Override
+	public Object createVariable(String stringValue) {
+		return DefaultTermFactory.instance().createVariable(stringValue);
 	}
-
 }

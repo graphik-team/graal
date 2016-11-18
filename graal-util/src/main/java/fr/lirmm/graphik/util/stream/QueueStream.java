@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,39 +40,56 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.api.io;
+package fr.lirmm.graphik.util.stream;
 
-import java.io.IOException;
-
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
- * @author Clément Sipieter (INRIA) <clement@6pi.fr>
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class ParseException extends IOException {
+public class QueueStream<T> extends AbstractCloseableIterator<T> implements InMemoryStream<T> {
 
-	private static final long serialVersionUID = -4455111019098315998L;
-	
-	/**
-	 * @param message
-	 * @param e
-	 */
-	public ParseException(String message, Throwable e) {
-		super(message, e);
+	private final Queue<T> buffer;
+
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
+
+	public QueueStream() {
+		this.buffer = new LinkedList<T>();
 	}
 
-	/**
-	 * @param message
-	 */
-	public ParseException(String message) {
-		super(message);
+	// /////////////////////////////////////////////////////////////////////////
+	// METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	@Override
+	public void write(T object) {
+		this.buffer.add(object);
 	}
 
-	public ParseException(Throwable e) {
-		super(e);
+	@Override
+	public boolean hasNext() {
+		return this.buffer.size() > 0;
+	}
+
+	@Override
+	public T next() {
+		return this.buffer.remove();
+	}
+
+	@Override
+	public void close() {
+
+	}
+
+	@Override
+	public void write(Iterator<T> objects) {
+		while (objects.hasNext())
+			this.write(objects.next());
 	}
 
 }

@@ -48,9 +48,6 @@ package fr.lirmm.graphik.graal.io.dlp;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import fr.lirmm.graphik.dlgp2.parser.ParserListener;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Constant;
@@ -70,9 +67,6 @@ import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
  * 
  */
 abstract class AbstractDlgpListener implements ParserListener {
-
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(AbstractDlgpListener.class);
 
 	private List<Term> answerVars;
 	private LinkedListAtomSet atomSet = null;

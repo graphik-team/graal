@@ -45,15 +45,13 @@
  */
 package fr.lirmm.graphik.util.stream;
 
-import java.io.IOException;
 import java.util.Iterator;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public class ArrayBlockingStream<T> extends AbstractCloseableIterator<T> implements
-		Writer<T> {
+public class ArrayBlockingStream<T> extends AbstractCloseableIterator<T> implements InMemoryStream<T> {
 
 	final int MIN_QUEUE;
 	private final Object[] buffer;
@@ -146,7 +144,7 @@ public class ArrayBlockingStream<T> extends AbstractCloseableIterator<T> impleme
 	}
 
 	@Override
-	public void write(Iterator<T> it) throws IOException {
+	public void write(Iterator<T> it) {
 		while (it.hasNext())
 			this.write(it.next());
 	}

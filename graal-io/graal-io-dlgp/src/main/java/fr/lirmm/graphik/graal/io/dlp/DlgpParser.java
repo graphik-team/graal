@@ -53,14 +53,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
-import java.lang.Thread.UncaughtExceptionHandler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.dlgp2.parser.DLGP2Parser;
-import fr.lirmm.graphik.dlgp2.parser.ParseException;
-import fr.lirmm.graphik.dlgp2.parser.TermFactory;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
@@ -68,20 +64,16 @@ import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.KnowledgeBase;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.VariableGenerator;
-import fr.lirmm.graphik.graal.api.io.ParseError;
+import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.api.io.Parser;
 import fr.lirmm.graphik.graal.core.DefaultNegativeConstraint;
 import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
-import fr.lirmm.graphik.graal.core.FreshVarSubstitution;
-import fr.lirmm.graphik.graal.core.stream.filter.AtomFilterIterator;
-import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
-import fr.lirmm.graphik.util.DefaultURI;
-import fr.lirmm.graphik.util.Prefix;
-import fr.lirmm.graphik.util.URI;
+import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.ArrayBlockingStream;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
+import fr.lirmm.graphik.util.stream.InMemoryStream;
+import fr.lirmm.graphik.util.stream.QueueStream;
 
 /**
  * 
@@ -93,130 +85,17 @@ public final class DlgpParser extends AbstractCloseableIterator<Object> implemen
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(DlgpParser.class);
 
-	private static VariableGenerator    freeVarGen = new DefaultVariableGenerator("I");
+	static VariableGenerator    freeVarGen = new DefaultVariableGenerator("I");
 
 	private ArrayBlockingStream<Object> buffer = new ArrayBlockingStream<Object>(
 			512);
 
-	private static class DlgpListener extends AbstractDlgpListener {
-
-		private ArrayBlockingStream<Object> set;
-
-		DlgpListener(ArrayBlockingStream<Object> buffer) {
-			this.set = buffer;
-		}
-
-		@Override
-		protected void createAtomSet(InMemoryAtomSet atomset) {
-			FreshVarSubstitution s = new FreshVarSubstitution(freeVarGen);
-			CloseableIteratorWithoutException<Atom> it = atomset.iterator();
-			while (it.hasNext()) {
-				Atom a = it.next();
-				this.set.write(s.createImageOf(a));
-			}
-		}
-
-		@Override
-		protected void createQuery(ConjunctiveQuery query) {
-			this.set.write(query);
-		}
-
-		@Override
-		protected void createRule(Rule rule) {
-			this.set.write(rule);
-		}
-
-		@Override
-		protected void createNegConstraint(DefaultNegativeConstraint negativeConstraint) {
-			this.set.write(negativeConstraint);
-		}
-
-		@Override
-		public void declarePrefix(String prefix, String ns) {
-			this.set.write(new Prefix(prefix.substring(0, prefix.length() - 1),
-					ns));
-		}
-
-		@Override
-		public void declareBase(String base) {
-			this.set.write(new Directive(Directive.Type.BASE, base));
-		}
-
-		@Override
-		public void declareTop(String top) {
-			this.set.write(new Directive(Directive.Type.TOP, top));
-		}
-
-		@Override
-		public void declareUNA() {
-			this.set.write(new Directive(Directive.Type.UNA, ""));
-		}
-
-		@Override
-		public void directive(String text) {
-			this.set.write(new Directive(Directive.Type.COMMENT, text));
-		}
-	};
-
-	private static class InternalTermFactory implements TermFactory {
-
-		@Override
-		public Object createIRI(String s) {
-			if (s.indexOf(':') == -1) {
-				return s;
-			}
-			return new DefaultURI(s);
-		}
-
-		@Override
-		public Object createLiteral(Object datatype, String stringValue,
-				String langTag) {
-			if (langTag != null) {
-				stringValue += "@" + langTag;
-			}
-			return DefaultTermFactory.instance().createLiteral((URI) datatype,
-					stringValue);
-		}
-
-		@Override
-		public Object createVariable(String stringValue) {
-			return DefaultTermFactory.instance().createVariable(stringValue);
-		}
-	}
-
-	private static class Producer implements Runnable {
-
-		private Reader reader;
-		private ArrayBlockingStream<Object> buffer;
-
-		Producer(Reader reader, ArrayBlockingStream<Object> buffer) {
-			this.reader = reader;
-			this.buffer = buffer;
-		}
-
-		@Override
-		public void run() {
-			DLGP2Parser parser = new DLGP2Parser(new InternalTermFactory(), reader);
-			parser.addParserListener(new DlgpListener(buffer));
-			parser.setDefaultBase("");
-
-			try {
-				parser.document();
-			} catch (ParseException e) {
-				throw new ParseError("An error occured while parsing", e);
-			} finally {
-				buffer.close();
-			}
-		}
-	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 	
 	private Reader reader = null;
-
-	private UncaughtExceptionHandler exceptionHandler;
 
 	/**
 	 * Constructor for parsing from the given reader.
@@ -340,24 +219,108 @@ public final class DlgpParser extends AbstractCloseableIterator<Object> implemen
 	// STATIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public static ConjunctiveQuery parseQuery(String s) {
-		return (ConjunctiveQuery) new DlgpParser(s).next();
+	public static ConjunctiveQuery parseQuery(String s) throws ParseException {
+		InMemoryStream<Object> stream = new QueueStream<Object>();
+		Producer p = new Producer(new StringReader(s), stream);
+		try {
+			p.run();
+		} catch (Throwable t) {
+			throw new ParseException(t);
+		}
+
+		if (!stream.hasNext()) {
+			throw new ParseException("No statement found.");
+		}
+		Object o = stream.next();
+		stream.close();
+		try {
+			return (ConjunctiveQuery) o;
+		} catch (ClassCastException e) {
+			throw new ParseException("Cannot cast parsed object into Atom.", e);
+		}
 	}
 
-	public static Atom parseAtom(String s) {
-		return (Atom) new DlgpParser(s).next();
+	public static Atom parseAtom(String s) throws ParseException {
+		InMemoryStream<Object> stream = new QueueStream<Object>();
+		Producer p = new Producer(new StringReader(s), stream);
+		try {
+			p.run();
+		} catch (Throwable t) {
+			throw new ParseException(t);
+		}
+
+		if (!stream.hasNext()) {
+			throw new ParseException("No statement found.");
+		}
+		Object o = stream.next();
+		stream.close();
+		try {
+			return (Atom) o;
+		} catch (ClassCastException e) {
+			throw new ParseException("Cannot cast parsed object into Atom.", e);
+		}
 	}
 	
-	public static CloseableIterator<Atom> parseAtomSet(String s) {
-		return new AtomFilterIterator(new DlgpParser(s));
+	public static CloseableIterator<Atom> parseAtomSet(String s) throws ParseException {
+		InMemoryStream<Object> stream = new QueueStream<Object>();
+		Producer p = new Producer(new StringReader(s), stream);
+		try {
+			p.run();
+		} catch (Throwable t) {
+			throw new ParseException(t);
+		}
+
+		InMemoryAtomSet atomset = new LinkedListAtomSet();
+		try {
+			while (stream.hasNext()) {
+				atomset.add((Atom) stream.next());
+			}
+			return atomset.iterator();
+		} catch (ClassCastException e) {
+			throw new ParseException("Cannot cast a parsed object into Atom.", e);
+		}
 	}
 	
-	public static Rule parseRule(String s) {
-		return (Rule) new DlgpParser(s).next();
+	public static Rule parseRule(String s) throws ParseException {
+		InMemoryStream<Object> stream = new QueueStream<Object>();
+		Producer p = new Producer(new StringReader(s), stream);
+		try {
+			p.run();
+		} catch (Throwable t) {
+			throw new ParseException(t);
+		}
+
+		if (!stream.hasNext()) {
+			throw new ParseException("No statement found.");
+		}
+		Object o = stream.next();
+		stream.close();
+		try {
+			return (Rule) o;
+		} catch (ClassCastException e) {
+			throw new ParseException("Cannot cast parsed object into Rule.", e);
+		}
 	}
 	
-	public static DefaultNegativeConstraint parseNegativeConstraint(String s) {
-		return (DefaultNegativeConstraint) new DlgpParser(s).next();
+	public static DefaultNegativeConstraint parseNegativeConstraint(String s) throws ParseException {
+		InMemoryStream<Object> stream = new QueueStream<Object>();
+		Producer p = new Producer(new StringReader(s), stream);
+		try {
+			p.run();
+		} catch (Throwable t) {
+			throw new ParseException(t);
+		}
+
+		if (!stream.hasNext()) {
+			throw new ParseException("No statement found.");
+		}
+		Object o = stream.next();
+		stream.close();
+		try {
+			return (DefaultNegativeConstraint) o;
+		} catch (ClassCastException e) {
+			throw new ParseException("Cannot cast parsed object into DefaultNegativeConstraint.", e);
+		}
 	}
 	
 	/**
