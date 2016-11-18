@@ -58,6 +58,7 @@ import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.backward_chaining.pure.AggregAllRulesOperator;
 import fr.lirmm.graphik.graal.backward_chaining.pure.AggregSingleRuleOperator;
 import fr.lirmm.graphik.graal.backward_chaining.pure.BasicAggregAllRulesOperator;
@@ -99,9 +100,11 @@ public class BackwardChainingTest {
 	 * Test 1
 	 * 
 	 * @throws IteratorException
+	 * @throws ParseException
 	 */
 	@Theory
-	public void Test1(RulesCompilation compilation, RewritingOperator operator) throws IteratorException {
+	public void Test1(RulesCompilation compilation, RewritingOperator operator)
+	    throws IteratorException, ParseException {
 		RuleSet rules = new LinkedListRuleSet();
 		rules.add(DlgpParser.parseRule("q(X1,X2), ppp(X2) :- r(X1)."));
 		rules.add(DlgpParser.parseRule("pp(X) :- ppp(X)."));
@@ -122,9 +125,11 @@ public class BackwardChainingTest {
 	 * Test 2
 	 * 
 	 * @throws IteratorException
+	 * @throws ParseException
 	 */
 	@Theory
-	public void Test2(RulesCompilation compilation, RewritingOperator operator) throws IteratorException {
+	public void Test2(RulesCompilation compilation, RewritingOperator operator)
+	    throws IteratorException, ParseException {
 		RuleSet rules = new LinkedListRuleSet();
 		rules.add(DlgpParser.parseRule("p(X,Y) :- q(X,Y)."));
 		rules.add(DlgpParser.parseRule("q(X,Y) :- p(Y,X)."));
@@ -143,10 +148,11 @@ public class BackwardChainingTest {
 	 * folding on answer variables
 	 * 
 	 * @throws IteratorException
+	 * @throws ParseException
 	 */
 	@Theory
 	public void forbiddenFoldingTest(RulesCompilation compilation, RewritingOperator operator)
-	    throws IteratorException {
+	    throws IteratorException, ParseException {
 		RuleSet rules = new LinkedListRuleSet();
 		rules.add(DlgpParser.parseRule("q(Y,X) :- p(X,Y)."));
 		rules.add(DlgpParser.parseRule("p(X,Y) :- q(Y,X)."));
@@ -161,7 +167,8 @@ public class BackwardChainingTest {
 	}
 
 	@Theory
-	public void queriesCover(RulesCompilation compilation, RewritingOperator operator) throws IteratorException {
+	public void queriesCover(RulesCompilation compilation, RewritingOperator operator)
+	    throws IteratorException, ParseException {
 		RuleSet rules = new LinkedListRuleSet();
 		rules.add(DlgpParser.parseRule("p(X) :- r(Y, X)."));
 
@@ -179,10 +186,12 @@ public class BackwardChainingTest {
 	 * c(X) :- b(X,Y,Y).
 	 *
 	 * getBody([X]) => b(X, Y, Y).
+	 * 
+	 * @throws ParseException
 	 */
 	@Theory
 	public void getBody1(RulesCompilation compilation,
-			RewritingOperator operator) {
+	    RewritingOperator operator) throws ParseException {
 		RuleSet rules = new LinkedListRuleSet();
 		rules.add(DlgpParser.parseRule("p(X) :- q(X,Y,Y)."));
 
@@ -213,10 +222,12 @@ public class BackwardChainingTest {
 	 * c(X) :- b(X,X).
 	 *
 	 * getBody([X]) => b(X, X).
+	 * 
+	 * @throws ParseException
 	 */
 	@Theory
 	public void getBody2(RulesCompilation compilation,
-			RewritingOperator operator) {
+	    RewritingOperator operator) throws ParseException {
 		RuleSet rules = new LinkedListRuleSet();
 		rules.add(DlgpParser.parseRule("p(X) :- q(X,X)."));
 
@@ -250,10 +261,11 @@ public class BackwardChainingTest {
 	 * ?(X) :- c(X).
 	 * 
 	 * @throws IteratorException
+	 * @throws ParseException
 	 */
 	@Theory
 	public void getUnification(RulesCompilation compilation,
-	    RewritingOperator operator) throws IteratorException {
+	    RewritingOperator operator) throws IteratorException, ParseException {
 		RuleSet rules = new LinkedListRuleSet();
 		rules.add(DlgpParser.parseRule("p(X) :- q(X,Y,X)."));
 		rules.add(DlgpParser.parseRule("q(X,Y,X) :- s(X)."));
@@ -269,23 +281,18 @@ public class BackwardChainingTest {
 	}
 
 	/**
-	 * Given 
-	 *     p(X,Y) :- q(X,Y). 
-	 *     q(X,Y) :- a(X), p(X,Y). 
-	 * Then rewrite(?(X) :-
-	 *     q(X,Y), p(Y,Z).) 
-	 * Return 
-	 *     ?(X) :- q(X,Y), p(Y,Z). 
-	 *     ?(X) :- a(X), p(X,Y), p(Y,Z). 
-	 *     ?(X) :- q(X,Y), q(Y,Z). 
-	 *     ?(X) :- a(X), p(X,Y), q(Y,Z).
+	 * Given p(X,Y) :- q(X,Y). q(X,Y) :- a(X), p(X,Y). Then rewrite(?(X) :-
+	 * q(X,Y), p(Y,Z).) Return ?(X) :- q(X,Y), p(Y,Z). ?(X) :- a(X), p(X,Y),
+	 * p(Y,Z). ?(X) :- q(X,Y), q(Y,Z). ?(X) :- a(X), p(X,Y), q(Y,Z).
 	 * 
 	 * @param compilation
 	 * @param operator
 	 * @throws IteratorException
+	 * @throws ParseException
 	 */
 	@Theory
-	public void issue22(RulesCompilation compilation, RewritingOperator operator) throws IteratorException {
+	public void issue22(RulesCompilation compilation, RewritingOperator operator)
+	    throws IteratorException, ParseException {
 		RuleSet rules = new LinkedListRuleSet();
 		rules.add(DlgpParser.parseRule("p(X,Y) :- q(X,Y)."));
 		rules.add(DlgpParser.parseRule("q(X,Y) :- a(X), p(X,Y)."));

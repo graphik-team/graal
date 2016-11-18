@@ -93,13 +93,13 @@ public class ChaseTest {
 	@Theory
 	public void test1(AtomSet atomSet)
 	    throws AtomSetException, HomomorphismFactoryException, HomomorphismException, ChaseException,
-	    IteratorException {
+	    IteratorException, ParseException {
 		Assume.assumeFalse(atomSet instanceof BlueprintsGraphDBStore); // FIXME
 		Assume.assumeFalse(atomSet instanceof Neo4jStore); // FIXME
 
 		atomSet.addAll(DlgpParser.parseAtomSet("<P>(X,a),<Q>(a,a)."));
 
-		LinkedList<Rule> ruleSet = new LinkedList<Rule>();
+		LinkedList<Rule> ruleSet = new LinkedList<>();
 		ruleSet.add(DlgpParser.parseRule("<Q>(X,Y) :- <P>(X,Y)."));
 
 		Chase chase = new DefaultChase(ruleSet, atomSet);
@@ -112,10 +112,10 @@ public class ChaseTest {
 	@Theory
 	public void restrictedChaseTest0(AtomSet atomSet)
 	    throws AtomSetException, HomomorphismFactoryException, HomomorphismException, ChaseException,
-	    IteratorException {
+	    IteratorException, ParseException {
 		atomSet.addAll(DlgpParser.parseAtomSet("<P>(a,a)."));
 
-		LinkedList<Rule> ruleSet = new LinkedList<Rule>();
+		LinkedList<Rule> ruleSet = new LinkedList<>();
 		ruleSet.add(DlgpParser.parseRule("<Q>(X,Z) :- <P>(X,X)."));
 
 		Chase chase = new DefaultChase(ruleSet, atomSet);
@@ -132,10 +132,10 @@ public class ChaseTest {
 	@Theory
 	public void restrictedChaseTest(AtomSet atomSet)
 	    throws AtomSetException, HomomorphismFactoryException, HomomorphismException, ChaseException,
-	    IteratorException {
+	    IteratorException, ParseException {
 		atomSet.addAll(DlgpParser.parseAtomSet("<P>(a,a)."));
 		
-		LinkedList<Rule> ruleSet = new LinkedList<Rule>();
+		LinkedList<Rule> ruleSet = new LinkedList<>();
 		ruleSet.add(DlgpParser.parseRule("<Q>(X,Z) :- <P>(X,X)."));
 		ruleSet.add(DlgpParser.parseRule("<R>(X,Z) :- <Q>(X,Y)."));
 		ruleSet.add(DlgpParser.parseRule("<Q>(X,Z) :- <R>(X,Y)."));
@@ -157,7 +157,7 @@ public class ChaseTest {
 	    AtomSetException, IteratorException {
 		atomSet.addAll(DlgpParser.parseAtomSet("<P>(a,a)."));
 
-		LinkedList<Rule> ruleSet = new LinkedList<Rule>();
+		LinkedList<Rule> ruleSet = new LinkedList<>();
 		ruleSet.add(DlgpParser.parseRule("<Q>(X,Z) :- <P>(X,X)."));
 		ruleSet.add(DlgpParser.parseRule("<R>(X,Z) :- <Q>(X,Y)."));
 		ruleSet.add(DlgpParser.parseRule("<Q>(X,Z) :- <R>(X,Y)."));
@@ -221,7 +221,7 @@ public class ChaseTest {
 
 	@Theory
 	public void test2(InMemoryAtomSet atomSet)
-	    throws ChaseException, HomomorphismFactoryException, HomomorphismException, IteratorException {
+	    throws ChaseException, HomomorphismFactoryException, HomomorphismException, IteratorException, ParseException {
 
 		// add assertions into this atom set
 		atomSet.add(DlgpParser.parseAtom("<P>(a,a)."));

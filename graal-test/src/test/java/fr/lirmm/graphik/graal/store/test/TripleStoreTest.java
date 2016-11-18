@@ -59,6 +59,7 @@ import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.api.store.TripleStore;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
@@ -101,7 +102,7 @@ public class TripleStoreTest {
 	}
 
 	@Theory
-	public void getPredicates(AtomSet store) throws AtomSetException, IteratorException {
+	public void getPredicates(AtomSet store) throws AtomSetException, IteratorException, ParseException {
 		Assume.assumeTrue(store instanceof TripleStore);
 
 		store.add(DlgpParser.parseAtom("r(a,b)."));
@@ -118,7 +119,7 @@ public class TripleStoreTest {
 	}
 
 	@Theory
-	public void addAndContains(AtomSet store) throws AtomSetException, IteratorException {
+	public void addAndContains(AtomSet store) throws AtomSetException, IteratorException, ParseException {
 		Assume.assumeTrue(store instanceof TripleStore);
 
 		store.add(DlgpParser.parseAtom("p(a,b)."));
@@ -141,7 +142,7 @@ public class TripleStoreTest {
 	}
 
 	@Theory
-	public void getTerms(AtomSet store) throws AtomSetException {
+	public void getTerms(AtomSet store) throws AtomSetException, ParseException {
 		Assume.assumeTrue(store instanceof TripleStore);
 
 		store.add(DlgpParser.parseAtom("p(a,b)."));
@@ -167,7 +168,7 @@ public class TripleStoreTest {
 	}
 
 	@Theory
-	public void isEmpty(AtomSet store) throws AtomSetException {
+	public void isEmpty(AtomSet store) throws AtomSetException, ParseException {
 		Assume.assumeTrue(store instanceof TripleStore);
 
 		Assert.assertTrue("Store is empty but isEmpty return false",

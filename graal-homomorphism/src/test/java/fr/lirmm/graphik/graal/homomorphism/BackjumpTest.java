@@ -49,6 +49,7 @@ import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.homomorphism.bbc.BCC;
 import fr.lirmm.graphik.graal.homomorphism.bootstrapper.StupidBootstrapper;
@@ -75,7 +76,7 @@ public class BackjumpTest {
 	 *            b  d  a  a  a  a
 	 */
 	@Test
-	public void test1() throws HomomorphismException, IteratorException {
+	public void test1() throws HomomorphismException, IteratorException, ParseException {
 		InMemoryAtomSet data = new DefaultInMemoryGraphAtomSet();
 		
 		data.addAll(DlgpParser.parseAtomSet("p12(a,a), p12(b,b), p12(b,c), p12(b,d)."));

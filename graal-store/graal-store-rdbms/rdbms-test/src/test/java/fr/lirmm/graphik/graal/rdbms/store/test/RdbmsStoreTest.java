@@ -53,6 +53,7 @@ import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
+import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.forward_chaining.ConfigurableChase;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
@@ -84,7 +85,7 @@ public class RdbmsStoreTest {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Theory
-	public void SQLRuleApplierTest(RdbmsStore store) throws AtomSetException, IteratorException {
+	public void SQLRuleApplierTest(RdbmsStore store) throws AtomSetException, IteratorException, ParseException {
 		RuleSet ruleSet = new LinkedListRuleSet();
 		ruleSet.add(DlgpParser.parseRule("<Q>(X,Y) :- <P>(X)."));
 		ruleSet.add(DlgpParser.parseRule("<R>(Y) :- <Q>(X,Y)."));

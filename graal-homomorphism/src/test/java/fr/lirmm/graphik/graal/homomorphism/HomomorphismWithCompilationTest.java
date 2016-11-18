@@ -56,6 +56,7 @@ import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
+import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.compilation.IDCompilation;
@@ -79,7 +80,7 @@ public class HomomorphismWithCompilationTest {
 
 	@Theory
 	public void test1(HomomorphismWithCompilation<ConjunctiveQuery, AtomSet> h)
-	    throws HomomorphismException, IteratorException {
+	    throws HomomorphismException, IteratorException, ParseException {
 		InMemoryAtomSet store = new LinkedListAtomSet();
 
 		store.add(DlgpParser.parseAtom("p(a)."));
@@ -101,7 +102,7 @@ public class HomomorphismWithCompilationTest {
 
 	@Theory
 	public void test2(HomomorphismWithCompilation<ConjunctiveQuery, AtomSet> h)
-	    throws HomomorphismException, IteratorException {
+	    throws HomomorphismException, IteratorException, ParseException {
 		InMemoryAtomSet store = new LinkedListAtomSet();
 
 		store.add(DlgpParser.parseAtom("p(a,b)."));
@@ -127,7 +128,7 @@ public class HomomorphismWithCompilationTest {
 
 	@Theory
 	public void issue34(HomomorphismWithCompilation<ConjunctiveQuery, AtomSet> h)
-	    throws HomomorphismException, IteratorException {
+	    throws HomomorphismException, IteratorException, ParseException {
 		InMemoryAtomSet query1 = new LinkedListAtomSet();
 		query1.add(DlgpParser.parseAtom("p(a,Y)."));
 
@@ -148,7 +149,7 @@ public class HomomorphismWithCompilationTest {
 
 	@Theory
 	public void issue35(HomomorphismWithCompilation<ConjunctiveQuery, AtomSet> h)
-	    throws HomomorphismException, IteratorException {
+	    throws HomomorphismException, IteratorException, ParseException {
 		InMemoryAtomSet facts = new LinkedListAtomSet();
 		facts.addAll(DlgpParser.parseAtomSet("p(a,a), r(a,b,b)."));
 

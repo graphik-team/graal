@@ -53,6 +53,7 @@ import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.SimpleFC;
@@ -69,7 +70,7 @@ import fr.lirmm.graphik.util.stream.IteratorException;
 public class ForwardCheckingTest {
 
 	@Test
-	public void test1() throws HomomorphismException, IteratorException {
+	public void test1() throws HomomorphismException, IteratorException, ParseException {
 		InMemoryAtomSet data = new DefaultInMemoryGraphAtomSet();
 
 		data.addAll(DlgpParser.parseAtomSet("p(a,b)."));
@@ -86,7 +87,7 @@ public class ForwardCheckingTest {
 	}
 
 	@Test
-	public void simpleFCTest1() throws HomomorphismException, IteratorException {
+	public void simpleFCTest1() throws HomomorphismException, IteratorException, ParseException {
 		Profiler profiler = new CPUTimeProfiler();
 
 		InMemoryAtomSet data = new DefaultInMemoryGraphAtomSet();
@@ -105,7 +106,7 @@ public class ForwardCheckingTest {
 	}
 
 	@Test
-	public void FCTest2() throws HomomorphismException, IteratorException {
+	public void FCTest2() throws HomomorphismException, IteratorException, ParseException {
 		Profiler profiler = new CPUTimeProfiler();
 
 		InMemoryAtomSet data = new DefaultInMemoryGraphAtomSet();
@@ -124,7 +125,7 @@ public class ForwardCheckingTest {
 	}
 
 	@Test
-	public void NFC2Test() throws HomomorphismException, IteratorException {
+	public void NFC2Test() throws HomomorphismException, IteratorException, ParseException {
 		Profiler profiler = new CPUTimeProfiler();
 
 		Predicate[] predicates = { new Predicate("p2", 2), new Predicate("p3", 3), new Predicate("p4", 4)};
@@ -147,7 +148,7 @@ public class ForwardCheckingTest {
 	}
 
 	@Test
-	public void NFC2Test2() throws HomomorphismException, IteratorException {
+	public void NFC2Test2() throws HomomorphismException, IteratorException, ParseException {
 		Profiler profiler = new CPUTimeProfiler();
 
 		Predicate[] predicates = { new Predicate("p", 2), new Predicate("q", 2), new Predicate("r", 2) };

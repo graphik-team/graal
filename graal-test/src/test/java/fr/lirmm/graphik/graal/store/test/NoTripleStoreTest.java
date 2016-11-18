@@ -59,6 +59,7 @@ import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.api.store.TripleStore;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.test.TestUtil;
@@ -78,7 +79,7 @@ public class NoTripleStoreTest {
 	}
 
 	@Theory
-	public void getTerms(AtomSet store) throws AtomSetException {
+	public void getTerms(AtomSet store) throws AtomSetException, ParseException {
 		Assume.assumeFalse(store instanceof TripleStore);
 
 		store.add(DlgpParser.parseAtom("<P>(a,b)."));
@@ -95,7 +96,7 @@ public class NoTripleStoreTest {
 	}
 
 	@Theory
-	public void termsOrder(AtomSet store) throws AtomSetException, IteratorException {
+	public void termsOrder(AtomSet store) throws AtomSetException, IteratorException, ParseException {
 		Assume.assumeFalse(store instanceof TripleStore);
 
 		Atom a1 = DlgpParser.parseAtom("<P>(a,b,c,d,e,f).");
@@ -113,7 +114,7 @@ public class NoTripleStoreTest {
 	}
 
 	@Theory
-	public void arityTest(AtomSet store) throws AtomSetException, IteratorException {
+	public void arityTest(AtomSet store) throws AtomSetException, IteratorException, ParseException {
 		Assume.assumeFalse(store instanceof TripleStore);
 
 		Atom toAdd = DlgpParser.parseAtom("<P>(a).");

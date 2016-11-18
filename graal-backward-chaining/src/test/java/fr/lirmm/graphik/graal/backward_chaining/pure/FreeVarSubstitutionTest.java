@@ -50,6 +50,7 @@ import org.junit.Test;
 
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.core.FreshVarSubstitution;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
@@ -61,7 +62,7 @@ import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 public class FreeVarSubstitutionTest {
 	
 	@Test
-	public void test() {
+	public void test() throws ParseException {
 		final Term X = DefaultTermFactory.instance().createVariable("X");
 		final Term Y = DefaultTermFactory.instance().createVariable("Y");
 		final Term Z = DefaultTermFactory.instance().createVariable("Z");

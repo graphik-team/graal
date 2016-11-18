@@ -55,6 +55,7 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.test.TestUtil;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -74,7 +75,7 @@ public class StoreTest {
 	}
 
 	@Theory
-	public void atomUnicity(AtomSet store) throws AtomSetException, IteratorException {
+	public void atomUnicity(AtomSet store) throws AtomSetException, IteratorException, ParseException {
 		store.add(DlgpParser.parseAtom("<R>(a,b)."));
 		store.add(DlgpParser.parseAtom("<R>(a,b)."));
 
@@ -83,7 +84,7 @@ public class StoreTest {
 	}
 
 	@Theory
-	public void getPredicates(AtomSet store) throws AtomSetException, IteratorException {
+	public void getPredicates(AtomSet store) throws AtomSetException, IteratorException, ParseException {
 		store.add(DlgpParser.parseAtom("<R>(a,b)."));
 		store.add(DlgpParser.parseAtom("<S>(a,b)."));
 		store.add(DlgpParser.parseAtom("<S>(a,c)."));
@@ -98,7 +99,7 @@ public class StoreTest {
 	}
 
 	@Theory
-	public void addAndContains(AtomSet store) throws AtomSetException, IteratorException {
+	public void addAndContains(AtomSet store) throws AtomSetException, IteratorException, ParseException {
 		store.add(DlgpParser.parseAtom("<P>(a,b)."));
 		store.add(DlgpParser.parseAtom("<Q>(b,c)."));
 
@@ -116,7 +117,7 @@ public class StoreTest {
 	}
 
 	@Theory
-	public void isEmpty(AtomSet store) throws AtomSetException {
+	public void isEmpty(AtomSet store) throws AtomSetException, ParseException {
 		Assert.assertTrue("Store is empty but isEmpty return false",
 				store.isEmpty());
 		store.add(DlgpParser.parseAtom("<P>(a,b)."));
@@ -125,7 +126,7 @@ public class StoreTest {
 	}
 
 	@Theory
-	public void match(AtomSet store) throws AtomSetException, IteratorException {
+	public void match(AtomSet store) throws AtomSetException, IteratorException, ParseException {
 		store.add(DlgpParser.parseAtom("<P>(b,a)."));
 		store.add(DlgpParser.parseAtom("<P>(a,a)."));
 		store.add(DlgpParser.parseAtom("<P>(b,b)."));
@@ -146,7 +147,7 @@ public class StoreTest {
 	}
 
 	@Theory
-	public void atomByPredicate(AtomSet store) throws AtomSetException, IteratorException {
+	public void atomByPredicate(AtomSet store) throws AtomSetException, IteratorException, ParseException {
 		store.add(DlgpParser.parseAtom("<P>(b,a)."));
 		store.add(DlgpParser.parseAtom("<P>(a,a)."));
 		store.add(DlgpParser.parseAtom("<P>(b,b)."));
@@ -161,7 +162,7 @@ public class StoreTest {
 	}
 
 	@Theory
-	public void termsByPredicatePosition(AtomSet store) throws AtomSetException, IteratorException {
+	public void termsByPredicatePosition(AtomSet store) throws AtomSetException, IteratorException, ParseException {
 		store.add(DlgpParser.parseAtom("<P>(d,a)."));
 		store.add(DlgpParser.parseAtom("<P>(d,a)."));
 		store.add(DlgpParser.parseAtom("<P>(d,b)."));
@@ -179,7 +180,7 @@ public class StoreTest {
 	}
 
 	@Theory
-	public void contains(AtomSet store) throws AtomSetException {
+	public void contains(AtomSet store) throws AtomSetException, ParseException {
 		store.add(DlgpParser.parseAtom("<P>(b,a)."));
 		store.add(DlgpParser.parseAtom("<P>(a,a)."));
 		store.add(DlgpParser.parseAtom("<P>(b,b)."));
@@ -195,7 +196,7 @@ public class StoreTest {
 	}
 
 	@Theory
-	public void caseSensitivityTest(AtomSet store) throws AtomSetException, IteratorException {
+	public void caseSensitivityTest(AtomSet store) throws AtomSetException, IteratorException, ParseException {
 		Atom toAdd = DlgpParser.parseAtom("<P>(a,b).");
 		Atom toCheck = DlgpParser.parseAtom("<p>(a,b).");
 		Predicate predicateToCheck = new Predicate("p", 2);
