@@ -47,6 +47,7 @@ package fr.lirmm.graphik.util;
 
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
@@ -193,6 +194,11 @@ public abstract class AbstractProfiler implements Profiler {
 	@Override
 	public Set<Map.Entry<String, Object>> entrySet() {
 		return this.map.entrySet();
+	}
+
+	@Override
+	public Map<String, Object> getMap() {
+		return Collections.unmodifiableMap(this.map);
 	}
 
 	/**

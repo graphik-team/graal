@@ -138,4 +138,9 @@ public interface Profiler {
 	 * @return a Set of all keys used.
 	 */
 	public Set<String> keySet();
+
+	/**
+	 * @return
+	 */
+	Map<String, Object> getMap();
 }
