@@ -44,6 +44,7 @@ package fr.lirmm.graphik.util;
 
 import java.io.PrintStream;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -128,6 +129,11 @@ public class NoProfiler implements Profiler {
 	@Override
 	public Set<String> keySet() {
 		return Collections.<String> emptySet();
+	}
+
+	@Override
+	public Map<String, Object> getMap() {
+		return Collections.<String, Object> emptyMap();
 	}
 
 }
