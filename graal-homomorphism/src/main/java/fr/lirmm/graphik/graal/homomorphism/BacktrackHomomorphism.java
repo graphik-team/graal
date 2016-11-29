@@ -150,16 +150,9 @@ public class BacktrackHomomorphism extends AbstractHomomorphismWithCompilation<C
 	@Override
 	public <U1 extends ConjunctiveQuery, U2 extends AtomSet> CloseableIterator<Substitution> execute(U1 q, U2 a,
 	    RulesCompilation compilation) throws HomomorphismException {
-		BacktrackIterator backtrackIterator = new BacktrackIterator(q.getAtomSet(), a, q.getAnswerVariables(),
+		return new BacktrackIterator(q.getAtomSet(), a, q.getAnswerVariables(),
 		                                                            this.scheduler, this.bootstrapper, this.fc,
 		                                                            this.bj, compilation, this.getProfiler());
-		//return new ArrayBlockingQueueToCloseableIteratorAdapter<Substitution>(backtrackIterator);
-		try {
-			return Iterators.uniq(backtrackIterator);
-		} catch (IteratorException e) {
-			throw new HomomorphismException("An errors occurs during homomorphism", e);
-		}
-
 	}
 
 }
