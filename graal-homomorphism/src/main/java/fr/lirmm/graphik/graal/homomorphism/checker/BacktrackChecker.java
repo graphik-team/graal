@@ -64,9 +64,9 @@ public class BacktrackChecker extends AbstractChecker {
 
 	@Override
 	public BacktrackHomomorphism getSolver() {
-		BCC bcc = new BCC(new GraphBaseBackJumping(), false);
-		return new BacktrackHomomorphism(DefaultScheduler.instance(), StarBootstrapper.instance(), new NFC2(),
-		                                 new GraphBaseBackJumping());
+		BCC bcc = new BCC(new GraphBaseBackJumping(), true);
+		return new BacktrackHomomorphism(bcc.getBCCScheduler(), StarBootstrapper.instance(), new NFC2(),
+		                                 bcc.getBCCBackJumping());
 	}
 
 	@Override

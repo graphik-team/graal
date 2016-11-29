@@ -76,4 +76,14 @@ public class NoBackJumping extends AbstractProfilable implements BackJumping {
 		return var.level - 1;
 	}
 
+	@Override
+	public void addNeighborhoodToBackjumpSet(Var from, Var to) {
+
+	}
+
+	@Override
+	public StringBuilder append(StringBuilder sb, int level) {
+		return sb;
+	}
+
 }

@@ -61,6 +61,7 @@ import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphism;
+import fr.lirmm.graphik.graal.homomorphism.DefaultScheduler;
 import fr.lirmm.graphik.graal.homomorphism.RecursiveBacktrackHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.GraphBaseBackJumping;
@@ -117,17 +118,22 @@ public final class TestUtil {
 
 	public static Homomorphism[] getHomomorphisms() {
 
-		BCC bcc0 = new BCC();
-		BCC bcc1 = new BCC(new GraphBaseBackJumping(), false);
-		BCC bcc2 = new BCC(new GraphBaseBackJumping(), false);
+		BCC bcc0 = new BCC(true);
+		BCC bcc1 = new BCC(new GraphBaseBackJumping(), true);
+		BCC bcc2 = new BCC(new GraphBaseBackJumping(), true);
 
 		return new Homomorphism[] { StaticHomomorphism.instance(), RecursiveBacktrackHomomorphism.instance(),
 		                            new BacktrackHomomorphism(),
+		                            new BacktrackHomomorphism(new GraphBaseBackJumping()),
 		                            new BacktrackHomomorphism(bcc0.getBCCScheduler(), bcc0.getBCCBackJumping()),
 		                            new BacktrackHomomorphism(bcc1.getBCCScheduler(), bcc1.getBCCBackJumping()),
-		                            new BacktrackHomomorphism(new NFC0()), new BacktrackHomomorphism(new NFC2()),
+		                            new BacktrackHomomorphism(new NFC0()), 
+		                            new BacktrackHomomorphism(new NFC2()),
+		                            new BacktrackHomomorphism(new NFC2(true)),
 		                            new BacktrackHomomorphism(new SimpleFC()),
 		                            new BacktrackHomomorphism(new NFC2WithLimit(8)),
+		                            new BacktrackHomomorphism(DefaultScheduler.instance(), StarBootstrapper.instance(), new NFC2(),
+		                    				new GraphBaseBackJumping()),
 		                            new BacktrackHomomorphism(bcc2.getBCCScheduler(), StarBootstrapper.instance(),
 		                                                      new NFC2(), bcc2.getBCCBackJumping()) };
 

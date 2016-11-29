@@ -53,9 +53,12 @@ import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.api.store.TripleStore;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
@@ -283,6 +286,23 @@ public class ConjunctiveQuery2Test {
 
 			Assert.assertFalse(subReader.hasNext());
 			subReader.close();
+		} catch (Exception e) {
+			Assert.assertTrue(e.getMessage(), false);
+		}
+	}
+	
+	/**
+	 * Check if the GraphBaseBackjumping jump to the last neighbor (in the homomorphism level order)
+	 * @param h
+	 * @param store
+	 */
+	@Theory
+	public void BackJumpingTest1(Homomorphism h, AtomSet store) {
+		try {
+			store.addAll(DlgpParser.parseAtomSet("<P0>(a,c), <P1>(a,z), <P1>(b,c)."));
+			ConjunctiveQuery query = DlgpParser.parseQuery("? :- <P0>(X0,X2), <P1>(X1,X2).");
+
+			Assert.assertTrue(h.exist(query, store));
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);
 		}

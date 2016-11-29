@@ -51,6 +51,7 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
 import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
 import fr.lirmm.graphik.util.Profilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
@@ -63,7 +64,18 @@ public interface ForwardChecking extends Profilable {
 	void init(Var[] vars, Map<Variable, Var> map);
 
 	boolean isInit(Var v);
+	
+	void setBackJumping(BackJumping bj);
 
+	/**
+	 * 
+	 * @param v
+	 * @param g
+	 * @param map
+	 * @param rc
+	 * @return -1 if the current affectation is acceptable, the level of the detected issue otherwise.
+	 * @throws BacktrackException
+	 */
 	boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc) throws BacktrackException;
 
 	/**
@@ -73,5 +85,11 @@ public interface ForwardChecking extends Profilable {
 	 */
 	CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Map<Variable, Var> map, RulesCompilation rc)
 	    throws BacktrackException;
+
+	/**
+	 * @param sb
+	 * @param level
+	 */
+	StringBuilder append(StringBuilder sb, int level);
 
 }

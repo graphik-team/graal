@@ -43,21 +43,34 @@
 package fr.lirmm.graphik.graal.homomorphism.forward_checking;
 
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
+import fr.lirmm.graphik.graal.homomorphism.BacktrackUtils;
 import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.util.profiler.Profiler;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * NFC0 is a ForwardChecking implementation for HyperGraph with delayed local
- * propagation.
+ * propagation. <br/>
+ * 
+ * delayed: check atoms with only one variable not assigned (after current
+ * assignment). <br/>
+ * local: check atoms containing at least one atoms from the set of post
+ * variables of the current variable. <br/>
  * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
@@ -76,30 +89,17 @@ public class NFC0 extends AbstractNFC implements ForwardChecking {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc)
-	    throws BacktrackException {
+	public boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc) throws BacktrackException {
 
 		// clear all computed candidats for post variables
 		for (Var z : v.postVars) {
 			this.clear(v, z);
 		}
 
-		boolean checkThisAtom = true;
-		for (Atom atom : v.postAtoms) {
-			int i = 0;
-			for (Term t : atom.getTerms(Type.VARIABLE)) {
-				Var z = map.get(t);
-				if (z.level > v.level) {
-					++i;
-					if (i > 1) {
-						checkThisAtom = false;
-					}
-				}
-			}
-
-			if (checkThisAtom) {
+		for (Atom atom : v.postAtoms) {	
+			if (mustBeChecked(atom, map)) {
 				try {
-					if (!select(atom, v, g, map, rc)) {
+					if(!select(atom, v, g, map, rc)) {
 						return false;
 					}
 				} catch (IteratorException e) {
@@ -110,6 +110,30 @@ public class NFC0 extends AbstractNFC implements ForwardChecking {
 			}
 		}
 
+		return true;
+	}
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+	// /////////////////////////////////////////////////////////////////////////
+	
+	/**
+	 * Check delayed property
+	 * @param atom
+	 * @param map
+	 * @return
+	 */
+	protected boolean mustBeChecked(Atom atom, Map<Variable, Var> map) {
+		int i = 0;
+		for (Term t : atom.getTerms(Type.VARIABLE)) {
+			Var z = map.get(t);
+			if (z.image != null) {
+				++i;
+				if (i > 1) {
+					return false;
+				}
+			}
+		}
 		return true;
 	}
 

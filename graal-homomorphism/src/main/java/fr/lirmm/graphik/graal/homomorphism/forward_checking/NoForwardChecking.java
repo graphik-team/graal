@@ -10,6 +10,7 @@ import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismIteratorChecker;
 import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
 import fr.lirmm.graphik.util.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
@@ -101,6 +102,16 @@ public class NoForwardChecking extends AbstractProfilable implements ForwardChec
 		tmp.setProfiler(this.getProfiler());
 		return tmp;
 
+	}
+
+	@Override
+	public void setBackJumping(BackJumping bj) {
+		
+	}
+
+	@Override
+	public StringBuilder append(StringBuilder sb, int level) {
+		return sb.append("NOFC");
 	}
 
 }

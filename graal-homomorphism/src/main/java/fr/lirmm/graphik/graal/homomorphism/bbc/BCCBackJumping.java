@@ -55,29 +55,39 @@ class BCCBackJumping extends AbstractProfilable implements BackJumping {
 	 * 
 	 */
     private final BCC BCC;
-	private BackJumping bc;
+	private BackJumping bj;
 
 	BCCBackJumping(BCC bcc, BackJumping bc) {
 		BCC = bcc;
-		this.bc = bc;
+		this.bj = bc;
 	}
 
 	@Override
 	public void init(Var[] vars, Map<Variable, Var> map) {
-		this.bc.init(vars, map);
+		this.bj.init(vars, map);
 	}
 
 	@Override
 	public int previousLevel(Var var, Var[] vars) {
+		int ret = this.bj.previousLevel(var, vars);
 		if (BCC.varData[var.level].isEntry && !vars[BCC.varData[var.level].previousLevelFailure].success) {
 			if (BCC.varData[BCC.varData[var.level].previousLevelFailure].forbidden != null) {
 				BCC.varData[BCC.varData[var.level].previousLevelFailure].forbidden.add(vars[BCC.varData[var.level].previousLevelFailure].image);
 			}
 			this.getProfiler().incr("#BCCBackjumps", 1);
-			return BCC.varData[var.level].previousLevelFailure;
-		} else {
-			return this.bc.previousLevel(var, vars);
+			ret = BCC.varData[var.level].previousLevelFailure;
 		}
+		return ret;
+	}
+
+	@Override
+	public void addNeighborhoodToBackjumpSet(Var from, Var to) {
+		this.bj.addNeighborhoodToBackjumpSet(from, to);
+	}
+	
+	@Override
+	public StringBuilder append(StringBuilder sb, int level) {
+		return bj.append(sb, level);
 	}
 
 }

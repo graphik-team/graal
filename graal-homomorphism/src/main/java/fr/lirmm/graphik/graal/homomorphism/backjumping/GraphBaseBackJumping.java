@@ -51,6 +51,12 @@ import fr.lirmm.graphik.graal.homomorphism.Var;
 import fr.lirmm.graphik.util.AbstractProfilable;
 
 /**
+ * The GraphBaseBackJumping allows jump (in case of failure) to the last
+ * neighbor node from the query graph (in the search order of the variable) <br/>
+ * Reference: Dechter, R. (1990). Enhancement Schemes for Constraint Processing:
+ * Backjumping, Learning, and Cutset Decomposition. [Artificial Intelligence,
+ * 41(3): 273-312]
+ * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
@@ -66,7 +72,7 @@ public class GraphBaseBackJumping extends AbstractProfilable implements BackJump
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-    public void init(Var[] vars, Map<Variable, Var> map) {
+	public void init(Var[] vars, Map<Variable, Var> map) {
 		this.data = new VarData[vars.length];
 
 		for (int i = 0; i < vars.length; ++i) {
@@ -80,20 +86,29 @@ public class GraphBaseBackJumping extends AbstractProfilable implements BackJump
 		int ret = var.previousLevel;
 
 		Var v = null, y = null;
+		
+		// get the higher neighbor of var
 		if (!var.preVars.isEmpty()) {
 			v = var.preVars.last();
 		}
+		
+		// look for a higher var in the backjump set
 		if (!this.data[var.level].backjumpSet.isEmpty()) {
 			y = this.data[var.level].backjumpSet.last();
 			if (v != null && v.compareTo(y) < 0) {
 				v = y;
 			}
 		}
+		
+		// update backjump set of the var v
 		if (v != null && !vars[v.level].success) {
 			this.data[v.level].backjumpSet.addAll(var.preVars);
 			this.data[v.level].backjumpSet.addAll(this.data[var.level].backjumpSet);
 			this.data[v.level].backjumpSet.remove(v);
-			this.getProfiler().incr("#backjumps", 1);
+			if(this.getProfiler().isProfilingEnabled()) {
+				this.getProfiler().incr("#backjumps", 1);
+				this.getProfiler().incr("#varsBackjumped", var.level - v.level);
+			}
 			ret = v.level;
 		}
 
@@ -101,6 +116,25 @@ public class GraphBaseBackJumping extends AbstractProfilable implements BackJump
 		return ret;
 	}
 
+	@Override
+	public void addNeighborhoodToBackjumpSet(Var from, Var to) {
+		for(Var v : from.preVars) {
+			if(v.level < to.level) {
+				this.data[to.level].backjumpSet.add(v);
+			}
+		}
+	}
+	
+	@Override
+	public StringBuilder append(StringBuilder sb, int level) {
+		sb.append("\tBJSet{");
+		for(Var v : this.data[level].backjumpSet) {
+			sb.append(v.value);
+			sb.append(", ");
+		}
+		return sb.append("}");
+	}
+	
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
@@ -108,4 +142,5 @@ public class GraphBaseBackJumping extends AbstractProfilable implements BackJump
 	private class VarData {
 		public SortedSet<Var> backjumpSet;
 	}
+
 }

@@ -195,20 +195,27 @@ public class NFC2WithLimit extends NFC2 implements ForwardChecking {
 					if (nbAns >= LIMIT) {
 						this.dataWithLimit[z.level].atomsToCheck.add(atom);
 					} else {
-    					AcceptableCandidats ac = this.data[z.level].candidats.get(v);
-    					if (ac.init) {
-    						ac.candidats.retainAll(this.data[z.level].tmp);
-    						isThereAnEmptiedList |= ac.candidats.isEmpty();
-    					} else {
-    						ac.candidats.addAll(this.data[z.level].tmp);
-    						ac.init = true;
-    					}
+						AcceptableCandidats ac = this.data[z.level].candidats.get(v);
+						if (ac.init) {
+							ac.candidats.retainAll(this.data[z.level].tmp);
+							isThereAnEmptiedList |= ac.candidats.isEmpty();
+							if(ac.candidats.isEmpty()) {
+								this.bj.addNeighborhoodToBackjumpSet(z, v);
+							}
+						} else {
+							ac.candidats.addAll(this.data[z.level].tmp);
+							ac.init = true;
+						}
 					}
 				}
+				
 				this.data[z.level].tmp.clear();
 			}
+		} else {
+			Var z = postVarsFromThisAtom.iterator().next();
+			this.bj.addNeighborhoodToBackjumpSet(z, v);
 		}
-
+		
 		return contains && !isThereAnEmptiedList;
 	}
 

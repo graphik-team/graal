@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,123 +40,81 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.homomorphism.forward_checking;
+package fr.lirmm.graphik.graal.homomorphism;
 
-import java.util.Map;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
-import org.apache.commons.lang3.tuple.Pair;
-
-import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
-import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
-import fr.lirmm.graphik.graal.homomorphism.BacktrackUtils;
-import fr.lirmm.graphik.graal.homomorphism.HomomorphismIteratorChecker;
-import fr.lirmm.graphik.graal.homomorphism.Var;
-import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
-import fr.lirmm.graphik.util.AbstractProfilable;
-import fr.lirmm.graphik.util.Profiler;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.IteratorException;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 
 /**
- * SimpleFC is a simple ForwardChecking implementation for HyperGraph with
- * immediate local checking in one step. It is simple because it does not
- * maintain a list of possible candidats for each variables.
- * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class SimpleFC extends AbstractProfilable implements ForwardChecking {
+public class FixedOrderScheduler extends AbstractProfilable implements Scheduler {
+
+	private List<Variable> order;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
+	public FixedOrderScheduler(List<Variable> order) {
+		this.order = order;
+	}
+	
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public void init(Var[] vars, Map<Variable, Var> map) {
-	}
+	public Var[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data, RulesCompilation rc) throws HomomorphismException {
+		Set<Term> terms = h.getTerms(Term.Type.VARIABLE);
+		Var[] vars = new Var[terms.size() + 2];
 
-	@Override
-	public boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc)
-	    throws BacktrackException {
+		int level = 0;
+		vars[level] = new Var(level);
 
-		Profiler profiler = this.getProfiler();
-		for (Atom atom : v.postAtoms) {
-			boolean contains = false;
-			Atom im = BacktrackUtils.createImageOf(atom, map);
-
-			if (profiler != null) {
-				profiler.incr("#selectOne", 1);
-				profiler.start("selectOneTime");
+		Set<Term> alreadyAffected = new TreeSet<Term>();
+		for (Variable v : this.order) {
+			if(!terms.contains(v)) {
+				throw new HomomorphismException("Try to schedule a variable which is not in the query :" + v);
 			}
-			for (Pair<Atom, Substitution> rew : rc.getRewritingOf(im)) {
-				Atom a = rew.getLeft();
-				CloseableIterator<Atom> matchIt = null;
-				try {
-					matchIt = g.match(a);
-					if (matchIt.hasNext()) {
-						contains = true;
-						break;
-					}
-				} catch (IteratorException e) {
-					throw new BacktrackException(e);
-				} catch (AtomSetException e) {
-					throw new BacktrackException(e);
-				} finally {
-					if(matchIt != null) {
-						matchIt.close();
-					}
-				}
+			if(alreadyAffected.contains(v)) {
+				throw new HomomorphismException("There is two occurences of the same variable in the specified order.");
 			}
-			if (profiler != null) {
-				profiler.stop("selectOneTime");
-			}
-
-			if (!contains) {
-				return false;
-			}
+			++level;
+			vars[level] = new Var(level);
+			vars[level].value = v;
+			alreadyAffected.add(v);
 		}
 
+		terms.removeAll(alreadyAffected);
+		if(!terms.isEmpty()) {
+			throw new HomomorphismException("Some variables of the query are not scheduled :" + terms);
+		}
+
+		++level;
+		vars[level] = new Var(level);
+		vars[level].previousLevel = level - 1;
+
+		return vars;
+	}
+	
+	@Override
+	public boolean isAllowed(Var var, Term image) {
 		return true;
 	}
-
-	@Override
-	public boolean isInit(Var v) {
-		return false;
-	}
-
-	@Override
-	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Map<Variable, Var> map, RulesCompilation rc)
-	    throws BacktrackException {
-		HomomorphismIteratorChecker tmp;
-		try {
-			tmp = new HomomorphismIteratorChecker(var, g.termsIterator(), var.preAtoms, g, map, rc);
-		} catch (AtomSetException e) {
-			throw new BacktrackException(e);
-		}
-		tmp.setProfiler(this.getProfiler());
-		return tmp;
-	}
-
-	@Override
-	public void setBackJumping(BackJumping bj) {
-		
-	}
-
-	@Override
-	public StringBuilder append(StringBuilder sb, int level) {
-		return sb.append("SimpleFC");
-	}
-
+	
 	// /////////////////////////////////////////////////////////////////////////
 	// OBJECT OVERRIDE METHODS
 	// /////////////////////////////////////////////////////////////////////////

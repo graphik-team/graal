@@ -48,6 +48,7 @@ import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.util.Profilable;
 
 /**
@@ -64,8 +65,9 @@ public interface Scheduler extends Profilable {
 	 * @param h
 	 * @param ans
 	 * @return an array of Var
+	 * @throws HomomorphismException 
 	 */
-	Var[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data, RulesCompilation rc);
+	Var[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data, RulesCompilation rc) throws HomomorphismException;
 
 	/**
 	 * @param var

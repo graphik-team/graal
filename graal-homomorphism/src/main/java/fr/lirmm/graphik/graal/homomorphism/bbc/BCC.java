@@ -61,6 +61,10 @@ public class BCC {
 	public BCC() {
 		this(NoBackJumping.instance(), false);
 	}
+	
+	public BCC(boolean withForbiddenCandidate) {
+		this(NoBackJumping.instance(), withForbiddenCandidate);
+	}
 
 	public BCC(BackJumping bc, boolean withForbiddenCandidate) {
 		super();

@@ -64,6 +64,7 @@ import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackUtils;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismIteratorChecker;
 import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
 import fr.lirmm.graphik.util.AbstractProfilable;
 import fr.lirmm.graphik.util.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -77,6 +78,12 @@ import fr.lirmm.graphik.util.stream.IteratorException;
 public abstract class AbstractNFC extends AbstractProfilable implements ForwardChecking {
 
 	protected VarData[] data;
+	protected BackJumping bj;
+	
+	@Override
+	public void setBackJumping(BackJumping bj) {
+		this.bj = bj;
+	}
 
 	@Override
 	public void init(Var[] vars, Map<Variable, Var> map) {
@@ -152,12 +159,11 @@ public abstract class AbstractNFC extends AbstractProfilable implements ForwardC
 		Substitution s = BacktrackUtils.createSubstitution(map.values().iterator());
 		Atom im = s.createImageOf(atom);
 		this.data[varToCompute.level].tmp.clear();
+		Set<Term> candidats = this.data[varToCompute.level].candidats.get(currentVar).candidats;
 		
 		// FIXME bug with p(X,Y,Z) -> q(X,Y) in the compilation
-		boolean contains = false;
 		for (Pair<Atom, Substitution> rew : rc.getRewritingOf(im)) {
 			Atom a = rew.getLeft();
-			Set<Term> candidats = this.data[varToCompute.level].candidats.get(currentVar).candidats;
 			Iterator<Term> it = candidats.iterator();
 			while (it.hasNext()) {
 				Term t = it.next();
@@ -174,15 +180,16 @@ public abstract class AbstractNFC extends AbstractProfilable implements ForwardC
 					profiler.stop("checkTime");
 				}
 			}
-			if (!candidats.isEmpty()) {
-				contains = true;
-			}
 		}
 		
-		this.data[varToCompute.level].candidats.get(currentVar).candidats.retainAll(this.data[varToCompute.level].tmp);
+		candidats.retainAll(this.data[varToCompute.level].tmp);
 		this.data[varToCompute.level].tmp.clear();
-		
-		return contains;
+		if(candidats.isEmpty()) {
+			this.bj.addNeighborhoodToBackjumpSet(varToCompute, currentVar);
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	protected boolean select(Atom atom, Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc)
@@ -228,6 +235,9 @@ public abstract class AbstractNFC extends AbstractProfilable implements ForwardC
 					if (ac.init) {
 						ac.candidats.retainAll(this.data[z.level].tmp);
 						isThereAnEmptiedList |= ac.candidats.isEmpty();
+						if(ac.candidats.isEmpty()) {
+							this.bj.addNeighborhoodToBackjumpSet(z, v);
+						}
 					} else {
 						ac.candidats.addAll(this.data[z.level].tmp);
 						ac.init = true;
@@ -235,6 +245,9 @@ public abstract class AbstractNFC extends AbstractProfilable implements ForwardC
 				}
 				this.data[z.level].tmp.clear();
 			}
+		} else {
+			Var z = postVarsFromThisAtom.iterator().next();
+			this.bj.addNeighborhoodToBackjumpSet(z, v);
 		}
 
 		return contains && !isThereAnEmptiedList;
@@ -291,6 +304,38 @@ public abstract class AbstractNFC extends AbstractProfilable implements ForwardC
 		Set<Term>           candidats;
 		AcceptableCandidats previous;
 		Boolean             init = false;
+		
+		public String toString() {
+			if(init) {
+				return candidats.toString();
+			} else {
+				return "";
+			}
+		}
 	}
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// OBJECT METHODS
+	// /////////////////////////////////////////////////////////////////////////
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for(int level=0; level < this.data.length; ++level) {
+			sb.append(level+": ");
+			this.append(sb, level);
+			sb.append("\n");
+		}
+		return sb.toString();
+	}
+	
+	@Override
+	public StringBuilder append(StringBuilder sb, int level) {
+		for(Map.Entry<Var, AcceptableCandidats> e : this.data[level].candidats.entrySet()) {
+			sb.append(e.getKey().value +"=" + e.getValue().toString()+", ");
+		}
+		return sb;
+	}
+	
 
 }

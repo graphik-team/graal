@@ -43,22 +43,35 @@
 package fr.lirmm.graphik.graal.homomorphism.forward_checking;
 
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
+import fr.lirmm.graphik.graal.homomorphism.BacktrackUtils;
 import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.graal.homomorphism.forward_checking.AbstractNFC.AcceptableCandidats;
+import fr.lirmm.graphik.util.profiler.Profiler;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * NFC2 is a ForwardChecking implementation for HyperGraph with immediate local
- * propagation in one step. It maintain a list of possible candidats for each
- * variables.
+ * propagation in one step. It maintain a list of possible candidates for each
+ * variables. <br/>
+ * 
+ * immediate: check atoms as soon as one variable is assigned. <br/>
+ * local: check atoms containing at least one atoms from the set of post
+ * variables of the current variable. <br/>
  * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
@@ -68,7 +81,7 @@ public class NFC2 extends AbstractNFC implements ForwardChecking {
 	/**
 	 * A data extension for variable indexed by level
 	 */
-	private boolean     checkMode;
+	private boolean checkMode;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -94,8 +107,7 @@ public class NFC2 extends AbstractNFC implements ForwardChecking {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc)
-	    throws BacktrackException {
+	public boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc) throws BacktrackException {
 
 		// clear all computed candidats for post variables
 		for (Var z : v.postVars) {
@@ -130,7 +142,7 @@ public class NFC2 extends AbstractNFC implements ForwardChecking {
 				}
 			} else {
 				try {
-					if (!select(atom, v, g, map, rc)) {
+					if(!select(atom, v, g, map, rc)) { 
 						return false;
 					}
 				} catch (IteratorException e) {
@@ -143,12 +155,10 @@ public class NFC2 extends AbstractNFC implements ForwardChecking {
 
 		return true;
 	}
-
+	
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
-
-
-
+	
 
 }

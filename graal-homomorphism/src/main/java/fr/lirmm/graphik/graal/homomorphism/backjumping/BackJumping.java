@@ -58,4 +58,17 @@ public interface BackJumping extends Profilable {
 
 	public int previousLevel(Var var, Var[] vars);
 
+	/**
+	 * @param from
+	 * @param to
+	 */
+	void addNeighborhoodToBackjumpSet(Var from, Var to);
+
+	/**
+	 * @param sb
+	 * @param level
+	 * @return
+	 */
+	StringBuilder append(StringBuilder sb, int level);
+
 }

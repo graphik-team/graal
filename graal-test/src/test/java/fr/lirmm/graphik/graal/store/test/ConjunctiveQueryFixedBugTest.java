@@ -46,6 +46,7 @@
 package fr.lirmm.graphik.graal.store.test;
 
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
@@ -56,6 +57,7 @@ import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
+import fr.lirmm.graphik.graal.api.store.TripleStore;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
@@ -129,6 +131,35 @@ public class ConjunctiveQueryFixedBugTest {
 
 			Assert.assertFalse(subReader.hasNext());
 			subReader.close();
+		} catch (Exception e) {
+			Assert.assertTrue(e.getMessage(), false);
+		}
+	}
+	
+	
+	@Theory
+	public void issue52(Homomorphism h, AtomSet store) {
+		try {
+			store.addAll(DlgpParser.parseAtomSet("<P0>(a,b),<P1>(b,c),<P2>(c,d),<P2>(a,a)."));
+
+			ConjunctiveQuery query = DlgpParser.parseQuery("?(X0,X1,X2,X3) :- <P0>(X0,X2), <P1>(X2,X3), <P2>(X3,X1).");
+
+			Assert.assertTrue(h.exist(query, store));		
+		} catch (Exception e) {
+			Assert.assertTrue(e.getMessage(), false);
+		}
+	}
+	
+	@Theory
+	public void issue52Bis(Homomorphism h, AtomSet store) {
+		Assume.assumeFalse(store instanceof TripleStore);
+
+		try {
+			store.addAll(DlgpParser.parseAtomSet("<P0>(a,b),<P1>(b,a),<P1>(d,b),<R>(b,c,c),<R>(b,d,d)."));
+
+			ConjunctiveQuery query = DlgpParser.parseQuery("?(X0,X1,X2,X3,X4,X5) :- <P0>(X0,X3), <R>(X3,X4,X5), <P1>(X4,X2), <P1>(X5,X1).");
+
+			Assert.assertTrue(h.exist(query, store));	
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);
 		}

@@ -56,6 +56,7 @@ import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
@@ -105,7 +106,7 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution>
 	// /////////////////////////////////////////////////////////////////////////
 
 	public BacktrackIterator(InMemoryAtomSet h, AtomSet g, List<Term> ans, Scheduler scheduler,
-	    Bootstrapper boostrapper, ForwardChecking fc, BackJumping bj, RulesCompilation compilation, Profiler profiler) {
+	    Bootstrapper boostrapper, ForwardChecking fc, BackJumping bj, RulesCompilation compilation, Profiler profiler) throws HomomorphismException {
 
 		this.h = h;
 		this.g = g;
@@ -114,6 +115,7 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution>
 		this.bootstrapper = boostrapper;
 		this.fc = fc;
 		this.bj = bj;
+		this.fc.setBackJumping(bj);
 		this.compilation = compilation;
 
 		this.currentVar = null;
@@ -134,13 +136,14 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution>
 	 * 
 	 * @param h
 	 * @param g
+	 * @throws HomomorphismException 
 	 */
 	public BacktrackIterator(InMemoryAtomSet h, AtomSet g, List<Term> ans, Scheduler scheduler,
-	    Bootstrapper boostrapper, ForwardChecking fc, BackJumping bj, RulesCompilation compilation) {
+	    Bootstrapper boostrapper, ForwardChecking fc, BackJumping bj, RulesCompilation compilation) throws HomomorphismException {
 		this(h, g, ans, scheduler, boostrapper, fc, bj, compilation, NoProfiler.instance());
 	}
 
-	private void preprocessing() {
+	private void preprocessing() throws HomomorphismException {
 		profiler.start("preprocessingTime");
 
 		// Compute order on query variables and atoms
@@ -241,10 +244,11 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution>
 		sb.append("{\n").append("\t{query->").append(h).append("},\n\t{level->").append(level).append("},\n\t{");
 		int i = 0;
 		for (Var v : vars) {
-			if (i == level)
-				sb.append('*');
+			sb.append((i == level)?'*':' ');
 			String s = v.toString();
-			sb.append(s.substring(0, s.length() - 1)).append("->").append(v.image).append("\n");
+			sb.append(s.substring(0, s.length() - 1)).append("->").append(v.image).append("\tFC{");
+			this.fc.append(sb, i).append("}");
+			this.bj.append(sb, i).append("}\n");
 			++i;
 		}
 		sb.append("}\n}\n");
