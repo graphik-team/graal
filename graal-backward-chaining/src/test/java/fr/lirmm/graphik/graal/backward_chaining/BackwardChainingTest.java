@@ -331,7 +331,6 @@ public class BackwardChainingTest {
 	@Theory
 	public void issue34_2(RulesCompilation compilation, RewritingOperator operator) throws IteratorException {
 		try {
-			System.out.println(compilation.getClass() + "//" + operator.getClass());
 			RuleSet rules = new LinkedListRuleSet();
 			rules.add(DlgpParser.parseRule("q(X,Y,X) :- p(X,Y)."));
 			rules.add(DlgpParser.parseRule("r(Z,T) :- q(X,Y,Z)."));
