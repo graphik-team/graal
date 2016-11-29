@@ -45,8 +45,8 @@
  */
 package fr.lirmm.graphik.graal.api.forward_chaining;
 
-import fr.lirmm.graphik.util.NoProfiler;
-import fr.lirmm.graphik.util.Profiler;
+import fr.lirmm.graphik.util.profiler.NoProfiler;
+import fr.lirmm.graphik.util.profiler.Profiler;
 
 
 /**

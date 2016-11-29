@@ -48,7 +48,7 @@ import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.Var;
-import fr.lirmm.graphik.util.AbstractProfilable;
+import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 
 /**
  * The GraphBaseBackJumping allows jump (in case of failure) to the last

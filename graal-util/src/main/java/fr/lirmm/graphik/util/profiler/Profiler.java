@@ -40,100 +40,114 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.util;
+package fr.lirmm.graphik.util.profiler;
 
 import java.io.PrintStream;
-import java.util.Collections;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+
+import fr.lirmm.graphik.util.TimeUnit;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class NoProfiler implements Profiler {
+public interface Profiler {
+	/**
+	 * Defines the date format used for displaying when the output stream is
+	 * set.
+	 */
+	void setDateFormat(String pattern);
+
+	/**
+	 * Sets the output stream.
+	 * 
+	 * @param out
+	 */
+	void setOutputStream(PrintStream out);
 
 	// /////////////////////////////////////////////////////////////////////////
-	// SINGLETON
+	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	private static NoProfiler instance;
+	public boolean isProfilingEnabled();
 
-	protected NoProfiler() {
-		super();
-	}
+	/**
+	 * Start a timer with a specified key/identifier. If you recall this method
+	 * with the same key, you will erase the start time for the key.
+	 * 
+	 * @param key
+	 */
+	public void start(String key);
 
-	public static synchronized NoProfiler instance() {
-		if (instance == null)
-			instance = new NoProfiler();
+	/**
+	 * Stop the timer with the specified key. The get method will return the
+	 * elapsed time between start and stop calls. You should called the start
+	 * method with the same key before.
+	 * 
+	 * @param key
+	 */
+	public void stop(String key);
 
-		return instance;
-	}
+	/**
+	 * Map miscellaneous data on the specified key. You can retrieve the data
+	 * using the get method.
+	 * 
+	 * @param key
+	 * @param value
+	 */
+	public void put(String key, Object value);
 
-	// /////////////////////////////////////////////////////////////////////////
-	//
-	// /////////////////////////////////////////////////////////////////////////
+	/**
+	 * Increment an integer attached to the specified key.
+	 * 
+	 * @param key
+	 * @param value
+	 */
+	public void incr(String key, int value);
 
-	@Override
-    public boolean isProfilingEnabled() {
-		return false;
-	}
+	/**
+	 * Get data/time attached to the specified key.
+	 * 
+	 * @param key
+	 * @return
+	 */
+	public Object get(String key);
 
-	@Override
-	public void setDateFormat(String pattern) {
-	}
+	public Set<Map.Entry<String, Object>> entrySet();
 
-	@Override
-	public void setOutputStream(PrintStream out) {
-	}
+	/**
+	 * Clear data attached to the specfied key.
+	 * 
+	 * @param key
+	 */
+	public void clear(String key);
 
-	@Override
-	public void start(String key) {
-	}
+	/**
+	 * Clear all data.
+	 */
+	public void clear();
 
-	@Override
-	public void stop(String key) {
-	}
+	/**
+	 * If the output stream is set, print this strings.
+	 * 
+	 * @param strings
+	 */
+	public void trace(String... strings);
 
-	@Override
-	public void put(String key, Object value) {
-	}
+	/**
+	 * 
+	 * @return a Set of all keys used.
+	 */
+	public Set<String> keySet();
 
-	@Override
-	public void incr(String key, int value) {
-	}
+	/**
+	 * @return
+	 */
+	Map<String, Object> getMap();
 
-	@Override
-	public Object get(String key) {
-		return "";
-	}
-
-	@Override
-	public Set<Entry<String, Object>> entrySet() {
-		return Collections.<String, Object> emptyMap().entrySet();
-	}
-
-	@Override
-	public void clear(String key) {
-	}
-
-	@Override
-	public void clear() {
-	}
-
-	@Override
-	public void trace(String... strings) {
-	}
-
-	@Override
-	public Set<String> keySet() {
-		return Collections.<String> emptySet();
-	}
-
-	@Override
-	public Map<String, Object> getMap() {
-		return Collections.<String, Object> emptyMap();
-	}
-
+	/**
+	 * @return
+	 */
+	TimeUnit getTimeUnit();
 }

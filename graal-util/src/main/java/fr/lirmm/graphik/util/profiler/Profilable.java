@@ -43,7 +43,7 @@
  /**
  * 
  */
-package fr.lirmm.graphik.util;
+package fr.lirmm.graphik.util.profiler;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}

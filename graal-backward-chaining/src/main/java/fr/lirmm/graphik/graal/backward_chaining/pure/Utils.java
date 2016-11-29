@@ -75,7 +75,7 @@ import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
 import fr.lirmm.graphik.graal.homomorphism.PureHomomorphism;
-import fr.lirmm.graphik.util.Profiler;
+import fr.lirmm.graphik.util.profiler.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**

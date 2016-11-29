@@ -40,10 +40,10 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.util;
+/**
+* 
+*/
+package fr.lirmm.graphik.util.profiler;
 
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
@@ -53,27 +53,42 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import fr.lirmm.graphik.util.TimeUnit;
+
 /**
  * This class is a profiler with a timer feature (ms)
+ * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */
 public abstract class AbstractProfiler implements Profiler {
 
-	private PrintStream               out        = null;
-	private SimpleDateFormat          dateFormat = new SimpleDateFormat();
+	private PrintStream out = null;
+	private SimpleDateFormat dateFormat = new SimpleDateFormat();
+	private TimeUnit timeUnit;
 
-	private final Map<String, Long>   tmpMap     = new TreeMap<String, Long>();
-	private final Map<String, Object> map        = new TreeMap<String, Object>();
+	private final Map<String, Long> startTimeMap = new TreeMap<String, Long>();
+	private final Map<String, Object> map = new TreeMap<String, Object>();
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 
 	public AbstractProfiler() {
+		this.timeUnit = TimeUnit.MICROSECONDS;
 	}
 
 	public AbstractProfiler(PrintStream out) {
+		this();
+		this.setOutputStream(out);
+	}
+
+	public AbstractProfiler(TimeUnit timeUnit) {
+		this.timeUnit = timeUnit;
+	}
+
+	public AbstractProfiler(PrintStream out, TimeUnit timeUnit) {
+		this(timeUnit);
 		this.setOutputStream(out);
 	}
 
@@ -105,6 +120,11 @@ public abstract class AbstractProfiler implements Profiler {
 		this.out = out;
 	}
 
+	@Override
+	public TimeUnit getTimeUnit() {
+		return this.timeUnit;
+	}
+
 	// /////////////////////////////////////////////////////////////////////////
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
@@ -117,7 +137,7 @@ public abstract class AbstractProfiler implements Profiler {
 	 */
 	@Override
 	public void start(String key) {
-		this.tmpMap.put(key, this.getTime());
+		this.startTimeMap.put(key, this.getTime());
 	}
 
 	/**
@@ -130,17 +150,19 @@ public abstract class AbstractProfiler implements Profiler {
 	@Override
 	public void stop(String key) {
 		Long oldTime = (Long) this.map.get(key);
-		if(oldTime == null) {
+		if (oldTime == null) {
 			oldTime = 0L;
 		}
-		Long newTime = oldTime + (((this.getTime() - this.tmpMap.get(key)) + 500000) / 1000000);
+		long elapsedTimeNano = this.getTime() - this.startTimeMap.get(key);
+		Long newTime = oldTime + timeUnit.round(elapsedTimeNano, TimeUnit.NANOSECONDS);
 		this.map.put(key, newTime);
 		if (this.out != null) {
 			this.printPrefix();
 			this.out.print(key);
 			this.out.print(": ");
 			this.out.print(newTime);
-			this.out.print("ms\n");
+			this.out.print(timeUnit.getAbbreviation());
+			this.out.print("\n");
 		}
 	}
 
@@ -208,7 +230,7 @@ public abstract class AbstractProfiler implements Profiler {
 	 */
 	@Override
 	public void clear(String key) {
-		this.tmpMap.remove(key);
+		this.startTimeMap.remove(key);
 		this.map.remove(key);
 	}
 
@@ -216,7 +238,7 @@ public abstract class AbstractProfiler implements Profiler {
 	 * Clear all data.
 	 */
 	@Override
-    public void clear() {
+	public void clear() {
 		this.map.clear();
 	}
 
@@ -274,5 +296,8 @@ public abstract class AbstractProfiler implements Profiler {
 		this.out.print(dateFormat.format(new Date()));
 		this.out.print("] ");
 	}
+
+	
+
 
 }

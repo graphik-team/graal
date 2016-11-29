@@ -40,39 +40,28 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.util;
-
-import java.io.PrintStream;
+package fr.lirmm.graphik.util.profiler;
 
 /**
- * This class is a profiler with a timer feature (ms)
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- * 
+ *
  */
-public class RealTimeProfiler extends AbstractProfiler {
+public class AbstractProfilable implements Profilable {
 
-	// /////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTOR
-	// /////////////////////////////////////////////////////////////////////////
-
-	public RealTimeProfiler() {
-		super();
-	}
-
-	public RealTimeProfiler(PrintStream out) {
-		super(out);
-	}
-
-	// /////////////////////////////////////////////////////////////////////////
-	// METHODS
-	// /////////////////////////////////////////////////////////////////////////
+	private Profiler profiler = NoProfiler.instance();
 
 	@Override
-	protected long getTime() {
-		return System.nanoTime();
+	public void setProfiler(Profiler profiler) {
+		if (profiler == null) {
+			this.profiler = NoProfiler.instance();
+		} else {
+			this.profiler = profiler;
+		}
+	}
+
+	@Override
+	public Profiler getProfiler() {
+		return this.profiler;
 	}
 
 }

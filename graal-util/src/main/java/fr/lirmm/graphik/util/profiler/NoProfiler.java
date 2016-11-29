@@ -40,28 +40,109 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.util;
+package fr.lirmm.graphik.util.profiler;
+
+import java.io.PrintStream;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import fr.lirmm.graphik.util.TimeUnit;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class AbstractProfilable implements Profilable {
+public class NoProfiler implements Profiler {
 
-	private Profiler profiler = NoProfiler.instance();
+	// /////////////////////////////////////////////////////////////////////////
+	// SINGLETON
+	// /////////////////////////////////////////////////////////////////////////
+
+	private static NoProfiler instance;
+
+	protected NoProfiler() {
+		super();
+	}
+
+	public static synchronized NoProfiler instance() {
+		if (instance == null)
+			instance = new NoProfiler();
+
+		return instance;
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	//
+	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public void setProfiler(Profiler profiler) {
-		if (profiler == null) {
-			this.profiler = NoProfiler.instance();
-		} else {
-			this.profiler = profiler;
-		}
+    public boolean isProfilingEnabled() {
+		return false;
 	}
 
 	@Override
-	public Profiler getProfiler() {
-		return this.profiler;
+	public void setDateFormat(String pattern) {
 	}
+
+	@Override
+	public void setOutputStream(PrintStream out) {
+	}
+
+	@Override
+	public void start(String key) {
+	}
+
+	@Override
+	public void stop(String key) {
+	}
+
+	@Override
+	public void put(String key, Object value) {
+	}
+
+	@Override
+	public void incr(String key, int value) {
+	}
+
+	@Override
+	public Object get(String key) {
+		return "";
+	}
+
+	@Override
+	public Set<Entry<String, Object>> entrySet() {
+		return Collections.<String, Object> emptyMap().entrySet();
+	}
+
+	@Override
+	public void clear(String key) {
+	}
+
+	@Override
+	public void clear() {
+	}
+
+	@Override
+	public void trace(String... strings) {
+	}
+
+	@Override
+	public Set<String> keySet() {
+		return Collections.<String> emptySet();
+	}
+
+	@Override
+	public Map<String, Object> getMap() {
+		return Collections.<String, Object> emptyMap();
+	}
+
+	@Override
+	public TimeUnit getTimeUnit() {
+		return TimeUnit.NANOSECONDS;
+	}
+	
+
 
 }

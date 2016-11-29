@@ -48,7 +48,7 @@ import java.util.Iterator;
 import org.apache.commons.lang3.tuple.Pair;
 
 import fr.lirmm.graphik.util.Partition;
-import fr.lirmm.graphik.util.Profilable;
+import fr.lirmm.graphik.util.profiler.Profilable;
 
 public interface RulesCompilation extends Profilable {
 

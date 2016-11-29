@@ -47,7 +47,7 @@ import java.util.Map;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.Var;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
-import fr.lirmm.graphik.util.AbstractProfilable;
+import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 
 class BCCBackJumping extends AbstractProfilable implements BackJumping {
 

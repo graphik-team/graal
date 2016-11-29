@@ -64,8 +64,8 @@ import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.compilation.IDCompilation;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByHeadPredicatesRuleSet;
 import fr.lirmm.graphik.util.Partition;
-import fr.lirmm.graphik.util.Profilable;
-import fr.lirmm.graphik.util.Profiler;
+import fr.lirmm.graphik.util.profiler.Profilable;
+import fr.lirmm.graphik.util.profiler.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**

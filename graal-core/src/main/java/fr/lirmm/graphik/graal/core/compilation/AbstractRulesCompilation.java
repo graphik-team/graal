@@ -53,7 +53,7 @@ import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.util.Profiler;
+import fr.lirmm.graphik.util.profiler.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**

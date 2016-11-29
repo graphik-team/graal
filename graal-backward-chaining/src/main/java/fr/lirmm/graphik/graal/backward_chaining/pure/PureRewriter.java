@@ -49,7 +49,7 @@ import fr.lirmm.graphik.graal.api.backward_chaining.QueryRewriterWithCompilation
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
-import fr.lirmm.graphik.util.AbstractProfilable;
+import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**

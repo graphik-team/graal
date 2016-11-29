@@ -54,7 +54,7 @@ import fr.lirmm.graphik.graal.homomorphism.bootstrapper.Bootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.bootstrapper.StarBootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.ForwardChecking;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NoForwardChecking;
-import fr.lirmm.graphik.util.Profilable;
+import fr.lirmm.graphik.util.profiler.Profilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
 import fr.lirmm.graphik.util.stream.Iterators;

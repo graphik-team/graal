@@ -45,7 +45,7 @@
  */
 package fr.lirmm.graphik.graal.api.forward_chaining;
 
-import fr.lirmm.graphik.util.Profilable;
+import fr.lirmm.graphik.util.profiler.Profilable;
 
 
 

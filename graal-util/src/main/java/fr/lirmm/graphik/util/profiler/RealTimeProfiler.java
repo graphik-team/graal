@@ -43,34 +43,39 @@
  /**
  * 
  */
-package fr.lirmm.graphik.util;
+package fr.lirmm.graphik.util.profiler;
 
 import java.io.PrintStream;
-import java.lang.management.ManagementFactory;
-import java.lang.management.ThreadMXBean;
+
+import fr.lirmm.graphik.util.TimeUnit;
 
 /**
  * This class is a profiler with a timer feature (ms)
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */
-public class CPUTimeProfiler extends AbstractProfiler {
-
-
-	private final ThreadMXBean        bean       = ManagementFactory.getThreadMXBean();
-
+public class RealTimeProfiler extends AbstractProfiler {
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 
-	public CPUTimeProfiler() {
+	public RealTimeProfiler() {
 		super();
 	}
 
-	public CPUTimeProfiler(PrintStream out) {
+	public RealTimeProfiler(PrintStream out) {
 		super(out);
 	}
+	
+	public RealTimeProfiler(TimeUnit timeUnit) {
+		super(timeUnit);
+	}
+
+	public RealTimeProfiler(PrintStream out, TimeUnit timeUnit) {
+		super(out,timeUnit);
+	}
+
 
 	// /////////////////////////////////////////////////////////////////////////
 	// METHODS
@@ -78,7 +83,7 @@ public class CPUTimeProfiler extends AbstractProfiler {
 
 	@Override
 	protected long getTime() {
-		return bean.getCurrentThreadCpuTime();
+		return System.nanoTime();
 	}
 
 }

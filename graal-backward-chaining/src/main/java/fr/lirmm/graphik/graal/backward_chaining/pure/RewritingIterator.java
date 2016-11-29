@@ -49,9 +49,9 @@ import fr.lirmm.graphik.graal.core.Rules;
 import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByHeadPredicatesRuleSet;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
-import fr.lirmm.graphik.util.NoProfiler;
-import fr.lirmm.graphik.util.Profilable;
-import fr.lirmm.graphik.util.Profiler;
+import fr.lirmm.graphik.util.profiler.NoProfiler;
+import fr.lirmm.graphik.util.profiler.Profilable;
+import fr.lirmm.graphik.util.profiler.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 

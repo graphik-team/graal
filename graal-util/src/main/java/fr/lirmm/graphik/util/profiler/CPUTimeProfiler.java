@@ -40,107 +40,55 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.util;
+ /**
+ * 
+ */
+package fr.lirmm.graphik.util.profiler;
 
 import java.io.PrintStream;
-import java.util.Map;
-import java.util.Set;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
+
+import fr.lirmm.graphik.util.TimeUnit;
 
 /**
+ * This class is a profiler with a timer feature (ms)
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- *
+ * 
  */
-public interface Profiler {
-	/**
-	 * Defines the date format used for displaying when the output stream is
-	 * set.
-	 */
-	void setDateFormat(String pattern);
+public class CPUTimeProfiler extends AbstractProfiler {
 
-	/**
-	 * Sets the output stream.
-	 * 
-	 * @param out
-	 */
-	void setOutputStream(PrintStream out);
+
+	private final ThreadMXBean        bean       = ManagementFactory.getThreadMXBean();
+
+
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTOR
+	// /////////////////////////////////////////////////////////////////////////
+
+	public CPUTimeProfiler() {
+		super();
+	}
+
+	public CPUTimeProfiler(PrintStream out) {
+		super(out);
+	}
+	
+	public CPUTimeProfiler(TimeUnit timeUnit) {
+		super(timeUnit);
+	}
+
+	public CPUTimeProfiler(PrintStream out, TimeUnit timeUnit) {
+		super(out,timeUnit);
+	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public boolean isProfilingEnabled();
+	@Override
+	protected long getTime() {
+		return bean.getCurrentThreadCpuTime();
+	}
 
-	/**
-	 * Start a timer with a specified key/identifier. If you recall this method
-	 * with the same key, you will erase the start time for the key.
-	 * 
-	 * @param key
-	 */
-	public void start(String key);
-
-	/**
-	 * Stop the timer with the specified key. The get method will return the
-	 * elapsed time between start and stop calls. You should called the start
-	 * method with the same key before.
-	 * 
-	 * @param key
-	 */
-	public void stop(String key);
-
-	/**
-	 * Map miscellaneous data on the specified key. You can retrieve the data
-	 * using the get method.
-	 * 
-	 * @param key
-	 * @param value
-	 */
-	public void put(String key, Object value);
-
-	/**
-	 * Increment an integer attached to the specified key.
-	 * 
-	 * @param key
-	 * @param value
-	 */
-	public void incr(String key, int value);
-
-	/**
-	 * Get data/time attached to the specified key.
-	 * 
-	 * @param key
-	 * @return
-	 */
-	public Object get(String key);
-
-	public Set<Map.Entry<String, Object>> entrySet();
-
-	/**
-	 * Clear data attached to the specfied key.
-	 * 
-	 * @param key
-	 */
-	public void clear(String key);
-
-	/**
-	 * Clear all data.
-	 */
-	public void clear();
-
-	/**
-	 * If the output stream is set, print this strings.
-	 * 
-	 * @param strings
-	 */
-	public void trace(String... strings);
-
-	/**
-	 * 
-	 * @return a Set of all keys used.
-	 */
-	public Set<String> keySet();
-
-	/**
-	 * @return
-	 */
-	Map<String, Object> getMap();
 }

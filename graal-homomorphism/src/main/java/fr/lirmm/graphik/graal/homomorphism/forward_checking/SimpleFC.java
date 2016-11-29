@@ -58,8 +58,8 @@ import fr.lirmm.graphik.graal.homomorphism.BacktrackUtils;
 import fr.lirmm.graphik.graal.homomorphism.HomomorphismIteratorChecker;
 import fr.lirmm.graphik.graal.homomorphism.Var;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
-import fr.lirmm.graphik.util.AbstractProfilable;
-import fr.lirmm.graphik.util.Profiler;
+import fr.lirmm.graphik.util.profiler.AbstractProfilable;
+import fr.lirmm.graphik.util.profiler.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
 

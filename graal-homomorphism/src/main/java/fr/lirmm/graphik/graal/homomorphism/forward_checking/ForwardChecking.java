@@ -52,7 +52,7 @@ import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
 import fr.lirmm.graphik.graal.homomorphism.Var;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
-import fr.lirmm.graphik.util.Profilable;
+import fr.lirmm.graphik.util.profiler.Profilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**

@@ -47,7 +47,7 @@ package fr.lirmm.graphik.graal.api.backward_chaining;
 
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Rule;
-import fr.lirmm.graphik.util.Profilable;
+import fr.lirmm.graphik.util.profiler.Profilable;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**

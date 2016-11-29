@@ -55,7 +55,7 @@ import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactory;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
-import fr.lirmm.graphik.util.AbstractProfilable;
+import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**

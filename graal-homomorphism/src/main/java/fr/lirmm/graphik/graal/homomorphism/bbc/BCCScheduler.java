@@ -64,7 +64,6 @@ import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.Scheduler;
 import fr.lirmm.graphik.graal.homomorphism.Var;
 import fr.lirmm.graphik.homorphism.utils.ProbaUtils;
-import fr.lirmm.graphik.util.AbstractProfilable;
 import fr.lirmm.graphik.util.graph.DefaultDirectedEdge;
 import fr.lirmm.graphik.util.graph.DefaultGraph;
 import fr.lirmm.graphik.util.graph.DefaultHyperEdge;
@@ -72,6 +71,7 @@ import fr.lirmm.graphik.util.graph.DefaultHyperGraph;
 import fr.lirmm.graphik.util.graph.DirectedEdge;
 import fr.lirmm.graphik.util.graph.Graph;
 import fr.lirmm.graphik.util.graph.HyperGraph;
+import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 class BCCScheduler extends AbstractProfilable implements Scheduler {

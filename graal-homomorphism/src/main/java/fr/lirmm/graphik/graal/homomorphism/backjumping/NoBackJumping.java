@@ -46,7 +46,7 @@ import java.util.Map;
 
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.Var;
-import fr.lirmm.graphik.util.AbstractProfilable;
+import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}

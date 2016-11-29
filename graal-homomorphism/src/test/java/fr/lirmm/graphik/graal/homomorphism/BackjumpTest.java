@@ -55,7 +55,7 @@ import fr.lirmm.graphik.graal.homomorphism.bbc.BCC;
 import fr.lirmm.graphik.graal.homomorphism.bootstrapper.StupidBootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NoForwardChecking;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
-import fr.lirmm.graphik.util.CPUTimeProfiler;
+import fr.lirmm.graphik.util.profiler.CPUTimeProfiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
