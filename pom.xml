@@ -59,7 +59,7 @@ algorithms, structural analysis of decidability properties of a rule set, a text
 		<module>graal-core</module>
 		<module>graal-homomorphism</module>
 		<module>graal-io</module>
-    <module>graal-kb</module>
+		<module>graal-kb</module>
 		<module>graal-forward-chaining</module>
 		<module>graal-store</module>
 		<module>graal-backward-chaining</module>
@@ -191,6 +191,25 @@ algorithms, structural analysis of decidability properties of a rule set, a text
 				<configuration>
 					<stagingDirectory>/tmp/graal-site/</stagingDirectory>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.7.7.201606060606</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
