@@ -1,0 +1,233 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>fr.lirmm.graphik</groupId>
+		<artifactId>graal</artifactId>
+		<version>1.2.1-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>graal-coverage</artifactId>
+	<name>fr.lirmm.graphik:graal-coverage</name>
+	<packaging>jar</packaging>
+
+	<properties>
+		<jdk.version>1.6</jdk.version>
+    
+    <graal-api.directory>../graal-api/</graal-api.directory>
+    <graal-test.directory>../graal-test/</graal-test.directory>
+    <graal-core.directory>../graal-core/</graal-core.directory>
+    <graal-util.directory>../graal-util/</graal-util.directory>
+    <graal-homomorphism.directory>../graal-homomorphism/</graal-homomorphism.directory>
+    <graal-io-dlgp.directory>../graal-io/graal-io-dlgp/</graal-io-dlgp.directory>
+    <graal-io-ruleml.directory>../graal-io/graal-io-ruleml/</graal-io-ruleml.directory>
+    <graal-io-sparql.directory>../graal-io/graal-io-sparql/</graal-io-sparql.directory>
+    <graal-io-owl.directory>../graal-io/graal-io-owl/</graal-io-owl.directory>
+
+    <graal-forward-chaining.directory>../graal-forward-chaining/</graal-forward-chaining.directory>
+    <graal-backward-chaining.directory>../graal-backward-chaining/</graal-backward-chaining.directory>
+    <graal-kb.directory>../graal-kb/</graal-kb.directory>
+    
+    <rdbms-common.directory>../graal-store/graal-store-rdbms/rdbms-common/</rdbms-common.directory>
+    <rdbms-adhoc.directory>../graal-store/graal-store-rdbms/rdbms-adhoc/</rdbms-adhoc.directory>
+    <rdbms-natural.directory>../graal-store/graal-store-rdbms/rdbms-natural/</rdbms-natural.directory>
+    <rdbms-test.directory>../graal-store/graal-store-rdbms/rdbms-test/</rdbms-test.directory>
+
+     <graal-store-neo4j.directory>../graal-store/graal-store-neo4j/</graal-store-neo4j.directory>
+     <graal-store-openrdf.directory>../graal-store/graal-store-openrdf/</graal-store-openrdf.directory>
+     <graal-store-jenatdb.directory>../graal-store/graal-store-jenaTDB/</graal-store-jenatdb.directory>
+     <graal-store-blueprints.directory>../graal-store/graal-store-blueprints/</graal-store-blueprints.directory>
+
+    
+	</properties>
+
+	<developers>
+		<developer>
+			<name>Clément SIPIETER</name>
+			<email>clement@6pi.fr</email>
+			<organization>INRIA</organization>
+		</developer>
+	</developers>
+
+  <build>
+    <plugins>
+  <plugin>
+	  <groupId>org.apache.maven.plugins</groupId>
+	  <artifactId>maven-dependency-plugin</artifactId>
+		<executions>
+		  <!-- Copy the ant tasks jar. Needed for ts.jacoco.report-ant . -->
+			<execution>
+				<id>jacoco-dependency-ant</id>
+				<goals>
+					<goal>copy</goal>
+				</goals>
+				<phase>process-test-resources</phase>
+				<inherited>false</inherited>
+				<configuration>
+					<artifactItems>
+						<artifactItem>
+							<groupId>org.jacoco</groupId>
+							<artifactId>org.jacoco.ant</artifactId>
+							<version>0.7.7.201606060606</version>
+						</artifactItem>
+             <artifactItem>
+      		     <groupId>org.jacoco</groupId>
+			         <artifactId>org.jacoco.report</artifactId>
+			         <version>0.7.7.201606060606</version>
+		         </artifactItem>
+              <artifactItem>
+      		     <groupId>org.jacoco</groupId>
+			         <artifactId>org.jacoco.core</artifactId>
+			         <version>0.7.7.201606060606</version>
+		          </artifactItem>
+            <artifactItem>
+      <groupId>org.ow2.asm</groupId>
+      <artifactId>asm-debug-all</artifactId>
+      <version>5.1</version>
+    </artifactItem>
+					</artifactItems>
+					<stripVersion>true</stripVersion>
+					<outputDirectory>${basedir}/target/jacoco-jars</outputDirectory>
+				</configuration>
+			</execution>
+		</executions>
+  </plugin>
+<plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-antrun-plugin</artifactId>
+	<version>1.6</version>
+	<executions>
+		<execution>
+			<phase>post-integration-test</phase>
+			<goals>
+				<goal>run</goal>
+			</goals>
+			<configuration>
+				<target>
+				<!-- Execute an ant task within maven -->
+					<echo message="Generating JaCoCo Reports" />
+					<taskdef name="report" classname="org.jacoco.ant.ReportTask">
+						<classpath path="${basedir}/target/jacoco-jars/org.jacoco.ant.jar:${basedir}/target/jacoco-jars/org.jacoco.report.jar:${basedir}/target/jacoco-jars/org.jacoco.core.jar:${basedir}/target/jacoco-jars/asm-debug-all.jar" />
+					</taskdef>
+					<mkdir dir="${basedir}/target/coverage-report" />
+					<report>
+						<executiondata>
+							<fileset dir="${graal-test.directory}/target">
+								<include name="jacoco.exec" />
+							</fileset>
+              <fileset dir="${graal-api.directory}/target">
+								<include name="jacoco.exec" />
+							</fileset>
+              <fileset dir="${graal-core.directory}/target">
+								<include name="jacoco.exec" />
+							</fileset>
+              <fileset dir="${graal-util.directory}/target">
+								<include name="jacoco.exec" />
+							</fileset>
+				      <fileset dir="${graal-homomorphism.directory}/target">
+								<include name="jacoco.exec" />
+							</fileset>
+              <fileset dir="${graal-io-dlgp.directory}/target">
+								<include name="jacoco.exec" />
+							</fileset>
+              <fileset dir="${graal-io-owl.directory}/target">
+								<include name="jacoco.exec" />
+							</fileset>
+              <fileset dir="${graal-io-ruleml.directory}/target">
+								<include name="jacoco.exec" />
+							</fileset>
+              <fileset dir="${graal-io-sparql.directory}/target">
+								<include name="jacoco.exec" />
+							</fileset>
+              <fileset dir="${graal-forward-chaining.directory}/target">
+								<include name="jacoco.exec" />
+							</fileset>
+              <fileset dir="${graal-backward-chaining.directory}/target">
+								<include name="jacoco.exec" />
+							</fileset>
+              <fileset dir="${graal-kb.directory}/target">
+								<include name="jacoco.exec" />
+							</fileset>
+              <fileset dir="${rdbms-common.directory}/target">
+								<include name="jacoco.exec" />
+							</fileset>
+              <fileset dir="${rdbms-test.directory}/target">
+								<include name="jacoco.exec" />
+							</fileset>
+              <fileset dir="${graal-store-neo4j.directory}/target">
+								<include name="jacoco.exec" />
+							</fileset>
+              <fileset dir="${graal-store-openrdf.directory}/target">
+								<include name="jacoco.exec" />
+							</fileset>
+              <fileset dir="${graal-store-jenatdb.directory}/target">
+								<include name="jacoco.exec" />
+							</fileset>
+              <fileset dir="${graal-store-blueprints.directory}/target">
+								<include name="jacoco.exec" />
+							</fileset>
+						</executiondata>
+						<structure name="jacoco-multi Coverage Project">
+							<group name="jacoco-multi">
+								<classfiles>
+                  <fileset dir="${graal-api.directory}/target/classes"/>
+                  <fileset dir="${graal-core.directory}/target/classes" />
+                  <fileset dir="${graal-util.directory}/target/classes" />
+                  <fileset dir="${graal-homomorphism.directory}/target/classes" />
+                  <fileset dir="${graal-io-dlgp.directory}/target/classes"/>
+                  <fileset dir="${graal-io-owl.directory}/target/classes"/>
+                  <fileset dir="${graal-io-ruleml.directory}/target/classes"/>
+                  <fileset dir="${graal-io-sparql.directory}/target/classes"/>
+                  <fileset dir="${graal-forward-chaining.directory}/target/classes"/>
+                  <fileset dir="${graal-backward-chaining.directory}/target/classes"/>
+                  <fileset dir="${graal-kb.directory}/target/classes"/>
+                  <fileset dir="${rdbms-common.directory}/target/classes"/>
+                  <fileset dir="${graal-store-neo4j.directory}/target/classes"/>
+                  <fileset dir="${graal-store-openrdf.directory}/target/classes"/>
+                  <fileset dir="${graal-store-jenatdb.directory}/target/classes"/>
+                  <fileset dir="${graal-store-blueprints.directory}/target/classes"/>
+								</classfiles>
+								<sourcefiles encoding="UTF-8">
+								  <fileset dir="${graal-api.directory}/src/main/java"/>
+                  <fileset dir="${graal-core.directory}/src/main/java" />
+                  <fileset dir="${graal-util.directory}/src/main/java" />
+                  <fileset dir="${graal-homomorphism.directory}/src/main/java" />
+                  <fileset dir="${graal-io-dlgp.directory}/src/main/java"/>
+                  <fileset dir="${graal-io-owl.directory}/src/main/java"/>
+                  <fileset dir="${graal-io-ruleml.directory}/src/main/java"/>
+                  <fileset dir="${graal-io-sparql.directory}/src/main/java"/>
+                  <fileset dir="${graal-forward-chaining.directory}/src/main/java"/>
+                  <fileset dir="${graal-backward-chaining.directory}/src/main/java"/>
+                  <fileset dir="${graal-kb.directory}/src/main/java"/>
+                  <fileset dir="${rdbms-common.directory}/src/main/java"/>
+                  <fileset dir="${graal-store-neo4j.directory}/src/main/java"/>
+                  <fileset dir="${graal-store-openrdf.directory}/src/main/java"/>
+                  <fileset dir="${graal-store-jenatdb.directory}/src/main/java"/>
+                  <fileset dir="${graal-store-blueprints.directory}/src/main/java"/>
+                </sourcefiles>
+							</group>
+						</structure>
+						<html destdir="${basedir}/target/coverage-report/html" />
+						<xml destfile="${basedir}/target/coverage-report/coverage-report.xml" />
+						<csv destfile="${basedir}/target/coverage-report/coverage-report.csv" />
+					</report>
+				</target>
+			</configuration>
+		</execution>
+	</executions>
+</plugin>
+</plugins>
+</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.jacoco</groupId>
+			<artifactId>org.jacoco.ant</artifactId>
+			<version>0.7.7.201606060606</version>
+		</dependency>
+   
+	</dependencies>
+
+
+</project>
