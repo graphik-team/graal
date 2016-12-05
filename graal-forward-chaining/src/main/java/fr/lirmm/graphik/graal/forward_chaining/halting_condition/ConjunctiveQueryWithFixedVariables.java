@@ -40,9 +40,9 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
+/**
+* 
+*/
 package fr.lirmm.graphik.graal.forward_chaining.halting_condition;
 
 import java.util.LinkedList;
@@ -59,7 +59,6 @@ import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
-
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
@@ -68,14 +67,15 @@ public class ConjunctiveQueryWithFixedVariables implements ConjunctiveQuery {
 
 	private InMemoryAtomSet atomSet;
 	private List<Term> answerVariables;
+	private String label = "";
 
 	public ConjunctiveQueryWithFixedVariables(InMemoryAtomSet atomSet, Iterable<Term> fixedTerms) {
 		this.atomSet = computeFixedQuery(atomSet, fixedTerms);
-        this.answerVariables = new LinkedList(this.atomSet.getTerms(Term.Type.VARIABLE));
-    }
+		this.answerVariables = new LinkedList(this.atomSet.getTerms(Term.Type.VARIABLE));
+	}
 
-	public ConjunctiveQueryWithFixedVariables(InMemoryAtomSet atomSet,
-			List<Term> responseVariables, Iterable<Term> fixedTerms) {
+	public ConjunctiveQueryWithFixedVariables(InMemoryAtomSet atomSet, List<Term> responseVariables,
+			Iterable<Term> fixedTerms) {
 
 		this.atomSet = computeFixedQuery(atomSet, fixedTerms);
 		this.answerVariables = responseVariables;
@@ -88,11 +88,11 @@ public class ConjunctiveQueryWithFixedVariables implements ConjunctiveQuery {
 	public CloseableIteratorWithoutException<Atom> iterator() {
 		return getAtomSet().iterator();
 	}
-	
+
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
-	
+
 	@Override
 	public boolean isBoolean() {
 		return this.answerVariables.isEmpty();
@@ -107,33 +107,33 @@ public class ConjunctiveQueryWithFixedVariables implements ConjunctiveQuery {
 	public List<Term> getAnswerVariables() {
 		return this.answerVariables;
 	}
-	
+
 	@Override
 	public void setAnswerVariables(List<Term> ans) {
 		this.answerVariables = ans;
 	}
-	
 
 	@Override
 	public String getLabel() {
-		return "";
+		return this.label;
 	}
-	
+
+	@Override
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
-	
-	private static InMemoryAtomSet computeFixedQuery(InMemoryAtomSet atomset,
-			Iterable<Term> fixedTerms) {
+
+	private static InMemoryAtomSet computeFixedQuery(InMemoryAtomSet atomset, Iterable<Term> fixedTerms) {
 		// create a Substitution for fixed query
 		InMemoryAtomSet fixedQuery = AtomSetFactory.instance().create();
 		Substitution fixSub = SubstitutionFactory.instance().createSubstitution();
 		for (Term t : fixedTerms) {
 			if (t.isVariable())
-				fixSub.put(
-				    (Variable) t,
-						DefaultTermFactory.instance().createConstant(
-								t.getLabel()));
+				fixSub.put((Variable) t, DefaultTermFactory.instance().createConstant(t.getLabel()));
 		}
 
 		// apply substitution
@@ -142,7 +142,7 @@ public class ConjunctiveQueryWithFixedVariables implements ConjunctiveQuery {
 			Atom a = it.next();
 			fixedQuery.add(fixSub.createImageOf(a));
 		}
-		
+
 		return fixedQuery;
 	}
 
@@ -169,5 +169,5 @@ public class ConjunctiveQueryWithFixedVariables implements ConjunctiveQuery {
 		sb.append(") :- ");
 		sb.append(this.atomSet);
 	}
-	
+
 }

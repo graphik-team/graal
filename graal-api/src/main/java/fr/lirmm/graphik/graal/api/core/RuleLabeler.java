@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,25 +40,14 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- package fr.lirmm.graphik.graal.api.core;
-
-import fr.lirmm.graphik.util.string.AppendableToStringBuilder;
+package fr.lirmm.graphik.graal.api.core;
 
 /**
- * This interface represents a generic query.
- * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- * 
+ *
  */
-public interface Query extends AppendableToStringBuilder {
-
-	/**
-	 * @return true if the expected answer is boolean, false otherwise.
-	 */
-	public boolean isBoolean();
+public interface RuleLabeler {
 	
-	public String getLabel();
-	
-	public void setLabel(String label);
+	public void setLabel(Rule r);
 
-};
+}

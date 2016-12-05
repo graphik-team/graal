@@ -101,7 +101,16 @@ public abstract class AbstractRule implements Rule {
 	}
 
 	public boolean equals(Rule other) { // NOPMD
-		return this == other;
+		if(!this.getLabel().equals(other.getLabel())) {
+			return false;
+		}
+		if(!this.getBody().equals(other.getBody())) {
+			return false;
+		}
+		if(!this.getHead().equals(other.getHead())) {
+			return false;
+		}
+		return true;
 	}
 
 	@Override

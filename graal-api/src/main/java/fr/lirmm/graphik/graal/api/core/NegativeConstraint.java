@@ -53,7 +53,7 @@ import fr.lirmm.graphik.util.string.AppendableToStringBuilder;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface NegativeConstraint extends AppendableToStringBuilder {
+public interface NegativeConstraint extends Rule, AppendableToStringBuilder {
 
 	/**
 	 * Get the label (the name) for this constraint.

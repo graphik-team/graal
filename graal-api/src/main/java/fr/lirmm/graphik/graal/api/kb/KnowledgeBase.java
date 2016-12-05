@@ -46,9 +46,11 @@
 package fr.lirmm.graphik.graal.api.kb;
 
 import java.io.Closeable;
+import java.util.Set;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.Query;
+import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
@@ -74,6 +76,13 @@ public interface KnowledgeBase extends Profilable, Closeable {
 	 * @return an AtomSet representing a conjunction of facts.
 	 */
 	AtomSet getFacts();
+	
+	Set<String> getRuleNames();
+	Rule getRule(String name);
+	
+	boolean addQuery(Query query);
+	Set<String> getQueryNames();
+	Query getQuery(String name);
 
 	/**
 	 * Return true if this knowledge base is consistent, false otherwise.

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,25 +40,52 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- package fr.lirmm.graphik.graal.api.core;
+package fr.lirmm.graphik.graal.api.core;
 
-import fr.lirmm.graphik.util.string.AppendableToStringBuilder;
+import java.util.Iterator;
+import java.util.Set;
+
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
- * This interface represents a generic query.
- * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- * 
+ *
  */
-public interface Query extends AppendableToStringBuilder {
-
-	/**
-	 * @return true if the expected answer is boolean, false otherwise.
-	 */
-	public boolean isBoolean();
+public interface Ontology extends RuleSet {
 	
-	public String getLabel();
+	public Set<String> getRuleNames();
 	
-	public void setLabel(String label);
+	public Rule getRule(String name);
+	
+	public Set<String> getNegativeConstraintNames();
+	
+	public NegativeConstraint getNegativeConstraint(String name);
+	
+	@Override
+	public boolean add(Rule rule);
 
-};
+	@Override
+	public boolean addAll(Iterator<Rule> ruleIterator);
+
+	@Override
+	public boolean addAll(CloseableIterator<Rule> ruleIterator) throws RuleSetException;
+
+	@Override
+	public boolean remove(Rule rule);
+
+	@Override
+	public boolean removeAll(Iterator<Rule> ruleIterator);
+
+	@Override
+	public boolean removeAll(CloseableIterator<Rule> ruleIterator) throws RuleSetException;;
+
+	@Override
+	public boolean contains(Rule rule);
+
+	@Override
+	public int size();
+
+	@Override
+	public Iterator<Rule> iterator();
+
+}

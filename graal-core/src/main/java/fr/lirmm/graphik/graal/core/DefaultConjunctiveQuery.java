@@ -134,6 +134,11 @@ public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 	public String getLabel() {
 		return this.label;
 	}
+	
+	@Override
+	public void setLabel(String label) {
+		this.label = label;
+	}
 
 	/**
 	 * Returns the fact of the query.

@@ -48,7 +48,10 @@ package fr.lirmm.graphik.graal.kb;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,8 +60,10 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.Ontology;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Query;
+import fr.lirmm.graphik.graal.api.core.QueryLabeler;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
@@ -75,11 +80,13 @@ import fr.lirmm.graphik.graal.api.kb.KnowledgeBase;
 import fr.lirmm.graphik.graal.api.kb.KnowledgeBaseException;
 import fr.lirmm.graphik.graal.api.kb.Priority;
 import fr.lirmm.graphik.graal.backward_chaining.pure.PureRewriter;
+import fr.lirmm.graphik.graal.core.DefaultQueryLabeler;
 import fr.lirmm.graphik.graal.core.DefaultUnionOfConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.core.compilation.IDCompilation;
 import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
+import fr.lirmm.graphik.graal.core.ruleset.DefaultOntology;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseWithGRD;
@@ -107,8 +114,11 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 	    DefaultAtomFactory.instance().create(Predicate.BOTTOM,
 	        Collections.<Term> singletonList(DefaultTermFactory.instance().createVariable("X"))));
 
-	private final RuleSet ruleset;
+	private final QueryLabeler queryLabeler;
+	
+	private final Ontology ruleset;
 	private final AtomSet store;
+	private final Map<String,Query> queries = new HashMap<String, Query>();
 
 	private RulesCompilation ruleCompilation;
 	private AnalyserRuleSet analysedRuleSet;
@@ -128,24 +138,31 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
+	
+	public DefaultKnowledgeBase() {
+		this.ruleset = new DefaultOntology();
+		this.store = new DefaultInMemoryGraphAtomSet();
+		this.queryLabeler = new DefaultQueryLabeler();
+	}
 
 	public DefaultKnowledgeBase(Parser<Object> parser) throws AtomSetException {
-		this.ruleset = new LinkedListRuleSet();
-		this.store = new DefaultInMemoryGraphAtomSet();
+		this();
 		this.load(parser);
 		init();
 	}
 
 	public DefaultKnowledgeBase(AtomSet facts, Parser<Object> parser) throws AtomSetException {
-		this.ruleset = new LinkedListRuleSet();
+		this.ruleset = new DefaultOntology();
 		this.store = facts;
 		this.load(parser);
+		this.queryLabeler = new DefaultQueryLabeler();
 		init();
 	}
 
 	public DefaultKnowledgeBase(AtomSet facts, RuleSet ontology) {
-		this.ruleset = ontology;
+		this.ruleset = new DefaultOntology(ontology);
 		this.store = facts;
+		this.queryLabeler = new DefaultQueryLabeler();
 		init();
 	}
 
@@ -412,6 +429,32 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 		} catch (IteratorException e) {
 			throw new AtomSetException(e);
 		}
+	}
+
+	@Override
+	public Set<String> getRuleNames() {
+		return this.ruleset.getRuleNames();
+	}
+
+	@Override
+	public Rule getRule(String name) {
+		return this.ruleset.getRule(name);
+	}
+
+	@Override
+	public boolean addQuery(Query query) {
+		this.queryLabeler.setLabel(query);
+		return this.queries.put(query.getLabel(), query) != null;
+	}
+
+	@Override
+	public Set<String> getQueryNames() {
+		return this.queries.keySet();
+	}
+
+	@Override
+	public Query getQuery(String name) {
+		return this.queries.get(name);
 	}
 
 };

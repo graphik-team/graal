@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,25 +40,46 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- package fr.lirmm.graphik.graal.api.core;
+package fr.lirmm.graphik.graal.core;
 
-import fr.lirmm.graphik.util.string.AppendableToStringBuilder;
+import java.util.Set;
+
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.RuleLabeler;
 
 /**
- * This interface represents a generic query.
- * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- * 
+ *
  */
-public interface Query extends AppendableToStringBuilder {
+public class DefaultRuleLabeler implements RuleLabeler {
 
-	/**
-	 * @return true if the expected answer is boolean, false otherwise.
-	 */
-	public boolean isBoolean();
-	
-	public String getLabel();
-	
-	public void setLabel(String label);
+	private int i = -1;
+	private static final String format = "_R%d";
 
-};
+	private Set<String> alreadyAffected;
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTOR
+	// /////////////////////////////////////////////////////////////////////////
+	
+	public DefaultRuleLabeler() {
+	}
+	
+	public DefaultRuleLabeler(Set<String> alreadyAffected) {
+		this.alreadyAffected = alreadyAffected;
+	}
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// METHODS
+	// /////////////////////////////////////////////////////////////////////////
+	
+	public void setLabel(Rule rule) {
+		if(rule.getLabel() == null || rule.getLabel().equals("") || rule.getLabel().startsWith("_")) {			
+			String label = null;
+			do {
+				label = String.format(format, ++i);
+			} while(alreadyAffected != null && alreadyAffected.contains(label));
+			rule.setLabel(label);
+		}
+	}
+}

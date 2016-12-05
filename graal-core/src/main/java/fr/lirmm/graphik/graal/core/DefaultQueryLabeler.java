@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,25 +40,47 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- package fr.lirmm.graphik.graal.api.core;
+package fr.lirmm.graphik.graal.core;
 
-import fr.lirmm.graphik.util.string.AppendableToStringBuilder;
+import java.util.Set;
+
+import fr.lirmm.graphik.graal.api.core.Query;
+import fr.lirmm.graphik.graal.api.core.QueryLabeler;
+import fr.lirmm.graphik.graal.api.core.Rule;
 
 /**
- * This interface represents a generic query.
- * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- * 
+ *
  */
-public interface Query extends AppendableToStringBuilder {
-
-	/**
-	 * @return true if the expected answer is boolean, false otherwise.
-	 */
-	public boolean isBoolean();
+public class DefaultQueryLabeler implements QueryLabeler {
 	
-	public String getLabel();
-	
-	public void setLabel(String label);
+	private int i = -1;
+	private static final String format = "_Q%d";
 
-};
+	private Set<String> alreadyAffected;
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTOR
+	// /////////////////////////////////////////////////////////////////////////
+	
+	public DefaultQueryLabeler() {
+	}
+	
+	public DefaultQueryLabeler(Set<String> alreadyAffected) {
+		this.alreadyAffected = alreadyAffected;
+	}
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// METHODS
+	// /////////////////////////////////////////////////////////////////////////
+	
+	public void setLabel(Query query) {
+		if(query.getLabel() == null || query.getLabel().equals("") || query.getLabel().startsWith("_")) {			
+			String label = null;
+			do {
+				label = String.format(format, ++i);
+			} while(alreadyAffected.contains(label));
+			query.setLabel(label);
+		}
+	}
+}

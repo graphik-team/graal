@@ -34,26 +34,33 @@
 			<artifactId>graal-api</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-   	<dependency>
+		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-forward-chaining</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-    <dependency>
+		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-backward-chaining</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-    <dependency>
+		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-homomorphism</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-		 <dependency>
-      <groupId>fr.lirmm.graphik</groupId>
-      <artifactId>graal-rules-analyser</artifactId>
-      <version>${project.parent.version}</version>
-    </dependency>
+		<dependency>
+			<groupId>fr.lirmm.graphik</groupId>
+			<artifactId>graal-rules-analyser</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<!-- TEST -->
+		<dependency>
+			<groupId>fr.lirmm.graphik</groupId>
+			<artifactId>graal-io-dlgp</artifactId>
+			<version>${project.parent.version}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 </project>
