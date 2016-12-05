@@ -53,6 +53,8 @@ import java.util.List;
 
 import fr.lirmm.graphik.graal.api.core.ImmutableRuleSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.RuleLabeler;
+import fr.lirmm.graphik.graal.core.DefaultRuleLabeler;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.grd.AtomErasingFilter;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
@@ -60,6 +62,8 @@ import fr.lirmm.graphik.graal.rulesetanalyser.graph.AffectedPositionSet;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.GraphPositionDependencies;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.MarkedVariableSet;
 import fr.lirmm.graphik.util.graph.scc.StronglyConnectedComponentsGraph;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -76,6 +80,7 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 	private List<AnalyserRuleSet> scc;
 	private GraphOfRuleDependencies.DependencyChecker dependencyChecker;
 	private boolean withUnifiers = false;
+	private RuleLabeler labeler = new DefaultRuleLabeler();
 	
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
@@ -83,28 +88,58 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 	
 	public AnalyserRuleSet(Rule rule) {
 		LinkedListRuleSet list = new LinkedListRuleSet();
+		this.labeler.setLabel(rule);
 		list.add(rule);
 		this.ruleset = Collections.unmodifiableCollection(list);
 		this.dependencyChecker = new AtomErasingFilter();
 	}
 
 	public AnalyserRuleSet(Iterable<Rule> rules) {
+		this(rules.iterator());
+	}
+	
+	public AnalyserRuleSet(Iterable<Rule> rules, GraphOfRuleDependencies.DependencyChecker checker) {
+		this(rules.iterator(), checker);
+	}
+	
+	public AnalyserRuleSet(Iterator<Rule> rules) {
 		this.ruleset = Collections.unmodifiableCollection(new LinkedListRuleSet(rules));
+		setRuleLabels();
 		this.dependencyChecker = new AtomErasingFilter();
 	}
 
-	public AnalyserRuleSet(Iterable<Rule> rules, GraphOfRuleDependencies.DependencyChecker checker) {
+	public AnalyserRuleSet(Iterator<Rule> rules, GraphOfRuleDependencies.DependencyChecker checker) {
 		this.ruleset = Collections.unmodifiableCollection(new LinkedListRuleSet(rules));
+		setRuleLabels();
+		this.dependencyChecker = checker;
+	}
+	
+	public AnalyserRuleSet(CloseableIterator<Rule> rules) throws IteratorException {
+		this.ruleset = Collections.unmodifiableCollection(new LinkedListRuleSet(rules));
+		setRuleLabels();
+		this.dependencyChecker = new AtomErasingFilter();
+	}
+
+	public AnalyserRuleSet(CloseableIterator<Rule> rules, GraphOfRuleDependencies.DependencyChecker checker) throws IteratorException {
+		this.ruleset = Collections.unmodifiableCollection(new LinkedListRuleSet(rules));
+		setRuleLabels();
 		this.dependencyChecker = checker;
 	}
 	
 	public AnalyserRuleSet(GraphOfRuleDependencies grd) {
 		Collection<Rule> c = new LinkedList<Rule>();
 		for(Rule r : grd.getRules()) {
+			this.labeler.setLabel(r);
 			c.add(r);
 		}
 		this.ruleset = Collections.unmodifiableCollection(c);
 		this.grd = grd;
+	}
+	
+	private final void setRuleLabels() {
+		for(Rule r : this.ruleset) {
+			this.labeler.setLabel(r);
+		}
 	}
 	
 	// /////////////////////////////////////////////////////////////////////////
