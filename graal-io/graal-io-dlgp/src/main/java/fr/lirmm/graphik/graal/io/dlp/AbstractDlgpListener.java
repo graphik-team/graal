@@ -47,6 +47,7 @@ package fr.lirmm.graphik.graal.io.dlp;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import fr.lirmm.graphik.dlgp2.parser.ParserListener;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
@@ -55,6 +56,8 @@ import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Term.Type;
+import fr.lirmm.graphik.graal.api.io.ParseError;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultNegativeConstraint;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
@@ -129,9 +132,15 @@ abstract class AbstractDlgpListener implements ParserListener {
 	public void endsConjunction(OBJECT_TYPE objectType) {
 		switch (objectType) {
 		case QUERY:
-				this.createQuery(
-				    DefaultConjunctiveQueryFactory.instance().create(this.label,
-					this.atomSet, this.answerVars));
+			Set<Term> bodyVars = this.atomSet.getTerms(Type.VARIABLE);
+			for(Term t : this.answerVars) {
+				if(t.isVariable() && !bodyVars.contains(t)) {
+					throw new ParseError("There is at least a variable in the answer list which does not appears in the query body.");
+				}
+			}
+			this.createQuery(
+			    DefaultConjunctiveQueryFactory.instance().create(this.label,
+				this.atomSet, this.answerVars));
 			break;
 		case NEG_CONSTRAINT:
 			this.createNegConstraint(new DefaultNegativeConstraint(this.label,

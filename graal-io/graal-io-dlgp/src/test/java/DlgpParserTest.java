@@ -93,6 +93,11 @@ public class DlgpParserTest {
 		Assert.assertEquals(X, a.getTerm(1));
 	}
 	
+	@Test(expected=ParseException.class)
+	public void parseQueryWithNewVarInAns() throws ParseException{
+		DlgpParser.parseQuery("?(X,Y) :- p(a,X).");
+	}
+	
 	@Test
 	public void parseBooleanQuery() throws ParseException {
 		ConjunctiveQuery q = DlgpParser.parseQuery("? :- p(a,X).");
