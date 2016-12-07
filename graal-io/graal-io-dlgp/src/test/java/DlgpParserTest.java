@@ -41,16 +41,23 @@
  * knowledge of the CeCILL license and that you accept its terms.
  */
  
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Test;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.Constant;
+import fr.lirmm.graphik.graal.api.core.Literal;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.core.DefaultNegativeConstraint;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
+import fr.lirmm.graphik.util.DefaultURI;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
@@ -58,6 +65,14 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
  *
  */
 public class DlgpParserTest {
+	
+	private static final Constant A = DefaultTermFactory.instance().createConstant("a");
+	private static final Constant B = DefaultTermFactory.instance().createConstant("b");
+	private static final Variable X = DefaultTermFactory.instance().createVariable("X");
+	//private static final Variable Y = DefaultTermFactory.instance().createVariable("Y");
+	private static final Literal L1 = DefaultTermFactory.instance().createLiteral(new DefaultURI("http://www.w3.org/2001/XMLSchema#integer"), "1");
+	private static final Literal LSTRING = DefaultTermFactory.instance().createLiteral(new DefaultURI("http://www.w3.org/2001/XMLSchema#string"), "string");
+	private static final Literal LTRUE = DefaultTermFactory.instance().createLiteral(new DefaultURI("http://www.w3.org/2001/XMLSchema#boolean"), "true");
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CHECK VARIABLE TYPE
@@ -72,9 +87,66 @@ public class DlgpParserTest {
 	@Test
 	public void parseQuery() throws ParseException {
 		ConjunctiveQuery q = DlgpParser.parseQuery("?(X) :- p(a,X).");
-		Assert.assertEquals(Term.Type.VARIABLE, q.getAnswerVariables().iterator().next().getType());
-		Assert.assertEquals(Term.Type.VARIABLE, q.getAtomSet().iterator().next().getTerm(1).getType());
+		Assert.assertEquals(X, q.getAnswerVariables().get(0));
+		Atom a = q.getAtomSet().iterator().next();
+		Assert.assertEquals(A, a.getTerm(0));
+		Assert.assertEquals(X, a.getTerm(1));
 	}
+	
+	@Test
+	public void parseBooleanQuery() throws ParseException {
+		ConjunctiveQuery q = DlgpParser.parseQuery("? :- p(a,X).");
+		Assert.assertTrue(q.getAnswerVariables().isEmpty());
+		Assert.assertTrue(q.isBoolean());
+		Atom a = q.getAtomSet().iterator().next();
+		Assert.assertEquals(A, a.getTerm(0));
+		Assert.assertEquals(X, a.getTerm(1));
+	}
+	
+	@Test
+	public void parseQueryWithConstantInAns() throws ParseException {
+		ConjunctiveQuery q = DlgpParser.parseQuery("?(b,X) :- p(a,X).");
+		List<Term> ans = q.getAnswerVariables();
+		Assert.assertEquals(B, ans.get(0));
+		Assert.assertEquals(X, ans.get(1));
+		Atom a = q.getAtomSet().iterator().next();
+		Assert.assertEquals(A, a.getTerm(0));
+		Assert.assertEquals(X, a.getTerm(1));
+	}
+	
+	@Test
+	public void parseQueryWithIntegerLiteralInAns() throws ParseException {
+		ConjunctiveQuery q = DlgpParser.parseQuery("?(1,X) :- p(a,X).");
+		List<Term> ans = q.getAnswerVariables();
+		Assert.assertEquals(L1, ans.get(0));
+		Assert.assertEquals(X, ans.get(1));
+		Atom a = q.getAtomSet().iterator().next();
+		Assert.assertEquals(A, a.getTerm(0));
+		Assert.assertEquals(X, a.getTerm(1));
+	}
+	
+	@Test
+	public void parseQueryWithStringLiteralInAns() throws ParseException {
+		ConjunctiveQuery q = DlgpParser.parseQuery("?(\"string\",X) :- p(a,X).");
+		List<Term> ans = q.getAnswerVariables();
+		Assert.assertEquals(LSTRING, ans.get(0));
+		Assert.assertEquals(X, ans.get(1));
+		Atom a = q.getAtomSet().iterator().next();
+		Assert.assertEquals(A, a.getTerm(0));
+		Assert.assertEquals(X, a.getTerm(1));
+	}
+	
+	@Test
+	public void parseQueryWithBooleanLiteralInAns() throws ParseException {
+		ConjunctiveQuery q = DlgpParser.parseQuery("?(true,X) :- p(a,X).");
+		List<Term> ans = q.getAnswerVariables();
+		Assert.assertEquals(LTRUE, ans.get(0));
+		Assert.assertEquals(X, ans.get(1));
+		Atom a = q.getAtomSet().iterator().next();
+		Assert.assertEquals(A, a.getTerm(0));
+		Assert.assertEquals(X, a.getTerm(1));
+	}
+	
 	
 	@Test
 	public void parseRule() throws ParseException {

@@ -121,7 +121,7 @@ abstract class AbstractDlgpListener implements ParserListener {
 	@Override
 	public void answerTermList(Object[] terms) {
 		for (Object t : terms) {
-			this.answerVars.add((Term) t);
+			this.answerVars.add(createTerm(t));
 		}
 	}
 
