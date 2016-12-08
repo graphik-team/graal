@@ -40,9 +40,9 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
+/**
+* 
+*/
 package fr.lirmm.graphik.graal.io.dlp;
 
 import java.io.File;
@@ -71,6 +71,7 @@ import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.ArrayBlockingStream;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.InMemoryStream;
+import fr.lirmm.graphik.util.stream.IteratorException;
 import fr.lirmm.graphik.util.stream.QueueStream;
 
 /**
@@ -79,39 +80,40 @@ import fr.lirmm.graphik.util.stream.QueueStream;
  * 
  */
 public final class DlgpParser extends AbstractCloseableIterator<Object> implements Parser<Object> {
-	
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(DlgpParser.class);
 
-	static VariableGenerator    freeVarGen = new DefaultVariableGenerator("I");
+	private static final Logger LOGGER = LoggerFactory.getLogger(DlgpParser.class);
 
-	private ArrayBlockingStream<Object> buffer = new ArrayBlockingStream<Object>(
-			512);
+	static VariableGenerator freeVarGen = new DefaultVariableGenerator("I");
 
+	private ArrayBlockingStream<Object> buffer = new ArrayBlockingStream<Object>(512);
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
-	
+
 	private Reader reader = null;
 
 	/**
 	 * Constructor for parsing from the given reader.
+	 * 
 	 * @param reader
 	 */
 	public DlgpParser(Reader reader) {
-		this(reader, null);
+		this.reader = reader;
+		Thread t = new Thread(new Producer(reader, buffer));
+		t.start();
 	}
-	
+
 	/**
 	 * Constructor for parsing from the standard input.
 	 */
 	public DlgpParser() {
 		this(new InputStreamReader(System.in));
 	}
-	
+
 	/**
 	 * Constructor for parsing from the given file.
+	 * 
 	 * @param file
 	 * @throws FileNotFoundException
 	 */
@@ -121,58 +123,20 @@ public final class DlgpParser extends AbstractCloseableIterator<Object> implemen
 
 	/**
 	 * Constructor for parsing the content of the string s as DLGP content.
+	 * 
 	 * @param s
 	 */
 	public DlgpParser(String s) {
 		this(new StringReader(s));
 	}
-	
+
 	/**
 	 * Constructor for parsing the given InputStream.
+	 * 
 	 * @param in
 	 */
 	public DlgpParser(InputStream in) {
 		this(new InputStreamReader(in));
-	}
-	
-	/**
-	 * Constructor for parsing from the given reader.
-	 * 
-	 * @param reader
-	 */
-	public DlgpParser(Reader reader, Thread.UncaughtExceptionHandler exceptionHandler) {
-		this.reader = reader;
-		Thread t = new Thread(new Producer(reader, buffer));
-		t.setUncaughtExceptionHandler(exceptionHandler);
-		t.start();
-	}
-
-	/**
-	 * Constructor for parsing from the given file.
-	 * 
-	 * @param file
-	 * @throws FileNotFoundException
-	 */
-	public DlgpParser(File file, Thread.UncaughtExceptionHandler exceptionHandler) throws FileNotFoundException {
-		this(new FileReader(file), exceptionHandler);
-	}
-
-	/**
-	 * Constructor for parsing the content of the string s as DLGP content.
-	 * 
-	 * @param s
-	 */
-	public DlgpParser(String s, Thread.UncaughtExceptionHandler exceptionHandler) {
-		this(new StringReader(s), exceptionHandler);
-	}
-
-	/**
-	 * Constructor for parsing the given InputStream.
-	 * 
-	 * @param in
-	 */
-	public DlgpParser(InputStream in, Thread.UncaughtExceptionHandler exceptionHandler) {
-		this(new InputStreamReader(in), exceptionHandler);
 	}
 
 	@Override
@@ -191,10 +155,14 @@ public final class DlgpParser extends AbstractCloseableIterator<Object> implemen
 	}
 
 	@Override
-	public Object next() {
-		return buffer.next();
+	public Object next() throws ParseException {
+		Object val = buffer.next();
+		if (val instanceof Throwable) {
+			throw new ParseException("An error occured while parsing.", (Throwable)val);
+		}
+		return val;
 	}
-	
+
 	/**
 	 * Closes the stream and releases any system resources associated with it.
 	 * Closing a previously closed parser has no effect.
@@ -203,7 +171,7 @@ public final class DlgpParser extends AbstractCloseableIterator<Object> implemen
 	 */
 	@Override
 	public void close() {
-		if(this.reader != null) {
+		if (this.reader != null) {
 			try {
 				this.reader.close();
 			} catch (IOException e) {
@@ -234,7 +202,7 @@ public final class DlgpParser extends AbstractCloseableIterator<Object> implemen
 		try {
 			return (ConjunctiveQuery) o;
 		} catch (ClassCastException e) {
-			throw new ParseException("Cannot cast parsed object into Atom.", e);
+			throw new ParseException("Cannot cast parsed object into ConjunctiveQuery.", e);
 		}
 	}
 
@@ -258,7 +226,7 @@ public final class DlgpParser extends AbstractCloseableIterator<Object> implemen
 			throw new ParseException("Cannot cast parsed object into Atom.", e);
 		}
 	}
-	
+
 	public static CloseableIterator<Atom> parseAtomSet(String s) throws ParseException {
 		InMemoryStream<Object> stream = new QueueStream<Object>();
 		Producer p = new Producer(new StringReader(s), stream);
@@ -278,7 +246,7 @@ public final class DlgpParser extends AbstractCloseableIterator<Object> implemen
 			throw new ParseException("Cannot cast a parsed object into Atom.", e);
 		}
 	}
-	
+
 	public static Rule parseRule(String s) throws ParseException {
 		InMemoryStream<Object> stream = new QueueStream<Object>();
 		Producer p = new Producer(new StringReader(s), stream);
@@ -299,7 +267,7 @@ public final class DlgpParser extends AbstractCloseableIterator<Object> implemen
 			throw new ParseException("Cannot cast parsed object into Rule.", e);
 		}
 	}
-	
+
 	public static DefaultNegativeConstraint parseNegativeConstraint(String s) throws ParseException {
 		InMemoryStream<Object> stream = new QueueStream<Object>();
 		Producer p = new Producer(new StringReader(s), stream);

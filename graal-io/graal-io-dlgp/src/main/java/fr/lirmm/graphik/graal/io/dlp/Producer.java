@@ -68,7 +68,7 @@ class Producer implements Runnable {
 		try {
 			parser.document();
 		} catch (ParseException e) {
-			throw new ParseError("An error occured while parsing", e);
+			buffer.write(e);
 		} finally {
 			buffer.close();
 		}

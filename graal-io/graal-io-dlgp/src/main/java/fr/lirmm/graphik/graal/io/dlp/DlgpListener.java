@@ -103,7 +103,7 @@ class DlgpListener extends AbstractDlgpListener {
 
 	@Override
 	public void declareUNA() {
-		this.set.write(new Directive(Directive.Type.UNA, ""));
+		this.set.write(new Directive(Directive.Type.UNA, null));
 	}
 
 	@Override
