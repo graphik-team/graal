@@ -75,7 +75,7 @@ public abstract class AbstractProfiler implements Profiler {
 	// /////////////////////////////////////////////////////////////////////////
 
 	public AbstractProfiler() {
-		this.timeUnit = TimeUnit.MICROSECONDS;
+		this.timeUnit = TimeUnit.MILLISECONDS;
 	}
 
 	public AbstractProfiler(PrintStream out) {
