@@ -58,11 +58,11 @@ import fr.lirmm.graphik.util.stream.IteratorException;
  */
 public class FilterIterator<U, T> implements CloseableIterator<T> {
 
-	private final CloseableIterator<U> it;
+	private final CloseableIterator<? extends U> it;
 	private final Filter<U> filter;
 	private T next;
 
-	public FilterIterator(CloseableIterator<U> it, Filter<U> filter) {
+	public FilterIterator(CloseableIterator<? extends U> it, Filter<U> filter) {
 		this.filter = filter;
 		this.it = it;
 		this.next = null;

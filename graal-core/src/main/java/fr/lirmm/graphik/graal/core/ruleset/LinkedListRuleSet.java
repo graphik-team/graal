@@ -47,6 +47,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.RuleSetException;
+import fr.lirmm.graphik.graal.core.stream.filter.RuleFilterIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
@@ -73,12 +75,10 @@ public class LinkedListRuleSet extends AbstractRuleSet implements
 		}
 	}
 	
-	public LinkedListRuleSet(CloseableIterator<Rule> rules) throws IteratorException {
+	public LinkedListRuleSet(CloseableIterator<?> parser) throws RuleSetException {
 		this();
-		while(rules.hasNext()) {
-			this.ruleList.add(rules.next());
-		}
-		rules.close();
+		this.addAll(new RuleFilterIterator(parser));
+		parser.close();
 	}
 
 	public LinkedListRuleSet(Iterable<Rule> rules) {

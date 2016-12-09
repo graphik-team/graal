@@ -55,6 +55,7 @@ import fr.lirmm.graphik.graal.api.core.RuleLabeler;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.RuleSetException;
 import fr.lirmm.graphik.graal.core.DefaultRuleLabeler;
+import fr.lirmm.graphik.graal.core.stream.filter.RuleFilterIterator;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
@@ -81,6 +82,12 @@ public class DefaultOntology implements Ontology {
 	public DefaultOntology(RuleSet rules) {
 		this();
 		this.addAll(rules.iterator());
+	}
+	
+	public DefaultOntology(CloseableIterator<Object> parser) throws RuleSetException {
+		this();
+		this.addAll(new RuleFilterIterator(parser));
+		parser.close();
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

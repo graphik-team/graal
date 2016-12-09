@@ -54,6 +54,7 @@ import java.util.List;
 import fr.lirmm.graphik.graal.api.core.ImmutableRuleSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleLabeler;
+import fr.lirmm.graphik.graal.api.core.RuleSetException;
 import fr.lirmm.graphik.graal.core.DefaultRuleLabeler;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.grd.AtomErasingFilter;
@@ -114,13 +115,13 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 		this.dependencyChecker = checker;
 	}
 	
-	public AnalyserRuleSet(CloseableIterator<Rule> rules) throws IteratorException {
+	public AnalyserRuleSet(CloseableIterator<Rule> rules) throws RuleSetException {
 		this.ruleset = Collections.unmodifiableCollection(new LinkedListRuleSet(rules));
 		setRuleLabels();
 		this.dependencyChecker = new AtomErasingFilter();
 	}
 
-	public AnalyserRuleSet(CloseableIterator<Rule> rules, GraphOfRuleDependencies.DependencyChecker checker) throws IteratorException {
+	public AnalyserRuleSet(CloseableIterator<Rule> rules, GraphOfRuleDependencies.DependencyChecker checker) throws RuleSetException {
 		this.ruleset = Collections.unmodifiableCollection(new LinkedListRuleSet(rules));
 		setRuleLabels();
 		this.dependencyChecker = checker;
