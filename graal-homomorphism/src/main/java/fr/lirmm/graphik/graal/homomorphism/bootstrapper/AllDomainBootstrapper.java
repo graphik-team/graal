@@ -53,20 +53,22 @@ import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
+ * This implementation uses all domain (all terms from data) to bootstrap.
+ *
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class StupidBootstrapper extends AbstractProfilable implements Bootstrapper {
+public class AllDomainBootstrapper extends AbstractProfilable implements Bootstrapper {
 
-	private static StupidBootstrapper instance;
+	private static AllDomainBootstrapper instance;
 
-	protected StupidBootstrapper() {
+	protected AllDomainBootstrapper() {
 		super();
 	}
 
-	public static synchronized StupidBootstrapper instance() {
+	public static synchronized AllDomainBootstrapper instance() {
 		if (instance == null)
-			instance = new StupidBootstrapper();
+			instance = new AllDomainBootstrapper();
 
 		return instance;
 	}

@@ -63,8 +63,7 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
- * This bootstrapper uses the star query around the variable to provide an
- * initial iterator over set of terms.
+ * This implementation uses the star query around the variable v to restrict the set of candidates.
  * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *

@@ -63,6 +63,9 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorAggregator;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
+ * This implementation uses an randomly selected atom containing the variable v to
+ * restrict the set of candidates.
+ * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */

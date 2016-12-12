@@ -52,6 +52,9 @@ import fr.lirmm.graphik.util.profiler.Profilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
+ * Bootstrapper is used to select a set of terms over which the backtrack homomorphism algorithm will iterate for a specific 
+ * variable when the set of candidates for this variable is not already restricted by forward checking.
+ * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
