@@ -125,7 +125,7 @@ public class StatBootstrapper extends AbstractProfilable implements Bootstrapper
 			if (constants != null && !constants.isEmpty()) {
 				terms = new TreeSet<Term>(TermValueComparator.instance());
 				for (Pair<Atom, Substitution> im : rc.getRewritingOf(aa)) {
-					int pos = im.getLeft().indexOf(v.value);
+					int pos = im.getLeft().indexOf(im.getRight().createImageOf(v.value));
 					CloseableIterator<Atom> match = data.match(im.getLeft());
 					while (match.hasNext()) {
 						terms.add(match.next().getTerm(pos));

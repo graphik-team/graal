@@ -112,9 +112,10 @@ public class DefaultBootstrapper extends AbstractProfilable implements Bootstrap
 				public boolean hasNext() throws IteratorException {
 					try {
 						if (next == null && rewritingOf.hasNext()) {
-							Atom im = rewritingOf.next().getLeft();
+							Pair<Atom, Substitution> rew = rewritingOf.next();
+							Atom im = rew.getLeft();
 							Predicate predicate = im.getPredicate();
-							int pos = im.indexOf(v.value);
+							int pos = im.indexOf(rew.getRight().createImageOf(v.value));
 							next = data.termsByPredicatePosition(predicate, pos);
 						}
 					} catch (AtomSetException e) {
