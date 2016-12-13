@@ -42,14 +42,16 @@
  */
 package fr.lirmm.graphik.graal.core.ruleset;
 
-import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.api.core.NegativeConstraint;
 import fr.lirmm.graphik.graal.api.core.Ontology;
+import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleLabeler;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
@@ -66,24 +68,25 @@ import fr.lirmm.graphik.util.stream.IteratorException;
  */
 public class DefaultOntology implements Ontology {
 
-
 	private Map<String, Rule> map;
+	private Set<Predicate> vocabulary;
 	private RuleLabeler labeler;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
-	
+
 	public DefaultOntology() {
-		this.map = new HashMap<String,Rule>();
+		this.map = new HashMap<String, Rule>();
 		this.labeler = new DefaultRuleLabeler();
+		this.vocabulary = new TreeSet<Predicate>();
 	}
-	
+
 	public DefaultOntology(RuleSet rules) {
 		this();
 		this.addAll(rules.iterator());
 	}
-	
+
 	public DefaultOntology(CloseableIterator<Object> parser) throws RuleSetException {
 		this();
 		this.addAll(new RuleFilterIterator(parser));
@@ -93,7 +96,7 @@ public class DefaultOntology implements Ontology {
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
-	
+
 	@Override
 	public Set<String> getRuleNames() {
 		return map.keySet();
@@ -118,6 +121,9 @@ public class DefaultOntology implements Ontology {
 
 	@Override
 	public boolean add(Rule rule) {
+		this.vocabulary.addAll(rule.getBody().getPredicates());
+		this.vocabulary.addAll(rule.getHead().getPredicates());
+
 		this.labeler.setLabel(rule);
 		return this.map.put(rule.getLabel(), rule) == null;
 	}
@@ -125,7 +131,7 @@ public class DefaultOntology implements Ontology {
 	@Override
 	public boolean addAll(Iterator<Rule> ruleIterator) {
 		boolean b = true;
-		while(ruleIterator.hasNext()) {
+		while (ruleIterator.hasNext()) {
 			b = this.add(ruleIterator.next()) && b;
 		}
 		return b;
@@ -135,7 +141,7 @@ public class DefaultOntology implements Ontology {
 	public boolean addAll(CloseableIterator<Rule> ruleIterator) throws RuleSetException {
 		boolean b = true;
 		try {
-			while(ruleIterator.hasNext()) {
+			while (ruleIterator.hasNext()) {
 				b = this.add(ruleIterator.next()) && b;
 			}
 		} catch (IteratorException e) {
@@ -148,14 +154,21 @@ public class DefaultOntology implements Ontology {
 
 	@Override
 	public boolean remove(Rule rule) {
-		return this.map.remove(rule) != null;
+		boolean res = this.removeWithoutVocReset(rule);
+		if(res) {
+			this.resetVocabulary();
+		}
+		return res;
 	}
 
 	@Override
 	public boolean removeAll(Iterator<Rule> ruleIterator) {
 		boolean b = true;
-		while(ruleIterator.hasNext()) {
-			b = this.remove(ruleIterator.next()) && b;
+		while (ruleIterator.hasNext()) {
+			b = this.removeWithoutVocReset(ruleIterator.next()) && b;
+		}
+		if(b) {
+			this.resetVocabulary();
 		}
 		return b;
 	}
@@ -164,13 +177,16 @@ public class DefaultOntology implements Ontology {
 	public boolean removeAll(CloseableIterator<Rule> ruleIterator) throws RuleSetException {
 		boolean b = true;
 		try {
-			while(ruleIterator.hasNext()) {
-				b = this.remove(ruleIterator.next()) && b;
+			while (ruleIterator.hasNext()) {
+				b = this.removeWithoutVocReset(ruleIterator.next()) && b;
 			}
 		} catch (IteratorException e) {
 			throw new RuleSetException(e);
 		} finally {
 			ruleIterator.close();
+		}
+		if (b) {
+			this.resetVocabulary();
 		}
 		return b;
 	}
@@ -190,6 +206,11 @@ public class DefaultOntology implements Ontology {
 		return this.map.values().iterator();
 	}
 	
+	@Override
+	public Set<Predicate> getVocabulary() {
+		return Collections.<Predicate>unmodifiableSet(this.vocabulary);
+	}
+
 	// /////////////////////////////////////////////////////////////////////////
 	// OBJECT OVERRIDE METHODS
 	// /////////////////////////////////////////////////////////////////////////
@@ -197,5 +218,22 @@ public class DefaultOntology implements Ontology {
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * 
+	 */
+	private void resetVocabulary() {
+		// reset vocabulary
+		this.vocabulary = new TreeSet<Predicate>();
+		for (Rule r : this) {
+			this.vocabulary.addAll(r.getBody().getPredicates());
+			this.vocabulary.addAll(r.getHead().getPredicates());
+		}
+	}
+	
+	
+	private boolean removeWithoutVocReset(Rule rule) {
+		return this.map.remove(rule.getLabel()) != null;
+	}
 
 }
