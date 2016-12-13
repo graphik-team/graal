@@ -83,9 +83,14 @@ public final class ProbaUtils {
 			count += data.count(im.getLeft().getPredicate());
 		}
 
-		double probaA = count / Math.pow(data.getDomainSize(), atom.getPredicate().getArity());
-		for (Term t : atom.getTerms(Term.Type.CONSTANT)) {
-			probaA /= data.getDomainSize();
+		double probaA ;
+		if(count == 0) {
+			probaA = 0.0;
+		} else {
+			probaA = count / Math.pow(data.getDomainSize(), atom.getPredicate().getArity());
+			for (Term t : atom.getTerms(Term.Type.CONSTANT)) {
+				probaA /= data.getDomainSize();
+			}
 		}
 
 		return probaA;
