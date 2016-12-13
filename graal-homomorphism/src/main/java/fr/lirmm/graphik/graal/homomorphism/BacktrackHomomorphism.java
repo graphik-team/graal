@@ -79,7 +79,7 @@ public class BacktrackHomomorphism extends AbstractHomomorphismWithCompilation<C
 	private BackJumping     bj;
 
 	public BacktrackHomomorphism() {
-		this(new DefaultScheduler(), StarBootstrapper.instance(), NoForwardChecking.instance(),
+		this(DefaultScheduler.instance(), StarBootstrapper.instance(), NoForwardChecking.instance(),
 		     NoBackJumping.instance());
 	}
 
@@ -88,11 +88,11 @@ public class BacktrackHomomorphism extends AbstractHomomorphismWithCompilation<C
 	}
 
 	public BacktrackHomomorphism(ForwardChecking fc) {
-		this(new DefaultScheduler(), StarBootstrapper.instance(), fc, NoBackJumping.instance());
+		this(DefaultScheduler.instance(), StarBootstrapper.instance(), fc, NoBackJumping.instance());
 	}
 
 	public BacktrackHomomorphism(BackJumping bj) {
-		this(new DefaultScheduler(), StarBootstrapper.instance(), NoForwardChecking.instance(), bj);
+		this(DefaultScheduler.instance(), StarBootstrapper.instance(), NoForwardChecking.instance(), bj);
 	}
 
 	public BacktrackHomomorphism(Scheduler s, BackJumping bj) {

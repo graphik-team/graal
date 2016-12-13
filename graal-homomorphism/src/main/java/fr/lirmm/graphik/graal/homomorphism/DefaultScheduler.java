@@ -65,7 +65,7 @@ public class DefaultScheduler extends AbstractProfilable implements Scheduler {
 
 	private static DefaultScheduler instance;
 
-	protected DefaultScheduler() {
+	private DefaultScheduler() {
 		super();
 	}
 
