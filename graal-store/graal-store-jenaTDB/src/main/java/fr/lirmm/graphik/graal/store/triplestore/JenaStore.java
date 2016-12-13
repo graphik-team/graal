@@ -56,11 +56,8 @@ import org.slf4j.LoggerFactory;
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ReadWrite;
 import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Literal;
-import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.tdb.TDBFactory;
 import com.hp.hpl.jena.update.GraphStore;
 import com.hp.hpl.jena.update.GraphStoreFactory;
@@ -77,12 +74,7 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.store.AbstractTripleStore;
 import fr.lirmm.graphik.graal.api.store.WrongArityException;
-import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultConstantGenerator;
-import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
-import fr.lirmm.graphik.util.Prefix;
-import fr.lirmm.graphik.util.URIUtils;
-import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -95,46 +87,6 @@ import fr.lirmm.graphik.util.stream.IteratorException;
 public class JenaStore extends AbstractTripleStore {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(JenaStore.class);
-
-	private static class URIzer {
-		private static URIzer instance;
-
-		protected URIzer() {
-			super();
-		}
-
-		public static synchronized URIzer instance() {
-			if (instance == null)
-				instance = new URIzer();
-
-			return instance;
-		}
-
-		Prefix defaultPrefix = new Prefix("jena", "file:///jena/");
-
-		/**
-		 * Add default prefix if necessary
-		 * 
-		 * @param s
-		 * @return
-		 */
-		String input(String s) {
-			return URIUtils.createURI(s, defaultPrefix).toString();
-		}
-
-		/**
-		 * Remove default prefix if it is present
-		 * 
-		 * @param s
-		 * @return
-		 */
-		String output(String s) {
-			if (s.startsWith(defaultPrefix.getPrefix())) {
-				return s.substring(defaultPrefix.getPrefix().length());
-			}
-			return s;
-		}
-	}
 
 	Dataset                     dataset;
 	String                      directory;
@@ -218,8 +170,8 @@ public class JenaStore extends AbstractTripleStore {
 	}
 
 	private static boolean add(UpdateRequest request, Atom atom) {
-		String insert = String.format(INSERT_QUERY, termToString(atom.getTerm(0)),
-		    predicateToString(atom.getPredicate()), termToString(atom.getTerm(1)));
+		String insert = String.format(INSERT_QUERY, Utils.termToString(atom.getTerm(0)),
+		    Utils.predicateToString(atom.getPredicate()), Utils.termToString(atom.getTerm(1)));
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(insert);
 		}
@@ -285,8 +237,8 @@ public class JenaStore extends AbstractTripleStore {
 	@Override
 	public boolean contains(Atom atom) throws AtomSetException {
 		boolean contains = false;
-		String select = String.format(SELECT_QUERY, termToString(atom.getTerm(0)),
-		    predicateToString(atom.getPredicate()), termToString(atom.getTerm(1)));
+		String select = String.format(SELECT_QUERY, Utils.termToString(atom.getTerm(0)),
+		    Utils.predicateToString(atom.getPredicate()), Utils.termToString(atom.getTerm(1)));
 
 		dataset.begin(ReadWrite.READ);
 		QueryExecution qExec = null;
@@ -308,8 +260,8 @@ public class JenaStore extends AbstractTripleStore {
 
 	@Override
 	public CloseableIterator<Atom> match(Atom atom) throws AtomSetException {
-		String select = String.format(SELECT_QUERY, termToString(atom.getTerm(0), "?s"),
-		    predicateToString(atom.getPredicate()), termToString(atom.getTerm(1), "?o"));
+		String select = String.format(SELECT_QUERY, Utils.termToString(atom.getTerm(0), "?s"),
+		    Utils.predicateToString(atom.getPredicate()), Utils.termToString(atom.getTerm(1), "?o"));
 
 		Term subject = atom.getTerm(0);
 		if (!subject.isConstant())
@@ -324,7 +276,7 @@ public class JenaStore extends AbstractTripleStore {
 
 	@Override
 	public CloseableIterator<Atom> atomsByPredicate(Predicate p) throws AtomSetException {
-		String select = String.format(SELECT_QUERY, "?s", predicateToString(p), "?o");
+		String select = String.format(SELECT_QUERY, "?s", Utils.predicateToString(p), "?o");
 
 		return new AtomIterator(this.directory, select, null, p, null);
 
@@ -333,9 +285,9 @@ public class JenaStore extends AbstractTripleStore {
 	@Override
 	public CloseableIterator<Term> termsByPredicatePosition(Predicate p, int position) throws AtomSetException {
 		if(position == 0) {
-			return new TermIterator(this.directory, "SELECT DISTINCT ?x WHERE { ?x " + predicateToString(p) + " ?y }");
+			return new TermIterator(this.directory, "SELECT DISTINCT ?x WHERE { ?x " + Utils.predicateToString(p) + " ?y }");
 		} else if (position == 1) {
-			return new TermIterator(this.directory, "SELECT DISTINCT ?x WHERE { ?y " + predicateToString(p) + " ?x }");
+			return new TermIterator(this.directory, "SELECT DISTINCT ?x WHERE { ?y " + Utils.predicateToString(p) + " ?x }");
 		} else {
 			throw new WrongArityException("Position should be 0 for subject or 1 for object.");
 		}
@@ -350,7 +302,7 @@ public class JenaStore extends AbstractTripleStore {
 			qExec = QueryExecutionFactory.create(SELECT_TERMS_QUERY, dataset);
 			ResultSet rs = qExec.execSelect();
 			while (rs.hasNext()) {
-				terms.add(createTerm(rs.next().get("?term")));
+				terms.add(Utils.createTerm(rs.next().get("?term")));
 			}
 		} finally {
 			if (qExec != null) {
@@ -432,198 +384,6 @@ public class JenaStore extends AbstractTripleStore {
 	@Override
 	public ConstantGenerator getFreshSymbolGenerator() {
 		return freshSymbolGenerator;
-	}
-
-	// /////////////////////////////////////////////////////////////////////////
-	// PRIVATE CLASS
-	// /////////////////////////////////////////////////////////////////////////
-
-	private static class AtomIterator extends AbstractCloseableIterator<Atom> {
-
-		Dataset             dataset;
-		ResultSet           rs;
-		QueryExecution      qExec;
-		
-		Term subject = null;
-		Predicate predicate = null;
-		Term object = null;
-
-
-		// /////////////////////////////////////////////////////////////////////////
-		// CONSTRUCTOR
-		// /////////////////////////////////////////////////////////////////////////
-
-		/**
-		 * @param dataset
-		 */
-		public AtomIterator(String directory) {
-			this(directory, SELECT_ALL);
-		}
-
-		public AtomIterator(String directory, String query) {
-			this(directory, query, null, null, null);
-		}
-		
-		public AtomIterator(String directory, String query, Term subject, Predicate predicate, Term object) {
-			this.dataset = TDBFactory.createDataset(directory);
-			this.dataset.begin(ReadWrite.READ);
-			this.qExec = QueryExecutionFactory.create(query, this.dataset);
-			this.rs = qExec.execSelect();
-			
-			this.subject = subject;
-			this.predicate = predicate;
-			this.object = object;
-		}
-
-
-		// /////////////////////////////////////////////////////////////////////////
-		// METHODS
-		// /////////////////////////////////////////////////////////////////////////
-
-		@Override
-		public void close() {
-			if (this.qExec != null) {
-				this.qExec.close();
-			}
-			this.dataset.end();
-		}
-
-		public void remove() {
-			this.rs.remove();
-		}
-
-		@Override
-		public boolean hasNext() {
-			if (this.rs.hasNext()) {
-				return true;
-			} else {
-				this.close();
-				return false;
-			}
-		}
-
-		@Override
-		public Atom next() {
-			QuerySolution next = this.rs.next();
-
-			Predicate predicate = this.predicate;
-			if(predicate == null)
-				predicate = createPredicate(next.get("?p"), 2);
-			
-			Term subject = this.subject;
-			if(subject == null)
-				subject = createTerm(next.get("?s"));
-			
-			Term object = this.object;
-			if (object == null)
-				object = createTerm(next.get("?o"));
-
-			return new DefaultAtom(predicate, subject, object);
-		}
-
-	}
-
-	private static class TermIterator extends AbstractCloseableIterator<Term> {
-
-		Dataset        dataset;
-		ResultSet      rs;
-		QueryExecution qExec;
-
-		Term           subject   = null;
-		Predicate      predicate = null;
-		Term           object    = null;
-
-		// /////////////////////////////////////////////////////////////////////////
-		// CONSTRUCTOR
-		// /////////////////////////////////////////////////////////////////////////
-
-		/**
-		 * This Iterator will iterate over ?x
-		 * 
-		 * @param directory
-		 * @param query
-		 */
-		public TermIterator(String directory, String query) {
-			this.dataset = TDBFactory.createDataset(directory);
-			this.dataset.begin(ReadWrite.READ);
-			this.qExec = QueryExecutionFactory.create(query, this.dataset);
-			this.rs = qExec.execSelect();
-		}
-
-		// /////////////////////////////////////////////////////////////////////////
-		// METHODS
-		// /////////////////////////////////////////////////////////////////////////
-
-		@Override
-		public void close() {
-			if (this.qExec != null) {
-				this.qExec.close();
-			}
-			this.dataset.end();
-		}
-
-		public void remove() {
-			this.rs.remove();
-		}
-
-		@Override
-		public boolean hasNext() {
-			if (this.rs.hasNext()) {
-				return true;
-			} else {
-				this.close();
-				return false;
-			}
-		}
-
-		@Override
-		public Term next() {
-			QuerySolution next = this.rs.next();
-			return createTerm(next.get("?x"));
-		}
-
-	}
-
-
-	// /////////////////////////////////////////////////////////////////////////
-	// PRIVATE STATIC METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	private static String predicateToString(Predicate p) {
-		return "<" + URIzer.instance().input(p.getIdentifier().toString()) + ">";
-	}
-
-	private static String termToString(Term t) {
-		return termToString(t, "<" + URIzer.instance().input(t.getIdentifier().toString()) + ">");
-	}
-	
-	private static String termToString(Term t, String valueIfVariable) {
-		if (Term.Type.CONSTANT.equals(t.getType())) {
-			return "<" + URIzer.instance().input(t.getIdentifier().toString()) + ">";
-		} else if (Term.Type.LITERAL.equals(t.getType())) {
-			return t.getIdentifier().toString();
-		} else if (Term.Type.VARIABLE.equals(t.getType())) {
-			return valueIfVariable;
-		} else {
-			return "";
-		}
-	}
-
-	private static Term createTerm(RDFNode node) {
-		Term term = null;
-		if (node.isLiteral()) {
-			Literal l = node.asLiteral();
-			term = DefaultTermFactory.instance().createLiteral(URIUtils.createURI(l.getDatatypeURI()), l.getValue());
-		} else {
-			term = DefaultTermFactory.instance().createConstant(URIzer.instance().output(node.toString()));
-		}
-		return term;
-	}
-
-	private static Predicate createPredicate(RDFNode node, int arity) {
-		String s = node.toString();
-		s = URIzer.instance().output(s);
-		return new Predicate(s, arity);
 	}
 
 }
