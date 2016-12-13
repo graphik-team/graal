@@ -65,7 +65,6 @@ algorithms, structural analysis of decidability properties of a rule set, a text
 		<module>graal-backward-chaining</module>
 		<module>graal-rules-analyser</module>
 		<module>graal-util</module>
-		<module>graal-test</module>
     <module>graal-coverage</module>
   </modules>
 

@@ -65,11 +65,16 @@ import fr.lirmm.graphik.graal.homomorphism.DefaultScheduler;
 import fr.lirmm.graphik.graal.homomorphism.RecursiveBacktrackHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.GraphBaseBackJumping;
+import fr.lirmm.graphik.graal.homomorphism.backjumping.NoBackJumping;
 import fr.lirmm.graphik.graal.homomorphism.bbc.BCC;
+import fr.lirmm.graphik.graal.homomorphism.bootstrapper.DefaultBootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.bootstrapper.StarBootstrapper;
+import fr.lirmm.graphik.graal.homomorphism.bootstrapper.StatBootstrapper;
+import fr.lirmm.graphik.graal.homomorphism.bootstrapper.AllDomainBootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC0;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2WithLimit;
+import fr.lirmm.graphik.graal.homomorphism.forward_checking.NoForwardChecking;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.SimpleFC;
 import fr.lirmm.graphik.graal.store.gdb.BlueprintsGraphDBStore;
 import fr.lirmm.graphik.graal.store.gdb.Neo4jStore;
@@ -121,21 +126,31 @@ public final class TestUtil {
 		BCC bcc0 = new BCC(true);
 		BCC bcc1 = new BCC(new GraphBaseBackJumping(), true);
 		BCC bcc2 = new BCC(new GraphBaseBackJumping(), true);
+		BCC bcc3 = new BCC(new GraphBaseBackJumping(), true);
+		BCC bcc4 = new BCC(new GraphBaseBackJumping(), true);
+		BCC bcc5 = new BCC(new GraphBaseBackJumping(), true);
 
 		return new Homomorphism[] { StaticHomomorphism.instance(), RecursiveBacktrackHomomorphism.instance(),
-		                            new BacktrackHomomorphism(),
-		                            new BacktrackHomomorphism(new GraphBaseBackJumping()),
-		                            new BacktrackHomomorphism(bcc0.getBCCScheduler(), bcc0.getBCCBackJumping()),
-		                            new BacktrackHomomorphism(bcc1.getBCCScheduler(), bcc1.getBCCBackJumping()),
-		                            new BacktrackHomomorphism(new NFC0()), 
-		                            new BacktrackHomomorphism(new NFC2()),
-		                            new BacktrackHomomorphism(new NFC2(true)),
-		                            new BacktrackHomomorphism(new SimpleFC()),
-		                            new BacktrackHomomorphism(new NFC2WithLimit(8)),
-		                            new BacktrackHomomorphism(DefaultScheduler.instance(), StarBootstrapper.instance(), new NFC2(),
-		                    				new GraphBaseBackJumping()),
-		                            new BacktrackHomomorphism(bcc2.getBCCScheduler(), StarBootstrapper.instance(),
-		                                                      new NFC2(), bcc2.getBCCBackJumping()) };
+									// Without Optimization
+		                            new BacktrackHomomorphism(DefaultScheduler.instance(), StarBootstrapper.instance(), NoForwardChecking.instance(), NoBackJumping.instance()),
+		                            // BackJumping
+		                            new BacktrackHomomorphism(DefaultScheduler.instance(), StarBootstrapper.instance(), NoForwardChecking.instance(), new GraphBaseBackJumping()),
+		                            // BCC
+		                            new BacktrackHomomorphism(bcc0.getBCCScheduler(), StarBootstrapper.instance(), NoForwardChecking.instance(), bcc0.getBCCBackJumping()),
+		                            new BacktrackHomomorphism(bcc1.getBCCScheduler(), StarBootstrapper.instance(), NoForwardChecking.instance(), bcc1.getBCCBackJumping()),
+		                            // Forward Checking
+		                            new BacktrackHomomorphism(DefaultScheduler.instance(), StarBootstrapper.instance(),new NFC0(), new GraphBaseBackJumping()), 
+		                            new BacktrackHomomorphism(DefaultScheduler.instance(), StarBootstrapper.instance(),new NFC2(), new GraphBaseBackJumping()),
+		                            new BacktrackHomomorphism(DefaultScheduler.instance(), StarBootstrapper.instance(),new NFC2(true), new GraphBaseBackJumping()),
+		                            new BacktrackHomomorphism(DefaultScheduler.instance(), StarBootstrapper.instance(),new SimpleFC(), new GraphBaseBackJumping()),
+		                            new BacktrackHomomorphism(DefaultScheduler.instance(), StarBootstrapper.instance(),new NFC2WithLimit(8), new GraphBaseBackJumping()),
+		                            // Bootstrapper
+		                            new BacktrackHomomorphism(bcc2.getBCCScheduler(), StarBootstrapper.instance(), new NFC2(), bcc2.getBCCBackJumping()),
+		                            new BacktrackHomomorphism(bcc3.getBCCScheduler(), StatBootstrapper.instance(), new NFC2(), bcc3.getBCCBackJumping()),
+		                            new BacktrackHomomorphism(bcc4.getBCCScheduler(), DefaultBootstrapper.instance(), new NFC2(), bcc4.getBCCBackJumping()),
+		                            new BacktrackHomomorphism(bcc5.getBCCScheduler(), AllDomainBootstrapper.instance(), new NFC2(), bcc5.getBCCBackJumping()) 
+		                            };
+		
 
 	}
 
