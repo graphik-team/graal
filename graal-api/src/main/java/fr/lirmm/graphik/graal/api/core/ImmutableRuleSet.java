@@ -54,6 +54,8 @@ import java.util.Iterator;
 public interface ImmutableRuleSet extends Iterable<Rule> {
 	
     public boolean contains(Rule rule);
+    
+    public boolean isEmpty();
 
 	@Override
 	public Iterator<Rule> iterator();

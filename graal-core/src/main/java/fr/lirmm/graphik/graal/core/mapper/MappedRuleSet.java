@@ -135,6 +135,11 @@ public class MappedRuleSet implements RuleSet {
 		                                                                   ruleUnconverter));
 	}
 
+	@Override
+	public boolean isEmpty() {
+		return ruleSet.isEmpty();
+	}
+
 	// /////////////////////////////////////////////////////////////////////////
 	// OBJECT OVERRIDE METHODS
 	// /////////////////////////////////////////////////////////////////////////

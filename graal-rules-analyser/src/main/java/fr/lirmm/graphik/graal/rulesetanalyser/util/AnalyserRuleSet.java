@@ -259,4 +259,9 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 		return this.ruleset.size();
 	}
 
+	@Override
+	public boolean isEmpty() {
+		return this.ruleset.isEmpty();
+	}
+
 }

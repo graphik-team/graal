@@ -61,6 +61,9 @@ public interface RuleSet extends ImmutableRuleSet {
 	public boolean removeAll(CloseableIterator<Rule> ruleIterator) throws RuleSetException;;
 
 	@Override
+	public boolean isEmpty();
+	
+	@Override
 	public boolean contains(Rule rule);
 
 	@Override

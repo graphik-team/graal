@@ -211,6 +211,12 @@ public class DefaultOntology implements Ontology {
 		return Collections.<Predicate>unmodifiableSet(this.vocabulary);
 	}
 
+
+	@Override
+	public boolean isEmpty() {
+		return this.map.isEmpty();
+	}
+	
 	// /////////////////////////////////////////////////////////////////////////
 	// OBJECT OVERRIDE METHODS
 	// /////////////////////////////////////////////////////////////////////////
