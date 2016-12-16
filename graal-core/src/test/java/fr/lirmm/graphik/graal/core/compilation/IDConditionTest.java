@@ -284,7 +284,7 @@ public class IDConditionTest {
 		Partition<Term> partition = cond.generateUnification(newBodyList, newHeadList);
 		boolean isFound = false;
 		for (Collection<Term> cl : partition) {
-			if (cl.contains(U) && cl.contains(W) && cl.contains(W)) {
+			if (cl.contains(U) && cl.contains(W) && cl.contains(Z)) {
 				isFound = !cl.contains(V);
 			}
 		}

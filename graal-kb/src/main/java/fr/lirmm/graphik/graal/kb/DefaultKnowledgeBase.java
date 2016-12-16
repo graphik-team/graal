@@ -296,7 +296,7 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 							return ((HomomorphismWithCompilation) solver).execute(ucq, this.store,
 							    this.ruleCompilation);
 						} else {
-							if (this.getProfiler().equals(Priority.REWRITING)) {
+							if (this.getPriority().equals(Priority.REWRITING)) {
 								it = PureRewriter.unfold(ucq, this.ruleCompilation);
 								ucq = new DefaultUnionOfConjunctiveQueries(cq.getAnswerVariables(), it);
 							} else {

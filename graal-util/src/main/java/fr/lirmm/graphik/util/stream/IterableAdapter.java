@@ -52,7 +52,7 @@ public class IterableAdapter<T> implements Iterable {
 
 	protected CloseableIterable<T> iterable;
 
-	public IterableAdapter(CloseableIterable<T> iterator) {
+	public IterableAdapter(CloseableIterable<T> iterable) {
 		this.iterable = iterable;
 	}
 
