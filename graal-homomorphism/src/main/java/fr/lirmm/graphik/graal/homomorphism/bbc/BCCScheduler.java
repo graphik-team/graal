@@ -133,7 +133,16 @@ class BCCScheduler extends AbstractProfilable implements Scheduler {
 		this.BCC.varData[level] = new VarData();
 		// if an homomorphism is found, go to the last answer variable
 		vars[level].previousLevel = lastAnswerVariable;
-
+		
+		if(this.getProfiler().isProfilingEnabled()) {
+			StringBuilder sb = new StringBuilder();
+			for(Var v : vars) {
+				sb.append(v.value);
+				sb.append(" > ");
+			}
+			this.getProfiler().put("BCCOrder", sb.toString());
+		}
+		
 		return vars;
 	}
 

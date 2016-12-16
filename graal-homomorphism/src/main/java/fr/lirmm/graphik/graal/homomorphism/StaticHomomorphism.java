@@ -108,7 +108,10 @@ public class StaticHomomorphism extends AbstractProfilable implements Homomorphi
 			LOGGER.debug("Query : " + query);
 
 		Homomorphism solver = getSolverFactory().getSolver(query, atomSet);
-		solver.setProfiler(this.getProfiler());
+		if(this.getProfiler().isProfilingEnabled()) {
+			this.getProfiler().put("solver", solver.toString());
+			solver.setProfiler(this.getProfiler());
+		}
 		return solver.execute(query, atomSet);
 	}
 
