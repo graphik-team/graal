@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2017)
  *
  * Contributors :
  *
@@ -40,12 +40,56 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-/**
-* 
-*/
 package fr.lirmm.graphik.graal.core.atomset.graph;
 
-interface Vertex {
+import java.util.Comparator;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
-	boolean addNeighbor(AtomEdge a);
+/**
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+ *
+ */
+public class TreeIndexFactory implements IndexFactory {
+
+	private static final TreeIndexFactory INSTANCE = new TreeIndexFactory();
+
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
+
+	public static TreeIndexFactory instance() {
+		return INSTANCE;
+	}
+
+	private TreeIndexFactory() {
+
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	@Override
+	public <T, U> Map<T, U> createMap() {
+		return new TreeMap<T, U>();
+	}
+
+	@Override
+	public <T, U> Map<T, U> createMap(Comparator<? super T> comparator) {
+		return new TreeMap<T, U>(comparator);
+	}
+
+	@Override
+	public <T> Set<T> createSet() {
+		return new TreeSet<T>();
+	}
+
+	@Override
+	public <T> Set<T> createSet(Comparator<? super T> comparator) {
+		return new TreeSet<T>(comparator);
+	}
+
 }

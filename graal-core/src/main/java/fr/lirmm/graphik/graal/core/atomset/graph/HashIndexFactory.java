@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2017)
  *
  * Contributors :
  *
@@ -40,12 +40,52 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-/**
-* 
-*/
 package fr.lirmm.graphik.graal.core.atomset.graph;
 
-interface Vertex {
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
-	boolean addNeighbor(AtomEdge a);
+/**
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+ *
+ */
+public class HashIndexFactory implements IndexFactory {
+
+	private static final HashIndexFactory INSTANCE = new HashIndexFactory();
+
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
+
+	public static HashIndexFactory instance() {
+		return INSTANCE;
+	}
+
+	private HashIndexFactory() {
+
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	public <T, U> Map<T, U> createMap() {
+		return new HashMap<T, U>();
+	}
+
+	public <T, U> Map<T, U> createMap(Comparator<? super T> comparator) {
+		return new HashMap<T, U>();
+	}
+
+	public <T> Set<T> createSet() {
+		return new HashSet<T>();
+	}
+
+	public <T> Set<T> createSet(Comparator<? super T> comparator) {
+		return new HashSet<T>();
+	}
+
 }

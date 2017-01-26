@@ -25,7 +25,7 @@
  * with a limited warranty  and the software's author,  the holder of the
  * economic rights,  and the successive licensors  have only  limited
  * liability.
- *
+ *void addNeighbor(Atom a);
  * In this respect, the user's attention is drawn to the risks associated
  * with loading,  using,  modifying and/or developing or reproducing the
  * software by the user in light of its specific status of free software,
@@ -46,15 +46,15 @@
 package fr.lirmm.graphik.graal.core.atomset.graph;
 
 import java.util.Set;
-import java.util.TreeSet;
 
+import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 
 class PredicateVertex extends Predicate implements Vertex {
 
 	private static final long serialVersionUID = 1607321754413212182L;
 
-	private Set<Edge>         edges            = new TreeSet<Edge>();
+	private Set<Edge> edges = CurrentIndexFactory.instance().<Edge>createSet();
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -75,9 +75,13 @@ class PredicateVertex extends Predicate implements Vertex {
 	// VERTEX METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	@Override
-	public Set<Edge> getEdges() {
+	public Set<Edge> getNeighbors() {
 		return this.edges;
+	}
+
+	@Override
+	public boolean addNeighbor(AtomEdge a) {
+		return this.edges.add(a);
 	}
 
 	@Override

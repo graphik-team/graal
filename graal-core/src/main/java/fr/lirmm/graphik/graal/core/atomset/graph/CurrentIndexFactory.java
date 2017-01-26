@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2017)
  *
  * Contributors :
  *
@@ -40,12 +40,22 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-/**
-* 
-*/
 package fr.lirmm.graphik.graal.core.atomset.graph;
 
-interface Vertex {
+/**
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+ *
+ */
+public final class CurrentIndexFactory {
 
-	boolean addNeighbor(AtomEdge a);
+	private static IndexFactory instance = HashIndexFactory.instance();
+	
+	public static IndexFactory instance() {
+		return instance;
+	}
+	
+	public static void setInstance(IndexFactory instance) {
+		CurrentIndexFactory.instance = instance;
+	}
+
 }

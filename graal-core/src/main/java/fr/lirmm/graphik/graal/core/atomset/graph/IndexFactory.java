@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2017)
  *
  * Contributors :
  *
@@ -40,17 +40,24 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-/**
- * 
- */
 package fr.lirmm.graphik.graal.core.atomset.graph;
 
-import fr.lirmm.graphik.graal.api.core.AtomSet;
+import java.util.Comparator;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface GraphAtomSet extends AtomSet {
+public interface IndexFactory {
+
+	public <T, U> Map<T, U> createMap();
+
+	public <T, U> Map<T, U> createMap(Comparator<? super T> comparator);
+
+	public <T> Set<T> createSet();
+
+	public <T> Set<T> createSet(Comparator<? super T> comparator);
 
 }

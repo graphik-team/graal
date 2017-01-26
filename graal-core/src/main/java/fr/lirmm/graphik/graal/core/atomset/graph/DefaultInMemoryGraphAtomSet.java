@@ -45,14 +45,11 @@ package fr.lirmm.graphik.graal.core.atomset.graph;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.AtomComparator;
 import fr.lirmm.graphik.graal.api.core.ConstantGenerator;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
@@ -63,6 +60,7 @@ import fr.lirmm.graphik.graal.core.AtomMatcher;
 import fr.lirmm.graphik.graal.core.DefaultConstantGenerator;
 import fr.lirmm.graphik.graal.core.atomset.AbstractInMemoryAtomSet;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
+import fr.lirmm.graphik.util.stream.CloseableIteratorAggregatorWithoutExeception;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 import fr.lirmm.graphik.util.stream.Iterators;
 import fr.lirmm.graphik.util.stream.filter.Filter;
@@ -71,13 +69,12 @@ import fr.lirmm.graphik.util.stream.filter.FilterIteratorWithoutException;
 /**
  * Implementation of a graph in memory. Inherits directly from Fact.
  */
-public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet implements GraphAtomSet, InMemoryAtomSet {
+public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet implements InMemoryAtomSet {
 
-	private TreeSet<TermVertex> terms;
-	private TreeSet<PredicateVertex> predicates;
-	private TreeSet<AtomEdge> atoms;
+	private Map<Term, TermVertex> terms;
+	private Map<Predicate, PredicateVertex> predicates;
 
-	private TreeMap<Predicate, Set<Term>[]> termsByPredicatePosition;
+	private Map<Predicate, Set<Term>[]> termsByPredicatePosition;
 	private ConstantGenerator freshSymbolGenerator = new DefaultConstantGenerator("EE");
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -85,11 +82,9 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 	// /////////////////////////////////////////////////////////////////////////
 
 	public DefaultInMemoryGraphAtomSet() {
-		this.terms = new TreeSet<TermVertex>(TermValueComparator.instance());
-		this.predicates = new TreeSet<PredicateVertex>();
-		this.atoms = new TreeSet<AtomEdge>(AtomComparator.instance());
-
-		this.termsByPredicatePosition = new TreeMap<Predicate, Set<Term>[]>();
+		this.terms = CurrentIndexFactory.instance().<Term, TermVertex>createMap(TermValueComparator.instance());
+		this.predicates = CurrentIndexFactory.instance().<Predicate, PredicateVertex>createMap();
+		this.termsByPredicatePosition = CurrentIndexFactory.instance().<Predicate, Set<Term>[]>createMap();
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -98,13 +93,7 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 
 	@Override
 	public Set<Predicate> getPredicates() {
-		Set<Predicate> predicates = new TreeSet<Predicate>();
-		CloseableIteratorWithoutException<Atom> it = this.iterator();
-		while (it.hasNext()) {
-			Atom a = it.next();
-			predicates.add(a.getPredicate());
-		}
-		return predicates;
+		return Collections.unmodifiableSet(this.predicates.keySet());
 	}
 
 	@Override
@@ -114,7 +103,14 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 
 	@Override
 	public CloseableIteratorWithoutException<Atom> iterator() {
-		return new CloseableIteratorAdapter<Atom>(new TreeSet<Atom>(this.atoms).iterator());
+		CloseableIteratorWithoutException<Predicate> predicatesIt = this.predicatesIterator();
+		List<CloseableIteratorWithoutException<Atom>> list = new LinkedList<CloseableIteratorWithoutException<Atom>>();
+		while (predicatesIt.hasNext()) {
+			list.add(this.atomsByPredicate(predicatesIt.next()));
+		}
+		return new CloseableIteratorAggregatorWithoutExeception<Atom>(
+				new CloseableIteratorAdapter<CloseableIteratorWithoutException<Atom>>(list.iterator()));
+
 	}
 
 	@Override
@@ -125,7 +121,11 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 
 	@Override
 	public boolean contains(Atom atom) {
-		return this.atoms.contains(atom);
+		PredicateVertex predicateVertex = this.predicates.get(atom.getPredicate());
+		if (predicateVertex == null) {
+			return false;
+		}
+		return predicateVertex.getNeighbors().contains(atom);
 	}
 
 	@Override
@@ -140,7 +140,7 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 				if (tv != null) {
 					it = tv.getNeighbors(atom.getPredicate(), i);
 				} else {
-					it = Iterators.<Atom> emptyIterator();
+					it = Iterators.<Atom>emptyIterator();
 				}
 			}
 		}
@@ -160,22 +160,21 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 	public CloseableIteratorWithoutException<Atom> atomsByPredicate(Predicate p) {
 		PredicateVertex pv = this.getPredicateVertex(p);
 		if (pv == null) {
-			return Iterators.<Atom> emptyIterator();
+			return Iterators.<Atom>emptyIterator();
 		}
-		return new FilterIteratorWithoutException<Edge, Atom>(new CloseableIteratorAdapter<Edge>(pv.getEdges()
-		                                                                                           .iterator()),
-		                                                      new Filter<Edge>() {
-			    @Override
-			    public boolean filter(Edge e) {
-				    return true;
-			    }
-		    });
+		return new FilterIteratorWithoutException<Edge, Atom>(
+				new CloseableIteratorAdapter<Edge>(pv.getNeighbors().iterator()), new Filter<Edge>() {
+					@Override
+					public boolean filter(Edge e) {
+						return true;
+					}
+				});
 	}
 
 	@Override
 	public int count(Predicate p) {
 		PredicateVertex pred = this.getPredicateVertex(p);
-		return (pred == null) ? 0 : pred.getEdges().size();
+		return (pred == null) ? 0 : pred.getNeighbors().size();
 	}
 
 	@Override
@@ -187,7 +186,7 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 	public CloseableIteratorWithoutException<Term> termsByPredicatePosition(Predicate p, int position) {
 		Set<Term>[] sets = this.termsByPredicatePosition.get(p);
 		if (sets == null) {
-			return new CloseableIteratorAdapter<Term>(Collections.<Term> emptyList().iterator());
+			return new CloseableIteratorAdapter<Term>(Collections.<Term>emptyList().iterator());
 		} else {
 			return new CloseableIteratorAdapter<Term>(sets[position].iterator());
 		}
@@ -195,7 +194,7 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 
 	@Override
 	public Set<Term> getTerms() {
-		return new TreeSet<Term>(this.terms);
+		return Collections.<Term>unmodifiableSet(this.terms.keySet());
 	}
 
 	@Override
@@ -206,7 +205,7 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 	@Override
 	public Set<Term> getTerms(Type type) {
 		TreeSet<Term> set = new TreeSet<Term>();
-		for (Term t : this.terms)
+		for (Term t : this.terms.keySet())
 			if (type.equals(t.getType()))
 				set.add(t);
 
@@ -218,83 +217,75 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 		return new CloseableIteratorAdapter<Term>(this.getTerms(type).iterator());
 	}
 
-	/**
-	 * @see fr.lirmm.graphik.alaska.store.Store#write(fr.lirmm.graphik.kb.core.IAtom)
-	 */
 	@Override
 	public boolean add(Atom atom) {
 		List<TermVertex> atomTerms = new LinkedList<TermVertex>();
 		PredicateVertex atomPredicate;
 
 		for (Term t : atom.getTerms()) {
-			// if (t.isConstant()) {
-			// t =
-			// DefaultTermFactory.instance().createConstant(t.getIdentifier().hashCode());
-			// }
 			atomTerms.add(this.addTermVertex(TermVertexFactory.instance().createTerm(t)));
 		}
 
-		atomPredicate = this.addPredicateVertex(
-		    new PredicateVertex(atom.getPredicate()
-		                            .getIdentifier()/*
-		                                             * . hashCode ( )
-		                                             */,
-		                        atom.getPredicate().getArity()));
+		atomPredicate = this.addPredicateVertex(new PredicateVertex(atom.getPredicate()));
 		AtomEdge atomEdge = new AtomEdge(atomPredicate, atomTerms);
 		return this.addAtomEdge(atomEdge);
+	}
+
+	@Override
+	public void clear() {
+		this.terms.clear();
+		this.predicates.clear();
+	}
+
+	@Override
+	public ConstantGenerator getFreshSymbolGenerator() {
+		return freshSymbolGenerator;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	TermVertex getTermVertex(Term term) {
-		SortedSet<TermVertex> set = this.terms.tailSet(TermVertexFactory.instance().createTerm(term));
-		TermVertex t = (set.isEmpty()) ? null : set.first();
+	private TermVertex getTermVertex(Term term) {
+		return this.terms.get(term);
+	}
 
-		if (t != null && TermValueComparator.instance().compare(term, t) == 0) {
-			return t;
-		} else {
-			return null;
+	private PredicateVertex getPredicateVertex(Predicate predicate) {
+		return this.predicates.get(predicate);
+
+	}
+
+	private TermVertex addTermVertex(TermVertex term) {
+		TermVertex t = this.terms.get(term);
+		if (t == null) {
+			t = term;
+			this.terms.put(t, t);
 		}
+		return t;
 	}
 
-	PredicateVertex getPredicateVertex(Predicate predicate) {
-		try {
-			PredicateVertex p = this.predicates.tailSet(new PredicateVertex(predicate)).first();
-			return (predicate.equals(p)) ? p : null;
-		} catch (NoSuchElementException e) {
-			return null;
-		}
-	}
-
-	TermVertex addTermVertex(TermVertex term) {
-		if (this.terms.add(term))
-			return term;
-		else
-			return this.terms.tailSet(term).first();
-	}
-
-	PredicateVertex addPredicateVertex(PredicateVertex predicate) {
-		if (this.predicates.add(predicate)) {
+	private PredicateVertex addPredicateVertex(PredicateVertex predicate) {
+		PredicateVertex p = this.predicates.get(predicate);
+		if (p == null) {
+			p = predicate;
+			this.predicates.put(p, p);
 			Set<Term>[] array = new Set[predicate.getArity()];
 			for (int i = 0; i < array.length; ++i) {
-				array[i] = new TreeSet<Term>();
+				array[i] = CurrentIndexFactory.instance().<Term>createSet();
 			}
-			this.termsByPredicatePosition.put(predicate, array);
-			return predicate;
-		} else
-			return this.predicates.tailSet(predicate).first();
+			this.termsByPredicatePosition.put(p, array);
+		}
+		return p;
 	}
 
-	boolean addAtomEdge(AtomEdge atom) {
-		boolean val = this.atoms.add(atom);
+	private boolean addAtomEdge(AtomEdge atom) {
+		PredicateVertex predicateVertex = this.predicates.get(atom.getPredicate());
+		boolean val = predicateVertex.addNeighbor(atom);
 		if (val) {
 			for (Vertex v : atom.getVertices()) {
-				v.getEdges().add(atom);
 				if (v instanceof TermVertex) {
 					TermVertex term = (TermVertex) v;
-					term.add(atom);
+					term.addNeighbor(atom);
 				}
 			}
 
@@ -305,18 +296,6 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 			}
 		}
 		return val;
-	}
-
-	@Override
-	public void clear() {
-		this.terms.clear();
-		this.predicates.clear();
-		this.atoms.clear();
-	}
-
-	@Override
-	public ConstantGenerator getFreshSymbolGenerator() {
-		return freshSymbolGenerator;
 	}
 
 }

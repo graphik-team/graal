@@ -45,8 +45,6 @@
  */
 package fr.lirmm.graphik.graal.core.atomset.graph;
 
-import java.util.Set;
-
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
@@ -60,8 +58,4 @@ interface TermVertex extends Term, Vertex {
 
 	CloseableIteratorWithoutException<Atom> getNeighbors(Predicate p, int position);
 
-	void add(Atom a);
-
-	@Override
-	Set<Edge> getEdges();
 }

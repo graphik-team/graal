@@ -60,7 +60,7 @@ import fr.lirmm.graphik.util.URI;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class TermVertexFactory implements TermFactory {
+class TermVertexFactory implements TermFactory {
 
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(TermVertexFactory.class);

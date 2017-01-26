@@ -49,9 +49,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.Map;
 
 import fr.lirmm.graphik.graal.api.core.AbstractTerm;
 import fr.lirmm.graphik.graal.api.core.Atom;
@@ -64,8 +62,7 @@ abstract class AbstractTermVertex extends AbstractTerm implements TermVertex {
 
 	private static final long serialVersionUID = -1087277093687686210L;
 
-	private final TreeSet<Edge>                          edges            = new TreeSet<Edge>();
-	private final TreeMap<Predicate, Collection<Atom>[]> index            = new TreeMap<Predicate, Collection<Atom>[]>();
+	private final Map<Predicate, Collection<Atom>[]> index = CurrentIndexFactory.instance().<Predicate, Collection<Atom>[]>createMap();
 
 	// /////////////////////////////////////////////////////////////////////////
 	// ABSTRACT METHODS
@@ -76,11 +73,6 @@ abstract class AbstractTermVertex extends AbstractTerm implements TermVertex {
 	// /////////////////////////////////////////////////////////////////////////
 	// VERTEX METHODS
 	// /////////////////////////////////////////////////////////////////////////
-
-	@Override
-	public Set<Edge> getEdges() {
-		return this.edges;
-	}
 
 	@Override
 	public CloseableIteratorWithoutException<Atom> getNeighbors(Predicate p, int position) {
@@ -99,13 +91,14 @@ abstract class AbstractTermVertex extends AbstractTerm implements TermVertex {
 	}
 
 	@Override
-	public void add(Atom a) {
+	public boolean addNeighbor(AtomEdge a) {
 		Collection<Atom>[] map = this.index.get(a.getPredicate());
 		if (map == null) {
 			map = new Collection[a.getPredicate().getArity()];
 			this.index.put(a.getPredicate(), map);
 		}
 
+		boolean res = false;
 		int i = -1;
 		for (Term t : a) {
 			++i;
@@ -115,9 +108,10 @@ abstract class AbstractTermVertex extends AbstractTerm implements TermVertex {
 					collection = new LinkedList<Atom>();
 					map[i] = collection;
 				}
-				collection.add(a);
+				res = collection.add(a) || res;
 			}
 		}
+		return res;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
