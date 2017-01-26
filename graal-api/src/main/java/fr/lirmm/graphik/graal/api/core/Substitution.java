@@ -98,7 +98,7 @@ public interface Substitution extends Comparable<Substitution>, AppendableToStri
 
 	/**
 	 * Add all mappings from an other substitution instance. Returns false if
-	 * there already exists an other image for a variable from the demain of s,
+	 * there already exists an other image for a variable from the domain of s,
 	 * true otherwise.
 	 * 
 	 * @param s
@@ -140,6 +140,28 @@ public interface Substitution extends Comparable<Substitution>, AppendableToStri
 	 *         component.
 	 */
 	Substitution aggregate(Substitution s);
+	
+	/**
+	 * For example, if the current substitution is {Y -> Z} and you compose it with
+	 * {X -> Y, V -> U}, the result is {X -> Z, Y -> Z, V -> U}.
+	 * 
+	 * @param s
+	 * @return
+	 */
+	boolean compose(Variable term, Term substitut);
+	
+	/**
+	 * (CONST) <br>
+	 * This method construct a new Substitution which is the composition of this
+	 * substitution with the specified one. 
+	 * 
+	 * For example, if the current substitution is {Y -> Z} and you compose it with
+	 * {X -> Y, V -> U}, the result is {X -> Z, Y -> Z, V -> U}.
+	 * 
+	 * @param s
+	 * @return
+	 */
+	Substitution compose(Substitution s);
 
 	/**
 	 * Apply this substitution on an atom.

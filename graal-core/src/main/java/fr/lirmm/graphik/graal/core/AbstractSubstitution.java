@@ -40,9 +40,9 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
+/**
+* 
+*/
 package fr.lirmm.graphik.graal.core;
 
 import java.util.ArrayList;
@@ -179,6 +179,23 @@ public abstract class AbstractSubstitution implements Substitution {
 	}
 
 	@Override
+	public boolean compose(Variable term, Term substitut) {
+		substitut = this.createImageOf(substitut);
+		return this.put(term, substitut);
+	}
+
+	@Override
+	public Substitution compose(Substitution s) {
+		Substitution newSub = SubstitutionFactory.instance().createSubstitution(this);
+		for (Variable term : s.getTerms()) {
+			if (!newSub.compose(term, s.createImageOf(term))) {
+				return null;
+			}
+		}
+		return newSub;
+	}
+
+	@Override
 	public boolean aggregate(Variable term, Term substitut) {
 		Term termSubstitut = this.createImageOf(term);
 		Term substitutSubstitut = this.createImageOf(substitut);
@@ -208,8 +225,7 @@ public abstract class AbstractSubstitution implements Substitution {
 
 	@Override
 	public Substitution aggregate(Substitution s) {
-		Substitution newSub = SubstitutionFactory.instance()
-		                                         .createSubstitution(this);
+		Substitution newSub = SubstitutionFactory.instance().createSubstitution(this);
 		for (Variable term : s.getTerms()) {
 			if (!newSub.aggregate(term, s.createImageOf(term))) {
 				return null;
@@ -283,6 +299,17 @@ public abstract class AbstractSubstitution implements Substitution {
 		}
 
 		return true;
+	}
+	
+	@Override
+	public int hashCode() {
+		int result = 1;
+		for(Map.Entry<Variable, Term> e : this.getMap().entrySet()) {
+			int a = 31 * e.getKey().hashCode();
+			int b = 67 * e.getValue().hashCode();
+			result += a + b + (a*b);
+		}
+		return result;
 	}
 
 	@Override

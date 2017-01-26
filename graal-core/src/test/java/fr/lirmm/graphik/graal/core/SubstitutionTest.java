@@ -63,6 +63,14 @@ import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 @RunWith(Theories.class)
 public class SubstitutionTest {
 	
+	private static final Variable S = DefaultTermFactory.instance().createVariable(
+			"S");
+	private static final Variable T = DefaultTermFactory.instance().createVariable(
+			"T");
+	private static final Variable U = DefaultTermFactory.instance().createVariable(
+			"U");
+	private static final Variable V = DefaultTermFactory.instance().createVariable(
+			"V");
 	private static final Variable X = DefaultTermFactory.instance().createVariable(
 			"X");
 	private static final Variable Y = DefaultTermFactory.instance().createVariable(
@@ -74,10 +82,33 @@ public class SubstitutionTest {
 			"a");
 	private static final Term B = DefaultTermFactory.instance().createConstant(
 			"b");
+	private static final Term C = DefaultTermFactory.instance().createConstant(
+			"c");
 	
 	@DataPoints
 	public static Substitution[] substitution() {
 		return new Substitution[] { new HashMapSubstitution(), new TreeMapSubstitution() };
+	}
+	
+	@Theory
+	public void compositionTest1(Substitution s1, Substitution s2) {
+		
+		s1.put(X,Y);
+		s1.put(S,T);
+		
+		s2.put(Y,Z);
+		s2.put(U,V);
+		
+		
+		Substitution comp = s2.compose(s1);
+		System.out.println(comp);
+
+		Assert.assertEquals(Z, comp.createImageOf(X));
+		Assert.assertEquals(Z, comp.createImageOf(Y));
+		Assert.assertEquals(Z, comp.createImageOf(Z));
+		Assert.assertEquals(T, comp.createImageOf(S));
+		Assert.assertEquals(V, comp.createImageOf(U));
+
 	}
 
 	@Theory
@@ -156,12 +187,91 @@ public class SubstitutionTest {
 	}
 	
 	@Theory
-	public void aggregateImpossible(Substitution s1, Substitution s2)  {
+	public void aggregateImpossibleTest1(Substitution s1, Substitution s2)  {
 		s1.put(X,A);
 		s2.put(X,B);
 		
 		Substitution aggregation = s1.aggregate(s2);
 		Assert.assertNull(aggregation);
+	}
+	
+	@Theory
+	public void aggregateImpossibleTest2(Substitution s1, Substitution s2)  {
+		s1.put(X,Z);
+		s1.put(Y,Z);
+		
+		s2.put(X,A);
+		s2.put(Y,B);
+		
+		Substitution aggregation = s1.aggregate(s2);
+		Assert.assertNull(aggregation);
+	}
+	
+	@Theory
+	public void hashCode1(Substitution s1, Substitution s2)  {
+		s1.put(X,Z);
+		s2.put(X,Z);
+		
+		s1.put(Y,Z);
+		s2.put(Y,Z);
+		
+		Assert.assertEquals(s1.hashCode(), s2.hashCode());
+	}
+	
+	
+	@Theory
+	public void hashCode2(Substitution s1, Substitution s2)  {
+		s1.put(X,A);
+		s2.put(X,A);
+		
+		s1.put(Y,B);
+		s2.put(Y,B);
+		
+		Assert.assertEquals(s1.hashCode(), s2.hashCode());
+	}
+	
+	@Theory
+	public void hashCode3(Substitution s1, Substitution s2)  {
+		s1.put(X,A);
+		s2.put(X,A);
+		
+		s1.put(Y,B);
+		s2.put(Y,B);
+		
+		s1.put(Z,C);
+		s2.put(Z,C);
+		
+		Assert.assertEquals(s1.hashCode(), s2.hashCode());
+	}
+	
+	@Theory
+	public void hashCodeDiff1(Substitution s1, Substitution s2)  {
+		s1.put(X,Z);
+		s2.put(Z,X);
+
+		Assert.assertNotEquals(s1.hashCode(), s2.hashCode());
+	}
+	
+	@Theory
+	public void hashCodeDiff2(Substitution s1, Substitution s2)  {
+		s1.put(X,Z);
+		s2.put(X,A);
+		
+		s1.put(Y,A);
+		s2.put(Y,Z);
+		
+		Assert.assertNotEquals(s1.hashCode(), s2.hashCode());
+	}
+	
+	@Theory
+	public void hashCode4(Substitution s1, Substitution s2)  {
+		s1.put(X,Z);
+		s1.put(Y,Z);
+		
+		s2.put(Y,Z);
+		s2.put(X,Z);
+		
+		Assert.assertEquals(s1.hashCode(), s2.hashCode());
 	}
 	
 }
