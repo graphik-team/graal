@@ -67,12 +67,9 @@ import fr.lirmm.graphik.util.stream.IteratorException;
  */
 public class UnionConjunctiveQueriesSubstitutionIterator extends AbstractProfilable implements
                                                                                    CloseableIterator<Substitution> {
-
-	private static final Logger                     LOGGER = LoggerFactory.getLogger(
-	    UnionConjunctiveQueriesSubstitutionIterator.class);
-
+	
 	private AtomSet                                 atomSet;
-	private CloseableIterator<ConjunctiveQuery>             cqueryIterator;
+	private CloseableIterator<ConjunctiveQuery>     cqueryIterator;
 	private CloseableIterator<Substitution>         tmpIt;
 	private boolean                                 hasNextCallDone = false;
 	private Homomorphism<ConjunctiveQuery, AtomSet> homomorphism;
@@ -150,11 +147,20 @@ public class UnionConjunctiveQueriesSubstitutionIterator extends AbstractProfila
 
 		return this.tmpIt.next();
 	}
+	
+	@Override
+	protected void finalize() throws Throwable {
+		this.close();
+		super.finalize();
+	}
 
 	@Override
 	public void close() {
 		if (this.tmpIt != null) {
 			this.tmpIt.close();
+		}
+		if (this.cqueryIterator != null) {
+			this.cqueryIterator.close();
 		}
 	}
 
