@@ -214,4 +214,18 @@ public final class Iterators {
 
 	}
 
+	/**
+	 * @param execute
+	 * @return
+	 * @throws IteratorException 
+	 */
+	public static <T> List<T> toList(CloseableIterator<T> it) throws IteratorException {
+		List<T> list = new LinkedList<T>();
+		while(it.hasNext()) {
+			list.add(it.next());
+		}
+		it.close();
+		return list;
+	}
+
 }
