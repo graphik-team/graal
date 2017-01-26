@@ -58,6 +58,23 @@ import fr.lirmm.graphik.graal.homomorphism.DefaultUCQHomomorphism;
  */
 public class DefaultUnionConjunctiveQueriesChecker extends AbstractChecker {
 
+	private static final DefaultUnionConjunctiveQueriesChecker INSTANCE = new DefaultUnionConjunctiveQueriesChecker();
+
+	// /////////////////////////////////////////////////////////////////////////
+	// SINGLETON
+	// /////////////////////////////////////////////////////////////////////////
+
+	public static DefaultUnionConjunctiveQueriesChecker instance() {
+		return INSTANCE;
+	}
+
+	private DefaultUnionConjunctiveQueriesChecker() {
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
+	
 	@Override
 	public boolean check(Query query, AtomSet atomset) {
 		return query instanceof DefaultUnionOfConjunctiveQueries;

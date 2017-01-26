@@ -62,6 +62,24 @@ import fr.lirmm.graphik.graal.homomorphism.AtomicQueryHomomorphism;
  */
 public class AtomicQueryHomomorphismChecker extends AbstractChecker {
 
+	private static final AtomicQueryHomomorphismChecker INSTANCE = new AtomicQueryHomomorphismChecker();
+
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
+
+	public static AtomicQueryHomomorphismChecker instance() {
+		return INSTANCE;
+	}
+	
+	private AtomicQueryHomomorphismChecker() {
+		
+	}
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
 	@Override
 	public AtomicQueryHomomorphism getSolver() {
 		return AtomicQueryHomomorphism.instance();
