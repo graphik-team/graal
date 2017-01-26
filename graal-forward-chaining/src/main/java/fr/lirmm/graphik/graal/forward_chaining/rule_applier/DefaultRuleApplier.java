@@ -78,8 +78,6 @@ import fr.lirmm.graphik.util.stream.IteratorException;
  */
 public class DefaultRuleApplier<T extends AtomSet> implements RuleApplier<Rule, T> {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultRuleApplier.class);
-
 	private ChaseHaltingCondition haltingCondition;
 	private Homomorphism<? super ConjunctiveQuery, ? super T> solver;
 
@@ -135,19 +133,11 @@ public class DefaultRuleApplier<T extends AtomSet> implements RuleApplier<Rule, 
 		boolean isChanged = false;
 		ConjunctiveQuery query = DefaultConjunctiveQueryFactory.instance().create(rule.getBody(),
 		        new LinkedList<Term>(rule.getFrontier()));
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Rule to execute: " + rule);
-			LOGGER.debug("       -- Query: " + query);
-		}
 
 		try {
 			CloseableIterator<Substitution> subIt = this.executeQuery(query, atomSet);
 			while (subIt.hasNext()) {
 				Substitution substitution = subIt.next();
-				if (LOGGER.isDebugEnabled()) {
-					LOGGER.debug("-- Found homomorphism: " + substitution);
-				}
-
 				CloseableIterator<Atom> it = this.getHaltingCondition().apply(rule, substitution, atomSet);
 				if (it.hasNext()) {
 					atomSet.addAll(it);
