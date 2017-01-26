@@ -99,8 +99,8 @@ public class Unifier {
 
 	public Set<Substitution> computePieceUnifier(Rule rule, InMemoryAtomSet set, Filter<Substitution> filter) {
 
-		Substitution s1 = Unifier.computeInitialRuleTermsSubstitution(rule);
-		Substitution s2 = Unifier.computeInitialAtomSetTermsSubstitution(set);
+		Substitution s1 = Unifier.computeInitialSourceTermsSubstitution(rule);
+		Substitution s2 = Unifier.computeInitialTargetTermsSubstitution(set);
 
 		Rule r1 = s1.createImageOf(rule);
 		InMemoryAtomSet atomset = s2.createImageOf(set);
@@ -129,8 +129,8 @@ public class Unifier {
 
 	public boolean existPieceUnifier(Rule rule, InMemoryAtomSet set, Filter<Substitution> filter) {
 
-		Substitution s1 = Unifier.computeInitialRuleTermsSubstitution(rule);
-		Substitution s2 = Unifier.computeInitialAtomSetTermsSubstitution(set);
+		Substitution s1 = Unifier.computeInitialSourceTermsSubstitution(rule);
+		Substitution s2 = Unifier.computeInitialTargetTermsSubstitution(set);
 
 		Rule r1 = s1.createImageOf(rule);
 		InMemoryAtomSet atomset = s2.createImageOf(set);
@@ -153,22 +153,22 @@ public class Unifier {
 		return false;
 	}
 
-	public static Substitution computeInitialRuleTermsSubstitution(Rule rule) {
+	public static Substitution computeInitialSourceTermsSubstitution(Rule rule) {
 		Substitution s = new TreeMapSubstitution();
 
 		for (Term t1 : rule.getTerms(Term.Type.VARIABLE)) {
-			Term t1b = DefaultTermFactory.instance().createVariable("D::" + t1.getIdentifier().toString());
+			Term t1b = DefaultTermFactory.instance().createVariable("S::" + t1.getIdentifier().toString());
 			s.put((Variable) t1, t1b);
 		}
 
 		return s;
 	}
 
-	public static Substitution computeInitialAtomSetTermsSubstitution(InMemoryAtomSet set) {
+	public static Substitution computeInitialTargetTermsSubstitution(InMemoryAtomSet set) {
 		Substitution s = new TreeMapSubstitution();
 
 		for (Term t2 : set.getTerms(Term.Type.VARIABLE)) {
-			Term t2b = DefaultTermFactory.instance().createVariable("R::" + t2.getIdentifier().toString());
+			Term t2b = DefaultTermFactory.instance().createVariable("T::" + t2.getIdentifier().toString());
 			s.put((Variable) t2, t2b);
 		}
 

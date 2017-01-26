@@ -48,6 +48,7 @@ package fr.lirmm.graphik.graal.grd;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -94,11 +95,11 @@ public class GraphOfRuleDependencies {
 		protected abstract boolean isValidDependency(Rule r1, Rule r2, Substitution s);
 
 		public final void setRule1(Rule r1) { 
-			Substitution s = Unifier.computeInitialRuleTermsSubstitution(r1);
+			Substitution s = Unifier.computeInitialSourceTermsSubstitution(r1);
 			this.rule1 = s.createImageOf(r1); 
 		}
 		public final void setRule2(Rule r2) { 
-			Substitution s = Unifier.computeInitialAtomSetTermsSubstitution(r2.getBody());
+			Substitution s = Unifier.computeInitialTargetTermsSubstitution(r2.getBody());
 			this.rule2 = s.createImageOf(r2); 
 		}
 
@@ -120,26 +121,38 @@ public class GraphOfRuleDependencies {
 	// /////////////////////////////////////////////////////////////////////////
 
 	public GraphOfRuleDependencies(Iterable<Rule> rules, boolean withUnifiers, DependencyChecker checker) {
+		this(rules.iterator(), withUnifiers, checker);
+	}
+	
+	public GraphOfRuleDependencies(Iterator<Rule> rules, boolean withUnifiers, DependencyChecker checker) {
 		this.graph = new DefaultDirectedGraph<Rule, Integer>(Integer.class);
 		this.edgesValue = new ArrayList<Set<Substitution>>();
 		this.computingUnifiers = withUnifiers;
 
-		for (Rule r : rules) {
-			this.addRule(r);
+		while(rules.hasNext()) {
+			this.addRule(rules.next());
 		}
 
 		this.computeDependencies(checker);
 	}
 
 	public GraphOfRuleDependencies(Iterable<Rule> rules, boolean wu) {
+		this(rules.iterator(),wu);
+	}
+	
+	public GraphOfRuleDependencies(Iterator<Rule> rules, boolean wu) {
 		this(rules,wu,DependencyChecker.DEFAULT);
 	}
 
 	public GraphOfRuleDependencies(Iterable<Rule> rules, DependencyChecker checker) {
-		this(rules,false,checker);
+		this(rules.iterator(),false,checker);
 	}
 
 	public GraphOfRuleDependencies(Iterable<Rule> rules) {
+		this(rules,false);
+	}
+	
+	public GraphOfRuleDependencies(Iterator<Rule> rules) {
 		this(rules,false);
 	}
 
