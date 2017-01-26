@@ -53,6 +53,7 @@ import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.UCQHomomorphismWithCompilation;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -90,7 +91,14 @@ public final class DefaultUCQHomomorphism extends
 	@Override
 	public <U1 extends UnionOfConjunctiveQueries, U2 extends AtomSet> boolean exist(U1 q, U2 a,
 	    RulesCompilation compilation) throws HomomorphismException {
-		return this.exist(q, a, compilation);
+		try {
+			CloseableIterator<Substitution> execute = this.execute(q, a, compilation);
+			boolean res = execute.hasNext();
+			execute.close();
+			return res;
+		} catch (IteratorException e) {
+			throw new HomomorphismException(e);
+		}
 	}
 
 }
