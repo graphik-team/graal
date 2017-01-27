@@ -42,6 +42,7 @@
  */
 package fr.lirmm.graphik.graal.homomorphism.bbc;
 
+import fr.lirmm.graphik.graal.homomorphism.Scheduler;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.NoBackJumping;
 
@@ -76,11 +77,11 @@ public class BCC {
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public BCCScheduler getBCCScheduler() {
+	public Scheduler getBCCScheduler() {
 		return this.scheduler;
 	}
 
-	public BCCBackJumping getBCCBackJumping() {
+	public BackJumping getBCCBackJumping() {
 		return this.backJumping;
 	}
 
