@@ -55,9 +55,13 @@ import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.graal.api.homomorphism.ExistentialHomomorphism;
+import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.homomorphism.bootstrapper.StarBootstrapper;
+import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.CloseableIterableWithoutException;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 import fr.lirmm.graphik.util.stream.IteratorException;
@@ -71,9 +75,7 @@ import fr.lirmm.graphik.util.stream.IteratorException;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class SimpleBacktrackHomomorphism  {
-
-
+public class SimpleBacktrackHomomorphism extends AbstractProfilable implements ExistentialHomomorphism<ConjunctiveQuery, AtomSet> {
 
 	private static final SimpleBacktrackHomomorphism INSTANCE = new SimpleBacktrackHomomorphism();
 
@@ -88,21 +90,8 @@ public class SimpleBacktrackHomomorphism  {
 	// /////////////////////////////////////////////////////////////////////////
 	// HOMOMORPHISM METHODS
 	// /////////////////////////////////////////////////////////////////////////
-
-	public <U1 extends ConjunctiveQuery, U2 extends AtomSet> boolean exist(InMemoryAtomSet q, U2 a) throws BacktrackException {
-		Var[] vars = DefaultScheduler.instance().execute(q, Collections.<Term>emptyList(), a, NoCompilation.instance());
-		
-		Map<Variable, Var> index = new TreeMap<Variable, Var>();
-		for (Var v : vars) {
-			if (v.value != null)
-				index.put(v.value, v);
-		}
-		
-		computeAtomOrder(q, vars, index);
-		return backtrack(q, vars, index, a);
-	}
 	
-	public <U1 extends ConjunctiveQuery, U2 extends AtomSet> boolean exist(U1 q, U2 a) throws BacktrackException {
+	public <U1 extends ConjunctiveQuery, U2 extends AtomSet> boolean exist(U1 q, U2 a) throws HomomorphismException {
 		Var[] vars = DefaultScheduler.instance().execute(q.getAtomSet(), Collections.<Term>emptyList(), a, NoCompilation.instance());
 		
 		Map<Variable, Var> index = new TreeMap<Variable, Var>();
