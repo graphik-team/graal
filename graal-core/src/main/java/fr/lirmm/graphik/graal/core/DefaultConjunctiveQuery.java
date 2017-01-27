@@ -87,7 +87,7 @@ public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 
 	public DefaultConjunctiveQuery(CloseableIterator<Atom> atomSet, CloseableIterator<Term> answerVariables) throws IteratorException {
 		this.label = "";
-		this.atomSet = new LinkedListAtomSet(atomSet);
+		this.atomSet = AtomSetFactory.instance().create(atomSet);
 		this.responseVariables = new LinkedList<Term>();
 		while (answerVariables.hasNext()) {
 			this.responseVariables.add(answerVariables.next());
@@ -97,7 +97,7 @@ public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 	public DefaultConjunctiveQuery(CloseableIteratorWithoutException<Atom> atomSet,
 	    CloseableIteratorWithoutException<Term> answerVariables) {
 		this.label = "";
-		this.atomSet = new LinkedListAtomSet(atomSet);
+		this.atomSet = AtomSetFactory.instance().create(atomSet);
 		this.responseVariables = new LinkedList<Term>();
 		while (answerVariables.hasNext()) {
 			this.responseVariables.add(answerVariables.next());
@@ -122,7 +122,7 @@ public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 	// copy constructor
 	public DefaultConjunctiveQuery(ConjunctiveQuery query) {
 		this.label = query.getLabel();
-		this.atomSet = new LinkedListAtomSet(query.getAtomSet());
+		this.atomSet = AtomSetFactory.instance().create(query.getAtomSet());
 		this.responseVariables = new LinkedList<Term>(query.getAnswerVariables());
 	}
 

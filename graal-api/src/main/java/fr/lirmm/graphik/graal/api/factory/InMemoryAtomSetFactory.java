@@ -45,6 +45,8 @@ package fr.lirmm.graphik.graal.api.factory;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
@@ -60,6 +62,10 @@ public interface InMemoryAtomSetFactory {
 	InMemoryAtomSet create(AtomSet src) throws IteratorException;
 
 	InMemoryAtomSet create(InMemoryAtomSet src);
+	
+	InMemoryAtomSet create(CloseableIterator<Atom> atoms) throws IteratorException;
+
+	InMemoryAtomSet create(CloseableIteratorWithoutException<Atom> atoms);
 
 	InMemoryAtomSet create(Atom atom);
 
