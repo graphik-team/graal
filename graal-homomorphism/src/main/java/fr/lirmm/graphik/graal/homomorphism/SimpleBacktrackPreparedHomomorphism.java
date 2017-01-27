@@ -42,34 +42,25 @@
  */
 package fr.lirmm.graphik.graal.homomorphism;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
-import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
-import fr.lirmm.graphik.graal.api.core.TermValueComparator;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.PreparedExistentialHomomorphism;
 import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
-import fr.lirmm.graphik.graal.homomorphism.bootstrapper.BootstrapperUtils;
+import fr.lirmm.graphik.graal.homomorphism.bootstrapper.PatternBootstrapper;
 import fr.lirmm.graphik.util.stream.CloseableIterableWithoutException;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
@@ -180,7 +171,7 @@ class SimpleBacktrackPreparedHomomorphism<U1 extends InMemoryAtomSet, U2 extends
 	}
 	
 	private static boolean getFirstValue(InMemoryAtomSet h, Var var, AtomSet g, Map<Variable, Var> index) throws BacktrackException {
-		var.domain = new HomomorphismIteratorChecker(var, boot(var, h, g, NoCompilation.instance(), index),
+		var.domain = new HomomorphismIteratorChecker(var, PatternBootstrapper.instance().exec(var, h, g, NoCompilation.instance(), index),
 			                                             var.preAtoms, g, index, NoCompilation.instance());
 		
 		return hasMoreValues(var, g);
@@ -244,98 +235,6 @@ class SimpleBacktrackPreparedHomomorphism<U1 extends InMemoryAtomSet, U2 extends
 			vars[rank].preAtoms.add(a);
 		}
 
-	}
-	
-	private static CloseableIterator<Term> boot(final Var v, InMemoryAtomSet query, final AtomSet data,
-	    RulesCompilation compilation, Map<Variable, Var> index) throws BacktrackException {
-		Set<Term> terms = null;
-		
-		/*++ if(this.getProfiler() != null) {
-			this.getProfiler().start("BootstrapTime");
-			this.getProfiler().start("BootstrapTimeFirstPart");
-		}*/
-		Iterator<Atom> it;
-
-		Collection<Term> constants = null;
-		Atom aa = null;
-		it = v.postAtoms.iterator();
-		while (it.hasNext()) {
-			Atom a = it.next();
-			if (constants == null || constants.isEmpty()) {
-				constants = a.getTerms(Type.CONSTANT);
-				aa = a;
-			}
-		}
-		it = v.preAtoms.iterator();
-		while (it.hasNext()) {
-			Atom a = it.next();
-			for(Term t : a.getTerms()) {
-				if (constants == null || constants.isEmpty()) {
-					if(t.isConstant()) {
-						constants = a.getTerms(Type.CONSTANT);
-						aa = a;
-					} else if(!t.equals(v.value)) {
-						constants = new LinkedList<Term>();
-						constants.add(index.get(t).image);
-						aa = BacktrackUtils.createImageOf(a, index);
-					}
-					
-				}
-			}
-		}
-		
-		try {
-			if (constants != null && !constants.isEmpty()) {
-				terms = new TreeSet<Term>(TermValueComparator.instance());
-				for (Pair<Atom, Substitution> im : compilation.getRewritingOf(aa)) {
-					int pos = im.getLeft().indexOf(im.getRight().createImageOf(v.value));
-					CloseableIterator<Atom> match = data.match(im.getLeft());
-					while (match.hasNext()) {
-						terms.add(match.next().getTerm(pos));
-					}
-				}
-			}
-
-			/*++ if (this.getProfiler() != null) {
-				this.getProfiler().stop("BootstrapTimeFirstPart");
-			}*/
-
-			if (terms == null) {
-				it = v.postAtoms.iterator();
-				while (it.hasNext()) {
-					if (terms == null) {
-						terms = BootstrapperUtils.computeCandidatesOverRewritings(it.next(), v, data, compilation);
-					} else {
-						terms.retainAll(
-						    BootstrapperUtils.computeCandidatesOverRewritings(it.next(), v, data, compilation));
-					}
-				}
-
-				it = v.preAtoms.iterator();
-				while (it.hasNext()) {
-					if (terms == null) {
-						terms = BootstrapperUtils.computeCandidatesOverRewritings(it.next(), v, data, compilation);
-					} else {
-						terms.retainAll(
-						    BootstrapperUtils.computeCandidatesOverRewritings(it.next(), v, data, compilation));
-					}
-				}
-			}
-
-			/*++ if (this.getProfiler() != null) {
-				this.getProfiler().stop("BootstrapTime");
-			}*/
-
-			if (terms == null) {
-				return data.termsIterator();
-			} else {
-				return new CloseableIteratorAdapter<Term>(terms.iterator());
-			}
-		} catch (AtomSetException e) {
-			throw new BacktrackException(e);
-		} catch (IteratorException e) {
-			throw new BacktrackException(e);
-		}
 	}
 
 }
