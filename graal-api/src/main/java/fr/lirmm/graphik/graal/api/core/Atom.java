@@ -45,6 +45,7 @@ package fr.lirmm.graphik.graal.api.core;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import fr.lirmm.graphik.util.string.AppendableToStringBuilder;
 
@@ -109,13 +110,29 @@ public interface Atom extends Comparable<Atom>, Iterable<Term>, AppendableToStri
 	List<Term> getTerms();
 
 	/**
+	 * @Deprecated 
+	 * This method is deprecated since 1.3, use getVariables and getConstants instead.
+	 * 
 	 * Get all Term of the specified type.
 	 * 
 	 * @param type
 	 * @return
 	 */
+	@Deprecated
 	Collection<Term> getTerms(Term.Type type);
-
+	
+	/**
+	 * Get all variables that appear is this atom.
+	 * @return
+	 */
+	Set<Variable> getVariables();
+	
+	/**
+	 * Get all constants that appear is this atom.
+	 * @return
+	 */
+	Set<Term> getConstants();
+	
 	/**
 	 * Return an Iterator of Term.
 	 */

@@ -45,13 +45,17 @@
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import fr.lirmm.graphik.graal.api.core.AbstractAtom;
 import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.Constant;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
 
 /**
  * Class that implements atoms.
@@ -100,15 +104,33 @@ public class DefaultAtom extends AbstractAtom implements Serializable {
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	/**
-	 * Returns all Term with the Type type.
-	 */
 	@Override
 	public Collection<Term> getTerms(Term.Type type) {
 		Collection<Term> typedTerms = new LinkedList<Term>();
 		for (Term term : this.terms)
 			if (type.equals(term.getType()))
 				typedTerms.add(term);
+
+		return typedTerms;
+	}
+	
+	
+	@Override
+	public Set<Term> getConstants() {
+		Set<Term> typedTerms = new HashSet<Term>();
+		for (Term term : this.terms)
+			if (term.isConstant())
+				typedTerms.add(term);
+
+		return typedTerms;
+	}
+	
+	@Override
+	public Set<Variable> getVariables() {
+		Set<Variable> typedTerms = new HashSet<Variable>();
+		for (Term term : this.terms)
+			if (term.isVariable())
+				typedTerms.add((Variable)term);
 
 		return typedTerms;
 	}
