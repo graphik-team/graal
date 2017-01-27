@@ -163,13 +163,13 @@ public class DlgpParserTest {
 		Assert.assertEquals(X, a.getTerm(1));
 	}
 
-	@Test
+	/*@Test
 	public void parseBooleanQuery2() throws ParseException {
 		ConjunctiveQuery q = DlgpParser.parseQuery("?() :- .");
 		Assert.assertTrue(q.getAnswerVariables().isEmpty());
 		Assert.assertTrue(q.isBoolean());
 		Assert.assertFalse(q.getAtomSet().iterator().hasNext());
-	}
+	}*/
 
 	@Test
 	public void parseQueryWithConstantInAns() throws ParseException {
