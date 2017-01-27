@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2017)
  *
  * Contributors :
  *
@@ -40,34 +40,22 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
 package fr.lirmm.graphik.graal.api.homomorphism;
 
-import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface HomomorphismWithCompilation<T1 extends Object, T2 extends AtomSet> extends ExistentialHomomorphismWithCompilation<T1, T2>, Homomorphism<T1, T2> {
-
+public interface PreparedExistentialHomomorphism<U1, U2> {
+	
 	/**
-	 * Look for the homomorphisms of the specified object into the specified
-	 * atomset.
 	 * 
-	 * @param q
-	 * @param a
-	 * @param compilation
-	 * @return
+	 * @param s a Substitution of all variables to parameterize into a constant term.
+	 * @return true if there exist an homomorphism, false otherwise.
 	 * @throws HomomorphismException
 	 */
-	<U1 extends T1, U2 extends T2> CloseableIterator<Substitution> execute(U1 q, U2 a, RulesCompilation compilation)
-			throws HomomorphismException;
+	boolean exist(Substitution s) throws HomomorphismException;
 
-};
-
+}

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2017)
  *
  * Contributors :
  *
@@ -43,31 +43,49 @@
  /**
  * 
  */
-package fr.lirmm.graphik.graal.api.homomorphism;
+package fr.lirmm.graphik.graal.api.core;
 
-import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.RulesCompilation;
-import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
+import java.util.List;
+import java.util.Set;
 
 /**
+ * This interface represents a conjunctive query. A conjunctive query is
+ * composed of a fact and a set of answer variables.
+ * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface HomomorphismWithCompilation<T1 extends Object, T2 extends AtomSet> extends ExistentialHomomorphismWithCompilation<T1, T2>, Homomorphism<T1, T2> {
+public interface ConjunctiveQueryWithNegation extends Query {
 
 	/**
-	 * Look for the homomorphisms of the specified object into the specified
-	 * atomset.
+	 * The label (the name) for this query.
 	 * 
-	 * @param q
-	 * @param a
-	 * @param compilation
 	 * @return
-	 * @throws HomomorphismException
 	 */
-	<U1 extends T1, U2 extends T2> CloseableIterator<Substitution> execute(U1 q, U2 a, RulesCompilation compilation)
-			throws HomomorphismException;
+	String getLabel();
+	
+	/**
+	 * Get the atom conjunction representing the query.
+	 * @return an atom set representing the atom conjunction of the query.
+	 */
+	InMemoryAtomSet getPositiveAtomSet();
+	
+	/**
+	 * Get the atom conjunction representing the query.
+	 * @return an atom set representing the atom conjunction of the query.
+	 */
+	InMemoryAtomSet getNegativeAtomSet();
 
-};
+	/**
+	 * Get the answer variables
+	 * @return an Collection of Term representing the answer variables.
+	 */
+	List<? extends Term> getAnswerVariables();
 
+	/**
+	 * Get the frontier variables (i.e. variables appearing both in the positive and negative part)  
+	 * @return an Collection of Term representing the answer variables.
+	 */
+	Set<Variable> getFrontierVariables();
+	
+}

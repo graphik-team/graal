@@ -47,14 +47,13 @@ package fr.lirmm.graphik.graal.api.homomorphism;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.util.profiler.Profilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface Homomorphism<T1 extends Object, T2 extends AtomSet> extends Profilable {
+public interface Homomorphism<T1 extends Object, T2 extends AtomSet> extends ExistentialHomomorphism<T1, T2> {
 
 	/**
 	 * Look for the homomorphisms of the specified object into the specified
@@ -67,16 +66,6 @@ public interface Homomorphism<T1 extends Object, T2 extends AtomSet> extends Pro
 	 */
 	<U1 extends T1, U2 extends T2> CloseableIterator<Substitution> execute(U1 q, U2 a)
 			throws HomomorphismException;
-
-	/**
-	 * Look if there exists an homomorphism from q into a.
-	 * 
-	 * @param q
-	 * @param a
-	 * @return
-	 * @throws HomomorphismException
-	 */
-	<U1 extends T1, U2 extends T2> boolean exist(U1 q, U2 a) throws HomomorphismException;
 
 };
 

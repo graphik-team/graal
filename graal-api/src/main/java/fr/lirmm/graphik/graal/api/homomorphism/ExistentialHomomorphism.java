@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2017)
  *
  * Contributors :
  *
@@ -40,34 +40,23 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
 package fr.lirmm.graphik.graal.api.homomorphism;
 
-import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.RulesCompilation;
-import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.profiler.Profilable;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface HomomorphismWithCompilation<T1 extends Object, T2 extends AtomSet> extends ExistentialHomomorphismWithCompilation<T1, T2>, Homomorphism<T1, T2> {
-
+public interface ExistentialHomomorphism<T1, T2> extends Profilable {
+	
 	/**
-	 * Look for the homomorphisms of the specified object into the specified
-	 * atomset.
+	 * Look if there exists an homomorphism of q into a.
 	 * 
 	 * @param q
 	 * @param a
-	 * @param compilation
 	 * @return
 	 * @throws HomomorphismException
 	 */
-	<U1 extends T1, U2 extends T2> CloseableIterator<Substitution> execute(U1 q, U2 a, RulesCompilation compilation)
-			throws HomomorphismException;
-
-};
-
+	<U1 extends T1, U2 extends T2> boolean exist(U1 q, U2 a) throws HomomorphismException;
+}
