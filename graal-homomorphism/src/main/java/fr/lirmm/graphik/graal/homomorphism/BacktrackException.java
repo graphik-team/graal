@@ -42,11 +42,13 @@
  */
 package fr.lirmm.graphik.graal.homomorphism;
 
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
+
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class BacktrackException extends Exception {
+public class BacktrackException extends HomomorphismException {
 
 	private static final long serialVersionUID = -3343596852822258586L;
 
