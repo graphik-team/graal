@@ -42,11 +42,9 @@
  */
 package fr.lirmm.graphik.graal.homomorphism;
 
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -57,15 +55,13 @@ import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.core.HashMapSubstitution;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAggregator;
-import fr.lirmm.graphik.util.stream.converter.ConversionException;
-import fr.lirmm.graphik.util.stream.converter.Converter;
 import fr.lirmm.graphik.util.stream.converter.ConverterCloseableIterator;
+import fr.lirmm.graphik.util.stream.filter.Filter;
+import fr.lirmm.graphik.util.stream.filter.FilterIterator;
 
 /**
  * An homomorphism for Atomic query without multiple occurences of a variables.
@@ -96,7 +92,15 @@ public class AtomicQueryHomomorphism extends AbstractHomomorphismWithCompilation
 	@Override
 	public <U1 extends ConjunctiveQuery, U2 extends AtomSet> CloseableIterator<Substitution> execute(U1 q, U2 a) throws HomomorphismException {
 		try {
-			return new ConverterCloseableIterator<Atom, Substitution>(a.atomsByPredicate(q.getAtomSet().iterator().next().getPredicate()), new Atom2SubstitutionConverter(q.getAtomSet().iterator().next(), q.getAnswerVariables()));
+			Atom atom = q.getAtomSet().iterator().next();
+			List<Term> ans = q.getAnswerVariables();
+			CloseableIterator<Atom> atomsByPredicateIt = a.atomsByPredicate(atom.getPredicate());
+			ConverterCloseableIterator<Atom, Substitution> converterSubIt = new ConverterCloseableIterator<Atom, Substitution>(atomsByPredicateIt, new Atom2SubstitutionConverter(atom, ans));
+			if(ans.containsAll(atom.getVariables())) {
+				return converterSubIt;
+			} else {
+				return new FilterIterator<Substitution, Substitution>(converterSubIt, new UniqFiler());
+			}
 		} catch (AtomSetException e) {
 			throw new HomomorphismException(e);
 		}
@@ -105,12 +109,18 @@ public class AtomicQueryHomomorphism extends AbstractHomomorphismWithCompilation
 	@Override
 	public <U1 extends ConjunctiveQuery, U2 extends AtomSet> CloseableIterator<Substitution> execute(U1 q, U2 a, RulesCompilation rc) throws HomomorphismException {
 		try {
-			List<CloseableIterator<Substitution>> iteratorsList = new LinkedList<CloseableIterator<Substitution>>();
 			Atom atom = q.getAtomSet().iterator().next();
+			List<Term> ans = q.getAnswerVariables();
+			List<CloseableIterator<Substitution>> iteratorsList = new LinkedList<CloseableIterator<Substitution>>();
 			for (Pair<Atom, Substitution> im : rc.getRewritingOf(atom)) {
-				iteratorsList.add(new ConverterCloseableIterator<Atom, Substitution>(a.atomsByPredicate(im.getLeft().getPredicate()), new Atom2SubstitutionConverter(q.getAtomSet().iterator().next(), q.getAnswerVariables(), im.getRight())));
+				iteratorsList.add(new ConverterCloseableIterator<Atom, Substitution>(a.atomsByPredicate(im.getLeft().getPredicate()), new Atom2SubstitutionConverter(atom, ans, im.getRight())));
 			}
-			return new CloseableIteratorAggregator<Substitution>(new CloseableIteratorAdapter<CloseableIterator<Substitution>>(iteratorsList.iterator()));
+			CloseableIteratorAggregator<Substitution> aggregIt = new CloseableIteratorAggregator<Substitution>(new CloseableIteratorAdapter<CloseableIterator<Substitution>>(iteratorsList.iterator()));
+			if(ans.containsAll(atom.getVariables())) {
+				return aggregIt;
+			} else {
+				return new FilterIterator<Substitution, Substitution>(aggregIt, new UniqFiler());
+			}
 		} catch (AtomSetException e) {
 			throw new HomomorphismException(e);
 		}
@@ -121,44 +131,16 @@ public class AtomicQueryHomomorphism extends AbstractHomomorphismWithCompilation
 	// PRIVATE CLASS
 	// /////////////////////////////////////////////////////////////////////////
 	
-	private class Atom2SubstitutionConverter implements Converter<Atom, Substitution> {
-		
-		private Map<Variable, Integer> variables = new TreeMap<Variable, Integer>();
-		private List<Term> ans;
-		
-		public Atom2SubstitutionConverter(Atom query, List<Term> ans) {
-			this.ans = ans;
-			int i = 0;
-			for(Term t : query) {
-				if(ans.contains(t))	 {
-					variables.put((Variable) t, i);
-				}
-				++i;
-			}
-		}
-		
-		public Atom2SubstitutionConverter(Atom query, List<Term> ans, Substitution rew) {
-			this.ans = ans;
-			int i = 0;
-			for(Term t : query) {
-				if(ans.contains(t))	 {
-					variables.put((Variable) t, i);
-				}
-				++i;
-			}
-			for(Variable var : rew.getTerms()) {
-				variables.put(var, variables.get(rew.createImageOf(var)));
-			}
-		}
+	
+	private static class UniqFiler implements Filter<Substitution> {
+
+		HashSet<Substitution> sol = new HashSet<Substitution>();
 		
 		@Override
-		public Substitution convert(Atom object) throws ConversionException {
-			Substitution s = new HashMapSubstitution();
-			for (Term var : ans) { 
-				s.put((Variable) var, object.getTerm(variables.get(var)));
-			}
-			return s;
+		public boolean filter(Substitution s) {
+			return sol.add(s);
 		}
+		
 	}
 
 }

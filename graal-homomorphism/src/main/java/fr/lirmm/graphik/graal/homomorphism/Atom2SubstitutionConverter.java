@@ -40,52 +40,56 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.api.core;
+package fr.lirmm.graphik.graal.homomorphism;
 
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
+import java.util.TreeMap;
 
-/**
- * This interface represents a conjunctive query. A conjunctive query is
- * composed of a fact and a set of answer variables.
- * 
- * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- *
- */
-public interface ConjunctiveQueryWithNegation extends Query {
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.graal.core.HashMapSubstitution;
+import fr.lirmm.graphik.util.stream.converter.ConversionException;
+import fr.lirmm.graphik.util.stream.converter.Converter;
 
-	/**
-	 * The label (the name) for this query.
-	 * 
-	 * @return
-	 */
-	String getLabel();
+class Atom2SubstitutionConverter implements Converter<Atom, Substitution> {
 	
-	/**
-	 * Get the atom conjunction representing the query.
-	 * @return an atom set representing the atom conjunction of the query.
-	 */
-	InMemoryAtomSet getPositiveAtomSet();
+	private Map<Variable, Integer> variables = new TreeMap<Variable, Integer>();
+	private List<Term> ans;
 	
-	/**
-	 * Get the atom conjunction representing the query.
-	 * @return an atom set representing the atom conjunction of the query.
-	 */
-	InMemoryAtomSet getNegativeAtomSet();
-
-	/**
-	 * Get the answer variables
-	 * @return an Collection of Term representing the answer variables.
-	 */
-	List<Term> getAnswerVariables();
-
-	/**
-	 * Get the frontier variables (i.e. variables appearing both in the positive and negative part)  
-	 * @return an Collection of Term representing the answer variables.
-	 */
-	Set<Variable> getFrontierVariables();
+	public Atom2SubstitutionConverter(Atom query, List<Term> ans) {
+		this.ans = ans;
+		int i = 0;
+		for(Term t : query) {
+			if(ans.contains(t))	 {
+				variables.put((Variable) t, i);
+			}
+			++i;
+		}
+	}
 	
+	public Atom2SubstitutionConverter(Atom query, List<Term> ans, Substitution rew) {
+		this.ans = ans;
+		int i = 0;
+		for(Term t : query) {
+			if(ans.contains(t))	 {
+				variables.put((Variable) t, i);
+			}
+			++i;
+		}
+		for(Variable var : rew.getTerms()) {
+			variables.put(var, variables.get(rew.createImageOf(var)));
+		}
+	}
+	
+	@Override
+	public Substitution convert(Atom object) throws ConversionException {
+		Substitution s = new HashMapSubstitution();
+		for (Term var : ans) { 
+			s.put((Variable) var, object.getTerm(variables.get(var)));
+		}
+		return s;
+	}
 }
