@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2017)
  *
  * Contributors :
  *
@@ -40,52 +40,69 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.api.homomorphism;
+package fr.lirmm.graphik.graal.homomorphism.checker;
+
+import java.util.Set;
+import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQueryWithNegation;
 import fr.lirmm.graphik.graal.api.core.Query;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.homomorphism.AbstractChecker;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismChecker;
+import fr.lirmm.graphik.graal.core.atomset.AtomSetUtils;
+import fr.lirmm.graphik.graal.homomorphism.AtomicQueryHomomorphismWithNegation;
 
 /**
- * Allow to know if an homomorphism solver can be applied.
- * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface HomomorphismChecker extends ExistentialHomomorphismChecker {
+public class AtomicQueryHomomorphismWithNegationChecker  extends AbstractChecker implements HomomorphismChecker {
+
+	private static final AtomicQueryHomomorphismWithNegationChecker INSTANCE = new AtomicQueryHomomorphismWithNegationChecker();
+
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
+
+	public static AtomicQueryHomomorphismWithNegationChecker instance() {
+		return INSTANCE;
+	}
 	
-	/**
-	 * Check if the current homomorphism solver can be applied on the specified
-	 * query and atomset.
-	 * 
-	 * @param query
-	 * @param atomset
-	 * @return
-	 */
-	boolean check(Query query, AtomSet atomset);
+	private AtomicQueryHomomorphismWithNegationChecker() {
+		
+	}
 	
-	/**
-	 * Return the attached solver.
-	 * 
-	 * @param query
-	 * @param atomset
-	 * @return
-	 */
-	Homomorphism<? extends Query, ? extends AtomSet> getSolver();
-	
-	/**
-	 * Get the priority of this solver. 0 is the lowest.
-	 * 
-	 * @return
-	 */
-	int getPriority();
-	
-	/**
-	 * Set the priority of this solver. 0 is the lowest.
-	 * 
-	 * @param priority
-	 */
-	void setPriority(int priority);
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	@Override
+	public AtomicQueryHomomorphismWithNegation getSolver() {
+		return AtomicQueryHomomorphismWithNegation.instance();
+	}
+
+	@Override
+	public boolean check(Query query, AtomSet atomset) {
+		if (query instanceof ConjunctiveQueryWithNegation) {
+			ConjunctiveQueryWithNegation q = (ConjunctiveQueryWithNegation) query;
+			if(AtomSetUtils.isSingleton(q.getPositiveAtomSet())){
+				Set<Term> set = new TreeSet<Term>();
+				for (Term t : q.getPositiveAtomSet().iterator().next()) {
+					if(t.isConstant() || !set.add(t)) {
+						return false;
+					}
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public int getDefaultPriority() {
+		return 20;
+	}
+
 }

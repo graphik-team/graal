@@ -40,52 +40,59 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
+/**
  * 
  */
-package fr.lirmm.graphik.graal.api.homomorphism;
+package fr.lirmm.graphik.graal.homomorphism.checker;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Query;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.homomorphism.AbstractChecker;
+import fr.lirmm.graphik.graal.homomorphism.SimpleBacktrackHomomorphism;
 
 /**
- * Allow to know if an homomorphism solver can be applied.
- * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface HomomorphismChecker extends ExistentialHomomorphismChecker {
-	
-	/**
-	 * Check if the current homomorphism solver can be applied on the specified
-	 * query and atomset.
-	 * 
-	 * @param query
-	 * @param atomset
-	 * @return
-	 */
-	boolean check(Query query, AtomSet atomset);
-	
-	/**
-	 * Return the attached solver.
-	 * 
-	 * @param query
-	 * @param atomset
-	 * @return
-	 */
-	Homomorphism<? extends Query, ? extends AtomSet> getSolver();
-	
-	/**
-	 * Get the priority of this solver. 0 is the lowest.
-	 * 
-	 * @return
-	 */
-	int getPriority();
-	
-	/**
-	 * Set the priority of this solver. 0 is the lowest.
-	 * 
-	 * @param priority
-	 */
-	void setPriority(int priority);
+public class SimpleBacktrackHomomorphismChecker extends AbstractChecker {
+
+	private static final SimpleBacktrackHomomorphismChecker INSTANCE = new SimpleBacktrackHomomorphismChecker();
+
+	// /////////////////////////////////////////////////////////////////////////
+	// SINGLETON
+	// /////////////////////////////////////////////////////////////////////////
+
+	public static SimpleBacktrackHomomorphismChecker instance() {
+		return INSTANCE;
+	}
+
+	private SimpleBacktrackHomomorphismChecker() {
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	@Override
+	public SimpleBacktrackHomomorphism getSolver() {
+		return SimpleBacktrackHomomorphism.instance();
+	}
+
+	@Override
+	public boolean check(Query query, AtomSet atomset) {
+		if (query instanceof ConjunctiveQuery) {
+			ConjunctiveQuery q = (ConjunctiveQuery) query;
+			int size = q.getAtomSet().getTerms(Term.Type.VARIABLE).size();
+			return size > 0 && size <= 2;
+		}
+		return false;
+	}
+
+	@Override
+	public int getDefaultPriority() {
+		return 30;
+	}
+
 }

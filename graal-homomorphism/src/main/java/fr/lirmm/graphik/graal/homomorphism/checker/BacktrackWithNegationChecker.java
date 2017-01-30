@@ -40,52 +40,60 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
+/**
  * 
  */
-package fr.lirmm.graphik.graal.api.homomorphism;
+package fr.lirmm.graphik.graal.homomorphism.checker;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQueryWithNegation;
 import fr.lirmm.graphik.graal.api.core.Query;
+import fr.lirmm.graphik.graal.api.homomorphism.AbstractChecker;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismChecker;
+import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphismWithNegation;
+import fr.lirmm.graphik.graal.homomorphism.backjumping.GraphBaseBackJumping;
+import fr.lirmm.graphik.graal.homomorphism.bbc.BCC;
+import fr.lirmm.graphik.graal.homomorphism.bootstrapper.StarBootstrapper;
+import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2;
 
 /**
- * Allow to know if an homomorphism solver can be applied.
- * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface HomomorphismChecker extends ExistentialHomomorphismChecker {
+public class BacktrackWithNegationChecker extends AbstractChecker implements HomomorphismChecker {
 	
-	/**
-	 * Check if the current homomorphism solver can be applied on the specified
-	 * query and atomset.
-	 * 
-	 * @param query
-	 * @param atomset
-	 * @return
-	 */
-	boolean check(Query query, AtomSet atomset);
-	
-	/**
-	 * Return the attached solver.
-	 * 
-	 * @param query
-	 * @param atomset
-	 * @return
-	 */
-	Homomorphism<? extends Query, ? extends AtomSet> getSolver();
-	
-	/**
-	 * Get the priority of this solver. 0 is the lowest.
-	 * 
-	 * @return
-	 */
-	int getPriority();
-	
-	/**
-	 * Set the priority of this solver. 0 is the lowest.
-	 * 
-	 * @param priority
-	 */
-	void setPriority(int priority);
+	private static final BacktrackWithNegationChecker INSTANCE = new BacktrackWithNegationChecker();
+
+	// /////////////////////////////////////////////////////////////////////////
+	// SINGLETON
+	// /////////////////////////////////////////////////////////////////////////
+
+	public static BacktrackWithNegationChecker instance() {
+		return INSTANCE;
+	}
+
+	private BacktrackWithNegationChecker() {
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	@Override
+	public BacktrackHomomorphismWithNegation getSolver() {
+		BCC bcc = new BCC(new GraphBaseBackJumping(), true);
+		return new BacktrackHomomorphismWithNegation(bcc.getBCCScheduler(),
+				StarBootstrapper.instance(), new NFC2(), bcc.getBCCBackJumping());
+	}
+
+	@Override
+	public boolean check(Query query, AtomSet atomset) {
+		return query instanceof ConjunctiveQueryWithNegation;
+	}
+
+	@Override
+	public int getDefaultPriority() {
+		return 1;
+	}
+
 }

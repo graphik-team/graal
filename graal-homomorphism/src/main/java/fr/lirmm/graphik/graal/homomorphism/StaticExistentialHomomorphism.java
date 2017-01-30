@@ -40,52 +40,72 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
+/**
  * 
  */
-package fr.lirmm.graphik.graal.api.homomorphism;
+package fr.lirmm.graphik.graal.homomorphism;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.Query;
+import fr.lirmm.graphik.graal.api.homomorphism.ExistentialHomomorphism;
+import fr.lirmm.graphik.graal.api.homomorphism.ExistentialHomomorphismFactory;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
+import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 
 /**
- * Allow to know if an homomorphism solver can be applied.
- * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- *
+ * 
  */
-public interface HomomorphismChecker extends ExistentialHomomorphismChecker {
-	
+public class StaticExistentialHomomorphism extends AbstractProfilable implements ExistentialHomomorphism<Query, AtomSet> {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(StaticExistentialHomomorphism.class);
+
+	public static ExistentialHomomorphismFactory getSolverFactory() {
+		return DefaultExistentialHomomorphismFactory.instance();
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTOR
+	// /////////////////////////////////////////////////////////////////////////
+
+	private static StaticExistentialHomomorphism instance;
+
+	protected StaticExistentialHomomorphism() {
+		super();
+	}
+
+	public static synchronized StaticExistentialHomomorphism instance() {
+		if (instance == null)
+			instance = new StaticExistentialHomomorphism();
+
+		return instance;
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
 	/**
-	 * Check if the current homomorphism solver can be applied on the specified
-	 * query and atomset.
+	 * For boolean query, return a SubstitutionReader with an empty Substitution
+	 * for true and no substitution for false.
 	 * 
 	 * @param query
-	 * @param atomset
-	 * @return
+	 * @param atomSet
+	 * @return A substitution stream that represents homomorphisms.
+	 * @throws HomomorphismFactoryException
+	 * @throws HomomorphismException
 	 */
-	boolean check(Query query, AtomSet atomset);
-	
-	/**
-	 * Return the attached solver.
-	 * 
-	 * @param query
-	 * @param atomset
-	 * @return
-	 */
-	Homomorphism<? extends Query, ? extends AtomSet> getSolver();
-	
-	/**
-	 * Get the priority of this solver. 0 is the lowest.
-	 * 
-	 * @return
-	 */
-	int getPriority();
-	
-	/**
-	 * Set the priority of this solver. 0 is the lowest.
-	 * 
-	 * @param priority
-	 */
-	void setPriority(int priority);
+	@Override
+	public <T1 extends Query, U2 extends AtomSet> boolean exist(T1 query, U2 atomSet)
+	    throws HomomorphismException {
+		if (LOGGER.isDebugEnabled())
+			LOGGER.debug("Query : " + query);
+		ExistentialHomomorphism solver = getSolverFactory().getSolver(query, atomSet);
+		return solver.exist(query, atomSet);
+	}
+
 }

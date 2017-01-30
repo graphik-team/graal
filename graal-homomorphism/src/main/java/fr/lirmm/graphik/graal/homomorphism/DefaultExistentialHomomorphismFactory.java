@@ -51,9 +51,10 @@ import java.util.TreeSet;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Query;
-import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
+import fr.lirmm.graphik.graal.api.homomorphism.ExistentialHomomorphism;
+import fr.lirmm.graphik.graal.api.homomorphism.ExistentialHomomorphismChecker;
+import fr.lirmm.graphik.graal.api.homomorphism.ExistentialHomomorphismFactory;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismChecker;
-import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.homomorphism.checker.AtomicQueryHomomorphismChecker;
 import fr.lirmm.graphik.graal.homomorphism.checker.AtomicQueryHomomorphismWithNegationChecker;
@@ -61,35 +62,37 @@ import fr.lirmm.graphik.graal.homomorphism.checker.BacktrackChecker;
 import fr.lirmm.graphik.graal.homomorphism.checker.BacktrackWithNegationChecker;
 import fr.lirmm.graphik.graal.homomorphism.checker.DefaultUnionConjunctiveQueriesChecker;
 import fr.lirmm.graphik.graal.homomorphism.checker.FullyInstantiatedQueryHomomorphismChecker;
+import fr.lirmm.graphik.graal.homomorphism.checker.SimpleBacktrackHomomorphismChecker;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public final class DefaultHomomorphismFactory implements HomomorphismFactory {
+public final class DefaultExistentialHomomorphismFactory implements ExistentialHomomorphismFactory {
 	
-	private SortedSet<HomomorphismChecker> elements;
+	private SortedSet<ExistentialHomomorphismChecker> elements;
 	
-	private static DefaultHomomorphismFactory instance = null;
+	private static DefaultExistentialHomomorphismFactory instance = null;
 	private static ConjunctiveQuery emptyConjunctiveQuery = DefaultConjunctiveQueryFactory.instance().create();
 	
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 	
-	private DefaultHomomorphismFactory(){
-		this.elements = new TreeSet<HomomorphismChecker>();
+	private DefaultExistentialHomomorphismFactory(){
+		this.elements = new TreeSet<ExistentialHomomorphismChecker>();
 		this.elements.add(BacktrackChecker.instance());
 		this.elements.add(DefaultUnionConjunctiveQueriesChecker.instance());
 		this.elements.add(FullyInstantiatedQueryHomomorphismChecker.instance());
 		this.elements.add(AtomicQueryHomomorphismChecker.instance());
 		this.elements.add(BacktrackWithNegationChecker.instance());
 		this.elements.add(AtomicQueryHomomorphismWithNegationChecker.instance());
+		this.elements.add(SimpleBacktrackHomomorphismChecker.instance());
 	}
 	
-	public static synchronized final DefaultHomomorphismFactory instance() {
+	public static synchronized final DefaultExistentialHomomorphismFactory instance() {
 		if(instance == null)
-			instance = new DefaultHomomorphismFactory();
+			instance = new DefaultExistentialHomomorphismFactory();
 		
 		return instance;
 	}
@@ -108,10 +111,10 @@ public final class DefaultHomomorphismFactory implements HomomorphismFactory {
 	}
 
 	@Override
-	public Homomorphism<? extends Query, ? extends AtomSet> getConjunctiveQuerySolver(
+	public ExistentialHomomorphism<? extends Query, ? extends AtomSet> getConjunctiveQuerySolver(
 			AtomSet atomset) {
-		Homomorphism<? extends Query, ? extends AtomSet> solver = null;
-		for (HomomorphismChecker e : elements) {
+		ExistentialHomomorphism<? extends Query, ? extends AtomSet> solver = null;
+		for (ExistentialHomomorphismChecker e : elements) {
 			if (e.check(emptyConjunctiveQuery, atomset)) {
 				solver = e.getSolver();
 				break;
@@ -121,9 +124,9 @@ public final class DefaultHomomorphismFactory implements HomomorphismFactory {
 	}
  	
     @Override
-    public Homomorphism<? extends Query, ? extends AtomSet> getSolver(Query query, AtomSet atomset) {
-    	Homomorphism<? extends Query, ? extends AtomSet> solver = null;
-    	for(HomomorphismChecker e : elements) {
+    public ExistentialHomomorphism<? extends Query, ? extends AtomSet> getSolver(Query query, AtomSet atomset) {
+    	ExistentialHomomorphism<? extends Query, ? extends AtomSet> solver = null;
+    	for(ExistentialHomomorphismChecker e : elements) {
     		if(e.check(query, atomset)) {
     			solver = e.getSolver();
     			break;

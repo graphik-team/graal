@@ -49,43 +49,13 @@ import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.Query;
 
 /**
- * Allow to know if an homomorphism solver can be applied.
- * 
- * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+ * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public interface HomomorphismChecker extends ExistentialHomomorphismChecker {
-	
-	/**
-	 * Check if the current homomorphism solver can be applied on the specified
-	 * query and atomset.
-	 * 
-	 * @param query
-	 * @param atomset
-	 * @return
-	 */
-	boolean check(Query query, AtomSet atomset);
-	
-	/**
-	 * Return the attached solver.
-	 * 
-	 * @param query
-	 * @param atomset
-	 * @return
-	 */
-	Homomorphism<? extends Query, ? extends AtomSet> getSolver();
-	
-	/**
-	 * Get the priority of this solver. 0 is the lowest.
-	 * 
-	 * @return
-	 */
-	int getPriority();
-	
-	/**
-	 * Set the priority of this solver. 0 is the lowest.
-	 * 
-	 * @param priority
-	 */
-	void setPriority(int priority);
+public interface ExistentialHomomorphismFactory {
+    
+	public abstract ExistentialHomomorphism getConjunctiveQuerySolver(AtomSet atomSet);
+
+    public abstract ExistentialHomomorphism getSolver(Query query, AtomSet atomSet);
+
 }

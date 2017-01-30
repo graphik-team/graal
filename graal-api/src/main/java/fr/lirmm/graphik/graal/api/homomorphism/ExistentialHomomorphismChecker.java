@@ -54,7 +54,7 @@ import fr.lirmm.graphik.graal.api.core.Query;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface HomomorphismChecker extends ExistentialHomomorphismChecker {
+public interface ExistentialHomomorphismChecker extends Comparable<ExistentialHomomorphismChecker> {
 	
 	/**
 	 * Check if the current homomorphism solver can be applied on the specified
@@ -73,7 +73,7 @@ public interface HomomorphismChecker extends ExistentialHomomorphismChecker {
 	 * @param atomset
 	 * @return
 	 */
-	Homomorphism<? extends Query, ? extends AtomSet> getSolver();
+	ExistentialHomomorphism<? extends Query, ? extends AtomSet> getSolver();
 	
 	/**
 	 * Get the priority of this solver. 0 is the lowest.

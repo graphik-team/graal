@@ -49,6 +49,7 @@ import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.homomorphism.AbstractChecker;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismChecker;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.GraphBaseBackJumping;
 import fr.lirmm.graphik.graal.homomorphism.bbc.BCC;
@@ -59,7 +60,7 @@ import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class BacktrackChecker extends AbstractChecker {
+public class BacktrackChecker extends AbstractChecker implements HomomorphismChecker {
 	
 	private static final BacktrackChecker INSTANCE = new BacktrackChecker();
 

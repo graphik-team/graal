@@ -40,52 +40,48 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.api.homomorphism;
+package fr.lirmm.graphik.graal.homomorphism.bbc;
 
-import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.Query;
+import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
+import fr.lirmm.graphik.graal.homomorphism.backjumping.NoBackJumping;
 
 /**
- * Allow to know if an homomorphism solver can be applied.
+ * This BacktrackHomomorphism.Scheduler implementation provides an backtracking
+ * order based on Biconnected Components (BCC-compatible ordering).
  * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface HomomorphismChecker extends ExistentialHomomorphismChecker {
+public class BCCNeg extends BCC {
+
+	VarData[]              varData;
+	private BCCSchedulerNeg   scheduler;
+	private BCCBackJumping backJumping;
+
+	public BCCNeg() {
+		this(NoBackJumping.instance(), false);
+	}
 	
-	/**
-	 * Check if the current homomorphism solver can be applied on the specified
-	 * query and atomset.
-	 * 
-	 * @param query
-	 * @param atomset
-	 * @return
-	 */
-	boolean check(Query query, AtomSet atomset);
-	
-	/**
-	 * Return the attached solver.
-	 * 
-	 * @param query
-	 * @param atomset
-	 * @return
-	 */
-	Homomorphism<? extends Query, ? extends AtomSet> getSolver();
-	
-	/**
-	 * Get the priority of this solver. 0 is the lowest.
-	 * 
-	 * @return
-	 */
-	int getPriority();
-	
-	/**
-	 * Set the priority of this solver. 0 is the lowest.
-	 * 
-	 * @param priority
-	 */
-	void setPriority(int priority);
+	public BCCNeg(boolean withForbiddenCandidate) {
+		this(NoBackJumping.instance(), withForbiddenCandidate);
+	}
+
+	public BCCNeg(BackJumping bc, boolean withForbiddenCandidate) {
+		super();
+		this.scheduler = new BCCSchedulerNeg(this, withForbiddenCandidate);
+		this.backJumping = new BCCBackJumping(this, bc);
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	public BCCSchedulerNeg getBCCScheduler() {
+		return this.scheduler;
+	}
+
+	public BackJumping getBCCBackJumping() {
+		return this.backJumping;
+	}
+
 }

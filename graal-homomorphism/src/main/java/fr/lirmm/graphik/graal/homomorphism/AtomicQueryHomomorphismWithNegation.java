@@ -42,6 +42,7 @@
  */
 package fr.lirmm.graphik.graal.homomorphism;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -50,14 +51,22 @@ import java.util.TreeMap;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQueryWithNegation;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.graal.api.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.HashMapSubstitution;
+import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
+import fr.lirmm.graphik.graal.core.stream.filter.ConjunctiveQueryFilterIterator;
+import fr.lirmm.graphik.graal.homomorphism.backjumping.GraphBaseBackJumping;
+import fr.lirmm.graphik.graal.homomorphism.bbc.BCC;
+import fr.lirmm.graphik.graal.homomorphism.bootstrapper.StarBootstrapper;
+import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2;
 import fr.lirmm.graphik.util.collections.Trie;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
@@ -99,16 +108,16 @@ public class AtomicQueryHomomorphismWithNegation extends AbstractHomomorphism<Co
 			List<Term> ans = query.getAnswerVariables();
 			CloseableIterator<Atom> atomsByPredicateIt = data.atomsByPredicate(atom.getPredicate());
 			
+			CloseableIterator<Substitution> subIt;
 			if(ans.containsAll(atom.getVariables())) {
-				ConverterCloseableIterator<Atom, Substitution> converterSubIt = new ConverterCloseableIterator<Atom, Substitution>(atomsByPredicateIt, new Atom2SubstitutionConverter(atom, ans));
-				return converterSubIt;
+				subIt = new ConverterCloseableIterator<Atom, Substitution>(atomsByPredicateIt, new Atom2SubstitutionConverter(atom, ans));
 			} else {
 				ConverterCloseableIterator<Atom, Term[]> converterArrayIt = new ConverterCloseableIterator<Atom, Term[]>(atomsByPredicateIt, new Atom2ArrayConverter(atom, ans));
 				FilterIterator<Term[], Term[]> filterIt = new FilterIterator<Term[], Term[]>(converterArrayIt, new UniqFiler());
-				ConverterCloseableIterator<Term[], Substitution> converterSubIt = new ConverterCloseableIterator<Term[], Substitution>(filterIt, new Array2SubstitutionConverter(ans));
-				Set<Variable> frontier = query.getFrontierVariables();
-				return new FilterIterator<Substitution, Substitution>(converterSubIt, new NegFilter(query.getNegativeAtomSet(), frontier, data));
+				subIt = new ConverterCloseableIterator<Term[], Substitution>(filterIt, new Array2SubstitutionConverter(ans));
 			}
+			Set<Variable> frontier = query.getFrontierVariables();
+			return new FilterIterator<Substitution, Substitution>(subIt, new NegFilter(query.getNegativeAtomSet(), frontier, data));
 
 		} catch (AtomSetException e) {
 			throw new HomomorphismException(e);
@@ -134,19 +143,18 @@ public class AtomicQueryHomomorphismWithNegation extends AbstractHomomorphism<Co
 	private static class NegFilter implements Filter<Substitution> {
 
 		private AtomSet data;
-		private InMemoryAtomSet nquery;
-		private SimpleBacktrackPreparedHomomorphism homo;
+		private InMemoryAtomSet head;
 		
-		public NegFilter(InMemoryAtomSet nquery, Set<Variable> frontier, AtomSet data) {
-			this.nquery = nquery;
+		public NegFilter(InMemoryAtomSet head, Set<Variable> frontier, AtomSet data) {
 			this.data = data;
-			this.homo = new SimpleBacktrackPreparedHomomorphism(nquery, frontier, data);
+			this.head = head;
 		}
 		
 		@Override
 		public boolean filter(Substitution s) {
 			try {
-				return !this.homo.exist(s);				
+				ConjunctiveQuery nquery = DefaultConjunctiveQueryFactory.instance().create(s.createImageOf(this.head), Collections.<Term>emptyList());
+				return !StaticExistentialHomomorphism.instance().exist(nquery, data);	
 			} catch (HomomorphismException e) {
 				// TODO treat this exception
 				e.printStackTrace();

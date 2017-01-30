@@ -76,7 +76,7 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 class BCCScheduler extends AbstractProfilable implements Scheduler {
 
-	private final BCC           BCC;
+	protected final BCC           BCC;
 	private Comparator<Integer> varComparator;
 	private Term[]              inverseMap;
 	boolean                     withForbiddenCandidate;
@@ -157,7 +157,7 @@ class BCCScheduler extends AbstractProfilable implements Scheduler {
 	 * @param nbVar
 	 * @return
 	 */
-	private double[] computeProba(InMemoryAtomSet h, AtomSet data, int nbVar, Map<Term, Integer> map,
+	protected double[] computeProba(InMemoryAtomSet h, AtomSet data, int nbVar, Map<Term, Integer> map,
 	    RulesCompilation rc) {
 		this.getProfiler().start("probaComputingTime");
 		final double[] proba = new double[nbVar + 1];
@@ -183,7 +183,7 @@ class BCCScheduler extends AbstractProfilable implements Scheduler {
 		return proba;
 	}
 
-	static TmpData biconnect(HyperGraph g, Comparator<Integer> varComparator) {
+	protected static TmpData biconnect(HyperGraph g, Comparator<Integer> varComparator) {
 		TmpData d = new TmpData(g.nbVertices());
 
 		d.components = new ArrayList<Set<Integer>>();
@@ -206,10 +206,10 @@ class BCCScheduler extends AbstractProfilable implements Scheduler {
 		return d;
 	}
 
-	static Deque<Integer> lastAccesseurs = new LinkedList<Integer>();
-	static int            lastTerminal;
+	protected static Deque<Integer> lastAccesseurs = new LinkedList<Integer>();
+	protected static int            lastTerminal;
 
-	private static void biconnect(HyperGraph g, TmpData d, int v, int u, Comparator<Integer> varComparator) {
+	protected static void biconnect(HyperGraph g, TmpData d, int v, int u, Comparator<Integer> varComparator) {
 
 		d.lowpt[v] = d.vars[v].level = ++d.i;
 		d.ext[v].previousLevelFailure = d.vars[u].level;
@@ -296,7 +296,7 @@ class BCCScheduler extends AbstractProfilable implements Scheduler {
 	 * @param h
 	 * @return
 	 */
-	private static HyperGraph constructHyperGraph(InMemoryAtomSet h, Set<Term> variables, Term[] inverseMap,
+	protected static HyperGraph constructHyperGraph(InMemoryAtomSet h, Set<Term> variables, Term[] inverseMap,
 	    Map<Term, Integer> map, Iterable<Term> ans) {
 
 		int i = 0;
@@ -323,7 +323,7 @@ class BCCScheduler extends AbstractProfilable implements Scheduler {
 	// PRIVATE CLASS
 	// /////////////////////////////////////////////////////////////////////////
 
-	private static class TmpData {
+	protected static class TmpData {
 		Var[]               vars;
 		VarData[]           ext;
 		int                 i;
@@ -343,7 +343,7 @@ class BCCScheduler extends AbstractProfilable implements Scheduler {
 		}
 	}
 
-	private static class BCCGraph {
+	protected static class BCCGraph {
 
 		public Graph    graph                       = new DefaultGraph();
 		public Object[] bccGraphMap                 = new Object[40];

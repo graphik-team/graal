@@ -49,13 +49,14 @@ import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.homomorphism.AbstractChecker;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismChecker;
 import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class SqlHomomorphismChecker extends AbstractChecker {
+public class SqlHomomorphismChecker extends AbstractChecker implements HomomorphismChecker {
 
 	@Override
 	public boolean check(Query query, AtomSet atomset) {

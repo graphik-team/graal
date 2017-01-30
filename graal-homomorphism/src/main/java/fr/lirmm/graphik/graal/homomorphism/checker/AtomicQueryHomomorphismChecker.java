@@ -53,6 +53,7 @@ import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.homomorphism.AbstractChecker;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismChecker;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetUtils;
 import fr.lirmm.graphik.graal.homomorphism.AtomicQueryHomomorphism;
 
@@ -60,7 +61,7 @@ import fr.lirmm.graphik.graal.homomorphism.AtomicQueryHomomorphism;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class AtomicQueryHomomorphismChecker extends AbstractChecker {
+public class AtomicQueryHomomorphismChecker extends AbstractChecker implements HomomorphismChecker {
 
 	private static final AtomicQueryHomomorphismChecker INSTANCE = new AtomicQueryHomomorphismChecker();
 
@@ -104,7 +105,7 @@ public class AtomicQueryHomomorphismChecker extends AbstractChecker {
 
 	@Override
 	public int getDefaultPriority() {
-		return 10;
+		return 40;
 	}
 
 }

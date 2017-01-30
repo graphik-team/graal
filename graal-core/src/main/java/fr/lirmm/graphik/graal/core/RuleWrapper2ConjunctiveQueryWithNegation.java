@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2017)
  *
  * Contributors :
  *
@@ -40,55 +40,101 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.homomorphism.checker;
+package fr.lirmm.graphik.graal.core;
 
-import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.Query;
-import fr.lirmm.graphik.graal.api.homomorphism.AbstractChecker;
-import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
-import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismChecker;
-import fr.lirmm.graphik.graal.core.DefaultUnionOfConjunctiveQueries;
-import fr.lirmm.graphik.graal.homomorphism.DefaultUCQHomomorphism;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQueryWithNegation;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.util.MethodNotImplementedError;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class DefaultUnionConjunctiveQueriesChecker extends AbstractChecker implements HomomorphismChecker {
+public class RuleWrapper2ConjunctiveQueryWithNegation implements ConjunctiveQueryWithNegation {
 
-	private static final DefaultUnionConjunctiveQueriesChecker INSTANCE = new DefaultUnionConjunctiveQueriesChecker();
-
+	private String label = "";
+	private Rule rule;
+	private List<Term> ans;
+	
 	// /////////////////////////////////////////////////////////////////////////
-	// SINGLETON
+	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public static DefaultUnionConjunctiveQueriesChecker instance() {
-		return INSTANCE;
+	public RuleWrapper2ConjunctiveQueryWithNegation(Rule rule) {
+		this.rule = rule;
+		ans = new LinkedList<Term>();
+		for(Term t : rule.getFrontier()) {
+			ans.add(t);
+		}
 	}
-
-	private DefaultUnionConjunctiveQueriesChecker() {
-	}
-
+	
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
+
+	@Override
+	public boolean isBoolean() {
+		// TODO implement this method
+		throw new MethodNotImplementedError();
+	}
+
+	@Override
+	public void setLabel(String label) {
+		this.label = label;
+	}
 	
 	@Override
-	public boolean check(Query query, AtomSet atomset) {
-		return query instanceof DefaultUnionOfConjunctiveQueries;
+	public String getLabel() {
+		return this.label;
 	}
 
 	@Override
-	public Homomorphism<? extends Query, ? extends AtomSet> getSolver() {
-		return new DefaultUCQHomomorphism();
+	public InMemoryAtomSet getPositiveAtomSet() {
+		return this.rule.getBody();
 	}
 
 	@Override
-	public int getDefaultPriority() {
-		return 0;
+	public InMemoryAtomSet getNegativeAtomSet() {
+		return this.rule.getHead();
 	}
+
+	@Override
+	public List<Term> getAnswerVariables() {
+		return ans;
+	}
+
+	@Override
+	public Set<Variable> getFrontierVariables() {
+		return rule.getFrontier();
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// OBJECT OVERRIDE METHODS
+	// /////////////////////////////////////////////////////////////////////////
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		this.appendTo(sb);
+		return sb.toString();
+	}
+
+	@Override
+	public void appendTo(StringBuilder sb) {
+		sb.append("ConjunctiveQueryWithNegation based on: ");
+		this.rule.appendTo(sb);
+	}
+
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
 }

@@ -51,14 +51,14 @@ package fr.lirmm.graphik.graal.api.homomorphism;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public abstract class AbstractChecker implements HomomorphismChecker {
+public abstract class AbstractChecker implements ExistentialHomomorphismChecker {
 
 	private int priority = this.getDefaultPriority();
 	
 	public abstract int getDefaultPriority();
 	
 	@Override
-	public int compareTo(HomomorphismChecker o) {
+	public int compareTo(ExistentialHomomorphismChecker o) {
 		int val = o.getPriority() - this.getPriority();
 		if(val == 0) {
 			val = this.getClass().hashCode() - o.getClass().hashCode();
