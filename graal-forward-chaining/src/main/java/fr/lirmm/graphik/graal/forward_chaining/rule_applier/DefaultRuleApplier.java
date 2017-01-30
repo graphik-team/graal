@@ -45,10 +45,8 @@
  */
 package fr.lirmm.graphik.graal.forward_chaining.rule_applier;
 
+import java.util.Collection;
 import java.util.LinkedList;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
@@ -150,6 +148,36 @@ public class DefaultRuleApplier<T extends AtomSet> implements RuleApplier<Rule, 
 		} catch (HomomorphismException e) {
 			throw new RuleApplicationException("Error during rule application", e);
 		} catch (AtomSetException e) {
+			throw new RuleApplicationException("Error during rule application", e);
+		} catch (IteratorException e) {
+			throw new RuleApplicationException("Error during rule application", e);
+		}
+
+		return isChanged;
+	}
+	
+	@Override
+	public boolean apply(Rule rule, T atomSet, Collection<Atom> newAtomDest) throws RuleApplicationException {
+		boolean isChanged = false;
+		ConjunctiveQuery query = DefaultConjunctiveQueryFactory.instance().create(rule.getBody(),
+		        new LinkedList<Term>(rule.getFrontier()));
+
+		try {
+			CloseableIterator<Substitution> subIt = this.executeQuery(query, atomSet);
+			while (subIt.hasNext()) {
+				Substitution substitution = subIt.next();
+				CloseableIterator<Atom> it = this.getHaltingCondition().apply(rule, substitution, atomSet);
+				if (it.hasNext()) {
+					while(it.hasNext()) {
+						newAtomDest.add(it.next());
+					}
+					isChanged = true;
+				}
+			}
+			subIt.close();
+		} catch (HomomorphismFactoryException e) {
+			throw new RuleApplicationException("Error during rule application", e);
+		} catch (HomomorphismException e) {
 			throw new RuleApplicationException("Error during rule application", e);
 		} catch (IteratorException e) {
 			throw new RuleApplicationException("Error during rule application", e);

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,107 +40,117 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-/**
-* 
-*/
 package fr.lirmm.graphik.graal.forward_chaining;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Set;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.forward_chaining.AbstractChase;
+import fr.lirmm.graphik.graal.api.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
+import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplicationException;
 import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.RestrictedChaseRuleApplier;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
+import fr.lirmm.graphik.util.graph.scc.StronglyConnectedComponentsGraph;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 
 /**
- * This chase (forward-chaining) algorithm use GRD to define the Rules that will
- * be triggered in the next step.
- * 
- * @author Clément Sipieter (INRIA) <clement@6pi.fr>
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class ChaseWithGRD extends AbstractChase {
+public class SccChase extends AbstractChase {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ChaseWithGRD.class);
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
 
 	private GraphOfRuleDependencies grd;
 	private AtomSet atomSet;
+	private List<Atom> tmpAtom;
 	private Queue<Rule> queue = new LinkedList<Rule>();
+	private List<Integer>[] layers;
+	int level = -1;
+	int levelmax;
+	StronglyConnectedComponentsGraph<Rule> sccg;
 
-	// /////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTOR
-	// /////////////////////////////////////////////////////////////////////////
-
-	public ChaseWithGRD(GraphOfRuleDependencies grd, AtomSet atomSet, RuleApplier ruleApplier) {
+	public SccChase(GraphOfRuleDependencies grd, AtomSet atomSet, RuleApplier ruleApplier) {
 		super(ruleApplier);
 		this.grd = grd;
 		this.atomSet = atomSet;
 		for (Rule r : grd.getRules()) {
 			this.queue.add(r);
 		}
+		init();
 	}
 
-	public ChaseWithGRD(GraphOfRuleDependencies grd, AtomSet atomSet) {
+	public SccChase(GraphOfRuleDependencies grd, AtomSet atomSet) {
 		this(grd, atomSet, RestrictedChaseRuleApplier.instance());
 	}
 
-	public ChaseWithGRD(Iterator<Rule> rules, AtomSet atomSet) {
+	public SccChase(Iterator<Rule> rules, AtomSet atomSet) {
 		this(new GraphOfRuleDependencies(rules), atomSet);
 	}
 
-	// /////////////////////////////////////////////////////////////////////////
-	// METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	@Override
-	public void next() throws ChaseException {
-
-		Queue<Rule> newQueue = new LinkedList<Rule>();
-		List<Atom> newAtomSet = new LinkedList<Atom>();
-
-		try {
-			while (!queue.isEmpty()) {
-
-				Rule rule = queue.poll();
-				if (rule != null) {
-					boolean val = this.getRuleApplier().apply(rule, atomSet, newAtomSet);
-					if (val) {
-						for (Integer e : this.grd.getOutgoingEdgesOf(rule)) {
-							Rule triggeredRule = this.grd.getEdgeTarget(e);
-							if (LOGGER.isDebugEnabled()) {
-								LOGGER.debug("-- -- Dependency: " + triggeredRule);
-							}
-							if (!newQueue.contains(triggeredRule)) {
-								newQueue.add(triggeredRule);
-							}
-						}
-					}
-				}
+	// compute scc layer
+	private final void init() {
+		sccg = this.grd.getStronglyConnectedComponentsGraph();
+		int[] sccLayer = sccg.computeLayers(sccg.getSources(), true);
+		layers = new List[sccLayer.length];
+		levelmax = -1;
+		for (int scc = 0; scc < sccLayer.length; ++scc) {
+			if (sccLayer[scc] > levelmax) {
+				levelmax = sccLayer[scc];
 			}
-
-			queue = newQueue;
-			atomSet.addAll(new CloseableIteratorAdapter<Atom>(newAtomSet.iterator()));
-
-		} catch (Exception e) {
-			throw new ChaseException("An error occur pending saturation step.", e);
+			List l = layers[sccLayer[scc]];
+			if (l == null) {
+				l = new LinkedList();
+				layers[sccLayer[scc]] = l;
+			}
+			l.add(scc);
 		}
 
 	}
 
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
 	@Override
-	public boolean hasNext() {
-		return !queue.isEmpty();
+	public void next() throws ChaseException {
+		++this.level;
+		tmpAtom = new LinkedList<Atom>();
+
+		for (Integer scc : layers[level]) {
+			Set<Rule> component = this.sccg.getComponent(scc);
+			if (component.size() == 1) {
+				try {
+					this.getRuleApplier().apply(component.iterator().next(), atomSet, tmpAtom);
+				} catch (RuleApplicationException e) {
+					throw new ChaseException("", e);
+				}
+			} else if (component.size() > 1) {
+				Chase chase = new ChaseWithGRD(this.grd.getSubGraph(component), atomSet, this.getRuleApplier());
+				chase.execute();
+			}
+		}
+		try {
+			atomSet.addAll(new CloseableIteratorAdapter<Atom>(tmpAtom.iterator()));
+		} catch (AtomSetException e) {
+			throw new ChaseException("", e);
+		}
 	}
 
+	@Override
+	public boolean hasNext() {
+		return this.level < this.levelmax;
+	}
+	
 }

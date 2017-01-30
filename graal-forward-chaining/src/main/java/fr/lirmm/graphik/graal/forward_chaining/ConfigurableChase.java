@@ -45,6 +45,7 @@
  */
 package fr.lirmm.graphik.graal.forward_chaining;
 
+import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -77,21 +78,30 @@ public class ConfigurableChase extends AbstractChase {
 
 	private Set<Rule> rulesToCheck;
 	private Set<Rule> nextRulesToCheck;
-
+	
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 	
 	public ConfigurableChase(Iterable<Rule> rules, AtomSet atomSet) {
+		this(rules.iterator(), atomSet, new DefaultRuleApplier<AtomSet>());
+	}
+	
+	public ConfigurableChase(Iterator<Rule> rules, AtomSet atomSet) {
 		this(rules, atomSet, new DefaultRuleApplier<AtomSet>());
 	}
-
-	public ConfigurableChase(Iterable<Rule> rules, AtomSet atomSet,
+	
+	public ConfigurableChase(Iterator<Rule> rules, AtomSet atomSet,
 			RuleApplier ruleApplier) {
 		super(ruleApplier);
 		this.atomSet = atomSet;
 		this.ruleSet = new IndexedByBodyPredicatesRuleSet();
 		init(rules);
+	}
+
+	public ConfigurableChase(Iterable<Rule> rules, AtomSet atomSet,
+			RuleApplier ruleApplier) {
+		this(rules.iterator(), atomSet, ruleApplier);
 	}
 
 	public ConfigurableChase(Iterable<Rule> rules, AtomSet atomSet,
@@ -110,9 +120,10 @@ public class ConfigurableChase extends AbstractChase {
 		this(rules, atomSet, new DefaultRuleApplier<AtomSet>(solver, haltingCondition));
 	}
 
-	private void init(Iterable<Rule> rules) {
+	private void init(Iterator<Rule> rules) {
 		this.nextRulesToCheck = new TreeSet<Rule>();
-		for (Rule r : rules) {
+		while(rules.hasNext()) {
+			Rule r = rules.next();
 			this.ruleSet.add(r);
 			this.nextRulesToCheck.add(r);
 		}

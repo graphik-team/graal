@@ -47,8 +47,12 @@ package fr.lirmm.graphik.graal.store.rdbms.rule_applier;
 
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collection;
 import java.util.Iterator;
 
+import org.apache.commons.lang3.NotImplementedException;
+
+import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Rule;
@@ -136,6 +140,12 @@ public class SQLRuleApplier<T extends RdbmsStore> implements
 			returnValue = this.fallback.apply(rule, store);
 		}
 		return returnValue;
+	}
+	
+	@Override
+	public boolean apply(Rule rule, T store, Collection<Atom> newAtomDest)
+			throws RuleApplicationException {
+		throw new NotImplementedException("");
 	}
 
 }

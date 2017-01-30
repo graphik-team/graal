@@ -45,6 +45,9 @@
  */
 package fr.lirmm.graphik.graal.api.forward_chaining;
 
+import java.util.Collection;
+
+import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 
@@ -63,5 +66,16 @@ public interface RuleApplier<R extends Rule, A extends AtomSet> {
 	 * @throws RuleApplicationException
 	 */
 	boolean apply(R rule, A atomSet) throws RuleApplicationException;
+	
+	/**
+	 * Apply the given Rule over the given AtomSet
+	 * 
+	 * @param rule
+	 * @param atomSet
+	 * @return true iff the atom-set has been modified.
+	 * @throws RuleApplicationException
+	 */
+	boolean apply(R rule, A atomSet, Collection<Atom> newAtomDest) throws RuleApplicationException;
+
 	
 }

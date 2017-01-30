@@ -45,6 +45,7 @@
  */
 package fr.lirmm.graphik.graal.forward_chaining;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -95,16 +96,24 @@ public class DefaultChase extends AbstractChase {
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 	
-	public DefaultChase(Iterable<Rule> rules, AtomSet atomSet) {
+	public DefaultChase(Iterator<Rule> rules, AtomSet atomSet) {
 		super(new DefaultRuleApplier<AtomSet>());
 		this.atomSet = atomSet;
 		this.ruleSet = new IndexedByBodyPredicatesRuleSet();
 		init(rules);
 	}
+	
+	public DefaultChase(Iterable<Rule> rules, AtomSet atomSet) {
+		super(new DefaultRuleApplier<AtomSet>());
+		this.atomSet = atomSet;
+		this.ruleSet = new IndexedByBodyPredicatesRuleSet();
+		init(rules.iterator());
+	}
 
-	private void init(Iterable<Rule> rules) {
+	private void init(Iterator<Rule> rules) {
 		this.nextRulesToCheck = new TreeMap<Rule, AtomSet>();
-		for (Rule r : rules) {
+		while(rules.hasNext()) {
+			Rule r = rules.next();
 			this.ruleSet.add(r);
 			this.nextRulesToCheck.put(r, atomSet);
 		}
@@ -129,15 +138,12 @@ public class DefaultChase extends AbstractChase {
 		this.rulesToCheck = this.nextRulesToCheck;
 		this.nextRulesToCheck = new TreeMap<Rule, AtomSet>();
 		try {
-			int i = 0;
 			if (!this.rulesToCheck.isEmpty()) {
 
 				if (this.getProfiler().isProfilingEnabled()) {
 					this.getProfiler().start("saturationTime");
 				}
 				for (Entry<Rule, AtomSet> e : this.rulesToCheck.entrySet()) {
-					if (LOGGER.isDebugEnabled())
-						LOGGER.debug("{}/{}", ++i, this.rulesToCheck.size());
 
 					String key = null;
 					Rule rule = e.getKey();
@@ -201,6 +207,7 @@ public class DefaultChase extends AbstractChase {
 						AtomSet set = nextRulesToCheck.get(r);
 						if (set == null) {
 							set = new LinkedListAtomSet();
+							//set =  new DefaultInMemoryGraphAtomSet();
 							nextRulesToCheck.put(r, set);
 						}
 						try {

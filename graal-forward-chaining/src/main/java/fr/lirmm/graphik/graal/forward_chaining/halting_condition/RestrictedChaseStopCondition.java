@@ -52,10 +52,12 @@ import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.core.VariableGenerator;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
@@ -63,16 +65,22 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
+import fr.lirmm.graphik.graal.core.atomset.AtomSetUtils;
+import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
+import fr.lirmm.graphik.graal.homomorphism.FullyInstantiatedQueryHomomorphism;
+import fr.lirmm.graphik.graal.homomorphism.SimpleBacktrackHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
+import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class RestrictedChaseStopCondition implements ChaseHaltingCondition {
+public class RestrictedChaseStopCondition extends AbstractProfilable implements ChaseHaltingCondition {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RestrictedChaseStopCondition.class);
 	private VariableGenerator existentialGen;
@@ -83,25 +91,26 @@ public class RestrictedChaseStopCondition implements ChaseHaltingCondition {
 
 	@Override
 	public CloseableIterator<Atom> apply(Rule rule, Substitution substitution, AtomSet data)
-	                                                                                 throws HomomorphismFactoryException,
-	                                                                                 HomomorphismException {
+			throws HomomorphismFactoryException, HomomorphismException {
 		InMemoryAtomSet newFacts = substitution.createImageOf(rule.getHead());
 		ConjunctiveQuery query = new DefaultConjunctiveQuery(newFacts);
 
 		try {
 			if (StaticHomomorphism.instance().execute(query, data).hasNext()) {
-				return new CloseableIteratorAdapter<Atom>(Collections.<Atom> emptyList().iterator());
+				return new CloseableIteratorAdapter<Atom>(Collections.<Atom>emptyList().iterator());
 			}
 		} catch (IteratorException e) {
 			throw new HomomorphismException("An errors occurs while iterating results", e);
+		} catch (BacktrackException e) {
+			throw new HomomorphismException("An errors occurs while iterating results", e);
 		}
-		
+
 		// replace variables by fresh symbol
 		for (Variable t : rule.getExistentials()) {
 			substitution.put(t, data.getFreshSymbolGenerator().getFreshCst());
 		}
-		
-		return substitution.createImageOf(rule.getHead()).iterator();
+		CloseableIteratorWithoutException<Atom> it = substitution.createImageOf(rule.getHead()).iterator();
+		return it;
 	}
 
 }

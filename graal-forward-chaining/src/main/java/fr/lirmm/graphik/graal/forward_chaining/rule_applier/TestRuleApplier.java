@@ -45,8 +45,10 @@
  */
 package fr.lirmm.graphik.graal.forward_chaining.rule_applier;
 
+import java.util.Collection;
 import java.util.LinkedList;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -152,6 +154,11 @@ public class TestRuleApplier<T extends AtomSet> implements RuleApplier<Rule, T> 
 		}
 
 		return isChanged;
+	}
+	
+	@Override
+	public boolean apply(Rule rule, T atomSet, Collection<Atom> newAtomDest) throws RuleApplicationException {
+		throw new NotImplementedException("");
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
