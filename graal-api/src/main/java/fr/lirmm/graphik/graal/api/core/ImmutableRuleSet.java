@@ -61,7 +61,7 @@ public interface ImmutableRuleSet extends Iterable<Rule> {
 	public Iterator<Rule> iterator();
 
 	/**
-	 * @return
+	 * @return the number of rules contained in this set.
 	 */
 	int size();
 

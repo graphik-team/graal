@@ -58,7 +58,7 @@ public interface Filter<E> {
 	 * 
 	 * @param e
 	 *            the element to check
-	 * @return
+	 * @return true if the element must be kept, false if it must be filtered.
 	 */
 	boolean filter(E e);
 }

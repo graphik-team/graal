@@ -59,7 +59,6 @@ public class RuleFilterIterator extends FilterIterator<Object, Rule> {
 	
 	/**
 	 * @param it
-	 * @param filter
 	 */
 	public RuleFilterIterator(CloseableIterator<? extends Object> it) {
 		super(it, RuleFilter.instance());

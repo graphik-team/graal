@@ -110,7 +110,7 @@ public interface Profiler {
 	 * Get data/time attached to the specified key.
 	 * 
 	 * @param key
-	 * @return
+	 * @return data/time attached to the specified key.
 	 */
 	public Object get(String key);
 
@@ -142,12 +142,12 @@ public interface Profiler {
 	public Set<String> keySet();
 
 	/**
-	 * @return
+	 * @return the map behind this profiler.
 	 */
 	Map<String, Object> getMap();
 
 	/**
-	 * @return
+	 * @return the {@link TimeUnit} in used.
 	 */
 	TimeUnit getTimeUnit();
 }

@@ -408,11 +408,6 @@ public class Neo4jStore extends GraphDBStore {
 	// PRIVATE METHODS
 	// //////////////////////////////////////////////////////////////////////////
 
-	/**
-	 * @param label
-	 * @return
-	 * @throws StoreException
-	 */
 	private Node getTerm(Term term) {
 		Node node = null;
 		ResourceIterator<Node> it = this.graph.findNodesByLabelAndProperty(
@@ -455,10 +450,6 @@ public class Neo4jStore extends GraphDBStore {
 		return node;
 	}
 
-	/**
-	 * @param predicate
-	 * @return
-	 */
 	private Node createPredicateIfNotExist(Predicate predicate) {
 		Node node = this.getPredicate(predicate);
 		if (node == null) {

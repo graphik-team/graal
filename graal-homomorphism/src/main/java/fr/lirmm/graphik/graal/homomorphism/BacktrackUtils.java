@@ -82,7 +82,7 @@ public final class BacktrackUtils {
 	 * @param atomsTo
 	 * @param index
 	 * @param rc
-	 * @return
+	 * @return true if there is a homomorphism, false otherwise.
 	 * @throws AtomSetException
 	 */
 	public static boolean isHomomorphism(Iterable<Atom> atomsFrom, AtomSet atomsTo, Map<Variable, Var> index,
@@ -107,8 +107,8 @@ public final class BacktrackUtils {
 	/**
 	 * 
 	 * @param atom
-	 * @param images
-	 * @return
+	 * @param map
+	 * @return an image of specified atom obtained by replacement variables contained in the map with the associated Var.image. 
 	 */
 	public static Atom createImageOf(Atom atom, Map<Variable, Var> map) {
 		List<Term> termsSubstitut = new LinkedList<Term>();
@@ -127,7 +127,7 @@ public final class BacktrackUtils {
 	 * Return the image of the specified variable (extracted from map).
 	 * 
 	 * @param var
-	 * @return
+	 * @return the variable image
 	 */
 	public static Term imageOf(Variable var, Map<Variable, Var> map) {
 		Term t = map.get(var).image;
@@ -142,7 +142,7 @@ public final class BacktrackUtils {
 	 * Extract image of variables from Var class in a Substitution.
 	 * 
 	 * @param vars
-	 * @return
+	 * @return a Substitution obtained by association of Var.value with Var.image.
 	 */
 	public static Substitution createSubstitution(Iterator<Var> vars) {
 		Substitution s = new TreeMapSubstitution();

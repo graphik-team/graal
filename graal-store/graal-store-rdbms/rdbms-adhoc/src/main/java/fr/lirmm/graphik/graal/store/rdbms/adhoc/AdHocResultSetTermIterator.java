@@ -74,7 +74,6 @@ class AdHocResultSetTermIterator extends AbstractCloseableIterator<Term> {
 	 * @param store
 	 * @param sqlQuery
 	 * @throws SQLException
-	 * @throws StoreException
 	 */
 	public AdHocResultSetTermIterator(RdbmsStore store, String sqlQuery) throws SQLException {
 		this.statement = store.getDriver().createStatement();

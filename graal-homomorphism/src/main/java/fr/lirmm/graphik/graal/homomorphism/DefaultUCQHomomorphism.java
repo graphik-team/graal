@@ -65,10 +65,6 @@ public final class DefaultUCQHomomorphism extends
 
 	private Homomorphism homomorphism;
 
-	/**
-	 * @param queries
-	 * @param atomSet
-	 */
 	public DefaultUCQHomomorphism() {
 	}
 

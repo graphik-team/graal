@@ -57,7 +57,7 @@ import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
 
 /**
  * At least one atom in the body of each rule contains all affected variables
- * from the body ({@see AffectedPositionSet}).
+ * from the body ({@link AffectedPositionSet}).
  * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * @author Swan Rocher

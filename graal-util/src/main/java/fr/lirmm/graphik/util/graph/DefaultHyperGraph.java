@@ -74,7 +74,7 @@ public class DefaultHyperGraph implements HyperGraph {
 	}
 
 	@Override
-	public int addVertice() {
+	public int addVertex() {
 		this.adjacencyList.add(new LinkedList<Integer>());
 		return this.nbVertices++;
 	}

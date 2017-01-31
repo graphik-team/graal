@@ -53,7 +53,6 @@ import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.Substitutions;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
@@ -75,7 +74,6 @@ class PureHomomorphismImpl extends AbstractProfilable {
 
 	private ArrayList<Integer> currentImagesPerLevel;
 	private ArrayList<List<Substitution>> availableImage;
-	private ArrayList<List<Term>> firstOccurenceArray;
 
 	private ArrayList<Substitution> currentSubstitutionPerLevel;
 
@@ -113,7 +111,7 @@ class PureHomomorphismImpl extends AbstractProfilable {
 	// /////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * @return
+	 * @return true if there exist a homomorphism.
 	 * @throws HomomorphismException
 	 */
 	public boolean exist() throws HomomorphismException {

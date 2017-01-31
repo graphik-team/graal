@@ -56,9 +56,9 @@ import fr.lirmm.graphik.util.string.AppendableToStringBuilder;
 public interface NegativeConstraint extends Rule, AppendableToStringBuilder {
 
 	/**
-	 * Get the label (the name) for this constraint.
-	 * 
-	 * @return
+	 * Get the label (the name) of this constraint.
+	 *  
+	 * @return the label of this constraint.
 	 */
 	String getLabel();
 
@@ -72,21 +72,21 @@ public interface NegativeConstraint extends Rule, AppendableToStringBuilder {
 	/**
 	 * Get the body (the hypothesis) of this constraint.
 	 * 
-	 * @return
+	 * @return the body of this constraint.
 	 */
 	InMemoryAtomSet getBody();
 
 	/**
 	 * Get terms by Type.
 	 * 
-	 * @return
+	 * @return a Set of all Term of the specified type related to this NegativeConstraint.  
 	 */
 	Set<Term> getTerms(Term.Type type);
 
 	/**
 	 * Get all terms of this constraint.
 	 * 
-	 * @return
+	 * @return a Set of all Term related to this NegativeConstraint.
 	 */
 	Set<Term> getTerms();
 

@@ -88,7 +88,7 @@ public interface RdbmsConjunctiveQueryTranslator {
 	 * if the specified atom is present, no tuple otherwise.
 	 * 
 	 * @param atom
-	 * @return
+	 * @return a SQLQuery encapsuling the SQL string which represents the contains query.
 	 * @throws AtomSetException
 	 */
 	SQLQuery translateContainsQuery(Atom atom) throws AtomSetException;
@@ -100,7 +100,7 @@ public interface RdbmsConjunctiveQueryTranslator {
 	 * 
 	 * @param p
 	 * @param position
-	 * @return
+	 * @return a SQLQuery.
 	 * @throws AtomSetException
 	 */
 	SQLQuery translateTermsByPredicatePositionQuery(Predicate p, int position) throws AtomSetException;
@@ -109,7 +109,7 @@ public interface RdbmsConjunctiveQueryTranslator {
 	 * Produces a SQL Query which remove the specified atom.
 	 * 
 	 * @param atom
-	 * @return
+	 * @return a SQLQuery.
 	 * @throws AtomSetException
 	 */
 	SQLQuery translateRemove(Atom atom) throws AtomSetException;
@@ -118,7 +118,7 @@ public interface RdbmsConjunctiveQueryTranslator {
 	 * Produces a CREATE TABLE Query.
 	 * 
 	 * @param table
-	 * @return
+	 * @return a String representing the SQL create table statement.
 	 */
 	String translateCreateTable(DBTable table);
 
@@ -130,7 +130,6 @@ public interface RdbmsConjunctiveQueryTranslator {
 	 * @param term
 	 *            the term to format
 	 * @return a String representing the term
-	 * @throws DriverException
 	 * @throws AtomSetException
 	 */
 	String formatFromColumnType(DBColumn col, Term term) throws AtomSetException;

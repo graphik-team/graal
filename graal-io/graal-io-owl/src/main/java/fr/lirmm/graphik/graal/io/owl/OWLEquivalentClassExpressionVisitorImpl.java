@@ -101,7 +101,7 @@ class OWLEquivalentClassExpressionVisitorImpl extends
 	@Override
 	public InMemoryAtomSet visit(OWLClass arg) {
 		Predicate p = GraalUtils.createPredicate(arg);
-		Atom a = GraalUtils.createAtom(p, glueVariable);
+		Atom a = DefaultAtomFactory.instance().create(p, glueVariable);
 		return GraalUtils.createAtomSet(a);
 	}
 
@@ -215,7 +215,7 @@ class OWLEquivalentClassExpressionVisitorImpl extends
 	@Override
 	public InMemoryAtomSet objectOneOf1(OWLIndividual i) {
 		InMemoryAtomSet atomset = GraalUtils.createAtomSet();
-		atomset.add(GraalUtils.createAtom(Predicate.EQUALITY, glueVariable,
+		atomset.add(DefaultAtomFactory.instance().create(Predicate.EQUALITY, glueVariable,
 				GraalUtils.createTerm(i)));
 		return atomset;
 	}

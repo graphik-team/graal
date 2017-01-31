@@ -266,7 +266,9 @@ public abstract class AbstractNFC extends AbstractProfilable implements ForwardC
 	 * @param postVars
 	 *            output parameter that is a Set in which must be added higher
 	 *            level variables from this atom.
-	 * @return
+	 * @return an array containing the coresseponding instance of Var class for
+	 * each position of a variable in the specified atom with a higher level
+	 * than the specified level.
 	 */
 	protected Var[] computePostVariablesPosition(Atom atom, int level, Map<Variable, Var> map,
 	    Set<Var> postVars) {

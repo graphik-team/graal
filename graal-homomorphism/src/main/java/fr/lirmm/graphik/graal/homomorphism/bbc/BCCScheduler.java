@@ -81,9 +81,6 @@ class BCCScheduler extends AbstractProfilable implements Scheduler {
 	private Term[]              inverseMap;
 	boolean                     withForbiddenCandidate;
 
-	/**
-	 * @param bcc
-	 */
 	BCCScheduler(BCC BCC, boolean withForbiddenCandidate) {
 		this.BCC = BCC;
 		this.withForbiddenCandidate = withForbiddenCandidate;
@@ -155,7 +152,7 @@ class BCCScheduler extends AbstractProfilable implements Scheduler {
 	 * @param h
 	 * @param map
 	 * @param nbVar
-	 * @return
+	 * @return the probability to have an image for each variables which appears in h.
 	 */
 	protected double[] computeProba(InMemoryAtomSet h, AtomSet data, int nbVar, Map<Term, Integer> map,
 	    RulesCompilation rc) {
@@ -170,7 +167,7 @@ class BCCScheduler extends AbstractProfilable implements Scheduler {
 			Atom a = it.next();
 			double probaA = ProbaUtils.computeProba(a, data, rc);
 
-			for (Term t : a.getTerms(Term.Type.VARIABLE)) {
+			for (Term t : a.getVariables()) {
 				int i = map.get(t);
 				if (proba[i] < 0) {
 					proba[i] = probaA;
@@ -293,8 +290,10 @@ class BCCScheduler extends AbstractProfilable implements Scheduler {
 	}
 
 	/**
+	 * The HyperGraph of variables of h. There is an edge if between two variables if they appear in a same atom.
+	 * 
 	 * @param h
-	 * @return
+	 * @return the HyperGraph of variables of h.
 	 */
 	protected static HyperGraph constructHyperGraph(InMemoryAtomSet h, Set<Term> variables, Term[] inverseMap,
 	    Map<Term, Integer> map, Iterable<Term> ans) {
@@ -310,7 +309,7 @@ class BCCScheduler extends AbstractProfilable implements Scheduler {
 		while (it.hasNext()) {
 			Atom a = it.next();
 			DefaultHyperEdge edge = new DefaultHyperEdge();
-			for (Term t : a.getTerms(Term.Type.VARIABLE)) {
+			for (Term t : a.getVariables()) {
 				edge.addVertice(map.get(t));
 			}
 			graph.add(edge);
@@ -358,7 +357,7 @@ class BCCScheduler extends AbstractProfilable implements Scheduler {
 		int addAccesseur(int accesseur) {
 			int v = bccGraphAccesseurInverseMap[accesseur];
 			if (v == -1) {
-				v = graph.addVertice();
+				v = graph.addVertex();
 				bccGraphMap[v] = accesseur;
 				bccGraphAccesseurInverseMap[accesseur] = v;
 			}
@@ -366,7 +365,7 @@ class BCCScheduler extends AbstractProfilable implements Scheduler {
 		}
 
 		int addComponent(Set<Integer> component) {
-			int v = graph.addVertice();
+			int v = graph.addVertex();
 			bccGraphMap[v] = component;
 			return v;
 		}
@@ -389,7 +388,7 @@ class BCCScheduler extends AbstractProfilable implements Scheduler {
 
 		/**
 		 * @param bccGraph
-		 * @param inverseMap2
+		 * @param inverseMap
 		 */
 		void printBccGraph(BCCGraph bccGraph, Term[] inverseMap) {
 			System.out.println("\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");

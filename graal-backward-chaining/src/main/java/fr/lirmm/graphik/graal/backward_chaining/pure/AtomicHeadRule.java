@@ -69,7 +69,6 @@ class AtomicHeadRule implements Rule {
 	 *            a fact
 	 * @param h
 	 *            must be an AtomicFact
-	 * @throws Exception
 	 */
 	public AtomicHeadRule(InMemoryAtomSet b, Atom h) {
 		this.rule = DefaultRuleFactory.instance().create(b, new AtomicAtomSet(h));

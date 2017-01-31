@@ -57,17 +57,14 @@ import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
 public interface RdbmsStore extends Store {
 
     /**
-     * @return
+     * @return the associated driver.
      */
     RdbmsDriver getDriver();
 
 	/**
 	 * Transform the conjunctive query into a SQL query
 	 * 
-	 * @param cquery
 	 * @return a string representing the generated SQL query
-	 * @throws StoreException
-	 * @throws Exception
 	 */
 	RdbmsConjunctiveQueryTranslator getConjunctiveQueryTranslator();
 
@@ -75,7 +72,7 @@ public interface RdbmsStore extends Store {
 	 * Check if the specified Atom has a format accepted by the store.
 	 * 
 	 * @param a
-	 * @return
+	 * @return true if the specified atom can be stored in this Store, false otherwise.
 	 * @throws AtomSetException
 	 */
 	boolean check(Atom a) throws AtomSetException;
@@ -84,15 +81,15 @@ public interface RdbmsStore extends Store {
 	 * Check if the specified predicate has a format accepted by the store.
 	 * 
 	 * @param p
-	 * @return
+	 * @return true if this store can handle predicate like the specified one, false otherwise.
 	 * @throws AtomSetException
 	 */
 	boolean check(Predicate p) throws AtomSetException;
 
 	/**
 	 * @param label
-	 * @return
-	 * @throws StoreException
+	 * @return a Term.
+	 * @throws AtomSetException
 	 */
 	Term getTerm(String label) throws AtomSetException;
 

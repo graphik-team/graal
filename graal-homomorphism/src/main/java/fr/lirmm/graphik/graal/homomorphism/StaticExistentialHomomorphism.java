@@ -89,16 +89,6 @@ public class StaticExistentialHomomorphism extends AbstractProfilable implements
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	/**
-	 * For boolean query, return a SubstitutionReader with an empty Substitution
-	 * for true and no substitution for false.
-	 * 
-	 * @param query
-	 * @param atomSet
-	 * @return A substitution stream that represents homomorphisms.
-	 * @throws HomomorphismFactoryException
-	 * @throws HomomorphismException
-	 */
 	@Override
 	public <T1 extends Query, U2 extends AtomSet> boolean exist(T1 query, U2 atomSet)
 	    throws HomomorphismException {

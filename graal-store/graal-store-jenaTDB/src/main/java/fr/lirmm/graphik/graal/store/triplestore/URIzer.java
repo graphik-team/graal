@@ -65,7 +65,7 @@ class URIzer {
 	 * Add default prefix if necessary
 	 * 
 	 * @param s
-	 * @return
+	 * @return a String which represents an URI.
 	 */
 	String input(String s) {
 		return URIUtils.createURI(s, defaultPrefix).toString();
@@ -75,7 +75,7 @@ class URIzer {
 	 * Remove default prefix if it is present
 	 * 
 	 * @param s
-	 * @return
+	 * @return the String s without the default prefix, if it was present.
 	 */
 	String output(String s) {
 		if (s.startsWith(defaultPrefix.getPrefix())) {

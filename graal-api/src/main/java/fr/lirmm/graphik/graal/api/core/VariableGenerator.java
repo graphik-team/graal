@@ -51,9 +51,9 @@ package fr.lirmm.graphik.graal.api.core;
 public interface VariableGenerator {
 
 	/**
-	 * Generate a fresh variable
+	 * Generate a fresh variable, i.e. a variable that does not already exist.
 	 * 
-	 * @return
+	 * @return a fresh variable.
 	 */
 	Variable getFreshVar();
 };

@@ -67,7 +67,7 @@ public interface BackJumping extends Profilable {
 	/**
 	 * @param sb
 	 * @param level
-	 * @return
+	 * @return the StringBuilder
 	 */
 	StringBuilder append(StringBuilder sb, int level);
 

@@ -87,7 +87,7 @@ public interface KnowledgeBase extends Profilable, Closeable {
 	/**
 	 * Return true if this knowledge base is consistent, false otherwise.
 	 * 
-	 * @return
+	 * @return true if this knowledge base is consistent, false otherwise.
 	 * @throws KnowledgeBaseException
 	 */
 	boolean isConsistent() throws KnowledgeBaseException;
@@ -111,7 +111,7 @@ public interface KnowledgeBase extends Profilable, Closeable {
 	 * Execute the query over this Knowledge Base. This method uses the graal-rules-analyser module (Kiabora) to 
 	 * find a decidable way to answer.
 	 * @param query
-	 * @return
+	 * @return an Iterator over Substitutions representing homomorphism found of q.
 	 * @throws KnowledgeBaseException
 	 */
 	CloseableIterator<Substitution> query(Query query) throws KnowledgeBaseException;
@@ -120,20 +120,20 @@ public interface KnowledgeBase extends Profilable, Closeable {
 	 * 
 	 * @param query
 	 * @param timeout in seconds
-	 * @return
+	 * @return an Iterator over Substitutions representing homomorphism found of q.
 	 * @throws KnowledgeBaseException
 	 */
 	CloseableIterator<Substitution> query(Query query, int timeout) throws KnowledgeBaseException;
 
 	/**
-	 * @throws ChaseException
+	 * @throws KnowledgeBaseException
 	 * 
 	 */
 	void semiSaturate() throws KnowledgeBaseException;
 
 	/**
-	 * Returns the defined priority of this KnowledgeBase (i.e saturation or rewriting)
-	 * @return
+	 * Returns the defined priority of this KnowledgeBase (i.e. saturation or rewriting).
+	 * @return the defined priority of this KnowledgeBase.
 	 */
 	Priority getPriority();
 

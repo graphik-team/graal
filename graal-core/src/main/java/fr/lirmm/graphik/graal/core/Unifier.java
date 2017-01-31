@@ -88,7 +88,7 @@ public class Unifier {
 	/**
 	 * @param rule
 	 * @param atomset
-	 * @return
+	 * @return a Set of Substitution representing the piece unifiers between the head of the specified rule and the specified atomset. 
 	 */
 	public Set<Substitution> computePieceUnifier(Rule rule, InMemoryAtomSet atomset) {
 		return computePieceUnifier(rule,atomset,new Filter<Substitution>() { 

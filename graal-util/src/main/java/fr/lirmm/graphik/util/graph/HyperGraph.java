@@ -60,14 +60,13 @@ public interface HyperGraph {
 	void add(HyperEdge e);
 
 	/**
-	 * @param v1
-	 * @param v2
+	 * @param vertices
 	 */
 	void addEdge(int... vertices);
 
 	/**
-	 * @return
+	 * @return the index of the new added vertex.
 	 */
-	int addVertice();
+	int addVertex();
 
 }

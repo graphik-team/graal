@@ -192,8 +192,7 @@ public class SimpleBacktrackHomomorphism extends AbstractProfilable implements E
 	 * 
 	 * @param atomset
 	 * @param index 
-	 * @param varsOrdered
-	 * @return
+	 * @param vars
 	 */
 	private static void computeAtomOrder(CloseableIterableWithoutException<Atom> atomset, Var[] vars, Map<Variable, Var> index) {
 		int tmp, rank;

@@ -66,7 +66,6 @@ public interface RewritingOperator extends Profilable {
 	 *            A fact
 	 * @return the ArrayList that contains the rewrites compute from the given
 	 *         fact and the rule set of the receiving object.
-	 * @throws Exception
 	 */
 	Collection<ConjunctiveQuery> getRewritesFrom(ConjunctiveQuery q, IndexedByHeadPredicatesRuleSet ruleSet, RulesCompilation compilation);
 }

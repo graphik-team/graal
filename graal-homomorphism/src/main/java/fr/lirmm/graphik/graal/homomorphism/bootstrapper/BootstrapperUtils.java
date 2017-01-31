@@ -77,7 +77,7 @@ class BootstrapperUtils {
 	 * @param v
 	 * @param data
 	 * @param compilation
-	 * @return
+	 * @return a Set of candidates
 	 * @throws AtomSetException
 	 * @throws IteratorException
 	 */

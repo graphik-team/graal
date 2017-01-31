@@ -108,10 +108,13 @@ final class TermPartitionUtils {
 
 	/**
 	 * return the subset of sep containing terms that are in the same class than
-	 * existential variable
+	 * existential variable.
 	 * 
+	 * @param partition
+	 * @param sep
 	 * @param rule
-	 * @return
+	 * @return the subset of sep containing terms that are in the same class than
+	 * existential variable.
 	 */
 	public static LinkedList<Term> getStickyVariable(Partition<Term> partition, LinkedList<Term> sep, Rule rule) {
 		// TODO faire mieux niveau optimisation

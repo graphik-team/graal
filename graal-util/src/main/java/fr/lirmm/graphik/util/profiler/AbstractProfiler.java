@@ -202,12 +202,6 @@ public abstract class AbstractProfiler implements Profiler {
 		this.map.put(key, i);
 	}
 
-	/**
-	 * Get data/time attached to the specified key.
-	 * 
-	 * @param key
-	 * @return
-	 */
 	@Override
 	public Object get(String key) {
 		return this.map.get(key);
@@ -287,7 +281,7 @@ public abstract class AbstractProfiler implements Profiler {
 	/**
 	 * Return time in nanoseconds
 	 * 
-	 * @return
+	 * @return time in nanoseconds.
 	 */
 	protected abstract long getTime();
 

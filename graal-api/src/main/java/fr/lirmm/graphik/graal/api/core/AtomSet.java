@@ -69,7 +69,7 @@ public interface AtomSet extends CloseableIterable<Atom> {
 	 * the specified atom.
 	 * 
 	 * @param atom
-	 * @return
+	 * @return an iterator over atoms.
 	 * @throws AtomSetException
 	 */
 	CloseableIterator<Atom> match(Atom atom) throws AtomSetException;
@@ -78,7 +78,7 @@ public interface AtomSet extends CloseableIterable<Atom> {
 	 * Returns an iterator over all atoms with the specified predicate.
 	 * 
 	 * @param predicate
-	 * @return
+	 * @return an iterator over all atoms with the specified predicate.
 	 * @throws AtomSetException
 	 */
 	CloseableIterator<Atom> atomsByPredicate(Predicate predicate) throws AtomSetException;
@@ -90,23 +90,23 @@ public interface AtomSet extends CloseableIterable<Atom> {
 	 * @param p
 	 * @param position
 	 *            the term position in atoms, positions starts from 0.
-	 * @return
+	 * @return an iterator over terms which appear in the specified position of the specified predicate.
 	 */
 	CloseableIterator<Term> termsByPredicatePosition(Predicate p, int position) throws AtomSetException;
 
 	/**
 	 * Returns a Set of all predicates in this atom set.
 	 * 
-	 * @return
+	 * @return a Set of all predicates.
 	 * @throws AtomSetException
 	 */
 	Set<Predicate> getPredicates() throws AtomSetException;
 
 	/**
-	 * Returns an iterator of all predicates in this atom set. Each predicate is
+	 * Returns an iterator over all predicates in this atom set. Each predicate is
 	 * iterated only once time.
 	 * 
-	 * @return
+	 * @return an iterator over all predicates.
 	 * @throws AtomSetException
 	 */
 	CloseableIterator<Predicate> predicatesIterator() throws AtomSetException;
@@ -114,16 +114,16 @@ public interface AtomSet extends CloseableIterable<Atom> {
 	/**
 	 * Returns a Set of all terms in this atom set.
 	 * 
-	 * @return
-	 * @throws IAtomSetException
+	 * @return a Set of all terms.
+	 * @throws AtomSetException
 	 */
 	Set<Term> getTerms() throws AtomSetException;
 
 	/**
-	 * Returns an iterator of all terms in this atom set. Each term is iterated
+	 * Returns an iterator over all terms in this atom set. Each term is iterated
 	 * only once time.
 	 * 
-	 * @return
+	 * @return an iterator over all terms.
 	 * @throws AtomSetException
 	 */
 	CloseableIterator<Term> termsIterator() throws AtomSetException;
@@ -139,11 +139,11 @@ public interface AtomSet extends CloseableIterable<Atom> {
 
 
 	/**
-	 * Retuns on iterator of all terms of the specified type in this atom set.
+	 * Returns an iterator of all terms of the specified type in this atom set.
 	 * Each term is iterated only once time.
 	 * 
 	 * @param type
-	 * @return
+	 * @return an iterator of all terms.
 	 * @throws AtomSetException
 	 */
 	CloseableIterator<Term> termsIterator(Term.Type type) throws AtomSetException;
@@ -155,7 +155,7 @@ public interface AtomSet extends CloseableIterable<Atom> {
 	 * AtomSet.
 	 * 
 	 * @param atomset
-	 * @return
+	 * @return true if all atoms of this AtomSet are also contained in the specified atomset, false otherwise.
 	 */
 	@Deprecated 
 	boolean isSubSetOf(AtomSet atomset) throws AtomSetException;
@@ -179,14 +179,14 @@ public interface AtomSet extends CloseableIterable<Atom> {
 	 * Add the specified atom stream to this atom set.
 	 * 
 	 * @param atoms
-	 * @return true if this atomset changed as a result of the call
-	 * @throws
+	 * @return true if this atomset changed as a result of the call.
+	 * @throws AtomSetException
 	 */
 	boolean addAll(CloseableIterator<? extends Atom> atoms) throws AtomSetException;
 
 	/**
 	 * @param atoms
-	 * @return
+	 * @return rue if this atomset changed as a result of the call.
 	 */
 	boolean addAll(AtomSet atoms) throws AtomSetException;
 
@@ -202,7 +202,7 @@ public interface AtomSet extends CloseableIterable<Atom> {
 	/**
 	 * Remove the specified atom stream from this atom set.
 	 * 
-	 * @param stream
+	 * @param atoms
 	 *            - the atom stream to be removed.
 	 * @return true if this atomset changed as a result of the call
 	 * @throws AtomSetException
@@ -238,7 +238,7 @@ public interface AtomSet extends CloseableIterable<Atom> {
 	
 
 	/**
-	 * @return
+	 * @return the SymbolGenerator used by this atomset.
 	 */
 	ConstantGenerator getFreshSymbolGenerator();
 

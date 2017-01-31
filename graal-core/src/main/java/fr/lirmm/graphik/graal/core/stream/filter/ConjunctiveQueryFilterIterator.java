@@ -59,7 +59,6 @@ public class ConjunctiveQueryFilterIterator extends FilterIterator<Object, Conju
 	
 	/**
 	 * @param it
-	 * @param filter
 	 */
 	public ConjunctiveQueryFilterIterator(CloseableIterator<Object> it) {
 		super(it, ConjunctiveQueryFilter.instance());

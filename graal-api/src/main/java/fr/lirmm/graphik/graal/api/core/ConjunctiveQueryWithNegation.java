@@ -60,7 +60,7 @@ public interface ConjunctiveQueryWithNegation extends Query {
 	/**
 	 * The label (the name) for this query.
 	 * 
-	 * @return
+	 * @return the label of this query.
 	 */
 	String getLabel();
 	

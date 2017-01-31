@@ -84,7 +84,7 @@ public class SQLQuery {
 	/**
 	 * Return true if this query is an empty query.
 	 * 
-	 * @return
+	 * @return true if this query is an empty query, false otherwise.
 	 */
 	public boolean isEmpty() {
 		return !this.hasSchemaError && this.query.isEmpty();
@@ -93,7 +93,7 @@ public class SQLQuery {
 	/**
 	 * Return true if the query requests a table which does not exist.
 	 * 
-	 * @return
+	 * @return true if the query requests a table which does not exist, false otherwise.
 	 */
 	public boolean hasSchemaError() {
 		return this.hasSchemaError;

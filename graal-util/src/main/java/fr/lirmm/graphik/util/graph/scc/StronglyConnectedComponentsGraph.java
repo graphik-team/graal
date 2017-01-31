@@ -158,11 +158,11 @@ public class StronglyConnectedComponentsGraph<V> extends
 	}
 
 	/**
-	 * @param scc
+	 * @param sources
 	 * @param direction
 	 *            if true, following the direction of the edges, otherwise
 	 *            follows the reverse direction.
-	 * @return
+	 * @return an array of int containing the layer number of each components of this graph.
 	 */
 	public int[] computeLayers(Iterable<Integer> sources,
 			boolean direction) {

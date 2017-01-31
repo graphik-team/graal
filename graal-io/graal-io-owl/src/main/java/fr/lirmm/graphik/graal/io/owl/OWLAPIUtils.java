@@ -113,10 +113,12 @@ final class OWLAPIUtils {
 	// /////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * @param superClass
-	 * @return
+	 * Split an {@link OWLObjectOneOf} or an {@link OWLObjectUnionOf} then return operands of this union.
+	 * @param c
+	 * @return a Set of the operands if the specified {@link OWLClassExpression} is one of {@link OWLObjectOneOf} or {@link OWLObjectUnionOf}, 
+	 * a singleton which encapsulates the specified {@link OWLClassExpression} otherwise.
 	 */
-	public static Iterable<OWLClassExpression> getObjectUnionOperands(
+	public static Set<OWLClassExpression> getObjectUnionOperands(
 			OWLClassExpression c) {
 		if (c instanceof OWLObjectOneOf
 				&& ((OWLObjectOneOf) c).getIndividuals().size() > 1) {
@@ -164,7 +166,7 @@ final class OWLAPIUtils {
 
 	/**
 	 * @param superClass
-	 * @return
+	 * @return true if the {@link OWLClassExpression} represents an logical intersection, false otherwise.
 	 */
 	public static boolean isIntersection(OWLClassExpression superClass) {
 		return superClass.asConjunctSet().size() > 1;
@@ -173,8 +175,8 @@ final class OWLAPIUtils {
 	/**
 	 * disjunctive normal form
 	 * 
-	 * @param e
-	 * @return
+	 * @param classExpression
+	 * @return a {@link OWLClassExpression} in disjunctive normal form equivalents to the specified one 
 	 */
 	public static OWLClassExpression classExpressionDisjunctiveNormalForm(
 			OWLClassExpression classExpression) {
@@ -324,8 +326,8 @@ final class OWLAPIUtils {
 	/**
 	 * disjunctive normal form
 	 * 
-	 * @param e
-	 * @return
+	 * @param dataRange
+	 * @return a {@link OWLDataRange} in disjunctive normal form equivalents to the specified one.
 	 */
 	public static OWLDataRange dataRangeDisjunctiveNormalForm(
 			OWLDataRange dataRange) {

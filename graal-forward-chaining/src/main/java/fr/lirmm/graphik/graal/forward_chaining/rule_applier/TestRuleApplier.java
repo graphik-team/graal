@@ -98,14 +98,15 @@ public class TestRuleApplier<T extends AtomSet> implements RuleApplier<Rule, T> 
 		this(globalAtomSet, StaticHomomorphism.instance(), haltingCondition);
 	}
 
+	
 	/**
 	 * Construct a DefaultRuleApplier with the given HaltingCondition,
 	 * homomorphism solver and SymbolGenerator. The SymbolGenerator is used to
 	 * generate new existential variables.
 	 * 
-	 * @param haltingCondition
+	 * @param globalAtomSet
 	 * @param homomorphismSolver
-	 * @param existentialVarGenerator
+	 * @param haltingCondition
 	 */
 	public TestRuleApplier(AtomSet globalAtomSet, Homomorphism<? super ConjunctiveQuery, ? super T> homomorphismSolver,
 	    ChaseHaltingCondition haltingCondition) {

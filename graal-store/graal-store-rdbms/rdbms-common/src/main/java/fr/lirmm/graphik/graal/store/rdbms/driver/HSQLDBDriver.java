@@ -53,7 +53,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.api.core.AtomSetException;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -65,11 +64,9 @@ public class HSQLDBDriver extends AbstractMergeRdbmsDriver {
 
 	/**
 	 * 
-	 * @param host
-	 * @param dbName
-	 * @param user
-	 * @param password
-	 * @throws AtomSetException
+	 * @param alias
+	 * @param properties
+	 * @throws SQLException
 	 */
 	public HSQLDBDriver(String alias, Map<String, String> properties) throws SQLException {
 		super(openConnection(alias, properties));

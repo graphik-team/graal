@@ -59,7 +59,7 @@ public interface ConjunctiveQueryFactory {
 	/**
 	 * Create an empty query
 	 * 
-	 * @return
+	 * @return a new ConjunctiveQuery.
 	 */
 	ConjunctiveQuery create();
 
@@ -68,7 +68,7 @@ public interface ConjunctiveQueryFactory {
 	 * the atom set will be considered as answer variables.
 	 * 
 	 * @param atomSet
-	 * @return
+	 * @return a new ConjunctiveQuery.
 	 */
 	ConjunctiveQuery create(InMemoryAtomSet atomSet);
 
@@ -78,7 +78,7 @@ public interface ConjunctiveQueryFactory {
 	 * 
 	 * @param atomSet
 	 * @param ans
-	 * @return
+	 * @return a new ConjunctiveQuery.
 	 */
 	ConjunctiveQuery create(InMemoryAtomSet atomSet, List<Term> ans);
 
@@ -87,7 +87,7 @@ public interface ConjunctiveQueryFactory {
 	 * the atom set will be considered as answer variables.
 	 * 
 	 * @param atom
-	 * @return
+	 * @return a new ConjunctiveQuery.
 	 */
 	ConjunctiveQuery create(Atom atom);
 
@@ -97,7 +97,7 @@ public interface ConjunctiveQueryFactory {
 	 * 
 	 * @param atom
 	 * @param ans
-	 * @return
+	 * @return a new ConjunctiveQuery.
 	 */
 	ConjunctiveQuery create(Atom atom, List<Term> ans);
 
@@ -107,7 +107,7 @@ public interface ConjunctiveQueryFactory {
 	 * 
 	 * @param atomSet
 	 * @param answerVariables
-	 * @return
+	 * @return a new ConjunctiveQuery.
 	 */
 	ConjunctiveQuery create(CloseableIteratorWithoutException<Atom> atomSet, CloseableIteratorWithoutException<Term> answerVariables);
 
@@ -127,7 +127,7 @@ public interface ConjunctiveQueryFactory {
 	 * Copy
 	 * 
 	 * @param query
-	 * @return
+	 * @return a new ConjunctiveQuery.
 	 */
 	ConjunctiveQuery create(ConjunctiveQuery query);
 

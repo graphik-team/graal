@@ -85,7 +85,6 @@ class RewritingAlgorithm implements Profilable {
 	 * 
 	 * @return a list of the most general rewrite computed for the specified query and
 	 *         the specified compilation
-	 * @throws Exception
 	 * 
 	 * @author Mélanie KÖNIG
 	 */
@@ -192,8 +191,8 @@ class RewritingAlgorithm implements Profilable {
 	 * 
 	 * @param f
 	 * @param rewriteSet
-	 * @param comp
-	 * @return
+	 * @param compilation
+	 * @return true if rewriteSet contains a fact more general than f, false otherwise.
 	 */
 	public boolean containMoreGeneral(InMemoryAtomSet f,
 			Collection<ConjunctiveQuery> rewriteSet, RulesCompilation compilation) {

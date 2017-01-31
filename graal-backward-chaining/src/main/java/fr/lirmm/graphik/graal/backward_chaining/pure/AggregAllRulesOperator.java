@@ -74,7 +74,6 @@ public class AggregAllRulesOperator extends BasicAggregAllRulesOperator {
 	 *            A fact
 	 * @return the ArrayList that contains the rewrites compute from the given
 	 *         fact and the rule set of the receiving object.
-	 * @throws Exception
 	 */
 	@Override
 	public Collection<ConjunctiveQuery> getRewritesFrom(ConjunctiveQuery q, IndexedByHeadPredicatesRuleSet ruleSet, RulesCompilation compilation) {	
@@ -125,7 +124,6 @@ public class AggregAllRulesOperator extends BasicAggregAllRulesOperator {
 	 *            the rule whose has the head to unify
 	 * @return the list of the atoms of the query that have the same predicate
 	 *         as the head atom of R and that are recently created in query
-	 * @throws Exception
 	 */
 	public LinkedList<Atom> getUnifiableAtoms(MarkedQuery query, Rule rule, RulesCompilation compilation) {
 		LinkedList<Atom> atoms = this.getUnifiableAtoms((ConjunctiveQuery)query, rule, compilation);

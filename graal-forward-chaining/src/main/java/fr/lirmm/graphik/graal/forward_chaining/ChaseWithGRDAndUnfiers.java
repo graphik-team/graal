@@ -227,26 +227,10 @@ public class ChaseWithGRDAndUnfiers extends AbstractChase {
 	}
 	
 	/** 
-	 * Apply s1 over range of s2
-	 * @param s1
-	 * @param s2
-	 * @return
+	 * @param s
+	 * @return a Substitution which is obtained by replacing all target mark (T::) from the specified substitution by a source mark (S::).
 	 */
-	private Substitution applyOn(Substitution s1, Substitution s2) {
-		Substitution res = SubstitutionFactory.instance().createSubstitution();
-		for(Variable v : s2.getTerms()) {
-			res.put(v, s1.createImageOf(s2.createImageOf(v)));
-		}
-		return res;
-	}
-	
-	/** 
-	 * Apply s1 over range of s2
-	 * @param s1
-	 * @param s2
-	 * @return
-	 */
-	private Substitution targetToSource(Substitution s) {
+	private static Substitution targetToSource(Substitution s) {
 		Substitution res = SubstitutionFactory.instance().createSubstitution();
 		for(Variable v : s.getTerms()) {
 			res.put(DefaultTermFactory.instance().createVariable(v.getLabel().replaceAll("T::", "S::")), s.createImageOf(v));
@@ -265,7 +249,7 @@ public class ChaseWithGRDAndUnfiers extends AbstractChase {
 		return s;
 	}
 
-	private Substitution forgetSource(Substitution s) {
+	private static Substitution forgetSource(Substitution s) {
 		Substitution res = SubstitutionFactory.instance().createSubstitution();
 		for(Variable v : s.getTerms()) {
 			if(v.getLabel().startsWith("T::")) {

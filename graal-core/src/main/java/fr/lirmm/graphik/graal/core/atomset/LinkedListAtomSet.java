@@ -160,7 +160,6 @@ public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements InMemo
 	/**
 	 * copy constructor
 	 * 
-	 * @throws IteratorException
 	 */
 	public LinkedListAtomSet(InMemoryAtomSet atomset) {
 		this();

@@ -167,7 +167,6 @@ public final class DlgpParser extends AbstractCloseableIterator<Object> implemen
 	 * Closes the stream and releases any system resources associated with it.
 	 * Closing a previously closed parser has no effect.
 	 * 
-	 * @throws IOException
 	 */
 	@Override
 	public void close() {

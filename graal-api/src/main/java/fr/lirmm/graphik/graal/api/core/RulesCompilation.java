@@ -111,8 +111,9 @@ public interface RulesCompilation extends Profilable {
 	public Collection<Predicate> getUnifiablePredicate(Predicate p);
 
 	/**
+	 * Filters redundant atom in the specified atom-set with respect to this rule compilation.
 	 * @param atomSet
-	 * @return
+	 * @return an InMemoryAtomSet which is a subset of the specified one and which is equivalent to with respect to this rule compilation.
 	 */
 	InMemoryAtomSet getIrredondant(InMemoryAtomSet atomSet);
 

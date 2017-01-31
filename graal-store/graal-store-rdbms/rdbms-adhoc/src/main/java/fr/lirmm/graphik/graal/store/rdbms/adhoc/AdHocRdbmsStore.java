@@ -175,7 +175,6 @@ public class AdHocRdbmsStore extends AbstractRdbmsStore {
 	/**
 	 * 
 	 * @param driver
-	 * @throws SQLException
 	 * @throws AtomSetException
 	 */
 	public AdHocRdbmsStore(RdbmsDriver driver) throws AtomSetException {
@@ -383,13 +382,6 @@ public class AdHocRdbmsStore extends AbstractRdbmsStore {
 		}
 	}
 
-	/**
-	 * Get a term by its label
-	 * 
-	 * @param label
-	 * @return
-	 * @throws AtomSetException
-	 */
 	@Override
 	public Term getTerm(String label) throws AtomSetException {
 		ResultSet results;
@@ -468,7 +460,6 @@ public class AdHocRdbmsStore extends AbstractRdbmsStore {
 	 * @param statement
 	 * @param atom
 	 * @throws AtomSetException
-	 * @throws SQLException
 	 */
 	@Override
 	protected Statement add(Statement statement, Atom atom) throws AtomSetException {
@@ -577,7 +568,7 @@ public class AdHocRdbmsStore extends AbstractRdbmsStore {
 
 	/**
 	 * 
-	 * @return
+	 * @return a free predicate id.
 	 * @throws SQLException
 	 */
 	private long getFreePredicateId() throws SQLException {

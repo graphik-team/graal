@@ -78,7 +78,7 @@ class PureQuery extends DefaultConjunctiveQuery {
 	 * Create a query which has the same atom and id as the given fact and which
 	 * has the given term as answerVariable
 	 * 
-	 * @param f
+	 * @param atomSet
 	 * @param answerVariable
 	 */
 	public PureQuery(InMemoryAtomSet atomSet, List<Term> answerVariable) {

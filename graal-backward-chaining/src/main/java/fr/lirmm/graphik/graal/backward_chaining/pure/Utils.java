@@ -117,16 +117,13 @@ final class Utils {
 	}
 
 	/**
-	 * Rewrite the fact q according to the unifier u between the head of r and q
+	 * Rewrite the fact q according to the unifier u.
 	 * 
 	 * @param q
 	 *            the fact to rewrite
-	 * @param r
-	 *            the rule which is unified with q
 	 * @param u
 	 *            the unifier between q and r
-	 * @return the rewrite of q according to the unifier u between the head of r
-	 *         and q
+	 * @return the rewrite of q according to the unifier u.
 	 */
 	public static ConjunctiveQuery rewrite(ConjunctiveQuery q, QueryUnifier u) {
 		InMemoryAtomSet ajout = u.getImageOf(u.getRule().getBody());
@@ -142,17 +139,13 @@ final class Utils {
 	}
 
 	/**
-	 * Rewrite the marked fact q according to the unifier u between the head of
-	 * r and q
+	 * Rewrite the marked fact q according to the unifier u between
 	 * 
 	 * @param q
 	 *            the fact to rewrite must be a marked fact
-	 * @param r
-	 *            the rule which is unified with q
 	 * @param u
 	 *            the unifier between q and r
-	 * @return the rewrite of q according to the unifier u between the head of r
-	 *         and q
+	 * @return the rewrite of q according to the unifier u.
 	 */
 	public static MarkedQuery rewriteWithMark(ConjunctiveQuery q, QueryUnifier u) {
 
@@ -206,14 +199,19 @@ final class Utils {
 		return safe;
 	}
 
+	
+	public static boolean testInclu = true;
+	
 	/**
 	 * Returns true if AtomSet h is more general than AtomSet f, and mark all
 	 * the atom of h if h is a marked fact; else return false
 	 * 
-	 * @param comp
+	 * @param h
+	 * @param f
+	 * @param compilation
+	 * @return true if AtomSet h is more general than AtomSet f, and mark all
+	 * the atom of h if h is a marked fact, false otherwise.
 	 */
-	public static boolean testInclu = true;
-
 	public static boolean isMoreGeneralThan(InMemoryAtomSet h, InMemoryAtomSet f, RulesCompilation compilation) {
 
 		boolean moreGen = false;
@@ -277,7 +275,6 @@ final class Utils {
 	 * rules) in the given facts
 	 * 
 	 * @param comp
-	 * @throws Exception
 	 */
 	public static void computeCover(Iterable<ConjunctiveQuery> set, RulesCompilation comp) {
 		Iterator<ConjunctiveQuery> beg = set.iterator();
@@ -303,8 +300,7 @@ final class Utils {
 	 * Remove the queries that are not the most general in the given set of
 	 * queries
 	 * 
-	 * @param comp
-	 * @throws Exception
+	 * @param set
 	 */
 	public static void computeCover(Iterable<ConjunctiveQuery> set) {
 		computeCover(set, NoCompilation.instance());
@@ -319,7 +315,7 @@ final class Utils {
 	 * predicate order ex: the rewrite A(x) can be entailed from the rewrite
 	 * B(x) and the predicate order A > B
 	 * 
-	 * @return
+	 * @return a Collection of unfolded rewritings.
 	 */
 	private static Collection<ConjunctiveQuery> developpRewriting(Iterable<ConjunctiveQuery> rewritingSet,
 	    RulesCompilation compilation) {

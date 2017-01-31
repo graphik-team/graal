@@ -51,7 +51,6 @@ import fr.lirmm.graphik.util.stream.converter.Converter;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- * @param <U>
  *
  */
 public class AdHocResultSet2PredicateConverter implements Converter<ResultSet, Predicate> {

@@ -137,6 +137,7 @@ import fr.lirmm.graphik.graal.api.core.VariableGenerator;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultNegativeConstraint;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.MathUtils;
@@ -623,7 +624,7 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 		Collection<Rule> rules = GraalUtils.<Rule> createCollection();
 
 		freeVarGen.setIndex(2);
-		InMemoryAtomSet head = GraalUtils.createAtomSet(GraalUtils.createAtom(
+		InMemoryAtomSet head = GraalUtils.createAtomSet(DefaultAtomFactory.instance().create(
 				equalityPredicate, glueVarX, glueVarY));
 
 		OWLClassExpression classExpression = OWLAPIUtils.classExpressionDisjunctiveNormalForm(arg.getClassExpression());
@@ -647,9 +648,9 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 					.getDataPropertyExpressions()) {
 				Term var = freeVarGen.getFreshVar();
 
-				body.add(GraalUtils.createAtom(GraalUtils.createPredicate(pe),
+				body.add(DefaultAtomFactory.instance().create(GraalUtils.createPredicate(pe),
 						glueVarX, var));
-				body.add(GraalUtils.createAtom(GraalUtils.createPredicate(pe),
+				body.add(DefaultAtomFactory.instance().create(GraalUtils.createPredicate(pe),
 						glueVarY, var));
 			}
 
@@ -887,10 +888,6 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 
 	}
 
-	/**
-	 * @param expression
-	 * @return
-	 */
 	private boolean isEquivClass(OWLClassExpression expression) {
 		return expression instanceof OWLClass
 				|| expression instanceof OWLObjectIntersectionOf
@@ -945,7 +942,7 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 				body.addAll(maxCard.getProperty().accept(this.propertyVisitorXZ));
 
 				InMemoryAtomSet bodyTemplate = body;
-				head = GraalUtils.createAtomSet(GraalUtils.createAtom(
+				head = GraalUtils.createAtomSet(DefaultAtomFactory.instance().create(
 						Predicate.EQUALITY, glueVarY, glueVarZ));
 				OWLClassExpression expr = OWLAPIUtils.classExpressionDisjunctiveNormalForm(maxCard.getFiller());
 				for(Pair<OWLClassExpression,OWLClassExpression> pair : MathUtils.selfCartesianProduct(OWLAPIUtils
@@ -961,10 +958,10 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 						.getSuperClass();
 
 				Predicate p = GraalUtils.createPredicate(maxCard.getProperty());
-				body.add(GraalUtils.createAtom(p, glueVarX, glueVarY));
-				body.add(GraalUtils.createAtom(p, glueVarX, glueVarZ));
+				body.add(DefaultAtomFactory.instance().create(p, glueVarX, glueVarY));
+				body.add(DefaultAtomFactory.instance().create(p, glueVarX, glueVarZ));
 				InMemoryAtomSet bodyTemplate = body;
-				head = GraalUtils.createAtomSet(GraalUtils.createAtom(
+				head = GraalUtils.createAtomSet(DefaultAtomFactory.instance().create(
 						Predicate.EQUALITY, glueVarY, glueVarZ));
 				OWLDataRange expr = OWLAPIUtils.dataRangeDisjunctiveNormalForm(maxCard.getFiller());
 				for(Pair<OWLDataRange,OWLDataRange> pair : MathUtils.selfCartesianProduct(OWLAPIUtils.getDataUnionOperands(expr))) {
@@ -979,7 +976,7 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 
 				Predicate p = GraalUtils.createPredicate(allvalues
 						.getProperty());
-				body.add(GraalUtils.createAtom(p, glueVarX, glueVarY));
+				body.add(DefaultAtomFactory.instance().create(p, glueVarX, glueVarY));
 				head = allvalues.getFiller().accept(dataRangeVisitorY);
 				objects.add(DefaultRuleFactory.instance().create(body, head));
 			} else {

@@ -62,23 +62,21 @@ public interface ExistentialHomomorphismChecker extends Comparable<ExistentialHo
 	 * 
 	 * @param query
 	 * @param atomset
-	 * @return
+	 * @return true if the related homomorphism can handle the specified query over the specified atomset, false otherwise.
 	 */
 	boolean check(Query query, AtomSet atomset);
 	
 	/**
 	 * Return the attached solver.
 	 * 
-	 * @param query
-	 * @param atomset
-	 * @return
+	 * @return the related homomorphism algorithm.
 	 */
 	ExistentialHomomorphism<? extends Query, ? extends AtomSet> getSolver();
 	
 	/**
 	 * Get the priority of this solver. 0 is the lowest.
 	 * 
-	 * @return
+	 * @return the priority of this solver.
 	 */
 	int getPriority();
 	

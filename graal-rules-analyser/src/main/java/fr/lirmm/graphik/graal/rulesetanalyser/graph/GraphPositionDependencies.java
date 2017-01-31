@@ -77,8 +77,6 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
  * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * @author Swan Rocher
- * @param <E>
- * @param <V>
  * 
  */
 public class GraphPositionDependencies {
@@ -155,9 +153,9 @@ public class GraphPositionDependencies {
 	}
 
 	/**
-	 * @param v
+	 * @param vertex
 	 * @param markedVertex
-	 * @return
+	 * @return true if there is a specialCycle, false otherwise.
 	 */
 	private boolean findSpecialCycle(PredicatePosition vertex, Set<PredicatePosition> markedVertex,
 			PredicatePosition vertexCible) {

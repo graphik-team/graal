@@ -59,7 +59,6 @@ public class NegativeConstraintFilterIterator extends FilterIterator<Object, Neg
 	
 	/**
 	 * @param it
-	 * @param filter
 	 */
 	public NegativeConstraintFilterIterator(CloseableIterator<Object> it) {
 		super(it, NegativeConstraintFilter.instance());

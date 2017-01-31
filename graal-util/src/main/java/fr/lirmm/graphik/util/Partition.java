@@ -80,8 +80,8 @@ public class Partition<E> implements Iterable<ArrayList<E>> {
 	/**
 	 * Create a partition based on the position of elements in the two lists.
 	 * 
-	 * @param toUnif
-	 * @param atom
+	 * @param list1
+	 * @param list2
 	 */
 	public Partition(List<E> list1, List<E> list2) {
 		this();

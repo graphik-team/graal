@@ -101,11 +101,11 @@ public abstract class AbstractRulesCompilation implements RulesCompilation {
 	}
 
 	/**
-	 * Remove compilable rule from ruleset and return a List of compilable
+	 * Remove compilable rule from ruleSet and return a List of compilable
 	 * rules.
 	 *
-	 * @param ruleset
-	 * @return
+	 * @param ruleSet
+	 * @return a List containing the compilable rules.
 	 */
 	protected final LinkedList<Rule> extractCompilable(Iterator<Rule> ruleSet) {
 		LinkedList<Rule> compilable = new LinkedList<Rule>();

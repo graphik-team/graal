@@ -64,7 +64,7 @@ public interface Atom extends Comparable<Atom>, Iterable<Term>, AppendableToStri
 	/**
 	 * Get the Predicate of this Atom.
 	 * 
-	 * @return
+	 * @return the predicate of this atom.
 	 */
 	Predicate getPredicate();
 
@@ -80,7 +80,7 @@ public interface Atom extends Comparable<Atom>, Iterable<Term>, AppendableToStri
 	 * Get the n<sup>th</sup> term of this Atom. The first index is 0.
 	 * 
 	 * @param index
-	 * @return
+	 * @return the n<sup>th</sup> term of this Atom.
 	 */
 	Term getTerm(int index);
 
@@ -90,7 +90,7 @@ public interface Atom extends Comparable<Atom>, Iterable<Term>, AppendableToStri
 	 * 
 	 * @param t
 	 *            term to search for
-	 * @return
+	 * @return the index of the first occurrence of the specified term.
 	 */
 	int indexOf(Term t);
 
@@ -98,38 +98,38 @@ public interface Atom extends Comparable<Atom>, Iterable<Term>, AppendableToStri
 	 * Returns true if the term list contains the specified term.
 	 * 
 	 * @param t
-	 * @return
+	 * @return true if the term list contains the specified term, false otherwise.
 	 */
 	boolean contains(Term t);
 
 	/**
 	 * Get an ordered List that represents the terms of this Atom.
 	 * 
-	 * @return
+	 * @return an ordered List that represents the terms of this Atom.
 	 */
 	List<Term> getTerms();
 
 	/**
-	 * @Deprecated 
-	 * This method is deprecated since 1.3, use getVariables and getConstants instead.
+	 * This method is deprecated since 1.3, use {@link #getConstants()} and {@link #getVariables()} instead. <br>
+	 * <br>
 	 * 
 	 * Get all Term of the specified type.
 	 * 
 	 * @param type
-	 * @return
+	 * @return all Term of the specified type.
 	 */
 	@Deprecated
 	Collection<Term> getTerms(Term.Type type);
 	
 	/**
 	 * Get all variables that appear is this atom.
-	 * @return
+	 * @return all variables that appear is this atom.
 	 */
 	Set<Variable> getVariables();
 	
 	/**
 	 * Get all constants that appear is this atom.
-	 * @return
+	 * @return all constants that appear is this atom.
 	 */
 	Set<Term> getConstants();
 	

@@ -67,7 +67,8 @@ class MarkedQuery extends DefaultConjunctiveQuery {
 	 * create a MarkedQuery which has the same atom than the given fact, which
 	 * has the given term as answerVariable and which has no marked atoms
 	 * 
-	 * @param f
+	 * @param atomset
+	 * @param answerVariable
 	 */
 	public MarkedQuery(InMemoryAtomSet atomset, List<Term> answerVariable) {
 		super(atomset, answerVariable);
@@ -78,7 +79,8 @@ class MarkedQuery extends DefaultConjunctiveQuery {
 	 * create a MarkedQuery which has the same atom than the given fact, which
 	 * has the given term as answerVariable and which has no marked atoms
 	 * 
-	 * @param f
+	 * @param query
+	 * @param markedAtoms
 	 */
 	public MarkedQuery(ConjunctiveQuery query, List<Atom> markedAtoms) {
 		super(query);

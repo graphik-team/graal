@@ -89,7 +89,7 @@ public interface Ontology extends RuleSet {
 	public Iterator<Rule> iterator();
 
 	/**
-	 * @return
+	 * @return a Set of all Predicate related to this Ontology.
 	 */
 	Set<Predicate> getVocabulary();
 

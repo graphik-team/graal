@@ -88,7 +88,7 @@ public class AffectedPositionSet {
 	// /////////////////////////////////////////////////////////////////////////
 	
 	/**
-	 * @return
+	 * @return a Iterable over rules considered in this structure.
 	 */
 	public Iterable<Rule> getRules() {
 		return this.ruleSet;
@@ -127,9 +127,9 @@ public class AffectedPositionSet {
 	/**
 	 * return all variable in vars that is affected
 	 * 
-	 * @param variableFilter
+	 * @param vars
 	 * @param body
-	 * @return
+	 * @return all variable in vars that is affected.
 	 */
 	private Set<Variable> getAllAffectedVariables(Set<Variable> vars, InMemoryAtomSet body) {
 		Set<Variable> affectedVars = new TreeSet<Variable>();

@@ -57,6 +57,7 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -91,21 +92,21 @@ class OWLPropertyExpressionVisitorImpl implements
 	@Override
 	public InMemoryAtomSet visit(OWLObjectProperty property) {
 		Predicate p = GraalUtils.createPredicate(property);
-		Atom a = GraalUtils.createAtom(p, glueVariable1, glueVariable2);
+		Atom a = DefaultAtomFactory.instance().create(p, glueVariable1, glueVariable2);
 		return GraalUtils.createAtomSet(a);
 	}
 
 	@Override
 	public InMemoryAtomSet visit(OWLObjectInverseOf property) {
 		Predicate p = GraalUtils.createPredicate(property.getInverse());
-		Atom a = GraalUtils.createAtom(p, glueVariable2, glueVariable1);
+		Atom a = DefaultAtomFactory.instance().create(p, glueVariable2, glueVariable1);
 		return GraalUtils.createAtomSet(a);
 	}
 
 	@Override
 	public InMemoryAtomSet visit(OWLDataProperty property) {
 		Predicate p = GraalUtils.createPredicate(property);
-		Atom a = GraalUtils.createAtom(p, glueVariable1, glueVariable2);
+		Atom a = DefaultAtomFactory.instance().create(p, glueVariable1, glueVariable2);
 		return GraalUtils.createAtomSet(a);
 	}
 

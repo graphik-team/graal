@@ -269,11 +269,6 @@ class IDConditionImpl implements IDCondition {
 		return res;
 	}
 
-	/**
-	 * @param terms
-	 * @param terms2
-	 * @return
-	 */
 	@Override
 	public Substitution homomorphism(List<Term> head, List<Term> to) {
 		if (!checkBody(to)) {

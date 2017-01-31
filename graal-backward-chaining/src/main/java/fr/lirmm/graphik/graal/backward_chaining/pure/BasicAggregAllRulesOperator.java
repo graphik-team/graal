@@ -71,7 +71,6 @@ public class BasicAggregAllRulesOperator extends AbstractRewritingOperator {
 	 *            A fact
 	 * @return the ArrayList that contains the rewrites compute from the given
 	 *         fact and the rule set of the receiving object.
-	 * @throws Exception
 	 */
 	@Override
 	public Collection<ConjunctiveQuery>  getRewritesFrom(ConjunctiveQuery q, IndexedByHeadPredicatesRuleSet ruleSet, RulesCompilation compilation) {		

@@ -358,7 +358,7 @@ public class DlgpWriter extends AbstractGraalWriter {
 	}
 
 	/**
-	 * @param string
+	 * @param identifier
 	 * @throws IOException
 	 */
 	private void writeLowerIdentifier(Object identifier) throws IOException {
@@ -412,7 +412,7 @@ public class DlgpWriter extends AbstractGraalWriter {
 	 * Check if the string contains only simple char (a-z A-Z 0-9 -)
 	 * 
 	 * @param s
-	 * @return
+	 * @return true if the string contains only simple characters, false otherwise.
 	 */
 	private static boolean onlySimpleChar(String s) {
 		char c;

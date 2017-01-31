@@ -73,8 +73,7 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
- * BlueprintsGraphDBStore wrap Blueprints API {@link http
- * ://blueprints.tinkerpop.com} into an AtomSet. Blueprints API allows you to
+ * BlueprintsGraphDBStore wrap  {@link <a href="http://blueprints.tinkerpop.com">Blueprints API</a>} into an AtomSet. Blueprints API allows you to
  * use many Graph Database like Neo4j, Sparksee, OrientDB, Titan...
  * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
