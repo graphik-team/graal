@@ -71,6 +71,8 @@ import fr.lirmm.graphik.util.stream.filter.FilterIteratorWithoutException;
  */
 public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet implements InMemoryAtomSet {
 
+	private int size = 0;
+	
 	private Map<Term, TermVertex> terms;
 	private Map<Predicate, PredicateVertex> predicates;
 
@@ -172,7 +174,7 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 	}
 
 	@Override
-	public int count(Predicate p) {
+	public int size(Predicate p) {
 		PredicateVertex pred = this.getPredicateVertex(p);
 		return (pred == null) ? 0 : pred.getNeighbors().size();
 	}
@@ -241,6 +243,10 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 	public ConstantGenerator getFreshSymbolGenerator() {
 		return freshSymbolGenerator;
 	}
+	
+	public int size() {
+		return this.size();
+	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
@@ -282,6 +288,7 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 		PredicateVertex predicateVertex = this.predicates.get(atom.getPredicate());
 		boolean val = predicateVertex.addNeighbor(atom);
 		if (val) {
+			++size;
 			for (Vertex v : atom.getVertices()) {
 				if (v instanceof TermVertex) {
 					TermVertex term = (TermVertex) v;

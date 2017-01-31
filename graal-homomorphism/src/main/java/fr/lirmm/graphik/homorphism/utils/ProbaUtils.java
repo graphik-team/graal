@@ -80,7 +80,7 @@ public final class ProbaUtils {
 	public static double computeProba(Atom atom, AtomSet data, RulesCompilation rc) {
 		int count = 0;
 		for (Pair<Atom, Substitution> im : rc.getRewritingOf(atom)) {
-			count += data.count(im.getLeft().getPredicate());
+			count += data.size(im.getLeft().getPredicate());
 		}
 
 		double probaA ;

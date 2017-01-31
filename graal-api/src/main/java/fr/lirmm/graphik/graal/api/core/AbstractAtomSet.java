@@ -244,7 +244,7 @@ public abstract class AbstractAtomSet implements AtomSet {
 	}
 
 	@Override
-	public int count(Predicate p) {
+	public int size(Predicate p) {
 		return Integer.MAX_VALUE;
 	}
 
