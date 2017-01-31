@@ -245,7 +245,7 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 	}
 	
 	public int size() {
-		return this.size();
+		return this.size;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
