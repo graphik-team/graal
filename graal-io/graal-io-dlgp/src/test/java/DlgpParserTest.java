@@ -382,7 +382,7 @@ public class DlgpParserTest {
 		parser.close();
 	}
 	
-	@Test(expected = ParseException.class)
+	@Test
 	public void directiveOrder2() throws IteratorException {
 			DlgpParser parser = new DlgpParser("@prefix pre: <http://example.com/>\n"
 					+ "@prefix pre2: <http://example2.com/>\n"
@@ -396,6 +396,42 @@ public class DlgpParserTest {
 			}
 			Assert.assertEquals(5,cpt);
 			parser.close();
-		
 	}
+	
+	@Test
+	public void directiveOrder3() throws IteratorException {
+		DlgpParser parser = new DlgpParser( "@una\n"
+				+ "@prefix pre: <http://example.com/>\n"
+				+ "@base <http://example.com/>\n"
+				+ "@prefix pre2: <http://example2.com/>\n"
+				+ "@top <http://example.com/top>\n"
+				);
+		int cpt = 0;
+		while (parser.hasNext()) {
+			++cpt;
+			parser.next();
+		}
+		Assert.assertEquals(5,cpt);
+		parser.close();
+	}
+	
+	@Test
+	public void directiveOrderWithDoublon() throws IteratorException {
+		DlgpParser parser = new DlgpParser( "@una\n"
+				+ "@top <http://example.com/top>\n"
+				+ "@prefix pre: <http://example.com/>\n"
+				+ "@base <http://example.com/>\n"
+				+ "@prefix pre2: <http://example2.com/>\n"
+				+ "@top <http://example.com/top2>\n"
+				+ "@una"
+				);
+		int cpt = 0;
+		while (parser.hasNext()) {
+			++cpt;
+			parser.next();
+		}
+		Assert.assertEquals(7,cpt);
+		parser.close();
+	}
+	
 }
