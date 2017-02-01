@@ -52,6 +52,7 @@ import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
+import fr.lirmm.graphik.graal.api.homomorphism.ExistentialHomomorphismWithCompilation;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
 import fr.lirmm.graphik.graal.api.io.ParseException;
@@ -69,13 +70,13 @@ import fr.lirmm.graphik.util.stream.IteratorException;
 public class PureHomomorphismTest {
 
 	@DataPoints
-	public static HomomorphismWithCompilation[] writeableStore() {
-		HomomorphismWithCompilation[] array = {PureHomomorphism.instance()};
+	public static ExistentialHomomorphismWithCompilation[] writeableStore() {
+		ExistentialHomomorphismWithCompilation[] array = {PureHomomorphism.instance()};
 		return array;
 	}
 
 	@Theory
-	public void issue34(HomomorphismWithCompilation<InMemoryAtomSet, AtomSet> h)
+	public void issue34(ExistentialHomomorphismWithCompilation<InMemoryAtomSet, AtomSet> h)
 	    throws HomomorphismException, IteratorException, ParseException {
 		InMemoryAtomSet query1 = new LinkedListAtomSet();
 		query1.add(DlgpParser.parseAtom("p(a,Y)."));
