@@ -173,7 +173,6 @@ class QueryUnifier {
 	 * @param u
 	 *            an unifier
 	 * @return unifier
-	 * @throws Exception
 	 */
 	public QueryUnifier aggregate(QueryUnifier u) {
 		// we create a piece that is the union of the two pieces

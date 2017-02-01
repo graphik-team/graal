@@ -203,8 +203,7 @@ class SimpleBacktrackPreparedHomomorphism<U1 extends InMemoryAtomSet, U2 extends
 	 * 
 	 * @param atomset
 	 * @param index 
-	 * @param varsOrdered
-	 * @return
+	 * @param vars
 	 */
 	private void computeAtomOrder(CloseableIterableWithoutException<Atom> atomset, Var[] vars, Map<Variable, Var> index) {
 		int tmp, rank;

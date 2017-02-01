@@ -56,7 +56,7 @@ public interface ExistentialHomomorphismWithCompilation<T1, T2> extends Existent
 	 * @param q
 	 * @param a
 	 * @param compilation
-	 * @return
+	 * @return true if there exists an homomorphism of q into a, false otherwise.
 	 * @throws HomomorphismException
 	 */
 	<U1 extends T1, U2 extends T2> boolean exist(U1 q, U2 a, RulesCompilation compilation) throws HomomorphismException;

@@ -101,7 +101,7 @@ public final class Iterators {
 	 * Remove adjacent equals elements.
 	 * 
 	 * @param it
-	 * @return
+	 * @return a CloseableIterator.
 	 */
 	public static <T> CloseableIterator<T> uniqLocaly(CloseableIterator<T> it) {
 		return new UniqIterator<T>(it);
@@ -111,7 +111,7 @@ public final class Iterators {
 	 * Return an iterator over sorted elements from the specified iterator.
 	 * 
 	 * @param it
-	 * @return
+	 * @return a sorted CloseableIterator over elements from the specified Iterator.
 	 * @throws IteratorException
 	 */
 	public static <T extends Comparable<T>> CloseableIterator<T> sort(CloseableIterator<T> it)
@@ -129,7 +129,7 @@ public final class Iterators {
 	 * Return an iterator over sorted elements from the specified iterator.
 	 * 
 	 * @param it
-	 * @return
+	 * @return a sorted Iterator over elements from the specified Iterator.
 	 */
 	public static <T extends Comparable<T>> Iterator<T> sort(Iterator<T> it) {
 		List<T> substitutionList = new LinkedList<T>();
@@ -144,7 +144,7 @@ public final class Iterators {
 	 * Remove all equals elements.
 	 * 
 	 * @param it
-	 * @return
+	 * @return a CloseableIterator over elements from the specified it without duplicate.
 	 * @throws IteratorException
 	 */
 	public static <T extends Comparable<T>> CloseableIterator<T> uniq(CloseableIterator<T> it)
@@ -161,7 +161,7 @@ public final class Iterators {
 	 * Remove all equals elements.
 	 * 
 	 * @param it
-	 * @return
+	 * @return an Iterator over elements from the specified it without duplicate.
 	 */
 	public static <T extends Comparable<T>> Iterator<T> uniq(Iterator<T> it) {
 		Set<T> substitutionSet = new TreeSet<T>();
@@ -215,8 +215,8 @@ public final class Iterators {
 	}
 
 	/**
-	 * @param execute
-	 * @return
+	 * @param it
+	 * @return a List containing all elements accessible by the specified iterator.
 	 * @throws IteratorException 
 	 */
 	public static <T> List<T> toList(CloseableIterator<T> it) throws IteratorException {

@@ -57,11 +57,12 @@ public interface Homomorphism<T1 extends Object, T2 extends AtomSet> extends Exi
 
 	/**
 	 * Look for the homomorphisms of the specified object into the specified
-	 * atomset.
+	 * atomset. For boolean query, return a SubstitutionReader with an empty Substitution
+	 * for true and no substitution for false.
 	 * 
 	 * @param q
 	 * @param a
-	 * @return
+	 * @return an Iterator over Substitutions representing homomorphism found of q into a.
 	 * @throws HomomorphismException
 	 */
 	<U1 extends T1, U2 extends T2> CloseableIterator<Substitution> execute(U1 q, U2 a)

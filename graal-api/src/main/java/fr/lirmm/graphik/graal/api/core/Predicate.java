@@ -68,8 +68,7 @@ public class Predicate implements Comparable<Predicate>, Serializable, Appendabl
 	/**
 	 * Construct a prefix with a specified prefix and a local name.
 	 * 
-	 * @param prefix
-	 * @param name
+	 * @param identifier
 	 * @param arity
 	 */
 	public Predicate(Object identifier, int arity) {
@@ -93,7 +92,7 @@ public class Predicate implements Comparable<Predicate>, Serializable, Appendabl
 	/**
 	 * Get the arity of this predicate.
 	 * 
-	 * @return
+	 * @return the arity of this predicate.
 	 */
 	public int getArity() {
 		return arity;

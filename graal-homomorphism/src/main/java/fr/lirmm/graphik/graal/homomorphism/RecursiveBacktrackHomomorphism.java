@@ -101,11 +101,6 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	/***
-	 * 
-	 * @return A SubstitutionReader that enumerate all substitutions.
-	 * @throws AtomSetException
-	 */
 	@Override
 	public CloseableIterator<Substitution> execute(ConjunctiveQuery query, AtomSet facts) throws HomomorphismException {
 		if (LOGGER.isTraceEnabled()) {
@@ -145,13 +140,6 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
 		}
 	}
 
-	/**
-	 * 
-	 * @param atomSet1
-	 * @param data
-	 * @return
-	 * @throws HomomorphismException
-	 */
 	@Override
 	public boolean exist(ConjunctiveQuery query, AtomSet data) throws HomomorphismException {
 		try {
@@ -183,16 +171,6 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	/**
-	 * 
-	 * @param queryAtomRanked
-	 * @param facts
-	 * @param substitution
-	 * @param orderedVars
-	 * @param rank
-	 * @return
-	 * @throws Exception
-	 */
 	private Collection<Substitution> homomorphism(
 												  ConjunctiveQuery query,
 												  Collection<Atom>[] queryAtomRanked,
@@ -226,16 +204,7 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
 		return substitutionList;
 	}
 
-	/**
-	 * 
-	 * @param queryAtomRanked
-	 * @param facts
-	 * @param substitution
-	 * @param orderedVars
-	 * @param rank
-	 * @return
-	 * @throws Exception
-	 */
+
 	private static boolean existHomomorphism(
 											 AtomSet atomSet1,
 											 Collection<Atom>[] queryAtomRanked,
@@ -293,7 +262,7 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
 	 * 
 	 * @param atomset
 	 * @param varsOrdered
-	 * @return
+	 * @return an array of Collection of Atom, each array index represents a rank (level) of the backtrack.
 	 */
 	private static Collection<Atom>[] getAtomRank(CloseableIterableWithoutException<Atom> atomset, List<Term> varsOrdered) {
 		int tmp, rank;

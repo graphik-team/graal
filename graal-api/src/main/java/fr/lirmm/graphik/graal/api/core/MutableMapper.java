@@ -53,8 +53,8 @@ public interface MutableMapper extends Mapper {
 	 * map(fromPredicate) will return toPredicate and unmap(toPredicate) will
 	 * return fromPredicate.
 	 * 
-	 * @param from
-	 * @param to
+	 * @param fromPredicate
+	 * @param toPredicate
 	 */
 	public void addMapping(Predicate fromPredicate, Predicate toPredicate);
 

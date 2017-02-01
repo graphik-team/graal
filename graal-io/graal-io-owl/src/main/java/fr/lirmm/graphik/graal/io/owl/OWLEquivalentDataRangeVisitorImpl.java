@@ -53,6 +53,7 @@ import org.semanticweb.owlapi.model.OWLLiteral;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -74,7 +75,7 @@ class OWLEquivalentDataRangeVisitorImpl extends
 	@Override
 	public InMemoryAtomSet visit(OWLDatatype node) {
 		Predicate p = GraalUtils.createPredicate(node);
-		return GraalUtils.createAtomSet(GraalUtils.createAtom(p, glueVariable));
+		return GraalUtils.createAtomSet(DefaultAtomFactory.instance().create(p, glueVariable));
 	}
 
 	@Override
@@ -89,7 +90,7 @@ class OWLEquivalentDataRangeVisitorImpl extends
 	@Override
 	public InMemoryAtomSet dataOneOf1(OWLLiteral literal) {
 		InMemoryAtomSet atomset = GraalUtils.createAtomSet();
-		atomset.add(GraalUtils.createAtom(Predicate.EQUALITY, glueVariable,
+		atomset.add(DefaultAtomFactory.instance().create(Predicate.EQUALITY, glueVariable,
 				GraalUtils.createLiteral(literal)));
 		return atomset;
 	}

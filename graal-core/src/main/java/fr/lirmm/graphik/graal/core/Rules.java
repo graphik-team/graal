@@ -122,7 +122,7 @@ public final class Rules {
 	 * Line Jean-François Baget, Michel Leclère, Marie-Laure Mugnier, Eric
 	 * Salvat
 	 *
-	 * @return
+	 * @return a Collection ofInMemoryAtomSet representing the set of pieces of the head of the specified rule.
 	 */
 	public static Collection<InMemoryAtomSet> getPieces(Rule rule) {
 		Set<Variable> existentials = rule.getExistentials();
@@ -212,7 +212,7 @@ public final class Rules {
 	 * Generate a set of mono-piece rules equivalent of the specified rule.
 	 * 
 	 * @param rule
-	 * @return
+	 * @return a Collection of Rule which is a decomposition of the specified rule to single piece rules.
 	 */
 	public static Collection<Rule> computeSinglePiece(Rule rule) {
 		String label = rule.getLabel();
@@ -239,7 +239,7 @@ public final class Rules {
 	 * Generate a set of atomic head rules equivalent of the specified rule.
 	 * 
 	 * @param rule
-	 * @return
+	 * @return a Collection of Rule which is a decomposition of the specified rule to atomic head rules.
 	 */
 	public static Collection<Rule> computeAtomicHead(Rule rule) {
 		String label = rule.getLabel();

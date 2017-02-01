@@ -80,8 +80,8 @@ public interface ForwardChecking extends Profilable {
 
 	/**
 	 * @param var
-	 * @return
-	 * @throws AtomSetException
+	 * @return an iterator over possible candidates.
+	 * @throws BacktrackException
 	 */
 	CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Map<Variable, Var> map, RulesCompilation rc)
 	    throws BacktrackException;

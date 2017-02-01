@@ -55,14 +55,14 @@ import fr.lirmm.graphik.util.string.AppendableToStringBuilder;
 public interface Rule extends Comparable<Rule>, AppendableToStringBuilder {
 
 	/**
-	 * Get the label (the name) for this rule.
+	 * Get the label (the name) of this rule.
 	 * 
-	 * @return
+	 * @return the label of this rule.
 	 */
 	String getLabel();
 
 	/**
-	 * Set the label (the name) for this rule.
+	 * Set the label (the name) of this rule.
 	 * 
 	 * @param label
 	 */
@@ -71,42 +71,42 @@ public interface Rule extends Comparable<Rule>, AppendableToStringBuilder {
 	/**
 	 * Get the body (the hypothesis) of this rule.
 	 * 
-	 * @return
+	 * @return the body of this rule.
 	 */
 	InMemoryAtomSet getBody();
 
 	/**
 	 * Get the head (the conclusion) of this rule.
 	 * 
-	 * @return
+	 * @return the head of this rule.
 	 */
 	InMemoryAtomSet getHead();
 
 	/**
 	 * Compute and return the set of frontier variables of this rule.
 	 * 
-	 * @return
+	 * @return a Set containing the frontier variables of this rule.
 	 */
 	Set<Variable> getFrontier();
 
 	/**
 	 * Compute and return the set of existential variables of this rule.
 	 * 
-	 * @return
+	 * @return a Set containing the existential variables of this rule.
 	 */
 	Set<Variable> getExistentials();
 
 	/**
 	 * Get terms by Type.
 	 * 
-	 * @return
+	 * @return a Set of all Term of the specified type related to this Rule.  
 	 */
 	Set<Term> getTerms(Term.Type type);
 
 	/**
 	 * Get all terms of this rule.
 	 * 
-	 * @return
+	 * @return a Set of all Term related to this Rule.
 	 */
 	Set<Term> getTerms();
 

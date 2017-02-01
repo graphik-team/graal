@@ -80,7 +80,7 @@ final class SparqlUtils {
 
 	/**
 	 * @param node
-	 * @return
+	 * @return a Term representing the specified {@link Node}.
 	 */
 	public static Term node2Term(Node node) {
 		Term term;

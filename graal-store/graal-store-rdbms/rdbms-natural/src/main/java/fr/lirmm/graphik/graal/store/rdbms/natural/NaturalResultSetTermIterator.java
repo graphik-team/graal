@@ -74,7 +74,6 @@ class NaturalResultSetTermIterator extends AbstractCloseableIterator<Term> {
 	 * @param store
 	 * @param sqlQuery
 	 * @throws SQLException
-	 * @throws StoreException
 	 */
 	public NaturalResultSetTermIterator(RdbmsStore store, String sqlQuery, int sqlColType) throws SQLException {
 		this.statement = store.getDriver().createStatement();

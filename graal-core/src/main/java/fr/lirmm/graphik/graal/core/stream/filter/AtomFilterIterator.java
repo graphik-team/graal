@@ -59,7 +59,6 @@ public class AtomFilterIterator extends FilterIterator<Object, Atom> {
 	
 	/**
 	 * @param it
-	 * @param filter
 	 */
 	public AtomFilterIterator(CloseableIterator<Object> it) {
 		super(it, AtomFilter.instance());

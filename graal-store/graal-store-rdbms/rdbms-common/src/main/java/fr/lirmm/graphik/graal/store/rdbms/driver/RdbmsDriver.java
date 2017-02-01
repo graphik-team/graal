@@ -70,7 +70,7 @@ public interface RdbmsDriver {
 	/**
 	 * Returns database metadata
 	 * 
-	 * @return
+	 * @return the DatabaseMetaData.
 	 */
 	DatabaseMetaData getMetaData() throws SQLException;
 
@@ -78,8 +78,8 @@ public interface RdbmsDriver {
 	 * Generates an INSERT OR IGNORE SQL statement.
 	 * 
 	 * @param tableName
-	 * @param values
-	 * @return
+	 * @param data
+	 * @return a String representing an insert or ignore query statement.
 	 */
 	String getInsertOrIgnoreQuery(DBTable tableName, Map<String, String> data) throws SQLException;
 
@@ -87,8 +87,8 @@ public interface RdbmsDriver {
 	 * 
 	 * @param tableName
 	 * @param selectQuery
-	 * @return
-	 * @throws DriverException
+	 * @return a String representing an insert or ignore SQL statement.
+	 * @throws SQLException
 	 */
 	String getInsertOrIgnoreQuery(DBTable tableName, String selectQuery) throws SQLException;
 
@@ -98,14 +98,14 @@ public interface RdbmsDriver {
 	 * characters.
 	 * 
 	 * @param identifier
-	 * @return
+	 * @return a String.
 	 */
 	String formatIdentifier(String identifier) throws SQLException;
 
 	/**
 	 * Returns an iterator over the database tables.
 	 * 
-	 * @return
+	 * @return an iterator over the database tables.
 	 * @throws SQLException
 	 */
 	CloseableIterator<DBTable> getTables() throws SQLException;
@@ -116,7 +116,7 @@ public interface RdbmsDriver {
 	 * 
 	 * @param tableName
 	 *            The table name correctly formated (upper or lower case).
-	 * @return
+	 * @return the table information for the specified table name or null if there is no table with this name.
 	 * @throws SQLException
 	 */
 	DBTable getTable(String tableName) throws SQLException;
@@ -127,7 +127,7 @@ public interface RdbmsDriver {
 	 * @param tableName
 	 *            The table name correctly formated (upper or lower case).
 	 * 
-	 * @return
+	 * @return columns informations for the specified table name.
 	 * @throws SQLException
 	 */
 	List<DBColumn> getColumns(String tableName) throws SQLException;
@@ -135,7 +135,7 @@ public interface RdbmsDriver {
 	/**
 	 * Return true if this database instance is case sensitive, false otherwise.
 	 * 
-	 * @return
+	 * @return true if this database instance is case sensitive, false otherwise.
 	 * @throws SQLException
 	 */
 	boolean isCaseSensitive() throws SQLException;
@@ -144,7 +144,7 @@ public interface RdbmsDriver {
 	 * Return a String containing extra characters available for table and
 	 * column name (those beyond a-z, A-Z, 0-9 and _).
 	 * 
-	 * @return
+	 * @return a String containing extra characters available.
 	 * @throws SQLException
 	 */
 	String getExtraIdentifierCharacters() throws SQLException;

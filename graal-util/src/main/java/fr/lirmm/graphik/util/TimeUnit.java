@@ -74,7 +74,7 @@ public enum TimeUnit {
 	 * minutes, "s" for seconds, "ms" for milliseconds, "μs" for microseconds
 	 * and "ns" for nanoseconds.
 	 * 
-	 * @return
+	 * @return the TimeUnit abbreviation.
 	 */
 	public String getAbbreviation() {
 		return this.abbrev;
@@ -112,7 +112,7 @@ public enum TimeUnit {
 	 * 
 	 * @param sourceDuration
 	 *            the time duration in the given sourceUnit
-	 * @param sourceUnit
+	 * @param timeUnit
 	 *            the unit of the sourceDuration argument
 	 * @return the rounded duration in this unit, or Long.MIN_VALUE if
 	 *         conversion would negatively overflow, or Long.MAX_VALUE if it

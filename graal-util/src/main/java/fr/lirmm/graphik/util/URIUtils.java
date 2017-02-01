@@ -104,7 +104,7 @@ public final class URIUtils {
 	 * Return the scheme part of this uri. 
 	 * URI = <scheme>:<scheme-specific-part>
 	 * @param uri
-	 * @return
+	 * @return the scheme part of the specified URI.
 	 */
 	public static String getScheme(String uri) {
 		java.net.URI tmp;
@@ -125,7 +125,7 @@ public final class URIUtils {
      *  return the second part of this split.
      *  
 	 * @param uri
-	 * @return
+	 * @return the LocalName of the specified URI.
 	 */
 	public static String getLocalName(String uri) {
 		try {
@@ -145,7 +145,7 @@ public final class URIUtils {
      *  return the first part of this split.
      *  
 	 * @param uri
-	 * @return
+	 * @return the prefix of the specified URI.
 	 */
 	public static String getPrefix(String uri) {
 		try {
@@ -162,7 +162,7 @@ public final class URIUtils {
 	 * 
 	 * @param string
 	 * @param defaultPrefix
-	 * @return
+	 * @return an new URI
 	 */
 	public static URI createURI(String string, Prefix defaultPrefix) {
 		String prefixString = URIUtils.getPrefix(string);

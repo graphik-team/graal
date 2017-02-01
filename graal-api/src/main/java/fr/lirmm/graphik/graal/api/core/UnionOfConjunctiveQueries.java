@@ -65,9 +65,9 @@ public interface UnionOfConjunctiveQueries extends Query, CloseableIterable<Conj
 	List<Term> getAnswerVariables();
 
 	/**
-	 * The label (the name) for this query.
+	 * The label (the name) of this query.
 	 * 
-	 * @return
+	 * @return the label of this query
 	 */
 	String getLabel();
 

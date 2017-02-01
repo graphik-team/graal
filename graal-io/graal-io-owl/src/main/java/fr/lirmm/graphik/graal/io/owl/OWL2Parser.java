@@ -120,7 +120,7 @@ public class OWL2Parser extends AbstractCloseableIterator<Object> implements Par
 	/**
 	 * Constructor for parsing from the given reader.
 	 * 
-	 * @param inputStream
+	 * @param stream
 	 * @throws OWL2ParserException
 	 */
 	public OWL2Parser(InputStream stream) throws OWL2ParserException {
@@ -207,8 +207,6 @@ public class OWL2Parser extends AbstractCloseableIterator<Object> implements Par
 	/**
 	 * Closes the stream and releases any system resources associated with it.
 	 * Closing a previously closed parser has no effect.
-	 * 
-	 * @throws IOException
 	 */
 	@Override
 	public void close() {
@@ -322,7 +320,6 @@ public class OWL2Parser extends AbstractCloseableIterator<Object> implements Par
 
 		/**
 		 * @param a
-		 * @return
 		 */
 		private static void processAxiom(OWLAxiom a, OWLAxiomParser visitor, Processor p) {
 			if (LOGGER.isDebugEnabled()) {
@@ -384,8 +381,6 @@ public class OWL2Parser extends AbstractCloseableIterator<Object> implements Par
 	/**
 	 * This filter some rule into a fact or a negativeConstraint or delete it.
 	 * 
-	 * @param r
-	 * @return
 	 */
 	private static class RuleTransformator implements Transformator<Rule, Object> {
 
@@ -441,7 +436,7 @@ public class OWL2Parser extends AbstractCloseableIterator<Object> implements Par
 	 * bottom and A => bottom
 	 * 
 	 * @param atomset
-	 * @return
+	 * @return an InMemoryAtomSet logically equivalents to the specified one.
 	 */
 	private static InMemoryAtomSet removeUselessBottom(InMemoryAtomSet atomset) {
 		CloseableIteratorWithoutException<Atom> it = atomset.iterator();

@@ -51,9 +51,9 @@ package fr.lirmm.graphik.graal.api.core;
 public interface ConstantGenerator {
 
 	/**
-	 * Generate a fresh variable
+	 * Generate a fresh constant, i.e. a constant which does not already exist. 
 	 * 
-	 * @return
+	 * @return a fresh Constant.
 	 */
 	Constant getFreshCst();
 };

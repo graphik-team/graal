@@ -73,7 +73,7 @@ public class DefaultGraph implements Graph {
 	}
 
 	@Override
-	public int addVertice() {
+	public int addVertex() {
 		this.adjacencyList.add(new LinkedList<Integer>());
 		return this.nbVertices++;
 	}

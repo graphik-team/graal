@@ -121,11 +121,11 @@ public class NFC0 extends AbstractNFC implements ForwardChecking {
 	 * Check delayed property
 	 * @param atom
 	 * @param map
-	 * @return
+	 * @return true if the specified atom must be checked now, false otherwise.
 	 */
 	protected boolean mustBeChecked(Atom atom, Map<Variable, Var> map) {
 		int i = 0;
-		for (Term t : atom.getTerms(Type.VARIABLE)) {
+		for (Term t : atom.getVariables()) {
 			Var z = map.get(t);
 			if (z.image != null) {
 				++i;

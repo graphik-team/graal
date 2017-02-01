@@ -70,11 +70,11 @@ public final class MathUtils {
 	// /////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * Comput the cartesian product of the specified set with itself.
+	 * Compute the cartesian product of the specified set with itself.
 	 * input: { A, B, C }
 	 * output : { (A,A), (A,B), (B,B) } 
 	 * @param set
-	 * @return
+	 * @return an Iterable of Pair representing the cartesian product of the specified set with itself.
 	 */
 	public static <T> Iterable<Pair<T, T>> selfCartesianProduct(
 			Iterable<T> set) {

@@ -73,9 +73,8 @@ public final class ProbaUtils {
 	 * 
 	 * @param atom
 	 * @param data
-	 * @param domainSize
 	 * @param rc
-	 * @return
+	 * @return the probability to have the specified atom over specified data.
 	 */
 	public static double computeProba(Atom atom, AtomSet data, RulesCompilation rc) {
 		int count = 0;

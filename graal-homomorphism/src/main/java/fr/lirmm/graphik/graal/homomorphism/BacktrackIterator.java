@@ -398,8 +398,7 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution>
 	 * The index 0 contains the fully instantiated atoms.
 	 * 
 	 * @param atomset
-	 * @param varsOrdered
-	 * @return
+	 * @param vars
 	 */
 	private void computeAtomOrder(CloseableIterableWithoutException<Atom> atomset, Var[] vars) {
 		int tmp, rank;

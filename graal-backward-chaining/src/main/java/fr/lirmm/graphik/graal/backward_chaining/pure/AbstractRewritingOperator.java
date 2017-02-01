@@ -106,16 +106,15 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 	/**
 	 * Returns the list of all single-piece unifier between the given query and
 	 * the given atomic-head rule cannot work with IDCompilation ( have to
-	 * conserv the fact that an atom of the query can only been associated by a
+	 * conserve the fact that an atom of the query can only been associated by a
 	 * single unification with an atom of the head
 	 * 
-	 * @param query
+	 * @param q
 	 *            the query that we want unify
 	 * @param r
 	 *            the atomic-head rule that we want unify
 	 * @return the ArrayList of all single-piece unifier between the query of
 	 *         the receiving object and R an atomic-head rule
-	 * @throws Exception
 	 */
 	private LinkedList<QueryUnifier> getSinglePieceUnifiersAHR(
 			ConjunctiveQuery q, AtomicHeadRule r, RulesCompilation compilation) {
@@ -185,13 +184,12 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 	 * Returns the list of all single-piece unifier between the given query and
 	 * the given rule
 	 * 
-	 * @param query
+	 * @param q
 	 *            the query that we want unify
 	 * @param r
 	 *            the atomic-head rule that we want unify
 	 * @return the ArrayList of all single-piece unifier between the query of
 	 *         the receiving object and R an atomic-head rule
-	 * @throws Exception
 	 */
 	private LinkedList<QueryUnifier> getSinglePieceUnifiersNAHR(
 			ConjunctiveQuery q, Rule r, RulesCompilation compilation) {
@@ -287,7 +285,7 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 	 * @param q
 	 * @param r
 	 * @param compilation
-	 * @return
+	 * @return a List of unifiers between q and the head of r.
 	 */
 	protected LinkedList<QueryUnifier> getSRUnifier(ConjunctiveQuery q, Rule r, RulesCompilation compilation) {
 		LinkedList<QueryUnifier> unifiers = new LinkedList<QueryUnifier>();
@@ -325,15 +323,14 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 	
 	/**
 	 * Returns the list of all the aggregated unifiers that can be build from u
-	 * and others unifiers of lu. recursive function
+	 * and others unifiers of l. recursive function
 	 * 
 	 * @param u
-	 *            the unifier whose we want aggregate with the unifiers of lu
-	 * @param lu
+	 *            the unifier whose we want aggregate with the unifiers of l
+	 * @param l
 	 *            list of unifiers
 	 * @return the list of all aggregated unifier build from u and unifiers of
-	 *         lu
-	 * @throws Exception
+	 *         l
 	 */
 	@SuppressWarnings({ "unchecked" })
 	private LinkedList<QueryUnifier> aggregate(QueryUnifier u,

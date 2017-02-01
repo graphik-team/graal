@@ -162,7 +162,7 @@ public class RuleSetPropertyHierarchy {
 	 * right place. Just add a line that will add an instance of your new class,
 	 * compile, and everything will (should) work!
 	 * 
-	 * @return
+	 * @return a Map of RuleSetProperty with their label as key.
 	 */
 	public static final Map<String, RuleSetProperty> generatePropertyMap() {
 		Map<String, RuleSetProperty> propertyMap = new TreeMap<String, RuleSetProperty>();

@@ -77,8 +77,6 @@ public class PostgreSQLDriver extends AbstractRdbmsDriver {
 	 * @param dbName
 	 * @param user
 	 * @param password
-	 * @throws AtomSetException
-	 * @throws DriverException
 	 */
 	public PostgreSQLDriver(String host, String dbName, String user,
 			String password)

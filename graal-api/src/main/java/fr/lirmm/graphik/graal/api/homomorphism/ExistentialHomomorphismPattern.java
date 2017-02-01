@@ -58,7 +58,7 @@ public interface ExistentialHomomorphismPattern<T1, T2> extends Profilable {
 	 * @param query
 	 * @param variablesToParameterize
 	 * @param data
-	 * @return
+	 * @return a pre-configured homomorphism algorithm instance.
 	 */
 	<U1 extends T1, U2 extends T2> PreparedExistentialHomomorphism prepareHomomorphism(U1 query, Set<Variable> variablesToParameterize, U2 data) throws HomomorphismException;
 }

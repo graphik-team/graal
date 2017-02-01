@@ -184,8 +184,8 @@ public class GraphOfRuleDependencies {
 	}
 
 	/**
-	 * @param ruleset
-	 * @return
+	 * @param ruleSet
+	 * @return a GraphOfRuleDependencies which is a subgraph of this graph containing only specified rules.
 	 */
 	public GraphOfRuleDependencies getSubGraph(Iterable<Rule> ruleSet) {
 		GraphOfRuleDependencies subGRD = new GraphOfRuleDependencies();

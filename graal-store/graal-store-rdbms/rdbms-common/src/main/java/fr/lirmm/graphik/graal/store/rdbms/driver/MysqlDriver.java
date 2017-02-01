@@ -71,7 +71,7 @@ public class MysqlDriver extends AbstractInsertOrIgnoreRdbmsDriver {
 	 * @param dbName
 	 * @param user
 	 * @param password
-	 * @throws AtomSetException
+	 * @throws SQLException
 	 */
 	public MysqlDriver(String host, String dbName, String user,
 			String password)

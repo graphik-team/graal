@@ -61,11 +61,15 @@ import fr.lirmm.graphik.util.profiler.Profilable;
  */
 public interface Scheduler extends Profilable {
 
+
+
 	/**
+	 * Compute the order.
+	 *
 	 * @param h
 	 * @param ans
-	 * @return an array of Var
-	 * @throws HomomorphismException 
+	 * @return an array of Var representing an order over its.
+	 * @throws HomomorphismException
 	 */
 	Var[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data, RulesCompilation rc) throws HomomorphismException;
 

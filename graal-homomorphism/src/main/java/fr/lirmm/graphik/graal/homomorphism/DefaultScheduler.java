@@ -76,12 +76,6 @@ public class DefaultScheduler extends AbstractProfilable implements Scheduler {
 		return instance;
 	}
 
-	/**
-	 * Compute the order.
-	 *
-	 * @param h
-	 * @return
-	 */
 	@Override
 	public Var[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data, RulesCompilation rc) {
 		Set<Term> terms = h.getTerms(Term.Type.VARIABLE);

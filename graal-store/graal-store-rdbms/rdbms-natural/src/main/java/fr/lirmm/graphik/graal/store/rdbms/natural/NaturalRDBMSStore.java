@@ -105,7 +105,6 @@ public class NaturalRDBMSStore extends AbstractRdbmsStore {
 	/**
 	 * 
 	 * @param driver
-	 * @throws SQLException
 	 * @throws AtomSetException
 	 */
 	public NaturalRDBMSStore(RdbmsDriver driver) throws AtomSetException {

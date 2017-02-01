@@ -63,10 +63,10 @@ public class ResultSetConverterIterator<T> extends ConverterCloseableIterator<Re
 	// /////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * @param store
+	 * @param stat
 	 * @param sqlQuery
+	 * @param converter
 	 * @throws SQLException
-	 * @throws StoreException
 	 */
 	public ResultSetConverterIterator(Statement stat, String sqlQuery, Converter<ResultSet, T> converter)
 	    throws SQLException {

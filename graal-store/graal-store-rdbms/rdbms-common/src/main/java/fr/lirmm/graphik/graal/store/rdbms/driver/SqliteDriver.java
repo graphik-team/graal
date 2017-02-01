@@ -67,7 +67,7 @@ public class SqliteDriver extends AbstractInsertOrIgnoreRdbmsDriver {
 	 /**
 	  * 
 	  * @param file
-	  * @throws StoreException
+	  * @throws SQLException
 	  */
 	public SqliteDriver(File file)
 	    throws SQLException {

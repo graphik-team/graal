@@ -57,7 +57,7 @@ public class MethodNotImplementedError extends Error {
 		super("This method isn't implemented");
 	}
 	/**
-	 * @param string
+	 * @param message
 	 */
 	public MethodNotImplementedError(String message) {
 		super(message);

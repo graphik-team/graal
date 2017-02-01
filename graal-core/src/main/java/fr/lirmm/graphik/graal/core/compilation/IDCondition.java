@@ -87,8 +87,7 @@ interface IDCondition {
 	/**
 	 * Generate head
 	 * 
-	 * @param body
-	 * @return
+	 * @return TODO
 	 */
 	List<Term> generateHead();
 
@@ -122,14 +121,14 @@ interface IDCondition {
 	Rule generateRule(Predicate bodyPredicate, Predicate headPredicate);
 
 	/**
-	 * @return
+	 * @return true if the current IDCondition represents an identity condition, false otherwise.
 	 */
 	boolean isIdentity();
 
 	/**
-	 * @param terms
-	 * @param terms2
-	 * @return
+	 * @param head
+	 * @param body
+	 * @return  TODO
 	 */
 	Substitution homomorphism(List<Term> head, List<Term> body);
 

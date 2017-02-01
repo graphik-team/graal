@@ -76,12 +76,6 @@ public class PatternScheduler extends AbstractProfilable {
 		return instance;
 	}
 
-	/**
-	 * Compute the order.
-	 *
-	 * @param h
-	 * @return
-	 */
 	public Var[] execute(InMemoryAtomSet h, Set<Variable> preAffectedVars, AtomSet data, RulesCompilation rc) {
 		Set<Term> terms = h.getTerms(Term.Type.VARIABLE);
 		Var[] vars = new Var[terms.size() + 2];

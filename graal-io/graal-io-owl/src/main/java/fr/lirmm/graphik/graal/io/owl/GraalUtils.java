@@ -62,6 +62,7 @@ import org.slf4j.LoggerFactory;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.Literal;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
@@ -92,23 +93,19 @@ final class GraalUtils {
 	// /////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * Convert org.semanticweb.owlapi.model.IRI into fr.lirmm.graphik.util.URI
+	 * Convert {@link org.semanticweb.owlapi.model.IRI} into {@link fr.lirmm.graphik.util.URI}
 	 * 
 	 * @param iri
-	 * @return
+	 * @return a {@link URI} equivalent to {@link IRI}
 	 */
 	public static URI convertIRI(IRI iri) {
 		return new DefaultURI(iri.toString());
 	}
 
-	public static Atom createAtom(Predicate p, Term... terms) {
-		return new DefaultAtom(p, terms);
-	}
-
 	/**
 	 * 
 	 * @param owlClass
-	 * @return
+	 * @return a {@link Predicate} with arity 1 which represents the specified owl class.
 	 */
 	public static Predicate createPredicate(OWLClassExpression owlClass) {
 		Predicate predicate = null;
@@ -125,7 +122,7 @@ final class GraalUtils {
 	/**
 	 * 
 	 * @param owlDatatype
-	 * @return
+	 * @return a {@link Predicate} with arity 1 which represents the specified owl datatype.
 	 */
 	public static Predicate createPredicate(OWLDatatype owlDatatype) {
 		return GraalUtils.createPredicate(owlDatatype.getIRI());
@@ -143,7 +140,7 @@ final class GraalUtils {
 
 	/**
 	 * @param property
-	 * @return
+	 * @return a {@link Predicate} with arity 2 which represents the specified owl object property.
 	 */
 	public static Predicate createPredicate(OWLObjectPropertyExpression property) {
 		Predicate predicate = null;
@@ -152,6 +149,11 @@ final class GraalUtils {
 		return predicate;
 	}
 
+	/**
+	 * 
+	 * @param property
+	 * @return a {@link Predicate} with arity 2 which represents the specified owl data property.
+	 */
 	public static Predicate createPredicate(OWLDataPropertyExpression property) {
 		Predicate predicate = null;
 		URI uri = convertIRI(property.asOWLDataProperty().getIRI());
@@ -160,8 +162,8 @@ final class GraalUtils {
 	}
 
 	/**
-	 * @param value
-	 * @return
+	 * @param individu
+	 * @return a {@link Term} which represents the owl individual.
 	 */
 	public static Term createTerm(OWLIndividual individu) {
 		if (individu.isNamed()) {
@@ -175,9 +177,9 @@ final class GraalUtils {
 
 	/**
 	 * @param object
-	 * @return
+	 * @return a {@link Literal} which represents the owl literal.
 	 */
-	public static Term createLiteral(OWLLiteral object) {
+	public static Literal createLiteral(OWLLiteral object) {
 		return DefaultTermFactory.instance().createLiteral(
 				convertIRI(object.getDatatype().getIRI()), object.getLiteral());
 	}
@@ -191,7 +193,7 @@ final class GraalUtils {
 	}
 
 	/**
-	 * @return
+	 * @return a new empty {@link Collection}
 	 */
 	public static <T> Collection<T> createCollection() {
 		return new LinkedList<T>();

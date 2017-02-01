@@ -219,7 +219,7 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements RdbmsS
 	/**
 	 * 
 	 * @param driver
-	 * @throws SQLException
+	 * @throws AtomSetException
 	 */
 	public AbstractRdbmsStore(RdbmsDriver driver) throws AtomSetException {
 		this.driver = driver;
@@ -340,11 +340,6 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements RdbmsS
 
 	protected abstract Statement add(Statement statement, Atom atom) throws AtomSetException;
 
-	/**
-	 * 
-	 * @param atom
-	 * @return
-	 */
 	protected Statement remove(Statement statement, Atom atom) throws AtomSetException {
 		if (!this.check(atom)) {
 			return statement;
@@ -368,7 +363,7 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements RdbmsS
 	 * there is no table for it, a new table is created.
 	 * 
 	 * @param predicate
-	 * @return
+	 * @return the table informations associated to the specified predicate.
 	 * @throws AtomSetException
 	 */
 	protected DBTable createPredicateTableIfNotExist(Predicate predicate) throws AtomSetException {
@@ -386,7 +381,7 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements RdbmsS
 	 * there is no table for it, return null.
 	 * 
 	 * @param predicate
-	 * @return
+	 * @return the table informations associated to the specified predicate.
 	 * @throws AtomSetException
 	 */
 	protected DBTable getPredicateTable(Predicate predicate) throws AtomSetException {
@@ -405,7 +400,7 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements RdbmsS
 	 * informations.
 	 * 
 	 * @param predicate
-	 * @return
+	 * @return the table informations.
 	 * @throws AtomSetException
 	 */
 	protected DBTable createPredicateTable(Predicate predicate) throws AtomSetException {
@@ -470,7 +465,7 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements RdbmsS
 	 * predicate. If there is no table for it, return null.
 	 * 
 	 * @param predicate
-	 * @return
+	 * @return the table informations associated to the specified predicate if exist, null otherwise.
 	 * @throws AtomSetException
 	 */
 	protected abstract DBTable getPredicateTableIfExist(Predicate predicate) throws AtomSetException;

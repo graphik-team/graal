@@ -68,8 +68,8 @@ public interface Graph {
 	void addPath(int... path);
 
 	/**
-	 * @return
+	 * @return the index of the new vertex.
 	 */
-	int addVertice();
+	int addVertex();
 
 }

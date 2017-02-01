@@ -57,14 +57,14 @@ public interface Substitution extends Comparable<Substitution>, AppendableToStri
 	/**
 	 * Get the domain of this substitution.
 	 * 
-	 * @return
+	 * @return the domain of this substitution.
 	 */
 	Set<Variable> getTerms();
 	
 	/**
 	 * Get the codomain of this substitution.
 	 * 
-	 * @return
+	 * @return the codomain of this substitution.
 	 */
 	Set<Term> getValues();
 
@@ -102,7 +102,7 @@ public interface Substitution extends Comparable<Substitution>, AppendableToStri
 	 * true otherwise.
 	 * 
 	 * @param s
-	 * @return
+	 * @return false if there already exists an other image for a variable from the domain of s, true otherwise.
 	 */
 	boolean put(Substitution s);
 
@@ -145,8 +145,9 @@ public interface Substitution extends Comparable<Substitution>, AppendableToStri
 	 * For example, if the current substitution is {Y -> Z} and you compose it with
 	 * {X -> Y, V -> U}, the result is {X -> Z, Y -> Z, V -> U}.
 	 * 
-	 * @param s
-	 * @return
+	 * @param term
+	 * @param substitut
+	 * @return TODO
 	 */
 	boolean compose(Variable term, Term substitut);
 	
@@ -159,14 +160,14 @@ public interface Substitution extends Comparable<Substitution>, AppendableToStri
 	 * {X -> Y, V -> U}, the result is {X -> Z, Y -> Z, V -> U}.
 	 * 
 	 * @param s
-	 * @return
+	 * @return TODO
 	 */
 	Substitution compose(Substitution s);
 
 	/**
 	 * Apply this substitution on an atom.
 	 * @param atom (const)
-	 * @return
+	 * @return an Atom which is the image of specified one by this substitution.
 	 */
 	Atom createImageOf(Atom atom);
 
@@ -175,7 +176,7 @@ public interface Substitution extends Comparable<Substitution>, AppendableToStri
 	 * 
 	 * @param src
 	 *            (const)
-	 * @return
+	 * @return an InMemoryAtomSet which is the image of specified one by this substitution.
 	 * @throws AtomSetException
 	 */
 	InMemoryAtomSet createImageOf(AtomSet src) throws AtomSetException;
@@ -185,8 +186,7 @@ public interface Substitution extends Comparable<Substitution>, AppendableToStri
 	 * 
 	 * @param src
 	 *            (const)
-	 * @return
-	 * @throws AtomSetException
+	 * @return an InMemoryAtomSet which is the image of specified one by this substitution.
 	 */
 	InMemoryAtomSet createImageOf(InMemoryAtomSet src);
 
@@ -195,8 +195,7 @@ public interface Substitution extends Comparable<Substitution>, AppendableToStri
 	 * 
 	 * @param rule
 	 *            (const)
-	 * @return
-	 * @throws AtomSetException
+	 * @return an Rule which is the image of specified one by this substitution.
 	 */
 	Rule createImageOf(Rule rule);
 
@@ -206,7 +205,7 @@ public interface Substitution extends Comparable<Substitution>, AppendableToStri
 	 * 
 	 * @param src
 	 *            (const)
-	 * @param dest
+	 * @param target
 	 * @throws AtomSetException
 	 */
 	void apply(AtomSet src, AtomSet target) throws AtomSetException;
@@ -217,7 +216,7 @@ public interface Substitution extends Comparable<Substitution>, AppendableToStri
 	 * 
 	 * @param src
 	 *            (const)
-	 * @param dest
+	 * @param target
 	 */
 	void apply(InMemoryAtomSet src, InMemoryAtomSet target);
 

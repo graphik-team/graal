@@ -76,7 +76,6 @@ class AdHocResultSetPredicateIterator extends AbstractCloseableIterator<Predicat
 	 * @param store
 	 * @param sqlQuery
 	 * @throws SQLException
-	 * @throws StoreException
 	 */
 	public AdHocResultSetPredicateIterator(RdbmsStore store, String sqlQuery) throws SQLException {
 		this.statement = store.getDriver().createStatement();
