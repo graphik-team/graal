@@ -45,15 +45,13 @@
 */
 package fr.lirmm.graphik.graal.homomorphism;
 
-import org.apache.commons.lang3.NotImplementedException;
-
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
-import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.api.homomorphism.ExistentialHomomorphismWithCompilation;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
+import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 
 /**
  * A simple implementation of an algorithm to find if there exist an
@@ -64,8 +62,8 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
  * @author Mélanie KÖNIG
  * 
  */
-public class PureHomomorphism extends AbstractHomomorphismWithCompilation<InMemoryAtomSet, AtomSet>
-                              implements HomomorphismWithCompilation<InMemoryAtomSet, AtomSet> {
+public class PureHomomorphism extends AbstractProfilable
+		implements ExistentialHomomorphismWithCompilation<InMemoryAtomSet, AtomSet> {
 
 	private static PureHomomorphism instance;
 
@@ -84,22 +82,17 @@ public class PureHomomorphism extends AbstractHomomorphismWithCompilation<InMemo
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public CloseableIterator<Substitution> execute(InMemoryAtomSet source, AtomSet target, RulesCompilation compilation)
-	    throws HomomorphismException {
-		throw new NotImplementedException("");
-	}
-
-	/**
-	 * return true iff exist an homomorphism from the query to the fact else
-	 * return false
-	 */
-	@Override
 	public boolean exist(InMemoryAtomSet source, AtomSet target, RulesCompilation compilation)
-	    throws HomomorphismException {
+			throws HomomorphismException {
 
 		PureHomomorphismImpl homomorphism = new PureHomomorphismImpl(source, target, compilation);
 		homomorphism.setProfiler(this.getProfiler());
 		return homomorphism.exist();
+	}
+
+	@Override
+	public boolean exist(InMemoryAtomSet source, AtomSet target) throws HomomorphismException {
+		return this.exist(source, target, NoCompilation.instance());
 	}
 
 }
