@@ -55,6 +55,8 @@ import fr.lirmm.graphik.util.stream.IteratorException;
 public class ParseException extends IteratorException {
 
 	private static final long serialVersionUID = -4455111019098315998L;
+	private int line = -1;
+	private int column = -1;
 	
 	/**
 	 * @param message
@@ -70,9 +72,27 @@ public class ParseException extends IteratorException {
 	public ParseException(String message) {
 		super(message);
 	}
+	
+	/**
+	 * @param message
+	 */
+	public ParseException(String message, int line, int column) {
+		super("line " + line + " column " + column + ": " + message);
+		this.line = line;
+		this.column = column;
+	}
 
 	public ParseException(Throwable e) {
 		super(e);
+	}
+	
+	
+	public int getLine() {
+		return line;
+	}
+	
+	public int getColumn() {
+		return column;
 	}
 
 }

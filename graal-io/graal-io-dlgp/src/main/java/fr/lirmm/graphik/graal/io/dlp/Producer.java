@@ -45,8 +45,8 @@ package fr.lirmm.graphik.graal.io.dlp;
 import java.io.Reader;
 
 import fr.lirmm.graphik.dlgp2.parser.DLGP2Parser;
-import fr.lirmm.graphik.dlgp2.parser.ParseException;
 import fr.lirmm.graphik.graal.api.io.ParseError;
+import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.util.stream.InMemoryStream;
 
 class Producer implements Runnable {
@@ -67,8 +67,10 @@ class Producer implements Runnable {
 
 		try {
 			parser.document();
-		} catch (ParseException e) {
-			buffer.write(e);
+		} catch (fr.lirmm.graphik.dlgp2.parser.ParseException e) {
+			buffer.write(new DlgpParseException(e));
+		} catch (Throwable e) {
+			buffer.write(new DlgpParseException(e.getMessage(), parser.token.beginLine, parser.token.beginColumn));
 		} finally {
 			buffer.close();
 		}

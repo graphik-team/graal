@@ -60,18 +60,17 @@ import org.slf4j.LoggerFactory;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.NegativeConstraint;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.VariableGenerator;
 import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.api.io.Parser;
-import fr.lirmm.graphik.graal.core.DefaultNegativeConstraint;
 import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.ArrayBlockingStream;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.InMemoryStream;
-import fr.lirmm.graphik.util.stream.IteratorException;
 import fr.lirmm.graphik.util.stream.QueueStream;
 
 /**
@@ -158,6 +157,9 @@ public final class DlgpParser extends AbstractCloseableIterator<Object> implemen
 	public Object next() throws ParseException {
 		Object val = buffer.next();
 		if (val instanceof Throwable) {
+			if(val instanceof ParseException) {
+				throw (ParseException) val;
+			}
 			throw new ParseException("An error occured while parsing.", (Throwable)val);
 		}
 		return val;
@@ -185,107 +187,74 @@ public final class DlgpParser extends AbstractCloseableIterator<Object> implemen
 	// /////////////////////////////////////////////////////////////////////////
 
 	public static ConjunctiveQuery parseQuery(String s) throws ParseException {
-		InMemoryStream<Object> stream = new QueueStream<Object>();
-		Producer p = new Producer(new StringReader(s), stream);
 		try {
-			p.run();
-		} catch (Throwable t) {
-			throw new ParseException(t);
-		}
-
-		if (!stream.hasNext()) {
-			throw new ParseException("No statement found.");
-		}
-		Object o = stream.next();
-		stream.close();
-		try {
-			return (ConjunctiveQuery) o;
+			return (ConjunctiveQuery) parse(s);
 		} catch (ClassCastException e) {
-			throw new ParseException("Cannot cast parsed object into ConjunctiveQuery.", e);
+			throw new DlgpParseException("Wrong object type.", e);
 		}
 	}
 
 	public static Atom parseAtom(String s) throws ParseException {
-		InMemoryStream<Object> stream = new QueueStream<Object>();
-		Producer p = new Producer(new StringReader(s), stream);
 		try {
-			p.run();
-		} catch (Throwable t) {
-			throw new ParseException(t);
-		}
-
-		if (!stream.hasNext()) {
-			throw new ParseException("No statement found.");
-		}
-		Object o = stream.next();
-		stream.close();
-		try {
-			return (Atom) o;
+			return (Atom) parse(s);
 		} catch (ClassCastException e) {
-			throw new ParseException("Cannot cast parsed object into Atom.", e);
+			throw new DlgpParseException("Wrong object type.", e);
 		}
 	}
 
+	public static Rule parseRule(String s) throws ParseException {
+		try {
+			return (Rule) parse(s);
+		} catch (ClassCastException e) {
+			throw new DlgpParseException("Wrong object type.", e);
+		}
+	}
+
+	public static NegativeConstraint parseNegativeConstraint(String s) throws ParseException {
+		try {
+			return (NegativeConstraint) parse(s);
+		} catch (ClassCastException e) {
+			throw new DlgpParseException("Wrong object type.", e);
+		}
+	}
+	
 	public static CloseableIterator<Atom> parseAtomSet(String s) throws ParseException {
 		InMemoryStream<Object> stream = new QueueStream<Object>();
 		Producer p = new Producer(new StringReader(s), stream);
 		try {
 			p.run();
 		} catch (Throwable t) {
-			throw new ParseException(t);
+			throw new DlgpParseException(t);
 		}
 
-		InMemoryAtomSet atomset = new LinkedListAtomSet();
-		try {
-			while (stream.hasNext()) {
-				atomset.add((Atom) stream.next());
-			}
-			return atomset.iterator();
-		} catch (ClassCastException e) {
-			throw new ParseException("Cannot cast a parsed object into Atom.", e);
-		}
+		return new AtomCloseableIteratorWrapperHandlingParseException(stream);
 	}
-
-	public static Rule parseRule(String s) throws ParseException {
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE
+	// /////////////////////////////////////////////////////////////////////////
+	
+	private static Object parse(String s) throws ParseException {
 		InMemoryStream<Object> stream = new QueueStream<Object>();
 		Producer p = new Producer(new StringReader(s), stream);
 		try {
 			p.run();
 		} catch (Throwable t) {
-			throw new ParseException(t);
+			throw new DlgpParseException(t);
 		}
 
 		if (!stream.hasNext()) {
-			throw new ParseException("No statement found.");
+			throw new DlgpParseException("No statement found.");
 		}
 		Object o = stream.next();
+		if(stream.hasNext()) {
+			throw new DlgpParseException("Too much statements.");
+		}
 		stream.close();
-		try {
-			return (Rule) o;
-		} catch (ClassCastException e) {
-			throw new ParseException("Cannot cast parsed object into Rule.", e);
+		if(o instanceof ParseException) {
+			throw (ParseException) o;
 		}
-	}
-
-	public static DefaultNegativeConstraint parseNegativeConstraint(String s) throws ParseException {
-		InMemoryStream<Object> stream = new QueueStream<Object>();
-		Producer p = new Producer(new StringReader(s), stream);
-		try {
-			p.run();
-		} catch (Throwable t) {
-			throw new ParseException(t);
-		}
-
-		if (!stream.hasNext()) {
-			throw new ParseException("No statement found.");
-		}
-		Object o = stream.next();
-		stream.close();
-		try {
-			return (DefaultNegativeConstraint) o;
-		} catch (ClassCastException e) {
-			throw new ParseException("Cannot cast parsed object into DefaultNegativeConstraint.", e);
-		}
+		return o;
 	}
 
 };

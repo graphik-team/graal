@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2017)
  *
  * Contributors :
  *
@@ -40,22 +40,55 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.api.io;
+package fr.lirmm.graphik.graal.io.dlp;
 
-import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.io.ParseException;
+import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
+import fr.lirmm.graphik.util.stream.InMemoryStream;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
+class AtomCloseableIteratorWrapperHandlingParseException extends AbstractCloseableIterator<Atom> {
 
-/**
- * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- *
- */
-public interface Parser<T> extends CloseableIterator<T> {
-	
-	boolean hasNext() throws ParseException;
+	private final InMemoryStream<Object> stream;
 
-	T next() throws ParseException;
-	
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
+
+	public AtomCloseableIteratorWrapperHandlingParseException(InMemoryStream<Object> stream) {
+		this.stream = stream;
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	@Override
+	public boolean hasNext() {
+		return this.stream.hasNext();
+	}
+
+	@Override
+	public Atom next() throws IteratorException {
+		Object val = this.stream.next();
+		
+		if (val instanceof Throwable) {
+			if (val instanceof ParseException) {
+				throw (ParseException) val;
+			}
+			throw new ParseException("An error occured while parsing.", (Throwable) val);
+		} 
+		try {
+			return (Atom) val;
+		} catch (ClassCastException e) {
+			throw new ParseException("Wrong object type.", e);
+		}
+	}
+
+	@Override
+	public void close() {
+		this.stream.close();
+	}
+
 }

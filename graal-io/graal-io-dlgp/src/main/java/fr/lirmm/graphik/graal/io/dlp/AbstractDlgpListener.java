@@ -135,7 +135,7 @@ abstract class AbstractDlgpListener implements ParserListener {
 			Set<Term> bodyVars = this.atomSet.getTerms(Type.VARIABLE);
 			for(Term t : this.answerVars) {
 				if(t.isVariable() && !bodyVars.contains(t)) {
-					throw new ParseError("There is at least a variable in the answer list which does not appears in the query body.");
+					throw new ParseError("There is at least one variable in the answer list which does not appear in the query body.");
 				}
 			}
 			this.createQuery(
@@ -168,15 +168,15 @@ abstract class AbstractDlgpListener implements ParserListener {
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	private Predicate createPredicate(Object uri, int arity) {
+	private static Predicate createPredicate(Object uri, int arity) {
 		return new Predicate(uri, arity);
 	}
 
-	private Constant createConstant(Object uri) {
+	private static Constant createConstant(Object uri) {
 		return DefaultTermFactory.instance().createConstant(uri);
 	}
 
-	private Term createTerm(Object t) {
+	private static Term createTerm(Object t) {
 		if (t instanceof Term) {
 			return (Term) t;
 		} else {

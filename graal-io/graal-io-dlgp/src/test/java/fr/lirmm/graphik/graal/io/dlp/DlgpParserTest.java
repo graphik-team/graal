@@ -1,7 +1,8 @@
+package fr.lirmm.graphik.graal.io.dlp;
 
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2017)
  *
  * Contributors :
  *
@@ -51,14 +52,13 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Constant;
 import fr.lirmm.graphik.graal.api.core.Literal;
+import fr.lirmm.graphik.graal.api.core.NegativeConstraint;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.io.ParseException;
-import fr.lirmm.graphik.graal.core.DefaultNegativeConstraint;
+import fr.lirmm.graphik.graal.api.io.Parser;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
-import fr.lirmm.graphik.graal.io.dlp.Directive;
-import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.util.DefaultURI;
 import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -95,22 +95,22 @@ public class DlgpParserTest {
 
 	@Test(expected = ParseException.class)
 	public void parseAtomWrongObject() throws ParseException {
-		DlgpParser.parseQuery("p(X) :- q(X).");
+		DlgpParser.parseAtom("p(X) :- q(X).");
 	}
 
 	@Test(expected = ParseException.class)
 	public void parseAtomSyntax() throws ParseException {
-		DlgpParser.parseQuery("p(a)");
+		DlgpParser.parseAtom("p(a)");
 	}
 
 	@Test(expected = ParseException.class)
 	public void parseAtomTwoObject() throws ParseException {
-		DlgpParser.parseQuery("p(a). p(b).");
+		DlgpParser.parseAtom("p(a). p(b).");
 	}
 
 	@Test(expected = ParseException.class)
 	public void parseAtomNoObject() throws ParseException {
-		DlgpParser.parseQuery(".");
+		DlgpParser.parseAtom("");
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -120,6 +120,19 @@ public class DlgpParserTest {
 	@Test
 	public void parseAtomSet() throws ParseException, IteratorException {
 		CloseableIterator<Atom> it = DlgpParser.parseAtomSet("p(a). p(b), p(1).");
+		int cpt = 0;
+		while (it.hasNext()) {
+			++cpt;
+			Atom a = it.next();
+			Term t = a.getTerm(0);
+			Assert.assertTrue(t.equals(B) || t.equals(A) || t.equals(L1));
+		}
+		Assert.assertEquals(3, cpt);
+	}
+	
+	@Test(expected = DlgpParseException.class)
+	public void parseAtomSetException() throws ParseException, IteratorException {
+		CloseableIterator<Atom> it = DlgpParser.parseAtomSet("p(a). p(b) p(1).");
 		int cpt = 0;
 		while (it.hasNext()) {
 			++cpt;
@@ -235,7 +248,7 @@ public class DlgpParserTest {
 
 	@Test(expected = ParseException.class)
 	public void parseRuleWrongObject() throws ParseException {
-		DlgpParser.parseQuery("p(a).");
+		DlgpParser.parseRule("p(a).");
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -244,7 +257,7 @@ public class DlgpParserTest {
 
 	@Test
 	public void parseNegativeConstraint() throws ParseException {
-		DefaultNegativeConstraint r = DlgpParser.parseNegativeConstraint("[N1]!:-p(X,Y), q(X,Y).");
+		NegativeConstraint r = DlgpParser.parseNegativeConstraint("[N1]!:-p(X,Y), q(X,Y).");
 
 		CloseableIteratorWithoutException<Atom> it = r.getBody().iterator();
 		Atom body = it.next();
@@ -261,7 +274,7 @@ public class DlgpParserTest {
 
 	@Test(expected = ParseException.class)
 	public void parseNegativeConstraintWrongObject() throws ParseException {
-		DlgpParser.parseQuery("p(a).");
+		DlgpParser.parseNegativeConstraint("p(a).");
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -329,6 +342,108 @@ public class DlgpParserTest {
 			Assert.assertEquals("http://example.com/top", d.getValue());
 		}
 		Assert.assertTrue("No element found", b);
+		parser.close();
+	}
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// Exception
+	// /////////////////////////////////////////////////////////////////////////
+	
+	@Test(expected = DlgpParseException.class)
+	public void exception1() throws IteratorException {
+		DlgpParser parser = new DlgpParser(
+				"?(X) :- p(a)."
+				);
+		while (parser.hasNext()) {
+			parser.next();
+		}
+		parser.close();
+	}
+	
+	@Test(expected = DlgpParseException.class)
+	public void exception2() throws IteratorException {
+		DlgpParser parser = new DlgpParser(
+				"p(a,b.\n"
+				);
+		while (parser.hasNext()) {
+			parser.next();
+		}
+		parser.close();
+	}
+	
+	@Test(expected = DlgpParseException.class)
+	public void exception3() throws IteratorException {
+		DlgpParser parser = new DlgpParser(
+				"P(a,b.\n"
+				);
+		while (parser.hasNext()) {
+			parser.next();
+		}
+		parser.close();
+	}
+	
+	@Test(expected = DlgpParseException.class)
+	public void exception4() throws IteratorException {
+		DlgpParser parser = new DlgpParser(
+				"."
+				);
+		while (parser.hasNext()) {
+			parser.next();
+		}
+		parser.close();
+	}
+	
+	@Test(expected = DlgpParseException.class)
+	public void exception5() throws IteratorException {
+		DlgpParser parser = new DlgpParser(
+				" :- p(a)."
+				);
+		while (parser.hasNext()) {
+			parser.next();
+		}
+		parser.close();
+	}
+	
+	@Test(expected = DlgpParseException.class)
+	public void exception6() throws IteratorException {
+		DlgpParser parser = new DlgpParser(
+				"! :-."
+				);
+		while (parser.hasNext()) {
+			parser.next();
+		}
+		parser.close();
+	}
+	
+	@Test(expected = DlgpParseException.class)
+	public void exception7() throws IteratorException {
+		DlgpParser parser = new DlgpParser(
+				"[label ? :- p(a)."
+				);
+		while (parser.hasNext()) {
+			parser.next();
+		}
+		parser.close();
+	}
+	
+	@Test(expected = DlgpParseException.class)
+	public void exception8() throws IteratorException {
+		DlgpParser parser = new DlgpParser(
+				"p(a)"
+				);
+		while (parser.hasNext()) {
+			parser.next();
+		}
+		parser.close();
+	}
+	@Test(expected = DlgpParseException.class)
+	public void exception9() throws IteratorException {
+		DlgpParser parser = new DlgpParser(
+				"p(a) p(b)."
+				);
+		while (parser.hasNext()) {
+			parser.next();
+		}
 		parser.close();
 	}
 	
