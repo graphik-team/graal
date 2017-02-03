@@ -72,9 +72,9 @@ import fr.lirmm.graphik.graal.api.core.ConstantGenerator;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
-import fr.lirmm.graphik.graal.api.store.AbstractTripleStore;
 import fr.lirmm.graphik.graal.api.store.WrongArityException;
 import fr.lirmm.graphik.graal.core.DefaultConstantGenerator;
+import fr.lirmm.graphik.graal.core.store.AbstractTripleStore;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -321,6 +321,7 @@ public class JenaStore extends AbstractTripleStore {
 	}
 
 	@Override
+	@Deprecated
 	public Set<Term> getTerms(Type type) {
 		Set<Term> terms = this.getTerms();
 		Iterator<Term> it = terms.iterator();
@@ -334,6 +335,7 @@ public class JenaStore extends AbstractTripleStore {
 	}
 
 	@Override
+	@Deprecated
 	public CloseableIterator<Term> termsIterator(Term.Type type) {
 		// TODO use a ResultSetIterator
 		return new CloseableIteratorAdapter<Term>(this.getTerms(type).iterator());

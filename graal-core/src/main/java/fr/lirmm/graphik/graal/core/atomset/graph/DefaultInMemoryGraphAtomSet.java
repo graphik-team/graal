@@ -205,6 +205,7 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 	}
 
 	@Override
+	@Deprecated
 	public Set<Term> getTerms(Type type) {
 		TreeSet<Term> set = new TreeSet<Term>();
 		for (Term t : this.terms.keySet())
@@ -215,6 +216,7 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 	}
 
 	@Override
+	@Deprecated
 	public CloseableIteratorWithoutException<Term> termsIterator(Term.Type type) {
 		return new CloseableIteratorAdapter<Term>(this.getTerms(type).iterator());
 	}

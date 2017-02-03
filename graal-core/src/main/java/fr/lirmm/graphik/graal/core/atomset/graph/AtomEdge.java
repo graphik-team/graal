@@ -133,6 +133,7 @@ class AtomEdge extends AbstractAtom implements Edge {
 	}
 
 	@Override
+	@Deprecated
 	public Collection<Term> getTerms(Type type) {
 		Collection<Term> typedTerms = new LinkedList<Term>();
 		for (Term term : this.terms)

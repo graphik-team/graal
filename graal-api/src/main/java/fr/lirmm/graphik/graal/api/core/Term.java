@@ -54,7 +54,9 @@ import java.io.Serializable;
  */
 public interface Term extends Comparable<Term>, Serializable {
 
-	/**
+	/*
+	 * This class is deprecated since 1.3. <br>
+	 * <br>
 	 * The enumeration of term types.
 	 */
 	@Deprecated
@@ -77,21 +79,54 @@ public interface Term extends Comparable<Term>, Serializable {
 	}
 
 	/**
+	 * Returns true iff this term is a Constant. 
+	 * The returned value of {@link #isConstant()} must be equals to !{@link #isVariable()}.
 	 * 
-	 * @return this.getType().isConstant();
+	 * @return true if this term is a constant, false otherwise.
 	 */
 	boolean isConstant();
 
-	/**
+	/** 
+	 * Returns true if this term is a Variable.
+	 * The returned value of {@link #isVariable()} must be equals to !{@link #isConstant()}.
+	 *
 	 * 
-	 * @return this.getType().isVariable();
+	 * @return true if this term is a variable, false otherwise.
 	 */
 	boolean isVariable();
+	
+	/**
+	 * Returns true if this term is a literal, in this case
+	 * {@link #isConstant()} must also return true.
+	 * 
+	 * @return true if this term is a literal, false otherwise.
+	 */
+	boolean isLiteral();
 
+	/**
+	 * Return a label that represents this term. 
+	 * There is no guarantee that two terms with the same label represent the same term (see {@link #getIdentifier()}).
+	 * 
+	 * @return a label that represents this term.
+	 */
 	String getLabel();
 
+	/**
+	 * A unique identifier of this term. The following constraint must be fulfil: <br>
+	 * <code>this.getIdentifier().equals(o.getIdentifier())</code> 
+	 * must be equivalent to
+	 * <code>this.equals(o)</code>.
+	 * @return a unique identifier of this term.
+	 */
 	Object getIdentifier();
 
+	/**
+	 * This method is deprecated since 1.3, use {@link #isVariable()}, {@link #isConstant()} or {@link #isLiteral()} instead. <br>
+	 * <br>
+	 * 
+	 * @return the {@link Type} of this term.
+	 */
+	@Deprecated
 	Type getType();
 
 }

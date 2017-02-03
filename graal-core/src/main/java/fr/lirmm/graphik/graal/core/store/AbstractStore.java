@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,15 +40,27 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.api.store;
+package fr.lirmm.graphik.graal.core.store;
+
+import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.store.BatchProcessor;
+import fr.lirmm.graphik.graal.api.store.Store;
+import fr.lirmm.graphik.graal.core.atomset.AbstractAtomSet;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public abstract class GraphDBStore extends AbstractStore implements Store {
+public abstract class AbstractStore extends AbstractAtomSet implements Store {
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	@Override
+	public BatchProcessor createBatchProcessor() throws AtomSetException {
+		return new DefaultBatchProcessor(this);
+	}
+
 
 }

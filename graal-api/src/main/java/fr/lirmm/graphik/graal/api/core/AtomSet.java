@@ -120,6 +120,43 @@ public interface AtomSet extends CloseableIterable<Atom> {
 	 * @throws AtomSetException
 	 */
 	Set<Term> getTerms() throws AtomSetException;
+	
+	/**
+	 * Returns a Set of all variables in this atom set.
+	 * 
+	 * @return a Set of all variables.
+	 * @throws AtomSetException
+	 */
+	Set<Variable> getVariables() throws AtomSetException;
+	
+	/**
+	 * Returns a Set of all constants in this atom set.
+	 * 
+	 * @return a Set of all constants.
+	 * @throws AtomSetException
+	 */
+	Set<Constant> getConstants() throws AtomSetException;
+	
+	/**
+	 * Returns a Set of all literals in this atom set.
+	 * 
+	 * @return a Set of all literals.
+	 * @throws AtomSetException
+	 */
+	Set<Literal> getLiterals() throws AtomSetException;
+	
+	/**
+	 * This method is deprecated since 1.3, use {@link #getVariables()}, {@link #getConstants()} or {@link #getLiterals()} instead.
+	 * <br><br>
+	 * 
+	 * Returns a Set of all terms of the specified type in this atom set.
+	 * 
+	 * @param type
+	 * @return a collection of all terms of the specified type in this atom set.
+	 * @throws AtomSetException
+	 */
+	@Deprecated
+	Set<Term> getTerms(Term.Type type) throws AtomSetException;
 
 	/**
 	 * Returns an iterator over all terms in this atom set. Each term is iterated
@@ -131,16 +168,38 @@ public interface AtomSet extends CloseableIterable<Atom> {
 	CloseableIterator<Term> termsIterator() throws AtomSetException;
 	
 	/**
-	 * Returns a Set of all terms of the specified type in this atom set.
+	 * Returns an iterator over all variables in this atom set. Each term is iterated
+	 * only once time.
 	 * 
-	 * @param type
-	 * @return a collection of all terms of the specified type in this atom set.
+	 * @return an iterator over all variables.
 	 * @throws AtomSetException
 	 */
-	Set<Term> getTerms(Term.Type type) throws AtomSetException;
+	CloseableIterator<Variable> variablesIterator() throws AtomSetException;
+	
+	/**
+	 * Returns an iterator over all constants in this atom set. Each term is iterated
+	 * only once time.
+	 * 
+	 * @return an iterator over all constants.
+	 * @throws AtomSetException
+	 */
+	CloseableIterator<Constant> constantsIterator() throws AtomSetException;
+	
+	/**
+	 * Returns an iterator over all literals in this atom set. Each term is iterated
+	 * only once time.
+	 * 
+	 * @return an iterator over all literals.
+	 * @throws AtomSetException
+	 */
+	CloseableIterator<Literal> literalsIterator() throws AtomSetException;
+	
 
 
 	/**
+	 * This method is deprecated since 1.3, use {@link #variablesIterator()}, {@link #constantsIterator()} or {@link #literalsIterator()} instead.
+	 * <br><br>
+	 * 
 	 * Returns an iterator of all terms of the specified type in this atom set.
 	 * Each term is iterated only once time.
 	 * 
@@ -148,6 +207,7 @@ public interface AtomSet extends CloseableIterable<Atom> {
 	 * @return an iterator of all terms.
 	 * @throws AtomSetException
 	 */
+	@Deprecated
 	CloseableIterator<Term> termsIterator(Term.Type type) throws AtomSetException;
 
 	/**

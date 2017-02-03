@@ -47,7 +47,6 @@ package fr.lirmm.graphik.graal.core.atomset;
 
 import java.util.Set;
 
-import fr.lirmm.graphik.graal.api.core.AbstractAtomSet;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
@@ -118,6 +117,7 @@ public abstract class AbstractInMemoryAtomSet extends AbstractAtomSet implements
 	}
 
 	@Override
+	@Deprecated
 	public Set<Term> getTerms(Type type) {
 		try {
 			return super.getTerms(type);

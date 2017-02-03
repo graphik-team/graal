@@ -40,49 +40,60 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.api.core;
+package fr.lirmm.graphik.graal.core.store;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.store.BatchProcessor;
+import fr.lirmm.graphik.graal.api.store.Store;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public abstract class AbstractImmutableAtomSet extends AbstractAtomSet {
+public class DefaultBatchProcessor implements BatchProcessor {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultBatchProcessor.class);
+
+	private Store store;
+
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
+
+	public DefaultBatchProcessor(Store store) {
+		LOGGER.warn("You use the default implementation of BatchProcessor. This implementation is not efficient!");
+		this.store = store;
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public boolean add(Atom atom) throws AtomSetException {
-		throw new UnsupportedOperationException();
+	public void addAll(CloseableIterator<? extends Atom> it) throws AtomSetException {
+		this.store.addAll(it);
 	}
 
 	@Override
-	public boolean addAll(CloseableIterator<? extends Atom> atoms) throws AtomSetException {
-		throw new UnsupportedOperationException();
+	public void add(Atom a) throws AtomSetException {
+		this.store.add(a);
 	}
 
 	@Override
-	public boolean addAll(AtomSet atoms) throws AtomSetException {
-		throw new UnsupportedOperationException();
+	public void flush() throws AtomSetException {
 	}
 
 	@Override
-	public boolean remove(Atom atom) throws AtomSetException {
-		throw new UnsupportedOperationException();
+	public void commit() throws AtomSetException {
 	}
 
 	@Override
-	public boolean removeAll(CloseableIterator<? extends Atom> atoms) throws AtomSetException {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public boolean removeAll(AtomSet atoms) throws AtomSetException {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public void clear() throws AtomSetException {
-		throw new UnsupportedOperationException();
+	public void close() {
 	}
 
 }

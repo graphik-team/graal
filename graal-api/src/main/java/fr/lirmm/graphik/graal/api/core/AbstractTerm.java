@@ -69,12 +69,17 @@ public abstract class AbstractTerm implements Term {
 
 	@Override
 	public final boolean isConstant() {
-		return this.getType().isConstant();
+		return this instanceof Constant;
 	}
 
 	@Override
 	public final boolean isVariable() {
-		return this.getType().isVariable();
+		return this instanceof Variable;
+	}
+	
+	@Override
+	public final boolean isLiteral() {
+		return this instanceof Literal;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -107,26 +112,17 @@ public abstract class AbstractTerm implements Term {
 	}
 
 	public boolean equals(Term term) {
-		if (this.getType().equals(term.getType())) {
-			if (this.getIdentifier().getClass().equals(term.getIdentifier().getClass())) {
-				return this.getIdentifier().equals(term.getIdentifier());
-			}
-		}
-		return false;
+		return this.getIdentifier().equals(term.getIdentifier());
 	}
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + this.getType().toString().hashCode();
-		result = prime * result + this.getIdentifier().hashCode();
-		return result;
+		return this.getIdentifier().hashCode();
 	}
 
 	@Override
 	public String toString() {
-		return this.getIdentifier().toString();
+		return this.getLabel();
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

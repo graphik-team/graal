@@ -53,7 +53,7 @@ import fr.lirmm.graphik.graal.api.core.Mapper;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
-import fr.lirmm.graphik.graal.api.store.AbstractStore;
+import fr.lirmm.graphik.graal.core.store.AbstractStore;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.converter.ConverterCloseableIterator;
 
@@ -116,6 +116,7 @@ public class MappedStore extends AbstractStore {
 	}
 
 	@Override
+	@Deprecated
 	public CloseableIterator<Term> termsIterator(Type type) throws AtomSetException {
 		return atomset.termsIterator(type);
 	}

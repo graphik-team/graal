@@ -217,6 +217,7 @@ public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements InMemo
 	}
 
 	@Override
+	@Deprecated
 	public Set<Term> getTerms(Term.Type type) {
 		Set<Term> terms = new TreeSet<Term>();
 		for (Atom a : this.linkedList) {
@@ -226,6 +227,7 @@ public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements InMemo
 	}
 
 	@Override
+	@Deprecated
 	public CloseableIteratorWithoutException<Term> termsIterator(Term.Type type) {
 		return new CloseableIteratorAdapter<Term>(this.getTerms(type).iterator());
 	}

@@ -71,9 +71,9 @@ import fr.lirmm.graphik.graal.api.core.ConstantGenerator;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
-import fr.lirmm.graphik.graal.api.store.GraphDBStore;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultConstantGenerator;
+import fr.lirmm.graphik.graal.core.store.GraphDBStore;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -272,6 +272,7 @@ public class Neo4jStore extends GraphDBStore {
 	}
 
 	@Override
+	@Deprecated
 	public CloseableIterator<Term> termsIterator(Type type) throws AtomSetException {
 		Map<String, Object> params = new TreeMap<String, Object>();
 		params.put("type", type.toString());
@@ -282,6 +283,7 @@ public class Neo4jStore extends GraphDBStore {
 	}
 
 	@Override
+	@Deprecated
 	public Set<Term> getTerms(Type type) throws AtomSetException {
 		TreeSet<Term> set = new TreeSet<Term>();
 		CloseableIterator<Term> it = this.termsIterator(type);

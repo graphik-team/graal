@@ -412,6 +412,7 @@ public class AdHocRdbmsStore extends AbstractRdbmsStore {
 	}
 
 	@Override
+	@Deprecated
 	public CloseableIterator<Term> termsIterator(Type type) throws AtomSetException {
 		try {
 			this.getTermsByTypeStatement.setString(1, type.toString());

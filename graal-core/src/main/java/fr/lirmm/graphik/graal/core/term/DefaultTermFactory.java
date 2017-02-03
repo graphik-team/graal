@@ -98,6 +98,7 @@ public class DefaultTermFactory implements TermFactory {
 	}
 
 	@Override
+	@Deprecated
 	public Term createTerm(Object o, Term.Type type) {
 		switch (type) {
 		case VARIABLE:

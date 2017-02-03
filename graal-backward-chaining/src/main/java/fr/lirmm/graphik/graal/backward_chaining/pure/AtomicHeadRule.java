@@ -110,6 +110,7 @@ class AtomicHeadRule implements Rule {
 	}
 
 	@Override
+	@Deprecated
 	public Set<Term> getTerms(Type type) {
 		return this.rule.getTerms(type);
 	}

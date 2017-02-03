@@ -107,6 +107,7 @@ final class DefaultLiteral extends AbstractTerm implements Literal {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
+	@Deprecated
 	public final Term.Type getType() {
 		return Term.Type.LITERAL;
 	}

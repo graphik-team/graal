@@ -80,6 +80,7 @@ final class DefaultVariable extends AbstractTerm implements Variable {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
+	@Deprecated
 	public final Term.Type getType() {
 		return Term.Type.VARIABLE;
 	}

@@ -119,6 +119,7 @@ abstract class AbstractTermVertex extends AbstractTerm implements TermVertex {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
+	@Deprecated
 	public Type getType() {
 		return this.getTerm().getType();
 	}

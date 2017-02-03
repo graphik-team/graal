@@ -215,6 +215,7 @@ public class NaturalRDBMSStore extends AbstractRdbmsStore {
 	}
 
 	@Override
+	@Deprecated
 	public CloseableIterator<Term> termsIterator(Type type) throws AtomSetException {
 		Set<Term> terms = new TreeSet<Term>();
 		CloseableIterator<Predicate> predIt = this.predicatesIterator();

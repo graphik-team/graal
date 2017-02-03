@@ -74,10 +74,10 @@ import fr.lirmm.graphik.graal.api.core.Literal;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
-import fr.lirmm.graphik.graal.api.store.AbstractTripleStore;
 import fr.lirmm.graphik.graal.api.store.WrongArityException;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultConstantGenerator;
+import fr.lirmm.graphik.graal.core.store.AbstractTripleStore;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.URIUtils;
@@ -354,12 +354,14 @@ public class SailStore extends AbstractTripleStore {
 	}
 
 	@Override
+	@Deprecated
 	public CloseableIterator<Term> termsIterator(Type type) throws AtomSetException {
 		// TODO implements other type
 		return this.termsIterator();
 	}
 
 	@Override
+	@Deprecated
 	public Set<Term> getTerms(Type type) throws AtomSetException {
 		// TODO implements other type
 		return this.getTerms();

@@ -60,7 +60,7 @@ import org.slf4j.LoggerFactory;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.Predicate;
-import fr.lirmm.graphik.graal.api.store.AbstractStore;
+import fr.lirmm.graphik.graal.core.store.AbstractStore;
 import fr.lirmm.graphik.graal.homomorphism.DefaultHomomorphismFactory;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
 import fr.lirmm.graphik.graal.store.rdbms.homomorphism.SqlHomomorphismChecker;

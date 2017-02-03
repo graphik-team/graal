@@ -65,6 +65,15 @@ public interface TermFactory {
 	
 	Term createTerm(Term term);
 
+	/**
+	 * This method is deprecated since 1.3, use {@link #createVariable()}, {@link #createConstant()} or {@link #createLiteral()} instead. 
+	 * <br><br>
+	 * 
+	 * @param o
+	 * @param type
+	 * @return a new Term.
+	 */
+	@Deprecated
 	Term createTerm(Object o, Term.Type type);
 
 	Variable createVariable(Object identifier);

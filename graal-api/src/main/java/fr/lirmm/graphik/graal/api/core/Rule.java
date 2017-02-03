@@ -103,6 +103,7 @@ public interface Rule extends Comparable<Rule>, AppendableToStringBuilder {
 	 * 
 	 * @return a Set of all Term of the specified type related to this Rule.  
 	 */
+	@Deprecated
 	Set<Term> getTerms(Term.Type type);
 
 	/**

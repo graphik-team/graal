@@ -81,6 +81,7 @@ public interface Store extends AtomSet {
 	CloseableIterator<Term> termsIterator() throws AtomSetException;
 
 	@Override
+	@Deprecated
 	CloseableIterator<Term> termsIterator(Term.Type type) throws AtomSetException;
 
 	void close();

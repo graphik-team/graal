@@ -105,6 +105,7 @@ public class DefaultAtom extends AbstractAtom implements Serializable {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
+	@Deprecated
 	public Collection<Term> getTerms(Term.Type type) {
 		Collection<Term> typedTerms = new LinkedList<Term>();
 		for (Term term : this.terms)

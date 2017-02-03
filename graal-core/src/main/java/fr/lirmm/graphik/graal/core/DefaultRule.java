@@ -146,6 +146,7 @@ public class DefaultRule extends AbstractRule {
 	}
 
 	@Override
+	@Deprecated
 	public Set<Term> getTerms(Term.Type type) {
 		Set<Term> terms = new TreeSet<Term>();
 		terms.addAll(this.getBody().getTerms(type));

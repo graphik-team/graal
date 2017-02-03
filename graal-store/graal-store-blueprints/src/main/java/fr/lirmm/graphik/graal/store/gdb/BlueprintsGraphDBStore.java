@@ -62,9 +62,9 @@ import fr.lirmm.graphik.graal.api.core.ConstantGenerator;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
-import fr.lirmm.graphik.graal.api.store.GraphDBStore;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultConstantGenerator;
+import fr.lirmm.graphik.graal.core.store.GraphDBStore;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
@@ -199,6 +199,7 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 	}
 
 	@Override
+	@Deprecated
 	public Set<Term> getTerms(Type type) {
 		Set<Term> terms = new TreeSet<Term>();
 		GraphQuery query = this.graph.query();
@@ -212,6 +213,7 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 	}
 
 	@Override
+	@Deprecated
 	public CloseableIterator<Term> termsIterator(Term.Type type) {
 		return new CloseableIteratorAdapter<Term>(this.getTerms(type).iterator());
 	}

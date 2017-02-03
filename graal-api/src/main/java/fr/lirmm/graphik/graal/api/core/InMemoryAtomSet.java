@@ -82,9 +82,11 @@ public interface InMemoryAtomSet extends AtomSet, CloseableIterableWithoutExcept
 	CloseableIteratorWithoutException<Term> termsIterator();
 	
 	@Override
+	@Deprecated
 	Set<Term> getTerms(Term.Type type);
 
 	@Override
+	@Deprecated
 	CloseableIteratorWithoutException<Term> termsIterator(Term.Type type);
 
 	@Override

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2016)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,34 +40,52 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.api.store;
+package fr.lirmm.graphik.graal.core.atomset;
+
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public abstract class AbstractTripleStore extends AbstractStore implements
-		TripleStore {
+public abstract class AbstractImmutableAtomSet extends AbstractAtomSet {
 
-	protected static final String DEFAULT_PREFIX = "graal:";
-	
-	protected static final String DEFAULT_PREFIX_VALUE = "<http://inria.fr/graphik/graal/>";
-	
-	protected static final String PREFIX = "PREFIX " + DEFAULT_PREFIX + " " + DEFAULT_PREFIX_VALUE + " ";
-
-	protected static final String SELECT_ALL = PREFIX + "SELECT ?s ?p ?o WHERE { ?s ?p ?o } ";
-
-	protected static final String SELECT_TERMS_QUERY = PREFIX
-			+ "SELECT DISTINCT ?term " + " WHERE { { ?term  ?p  ?o } "
-			+ " UNION { ?s ?p ?term } } ";
-
-	protected static final String SELECT_PREDICATES_QUERY = PREFIX
-			+ "SELECT DISTINCT ?p " + " WHERE { ?s ?p ?o }";
-	
-	public String getDefaultPrefix() {
-		return "graal:";
+	@Override
+	public boolean add(Atom atom) throws AtomSetException {
+		throw new UnsupportedOperationException();
 	}
+
+	@Override
+	public boolean addAll(CloseableIterator<? extends Atom> atoms) throws AtomSetException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean addAll(AtomSet atoms) throws AtomSetException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean remove(Atom atom) throws AtomSetException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean removeAll(CloseableIterator<? extends Atom> atoms) throws AtomSetException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean removeAll(AtomSet atoms) throws AtomSetException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void clear() throws AtomSetException {
+		throw new UnsupportedOperationException();
+	}
+
 }

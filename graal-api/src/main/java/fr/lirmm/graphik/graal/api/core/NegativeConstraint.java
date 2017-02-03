@@ -86,6 +86,7 @@ public interface NegativeConstraint extends Rule, AppendableToStringBuilder {
 	 * 
 	 * @return a Set of all Term of the specified type related to this NegativeConstraint.  
 	 */
+	@Deprecated
 	Set<Term> getTerms(Term.Type type);
 
 	/**

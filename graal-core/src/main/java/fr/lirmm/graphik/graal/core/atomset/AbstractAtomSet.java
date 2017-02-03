@@ -43,7 +43,7 @@
  /**
  * 
  */
-package fr.lirmm.graphik.graal.api.core;
+package fr.lirmm.graphik.graal.core.atomset;
 
 import java.util.Set;
 import java.util.TreeSet;
@@ -51,8 +51,21 @@ import java.util.TreeSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.AtomComparator;
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.Constant;
+import fr.lirmm.graphik.graal.api.core.Literal;
+import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
+import fr.lirmm.graphik.graal.notapi.ConstantFilter;
+import fr.lirmm.graphik.graal.notapi.LiteralFilter;
+import fr.lirmm.graphik.graal.notapi.VariableFilter;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.filter.FilterIterator;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -126,8 +139,66 @@ public abstract class AbstractAtomSet implements AtomSet {
 		}
 		return terms;
 	}
+	
+	@Override
+	public Set<Variable> getVariables() throws AtomSetException {
+		Set<Variable> terms = new TreeSet<Variable>();
+		CloseableIterator<Variable> it = this.variablesIterator();
+		try {
+			while (it.hasNext()) {
+				terms.add(it.next());
+			}
+		} catch (Exception e) {
+			throw new AtomSetException(e);
+		}
+		return terms;
+	}
+	
+	@Override
+	public Set<Constant> getConstants() throws AtomSetException {
+		Set<Constant> terms = new TreeSet<Constant>();
+		CloseableIterator<Constant> it = this.constantsIterator();
+		try {
+			while (it.hasNext()) {
+				terms.add(it.next());
+			}
+		} catch (Exception e) {
+			throw new AtomSetException(e);
+		}
+		return terms;
+	}
+	
+	@Override
+	public Set<Literal> getLiterals() throws AtomSetException {
+		Set<Literal> terms = new TreeSet<Literal>();
+		CloseableIterator<Literal> it = this.literalsIterator();
+		try {
+			while (it.hasNext()) {
+				terms.add(it.next());
+			}
+		} catch (Exception e) {
+			throw new AtomSetException(e);
+		}
+		return terms;
+	}
+	
+	@Override
+	public CloseableIterator<Variable> variablesIterator() throws AtomSetException {
+		return new FilterIterator<Term, Variable>(this.termsIterator(), VariableFilter.instance());
+	}
+	
+	@Override
+	public CloseableIterator<Constant> constantsIterator() throws AtomSetException {
+		return new FilterIterator<Term, Constant>(this.termsIterator(), ConstantFilter.instance());
+	}
+	
+	@Override
+	public CloseableIterator<Literal> literalsIterator() throws AtomSetException {
+		return new FilterIterator<Term, Literal>(this.termsIterator(), LiteralFilter.instance());
+	}
 
 	@Override
+	@Deprecated
 	public Set<Term> getTerms(Type type) throws AtomSetException {
 		Set<Term> terms = new TreeSet<Term>();
 		try {
