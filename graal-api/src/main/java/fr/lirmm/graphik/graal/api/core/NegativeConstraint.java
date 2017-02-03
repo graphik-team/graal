@@ -50,6 +50,11 @@ import java.util.Set;
 import fr.lirmm.graphik.util.string.AppendableToStringBuilder;
 
 /**
+ * This interface represents a negative constraint. A negative constraint C is a conjunction of atoms
+ * interpreted as the negation of its existential closure ∄X C[X] where X denotes a set of variables.
+ * Equivalently, it can be seen as a rule 
+ * of the form C -> ⊥, where ⊥ denotes the absurd symbol (which is always false).
+ *  
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */

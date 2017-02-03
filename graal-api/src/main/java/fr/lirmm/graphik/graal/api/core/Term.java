@@ -48,6 +48,7 @@ package fr.lirmm.graphik.graal.api.core;
 import java.io.Serializable;
 
 /**
+ * A Term is either a {@link Constant} or {@link Variable}.
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
@@ -56,6 +57,7 @@ public interface Term extends Comparable<Term>, Serializable {
 	/**
 	 * The enumeration of term types.
 	 */
+	@Deprecated
 	public static enum Type {
 							 CONSTANT(false), VARIABLE(true), LITERAL(false);
 

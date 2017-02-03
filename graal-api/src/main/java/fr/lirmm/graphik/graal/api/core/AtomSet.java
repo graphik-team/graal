@@ -48,7 +48,9 @@ import fr.lirmm.graphik.util.stream.CloseableIterable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
- * This interface represents a set of atoms.
+ * This interface represents a set of atoms. You can interpret this set like
+ * you want, disjunction or conjunction of atoms. However, in Graal, it is 
+ * almost always interpreted as a <em>conjunction</em>.
  * 
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 

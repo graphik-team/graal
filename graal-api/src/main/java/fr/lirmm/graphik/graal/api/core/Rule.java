@@ -47,9 +47,11 @@ import java.util.Set;
 import fr.lirmm.graphik.util.string.AppendableToStringBuilder;
 
 /**
- * This interface represents an existential rule.
- * A Rule is a pair (B,H) of atom set such as "B -> H".
- * 
+ * This interface represents an existential rule. An existential rule is a positive rule of the form B -> H,
+ * where B and H are conjunctions of atoms; it is interpreted as the formula ∀X(∃Y B[X,Y] -> ∃Z H[X,Z]), or equivalently
+ * ∀X∀Y(B[X,Y] -> ∃Z H[X,Z]), where X are the variables shared by B and H, Y are the variables that occur only in B and Z
+ * the ones that occur only in H. Note that Z are existentially quantified.
+ *  
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  */
 public interface Rule extends Comparable<Rule>, AppendableToStringBuilder {

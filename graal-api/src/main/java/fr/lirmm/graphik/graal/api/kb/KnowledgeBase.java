@@ -53,11 +53,13 @@ import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.util.profiler.Profilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
+ * A knowledge base is composed of facts, existential rules, negative constraints and queries. It provides
+ * methods to facilitate their management.
+ * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */

@@ -49,8 +49,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * This interface represents a conjunctive query. A conjunctive query is
- * composed of a fact and a set of answer variables.
+ * This interface represents a conjunctive query with a negated part. A conjunctive query with negation is
+ * composed of a positive set of facts, a negative set of facts and a set of answer variables.
  * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
@@ -65,13 +65,13 @@ public interface ConjunctiveQueryWithNegation extends Query {
 	String getLabel();
 	
 	/**
-	 * Get the atom conjunction representing the query.
+	 * Get the positive set of facts of the query.
 	 * @return an atom set representing the atom conjunction of the query.
 	 */
 	InMemoryAtomSet getPositiveAtomSet();
 	
 	/**
-	 * Get the atom conjunction representing the query.
+	 * Get the negative set of facts of the query.
 	 * @return an atom set representing the atom conjunction of the query.
 	 */
 	InMemoryAtomSet getNegativeAtomSet();

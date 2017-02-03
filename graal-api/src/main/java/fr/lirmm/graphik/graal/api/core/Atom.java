@@ -50,7 +50,10 @@ import java.util.Set;
 import fr.lirmm.graphik.util.string.AppendableToStringBuilder;
 
 /**
- * This interface represents a logical atom like p(X,Y).
+ * This interface represents a logical atom. An <em>atom</em> is of the form p(e<sub>1</sub>…e<sub>k</sub>)
+ * where <em>p</em> is a predicate, <em>k</em> >= 1 the arity of <em>p</em>, and each e<sub>i</sub> is a term.
+ * 
+ * @author Clément Sipieter (INRIA/CNRS) {@literal <clement@6pi.fr>}
  */
 public interface Atom extends Comparable<Atom>, Iterable<Term>, AppendableToStringBuilder {
 

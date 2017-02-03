@@ -51,9 +51,11 @@ import fr.lirmm.graphik.util.stream.CloseableIterableWithoutException;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
- * This interface represents a conjunctive query. A conjunctive query is
- * composed of a fact and a set of answer variables.
- * 
+ * This interface represents a conjunctive query. A conjunctive query Q is a conjunction of 
+ * atoms with a distinguished subset of its variables (the answer variables). It is
+ * interpreted as the logical formula obtained from Q by existentially quantifying non-distinguished 
+ * variables. When the set of answer variables is empty, Q is a <em>Boolean query</em>.
+ *  
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
