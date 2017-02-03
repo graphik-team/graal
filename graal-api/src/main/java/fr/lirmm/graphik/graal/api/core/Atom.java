@@ -134,7 +134,13 @@ public interface Atom extends Comparable<Atom>, Iterable<Term>, AppendableToStri
 	 * Get all constants that appear is this atom.
 	 * @return all constants that appear is this atom.
 	 */
-	Set<Term> getConstants();
+	Set<Constant> getConstants();
+	
+	/**
+	 * Get all literals that appear is this atom.
+	 * @return all literals that appear is this atom.
+	 */
+	Set<Literal> getLiterals();
 	
 	/**
 	 * Return an Iterator of Term.

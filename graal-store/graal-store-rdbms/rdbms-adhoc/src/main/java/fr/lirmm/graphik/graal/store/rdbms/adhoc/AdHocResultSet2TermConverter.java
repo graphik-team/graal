@@ -45,6 +45,7 @@ package fr.lirmm.graphik.graal.store.rdbms.adhoc;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.stream.converter.ConversionException;
@@ -68,8 +69,16 @@ public class AdHocResultSet2TermConverter implements Converter<ResultSet, Term> 
 	@Override
 	public Term convert(ResultSet result) throws ConversionException {
 		try {
-			return DefaultTermFactory.instance().createTerm(result.getString(1),
-			    Term.Type.valueOf(result.getString(2)));
+			String type = result.getString(2);
+			if("V".equals(type)) {
+				return DefaultTermFactory.instance().createVariable(result.getString(1));
+			} else if ("L".equals(type)) {
+				return DefaultTermFactory.instance().createLiteral(result.getString(1));
+			} else if ("C".equals(type)) {
+				return DefaultTermFactory.instance().createConstant(result.getString(1));
+			} else {			
+				throw new ConversionException("Unrecognized type: " + type);
+			}
 		} catch (SQLException e) {
 			throw new ConversionException(e);
 		}

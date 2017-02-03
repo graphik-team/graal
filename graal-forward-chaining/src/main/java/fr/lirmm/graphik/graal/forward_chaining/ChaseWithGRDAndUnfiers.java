@@ -241,9 +241,9 @@ public class ChaseWithGRDAndUnfiers extends AbstractChase {
 	public static Substitution computeInitialTargetTermsSubstitution(Rule r) {
 		Substitution s = new TreeMapSubstitution();
 
-		for (Term t2 : r.getTerms(Term.Type.VARIABLE)) {
-			Term t2b = DefaultTermFactory.instance().createVariable("T::" + t2.getIdentifier().toString());
-			s.put((Variable) t2, t2b);
+		for (Variable t2 : r.getVariables()) {
+			Variable t2b = DefaultTermFactory.instance().createVariable("T::" + t2.getIdentifier().toString());
+			s.put(t2, t2b);
 		}
 
 		return s;

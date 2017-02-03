@@ -45,8 +45,10 @@
  */
 package fr.lirmm.graphik.graal.api.core;
 
-import java.util.List;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -54,6 +56,36 @@ import java.util.Iterator;
  *
  */
 public abstract class AbstractAtom implements Atom {
+	
+	@Override
+	public Set<Constant> getConstants() {
+		Set<Constant> typedTerms = new HashSet<Constant>();
+		for (Term term : this.getTerms())
+			if (term.isConstant())
+				typedTerms.add((Constant) term);
+
+		return typedTerms;
+	}
+	
+	@Override
+	public Set<Variable> getVariables() {
+		Set<Variable> typedTerms = new HashSet<Variable>();
+		for (Term term : this.getTerms())
+			if (term.isVariable())
+				typedTerms.add((Variable)term);
+
+		return typedTerms;
+	}
+	
+	@Override
+	public Set<Literal> getLiterals() {
+		Set<Literal> typedTerms = new HashSet<Literal>();
+		for (Term term : this.getTerms())
+			if (term.isLiteral())
+				typedTerms.add((Literal)term);
+
+		return typedTerms;
+	}
     
     public int hashCode() {
         final int prime = 31;

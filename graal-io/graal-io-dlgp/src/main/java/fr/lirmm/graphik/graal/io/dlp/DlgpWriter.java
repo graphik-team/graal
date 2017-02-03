@@ -62,7 +62,6 @@ import fr.lirmm.graphik.graal.api.core.NegativeConstraint;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.io.AbstractGraalWriter;
 import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
 import fr.lirmm.graphik.util.Prefix;
@@ -294,12 +293,12 @@ public class DlgpWriter extends AbstractGraalWriter {
 	}
 
 	protected void writeTerm(Term t) throws IOException {
-		if(Type.VARIABLE.equals(t.getType())) {
+		if(t.isVariable()) {
 			this.writeUpperIdentifier(t.getIdentifier());
-		} else if(Type.CONSTANT.equals(t.getType())) {
-			this.writeLowerIdentifier(t.getIdentifier());
-		} else { // LITERAL
+		} else if(t.isLiteral()) {
 			this.writeLiteral((Literal) t);
+		} else { // Constant
+			this.writeLowerIdentifier(t.getIdentifier());
 		}
 	}
 

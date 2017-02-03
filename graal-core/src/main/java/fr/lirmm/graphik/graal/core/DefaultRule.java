@@ -50,10 +50,11 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.Constant;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.Literal;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
@@ -69,6 +70,9 @@ public class DefaultRule extends AbstractRule {
 	private InMemoryAtomSet head;
 
 	private Set<Term> terms = null;
+	private Set<Variable> variables = null;
+	private Set<Constant> constants = null;
+	private Set<Literal> literals = null;
 	private Set<Variable> frontier = null;
 	private Set<Variable> existentials = null;
 
@@ -144,6 +148,36 @@ public class DefaultRule extends AbstractRule {
 		}
 		return this.terms;
 	}
+	
+	@Override
+	public Set<Variable> getVariables() {
+		if(this.variables == null) {
+			this.variables = new TreeSet<Variable>();
+			this.variables.addAll(this.getBody().getVariables());
+			this.variables.addAll(this.getHead().getVariables());
+		}
+		return this.variables;
+	}
+	
+	@Override
+	public Set<Constant> getConstants() {
+		if(this.constants == null) {
+			this.constants = new TreeSet<Constant>();
+			this.constants.addAll(this.getBody().getConstants());
+			this.constants.addAll(this.getHead().getConstants());
+		}
+		return this.constants;
+	}
+	
+	@Override
+	public Set<Literal> getLiterals() {
+		if(this.literals == null) {
+			this.literals = new TreeSet<Literal>();
+			this.literals.addAll(this.getBody().getLiterals());
+			this.literals.addAll(this.getHead().getLiterals());
+		}
+		return this.literals;
+	}
 
 	@Override
 	@Deprecated
@@ -180,18 +214,18 @@ public class DefaultRule extends AbstractRule {
 	private void computeFrontierAndExistentials() {
 		this.frontier = new TreeSet<Variable>();
 		this.existentials = new TreeSet<Variable>();
-		Collection<Term> body = this.getBody().getTerms(Type.VARIABLE);
+		Collection<Variable> body = this.getBody().getVariables();
 
-		for (Term termHead : this.getHead().getTerms(Type.VARIABLE)) {
+		for (Variable termHead : this.getHead().getVariables()) {
 			boolean isExistential = true;
-			for (Term termBody : body) {
+			for (Variable termBody : body) {
 				if (termBody.equals(termHead)) {
-					this.frontier.add((Variable) termHead);
+					this.frontier.add(termHead);
 					isExistential = false;
 				}
 			}
 			if (isExistential) {
-				this.existentials.add((Variable) termHead);
+				this.existentials.add(termHead);
 			}
 		}
 	}

@@ -45,7 +45,9 @@
 import java.util.Set;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.Constant;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.Literal;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
@@ -118,6 +120,21 @@ class AtomicHeadRule implements Rule {
 	@Override
 	public Set<Term> getTerms() {
 		return this.rule.getTerms();
+	}
+	
+	@Override
+	public Set<Variable> getVariables() {
+		return this.rule.getVariables();
+	}
+	
+	@Override
+	public Set<Constant> getConstants() {
+		return this.rule.getConstants();
+	}
+	
+	@Override
+	public Set<Literal> getLiterals() {
+		return this.rule.getLiterals();
 	}
 
 	@Override

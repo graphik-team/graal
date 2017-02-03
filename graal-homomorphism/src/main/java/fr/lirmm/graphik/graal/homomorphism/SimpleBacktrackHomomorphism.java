@@ -53,10 +53,8 @@ import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.homomorphism.ExistentialHomomorphism;
-import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
@@ -208,8 +206,8 @@ public class SimpleBacktrackHomomorphism extends AbstractProfilable implements E
 		while (it.hasNext()) {
 			Atom a = it.next();
 			rank = 0;
-			for (Term t : a.getTerms(Type.VARIABLE)) {
-				tmp = index.get((Variable) t).level;
+			for (Term t : a.getVariables()) {
+				tmp = index.get(t).level;
 				vars[tmp].postAtoms.add(a);
 
 				if (rank < tmp)

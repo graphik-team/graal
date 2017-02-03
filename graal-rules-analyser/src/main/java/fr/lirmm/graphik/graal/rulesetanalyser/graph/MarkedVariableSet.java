@@ -57,6 +57,7 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.PredicatePosition;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
@@ -147,7 +148,7 @@ public class MarkedVariableSet {
 	}
 
 	private void testRule(MarkedRule mrule) {
-		Set<Term> bodyVars = mrule.rule.getBody().getTerms(Term.Type.VARIABLE);
+		Set<Variable> bodyVars = mrule.rule.getBody().getVariables();
 		for (Term v : bodyVars) {
 			CloseableIteratorWithoutException<Atom> it = mrule.rule.getHead().iterator();
 			while (it.hasNext()) {
@@ -197,7 +198,7 @@ public class MarkedVariableSet {
 						Atom a = it.next();
 						if (a.getPredicate().equals(mpos.predicate)) {
 							v = a.getTerm(mpos.position);
-							if (v.getType().equals(Term.Type.VARIABLE)) {
+							if (v.isVariable()) {
 								this.mark(v, mr);
 							}
 						}

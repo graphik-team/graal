@@ -47,6 +47,7 @@ import java.util.NavigableSet;
 import java.util.Set;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.Constant;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -60,7 +61,7 @@ public class Var implements Comparable<Var> {
 
 	public int              level;
 	public Variable         value;
-	public Term             image;
+	public Term         image;
 
 	/*
 	 * Each atoms from the request graph in which this variable have the highest

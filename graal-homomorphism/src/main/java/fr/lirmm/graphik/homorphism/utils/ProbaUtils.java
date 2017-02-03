@@ -46,9 +46,9 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.Constant;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.graal.api.core.Term;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -87,7 +87,7 @@ public final class ProbaUtils {
 			probaA = 0.0;
 		} else {
 			probaA = count / Math.pow(data.getDomainSize(), atom.getPredicate().getArity());
-			for (Term t : atom.getTerms(Term.Type.CONSTANT)) {
+			for (Constant t : atom.getConstants()) {
 				probaA /= data.getDomainSize();
 			}
 		}

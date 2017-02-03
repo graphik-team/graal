@@ -77,9 +77,27 @@ public interface InMemoryAtomSet extends AtomSet, CloseableIterableWithoutExcept
 
 	@Override
 	Set<Term> getTerms();
+	
+	@Override
+	Set<Variable> getVariables();
+	
+	@Override
+	Set<Constant> getConstants();
+	
+	@Override
+	Set<Literal> getLiterals();
 
 	@Override
 	CloseableIteratorWithoutException<Term> termsIterator();
+	
+	@Override
+	CloseableIteratorWithoutException<Variable> variablesIterator();
+	
+	@Override
+	CloseableIteratorWithoutException<Constant> constantsIterator();
+	
+	@Override
+	CloseableIteratorWithoutException<Literal> literalsIterator();
 	
 	@Override
 	@Deprecated

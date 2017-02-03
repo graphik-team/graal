@@ -51,7 +51,6 @@ import java.util.TreeSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQueryWithNegation;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
 
@@ -81,7 +80,7 @@ public class DefaultConjunctiveQueryWithNegation implements ConjunctiveQueryWith
 
 	public DefaultConjunctiveQueryWithNegation(String label, InMemoryAtomSet positiveAtomSet,
 			InMemoryAtomSet negativeAtomSet) {
-		this("", positiveAtomSet, negativeAtomSet, new LinkedList<Term>(positiveAtomSet.getTerms(Term.Type.VARIABLE)));
+		this("", positiveAtomSet, negativeAtomSet, new LinkedList<Term>(positiveAtomSet.getVariables()));
 	}
 
 	public DefaultConjunctiveQueryWithNegation(InMemoryAtomSet positiveAtomSet, InMemoryAtomSet negativeAtomSet,
@@ -218,12 +217,12 @@ public class DefaultConjunctiveQueryWithNegation implements ConjunctiveQueryWith
 
 	private void computeFrontierAndExistentials() {
 		this.frontierVariables = new TreeSet<Variable>();
-		Collection<Term> body = this.getPositiveAtomSet().getTerms(Type.VARIABLE);
+		Collection<Variable> body = this.getPositiveAtomSet().getVariables();
 
-		for (Term termHead : this.getNegativeAtomSet().getTerms(Type.VARIABLE)) {
-			for (Term termBody : body) {
+		for (Variable termHead : this.getNegativeAtomSet().getVariables()) {
+			for (Variable termBody : body) {
 				if (termBody.equals(termHead)) {
-					this.frontierVariables.add((Variable) termHead);
+					this.frontierVariables.add(termHead);
 				}
 			}
 		}

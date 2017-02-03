@@ -52,11 +52,11 @@ import org.apache.commons.lang3.tuple.Pair;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.Constant;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.TermValueComparator;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
 import fr.lirmm.graphik.graal.homomorphism.Var;
@@ -103,13 +103,13 @@ public class StatBootstrapper extends AbstractProfilable implements Bootstrapper
 		}
 		Iterator<Atom> it;
 
-		Collection<Term> constants = null;
+		Collection<Constant> constants = null;
 		Atom aa = null;
 		it = v.postAtoms.iterator();
 		while (it.hasNext()) {
 			Atom a = it.next();
 			if (constants == null || constants.isEmpty()) {
-				constants = a.getTerms(Type.CONSTANT);
+				constants = a.getConstants();
 				aa = a;
 			}
 		}
@@ -117,7 +117,7 @@ public class StatBootstrapper extends AbstractProfilable implements Bootstrapper
 		while (it.hasNext()) {
 			Atom a = it.next();
 			if (constants == null || constants.isEmpty()) {
-				constants = a.getTerms(Type.CONSTANT);
+				constants = a.getConstants();
 				aa = a;
 			}
 		}

@@ -268,7 +268,7 @@ public class AdHocRdbmsStore extends AbstractRdbmsStore {
 			statement.executeUpdate(createTermTypeTableQuery);
 
 			pstat = this.getConnection().prepareStatement(insertTermTypeQuery);
-			Term.Type[] types = Term.Type.values();
+			String[] types = {"V", "C", "L"};
 			for (int i = 0; i < types.length; ++i) {
 				pstat.setString(1, types[i].toString());
 				pstat.addBatch();
@@ -391,8 +391,16 @@ public class AdHocRdbmsStore extends AbstractRdbmsStore {
 			this.getTermStatement.setString(1, label);
 			results = this.getTermStatement.executeQuery();
 			if (results.next()) {
-				term = DefaultTermFactory.instance().createTerm(results.getString(1),
-				    Term.Type.valueOf(results.getString(2)));
+				String type = results.getString(2);
+				if("V".equals(type)) {
+					term = DefaultTermFactory.instance().createVariable(results.getString(1));
+				} else if ("L".equals(type)) {
+					term = DefaultTermFactory.instance().createLiteral(results.getString(1));
+				} else if ("C".equals(type)) {
+					term = DefaultTermFactory.instance().createConstant(results.getString(1));
+				} else {			
+					throw new AtomSetException("Unrecognized type: " + type);
+				}
 			}
 			results.close();
 		} catch (SQLException e) {
@@ -504,7 +512,7 @@ public class AdHocRdbmsStore extends AbstractRdbmsStore {
 			List<DBColumn> cols = TERMS_TABLE.getColumns();
 			Map<String, String> data = new TreeMap<String, String>();
 			data.put(cols.get(0).getName(), '\'' + StringUtils.addSlashes(term.getIdentifier().toString()) + '\'');
-			data.put(cols.get(1).getName(), '\'' + term.getType().toString() + '\'');
+			data.put(cols.get(1).getName(), '\'' + getType(term) + '\'');
 			String query = this.getDriver().getInsertOrIgnoreQuery(TERMS_TABLE, data);
 			statement.executeUpdate(query);
 		} catch (SQLException e) {
@@ -618,6 +626,16 @@ public class AdHocRdbmsStore extends AbstractRdbmsStore {
 	@Override
 	protected DBTable getPredicateTable(Predicate p) throws AtomSetException {
 		return super.getPredicateTable(p); // for package visibility
+	}
+	
+	private static String getType(Term t) {
+		if (t.isVariable()) {
+			return "V";
+		} else if (t.isLiteral()) {
+			return "L";
+		} else {
+			return "C";
+		}
 	}
 
 }

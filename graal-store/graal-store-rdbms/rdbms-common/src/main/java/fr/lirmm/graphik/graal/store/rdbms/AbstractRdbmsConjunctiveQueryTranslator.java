@@ -214,9 +214,7 @@ public abstract class AbstractRdbmsConjunctiveQueryTranslator implements RdbmsCo
 							                           + ")");
 					}
 				} else {
-					throw new AtomSetException("No correspondance between the database field (Boolean) and the Term type ("
-					                           + term.getType().toString()
-					                           + ")");
+					throw new AtomSetException("No correspondance between the database field (Boolean) and the Term type.");
 				}
 			case Types.VARCHAR:
 			case Types.NVARCHAR:

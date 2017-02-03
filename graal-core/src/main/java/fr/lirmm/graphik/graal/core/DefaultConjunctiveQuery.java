@@ -49,7 +49,7 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
@@ -78,7 +78,7 @@ public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 	public DefaultConjunctiveQuery(InMemoryAtomSet atomSet) {
 		this.label = "";
 		this.atomSet = atomSet;
-		this.responseVariables = new LinkedList<Term>(atomSet.getTerms(Term.Type.VARIABLE));
+		this.responseVariables = new LinkedList<Term>(atomSet.getVariables());
 	}
 
 	public DefaultConjunctiveQuery(InMemoryAtomSet atomSet, List<Term> ans) {

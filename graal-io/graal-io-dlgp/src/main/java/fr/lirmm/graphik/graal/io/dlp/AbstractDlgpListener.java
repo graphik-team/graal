@@ -56,7 +56,7 @@ import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.Term.Type;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.io.ParseError;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultNegativeConstraint;
@@ -132,7 +132,7 @@ abstract class AbstractDlgpListener implements ParserListener {
 	public void endsConjunction(OBJECT_TYPE objectType) {
 		switch (objectType) {
 		case QUERY:
-			Set<Term> bodyVars = this.atomSet.getTerms(Type.VARIABLE);
+			Set<Variable> bodyVars = this.atomSet.getVariables();
 			for(Term t : this.answerVars) {
 				if(t.isVariable() && !bodyVars.contains(t)) {
 					throw new ParseError("There is at least one variable in the answer list which does not appear in the query body.");

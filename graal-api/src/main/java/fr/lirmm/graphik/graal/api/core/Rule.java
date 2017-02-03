@@ -107,6 +107,27 @@ public interface Rule extends Comparable<Rule>, AppendableToStringBuilder {
 	Set<Term> getTerms(Term.Type type);
 
 	/**
+	 * Get all variables of this rule.
+	 * 
+	 * @return a Set of all variables related to this Rule.
+	 */
+	Set<Variable> getVariables();
+	
+	/**
+	 * Get all constants of this rule.
+	 * 
+	 * @return a Set of all constants related to this Rule.
+	 */
+	Set<Constant> getConstants();
+	
+	/**
+	 * Get all literals of this rule.
+	 * 
+	 * @return a Set of all literals related to this Rule.
+	 */
+	Set<Literal> getLiterals();
+	
+	/**
 	 * Get all terms of this rule.
 	 * 
 	 * @return a Set of all Term related to this Rule.

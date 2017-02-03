@@ -61,7 +61,6 @@ import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetUtils;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
@@ -109,7 +108,7 @@ public final class Rules {
 		CloseableIteratorWithoutException<Atom> it = atomset.iterator();
 		while (it.hasNext()) {
 			Atom atom = it.next();
-			if (atom.getTerms(Type.VARIABLE).containsAll(terms)) {
+			if (atom.getVariables().containsAll(terms)) {
 				return true;
 			}
 		}
@@ -602,7 +601,7 @@ public final class Rules {
 				Atom b = it.next();
 				predicates.add(b.getPredicate());
 				for (Term t : b.getTerms())
-					if (t.getType() == Term.Type.CONSTANT)
+					if (t.isConstant())
 						terms.add(t);
 			}
 		}

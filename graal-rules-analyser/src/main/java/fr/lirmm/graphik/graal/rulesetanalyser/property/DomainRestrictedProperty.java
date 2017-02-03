@@ -49,6 +49,7 @@ import java.util.Set;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
@@ -87,7 +88,7 @@ public class DomainRestrictedProperty extends RuleSetProperty.Local {
 		boolean none;
 		boolean all;
 
-		Set<Term> bodyVars = rule.getBody().getTerms(Term.Type.VARIABLE);
+		Set<Variable> bodyVars = rule.getBody().getVariables();
 
 		CloseableIteratorWithoutException<Atom> it = rule.getHead().iterator();
 		while (it.hasNext()) {

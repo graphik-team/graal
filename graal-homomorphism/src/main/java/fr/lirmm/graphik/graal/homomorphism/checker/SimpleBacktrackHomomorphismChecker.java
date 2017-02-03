@@ -84,7 +84,7 @@ public class SimpleBacktrackHomomorphismChecker extends AbstractChecker {
 	public boolean check(Query query, AtomSet atomset) {
 		if (query instanceof ConjunctiveQuery) {
 			ConjunctiveQuery q = (ConjunctiveQuery) query;
-			int size = q.getAtomSet().getTerms(Term.Type.VARIABLE).size();
+			int size = q.getAtomSet().getVariables().size();
 			return size > 0 && size <= 2;
 		}
 		return false;

@@ -43,25 +43,14 @@
 package fr.lirmm.graphik.graal.homomorphism.forward_checking;
 
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-
-import org.apache.commons.lang3.tuple.Pair;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
-import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
-import fr.lirmm.graphik.graal.homomorphism.BacktrackUtils;
 import fr.lirmm.graphik.graal.homomorphism.Var;
-import fr.lirmm.graphik.graal.homomorphism.forward_checking.AbstractNFC.AcceptableCandidats;
-import fr.lirmm.graphik.util.profiler.Profiler;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
@@ -119,7 +108,7 @@ public class NFC2 extends AbstractNFC implements ForwardChecking {
 			boolean runCheck = true;
 			if (checkMode) {
 				int i = 0;
-				for (Term t : atom.getTerms(Type.VARIABLE)) {
+				for (Variable t : atom.getVariables()) {
 					Var z = map.get(t);
 					if (z.level > v.level) {
 						++i;

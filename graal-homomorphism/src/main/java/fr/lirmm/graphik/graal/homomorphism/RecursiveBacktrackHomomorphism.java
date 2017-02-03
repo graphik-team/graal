@@ -53,7 +53,6 @@ import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Substitution;
@@ -109,7 +108,7 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
 		if (profiler != null) {
 			profiler.start("preprocessing time");
 		}
-		List<Term> orderedVars = order(query.getAtomSet().getTerms(Term.Type.VARIABLE));
+		List<Variable> orderedVars = order(query.getAtomSet().getVariables());
 		Collection<Atom>[] queryAtomRanked = getAtomRank(query.getAtomSet(), orderedVars);
 		if (profiler != null) {
 			profiler.stop("preprocessing time");
@@ -144,7 +143,7 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
 	public boolean exist(ConjunctiveQuery query, AtomSet data) throws HomomorphismException {
 		try {
 			InMemoryAtomSet atomSet1 = query.getAtomSet();
-			List<Term> orderedVars = order(atomSet1.getTerms(Term.Type.VARIABLE));
+			List<Variable> orderedVars = order(atomSet1.getVariables());
 			Collection<Atom>[] queryAtomRanked = getAtomRank(atomSet1, orderedVars);
 
 			if (isHomomorphism(queryAtomRanked[0], data, new HashMapSubstitution())) {
@@ -176,7 +175,7 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
 												  Collection<Atom>[] queryAtomRanked,
 												  AtomSet facts,
 												  Substitution substitution,
-												  List<Term> orderedVars,
+												  List<Variable> orderedVars,
 												  int rank) throws Exception {
 		Collection<Substitution> substitutionList = new LinkedList<Substitution>();
 		if (orderedVars.size() == 0) {
@@ -196,7 +195,7 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
 					// Test partial homomorphism
 					if (isHomomorphism(queryAtomRanked[rank], facts, tmpSubstitution))
 						substitutionList.addAll(homomorphism(query, queryAtomRanked, facts, tmpSubstitution,
-						    new LinkedList<Term>(orderedVars), rank + 1));
+						    new LinkedList<Variable>(orderedVars), rank + 1));
 				}
 			}
 
@@ -210,7 +209,7 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
 											 Collection<Atom>[] queryAtomRanked,
 											 AtomSet atomSet2,
 											 Substitution substitution,
-											 List<Term> orderedVars,
+											 List<Variable> orderedVars,
 											 int rank) throws Exception {
 		if (orderedVars.size() == 0) {
 			return true;
@@ -226,7 +225,7 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
 					// Test partial homomorphism
 					if (isHomomorphism(queryAtomRanked[rank], atomSet2, tmpSubstitution))
 						if (existHomomorphism(atomSet1, queryAtomRanked, atomSet2, tmpSubstitution,
-						    new LinkedList<Term>(orderedVars), rank + 1)) {
+						    new LinkedList<Variable>(orderedVars), rank + 1)) {
 							return true;
 						}
 				}
@@ -248,9 +247,9 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
 	}
 
 	// TODO use an external comparator
-	private static List<Term> order(Collection<Term> vars) {
-		LinkedList<Term> orderedList = new LinkedList<Term>();
-		for (Term var : vars)
+	private static List<Variable> order(Collection<Variable> vars) {
+		LinkedList<Variable> orderedList = new LinkedList<Variable>();
+		for (Variable var : vars)
 			if (!orderedList.contains(var))
 				orderedList.add(var);
 
@@ -264,7 +263,7 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
 	 * @param varsOrdered
 	 * @return an array of Collection of Atom, each array index represents a rank (level) of the backtrack.
 	 */
-	private static Collection<Atom>[] getAtomRank(CloseableIterableWithoutException<Atom> atomset, List<Term> varsOrdered) {
+	private static Collection<Atom>[] getAtomRank(CloseableIterableWithoutException<Atom> atomset, List<Variable> varsOrdered) {
 		int tmp, rank;
 
 		Collection<Atom>[] atomRank = new LinkedList[varsOrdered.size() + 1];

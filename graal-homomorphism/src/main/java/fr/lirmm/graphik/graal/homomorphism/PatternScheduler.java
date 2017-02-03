@@ -42,7 +42,6 @@
  */
 package fr.lirmm.graphik.graal.homomorphism;
 
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -77,7 +76,7 @@ public class PatternScheduler extends AbstractProfilable {
 	}
 
 	public Var[] execute(InMemoryAtomSet h, Set<Variable> preAffectedVars, AtomSet data, RulesCompilation rc) {
-		Set<Term> terms = h.getTerms(Term.Type.VARIABLE);
+		Set<Variable> terms = h.getVariables();
 		Var[] vars = new Var[terms.size() + 2];
 
 		int level = 0;

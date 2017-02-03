@@ -54,7 +54,6 @@ import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
@@ -416,8 +415,8 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution>
 		while (it.hasNext()) {
 			Atom a = it.next();
 			rank = 0;
-			for (Term t : a.getTerms(Type.VARIABLE)) {
-				tmp = this.index.get((Variable) t).level;
+			for (Term t : a.getVariables()) {
+				tmp = this.index.get(t).level;
 				vars[tmp].postAtoms.add(a);
 
 				if (rank < tmp)
@@ -429,8 +428,8 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution>
 
 		for (int i = 0; i < vars.length; ++i) {
 			for (Atom a : vars[i].postAtoms) {
-				for (Term t : a.getTerms(Type.VARIABLE)) {
-					Var v = this.index.get((Variable) t);
+				for (Variable t : a.getVariables()) {
+					Var v = this.index.get(t);
 					if (v.level > i) {
 						vars[i].postVars.add(v);
 						v.preVars.add(vars[i]);

@@ -50,6 +50,7 @@ import org.junit.Test;
 
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.core.FreshVarSubstitution;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
@@ -72,7 +73,7 @@ public class FreeVarSubstitutionTest {
 		FreshVarSubstitution subtitution = new FreshVarSubstitution();
 		
 		Rule substitut = subtitution.createImageOf(rule);
-		for(Term t : substitut.getTerms(Term.Type.VARIABLE)) {
+		for(Variable t : substitut.getVariables()) {
 			if(t.equals(X) || t.equals(Y) || t.equals(Z)) {
 				Assert.assertFalse(true);
 			}

@@ -65,7 +65,6 @@ import fr.lirmm.graphik.graal.api.core.NegativeConstraint;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.io.AbstractGraalWriter;
 import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
@@ -164,7 +163,7 @@ public class RuleMLWriter extends AbstractGraalWriter {
 	@Override
 	public RuleMLWriter write(Rule rule) throws IOException {
 		Set<Variable> existVar = rule.getExistentials();
-		Set<Term> universalVar = rule.getTerms(Type.VARIABLE);
+		Set<Variable> universalVar = rule.getVariables();
 		universalVar.removeAll(existVar);
 
 		CloseableIteratorWithoutException<Atom> it = rule.getHead().iterator();
@@ -212,7 +211,7 @@ public class RuleMLWriter extends AbstractGraalWriter {
 	
 	@Override
 	public RuleMLWriter write(ConjunctiveQuery query) throws IOException {
-		Set<Term> existVar = query.getAtomSet().getTerms(Term.Type.VARIABLE);
+		Set<Variable> existVar = query.getAtomSet().getVariables();
 		existVar.removeAll(query.getAnswerVariables());
 
 		this.openBalise("Query");
@@ -305,7 +304,7 @@ public class RuleMLWriter extends AbstractGraalWriter {
 	}
 
 	protected void writeTerm(Term t) throws IOException {
-		if(Type.VARIABLE.equals(t.getType())) {
+		if(t.isVariable()) {
 			if (this.inFact) {
 				// Facts does not allow existential variables
 				this.writeInd(t.getIdentifier());
@@ -314,9 +313,7 @@ public class RuleMLWriter extends AbstractGraalWriter {
 				this.write(t.getIdentifier().toString());
 				this.closeBalise("Var");
 			}
-		} else if(Type.CONSTANT.equals(t.getType())) {
-			this.writeInd(t.getIdentifier());
-		} else { // LITERAL
+		} else if(t.isLiteral()) {
 			Literal l = (Literal) t;
 			this.writeIndent();
 			this.write("<Data xsi:type=\"");
@@ -330,6 +327,8 @@ public class RuleMLWriter extends AbstractGraalWriter {
 			this.write("\">");
 			this.write(l.getValue().toString());
 			this.write("</Data>");
+		} else { // CONSTANT
+			this.writeInd(t.getIdentifier());
 		}
 	}
 	

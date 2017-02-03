@@ -77,7 +77,6 @@ import fr.lirmm.graphik.graal.core.store.GraphDBStore;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
@@ -426,16 +425,22 @@ public class Neo4jStore extends GraphDBStore {
 		if (node == null) {
 			node = this.graph.createNode(NodeType.TERM);
 			node.setProperty("value", term.getIdentifier().toString());
-			node.setProperty("type", term.getType().toString());
+			node.setProperty("type", getType(term));
 		}
 		return node;
 	}
 
-	private Term nodeToTerm(Node node) {
-		return DefaultTermFactory.instance().createTerm(
-				node.getProperty("value"),
-				Term.Type.valueOf(node
-				.getProperty("type").toString()));
+	private Term nodeToTerm(Node node) throws AtomSetException {
+		String type = node.getProperty("type").toString();
+		if("V".equals(type)) {
+			return DefaultTermFactory.instance().createVariable(node.getProperty("value"));
+		} else if ("L".equals(type)) {
+			return DefaultTermFactory.instance().createLiteral(node.getProperty("value"));
+		} else if ("C".equals(type)) {
+			return DefaultTermFactory.instance().createConstant(node.getProperty("value"));
+		} else {			
+			throw new AtomSetException("Unrecognized type: " + type);
+		}
 	}
 
 	private Node getPredicate(Predicate predicate) {
@@ -513,7 +518,7 @@ public class Neo4jStore extends GraphDBStore {
 			++i;
 			if (checkVariable || t.isConstant()) {
 				sb.append("(term").append(i).append(":TERM {value: '").append(t.getIdentifier().toString())
-				  .append("', type: '").append(t.getType().toString()).append("' }), (atom)-[rel_term").append(i)
+				  .append("', type: '").append(getType(t)).append("' }), (atom)-[rel_term").append(i)
 				  .append(":TERM { index: ").append(i).append(" }]->(term").append(i).append("), ");
 			}
 		}
@@ -607,7 +612,7 @@ public class Neo4jStore extends GraphDBStore {
 		}
 
 		@Override
-		public Atom next() {
+		public Atom next() throws IteratorException {
 			Node atomNode = (Node) this.iterator.next().get("atom");
 			Node predicateNode = atomNode.getSingleRelationship(
 					RelationshipType.PREDICATE, Direction.OUTGOING)
@@ -620,7 +625,11 @@ public class Neo4jStore extends GraphDBStore {
 					Direction.OUTGOING, RelationshipType.TERM)) {
 				Node termNode = rel.getEndNode();
 
-				terms[(Integer) rel.getProperty("index")] = nodeToTerm(termNode);
+				try {
+					terms[(Integer) rel.getProperty("index")] = nodeToTerm(termNode);
+				} catch (AtomSetException e) {
+					throw new IteratorException(e);
+				}
 			}
 
 			return new DefaultAtom(predicate, terms);
@@ -641,8 +650,12 @@ public class Neo4jStore extends GraphDBStore {
 		}
 
 		@Override
-		public Term next() {
-			return nodeToTerm((Node) iterator.next().get("term"));
+		public Term next() throws IteratorException {
+			try {
+				return nodeToTerm((Node) iterator.next().get("term"));
+			} catch (AtomSetException e) {
+				throw new IteratorException(e);
+			}
 		}
 
 	}
@@ -665,6 +678,16 @@ public class Neo4jStore extends GraphDBStore {
 			return nodeToPredicate((Node) iterator.next().get("predicate"));
 		}
 
+	}
+	
+	private static String getType(Term t) {
+		if (t.isVariable()) {
+			return "V";
+		} else if (t.isLiteral()) {
+			return "L";
+		} else {
+			return "C";
+		}
 	}
 
 }

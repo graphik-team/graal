@@ -88,15 +88,15 @@ public abstract class AbstractTerm implements Term {
 
 	@Override
 	public int compareTo(Term o) {
-		int res = this.getType().compareTo(o.getType());
-		if (res == 0) {
+		if(this.getIdentifier().equals(o.getIdentifier())) {
+			return 0;
+		} else {
 			if(this.getIdentifier().getClass().equals(o.getIdentifier().getClass())) {
-				res = this.getIdentifier().toString().compareTo(o.getIdentifier().toString());
+				return this.getIdentifier().toString().compareTo(o.getIdentifier().toString());
 			} else {
-				res = this.getIdentifier().getClass().toString().compareTo(o.getIdentifier().getClass().toString());
+				return this.getIdentifier().getClass().toString().compareTo(o.getIdentifier().getClass().toString());
 			}
 		}
-		return res;
 	}
 
 	@Override

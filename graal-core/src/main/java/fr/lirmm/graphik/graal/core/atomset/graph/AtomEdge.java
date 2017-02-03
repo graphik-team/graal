@@ -46,7 +46,6 @@
 package fr.lirmm.graphik.graal.core.atomset.graph;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -58,7 +57,6 @@ import fr.lirmm.graphik.graal.api.core.AbstractAtom;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
-import fr.lirmm.graphik.graal.api.core.Variable;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -143,25 +141,6 @@ class AtomEdge extends AbstractAtom implements Edge {
 		return typedTerms;
 	}
 	
-	@Override
-	public Set<Term> getConstants() {
-		Set<Term> typedTerms = new HashSet<Term>();
-		for (Term term : this.terms)
-			if (term.isConstant())
-				typedTerms.add(term);
-
-		return typedTerms;
-	}
-	
-	@Override
-	public Set<Variable> getVariables() {
-		Set<Variable> typedTerms = new HashSet<Variable>();
-		for (Term term : this.terms)
-			if (term.isVariable())
-				typedTerms.add((Variable)term);
-
-		return typedTerms;
-	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// EDGE METHODS

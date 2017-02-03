@@ -156,9 +156,9 @@ public class Unifier {
 	public static Substitution computeInitialSourceTermsSubstitution(Rule rule) {
 		Substitution s = new TreeMapSubstitution();
 
-		for (Term t1 : rule.getTerms(Term.Type.VARIABLE)) {
-			Term t1b = DefaultTermFactory.instance().createVariable("S::" + t1.getIdentifier().toString());
-			s.put((Variable) t1, t1b);
+		for (Variable t1 : rule.getVariables()) {
+			Variable t1b = DefaultTermFactory.instance().createVariable("S::" + t1.getIdentifier().toString());
+			s.put(t1, t1b);
 		}
 
 		return s;
@@ -167,9 +167,9 @@ public class Unifier {
 	public static Substitution computeInitialTargetTermsSubstitution(InMemoryAtomSet set) {
 		Substitution s = new TreeMapSubstitution();
 
-		for (Term t2 : set.getTerms(Term.Type.VARIABLE)) {
-			Term t2b = DefaultTermFactory.instance().createVariable("T::" + t2.getIdentifier().toString());
-			s.put((Variable) t2, t2b);
+		for (Variable t2 : set.getVariables()) {
+			Variable t2b = DefaultTermFactory.instance().createVariable("T::" + t2.getIdentifier().toString());
+			s.put(t2, t2b);
 		}
 
 		return s;

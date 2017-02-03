@@ -57,7 +57,6 @@ import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.io.ParseException;
-import fr.lirmm.graphik.graal.api.io.Parser;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.DefaultURI;
 import fr.lirmm.graphik.util.Prefix;
@@ -90,7 +89,7 @@ public class DlgpParserTest {
 	@Test
 	public void parseAtom() throws ParseException {
 		Atom a = DlgpParser.parseAtom("p(a, X).");
-		Assert.assertEquals(Term.Type.VARIABLE, a.getTerm(1).getType());
+		Assert.assertTrue(a.getTerm(1).isVariable());
 	}
 
 	@Test(expected = ParseException.class)
@@ -237,12 +236,12 @@ public class DlgpParserTest {
 		Rule r = DlgpParser.parseRule("p(X,Y) :- q(X,Z).");
 
 		Atom body = r.getBody().iterator().next();
-		Assert.assertEquals(Term.Type.VARIABLE, body.getTerm(0).getType());
-		Assert.assertEquals(Term.Type.VARIABLE, body.getTerm(1).getType());
+		Assert.assertTrue(body.getTerm(0).isVariable());
+		Assert.assertTrue(body.getTerm(1).isVariable());
 
 		Atom head = r.getHead().iterator().next();
-		Assert.assertEquals(Term.Type.VARIABLE, head.getTerm(0).getType());
-		Assert.assertEquals(Term.Type.VARIABLE, head.getTerm(1).getType());
+		Assert.assertTrue(head.getTerm(0).isVariable());
+		Assert.assertTrue(head.getTerm(1).isVariable());
 
 	}
 
@@ -261,12 +260,12 @@ public class DlgpParserTest {
 
 		CloseableIteratorWithoutException<Atom> it = r.getBody().iterator();
 		Atom body = it.next();
-		Assert.assertEquals(Term.Type.VARIABLE, body.getTerm(0).getType());
-		Assert.assertEquals(Term.Type.VARIABLE, body.getTerm(1).getType());
+		Assert.assertTrue(body.getTerm(0).isVariable());
+		Assert.assertTrue(body.getTerm(1).isVariable());
 
 		body = it.next();
-		Assert.assertEquals(Term.Type.VARIABLE, body.getTerm(0).getType());
-		Assert.assertEquals(Term.Type.VARIABLE, body.getTerm(1).getType());
+		Assert.assertTrue(body.getTerm(0).isVariable());
+		Assert.assertTrue(body.getTerm(1).isVariable());
 
 		Assert.assertEquals("N1", r.getLabel());
 

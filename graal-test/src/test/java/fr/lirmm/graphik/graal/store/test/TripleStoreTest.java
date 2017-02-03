@@ -45,8 +45,6 @@
  */
 package fr.lirmm.graphik.graal.store.test;
 
-import java.util.Iterator;
-
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.experimental.theories.DataPoints;
@@ -57,6 +55,7 @@ import org.junit.runner.RunWith;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.Constant;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.io.ParseException;
@@ -142,7 +141,7 @@ public class TripleStoreTest {
 	}
 
 	@Theory
-	public void getTerms(AtomSet store) throws AtomSetException, ParseException {
+	public void getTerms(AtomSet store) throws AtomSetException, IteratorException {
 		Assume.assumeTrue(store instanceof TripleStore);
 
 		store.add(DlgpParser.parseAtom("p(a,b)."));
@@ -150,7 +149,7 @@ public class TripleStoreTest {
 		store.add(DlgpParser.parseAtom("p(e,f)."));
 
 		int i = 0;
-		for (Iterator<Term> it = store.getTerms().iterator(); it.hasNext(); it
+		for (CloseableIterator<Term> it = store.termsIterator(); it.hasNext(); it
 				.next()) {
 			++i;
 		}
@@ -158,7 +157,7 @@ public class TripleStoreTest {
 		Assert.assertEquals("Wrong number of terms", 5, i);
 
 		i = 0;
-		for (Iterator<Term> it = store.getTerms(Term.Type.CONSTANT).iterator(); it
+		for (CloseableIterator<Constant> it = store.constantsIterator(); it
 				.hasNext(); it.next()) {
 			++i;
 		}

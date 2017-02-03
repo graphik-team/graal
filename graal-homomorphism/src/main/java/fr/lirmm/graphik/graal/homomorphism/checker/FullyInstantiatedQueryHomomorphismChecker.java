@@ -85,7 +85,7 @@ public class FullyInstantiatedQueryHomomorphismChecker extends AbstractChecker i
 	public boolean check(Query query, AtomSet atomset) {
 		if (query instanceof ConjunctiveQuery) {
 			ConjunctiveQuery q = (ConjunctiveQuery) query;
-			return q.getAtomSet().getTerms(Term.Type.VARIABLE).isEmpty();
+			return q.getAtomSet().getVariables().isEmpty();
 		}
 		return false;
 	}

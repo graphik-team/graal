@@ -50,11 +50,19 @@ import java.util.Set;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.Constant;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.Literal;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
+import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.graal.core.filter.ConstantFilter;
+import fr.lirmm.graphik.graal.core.filter.LiteralFilter;
+import fr.lirmm.graphik.graal.core.filter.VariableFilter;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
+import fr.lirmm.graphik.util.stream.filter.FilterIteratorWithoutException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -115,6 +123,33 @@ public abstract class AbstractInMemoryAtomSet extends AbstractAtomSet implements
 			throw new Error("It should never happen.");
 		}
 	}
+	
+	@Override
+	public Set<Variable> getVariables() {
+		try {
+			return super.getVariables();
+		} catch (AtomSetException e) {
+			throw new Error("It should never happen.");
+		}
+	}
+	
+	@Override
+	public Set<Constant> getConstants() {
+		try {
+			return super.getConstants();
+		} catch (AtomSetException e) {
+			throw new Error("It should never happen.");
+		}
+	}
+	
+	@Override
+	public Set<Literal> getLiterals() {
+		try {
+			return super.getLiterals();
+		} catch (AtomSetException e) {
+			throw new Error("It should never happen.");
+		}
+	}
 
 	@Override
 	@Deprecated
@@ -124,6 +159,22 @@ public abstract class AbstractInMemoryAtomSet extends AbstractAtomSet implements
 		} catch (AtomSetException e) {
 			throw new Error("It should never happen.");
 		}
+	}
+	
+	@Override
+	public CloseableIteratorWithoutException<Variable> variablesIterator() {
+		return new FilterIteratorWithoutException<Term, Variable>(this.termsIterator(), VariableFilter.instance());
+	}
+	
+	@Override
+	public CloseableIteratorWithoutException<Constant> constantsIterator() {
+		return new FilterIteratorWithoutException<Term, Constant>(this.termsIterator(), ConstantFilter.instance());
+		
+	}
+	
+	@Override
+	public CloseableIteratorWithoutException<Literal> literalsIterator() {
+		return new FilterIteratorWithoutException<Term, Literal>(this.termsIterator(), LiteralFilter.instance());
 	}
 
 	@Override
@@ -136,6 +187,7 @@ public abstract class AbstractInMemoryAtomSet extends AbstractAtomSet implements
 	}
 
 	@Override
+	@Deprecated
 	public boolean isSubSetOf(AtomSet atomset) {
 		try {
 			return super.isSubSetOf(atomset);

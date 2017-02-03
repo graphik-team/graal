@@ -98,7 +98,7 @@ public class BCCSchedulerNeg extends BCCScheduler {
 		}
 		InMemoryAtomSet h = s.createImageOf(negH);
 		
-		Set<Term> variables = h.getTerms(Term.Type.VARIABLE);
+		Set<Variable> variables = h.getVariables();
 
 		// BCC
 		Map<Term, Integer> map = new TreeMap<Term, Integer>();

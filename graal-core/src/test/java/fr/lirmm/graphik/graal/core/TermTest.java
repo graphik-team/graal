@@ -56,31 +56,43 @@ import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 public class TermTest 
 {
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void constantConstructorTest() {
 		String label = "label";
 		Term term = DefaultTermFactory.instance().createConstant(label);
 		
 		Assert.assertTrue(Term.Type.CONSTANT.equals(term.getType()));
+		Assert.assertTrue(term.isConstant());
+		Assert.assertFalse(term.isLiteral());
+		Assert.assertFalse(term.isVariable());
 		Assert.assertTrue(term.getIdentifier().toString()
 .equals(label));
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Test
 	public void literalConstructorTest() {
 		int value = 1;
 		Literal term = DefaultTermFactory.instance().createLiteral(1);
 
 		Assert.assertTrue(Term.Type.LITERAL.equals(term.getType()));
+		Assert.assertTrue(term.isConstant());
+		Assert.assertTrue(term.isLiteral());
+		Assert.assertFalse(term.isVariable());
 		Assert.assertTrue(term.getValue().equals(value));
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void variableConstructorTest() {
 		String label = "label";
 		Term term = DefaultTermFactory.instance().createVariable(label);
 
 		Assert.assertTrue(Term.Type.VARIABLE.equals(term.getType()));
+		Assert.assertFalse(term.isConstant());
+		Assert.assertFalse(term.isLiteral());
+		Assert.assertTrue(term.isVariable());
 		Assert.assertTrue(term.getIdentifier().toString()
 .equals(label));
 	}

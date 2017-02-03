@@ -47,7 +47,6 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.URIUtils;
 
@@ -72,11 +71,11 @@ final class Utils {
 	}
 
 	static String termToString(Term t, String valueIfVariable) {
-		if (Term.Type.CONSTANT.equals(t.getType())) {
+		if (t.isConstant()) {
 			return "<" + URIzer.instance().input(t.getIdentifier().toString()) + ">";
-		} else if (Term.Type.LITERAL.equals(t.getType())) {
+		} else if (t.isLiteral()) {
 			return t.getIdentifier().toString();
-		} else if (Term.Type.VARIABLE.equals(t.getType())) {
+		} else if (t.isVariable()) {
 			return valueIfVariable;
 		} else {
 			return "";

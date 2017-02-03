@@ -208,7 +208,7 @@ public class IDCompilation extends AbstractRulesCompilation {
 	public boolean isCompilable(Rule r) {
 		return Rules.hasAtomicBody(r) && Rules.hasAtomicHead(r)
 				&& r.getExistentials().isEmpty()
-				&& r.getTerms(Term.Type.CONSTANT).isEmpty();
+				&& r.getConstants().isEmpty();
 	}
 
 	/**

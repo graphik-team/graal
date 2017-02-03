@@ -53,6 +53,7 @@ import java.util.Set;
 import fr.lirmm.graphik.graal.api.core.AbstractAtom;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Constant;
+import fr.lirmm.graphik.graal.api.core.Literal;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
@@ -116,25 +117,7 @@ public class DefaultAtom extends AbstractAtom implements Serializable {
 	}
 	
 	
-	@Override
-	public Set<Term> getConstants() {
-		Set<Term> typedTerms = new HashSet<Term>();
-		for (Term term : this.terms)
-			if (term.isConstant())
-				typedTerms.add(term);
-
-		return typedTerms;
-	}
 	
-	@Override
-	public Set<Variable> getVariables() {
-		Set<Variable> typedTerms = new HashSet<Variable>();
-		for (Term term : this.terms)
-			if (term.isVariable())
-				typedTerms.add((Variable)term);
-
-		return typedTerms;
-	}
 
 	@Override
 	public boolean contains(Term term) {
@@ -150,7 +133,7 @@ public class DefaultAtom extends AbstractAtom implements Serializable {
 		}
 		return -1;
 	}
-
+	
 	/**
 	 * Returns the index of a given term in the atom.
 	 */

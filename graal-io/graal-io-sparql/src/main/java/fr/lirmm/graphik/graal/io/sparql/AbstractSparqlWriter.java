@@ -165,7 +165,7 @@ public class AbstractSparqlWriter extends AbstractWriter {
 	 * @throws IOException
 	 */
 	protected void write(Term t) throws IOException {
-		if (Term.Type.VARIABLE.equals(t.getType())) {
+		if (t.isVariable()) {
 			this.write('?');
 			this.writeSimpleIdentifier(t.getIdentifier().toString());
 		} else {

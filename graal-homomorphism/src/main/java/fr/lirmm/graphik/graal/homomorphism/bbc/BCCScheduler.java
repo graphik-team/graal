@@ -89,7 +89,7 @@ class BCCScheduler extends AbstractProfilable implements Scheduler {
 	@Override
 	public Var[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data, RulesCompilation rc) {
 
-		Set<Term> variables = h.getTerms(Term.Type.VARIABLE);
+		Set<Variable> variables = h.getVariables();
 
 		// BCC
 		Map<Term, Integer> map = new TreeMap<Term, Integer>();
@@ -295,7 +295,7 @@ class BCCScheduler extends AbstractProfilable implements Scheduler {
 	 * @param h
 	 * @return the HyperGraph of variables of h.
 	 */
-	protected static HyperGraph constructHyperGraph(InMemoryAtomSet h, Set<Term> variables, Term[] inverseMap,
+	protected static HyperGraph constructHyperGraph(InMemoryAtomSet h, Set<Variable> variables, Term[] inverseMap,
 	    Map<Term, Integer> map, Iterable<Term> ans) {
 
 		int i = 0;

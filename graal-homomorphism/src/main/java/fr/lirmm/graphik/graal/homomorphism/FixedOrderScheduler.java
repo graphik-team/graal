@@ -78,7 +78,7 @@ public class FixedOrderScheduler extends AbstractProfilable implements Scheduler
 
 	@Override
 	public Var[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data, RulesCompilation rc) throws HomomorphismException {
-		Set<Term> terms = h.getTerms(Term.Type.VARIABLE);
+		Set<Variable> terms = h.getVariables();
 		Var[] vars = new Var[terms.size() + 2];
 
 		int level = 0;

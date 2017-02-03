@@ -140,11 +140,11 @@ public final class MSAProperty extends RuleSetProperty.Default {
 		}
 		DefaultRule rule = new DefaultRule();
 		Atom s = new DefaultAtom(S);
-		s.setTerm(0,DefaultTermFactory.instance().createTerm("X1",Term.Type.VARIABLE));
-		s.setTerm(1,DefaultTermFactory.instance().createTerm("X2",Term.Type.VARIABLE));
+		s.setTerm(0,DefaultTermFactory.instance().createVariable("X1"));
+		s.setTerm(1,DefaultTermFactory.instance().createVariable("X2"));
 		Atom d = new DefaultAtom(D);
-		d.setTerm(0,DefaultTermFactory.instance().createTerm("X1",Term.Type.VARIABLE));
-		d.setTerm(1,DefaultTermFactory.instance().createTerm("X2",Term.Type.VARIABLE));
+		d.setTerm(0,DefaultTermFactory.instance().createVariable("X1"));
+		d.setTerm(1,DefaultTermFactory.instance().createVariable("X2"));
 		rule.getBody().add(s);
 		rule.getHead().add(d);
 
@@ -153,12 +153,12 @@ public final class MSAProperty extends RuleSetProperty.Default {
 		s = new DefaultAtom(S);
 		d = new DefaultAtom(D);
 		Atom d2 = new DefaultAtom(D);
-		d.setTerm(0,DefaultTermFactory.instance().createTerm("X1",Term.Type.VARIABLE));
-		d.setTerm(1,DefaultTermFactory.instance().createTerm("X2",Term.Type.VARIABLE));
-		s.setTerm(0,DefaultTermFactory.instance().createTerm("X2",Term.Type.VARIABLE));
-		s.setTerm(1,DefaultTermFactory.instance().createTerm("X3",Term.Type.VARIABLE));
-		d2.setTerm(0,DefaultTermFactory.instance().createTerm("X1",Term.Type.VARIABLE));
-		d2.setTerm(1,DefaultTermFactory.instance().createTerm("X3",Term.Type.VARIABLE));
+		d.setTerm(0,DefaultTermFactory.instance().createVariable("X1"));
+		d.setTerm(1,DefaultTermFactory.instance().createVariable("X2"));
+		s.setTerm(0,DefaultTermFactory.instance().createVariable("X2"));
+		s.setTerm(1,DefaultTermFactory.instance().createVariable("X3"));
+		d2.setTerm(0,DefaultTermFactory.instance().createVariable("X1"));
+		d2.setTerm(1,DefaultTermFactory.instance().createVariable("X3"));
 		rule = new DefaultRule();
 		rule.getBody().add(d);
 		rule.getBody().add(s);
@@ -189,12 +189,12 @@ public final class MSAProperty extends RuleSetProperty.Default {
 
 			DefaultRule r3 = new DefaultRule();
 			DefaultAtom f1 = new DefaultAtom(Fir);
-			f1.setTerm(0,DefaultTermFactory.instance().createTerm("X1",Term.Type.VARIABLE));
+			f1.setTerm(0,DefaultTermFactory.instance().createVariable("X1"));
 			DefaultAtom f2 = new DefaultAtom(Fir);
-			f2.setTerm(0,DefaultTermFactory.instance().createTerm("X2",Term.Type.VARIABLE));
+			f2.setTerm(0,DefaultTermFactory.instance().createVariable("X2"));
 			DefaultAtom d = new DefaultAtom(D);
-			d.setTerm(0,DefaultTermFactory.instance().createTerm("X1",Term.Type.VARIABLE));
-			d.setTerm(1,DefaultTermFactory.instance().createTerm("X2",Term.Type.VARIABLE));
+			d.setTerm(0,DefaultTermFactory.instance().createVariable("X1"));
+			d.setTerm(1,DefaultTermFactory.instance().createVariable("X2"));
 
 			r3.getBody().add(f1);
 			r3.getBody().add(d);

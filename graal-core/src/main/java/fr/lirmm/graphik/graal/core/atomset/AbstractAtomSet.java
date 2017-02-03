@@ -59,8 +59,8 @@ import fr.lirmm.graphik.graal.api.core.Constant;
 import fr.lirmm.graphik.graal.api.core.Literal;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.filter.ConstantFilter;
 import fr.lirmm.graphik.graal.core.filter.LiteralFilter;
 import fr.lirmm.graphik.graal.core.filter.VariableFilter;
@@ -227,6 +227,7 @@ public abstract class AbstractAtomSet implements AtomSet {
 	}
 
 	@Override
+	@Deprecated
 	public boolean isSubSetOf(AtomSet atomset) throws AtomSetException {
 		CloseableIterator<Atom> it = atomset.iterator();
 		try {

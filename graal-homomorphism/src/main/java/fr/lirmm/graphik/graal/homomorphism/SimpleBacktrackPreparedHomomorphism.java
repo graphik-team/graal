@@ -52,8 +52,6 @@ import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.PreparedExistentialHomomorphism;
@@ -220,8 +218,8 @@ class SimpleBacktrackPreparedHomomorphism<U1 extends InMemoryAtomSet, U2 extends
 		while (it.hasNext()) {
 			Atom a = it.next();
 			rank = 0;
-			for (Term t : a.getTerms(Type.VARIABLE)) {
-				tmp = index.get((Variable) t).level;
+			for (Variable t : a.getVariables()) {
+				tmp = index.get(t).level;
 				if(tmp < firstRealLevel) {
 					tmp = firstRealLevel;
 				}

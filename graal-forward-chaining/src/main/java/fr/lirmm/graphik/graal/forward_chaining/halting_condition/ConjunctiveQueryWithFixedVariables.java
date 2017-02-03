@@ -50,6 +50,7 @@ import java.util.List;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.Constant;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
@@ -71,7 +72,7 @@ public class ConjunctiveQueryWithFixedVariables implements ConjunctiveQuery {
 
 	public ConjunctiveQueryWithFixedVariables(InMemoryAtomSet atomSet, Iterable<Term> fixedTerms) {
 		this.atomSet = computeFixedQuery(atomSet, fixedTerms);
-		this.answerVariables = new LinkedList(this.atomSet.getTerms(Term.Type.VARIABLE));
+		this.answerVariables = new LinkedList<Term>(this.atomSet.getVariables());
 	}
 
 	public ConjunctiveQueryWithFixedVariables(InMemoryAtomSet atomSet, List<Term> responseVariables,
@@ -159,7 +160,7 @@ public class ConjunctiveQueryWithFixedVariables implements ConjunctiveQuery {
 
 	@Override
 	public void appendTo(StringBuilder sb) {
-		for (Term t : this.atomSet.getTerms(Term.Type.CONSTANT))
+		for (Constant t : this.atomSet.getConstants())
 			sb.append(t).append(',');
 
 		sb.append("), ANS(");

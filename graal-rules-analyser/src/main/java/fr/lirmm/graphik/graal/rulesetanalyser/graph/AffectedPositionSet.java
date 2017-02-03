@@ -54,7 +54,6 @@ import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.PredicatePosition;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
@@ -110,8 +109,8 @@ public class AffectedPositionSet {
 
 	public Set<Variable> getAllAffectedVariables(InMemoryAtomSet body) {
 		Set<Variable> set = new TreeSet<Variable>();
-		for (Term t : body.getTerms(Type.VARIABLE)) {
-				set.add((Variable) t);
+		for (Variable t : body.getVariables()) {
+				set.add(t);
 		}
 		return this.getAllAffectedVariables(set, body);
 	}
@@ -141,7 +140,7 @@ public class AffectedPositionSet {
 			i = -1;
 			for (Term t : atom) {
 				++i;
-				if (Type.VARIABLE.equals(t.getType())
+				if (t.isVariable()
 						&& !this.isAffected(atom.getPredicate(), i)) {
 					affectedVars.remove(t);
 				}
@@ -201,7 +200,7 @@ public class AffectedPositionSet {
 			fixPoint = true;
 			for (Rule rule : ruleSet) {
 				body = rule.getBody();
-				for (Term term : rule.getBody().getTerms(Type.VARIABLE)) {
+				for (Variable term : rule.getBody().getVariables()) {
 					isAffected = true;
 					atomIt = body.iterator();
 					while (atomIt.hasNext() && isAffected) {

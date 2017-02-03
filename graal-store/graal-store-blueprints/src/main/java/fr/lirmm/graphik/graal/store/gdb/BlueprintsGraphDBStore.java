@@ -158,10 +158,15 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 		query.has("predicate", predicateToString(p));
 		Set<Term> terms = new TreeSet<Term>();
 		AtomToTermIterator it = new AtomToTermIterator(query.vertices().iterator(), position);
-		while (it.hasNext()) {
-			terms.add(it.next());
+		try {
+			while (it.hasNext()) {
+				terms.add(it.next());
+			}
+		} catch (IteratorException e) {
+			throw new AtomSetException(e);
+		} finally {
+			it.close();
 		}
-		it.close();
 		return new CloseableIteratorAdapter<Term>(terms.iterator());
 	}
 
@@ -185,7 +190,7 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 	}
 
 	@Override
-	public Set<Term> getTerms() {
+	public Set<Term> getTerms() throws AtomSetException {
 		Set<Term> terms = new TreeSet<Term>();
 		for (Vertex v : this.graph.getVertices("class", "term")) {
 			terms.add(vertexToTerm(v));
@@ -194,13 +199,13 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 	}
 
 	@Override
-	public CloseableIterator<Term> termsIterator() {
+	public CloseableIterator<Term> termsIterator() throws AtomSetException {
 		return new CloseableIteratorAdapter<Term>(this.getTerms().iterator());
 	}
 
 	@Override
 	@Deprecated
-	public Set<Term> getTerms(Type type) {
+	public Set<Term> getTerms(Type type) throws AtomSetException {
 		Set<Term> terms = new TreeSet<Term>();
 		GraphQuery query = this.graph.query();
 		query.has("class", "term");
@@ -214,7 +219,7 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 
 	@Override
 	@Deprecated
-	public CloseableIterator<Term> termsIterator(Term.Type type) {
+	public CloseableIterator<Term> termsIterator(Term.Type type) throws AtomSetException {
 		return new CloseableIteratorAdapter<Term>(this.getTerms(type).iterator());
 	}
 
@@ -270,7 +275,7 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 		GraphQuery query = this.graph.query();
 		query.has("class", "term");
 		query.has("value", term.getIdentifier().toString());
-		query.has("type", term.getType().toString());
+		query.has("type", getType(term));
 		Iterator<Vertex> it = query.vertices().iterator();
 
 		if (it.hasNext()) {
@@ -279,7 +284,7 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 			v = this.graph.addVertex(null);
 			v.setProperty("class", "term");
 			v.setProperty("value", term.getIdentifier().toString());
-			v.setProperty("type", term.getType().toString());
+			v.setProperty("type", getType(term));
 		}
 		return v;
 	}
@@ -319,14 +324,21 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 		return new Predicate(label, arity);
 	}
 
-	private static Term vertexToTerm(Vertex vertex) {
-		return DefaultTermFactory.instance().createTerm(
-				vertex.getProperty("value"),
-				Term.Type.valueOf(vertex
-				.getProperty("type").toString()));
+	private static Term vertexToTerm(Vertex vertex) throws AtomSetException {
+		String type = vertex.getProperty("type").toString();
+		if("V".equals(type)) {
+			return DefaultTermFactory.instance().createVariable(vertex.getProperty("value"));
+		} else if ("L".equals(type)) {
+			return DefaultTermFactory.instance().createLiteral(vertex.getProperty("value"));
+		} else if ("C".equals(type)) {
+			return DefaultTermFactory.instance().createConstant(vertex.getProperty("value"));
+		} else {			
+			throw new AtomSetException("Unrecognized type: " + type);
+		}
+	
 	}
 
-	private static Atom vertexToAtom(Vertex vertex) {
+	private static Atom vertexToAtom(Vertex vertex) throws AtomSetException {
 		Iterator<Edge> it = vertex.getEdges(Direction.OUT, "predicate")
 				.iterator();
 		Vertex predicateVertex = it.next().getVertex(Direction.IN);
@@ -347,7 +359,7 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 	}
 
 	private static String termToString(Term t) {
-		return t.getIdentifier().toString() + "@" + t.getType().toString();
+		return t.getIdentifier().toString() + "@" + getType(t);
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -367,8 +379,12 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 		}
 
 		@Override
-		public Atom next() {
-			return vertexToAtom(this.it.next());
+		public Atom next() throws IteratorException {
+			try {
+				return vertexToAtom(this.it.next());
+			} catch (AtomSetException e) {
+				throw new IteratorException(e);
+			}
 		}
 
 		public void remove() {
@@ -424,10 +440,14 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 		}
 
 		@Override
-		public Term next() {
+		public Term next() throws IteratorException {
 			VertexQuery query = this.it.next().query();
 			query.has("index", position);
-			return vertexToTerm(query.vertices().iterator().next());
+			try {
+				return vertexToTerm(query.vertices().iterator().next());
+			} catch (AtomSetException e) {
+				throw new IteratorException(e);
+			}
 		}
 
 		public void remove() {
@@ -438,6 +458,16 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 		public void close() {
 		}
 
+	}
+	
+	private static String getType(Term t) {
+		if (t.isVariable()) {
+			return "V";
+		} else if (t.isLiteral()) {
+			return "L";
+		} else {
+			return "C";
+		}
 	}
 
 
