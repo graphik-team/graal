@@ -61,9 +61,9 @@ import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
-import fr.lirmm.graphik.graal.notapi.ConstantFilter;
-import fr.lirmm.graphik.graal.notapi.LiteralFilter;
-import fr.lirmm.graphik.graal.notapi.VariableFilter;
+import fr.lirmm.graphik.graal.core.filter.ConstantFilter;
+import fr.lirmm.graphik.graal.core.filter.LiteralFilter;
+import fr.lirmm.graphik.graal.core.filter.VariableFilter;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.filter.FilterIterator;
 
