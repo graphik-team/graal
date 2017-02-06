@@ -399,10 +399,10 @@ public class OWL2Parser extends AbstractCloseableIterator<Object> implements Par
 				if (a.getPredicate().equals(Predicate.EQUALITY)
 				    && (a.getTerm(0).isVariable() || a.getTerm(1).isVariable())) {
 					toRemove.add(a);
-					if (a.getTerm(1).isVariable()) {
-						s.put((Variable) a.getTerm(1), a.getTerm(0));
-					} else {
+					if (a.getTerm(0).isVariable()) {
 						s.put((Variable) a.getTerm(0), a.getTerm(1));
+					} else {
+						s.put((Variable) a.getTerm(1), a.getTerm(0));
 					}
 				}
 			}

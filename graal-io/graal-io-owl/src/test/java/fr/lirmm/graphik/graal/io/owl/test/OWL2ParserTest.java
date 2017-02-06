@@ -2135,12 +2135,23 @@ public class OWL2ParserTest {
 			while (parser.hasNext()) {
 				Object o = parser.next();
 				if (o instanceof AtomSet) {
+					Term a0 = null, b0 = null, p0 = null, p1 = null;
 					++nbFacts;
 					CloseableIterator<Atom> it = ((AtomSet) o).iterator();
 					while (it.hasNext()) {
-						it.next();
+						Atom a = it.next();
 						++nbAtoms;
+						if(a.getPredicate().equals(P)) {
+							p0 = a.getTerm(0);
+							p1 = a.getTerm(1);
+						} else if (a.getPredicate().equals(A)) {
+							a0 = a.getTerm(0);
+						} else if (a.getPredicate().equals(B)) {
+							b0 = a.getTerm(0);
+						}
 					}
+					Assert.assertEquals(p0, a0);
+					Assert.assertEquals(p1, b0);
 				}
 			}
 			Assert.assertEquals("Number of facts found:", 2, nbFacts);
