@@ -187,6 +187,26 @@ public class SubstitutionTest {
 	}
 	
 	@Theory
+	public void aggregateTest4(Substitution s1, Substitution s2)  {
+		s1.put(X,Y);
+		s1.put(Z,U);
+		
+		s2.put(Y,A);
+		s2.put(Z,V);
+		
+		Substitution aggregation = s1.aggregate(s2);
+		System.out.println(aggregation);
+		Assert.assertNotNull(aggregation);
+		
+		Assert.assertEquals(A, aggregation.createImageOf(X));
+		Assert.assertEquals(A, aggregation.createImageOf(Y));
+		
+		Assert.assertEquals(aggregation.createImageOf(Z), aggregation.createImageOf(U));
+		Assert.assertEquals(aggregation.createImageOf(V), aggregation.createImageOf(U));
+
+	}
+	
+	@Theory
 	public void aggregateImpossibleTest1(Substitution s1, Substitution s2)  {
 		s1.put(X,A);
 		s2.put(X,B);

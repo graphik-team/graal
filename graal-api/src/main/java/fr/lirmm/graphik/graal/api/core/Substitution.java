@@ -120,8 +120,9 @@ public interface Substitution extends Comparable<Substitution>, AppendableToStri
 	 * and codomain. It choose a representative term for each connected
 	 * component by successive application of the mapping.
 	 * 
-	 * For example, if the current substitution is {X -> Y} and you add a
-	 * mapping {Y -> 'a'}, the result is {X -> 'a', Y -> 'a'}.
+	 * For example, if the current substitution is {X -> Y, Z -> U} and you add a
+	 * mapping {Y -> 'a', Z -> V}, the result is {Y -> 'a', X -> 'a', Z -> V, U -> V}
+	 * or {Y -> 'a', X -> 'a', U -> Z, V -> Z} or {Y -> 'a', X -> 'a', Z -> U, V -> U}.
 	 * 
 	 * 
 	 * @param var
