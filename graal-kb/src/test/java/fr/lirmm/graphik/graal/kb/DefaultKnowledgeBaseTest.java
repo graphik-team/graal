@@ -56,6 +56,7 @@ import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.api.kb.KnowledgeBase;
 import fr.lirmm.graphik.graal.api.kb.KnowledgeBaseException;
+import fr.lirmm.graphik.graal.api.kb.Priority;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
@@ -91,6 +92,7 @@ public class DefaultKnowledgeBaseTest {
 		Assert.assertTrue(kb.getFacts().contains(aa));
 		Assert.assertTrue(kb.getFacts().contains(ab));
 		Assert.assertTrue(kb.getFacts().contains(ac));
+		kb.close();
 	}
 
 	/**
@@ -117,6 +119,7 @@ public class DefaultKnowledgeBaseTest {
 		Assert.assertTrue(kb.getFacts().contains(aa));
 		Assert.assertTrue(kb.getFacts().contains(ab));
 		Assert.assertTrue(kb.getFacts().contains(ac));
+		kb.close();
 	}
 
 	/**
@@ -147,6 +150,7 @@ public class DefaultKnowledgeBaseTest {
 		Assert.assertTrue(kb.getFacts().contains(aa));
 		Assert.assertTrue(kb.getFacts().contains(ab));
 		Assert.assertTrue(kb.getFacts().contains(ac));
+		kb.close();
 	}
 
 	/**
@@ -160,6 +164,25 @@ public class DefaultKnowledgeBaseTest {
 		KnowledgeBase kb = new DefaultKnowledgeBase(
 				new DlgpParser("[R] p(X) :- q(X). q(a). [NC] ! :- q(X), p(X)."));
 		Assert.assertFalse(kb.isConsistent());
+		kb.close();
+	}
+	
+	/**
+	 * Test method for
+	 * {@link fr.lirmm.graphik.graal.kb.DefaultKnowledgeBase#isConsistent()}.
+	 * @throws KnowledgeBaseException 
+	 * @throws AtomSetException 
+	 * @throws KBBuilderException 
+	 */
+	@Test
+	public void testIsConsistentFalse2() throws KnowledgeBaseException, AtomSetException, KBBuilderException {
+		KBBuilder kbb = new KBBuilder();
+		kbb.addAll(new DlgpParser("q2(X) :- q(X). pr(X) :- p(X), r(X). q(a), p(a), r(a). [NC] ! :- q2(X), pr(X)."));
+		kbb.setPriority(Priority.REWRITING);
+		KnowledgeBase kb = kbb.build();
+		
+		Assert.assertFalse(kb.isConsistent());
+		kb.close();
 	}
 	
 	/**
@@ -171,6 +194,7 @@ public class DefaultKnowledgeBaseTest {
 		KnowledgeBase kb = new DefaultKnowledgeBase(
 				new DlgpParser("[R] p(X) :- q(X). p(a). [NC] ! :- q(X), p(X)."));
 		Assert.assertTrue(kb.isConsistent());
+		kb.close();
 	}
 
 	/**
@@ -188,6 +212,7 @@ public class DefaultKnowledgeBaseTest {
 		Assert.assertTrue(kb.getFacts().contains(DlgpParser.parseAtom("r(a).")));
 		Assert.assertTrue(kb.getFacts().contains(DlgpParser.parseAtom("q(a).")));
 		Assert.assertTrue(kb.getFacts().contains(DlgpParser.parseAtom("p(a).")));
+		kb.close();
 	}
 
 	/**
@@ -205,6 +230,7 @@ public class DefaultKnowledgeBaseTest {
 		CloseableIterator<Substitution> res = kb.query(DlgpParser.parseQuery("? :- p(a)."));
 		Assert.assertTrue(res.hasNext());
 		res.close();
+		kb.close();
 	}
 
 	/**
@@ -229,6 +255,7 @@ public class DefaultKnowledgeBaseTest {
 		
 		Assert.assertEquals(r1, kb.getRule("R1"));
 		Assert.assertEquals(r2, kb.getRule("R2"));
+		kb.close();
 	}
 
 
@@ -244,6 +271,7 @@ public class DefaultKnowledgeBaseTest {
 		kb.addQuery(q1);
 		Assert.assertTrue(kb.getQueryNames().contains("Q1"));
 		Assert.assertEquals(q1, kb.getQuery("Q1"));
+		kb.close();
 	}
 
 
