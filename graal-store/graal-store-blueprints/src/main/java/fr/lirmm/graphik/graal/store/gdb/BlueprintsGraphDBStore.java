@@ -62,8 +62,10 @@ import fr.lirmm.graphik.graal.api.core.ConstantGenerator;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
+import fr.lirmm.graphik.graal.core.AtomType;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultConstantGenerator;
+import fr.lirmm.graphik.graal.core.TypeFilter;
 import fr.lirmm.graphik.graal.core.store.GraphDBStore;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
@@ -71,6 +73,7 @@ import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.IteratorException;
+import fr.lirmm.graphik.util.stream.filter.FilterIterator;
 
 /**
  * BlueprintsGraphDBStore wrap  {@link <a href="http://blueprints.tinkerpop.com">Blueprints API</a>} into an AtomSet. Blueprints API allows you to
@@ -140,7 +143,8 @@ public class BlueprintsGraphDBStore extends GraphDBStore {
 			}
 		}
 
-		return new AtomIterator(query.vertices().iterator());
+		final AtomType atomType = new AtomType(atom);
+		return new FilterIterator<Atom, Atom>(new AtomIterator(query.vertices().iterator()), new TypeFilter(atomType, atom));
 	}
 
 	@Override

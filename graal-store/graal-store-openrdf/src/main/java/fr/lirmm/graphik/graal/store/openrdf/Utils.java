@@ -40,10 +40,7 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.store.triplestore;
-
-import com.hp.hpl.jena.rdf.model.Literal;
-import com.hp.hpl.jena.rdf.model.RDFNode;
+package fr.lirmm.graphik.graal.store.openrdf;
 
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
@@ -82,22 +79,6 @@ final class Utils {
 		}
 	}
 
-	static Term createTerm(RDFNode node) {
-		Term term = null;
-		if (node.isLiteral()) {
-			Literal l = node.asLiteral();
-			term = DefaultTermFactory.instance().createLiteral(URIUtils.createURI(l.getDatatypeURI()), l.getValue());
-		} else {
-			term = DefaultTermFactory.instance().createConstant(URIzer.instance().output(node.toString()));
-		}
-		return term;
-	}
-
-	static Predicate createPredicate(RDFNode node, int arity) {
-		String s = node.toString();
-		s = URIzer.instance().output(s);
-		return new Predicate(s, arity);
-	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS

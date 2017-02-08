@@ -58,4 +58,11 @@ interface TermVertex extends Term, Vertex {
 
 	CloseableIteratorWithoutException<Atom> getNeighbors(Predicate p, int position);
 
+	/**
+	 * @param p
+	 * @param position
+	 * @return the size of the neighborhood by p and the specified position.
+	 */
+	int neighborhoodSize(Predicate p, int position);
+
 }

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2017)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -42,7 +42,6 @@
  */
 package fr.lirmm.graphik.graal.homomorphism;
 
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -54,14 +53,11 @@ import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAggregator;
 import fr.lirmm.graphik.util.stream.converter.ConverterCloseableIterator;
-import fr.lirmm.graphik.util.stream.filter.Filter;
-import fr.lirmm.graphik.util.stream.filter.FilterIterator;
 
 /**
  * An homomorphism for Atomic query without multiple occurences of a variables.
@@ -88,59 +84,35 @@ public class AtomicQueryHomomorphism extends AbstractHomomorphismWithCompilation
 	// /////////////////////////////////////////////////////////////////////////
 	// HOMOMORPHISM METHODS
 	// /////////////////////////////////////////////////////////////////////////
-	
+
 	@Override
-	public <U1 extends ConjunctiveQuery, U2 extends AtomSet> CloseableIterator<Substitution> execute(U1 q, U2 a) throws HomomorphismException {
+	public <U1 extends ConjunctiveQuery, U2 extends AtomSet> CloseableIterator<Substitution> execute(U1 q, U2 a)
+			throws HomomorphismException {
+		System.out.println("AtomicQueryHomomorphismNew" + q.toString());
+		Atom atom = q.getAtomSet().iterator().next();
 		try {
-			Atom atom = q.getAtomSet().iterator().next();
-			List<Term> ans = q.getAnswerVariables();
-			CloseableIterator<Atom> atomsByPredicateIt = a.atomsByPredicate(atom.getPredicate());
-			ConverterCloseableIterator<Atom, Substitution> converterSubIt = new ConverterCloseableIterator<Atom, Substitution>(atomsByPredicateIt, new Atom2SubstitutionConverter(atom, ans));
-			if(ans.containsAll(atom.getVariables())) {
-				return converterSubIt;
-			} else {
-				return new FilterIterator<Substitution, Substitution>(converterSubIt, new UniqFiler());
-			}
+			return new ConverterCloseableIterator<Atom, Substitution>(a.match(atom),
+					new Atom2SubstitutionConverter(atom, q.getAnswerVariables()));
 		} catch (AtomSetException e) {
 			throw new HomomorphismException(e);
 		}
 	}
-	
+
 	@Override
-	public <U1 extends ConjunctiveQuery, U2 extends AtomSet> CloseableIterator<Substitution> execute(U1 q, U2 a, RulesCompilation rc) throws HomomorphismException {
+	public <U1 extends ConjunctiveQuery, U2 extends AtomSet> CloseableIterator<Substitution> execute(U1 q, U2 a,
+			RulesCompilation rc) throws HomomorphismException {
 		try {
-			Atom atom = q.getAtomSet().iterator().next();
-			List<Term> ans = q.getAnswerVariables();
 			List<CloseableIterator<Substitution>> iteratorsList = new LinkedList<CloseableIterator<Substitution>>();
+			Atom atom = q.getAtomSet().iterator().next();
 			for (Pair<Atom, Substitution> im : rc.getRewritingOf(atom)) {
-				iteratorsList.add(new ConverterCloseableIterator<Atom, Substitution>(a.atomsByPredicate(im.getLeft().getPredicate()), new Atom2SubstitutionConverter(atom, ans, im.getRight())));
+				iteratorsList.add(new ConverterCloseableIterator<Atom, Substitution>(a.match(im.getLeft()),
+						new Atom2SubstitutionConverter(im.getLeft(), q.getAnswerVariables(), im.getRight())));
 			}
-			CloseableIteratorAggregator<Substitution> aggregIt = new CloseableIteratorAggregator<Substitution>(new CloseableIteratorAdapter<CloseableIterator<Substitution>>(iteratorsList.iterator()));
-			if(ans.containsAll(atom.getVariables())) {
-				return aggregIt;
-			} else {
-				return new FilterIterator<Substitution, Substitution>(aggregIt, new UniqFiler());
-			}
+			return new CloseableIteratorAggregator<Substitution>(
+					new CloseableIteratorAdapter<CloseableIterator<Substitution>>(iteratorsList.iterator()));
 		} catch (AtomSetException e) {
 			throw new HomomorphismException(e);
 		}
-	}
-
-
-	// /////////////////////////////////////////////////////////////////////////
-	// PRIVATE CLASS
-	// /////////////////////////////////////////////////////////////////////////
-	
-	
-	private static class UniqFiler implements Filter<Substitution> {
-
-		HashSet<Substitution> sol = new HashSet<Substitution>();
-		
-		@Override
-		public boolean filter(Substitution s) {
-			return sol.add(s);
-		}
-		
 	}
 
 }

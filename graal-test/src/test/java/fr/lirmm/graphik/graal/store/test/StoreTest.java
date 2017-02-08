@@ -46,6 +46,7 @@
 package fr.lirmm.graphik.graal.store.test;
 
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
@@ -54,8 +55,16 @@ import org.junit.runner.RunWith;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.RuleSet;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.io.ParseException;
+import fr.lirmm.graphik.graal.api.store.TripleStore;
+import fr.lirmm.graphik.graal.core.compilation.IDCompilation;
+import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
+import fr.lirmm.graphik.graal.homomorphism.AtomicQueryHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.test.TestUtil;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -127,22 +136,77 @@ public class StoreTest {
 
 	@Theory
 	public void match(AtomSet store) throws AtomSetException, IteratorException, ParseException {
+		Atom a1 = DlgpParser.parseAtom("<P>(a,a).");
+		Atom a2 = DlgpParser.parseAtom("<P>(a,c).");
+		
 		store.add(DlgpParser.parseAtom("<P>(b,a)."));
-		store.add(DlgpParser.parseAtom("<P>(a,a)."));
+		store.add(a1);
 		store.add(DlgpParser.parseAtom("<P>(b,b)."));
+		store.add(a2);
+		store.add(DlgpParser.parseAtom("<Q>(a,a)."));
+		store.add(DlgpParser.parseAtom("<Q>(a,b)."));
+
+		Atom q = DlgpParser.parseAtom("<P>(a,X).");
+		CloseableIterator<Atom> it = store.match(q);
+		
+		int cpt = 0;
+		while (it.hasNext()) {
+			++cpt;
+			Atom a = it.next();
+			Assert.assertTrue(a.equals(a1) || a.equals(a2));
+		}
+
+		Assert.assertEquals(2, cpt);
+	}
+	
+	@Theory
+	public void match2(AtomSet store) throws AtomSetException, IteratorException, ParseException {
+		Atom a1 = DlgpParser.parseAtom("<P>(a,a).");
+		Atom a2 = DlgpParser.parseAtom("<P>(b,b).");
+		
+		store.add(DlgpParser.parseAtom("<P>(b,a)."));
+		store.add(a1);
+		store.add(a2);
 		store.add(DlgpParser.parseAtom("<P>(a,c)."));
 		store.add(DlgpParser.parseAtom("<Q>(a,a)."));
 		store.add(DlgpParser.parseAtom("<Q>(a,b)."));
 
-		Atom a = DlgpParser.parseAtom("<P>(a,X).");
-
-		CloseableIterator<?> it = store.match(a);
+		Atom q = DlgpParser.parseAtom("<P>(X,X).");
+		CloseableIterator<Atom> it = store.match(q);
+		
 		int cpt = 0;
 		while (it.hasNext()) {
 			++cpt;
-			it.next();
+			Atom a = it.next();
+			Assert.assertTrue(a.equals(a1) || a.equals(a2));
 		}
 
+		Assert.assertEquals(2, cpt);
+	}
+	
+	@Theory
+	public void match3(AtomSet store) throws AtomSetException, IteratorException, ParseException, HomomorphismException {
+		Assume.assumeFalse(store instanceof TripleStore);
+		
+		Atom a1 = DlgpParser.parseAtom("<P>(a,a,a).");
+		Atom a2 = DlgpParser.parseAtom("<P>(a,c,c).");
+
+		store.add(DlgpParser.parseAtom("<P>(b,a,a)."));
+		store.add(DlgpParser.parseAtom("<P>(a,a,a)."));
+		store.add(DlgpParser.parseAtom("<P>(a,c,b)."));
+		store.add(DlgpParser.parseAtom("<P>(a,c,c)."));
+		store.add(DlgpParser.parseAtom("<Q>(b,a,c)."));
+		store.add(DlgpParser.parseAtom("<Q>(a,b,b)."));
+
+		Atom q = DlgpParser.parseAtom("<P>(a,X,X).");
+		CloseableIterator<Atom> it = store.match(q);
+		
+		int cpt = 0;
+		while (it.hasNext()) {
+			++cpt;
+			Atom a = it.next();
+			Assert.assertTrue(a.equals(a1) || a.equals(a2));
+		}
 		Assert.assertEquals(2, cpt);
 	}
 

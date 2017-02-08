@@ -40,64 +40,35 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-/**
- * 
- */
-package fr.lirmm.graphik.graal.homomorphism.checker;
+package fr.lirmm.graphik.graal.core;
 
-import java.util.Set;
-import java.util.TreeSet;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.util.stream.filter.Filter;
 
-import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.api.core.Query;
-import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.homomorphism.AbstractChecker;
-import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismChecker;
-import fr.lirmm.graphik.graal.core.atomset.AtomSetUtils;
-import fr.lirmm.graphik.graal.homomorphism.AtomicQueryHomomorphism;
+public class TypeFilter implements Filter<Atom> {
 
-/**
- * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- *
- */
-public class AtomicQueryHomomorphismChecker extends AbstractChecker implements HomomorphismChecker {
+	private AtomType type;
+	private Atom atom;
 
-	private static final AtomicQueryHomomorphismChecker INSTANCE = new AtomicQueryHomomorphismChecker();
-
-	// /////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	// /////////////////////////////////////////////////////////////////////////
-
-	public static AtomicQueryHomomorphismChecker instance() {
-		return INSTANCE;
+	public TypeFilter(AtomType type, Atom atom) {
+		this.type = type;
+		this.atom = atom;
 	}
 	
-	private AtomicQueryHomomorphismChecker() {
-		
-	}
-	
-	// /////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
 	@Override
-	public AtomicQueryHomomorphism getSolver() {
-		return AtomicQueryHomomorphism.instance();
-	}
-
-	@Override
-	public boolean check(Query query, AtomSet atomset) {
-		if (query instanceof ConjunctiveQuery) {
-			ConjunctiveQuery q = (ConjunctiveQuery) query;
-			return AtomSetUtils.isSingleton(q.getAtomSet());
+	public boolean filter(Atom e) {
+		for(int i = 0; i < type.type.length; ++i) {
+			if(type.type[i] >= 0) {
+				if(!e.getTerm(i).equals(e.getTerm(type.type[i]))) {
+					return false;
+				}
+			} else if (type.type[i] == AtomType.CONSTANT) {
+				if(!e.getTerm(i).equals(atom.getTerm(i))) {
+					return false;
+				}
+			}
 		}
-		return false;
-	}
-
-	@Override
-	public int getDefaultPriority() {
-		return 40;
+		return true;
 	}
 
 }

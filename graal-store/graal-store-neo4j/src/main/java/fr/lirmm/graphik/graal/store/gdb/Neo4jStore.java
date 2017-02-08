@@ -496,17 +496,17 @@ public class Neo4jStore extends GraphDBStore {
 		return sb.toString();
 	}
 
-	private static String containsAtomIntoCypherQuery(Atom a, boolean checkVariable) {
+	private static String containsAtomIntoCypherQuery(Atom a, boolean checkVariableAsFixed) {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("MATCH ");
-		atomToCypher(sb, a, checkVariable);
+		atomToCypher(sb, a, checkVariableAsFixed);
 		sb.append("RETURN atom");
 
 		return sb.toString();
 	}
 
-	private static void atomToCypher(StringBuilder sb, Atom a, boolean checkVariable) {
+	private static void atomToCypher(StringBuilder sb, Atom a, boolean checkVariableAsFixed) {
 		sb.append("(atom:ATOM),");
 		predicateToCypher(sb, a.getPredicate());
 		sb.append(",");
@@ -516,10 +516,14 @@ public class Neo4jStore extends GraphDBStore {
 			// (term?:TERM {value: '?', arity: ?}),
 			// (atom)-[:TERM { index: ? }]->(term?)
 			++i;
-			if (checkVariable || t.isConstant()) {
+			if (checkVariableAsFixed || t.isConstant()) {
 				sb.append("(term").append(i).append(":TERM {value: '").append(t.getIdentifier().toString())
 				  .append("', type: '").append(getType(t)).append("' }), (atom)-[rel_term").append(i)
 				  .append(":TERM { index: ").append(i).append(" }]->(term").append(i).append("), ");
+			} else {
+				String id = t.getIdentifier().toString();
+				sb.append("(term").append(id).append(":TERM), (atom)-[rel_term")
+				  .append(i).append(":TERM { index: ").append(i).append(" }]->(term").append(id).append("), ");
 			}
 		}
 

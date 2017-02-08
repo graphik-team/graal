@@ -89,6 +89,19 @@ abstract class AbstractTermVertex extends AbstractTerm implements TermVertex {
 		}
 		return new CloseableIteratorAdapter<Atom>(it);
 	}
+	
+	@Override
+	public int neighborhoodSize(Predicate p, int position) {
+		int size = 0;
+		Collection<Atom>[] map = this.index.get(p);
+		if(map != null) {
+			Collection<Atom> collection = map[position];
+			if(collection != null) {
+				size = collection.size();
+			}
+		}
+		return size;
+	}
 
 	@Override
 	public boolean addNeighbor(AtomEdge a) {

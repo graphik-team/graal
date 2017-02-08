@@ -43,7 +43,7 @@
 /**
  * 
  */
-package fr.lirmm.graphik.graal.store.triplestore;
+package fr.lirmm.graphik.graal.store.jenatdb;
 
 import java.io.File;
 import java.util.Iterator;
@@ -93,8 +93,6 @@ public class JenaStore extends AbstractTripleStore {
 	private static final String INSERT_QUERY = PREFIX + " INSERT DATA { " + " %s %s %s " + " } ";
 
 	private static final String DELETE_QUERY = PREFIX + " DELETE WHERE { %s %s %s } ";
-
-	private static final String SELECT_QUERY = PREFIX + "SELECT * " + " WHERE { %s %s %s } ";
 	
 	private static final String SELECT_FILTERED_QUERY = PREFIX + "SELECT ?s ?p ?o WHERE { %s %s %s }";
 
@@ -259,16 +257,10 @@ public class JenaStore extends AbstractTripleStore {
 
 	@Override
 	public CloseableIterator<Atom> match(Atom atom) throws AtomSetException {
-		String select = String.format(SELECT_QUERY, Utils.termToString(atom.getTerm(0), "?s"),
-		    Utils.predicateToString(atom.getPredicate()), Utils.termToString(atom.getTerm(1), "?o"));
-
 		Term subject = atom.getTerm(0);
-		if (!subject.isConstant())
-			subject = null;
-
 		Term object = atom.getTerm(1);
-		if (!object.isConstant())
-			object = null;
+		String select = String.format(SELECT_QUERY, Utils.termToString(subject, "?" + subject.getLabel()),
+		    Utils.predicateToString(atom.getPredicate()), Utils.termToString(object, "?" + object.getLabel()));
 
 		return new AtomIterator(this.directory, select, subject, atom.getPredicate(), object);
 	}

@@ -40,7 +40,7 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.store.triplestore;
+package fr.lirmm.graphik.graal.store.jenatdb;
 
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.QueryExecution;
@@ -50,37 +50,42 @@ import com.hp.hpl.jena.query.ReadWrite;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.tdb.TDBFactory;
 
+import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 
-class TermIterator extends AbstractCloseableIterator<Term> {
+class AtomIterator extends AbstractCloseableIterator<Atom> {
 
-	private Dataset        dataset;
-	private ResultSet      rs;
-	private QueryExecution qExec;
-	private boolean        isClosed = false;
+	private Dataset             dataset;
+	private ResultSet           rs;
+	private QueryExecution      qExec;
+	
+	private Term subject = null;
+	private Predicate predicate = null;
+	private Term object = null;
 
-	private Term           subject   = null;
-	private Predicate      predicate = null;
-	private Term           object    = null;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 
-	/**
-	 * This Iterator will iterate over ?x
-	 * 
-	 * @param directory
-	 * @param query
-	 */
-	public TermIterator(String directory, String query) {
+	public AtomIterator(String directory, String query) {
+		this(directory, query, null, null, null);
+	}
+	
+	public AtomIterator(String directory, String query, Term subject, Predicate predicate, Term object) {
 		this.dataset = TDBFactory.createDataset(directory);
 		this.dataset.begin(ReadWrite.READ);
 		this.qExec = QueryExecutionFactory.create(query, this.dataset);
 		this.rs = qExec.execSelect();
+		
+		this.subject = subject;
+		this.predicate = predicate;
+		this.object = object;
 	}
+
 
 	// /////////////////////////////////////////////////////////////////////////
 	// METHODS
@@ -88,13 +93,10 @@ class TermIterator extends AbstractCloseableIterator<Term> {
 
 	@Override
 	public void close() {
-		if(!this.isClosed) {
-			if (this.qExec != null) {
-				this.qExec.close();
-			}
-			this.dataset.end();
+		if (this.qExec != null) {
+			this.qExec.close();
 		}
-		this.isClosed = true;
+		this.dataset.end();
 	}
 
 	public void remove() {
@@ -103,20 +105,37 @@ class TermIterator extends AbstractCloseableIterator<Term> {
 
 	@Override
 	public boolean hasNext() {
-		if (!this.isClosed) {
-			if (this.rs.hasNext()) {
-				return true;
-			} else {
-				this.close();
-			}
+		if (this.rs.hasNext()) {
+			return true;
+		} else {
+			this.close();
+			return false;
 		}
-		return false;
 	}
 
 	@Override
-	public Term next() {
+	public Atom next() {
 		QuerySolution next = this.rs.next();
-		return Utils.createTerm(next.get("?x"));
+
+		Predicate predicate = this.predicate;
+		if(predicate == null)
+			predicate = Utils.createPredicate(next.get("?p"), 2);
+		
+		Term subject = this.subject;
+		if(subject == null) {
+			subject = Utils.createTerm(next.get("?s"));
+		} else if(subject.isVariable()) {
+			subject = Utils.createTerm(next.get("?" + subject.getLabel()));
+		}
+		
+		Term object = this.object;
+		if (object == null) {
+			object = Utils.createTerm(next.get("?o"));
+		} else if(object.isVariable()) {
+			object = Utils.createTerm(next.get("?" + object.getLabel()));
+		}
+
+		return new DefaultAtom(predicate, subject, object);
 	}
 
 }

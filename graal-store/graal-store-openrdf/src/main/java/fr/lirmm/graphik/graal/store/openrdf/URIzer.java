@@ -40,66 +40,47 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.core;
+package fr.lirmm.graphik.graal.store.openrdf;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.Predicate;
-import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.TermValueComparator;
+import fr.lirmm.graphik.util.Prefix;
+import fr.lirmm.graphik.util.URIUtils;
 
-/**
- * AtomMatcher check if an atom match a pattern specified by the atom given in
- * the constructor. Note that, it does not check if a same variable are
- * instantiated by the same term. So, an AtomMatcher instantiated with
- * "p(X1,X1,a)" match "p(a,a,a)" but also "p(a,b,a)".
- * 
- * 
- * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- *
- */
-public class AtomMatcher {
+class URIzer {
+	private static URIzer instance;
 
-	private Predicate predicate;
-	private Term check[];
-
-	// /////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	// /////////////////////////////////////////////////////////////////////////
-
-	public AtomMatcher(Atom a) {
-		this.predicate = a.getPredicate();
-		this.check = new Term[this.predicate.getArity()];
-
-		int i = -1;
-		for (Term t : a.getTerms()) {
-			++i;
-			if (t.isConstant()) {
-				this.check[i] = t;
-			}
-		}
+	protected URIzer() {
+		super();
 	}
 
-	// /////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	// /////////////////////////////////////////////////////////////////////////
+	public static synchronized URIzer instance() {
+		if (instance == null)
+			instance = new URIzer();
+
+		return instance;
+	}
+
+	Prefix defaultPrefix = new Prefix("sail", "file:///sail/");
 
 	/**
+	 * Add default prefix if necessary
 	 * 
-	 * @param atom
-	 * @return true
+	 * @param s
+	 * @return a String which represents an URI.
 	 */
-	public boolean check(Atom atom) {
-		if (!predicate.equals(atom.getPredicate())) {
-			return false;
-		}
+	String input(String s) {
+		return URIUtils.createURI(s, defaultPrefix).toString();
+	}
 
-		int i = -1;
-		for (Term t : atom) {
-			++i;
-			if (this.check[i] != null && TermValueComparator.instance().compare(this.check[i], t) != 0) {
-				return false;
-			}
+	/**
+	 * Remove default prefix if it is present
+	 * 
+	 * @param s
+	 * @return the String s without the default prefix, if it was present.
+	 */
+	String output(String s) {
+		if (s.startsWith(defaultPrefix.getPrefix())) {
+			return s.substring(defaultPrefix.getPrefix().length());
 		}
-		return true;
+		return s;
 	}
 }

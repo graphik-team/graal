@@ -40,64 +40,76 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-/**
- * 
- */
-package fr.lirmm.graphik.graal.homomorphism.checker;
+package fr.lirmm.graphik.graal.store.jenatdb;
 
-import java.util.Set;
-import java.util.TreeSet;
+import com.hp.hpl.jena.rdf.model.Literal;
+import com.hp.hpl.jena.rdf.model.RDFNode;
 
-import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.api.core.Query;
+import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.homomorphism.AbstractChecker;
-import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismChecker;
-import fr.lirmm.graphik.graal.core.atomset.AtomSetUtils;
-import fr.lirmm.graphik.graal.homomorphism.AtomicQueryHomomorphism;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.util.URIUtils;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class AtomicQueryHomomorphismChecker extends AbstractChecker implements HomomorphismChecker {
-
-	private static final AtomicQueryHomomorphismChecker INSTANCE = new AtomicQueryHomomorphismChecker();
+final class Utils {
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
+	
+	private Utils(){}
 
-	public static AtomicQueryHomomorphismChecker instance() {
-		return INSTANCE;
+	static String predicateToString(Predicate p) {
+		return "<" + URIzer.instance().input(p.getIdentifier().toString()) + ">";
 	}
-	
-	private AtomicQueryHomomorphismChecker() {
-		
+
+	static String termToString(Term t) {
+		return Utils.termToString(t, "<" + URIzer.instance().input(t.getIdentifier().toString()) + ">");
 	}
-	
+
+	static String termToString(Term t, String valueIfVariable) {
+		if (t.isConstant()) {
+			return "<" + URIzer.instance().input(t.getIdentifier().toString()) + ">";
+		} else if (t.isLiteral()) {
+			return t.getIdentifier().toString();
+		} else if (t.isVariable()) {
+			return valueIfVariable;
+		} else {
+			return "";
+		}
+	}
+
+	static Term createTerm(RDFNode node) {
+		Term term = null;
+		if (node.isLiteral()) {
+			Literal l = node.asLiteral();
+			term = DefaultTermFactory.instance().createLiteral(URIUtils.createURI(l.getDatatypeURI()), l.getValue());
+		} else {
+			term = DefaultTermFactory.instance().createConstant(URIzer.instance().output(node.toString()));
+		}
+		return term;
+	}
+
+	static Predicate createPredicate(RDFNode node, int arity) {
+		String s = node.toString();
+		s = URIzer.instance().output(s);
+		return new Predicate(s, arity);
+	}
+
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	@Override
-	public AtomicQueryHomomorphism getSolver() {
-		return AtomicQueryHomomorphism.instance();
-	}
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// OBJECT OVERRIDE METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
-	@Override
-	public boolean check(Query query, AtomSet atomset) {
-		if (query instanceof ConjunctiveQuery) {
-			ConjunctiveQuery q = (ConjunctiveQuery) query;
-			return AtomSetUtils.isSingleton(q.getAtomSet());
-		}
-		return false;
-	}
-
-	@Override
-	public int getDefaultPriority() {
-		return 40;
-	}
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
 }

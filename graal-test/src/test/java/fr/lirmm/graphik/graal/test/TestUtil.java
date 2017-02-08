@@ -78,11 +78,11 @@ import fr.lirmm.graphik.graal.homomorphism.forward_checking.NoForwardChecking;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.SimpleFC;
 import fr.lirmm.graphik.graal.store.gdb.BlueprintsGraphDBStore;
 import fr.lirmm.graphik.graal.store.gdb.Neo4jStore;
+import fr.lirmm.graphik.graal.store.jenatdb.JenaStore;
+import fr.lirmm.graphik.graal.store.openrdf.SailStore;
 import fr.lirmm.graphik.graal.store.rdbms.adhoc.AdHocRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.HSQLDBDriver;
 import fr.lirmm.graphik.graal.store.rdbms.natural.NaturalRDBMSStore;
-import fr.lirmm.graphik.graal.store.triplestore.JenaStore;
-import fr.lirmm.graphik.graal.store.triplestore.SailStore;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>

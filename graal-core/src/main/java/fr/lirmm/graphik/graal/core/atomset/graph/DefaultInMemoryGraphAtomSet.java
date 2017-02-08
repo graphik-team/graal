@@ -56,8 +56,9 @@ import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.TermValueComparator;
-import fr.lirmm.graphik.graal.core.AtomMatcher;
+import fr.lirmm.graphik.graal.core.AtomType;
 import fr.lirmm.graphik.graal.core.DefaultConstantGenerator;
+import fr.lirmm.graphik.graal.core.TypeFilter;
 import fr.lirmm.graphik.graal.core.atomset.AbstractInMemoryAtomSet;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAggregatorWithoutExeception;
@@ -132,29 +133,36 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 
 	@Override
 	public CloseableIteratorWithoutException<Atom> match(Atom atom) {
-		final AtomMatcher matcher = new AtomMatcher(atom);
 		CloseableIteratorWithoutException<Atom> it = null;
-		int i = -1;
-		for (Term t : atom.getTerms()) {
-			++i;
-			if (t.isConstant()) {
-				TermVertex tv = this.getTermVertex(t);
-				if (tv != null) {
-					it = tv.getNeighbors(atom.getPredicate(), i);
-				} else {
-					it = Iterators.<Atom>emptyIterator();
+		final AtomType atomType = new AtomType(atom);
+		if(atomType.isThereConstant()) {
+			// find smallest iterator
+			int i = -1;
+			int size = Integer.MAX_VALUE;
+			for (Term t : atom.getTerms()) {
+				++i;
+				if (t.isConstant()) {
+					TermVertex tv = this.getTermVertex(t);
+					if (tv != null) {
+						int tmpSize = tv.neighborhoodSize(atom.getPredicate(), i);
+						if(tmpSize < size) {
+							size = tmpSize;
+							it = tv.getNeighbors(atom.getPredicate(), i);
+						}
+					} else {
+						size = 0;
+						it = Iterators.<Atom>emptyIterator();
+					}
 				}
 			}
-		}
-		if (it == null) {
-			return this.atomsByPredicate(atom.getPredicate());
 		} else {
-			return new FilterIteratorWithoutException<Atom, Atom>(it, new Filter<Atom>() {
-				@Override
-				public boolean filter(Atom a) {
-					return matcher.check((Atom) a);
-				}
-			});
+			 it = this.atomsByPredicate(atom.getPredicate());
+		}
+		
+		if(atomType.isThereConstraint()) {
+			return new FilterIteratorWithoutException<Atom, Atom>(it, new TypeFilter(atomType, atom));
+		} else {
+			return it;
 		}
 	}
 

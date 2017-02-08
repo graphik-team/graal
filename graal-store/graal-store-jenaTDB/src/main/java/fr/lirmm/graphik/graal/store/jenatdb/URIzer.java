@@ -40,64 +40,47 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-/**
- * 
- */
-package fr.lirmm.graphik.graal.homomorphism.checker;
+package fr.lirmm.graphik.graal.store.jenatdb;
 
-import java.util.Set;
-import java.util.TreeSet;
+import fr.lirmm.graphik.util.Prefix;
+import fr.lirmm.graphik.util.URIUtils;
 
-import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.api.core.Query;
-import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.homomorphism.AbstractChecker;
-import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismChecker;
-import fr.lirmm.graphik.graal.core.atomset.AtomSetUtils;
-import fr.lirmm.graphik.graal.homomorphism.AtomicQueryHomomorphism;
+class URIzer {
+	private static URIzer instance;
 
-/**
- * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- *
- */
-public class AtomicQueryHomomorphismChecker extends AbstractChecker implements HomomorphismChecker {
-
-	private static final AtomicQueryHomomorphismChecker INSTANCE = new AtomicQueryHomomorphismChecker();
-
-	// /////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	// /////////////////////////////////////////////////////////////////////////
-
-	public static AtomicQueryHomomorphismChecker instance() {
-		return INSTANCE;
-	}
-	
-	private AtomicQueryHomomorphismChecker() {
-		
-	}
-	
-	// /////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	@Override
-	public AtomicQueryHomomorphism getSolver() {
-		return AtomicQueryHomomorphism.instance();
+	protected URIzer() {
+		super();
 	}
 
-	@Override
-	public boolean check(Query query, AtomSet atomset) {
-		if (query instanceof ConjunctiveQuery) {
-			ConjunctiveQuery q = (ConjunctiveQuery) query;
-			return AtomSetUtils.isSingleton(q.getAtomSet());
+	public static synchronized URIzer instance() {
+		if (instance == null)
+			instance = new URIzer();
+
+		return instance;
+	}
+
+	Prefix defaultPrefix = new Prefix("jena", "file:///jena/");
+
+	/**
+	 * Add default prefix if necessary
+	 * 
+	 * @param s
+	 * @return a String which represents an URI.
+	 */
+	String input(String s) {
+		return URIUtils.createURI(s, defaultPrefix).toString();
+	}
+
+	/**
+	 * Remove default prefix if it is present
+	 * 
+	 * @param s
+	 * @return the String s without the default prefix, if it was present.
+	 */
+	String output(String s) {
+		if (s.startsWith(defaultPrefix.getPrefix())) {
+			return s.substring(defaultPrefix.getPrefix().length());
 		}
-		return false;
+		return s;
 	}
-
-	@Override
-	public int getDefaultPriority() {
-		return 40;
-	}
-
 }
