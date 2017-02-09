@@ -88,7 +88,9 @@ public class KBBuilder {
 	
 	public KnowledgeBase build() {
 		DefaultKnowledgeBase kb = new DefaultKnowledgeBase(this.mappedStore, this.mappedOntology);
-		kb.setPriority(this.priority);
+		if(this.priority != null) {
+			kb.setPriority(this.priority);
+		}
 		return kb;
 	}
 
