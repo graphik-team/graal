@@ -313,6 +313,15 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements RdbmsS
 			return null;
 		}
 	}
+	
+	@Override
+	public boolean isWriteable() throws AtomSetException {
+		try {
+			return !this.getConnection().isReadOnly();
+		} catch (SQLException e) {
+			throw new AtomSetException(e);
+		}
+	}
 
 	/**
 	 * This method close the associated driver instance.

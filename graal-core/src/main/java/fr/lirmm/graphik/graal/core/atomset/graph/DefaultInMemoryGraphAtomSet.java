@@ -50,16 +50,19 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConstantGenerator;
-import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.TermValueComparator;
+import fr.lirmm.graphik.graal.api.store.BatchProcessor;
+import fr.lirmm.graphik.graal.api.store.Store;
 import fr.lirmm.graphik.graal.core.AtomType;
 import fr.lirmm.graphik.graal.core.DefaultConstantGenerator;
 import fr.lirmm.graphik.graal.core.TypeFilter;
 import fr.lirmm.graphik.graal.core.atomset.AbstractInMemoryAtomSet;
+import fr.lirmm.graphik.graal.core.store.DefaultBatchProcessor;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAggregatorWithoutExeception;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
@@ -70,7 +73,7 @@ import fr.lirmm.graphik.util.stream.filter.FilterIteratorWithoutException;
 /**
  * Implementation of a graph in memory. Inherits directly from Fact.
  */
-public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet implements InMemoryAtomSet {
+public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet implements Store {
 
 	private int size = 0;
 	
@@ -313,6 +316,20 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 			}
 		}
 		return val;
+	}
+
+	@Override
+	public BatchProcessor createBatchProcessor() throws AtomSetException {
+		return new DefaultBatchProcessor(this);
+	}
+
+	@Override
+	public boolean isWriteable() {
+		return true;
+	}
+
+	@Override
+	public void close() {
 	}
 
 }

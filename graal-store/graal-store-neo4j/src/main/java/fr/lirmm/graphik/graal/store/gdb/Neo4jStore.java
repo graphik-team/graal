@@ -693,5 +693,10 @@ public class Neo4jStore extends GraphDBStore {
 			return "C";
 		}
 	}
+	
+	@Override
+	public boolean isWriteable() {
+		return true;
+	}
 
 }

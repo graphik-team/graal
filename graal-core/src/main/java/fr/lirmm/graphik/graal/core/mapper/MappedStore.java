@@ -53,6 +53,7 @@ import fr.lirmm.graphik.graal.api.core.Mapper;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
+import fr.lirmm.graphik.graal.api.store.Store;
 import fr.lirmm.graphik.graal.core.store.AbstractStore;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.converter.ConverterCloseableIterator;
@@ -63,7 +64,7 @@ import fr.lirmm.graphik.util.stream.converter.ConverterCloseableIterator;
  */
 public class MappedStore extends AbstractStore {
 
-	private AtomSet atomset;
+	private Store store;
 	private Mapper mapper;
 	private MapperAtomConverter unconverter;
 	private MapperPredicateConverter predicateUnconverter;
@@ -72,8 +73,8 @@ public class MappedStore extends AbstractStore {
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 	
-	public MappedStore(AtomSet atomset, Mapper mapper) {
-		this.atomset = atomset;
+	public MappedStore(Store store, Mapper mapper) {
+		this.store = store;
 		this.mapper = mapper;
 		this.unconverter = new MapperAtomConverter(this.mapper.inverse());
 		this.predicateUnconverter = new MapperPredicateConverter(this.mapper.inverse());
@@ -82,50 +83,55 @@ public class MappedStore extends AbstractStore {
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
+	
+	@Override
+	public boolean isWriteable() throws AtomSetException {
+		return store.isWriteable();
+	}
 		
 	@Override
 	public CloseableIterator<Atom> iterator() {
-		return new ConverterCloseableIterator<Atom, Atom>(atomset.iterator(), unconverter);
+		return new ConverterCloseableIterator<Atom, Atom>(store.iterator(), unconverter);
 	}
 
 	@Override
 	public CloseableIterator<Atom> match(Atom atom) throws AtomSetException {
-		CloseableIterator<Atom> match = atomset.match(mapper.map(atom));
+		CloseableIterator<Atom> match = store.match(mapper.map(atom));
 		return new ConverterCloseableIterator<Atom, Atom>(match, unconverter);
 	}
 
 	@Override
 	public CloseableIterator<Atom> atomsByPredicate(Predicate p) throws AtomSetException {
-		CloseableIterator<Atom> atomsByPredicate = atomset.atomsByPredicate(mapper.map(p));
+		CloseableIterator<Atom> atomsByPredicate = store.atomsByPredicate(mapper.map(p));
 		return new ConverterCloseableIterator<Atom, Atom>(atomsByPredicate, unconverter);
 	}
 
 	@Override
 	public CloseableIterator<Term> termsByPredicatePosition(Predicate p, int position) throws AtomSetException {
-		return atomset.termsByPredicatePosition(mapper.map(p), position);
+		return store.termsByPredicatePosition(mapper.map(p), position);
 	}
 
 	@Override
 	public CloseableIterator<Predicate> predicatesIterator() throws AtomSetException {
-		return new ConverterCloseableIterator<Predicate, Predicate>(atomset.predicatesIterator(), predicateUnconverter);
+		return new ConverterCloseableIterator<Predicate, Predicate>(store.predicatesIterator(), predicateUnconverter);
 	}
 
 	@Override
 	public CloseableIterator<Term> termsIterator() throws AtomSetException {
-		return atomset.termsIterator();
+		return store.termsIterator();
 	}
 
 	@Override
 	@Deprecated
 	public CloseableIterator<Term> termsIterator(Type type) throws AtomSetException {
-		return atomset.termsIterator(type);
+		return store.termsIterator(type);
 	}
 
 	@Override
 	public void close() {
-		if(atomset instanceof Closeable) {
+		if(store instanceof Closeable) {
 			try {
-				((Closeable) atomset).close();
+				((Closeable) store).close();
 			} catch (IOException e) {
 			}
 		}
@@ -133,23 +139,23 @@ public class MappedStore extends AbstractStore {
 
 	@Override
 	public boolean add(Atom atom) throws AtomSetException {
-		return atomset.add(mapper.map(atom));
+		return store.add(mapper.map(atom));
 	}
 
 	@Override
 	public boolean remove(Atom atom) throws AtomSetException {
-		return atomset.remove(mapper.map(atom));
+		return store.remove(mapper.map(atom));
 
 	}
 
 	@Override
 	public void clear() throws AtomSetException {
-		atomset.clear();
+		store.clear();
 	}
 
 	@Override
 	public ConstantGenerator getFreshSymbolGenerator() {
-		return atomset.getFreshSymbolGenerator();
+		return store.getFreshSymbolGenerator();
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

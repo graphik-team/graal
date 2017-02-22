@@ -378,5 +378,10 @@ public class JenaStore extends AbstractTripleStore {
 	public ConstantGenerator getFreshSymbolGenerator() {
 		return freshSymbolGenerator;
 	}
+	
+	@Override
+	public boolean isWriteable() {
+		return true;
+	}
 
 }

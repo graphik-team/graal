@@ -443,6 +443,15 @@ public class SailStore extends AbstractTripleStore {
 			    l.getLabel());
 		}
 	}
+	
+	@Override
+	public boolean isWriteable() throws AtomSetException {
+		try {
+			return this.connection.getRepository().isWritable();
+		} catch (RepositoryException e) {
+			throw new AtomSetException(e);
+		}
+	}
 
 	// //////////////////////////////////////////////////////////////////////////
 	// PRIVATE CLASSES

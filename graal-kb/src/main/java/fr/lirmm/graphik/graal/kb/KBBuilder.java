@@ -43,7 +43,6 @@
 package fr.lirmm.graphik.graal.kb;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.Mapper;
 import fr.lirmm.graphik.graal.api.core.MutableMapper;
@@ -52,6 +51,7 @@ import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.RuleSetException;
 import fr.lirmm.graphik.graal.api.kb.KnowledgeBase;
 import fr.lirmm.graphik.graal.api.kb.Priority;
+import fr.lirmm.graphik.graal.api.store.Store;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.core.mapper.MappedRuleSet;
 import fr.lirmm.graphik.graal.core.mapper.MappedStore;
@@ -71,8 +71,8 @@ import fr.lirmm.graphik.util.stream.converter.ConverterCloseableIterator;
  */
 public class KBBuilder {
 
-	private AtomSet store = new DefaultInMemoryGraphAtomSet();
-	private AtomSet mappedStore = store;
+	private Store store = new DefaultInMemoryGraphAtomSet();
+	private Store mappedStore = store;
 	private RuleSet ontology = new LinkedListRuleSet();
 	private RuleSet mappedOntology = ontology;
 	private MutableMapper mapper;
@@ -94,7 +94,7 @@ public class KBBuilder {
 		return kb;
 	}
 
-	public void setStore(AtomSet store) {
+	public void setStore(Store store) {
 		this.store = store;
 		if (mapper != null) {
 			this.mappedStore = new MappedStore(store, mapper);

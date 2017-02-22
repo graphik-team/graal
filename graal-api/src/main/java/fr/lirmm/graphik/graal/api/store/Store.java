@@ -61,6 +61,8 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
 public interface Store extends AtomSet {
 	
 	BatchProcessor createBatchProcessor() throws AtomSetException;
+	
+	boolean isWriteable() throws AtomSetException;
 
 	@Override
 	CloseableIterator<Atom> iterator();
