@@ -137,7 +137,7 @@ public interface KnowledgeBase extends Profilable, Closeable {
 	 * Returns the defined priority of this KnowledgeBase (i.e. saturation or rewriting).
 	 * @return the defined priority of this KnowledgeBase.
 	 */
-	Priority getPriority();
+	Approach getApproach();
 
 	void close();
 

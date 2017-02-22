@@ -56,7 +56,7 @@ import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.api.kb.KnowledgeBase;
 import fr.lirmm.graphik.graal.api.kb.KnowledgeBaseException;
-import fr.lirmm.graphik.graal.api.kb.Priority;
+import fr.lirmm.graphik.graal.api.kb.Approach;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
@@ -178,7 +178,7 @@ public class DefaultKnowledgeBaseTest {
 	public void testIsConsistentFalse2() throws KnowledgeBaseException, AtomSetException, KBBuilderException {
 		KBBuilder kbb = new KBBuilder();
 		kbb.addAll(new DlgpParser("q2(X) :- q(X). pr(X) :- p(X), r(X). q(a), p(a), r(a). [NC] ! :- q2(X), pr(X)."));
-		kbb.setPriority(Priority.REWRITING);
+		kbb.setApproach(Approach.REWRITING_FIRST);
 		KnowledgeBase kb = kbb.build();
 		
 		Assert.assertFalse(kb.isConsistent());

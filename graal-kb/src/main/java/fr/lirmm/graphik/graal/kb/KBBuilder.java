@@ -50,7 +50,7 @@ import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.RuleSetException;
 import fr.lirmm.graphik.graal.api.kb.KnowledgeBase;
-import fr.lirmm.graphik.graal.api.kb.Priority;
+import fr.lirmm.graphik.graal.api.kb.Approach;
 import fr.lirmm.graphik.graal.api.store.Store;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.core.mapper.MappedRuleSet;
@@ -76,7 +76,7 @@ public class KBBuilder {
 	private RuleSet ontology = new LinkedListRuleSet();
 	private RuleSet mappedOntology = ontology;
 	private MutableMapper mapper;
-	private Priority priority;
+	private Approach approach;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -88,8 +88,8 @@ public class KBBuilder {
 	
 	public KnowledgeBase build() {
 		DefaultKnowledgeBase kb = new DefaultKnowledgeBase(this.mappedStore, this.mappedOntology);
-		if(this.priority != null) {
-			kb.setPriority(this.priority);
+		if(this.approach != null) {
+			kb.setPriority(this.approach);
 		}
 		return kb;
 	}
@@ -190,8 +190,8 @@ public class KBBuilder {
 		}
 	}
 	
-	public void setPriority(Priority priority) {
-		this.priority = priority;
+	public void setApproach(Approach approach) {
+		this.approach = approach;
 	}
 
 

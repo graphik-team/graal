@@ -78,7 +78,7 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
 import fr.lirmm.graphik.graal.api.io.Parser;
 import fr.lirmm.graphik.graal.api.kb.KnowledgeBase;
 import fr.lirmm.graphik.graal.api.kb.KnowledgeBaseException;
-import fr.lirmm.graphik.graal.api.kb.Priority;
+import fr.lirmm.graphik.graal.api.kb.Approach;
 import fr.lirmm.graphik.graal.backward_chaining.pure.PureRewriter;
 import fr.lirmm.graphik.graal.core.DefaultQueryLabeler;
 import fr.lirmm.graphik.graal.core.DefaultUnionOfConjunctiveQueries;
@@ -133,7 +133,7 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 	private RuleSet fusRuleSet;
 	private GraphOfRuleDependencies fesGRD;
 
-	private Priority priority = Priority.REWRITING;
+	private Approach approach = Approach.REWRITING_FIRST;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
@@ -279,7 +279,9 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 				}
 			} else {
 				this.analyse();
-				if (this.analyse.isDecidable()) {
+				if (this.analyse.isDecidable() && 
+						(!this.getApproach().equals(Approach.REWRITING_ONLY) || this.getFESRuleSet().isEmpty()) && 
+						(!this.getApproach().equals(Approach.SATURATION_ONLY) || this.getFUSRuleSet().isEmpty()) ) {
 					try {
 						this.fesSaturate();
 						this.compileRule();
@@ -296,7 +298,7 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 							return ((HomomorphismWithCompilation) solver).execute(ucq, this.store,
 							    this.ruleCompilation);
 						} else {
-							if (this.getPriority().equals(Priority.REWRITING)) {
+							if (this.getApproach().equals(Approach.REWRITING_FIRST)) {
 								it = PureRewriter.unfold(ucq, this.ruleCompilation);
 								ucq = new DefaultUnionOfConjunctiveQueries(cq.getAnswerVariables(), it);
 							} else {
@@ -310,7 +312,7 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 						throw new KnowledgeBaseException(e);
 					}
 				} else {
-					throw new KnowledgeBaseException("No decidable combinaison found.");
+					throw new KnowledgeBaseException("No decidable combinaison found with the defined approach: " + this.getApproach());
 				}
 			}
 		} else {
@@ -336,16 +338,16 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 	}
 
 	@Override
-	public Priority getPriority() {
-		return this.priority;
+	public Approach getApproach() {
+		return this.approach;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// PACKAGE METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	void setPriority(Priority p) {
-		this.priority = p;
+	void setPriority(Approach p) {
+		this.approach = p;
 	}
 
 
@@ -392,7 +394,7 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 	}
 
 	private int[] getDecidableCombination() {
-		if (priority == Priority.SATURATION) {
+		if (approach == Approach.SATURATION_FIRST || approach == Approach.SATURATION_ONLY) {
 			return this.analyse.combineFES();
 		} else {
 			return this.analyse.combineFUS();
