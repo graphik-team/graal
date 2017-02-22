@@ -45,7 +45,6 @@
  */
 package fr.lirmm.graphik.graal.store.triplestore.rdf4j;
 
-import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -442,9 +441,9 @@ public class RDF4jStore extends AbstractTripleStore {
 			URI uri = URIUtils.createURI(l.getDatatype().toString());
 			String label = l.getLabel();
 			if(uri.equals(URIUtils.RDF_LANG_STRING)) {
-				Optional<String> opt = l.getLanguage();
+				String opt = l.getLanguage();
 				label += "@";
-				label += opt.get();
+				label += opt;
 			}
 			return DefaultTermFactory.instance().createLiteral(uri, label);
 		}
