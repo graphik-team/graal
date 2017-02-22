@@ -40,47 +40,40 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.store.openrdf;
+package fr.lirmm.graphik.graal.store.triplestore.rdf4j;
 
-import fr.lirmm.graphik.util.Prefix;
-import fr.lirmm.graphik.util.URIUtils;
+import org.eclipse.rdf4j.query.QueryEvaluationException;
+import org.eclipse.rdf4j.query.TupleQueryResult;
 
-class URIzer {
-	private static URIzer instance;
+import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
-	protected URIzer() {
-		super();
-	}
+abstract class TupleQueryResultIterator<E> extends AbstractCloseableIterator<E> {
 
-	public static synchronized URIzer instance() {
-		if (instance == null)
-			instance = new URIzer();
+	protected TupleQueryResult it;
 
-		return instance;
-	}
-
-	Prefix defaultPrefix = new Prefix("sail", "file:///sail/");
-
-	/**
-	 * Add default prefix if necessary
-	 * 
-	 * @param s
-	 * @return a String which represents an URI.
-	 */
-	String input(String s) {
-		return URIUtils.createURI(s, defaultPrefix).toString();
-	}
-
-	/**
-	 * Remove default prefix if it is present
-	 * 
-	 * @param s
-	 * @return the String s without the default prefix, if it was present.
-	 */
-	String output(String s) {
-		if (s.startsWith(defaultPrefix.getPrefix())) {
-			return s.substring(defaultPrefix.getPrefix().length());
+	@Override
+	public void close() {
+		try {
+			this.it.close();
+		} catch (QueryEvaluationException e) {
+			if (RDF4jStore.LOGGER.isErrorEnabled()) {
+				RDF4jStore.LOGGER.error("Error during iteration closing", e);
+			}
+			throw new RuntimeException("An error occurs while closing iterator", e);
 		}
-		return s;
 	}
+
+	@Override
+	public boolean hasNext() throws IteratorException {
+		try {
+			return this.it.hasNext();
+		} catch (QueryEvaluationException e) {
+			if (RDF4jStore.LOGGER.isErrorEnabled()) {
+				RDF4jStore.LOGGER.error("Error during iteration", e);
+			}
+			throw new IteratorException("An error occurs during iteration", e);
+		}
+	}
+
 }

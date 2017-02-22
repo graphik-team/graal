@@ -43,28 +43,25 @@
 /**
  * 
  */
-package fr.lirmm.graphik.graal.store.openrdf;
+package fr.lirmm.graphik.graal.store.triplestore.rdf4j;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.query.BindingSet;
-import org.openrdf.query.MalformedQueryException;
-import org.openrdf.query.QueryEvaluationException;
-import org.openrdf.query.QueryLanguage;
-import org.openrdf.query.TupleQuery;
-import org.openrdf.query.TupleQueryResult;
-import org.openrdf.repository.Repository;
-import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.RepositoryResult;
-import org.openrdf.repository.sail.SailRepository;
-import org.openrdf.sail.memory.MemoryStore;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.query.MalformedQueryException;
+import org.eclipse.rdf4j.query.QueryEvaluationException;
+import org.eclipse.rdf4j.query.QueryLanguage;
+import org.eclipse.rdf4j.query.TupleQuery;
+import org.eclipse.rdf4j.query.TupleQueryResult;
+import org.eclipse.rdf4j.repository.Repository;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.eclipse.rdf4j.repository.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,22 +75,20 @@ import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.store.WrongArityException;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultConstantGenerator;
-import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
 import fr.lirmm.graphik.graal.core.store.AbstractTripleStore;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.util.URI;
 import fr.lirmm.graphik.util.URIUtils;
-import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
-import info.aduna.iteration.Iteration;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class SailStore extends AbstractTripleStore {
+public class RDF4jStore extends AbstractTripleStore {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(SailStore.class);
+	static final Logger LOGGER = LoggerFactory.getLogger(RDF4jStore.class);
 
 	private RepositoryConnection connection;
 	private ValueFactory         valueFactory;
@@ -101,17 +96,23 @@ public class SailStore extends AbstractTripleStore {
 	private TupleQuery           predicatesQuery;
 	private TupleQuery           termsQuery;
 
-	public SailStore() throws AtomSetException {
-		Repository repo = new SailRepository(new MemoryStore());
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTOR
+	// /////////////////////////////////////////////////////////////////////////
+	
+	/**
+	 * Construct a RDF4jStore around a {@link http://docs.rdf4j.org/javadoc/latest/org/eclipse/rdf4j/repository/Repository.html}
+	 * @param repo
+	 * @throws AtomSetException
+	 */
+	public RDF4jStore(Repository repo) throws AtomSetException {
 		try {
 			repo.initialize();
 			this.connection = repo.getConnection();
 		} catch (RepositoryException e) {
 			throw new AtomSetException("Error while creating SailStore", e);
-		}
-
+		}		
 		this.valueFactory = repo.getValueFactory();
-
 	}
 
 	@Override
@@ -123,6 +124,11 @@ public class SailStore extends AbstractTripleStore {
 	// //////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// //////////////////////////////////////////////////////////////////////////
+	
+	@Override
+	public boolean isWriteable() {
+		return this.connection.getRepository().isWritable();
+	}
 
 	@Override
 	public void close() {
@@ -148,7 +154,7 @@ public class SailStore extends AbstractTripleStore {
 	@Override
 	public boolean addAll(CloseableIterator<? extends Atom> atom) throws AtomSetException {
 		try {
-			this.connection.add(new StatementIterator(atom));
+			this.connection.add(new StatementIterator(this, atom));
 		} catch (RepositoryException e) {
 			throw new AtomSetException("Error while adding the atom " + atom, e);
 		}
@@ -174,7 +180,7 @@ public class SailStore extends AbstractTripleStore {
 	@Override
 	public boolean removeAll(CloseableIterator<? extends Atom> atom) throws AtomSetException {
 		try {
-			this.connection.remove(new StatementIterator(atom));
+			this.connection.remove(new StatementIterator(this, atom));
 		} catch (RepositoryException e) {
 			throw new AtomSetException("Error while removing the atoms.", e);
 		}
@@ -193,33 +199,27 @@ public class SailStore extends AbstractTripleStore {
 
 	@Override
 	public CloseableIterator<Atom> match(Atom atom) throws AtomSetException {
-		TupleQuery query = null;
-		TupleQueryResult results = null;
-		
-		Term subject = atom.getTerm(0);
-		Term object = atom.getTerm(1);
-		String select = String.format(SELECT_QUERY, Utils.termToString(subject, "?" + subject.getLabel()),
-		    Utils.predicateToString(atom.getPredicate()), Utils.termToString(object, "?" + object.getLabel()));
-	
+		Statement stat = this.atomToStatement(atom);
+		IRI subject = (IRI) stat.getSubject();
+		if (subject.getNamespace().equals("_:")) {
+			subject = null;
+		}
+		Value object = stat.getObject();
+		if (object instanceof IRI && ((IRI) object).getNamespace().equals("_:")) {
+			object = null;
+		}
+
 		try {
-			query = this.connection.prepareTupleQuery(QueryLanguage.SPARQL, select);
+			return new AtomIterator(this.connection.getStatements(subject, stat.getPredicate(), object, false));
 		} catch (RepositoryException e) {
 			throw new AtomSetException(e);
-		} catch (MalformedQueryException e) {
-			throw new AtomSetException(e);
 		}
-		try {
-			results = query.evaluate();
-		} catch (QueryEvaluationException e) {
-			throw new AtomSetException(e);
-		}
-		return new AtomsIterator(results, atom.getPredicate(), subject, object);
 	}
 
 	@Override
 	public CloseableIterator<Atom> atomsByPredicate(Predicate p) throws AtomSetException {
 		try {
-			return new Statement2AtomIterator(this.connection.getStatements(null, this.createURI(p), null, false));
+			return new AtomIterator(this.connection.getStatements(null, this.createURI(p), null, false));
 		} catch (RepositoryException e) {
 			throw new AtomSetException(e);
 		}
@@ -368,7 +368,7 @@ public class SailStore extends AbstractTripleStore {
 	@Override
 	public CloseableIterator<Atom> iterator() {
 		try {
-			return new Statement2AtomIterator(this.connection.getStatements(null, null, null, false));
+			return new AtomIterator(this.connection.getStatements(null, null, null, false));
 		} catch (RepositoryException e) {
 			if (LOGGER.isErrorEnabled()) {
 				LOGGER.error("Error during iterator creation", e);
@@ -381,23 +381,23 @@ public class SailStore extends AbstractTripleStore {
 	// PRIVATE
 	// //////////////////////////////////////////////////////////////////////////
 
-	private Statement atomToStatement(Atom atom) throws WrongArityException {
+	Statement atomToStatement(Atom atom) throws WrongArityException {
 		if (atom.getPredicate().getArity() != 2) {
-			throw new WrongArityException("Arity "
+			throw new WrongArityException("Error on " + atom + ": arity "
 			                              + atom.getPredicate().getArity()
-			                              + " is not supported by this store.");
+			                              + " is not supported by this store. ");
 		}
-		URI predicate = this.createURI(atom.getPredicate());
-		URI term0 = this.createURI(atom.getTerm(0));
+		IRI predicate = this.createURI(atom.getPredicate());
+		IRI term0 = this.createURI(atom.getTerm(0));
 		Value term1 = this.createValue(atom.getTerm(1));
 		return valueFactory.createStatement(term0, predicate, term1);
 	}
 
-	private URI createURI(Predicate p) {
+	private IRI createURI(Predicate p) {
 		return createURI(URIzer.instance().input(p.getIdentifier().toString()));
 	}
 
-	private URI createURI(Term t) {
+	private IRI createURI(Term t) {
 		if (t.isConstant()) {
 			return createURI(URIzer.instance().input(t.getIdentifier().toString()));
 		} else {
@@ -409,252 +409,47 @@ public class SailStore extends AbstractTripleStore {
 	 * Create URI from string. If the specified string is not a valid URI, the
 	 * method add a default prefix to the string.
 	 */
-	private URI createURI(String string) {
-		return valueFactory.createURI(string);
+	private IRI createURI(String string) {
+		return valueFactory.createIRI(string);
 	}
 
 	private Value createValue(Term t) {
 		if (t instanceof Literal) {
 			Literal l = (Literal) t;
 			return valueFactory.createLiteral(l.getValue().toString(),
-			    valueFactory.createURI(l.getDatatype().toString()));
+			    valueFactory.createIRI(l.getDatatype().toString()));
 		} else {
 			return createURI(t);
 		}
 	}
 
-	private static Atom statementToAtom(Statement stat) {
+	static Atom statementToAtom(Statement stat) {
 		Predicate predicate = valueToPredicate(stat.getPredicate());
 		Term term0 = valueToTerm(stat.getSubject());
 		Term term1 = valueToTerm(stat.getObject());
 		return new DefaultAtom(predicate, term0, term1);
 	}
 
-	private static Predicate valueToPredicate(Value value) {
+	static Predicate valueToPredicate(Value value) {
 		return new Predicate(URIzer.instance().output(value.toString()), 2);
 	}
 
-	private static Term valueToTerm(Value value) {
+	static Term valueToTerm(Value value) {
 		if (value instanceof Resource) {
 			return DefaultTermFactory.instance().createConstant(URIzer.instance().output(value.toString()));
 		} else { //  Literal
-			org.openrdf.model.Literal l = (org.openrdf.model.Literal) value;
-			return DefaultTermFactory.instance().createLiteral(URIUtils.createURI(l.getDatatype().toString()),
-			    l.getLabel());
-		}
-	}
-	
-	@Override
-	public boolean isWriteable() throws AtomSetException {
-		try {
-			return this.connection.getRepository().isWritable();
-		} catch (RepositoryException e) {
-			throw new AtomSetException(e);
+			org.eclipse.rdf4j.model.Literal l = (org.eclipse.rdf4j.model.Literal) value;
+			URI uri = URIUtils.createURI(l.getDatatype().toString());
+			String label = l.getLabel();
+			if(uri.equals(URIUtils.RDF_LANG_STRING)) {
+				Optional<String> opt = l.getLanguage();
+				label += "@";
+				label += opt.get();
+			}
+			return DefaultTermFactory.instance().createLiteral(uri, label);
 		}
 	}
 
-	// //////////////////////////////////////////////////////////////////////////
-	// PRIVATE CLASSES
-	// //////////////////////////////////////////////////////////////////////////
 
-	private class StatementIterator implements Iteration<Statement, RepositoryException> {
-
-		private CloseableIterator<? extends Atom> it;
-
-		public StatementIterator(CloseableIterator<? extends Atom> iterator) {
-			this.it = iterator;
-		}
-
-		@Override
-		public boolean hasNext() {
-			try {
-				return it.hasNext();
-			} catch (IteratorException e) {
-				throw new RuntimeException("An errors occurs while iterating atoms", e);
-			}
-		}
-
-		@Override
-		public Statement next() {
-			try {
-				return atomToStatement(it.next());
-			} catch (WrongArityException e) {
-				throw new RuntimeException("An errors occurs while translating atom to statement", e);
-			} catch (IteratorException e) {
-				throw new RuntimeException("An errors occurs while iterating atoms", e);
-			}
-		}
-
-		@Override
-		public void remove() {
-			throw new UnsupportedOperationException();
-		}
-
-	}
-
-	private class Statement2AtomIterator extends AbstractCloseableIterator<Atom> {
-		RepositoryResult<Statement> it;
-
-		Statement2AtomIterator(RepositoryResult<Statement> it) {
-			this.it = it;
-		}
-
-		@Override
-		public void close() {
-			try {
-				this.it.close();
-			} catch (RepositoryException e) {
-				LOGGER.error("Error when closing SailStore iterator.");
-				throw new RuntimeException("An error occurs while closing SailStore iterator.", e);
-			}
-		}
-
-		@Override
-		public boolean hasNext() throws IteratorException {
-			try {
-				if (it.hasNext()) {
-					return true;
-				} else {
-					this.it.close();
-					return false;
-				}
-			} catch (RepositoryException e) {
-				LOGGER.error("Error on SailStore iterator.");
-				throw new IteratorException("An error occurs during iteration over sailStore", e);
-			}
-		}
-
-		@Override
-		public Atom next() throws IteratorException {
-			try {
-				return statementToAtom(this.it.next());
-			} catch (RepositoryException e) {
-				LOGGER.error("Error on SailStore iterator.");
-				throw new IteratorException("An error occurs during iteration over sailStore", e);
-			}
-		}
-
-		public void remove() throws IteratorException {
-			try {
-				this.it.remove();
-			} catch (RepositoryException e) {
-				LOGGER.error("Error on SailStore iterator.");
-				throw new IteratorException("An error occurs while removing atom from sailStore iterator", e);
-			}
-		}
-	}
-
-	private abstract class TupleQueryResultIterator<E> extends AbstractCloseableIterator<E> {
-
-		protected TupleQueryResult it;
-
-		@Override
-		public void close() {
-			try {
-				this.it.close();
-			} catch (QueryEvaluationException e) {
-				if (LOGGER.isErrorEnabled()) {
-					LOGGER.error("Error during iteration closing", e);
-				}
-				throw new RuntimeException("An error occurs while closing iterator", e);
-			}
-		}
-
-		@Override
-		public boolean hasNext() throws IteratorException {
-			try {
-				return this.it.hasNext();
-			} catch (QueryEvaluationException e) {
-				if (LOGGER.isErrorEnabled()) {
-					LOGGER.error("Error during iteration", e);
-				}
-				throw new IteratorException("An error occurs during iteration", e);
-			}
-		}
-
-	}
-
-	private class PredicatesIterator extends TupleQueryResultIterator<Predicate> {
-
-		PredicatesIterator(TupleQueryResult results) {
-			super.it = results;
-		}
-
-		@Override
-		public Predicate next() throws IteratorException {
-			try {
-				return valueToPredicate(this.it.next().getValue("p"));
-			} catch (QueryEvaluationException e) {
-				if (LOGGER.isErrorEnabled()) {
-					LOGGER.error("Error during iteration", e);
-				}
-				throw new IteratorException(e);
-			}
-		}
-
-	}
-	
-	private class AtomsIterator extends TupleQueryResultIterator<Atom> {
-
-		private Term subject;
-		private Term object;
-		private Predicate p;
-
-		AtomsIterator(TupleQueryResult results, Predicate p, Term subject, Term object) {
-			super.it = results;
-			this.p = p;
-			this.object = object;
-			this.subject = subject;
-		}
-
-		@Override
-		public Atom next() throws IteratorException {
-			try {
-				BindingSet next = this.it.next();
-				Term s = subject;
-				if (s.isVariable()) {
-					s = valueToTerm(next.getValue(s.getLabel()));
-				}
-				Term o = object;
-				if(o.isVariable()) {
-					o = valueToTerm(next.getValue(o.getLabel()));
-				}
-				return DefaultAtomFactory.instance().create(p, s, o);
-			} catch (QueryEvaluationException e) {
-				if (LOGGER.isErrorEnabled()) {
-					LOGGER.error("Error during iteration", e);
-				}
-				throw new IteratorException(e);
-			}
-		}
-
-	}
-
-	private class TermsIterator extends TupleQueryResultIterator<Term> {
-
-		String value = "term";
-
-		TermsIterator(TupleQueryResult results) {
-			super.it = results;
-		}
-
-		TermsIterator(TupleQueryResult results, String value) {
-			super.it = results;
-			this.value = value;
-		}
-
-		@Override
-		public Term next() throws IteratorException {
-			try {
-				return valueToTerm(this.it.next().getValue(value));
-			} catch (QueryEvaluationException e) {
-				if (LOGGER.isErrorEnabled()) {
-					LOGGER.error("Error during iteration", e);
-				}
-				throw new IteratorException(e);
-			}
-		}
-
-	}
 
 }

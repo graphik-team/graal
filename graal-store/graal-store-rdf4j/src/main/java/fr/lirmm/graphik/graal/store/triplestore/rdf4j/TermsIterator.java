@@ -40,57 +40,37 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.store.openrdf;
+package fr.lirmm.graphik.graal.store.triplestore.rdf4j;
 
-import fr.lirmm.graphik.graal.api.core.Predicate;
+import org.eclipse.rdf4j.query.QueryEvaluationException;
+import org.eclipse.rdf4j.query.TupleQueryResult;
+
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
-import fr.lirmm.graphik.util.URIUtils;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
-/**
- * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- *
- */
-final class Utils {
+class TermsIterator extends TupleQueryResultIterator<Term> {
 
-	// /////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	// /////////////////////////////////////////////////////////////////////////
-	
-	private Utils(){}
+	String value = "term";
 
-	static String predicateToString(Predicate p) {
-		return "<" + URIzer.instance().input(p.getIdentifier().toString()) + ">";
+	TermsIterator(TupleQueryResult results) {
+		super.it = results;
 	}
 
-	static String termToString(Term t) {
-		return Utils.termToString(t, "<" + URIzer.instance().input(t.getIdentifier().toString()) + ">");
+	TermsIterator(TupleQueryResult results, String value) {
+		super.it = results;
+		this.value = value;
 	}
 
-	static String termToString(Term t, String valueIfVariable) {
-		if (t.isConstant()) {
-			return "<" + URIzer.instance().input(t.getIdentifier().toString()) + ">";
-		} else if (t.isLiteral()) {
-			return t.getIdentifier().toString();
-		} else if (t.isVariable()) {
-			return valueIfVariable;
-		} else {
-			return "";
+	@Override
+	public Term next() throws IteratorException {
+		try {
+			return RDF4jStore.valueToTerm(this.it.next().getValue(value));
+		} catch (QueryEvaluationException e) {
+			if (RDF4jStore.LOGGER.isErrorEnabled()) {
+				RDF4jStore.LOGGER.error("Error during iteration", e);
+			}
+			throw new IteratorException(e);
 		}
 	}
-
-
-	// /////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	
-	// /////////////////////////////////////////////////////////////////////////
-	// OBJECT OVERRIDE METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	// /////////////////////////////////////////////////////////////////////////
-	// PRIVATE METHODS
-	// /////////////////////////////////////////////////////////////////////////
 
 }
