@@ -67,6 +67,7 @@ import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.api.io.Parser;
 import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.ArrayBlockingStream;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -246,7 +247,12 @@ public final class DlgpParser extends AbstractCloseableIterator<Object> implemen
 		if (!stream.hasNext()) {
 			throw new DlgpParseException("No statement found.");
 		}
-		Object o = stream.next();
+		
+		Object o = null;
+		do {
+			o = stream.next();
+		} while(o instanceof Directive || o instanceof Prefix);
+		
 		if(stream.hasNext()) {
 			throw new DlgpParseException("Too much statements.");
 		}

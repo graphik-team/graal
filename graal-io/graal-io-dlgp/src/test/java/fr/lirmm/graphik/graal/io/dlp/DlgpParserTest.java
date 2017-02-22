@@ -91,6 +91,12 @@ public class DlgpParserTest {
 		Atom a = DlgpParser.parseAtom("p(a, X).");
 		Assert.assertTrue(a.getTerm(1).isVariable());
 	}
+	
+	@Test
+	public void parseAtomWithPrefix() throws ParseException {
+		Atom a = DlgpParser.parseAtom("@prefix ex: <http://example.com/> ex:p(a, X).");
+		Assert.assertTrue(a.getTerm(1).isVariable());
+	}
 
 	@Test(expected = ParseException.class)
 	public void parseAtomWrongObject() throws ParseException {
@@ -129,6 +135,19 @@ public class DlgpParserTest {
 		Assert.assertEquals(3, cpt);
 	}
 	
+	@Test
+	public void parseAtomSetWithPrefix() throws ParseException, IteratorException {
+		CloseableIterator<Atom> it = DlgpParser.parseAtomSet("@prefix ex: <http://example.com/> ex:p(a). ex:p(b), ex:p(1).");
+		int cpt = 0;
+		while (it.hasNext()) {
+			++cpt;
+			Atom a = it.next();
+			Term t = a.getTerm(0);
+			Assert.assertTrue(t.equals(B) || t.equals(A) || t.equals(L1));
+		}
+		Assert.assertEquals(3, cpt);
+	}
+	
 	@Test(expected = DlgpParseException.class)
 	public void parseAtomSetException() throws ParseException, IteratorException {
 		CloseableIterator<Atom> it = DlgpParser.parseAtomSet("p(a). p(b) p(1).");
@@ -149,6 +168,15 @@ public class DlgpParserTest {
 	@Test
 	public void parseQuery() throws ParseException {
 		ConjunctiveQuery q = DlgpParser.parseQuery("?(X) :- p(a,X).");
+		Assert.assertEquals(X, q.getAnswerVariables().get(0));
+		Atom a = q.getAtomSet().iterator().next();
+		Assert.assertEquals(A, a.getTerm(0));
+		Assert.assertEquals(X, a.getTerm(1));
+	}
+	
+	@Test
+	public void parseQueryWithPrefix() throws ParseException {
+		ConjunctiveQuery q = DlgpParser.parseQuery("@prefix ex: <http://example.com/> ?(X) :- ex:p(a,X).");
 		Assert.assertEquals(X, q.getAnswerVariables().get(0));
 		Atom a = q.getAtomSet().iterator().next();
 		Assert.assertEquals(A, a.getTerm(0));
@@ -244,6 +272,20 @@ public class DlgpParserTest {
 		Assert.assertTrue(head.getTerm(1).isVariable());
 
 	}
+		
+	@Test
+	public void parseRuleWithPrefix() throws ParseException {
+		Rule r = DlgpParser.parseRule("@prefix ex: <http://example.com/> ex:p(X,Y) :- ex:q(X,Z).");
+
+		Atom body = r.getBody().iterator().next();
+		Assert.assertTrue(body.getTerm(0).isVariable());
+		Assert.assertTrue(body.getTerm(1).isVariable());
+
+		Atom head = r.getHead().iterator().next();
+		Assert.assertTrue(head.getTerm(0).isVariable());
+		Assert.assertTrue(head.getTerm(1).isVariable());
+
+	}
 
 	@Test(expected = ParseException.class)
 	public void parseRuleWrongObject() throws ParseException {
@@ -257,6 +299,23 @@ public class DlgpParserTest {
 	@Test
 	public void parseNegativeConstraint() throws ParseException {
 		NegativeConstraint r = DlgpParser.parseNegativeConstraint("[N1]!:-p(X,Y), q(X,Y).");
+
+		CloseableIteratorWithoutException<Atom> it = r.getBody().iterator();
+		Atom body = it.next();
+		Assert.assertTrue(body.getTerm(0).isVariable());
+		Assert.assertTrue(body.getTerm(1).isVariable());
+
+		body = it.next();
+		Assert.assertTrue(body.getTerm(0).isVariable());
+		Assert.assertTrue(body.getTerm(1).isVariable());
+
+		Assert.assertEquals("N1", r.getLabel());
+
+	}
+	
+	@Test
+	public void parseNegativeConstraintWithPrefix() throws ParseException {
+		NegativeConstraint r = DlgpParser.parseNegativeConstraint("@prefix ex: <http://example.com/> [N1]!:-ex:p(X,Y), ex:q(X,Y).");
 
 		CloseableIteratorWithoutException<Atom> it = r.getBody().iterator();
 		Atom body = it.next();

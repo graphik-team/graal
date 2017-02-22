@@ -44,6 +44,7 @@ package fr.lirmm.graphik.graal.io.dlp;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.io.ParseException;
+import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.InMemoryStream;
 import fr.lirmm.graphik.util.stream.IteratorException;
@@ -51,6 +52,8 @@ import fr.lirmm.graphik.util.stream.IteratorException;
 class AtomCloseableIteratorWrapperHandlingParseException extends AbstractCloseableIterator<Atom> {
 
 	private final InMemoryStream<Object> stream;
+	private final boolean hasNextCallDone = false;
+	private Object next = null;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -66,21 +69,25 @@ class AtomCloseableIteratorWrapperHandlingParseException extends AbstractCloseab
 
 	@Override
 	public boolean hasNext() {
-		return this.stream.hasNext();
+		while(this.stream.hasNext()) {
+			next = this.stream.next();
+			if(!(next instanceof Directive) && !(next instanceof Prefix)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
-	public Atom next() throws IteratorException {
-		Object val = this.stream.next();
-		
-		if (val instanceof Throwable) {
-			if (val instanceof ParseException) {
-				throw (ParseException) val;
+	public Atom next() throws IteratorException {		
+		if (next instanceof Throwable) {
+			if (next instanceof ParseException) {
+				throw (ParseException) next;
 			}
-			throw new ParseException("An error occured while parsing.", (Throwable) val);
+			throw new ParseException("An error occured while parsing.", (Throwable) next);
 		} 
 		try {
-			return (Atom) val;
+			return (Atom) next;
 		} catch (ClassCastException e) {
 			throw new ParseException("Wrong object type.", e);
 		}
