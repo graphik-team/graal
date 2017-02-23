@@ -113,7 +113,7 @@ public class AtomicQueryHomomorphismWithNegation extends AbstractHomomorphism<Co
 				subIt = new ConverterCloseableIterator<Atom, Substitution>(atomsByPredicateIt, new Atom2SubstitutionConverter(atom, ans));
 			} else {
 				ConverterCloseableIterator<Atom, Term[]> converterArrayIt = new ConverterCloseableIterator<Atom, Term[]>(atomsByPredicateIt, new Atom2ArrayConverter(atom, ans));
-				FilterIterator<Term[], Term[]> filterIt = new FilterIterator<Term[], Term[]>(converterArrayIt, new UniqFiler());
+				FilterIterator<Term[], Term[]> filterIt = new FilterIterator<Term[], Term[]>(converterArrayIt, new UniqFilter());
 				subIt = new ConverterCloseableIterator<Term[], Substitution>(filterIt, new Array2SubstitutionConverter(ans));
 			}
 			Set<Variable> frontier = query.getFrontierVariables();
@@ -129,7 +129,7 @@ public class AtomicQueryHomomorphismWithNegation extends AbstractHomomorphism<Co
 	// PRIVATE CLASS
 	// /////////////////////////////////////////////////////////////////////////
 	
-	private static class UniqFiler implements Filter<Term[]> {
+	private static class UniqFilter implements Filter<Term[]> {
 
 		Trie<Term, Boolean> sol = new Trie<Term, Boolean>();
 		
