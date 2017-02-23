@@ -1,5 +1,8 @@
 package fr.lirmm.graphik.graal.io.dlp;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
  * (Université de Montpellier & CNRS) (2014 - 2017)
@@ -606,5 +609,44 @@ public class DlgpParserTest {
 		Assert.assertEquals(7,cpt);
 		parser.close();
 	}
+	
+	
+	@Test
+	public void testSimpleFile() throws IteratorException, FileNotFoundException {
+		DlgpParser parser = new DlgpParser(new File("./src/test/resources/simple.dlp"));
+		int i = 0;
+		while (parser.hasNext()) {
+			++i;
+			parser.next();
+		}
+		parser.close();
+		Assert.assertEquals(21,i);
+	}
+	
+	@Test
+	public void testIrisAndLiteralsFile() throws IteratorException, FileNotFoundException {
+		DlgpParser parser = new DlgpParser(new File("./src/test/resources/irisAndLiterals.dlp"));
+		int i = 0;
+		while (parser.hasNext()) {
+			++i;
+			parser.next();
+		}
+		parser.close();
+		Assert.assertEquals(8,i);
+	}
+	
+	@Test
+	public void testCorrectFile() throws IteratorException, FileNotFoundException {
+		DlgpParser parser = new DlgpParser(new File("./src/test/resources/correct.dlp"));
+		int i = 0;
+		while (parser.hasNext()) {
+			++i;
+			parser.next();
+		}
+		Assert.assertEquals(19,i);
+		parser.close();
+	}
+	
+	
 	
 }

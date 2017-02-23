@@ -1,0 +1,23 @@
+@facts
+[f1] p(a), relatedTo(a,b), q(b).
+[f2] p(X), t(X,a,b), s(a,z).
+t(X,a,b), relatedTo(Y,z).
+
+@constraints
+[c1] ! :- relatedTo(X,X).
+[constraint_2] ! :- X=Y, t(X,Y,b).
+! :- p(X), q(X).
+
+@rules
+[r1] relatedTo(X,Y) :- p(X), t(X,Z).
+s(X,Y), s(Y,Z) :- q(X),t(X,Z).
+[rA 1] p(X) :- q(X).
+Y=Z :- t(X,Y),t(X,Z).
+s(a) :- .
+s(Z) :- a=b, X=Y, X=a, p(X,Y).
+
+@queries
+[q1] ? (X) :- p(X), relatedTo(X,Z), t(a,Z).
+[Query2] ? (X,Y) :- relatedTo(X,X), Y=a.
+? :- p(X).
+?() :- .

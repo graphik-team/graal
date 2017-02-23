@@ -1,0 +1,19 @@
+@base <http://www.example.org/>
+@prefix ex: <http://www.example.org/>
+@prefix inria-team: <https://team.inria.fr/>
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+
+@facts
+
+% use of @base
+[f 1] <Pred>(1.5).
+
+% use of @prefix
+[f 2] ex:Pred("1.5"^^xsd:decimal).
+
+% absolute IRIs
+[f 3] <http://www.example.org/Pred>
+      ("1.5"^^<http://www.w3.org/2001/XMLSchema#decimal>). 
+
+% use of @base for the predicate and @prefix for the argument
+[f 4] team(inria-team:graphik). 

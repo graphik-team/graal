@@ -1,0 +1,19 @@
+[f1] p(a), relatedTo(a,b), q(b). [f2] p(X), t(X,a,b), s(a,z).
+[c1] !:-relatedTo(X
+% this is a comment
+,X).
+[q1]?(X) :- p(X), relatedTo(X,Z), t(a,Z).
+t(X,a,b).
+[r1] relatedTo(X,Y) :- p(X), t(X,Z).
+[constraint_2] ! :- X=Y, t(X,Y,b).
+s(X,Y), s(Y,Z) :- % This is another comment
+q(X),t(X,Z).
+[rA_1] p(X)
+:-
+q(X)
+. Y=Z :- t(X,Y),t(X,Z).
+[Query2]
+? (X,Y) :- relatedTo(X,X), Y=a.
+s(Z) :- a=b, X=Y, X=a, p(X,Y).
+!:- p(X), q(X).
+ relatedTo(Y,z).?    :- p(X).
