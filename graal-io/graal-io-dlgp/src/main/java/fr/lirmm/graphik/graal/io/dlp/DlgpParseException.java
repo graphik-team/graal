@@ -68,7 +68,7 @@ class DlgpParseException extends ParseException {
 	}
 
 	DlgpParseException(fr.lirmm.graphik.dlgp2.parser.ParseException e) {
-		super(createMsg(e), e.currentToken.beginLine, e.currentToken.beginColumn);
+		super(createMsg(e), (e.currentToken!=null)?e.currentToken.beginLine:-1, (e.currentToken!=null)?e.currentToken.beginColumn:-1);
 	}
 	
 	DlgpParseException(String message, int line, int column) {
@@ -82,17 +82,21 @@ class DlgpParseException extends ParseException {
 	private static final String createMsg(fr.lirmm.graphik.dlgp2.parser.ParseException e) {
 
 		Token tok = e.currentToken;
-		String extract = "";
-		do {
-			if (tok.kind == 0) {
-				extract += e.tokenImage[0];
-				break;
-			}
-			extract += add_escapes(tok.image);
-			tok = tok.next;
-		} while (tok != null);
-		
-		return "a parse exception occured on \"" + extract + "\"";
+		if(e.currentToken != null) { 
+			String extract = "";
+			do {
+				if (tok.kind == 0) {
+					extract += e.tokenImage[0];
+					break;
+				}
+				extract += add_escapes(tok.image);
+				tok = tok.next;
+			} while (tok != null);
+			
+			return "a parse exception occured on \"" + extract + "\"";
+		} else {
+			return e.getMessage();
+		}
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

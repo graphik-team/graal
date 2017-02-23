@@ -77,7 +77,7 @@ public class ParseException extends IteratorException {
 	 * @param message
 	 */
 	public ParseException(String message, int line, int column) {
-		super("line " + line + " column " + column + ": " + message);
+		super((line >= 0 && column >= 0)?"line " + line + " column " + column + ": " + message:message);
 		this.line = line;
 		this.column = column;
 	}
