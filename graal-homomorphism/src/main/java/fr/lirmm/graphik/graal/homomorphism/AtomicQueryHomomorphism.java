@@ -88,7 +88,6 @@ public class AtomicQueryHomomorphism extends AbstractHomomorphismWithCompilation
 	@Override
 	public <U1 extends ConjunctiveQuery, U2 extends AtomSet> CloseableIterator<Substitution> execute(U1 q, U2 a)
 			throws HomomorphismException {
-		System.out.println("AtomicQueryHomomorphismNew" + q.toString());
 		Atom atom = q.getAtomSet().iterator().next();
 		try {
 			return new ConverterCloseableIterator<Atom, Substitution>(a.match(atom),
