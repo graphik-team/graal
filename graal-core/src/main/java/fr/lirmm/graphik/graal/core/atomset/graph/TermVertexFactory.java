@@ -89,12 +89,12 @@ class TermVertexFactory implements TermFactory {
 			return new ConstantVertex(((ConstantVertex)term).getTerm());
 		} else if (term instanceof LiteralVertex) {
 			return new LiteralVertex(((LiteralVertex) term).getTerm());
-		} else if (term instanceof Variable) {
+		} else if (term.isVariable()) {
 			return new VariableVertex(((Variable) term));
-		} else if (term instanceof Constant) { 
-			return new ConstantVertex(((Constant) term));
-		} else if (term instanceof Literal) {
+		} else if (term.isLiteral()) { 
 			return new LiteralVertex(((Literal) term));
+		} else if (term.isConstant()) {
+			return new ConstantVertex(((Constant) term));
 		} else {
 			return null;
 		}
