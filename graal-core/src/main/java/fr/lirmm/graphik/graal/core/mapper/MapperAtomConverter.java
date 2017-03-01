@@ -43,7 +43,7 @@
 package fr.lirmm.graphik.graal.core.mapper;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.Mapper;
+import fr.lirmm.graphik.graal.api.core.mapper.AtomMapper;
 import fr.lirmm.graphik.util.stream.converter.Converter;
 
 /**
@@ -52,13 +52,13 @@ import fr.lirmm.graphik.util.stream.converter.Converter;
  */
 public class MapperAtomConverter implements Converter<Atom, Atom> {
 
-	private Mapper mapper;
+	private AtomMapper mapper;
 	
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 	
-	public MapperAtomConverter(Mapper mapper) {
+	public MapperAtomConverter(AtomMapper mapper) {
 		this.mapper = mapper;
 	}
 	

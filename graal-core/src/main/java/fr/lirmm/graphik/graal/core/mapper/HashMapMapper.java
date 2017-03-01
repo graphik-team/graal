@@ -44,8 +44,8 @@ package fr.lirmm.graphik.graal.core.mapper;
 
 import java.util.HashMap;
 
-import fr.lirmm.graphik.graal.api.core.MutableMapper;
 import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.mapper.MutableMapper;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}

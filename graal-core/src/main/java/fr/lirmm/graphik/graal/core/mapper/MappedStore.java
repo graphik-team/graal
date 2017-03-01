@@ -46,13 +46,12 @@ import java.io.Closeable;
 import java.io.IOException;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConstantGenerator;
-import fr.lirmm.graphik.graal.api.core.Mapper;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
+import fr.lirmm.graphik.graal.api.core.mapper.Mapper;
 import fr.lirmm.graphik.graal.api.store.Store;
 import fr.lirmm.graphik.graal.core.store.AbstractStore;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -66,6 +65,7 @@ public class MappedStore extends AbstractStore {
 
 	private Store store;
 	private Mapper mapper;
+	private MapperAtomConverter converter;
 	private MapperAtomConverter unconverter;
 	private MapperPredicateConverter predicateUnconverter;
 	
@@ -76,6 +76,7 @@ public class MappedStore extends AbstractStore {
 	public MappedStore(Store store, Mapper mapper) {
 		this.store = store;
 		this.mapper = mapper;
+		this.converter = new MapperAtomConverter(this.mapper);
 		this.unconverter = new MapperAtomConverter(this.mapper.inverse());
 		this.predicateUnconverter = new MapperPredicateConverter(this.mapper.inverse());
 	}
@@ -141,6 +142,11 @@ public class MappedStore extends AbstractStore {
 	public boolean add(Atom atom) throws AtomSetException {
 		return store.add(mapper.map(atom));
 	}
+	
+	public boolean addAll(CloseableIterator<? extends Atom> it) throws AtomSetException {
+		return store.addAll(new ConverterCloseableIterator<Atom, Atom>((CloseableIterator<Atom>) it, this.converter));
+	}
+
 
 	@Override
 	public boolean remove(Atom atom) throws AtomSetException {

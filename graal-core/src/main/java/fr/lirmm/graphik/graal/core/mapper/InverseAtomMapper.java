@@ -43,41 +43,27 @@
 package fr.lirmm.graphik.graal.core.mapper;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
-import fr.lirmm.graphik.graal.api.core.Predicate;
-import fr.lirmm.graphik.graal.api.core.Rule;
-import fr.lirmm.graphik.graal.api.core.mapper.Mapper;
+import fr.lirmm.graphik.graal.api.core.mapper.AtomMapper;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class InverseMapper implements Mapper {
+public class InverseAtomMapper implements AtomMapper {
 
-	private Mapper mapper;
+	private AtomMapper mapper;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public InverseMapper(Mapper mapper) {
+	public InverseAtomMapper(AtomMapper mapper) {
 		this.mapper = mapper;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
-
-	@Override
-	public Predicate map(Predicate predicate) {
-		return this.mapper.unmap(predicate);
-	}
-
-	@Override
-	public Predicate unmap(Predicate predicate) {
-		return this.mapper.map(predicate);
-	}
 
 	@Override
 	public Atom map(Atom atom) {
@@ -90,46 +76,8 @@ public class InverseMapper implements Mapper {
 	}
 
 	@Override
-	public ConjunctiveQuery map(ConjunctiveQuery cq) {
-		return this.mapper.unmap(cq);
-	}
-
-	@Override
-	public ConjunctiveQuery unmap(ConjunctiveQuery cq) {
-		return this.mapper.map(cq);
-	}
-
-	@Override
-	public Rule map(Rule rule) {
-		return this.mapper.unmap(rule);
-	}
-
-	@Override
-	public Rule unmap(Rule rule) {
-		return this.mapper.map(rule);
-	}
-
-	@Override
-	public InMemoryAtomSet map(InMemoryAtomSet atomset) {
-		return this.mapper.unmap(atomset);
-	}
-
-	@Override
-	public InMemoryAtomSet unmap(InMemoryAtomSet atomset) {
-		return this.mapper.map(atomset);
-	}
-
-	@Override
-	public Mapper inverse() {
+	public AtomMapper inverse() {
 		return this.mapper;
 	}
-
-	// /////////////////////////////////////////////////////////////////////////
-	// OBJECT OVERRIDE METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	// /////////////////////////////////////////////////////////////////////////
-	// PRIVATE METHODS
-	// /////////////////////////////////////////////////////////////////////////
 
 }

@@ -44,10 +44,10 @@ package fr.lirmm.graphik.graal.core.mapper;
 
 import java.util.Iterator;
 
-import fr.lirmm.graphik.graal.api.core.Mapper;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.RuleSetException;
+import fr.lirmm.graphik.graal.api.core.mapper.Mapper;
 import fr.lirmm.graphik.util.ShouldNeverHappenedError;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;

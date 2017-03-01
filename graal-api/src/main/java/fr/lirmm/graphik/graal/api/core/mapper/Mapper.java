@@ -40,20 +40,30 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.api.core;
+package fr.lirmm.graphik.graal.api.core.mapper;
+
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Rule;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface Mapper {
+public interface Mapper extends AtomMapper, PredicateMapper {
 
+	@Override
 	Predicate map(Predicate predicate);
 
+	@Override
 	Predicate unmap(Predicate predicate);
 
+	@Override
 	Atom map(Atom atom);
 
+	@Override
 	Atom unmap(Atom atom);
 
 	ConjunctiveQuery map(ConjunctiveQuery cq);

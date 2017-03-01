@@ -40,43 +40,24 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.core.mapper;
+package fr.lirmm.graphik.graal.api.core.mapper;
 
-import fr.lirmm.graphik.graal.api.core.Rule;
-import fr.lirmm.graphik.graal.api.core.mapper.Mapper;
-import fr.lirmm.graphik.util.stream.converter.Converter;
+import fr.lirmm.graphik.graal.api.core.Predicate;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class MapperRuleConverter implements Converter<Rule, Rule> {
+public interface MutableMapper extends Mapper {
 
-	private Mapper mapper;
-	
-	// /////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	// /////////////////////////////////////////////////////////////////////////
-	
-	public MapperRuleConverter(Mapper mapper) {
-		this.mapper = mapper;
-	}
-	
-	// /////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	@Override
-	public Rule convert(Rule rule) {
-		return this.mapper.map(rule);
-	}
-
-	// /////////////////////////////////////////////////////////////////////////
-	// OBJECT OVERRIDE METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	// /////////////////////////////////////////////////////////////////////////
-	// PRIVATE METHODS
-	// /////////////////////////////////////////////////////////////////////////
+	/**
+	 * Add a mapping from fromPredicate to toPredicate. <br>
+	 * map(fromPredicate) will return toPredicate and unmap(toPredicate) will
+	 * return fromPredicate.
+	 * 
+	 * @param fromPredicate
+	 * @param toPredicate
+	 */
+	public void addMapping(Predicate fromPredicate, Predicate toPredicate);
 
 }

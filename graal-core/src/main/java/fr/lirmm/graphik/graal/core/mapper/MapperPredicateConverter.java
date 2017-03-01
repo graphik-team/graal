@@ -42,8 +42,8 @@
  */
 package fr.lirmm.graphik.graal.core.mapper;
 
-import fr.lirmm.graphik.graal.api.core.Mapper;
 import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.mapper.PredicateMapper;
 import fr.lirmm.graphik.util.stream.converter.Converter;
 
 /**
@@ -53,13 +53,13 @@ import fr.lirmm.graphik.util.stream.converter.Converter;
 public class MapperPredicateConverter implements Converter<Predicate, Predicate>
 {
 
-	private Mapper mapper;
+	private PredicateMapper mapper;
 	
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 	
-	public MapperPredicateConverter(Mapper mapper) {
+	public MapperPredicateConverter(PredicateMapper mapper) {
 		this.mapper = mapper;
 	}
 	

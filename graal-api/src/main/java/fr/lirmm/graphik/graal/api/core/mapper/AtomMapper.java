@@ -40,43 +40,20 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.core.mapper;
+package fr.lirmm.graphik.graal.api.core.mapper;
 
-import fr.lirmm.graphik.graal.api.core.Rule;
-import fr.lirmm.graphik.graal.api.core.mapper.Mapper;
-import fr.lirmm.graphik.util.stream.converter.Converter;
+import fr.lirmm.graphik.graal.api.core.Atom;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class MapperRuleConverter implements Converter<Rule, Rule> {
+public interface AtomMapper {
 
-	private Mapper mapper;
-	
-	// /////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	// /////////////////////////////////////////////////////////////////////////
-	
-	public MapperRuleConverter(Mapper mapper) {
-		this.mapper = mapper;
-	}
-	
-	// /////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	// /////////////////////////////////////////////////////////////////////////
+	Atom map(Atom atom);
 
-	@Override
-	public Rule convert(Rule rule) {
-		return this.mapper.map(rule);
-	}
+	Atom unmap(Atom atom);
 
-	// /////////////////////////////////////////////////////////////////////////
-	// OBJECT OVERRIDE METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	// /////////////////////////////////////////////////////////////////////////
-	// PRIVATE METHODS
-	// /////////////////////////////////////////////////////////////////////////
+	AtomMapper inverse();
 
 }

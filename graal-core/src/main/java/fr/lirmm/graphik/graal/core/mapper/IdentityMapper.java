@@ -44,10 +44,10 @@ package fr.lirmm.graphik.graal.core.mapper;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.api.core.Mapper;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.mapper.Mapper;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}

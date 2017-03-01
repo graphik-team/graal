@@ -44,11 +44,11 @@ package fr.lirmm.graphik.graal.kb;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
-import fr.lirmm.graphik.graal.api.core.Mapper;
-import fr.lirmm.graphik.graal.api.core.MutableMapper;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.RuleSetException;
+import fr.lirmm.graphik.graal.api.core.mapper.Mapper;
+import fr.lirmm.graphik.graal.api.core.mapper.MutableMapper;
 import fr.lirmm.graphik.graal.api.kb.KnowledgeBase;
 import fr.lirmm.graphik.graal.api.kb.Approach;
 import fr.lirmm.graphik.graal.api.store.Store;
