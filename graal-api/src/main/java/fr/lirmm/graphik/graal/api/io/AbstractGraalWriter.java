@@ -58,6 +58,8 @@ import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.factory.AtomFactory;
 import fr.lirmm.graphik.util.Prefix;
+import fr.lirmm.graphik.util.stream.CloseableIterable;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -100,9 +102,13 @@ public abstract class AbstractGraalWriter extends AbstractWriter implements
 			this.writeIterable((Iterable<?>) o);
 		} else if (o instanceof Iterator<?>) {
 			this.writeIterator((Iterator<?>) o);
+		} else if (o instanceof CloseableIterable<?>) {
+			this.writeCloseableIterable((CloseableIterable<?>) o);
+		} else if (o instanceof CloseableIterator<?>) {
+			this.writeCloseableIterator((CloseableIterator<?>) o);
 		} else {
 			// fallback
-			this.write(o.toString());
+			this.writeln(o.toString());
 		}
 		return this;
 	}
@@ -122,6 +128,15 @@ public abstract class AbstractGraalWriter extends AbstractWriter implements
 	}
 
 	protected void writeIterator(Iterator<?> it) throws IOException {
+		while (it.hasNext())
+			this.write(it.next());
+	}
+	
+	protected void writeCloseableIterable(CloseableIterable<?> it) throws IOException {
+		this.writeCloseableIterator(it.iterator());
+	}
+	
+	protected void writeCloseableIterator(CloseableIterator<?> it) throws IOException {
 		while (it.hasNext())
 			this.write(it.next());
 	}
