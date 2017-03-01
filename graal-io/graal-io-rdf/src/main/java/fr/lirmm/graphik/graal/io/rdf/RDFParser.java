@@ -46,7 +46,11 @@
 package fr.lirmm.graphik.graal.io.rdf;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
@@ -71,6 +75,14 @@ public final class RDFParser extends AbstractCloseableIterator<Object> implement
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
+	
+	public RDFParser(InputStream is, RDFFormat format) {
+		this(new InputStreamReader(is), format, null);
+	}
+	
+	public RDFParser(File file, RDFFormat format) throws FileNotFoundException {
+		this(new FileReader(file), format, null);
+	}
 
 	public RDFParser(Reader reader, RDFFormat format) {
 		this(reader, format, null);
