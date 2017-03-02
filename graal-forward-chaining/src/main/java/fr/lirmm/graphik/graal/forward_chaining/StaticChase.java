@@ -56,28 +56,29 @@ import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
  *
  */
 public class StaticChase {
+	
 	public static void executeChase(AtomSet atomSet, Iterable<Rule> ruleSet)
 			throws ChaseException {
-		Chase chase = new DefaultChase(ruleSet, atomSet);
-		chase.execute();
-	}
-
-	public static void executeChaseWithGRDAndUnfiers(AtomSet atomSet,
-			GraphOfRuleDependencies grd)
-			throws ChaseException {
-		Chase chase = new ChaseWithGRDAndUnfiers(grd, atomSet);
+		Chase chase = new SccChase(ruleSet.iterator(), atomSet);
 		chase.execute();
 	}
 
 	public static void executeOneStepChase(AtomSet atomSet,
 			Iterable<Rule> ruleSet) throws ChaseException {
-		Chase chase = new DefaultChase(ruleSet, atomSet);
+		Chase chase = new SccChase(ruleSet.iterator(), atomSet);
+		chase.next();
+	}
+	
+	public static void executeChase(AtomSet atomSet, GraphOfRuleDependencies grd)
+			throws ChaseException {
+		Chase chase = new SccChase(grd, atomSet);
+		chase.execute();
+	}
+
+	public static void executeOneStepChase(AtomSet atomSet,
+			GraphOfRuleDependencies grd) throws ChaseException {
+		Chase chase = new SccChase(grd, atomSet);
 		chase.next();
 	}
 
-	public static void executeOneStepChaseWithGRDAndUnifiers(AtomSet atomSet,
-			GraphOfRuleDependencies grd) throws ChaseException {
-		Chase chase = new ChaseWithGRDAndUnfiers(grd, atomSet);
-		chase.next();
-	}
 }
