@@ -63,7 +63,7 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.Scheduler;
 import fr.lirmm.graphik.graal.homomorphism.Var;
-import fr.lirmm.graphik.homorphism.utils.ProbaUtils;
+import fr.lirmm.graphik.graal.homorphism.utils.ProbaUtils;
 import fr.lirmm.graphik.util.graph.DefaultDirectedEdge;
 import fr.lirmm.graphik.util.graph.DefaultGraph;
 import fr.lirmm.graphik.util.graph.DefaultHyperEdge;
