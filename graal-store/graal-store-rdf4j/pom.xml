@@ -33,7 +33,7 @@
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-api</artifactId>
+			<artifactId>rdf4j-common</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>

@@ -49,10 +49,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.Value;
-import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.query.MalformedQueryException;
 import org.eclipse.rdf4j.query.QueryEvaluationException;
 import org.eclipse.rdf4j.query.QueryLanguage;
@@ -67,17 +65,14 @@ import org.slf4j.LoggerFactory;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConstantGenerator;
-import fr.lirmm.graphik.graal.api.core.Literal;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.store.WrongArityException;
-import fr.lirmm.graphik.graal.core.DefaultAtom;
+import fr.lirmm.graphik.graal.common.rdf4j.RDF4jUtils;
 import fr.lirmm.graphik.graal.core.DefaultConstantGenerator;
 import fr.lirmm.graphik.graal.core.store.AbstractTripleStore;
-import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
-import fr.lirmm.graphik.util.URI;
-import fr.lirmm.graphik.util.URIUtils;
+import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
@@ -90,11 +85,12 @@ public class RDF4jStore extends AbstractTripleStore {
 	static final Logger LOGGER = LoggerFactory.getLogger(RDF4jStore.class);
 
 	private RepositoryConnection connection;
-	private ValueFactory         valueFactory;
 
 	private TupleQuery           predicatesQuery;
 	private TupleQuery           termsQuery;
-
+	
+	private RDF4jUtils utils;
+	
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
@@ -111,7 +107,7 @@ public class RDF4jStore extends AbstractTripleStore {
 		} catch (RepositoryException e) {
 			throw new AtomSetException("Error while creating SailStore", e);
 		}		
-		this.valueFactory = repo.getValueFactory();
+		this.utils = new RDF4jUtils(new Prefix("rdf4j", "file://rdf4j/"),repo.getValueFactory());
 	}
 
 	@Override
@@ -143,7 +139,7 @@ public class RDF4jStore extends AbstractTripleStore {
 	@Override
 	public boolean add(Atom atom) throws AtomSetException {
 		try {
-			this.connection.add(this.atomToStatement(atom));
+			this.connection.add(utils.atomToStatement(atom));
 		} catch (RepositoryException e) {
 			throw new AtomSetException("Error while adding the atom " + atom, e);
 		}
@@ -153,7 +149,7 @@ public class RDF4jStore extends AbstractTripleStore {
 	@Override
 	public boolean addAll(CloseableIterator<? extends Atom> atom) throws AtomSetException {
 		try {
-			this.connection.add(new StatementIterator(this, atom));
+			this.connection.add(new StatementIterator(utils, atom));
 		} catch (RepositoryException e) {
 			throw new AtomSetException("Error while adding the atom " + atom, e);
 		}
@@ -169,7 +165,7 @@ public class RDF4jStore extends AbstractTripleStore {
 	@Override
 	public boolean remove(Atom atom) throws AtomSetException {
 		try {
-			this.connection.remove(this.atomToStatement(atom));
+			this.connection.remove(utils.atomToStatement(atom));
 		} catch (RepositoryException e) {
 			throw new AtomSetException("Error while adding the atoms.", e);
 		}
@@ -179,7 +175,7 @@ public class RDF4jStore extends AbstractTripleStore {
 	@Override
 	public boolean removeAll(CloseableIterator<? extends Atom> atom) throws AtomSetException {
 		try {
-			this.connection.remove(new StatementIterator(this, atom));
+			this.connection.remove(new StatementIterator(utils, atom));
 		} catch (RepositoryException e) {
 			throw new AtomSetException("Error while removing the atoms.", e);
 		}
@@ -188,7 +184,7 @@ public class RDF4jStore extends AbstractTripleStore {
 
 	@Override
 	public boolean contains(Atom atom) throws AtomSetException {
-		Statement stat = this.atomToStatement(atom);
+		Statement stat = utils.atomToStatement(atom);
 		try {
 			return this.connection.hasStatement(stat, false);
 		} catch (RepositoryException e) {
@@ -198,7 +194,7 @@ public class RDF4jStore extends AbstractTripleStore {
 
 	@Override
 	public CloseableIterator<Atom> match(Atom atom) throws AtomSetException {
-		Statement stat = this.atomToStatement(atom);
+		Statement stat = utils.atomToStatement(atom);
 		IRI subject = (IRI) stat.getSubject();
 		if (subject.getNamespace().equals("_:")) {
 			subject = null;
@@ -209,7 +205,7 @@ public class RDF4jStore extends AbstractTripleStore {
 		}
 
 		try {
-			return new AtomIterator(this.connection.getStatements(subject, stat.getPredicate(), object, false));
+			return new AtomIterator(this.connection.getStatements(subject, stat.getPredicate(), object, false), utils);
 		} catch (RepositoryException e) {
 			throw new AtomSetException(e);
 		}
@@ -218,7 +214,7 @@ public class RDF4jStore extends AbstractTripleStore {
 	@Override
 	public CloseableIterator<Atom> atomsByPredicate(Predicate p) throws AtomSetException {
 		try {
-			return new AtomIterator(this.connection.getStatements(null, this.createURI(p), null, false));
+			return new AtomIterator(this.connection.getStatements(null, utils.createURI(p), null, false), utils);
 		} catch (RepositoryException e) {
 			throw new AtomSetException(e);
 		}
@@ -232,12 +228,12 @@ public class RDF4jStore extends AbstractTripleStore {
 			if (position == 0) {
 				query = this.connection.prepareTupleQuery(QueryLanguage.SPARQL,
  "SELECT DISTINCT ?x WHERE { ?x <"
-				                                                                + this.createURI(p)
+				                                                                + utils.createURI(p)
 				                                                                + "> ?y }");
 			} else if (position == 1) {
 				query = this.connection.prepareTupleQuery(QueryLanguage.SPARQL,
  "SELECT DISTINCT ?x WHERE { ?y <"
-				                                                                + this.createURI(p)
+				                                                                + utils.createURI(p)
 				                                                                + "> ?x }");
 			} else {
 				throw new WrongArityException("Position should be 0 for subject or 1 for object.");
@@ -259,7 +255,7 @@ public class RDF4jStore extends AbstractTripleStore {
 		TupleQueryResult result;
 		try {
 			result = this.getPredicatesQuery().evaluate();
-			return new PredicatesIterator(result);
+			return new PredicatesIterator(result, utils);
 		} catch (QueryEvaluationException e) {
 			throw new AtomSetException(e);
 		}
@@ -299,7 +295,7 @@ public class RDF4jStore extends AbstractTripleStore {
 		TupleQueryResult result;
 		try {
 			result = this.getTermsQuery().evaluate();
-			return new TermsIterator(result);
+			return new TermsIterator(result, utils);
 		} catch (QueryEvaluationException e) {
 			throw new AtomSetException(e);
 		}
@@ -367,7 +363,7 @@ public class RDF4jStore extends AbstractTripleStore {
 	@Override
 	public CloseableIterator<Atom> iterator() {
 		try {
-			return new AtomIterator(this.connection.getStatements(null, null, null, false));
+			return new AtomIterator(this.connection.getStatements(null, null, null, false), utils);
 		} catch (RepositoryException e) {
 			if (LOGGER.isErrorEnabled()) {
 				LOGGER.error("Error during iterator creation", e);
@@ -375,80 +371,6 @@ public class RDF4jStore extends AbstractTripleStore {
 		}
 		return null;
 	}
-
-	// //////////////////////////////////////////////////////////////////////////
-	// PRIVATE
-	// //////////////////////////////////////////////////////////////////////////
-
-	Statement atomToStatement(Atom atom) throws WrongArityException {
-		if (atom.getPredicate().getArity() != 2) {
-			throw new WrongArityException("Error on " + atom + ": arity "
-			                              + atom.getPredicate().getArity()
-			                              + " is not supported by this store. ");
-		}
-		IRI predicate = this.createURI(atom.getPredicate());
-		IRI term0 = this.createURI(atom.getTerm(0));
-		Value term1 = this.createValue(atom.getTerm(1));
-		return valueFactory.createStatement(term0, predicate, term1);
-	}
-
-	private IRI createURI(Predicate p) {
-		return createURI(URIzer.instance().input(p.getIdentifier().toString()));
-	}
-
-	private IRI createURI(Term t) {
-		if (t.isConstant()) {
-			return createURI(URIzer.instance().input(t.getIdentifier().toString()));
-		} else {
-			return createURI("_:" + t.getIdentifier().toString());
-		}
-	}
-
-	/**
-	 * Create URI from string. If the specified string is not a valid URI, the
-	 * method add a default prefix to the string.
-	 */
-	private IRI createURI(String string) {
-		return valueFactory.createIRI(string);
-	}
-
-	private Value createValue(Term t) {
-		if (t instanceof Literal) {
-			Literal l = (Literal) t;
-			return valueFactory.createLiteral(l.getValue().toString(),
-			    valueFactory.createIRI(l.getDatatype().toString()));
-		} else {
-			return createURI(t);
-		}
-	}
-
-	static Atom statementToAtom(Statement stat) {
-		Predicate predicate = valueToPredicate(stat.getPredicate());
-		Term term0 = valueToTerm(stat.getSubject());
-		Term term1 = valueToTerm(stat.getObject());
-		return new DefaultAtom(predicate, term0, term1);
-	}
-
-	static Predicate valueToPredicate(Value value) {
-		return new Predicate(URIzer.instance().output(value.toString()), 2);
-	}
-
-	static Term valueToTerm(Value value) {
-		if (value instanceof Resource) {
-			return DefaultTermFactory.instance().createConstant(URIzer.instance().output(value.toString()));
-		} else { //  Literal
-			org.eclipse.rdf4j.model.Literal l = (org.eclipse.rdf4j.model.Literal) value;
-			URI uri = URIUtils.createURI(l.getDatatype().toString());
-			String label = l.getLabel();
-			if(uri.equals(URIUtils.RDF_LANG_STRING)) {
-				String opt = l.getLanguage();
-				label += "@";
-				label += opt;
-			}
-			return DefaultTermFactory.instance().createLiteral(uri, label);
-		}
-	}
-
 
 
 }

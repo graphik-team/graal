@@ -40,74 +40,87 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.store.jenatdb;
+package fr.lirmm.graphik.graal.io.rdf;
 
-import com.hp.hpl.jena.rdf.model.Literal;
-import com.hp.hpl.jena.rdf.model.RDFNode;
+import java.io.IOException;
+import java.io.OutputStream;
 
-import fr.lirmm.graphik.graal.api.core.Predicate;
-import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFHandlerException;
+import org.eclipse.rdf4j.rio.Rio;
+
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.io.AtomWriter;
+import fr.lirmm.graphik.graal.api.io.Writer;
+import fr.lirmm.graphik.graal.api.store.WrongArityException;
+import fr.lirmm.graphik.graal.common.rdf4j.RDF4jUtils;
 import fr.lirmm.graphik.util.Prefix;
-import fr.lirmm.graphik.util.URIUtils;
-import fr.lirmm.graphik.util.URIzer;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-final class Utils {
+public class RDFWriter implements AtomWriter {
 
+	private final RDF4jUtils utils = new RDF4jUtils(new Prefix("rdf4j", "file://rdf4j/"), SimpleValueFactory.getInstance());
+	private final org.eclipse.rdf4j.rio.RDFWriter writer;
+	
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
-	
-	private static URIzer urizer = new URIzer(new Prefix("jena", "file:///jena/"));
-	
-	private Utils(){}
 
-	static String predicateToString(Predicate p) {
-		return "<" + urizer.input(p.getIdentifier().toString()) + ">";
+	public RDFWriter(OutputStream os, RDFFormat format) {
+		this.writer = Rio.createWriter(format, os);
+		this.writer.startRDF();
 	}
-
-	static String termToString(Term t) {
-		return Utils.termToString(t, "<" + urizer.input(t.getIdentifier().toString()) + ">");
+	public RDFWriter(java.io.Writer writer, RDFFormat format) {
+		this.writer = Rio.createWriter(format, writer);
+		this.writer.startRDF();
 	}
-
-	static String termToString(Term t, String valueIfVariable) {
-		if (t.isConstant()) {
-			return "<" + urizer.input(t.getIdentifier().toString()) + ">";
-		} else if (t.isLiteral()) {
-			return t.getIdentifier().toString();
-		} else if (t.isVariable()) {
-			return valueIfVariable;
-		} else {
-			return "";
-		}
-	}
-
-	static Term createTerm(RDFNode node) {
-		Term term = null;
-		if (node.isLiteral()) {
-			Literal l = node.asLiteral();
-			term = DefaultTermFactory.instance().createLiteral(URIUtils.createURI(l.getDatatypeURI()), l.getValue());
-		} else {
-			term = DefaultTermFactory.instance().createConstant(urizer.output(node.toString()));
-		}
-		return term;
-	}
-
-	static Predicate createPredicate(RDFNode node, int arity) {
-		String s = node.toString();
-		s = urizer.output(s);
-		return new Predicate(s, arity);
-	}
-
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	
+	@Override
+	public Writer write(Prefix prefix) throws IOException {
+		this.writer.handleNamespace(prefix.getPrefixName(), prefix.getPrefix());
+		return this;
+	}
+
+	@Override
+	public Writer writeComment(String comment) throws IOException {
+		this.writer.handleComment(comment);
+		return this;
+	}
+
+	@Override
+	public AtomWriter write(Atom atom) throws IOException {
+		
+		try {
+			this.writer.handleStatement(utils.atomToStatement(atom));
+		} catch (RDFHandlerException e) {
+			// TODO treat this exception
+			e.printStackTrace();
+			throw new Error("Untreated exception");
+		} catch (WrongArityException e) {
+			// TODO treat this exception
+			e.printStackTrace();
+			throw new Error("Untreated exception");
+		}
+		return this;
+	}
+
+	@Override
+	public void flush() throws IOException {
+	}
+
+	@Override
+	public void close() throws IOException {
+		this.writer.endRDF();
+	}
+
 	// /////////////////////////////////////////////////////////////////////////
 	// OBJECT OVERRIDE METHODS
 	// /////////////////////////////////////////////////////////////////////////
@@ -115,5 +128,6 @@ final class Utils {
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
-
+	
+	
 }

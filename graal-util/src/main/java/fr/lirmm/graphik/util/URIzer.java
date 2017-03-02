@@ -40,34 +40,31 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.store.triplestore.rdf4j;
+package fr.lirmm.graphik.util;
 
-import fr.lirmm.graphik.util.Prefix;
-import fr.lirmm.graphik.util.URIUtils;
+public class URIzer {
+	
+	private final Prefix defaultPrefix;
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
 
-class URIzer {
-	private static URIzer instance;
-
-	protected URIzer() {
-		super();
+	public URIzer(Prefix defaultPrefix) {
+		this.defaultPrefix = defaultPrefix;
 	}
-
-	public static synchronized URIzer instance() {
-		if (instance == null)
-			instance = new URIzer();
-
-		return instance;
-	}
-
-	Prefix defaultPrefix = new Prefix("sail", "file:///sail/");
-
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// METHODS
+	// /////////////////////////////////////////////////////////////////////////
+	
 	/**
 	 * Add default prefix if necessary
 	 * 
 	 * @param s
 	 * @return a String which represents an URI.
 	 */
-	String input(String s) {
+	public String input(String s) {
 		return URIUtils.createURI(s, defaultPrefix).toString();
 	}
 
@@ -77,7 +74,7 @@ class URIzer {
 	 * @param s
 	 * @return the String s without the default prefix, if it was present.
 	 */
-	String output(String s) {
+	public String output(String s) {
 		if (s.startsWith(defaultPrefix.getPrefix())) {
 			return s.substring(defaultPrefix.getPrefix().length());
 		}

@@ -46,14 +46,17 @@ import org.eclipse.rdf4j.query.QueryEvaluationException;
 import org.eclipse.rdf4j.query.TupleQueryResult;
 
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.common.rdf4j.RDF4jUtils;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
 class TermsIterator extends TupleQueryResultIterator<Term> {
 
 	String value = "term";
+	private RDF4jUtils utils;
 
-	TermsIterator(TupleQueryResult results) {
+	TermsIterator(TupleQueryResult results, RDF4jUtils utils) {
 		super.it = results;
+		this.utils = utils;
 	}
 
 	TermsIterator(TupleQueryResult results, String value) {
@@ -64,7 +67,7 @@ class TermsIterator extends TupleQueryResultIterator<Term> {
 	@Override
 	public Term next() throws IteratorException {
 		try {
-			return RDF4jStore.valueToTerm(this.it.next().getValue(value));
+			return utils.valueToTerm(this.it.next().getValue(value));
 		} catch (QueryEvaluationException e) {
 			if (RDF4jStore.LOGGER.isErrorEnabled()) {
 				RDF4jStore.LOGGER.error("Error during iteration", e);

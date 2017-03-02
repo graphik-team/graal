@@ -47,14 +47,17 @@ import org.eclipse.rdf4j.repository.RepositoryException;
 import org.eclipse.rdf4j.repository.RepositoryResult;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.common.rdf4j.RDF4jUtils;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
 class AtomIterator extends AbstractCloseableIterator<Atom> {
 	RepositoryResult<Statement> it;
+	private RDF4jUtils utils;
 
-	AtomIterator(RepositoryResult<Statement> it) {
+	AtomIterator(RepositoryResult<Statement> it, RDF4jUtils utils) {
 		this.it = it;
+		this.utils = utils;
 	}
 
 	@Override
@@ -85,7 +88,7 @@ class AtomIterator extends AbstractCloseableIterator<Atom> {
 	@Override
 	public Atom next() throws IteratorException {
 		try {
-			return RDF4jStore.statementToAtom(this.it.next());
+			return utils.statementToAtom(this.it.next());
 		} catch (RepositoryException e) {
 			RDF4jStore.LOGGER.error("Error on SailStore iterator.");
 			throw new IteratorException("An error occurs during iteration over sailStore", e);

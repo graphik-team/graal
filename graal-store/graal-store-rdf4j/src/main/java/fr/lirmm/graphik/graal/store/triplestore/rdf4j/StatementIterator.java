@@ -48,6 +48,7 @@ import org.eclipse.rdf4j.repository.RepositoryException;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.store.WrongArityException;
+import fr.lirmm.graphik.graal.common.rdf4j.RDF4jUtils;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
@@ -56,11 +57,11 @@ class StatementIterator implements Iteration<Statement, RepositoryException> {
 	/**
 	 * 
 	 */
-	private final RDF4jStore rdf4jStore;
+	private final RDF4jUtils utils;
 	private CloseableIterator<? extends Atom> it;
 
-	public StatementIterator(RDF4jStore rdf4jStore, CloseableIterator<? extends Atom> iterator) {
-		this.rdf4jStore = rdf4jStore;
+	public StatementIterator(RDF4jUtils utils, CloseableIterator<? extends Atom> iterator) {
+		this.utils = utils;
 		this.it = iterator;
 	}
 
@@ -76,7 +77,7 @@ class StatementIterator implements Iteration<Statement, RepositoryException> {
 	@Override
 	public Statement next() {
 		try {
-			return this.rdf4jStore.atomToStatement(it.next());
+			return utils.atomToStatement(it.next());
 		} catch (WrongArityException e) {
 			throw new RuntimeException("An errors occurs while translating atom to statement", e);
 		} catch (IteratorException e) {
