@@ -48,6 +48,9 @@ package fr.lirmm.graphik.graal.rulesetanalyser.property;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.lirmm.graphik.graal.GraalConstant;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
@@ -57,6 +60,8 @@ import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultRule;
@@ -66,9 +71,12 @@ import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.forward_chaining.StaticChase;
 import fr.lirmm.graphik.graal.homomorphism.RecursiveBacktrackHomomorphism;
+import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
 
 public final class MSAProperty extends RuleSetProperty.Default {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(MSAProperty.class);
 
 	private static MSAProperty instance = null;
 
@@ -97,8 +105,8 @@ public final class MSAProperty extends RuleSetProperty.Default {
 		AtomSet A = Rules.criticalInstance(ruleSet);
 
 		try { StaticChase.executeChase(A,R); }
-		catch (Exception e) {
-			System.err.println("TODO: something to do about it: " +e);
+		catch (ChaseException e) {
+			LOGGER.warn("An error occurs during the chase: ", e);
 			return 0;
 		}
 
@@ -108,12 +116,11 @@ public final class MSAProperty extends RuleSetProperty.Default {
 		Q.getAtomSet().add(q);
 
 		try { 
-			if (RecursiveBacktrackHomomorphism.instance().exist(Q, A))
+			if (StaticHomomorphism.instance().exist(Q, A))
 				return -1;
 			return 1;
-		}
-		catch (Exception e) {
-			System.err.println("TODO: something to do about it: " +e);
+		}catch (HomomorphismException e) {
+			LOGGER.warn("An error occurs during the homomorphism: ", e);
 			return 0;
 		}
 	}

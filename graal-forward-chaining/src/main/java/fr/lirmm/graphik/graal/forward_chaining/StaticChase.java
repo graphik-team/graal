@@ -49,6 +49,7 @@ import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
+import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 
 /**
@@ -60,6 +61,12 @@ public class StaticChase {
 	public static void executeChase(AtomSet atomSet, Iterable<Rule> ruleSet)
 			throws ChaseException {
 		Chase chase = new SccChase(ruleSet.iterator(), atomSet);
+		chase.execute();
+	}
+	
+	public static void executeChase(AtomSet atomSet, Iterable<Rule> ruleSet, RuleApplier ruleApplier)
+			throws ChaseException {
+		Chase chase = new SccChase(ruleSet.iterator(), atomSet, ruleApplier);
 		chase.execute();
 	}
 

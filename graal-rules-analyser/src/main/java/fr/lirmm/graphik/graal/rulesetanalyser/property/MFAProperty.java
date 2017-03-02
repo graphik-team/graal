@@ -48,6 +48,9 @@ package fr.lirmm.graphik.graal.rulesetanalyser.property;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.lirmm.graphik.graal.GraalConstant;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
@@ -56,6 +59,8 @@ import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.forward_chaining.Chase;
+import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultRule;
@@ -63,8 +68,11 @@ import fr.lirmm.graphik.graal.core.Rules;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.forward_chaining.ConfigurableChase;
+import fr.lirmm.graphik.graal.forward_chaining.SccChase;
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.FrontierRestrictedChaseHaltingCondition;
+import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
 import fr.lirmm.graphik.graal.homomorphism.RecursiveBacktrackHomomorphism;
+import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
 
 /**
@@ -72,6 +80,8 @@ import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
  * executed on the critical instance.
  */
 public final class MFAProperty extends RuleSetProperty.Default {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(MFAProperty.class);
 
 	private static MFAProperty instance = null;
 
@@ -98,7 +108,7 @@ public final class MFAProperty extends RuleSetProperty.Default {
 	public int check(AnalyserRuleSet ruleSet) {
 		RuleSet R = translateToMFA(ruleSet);
 		AtomSet A = Rules.criticalInstance(ruleSet);
-		Chase chase = new ConfigurableChase(R, A, new FrontierRestrictedChaseHaltingCondition());
+		Chase chase = new SccChase(R.iterator(), A, new DefaultRuleApplier<AtomSet>(new FrontierRestrictedChaseHaltingCondition()));
 
 		DefaultConjunctiveQuery Q = new DefaultConjunctiveQuery();
 		DefaultAtom q = new DefaultAtom(C);
@@ -108,13 +118,16 @@ public final class MFAProperty extends RuleSetProperty.Default {
 		try {
 			while (chase.hasNext()) {
 				chase.next();
-				if (RecursiveBacktrackHomomorphism.instance().exist(Q, A)) {
+				if (StaticHomomorphism.instance().exist(Q, A)) {
 					return -1;
 				}
 			}
 		}
-		catch (Exception e) {
-			System.err.println("TODO: something to do about it: " +e);
+		catch (ChaseException e) {
+			LOGGER.warn("An error occurs during the chase: ", e);
+			return 0;
+		} catch (HomomorphismException e) {
+			LOGGER.warn("An error occurs during the homomorphism: ", e);
 			return 0;
 		}
 

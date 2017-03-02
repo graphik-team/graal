@@ -90,6 +90,10 @@ public class SccChase extends AbstractChase {
 		}
 		init();
 	}
+	
+	public SccChase(Iterator<Rule> rules, AtomSet atomSet, RuleApplier ruleApplier) {
+		this(new GraphOfRuleDependencies(rules), atomSet, ruleApplier);
+	}
 
 	public SccChase(GraphOfRuleDependencies grd, AtomSet atomSet) {
 		this(grd, atomSet, RestrictedChaseRuleApplier.instance());
