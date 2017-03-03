@@ -48,7 +48,10 @@ package fr.lirmm.graphik.graal.backward_chaining.pure;
 import fr.lirmm.graphik.graal.api.backward_chaining.QueryRewriterWithCompilation;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
+import fr.lirmm.graphik.graal.core.compilation.IDCompilation;
+import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 import fr.lirmm.graphik.util.profiler.NoProfiler;
 import fr.lirmm.graphik.util.stream.CloseableIterable;
@@ -92,7 +95,10 @@ public class PureRewriter extends AbstractProfilable implements QueryRewriterWit
 
 	@Override
 	public CloseableIteratorWithoutException<ConjunctiveQuery> execute(ConjunctiveQuery query, Iterable<Rule> rules) {
-		RewritinCloseableIterator it = new RewritinCloseableIterator(this.unfolding, query, rules, this.operator);
+		RuleSet newRulSet = new LinkedListRuleSet(rules);
+		RulesCompilation compilation = new IDCompilation();
+		compilation.compile(newRulSet.iterator());
+		RewritinCloseableIterator it = new RewritinCloseableIterator(this.unfolding, query, newRulSet, compilation, this.operator);
 		it.setProfiler(this.getProfiler());
 		return it;
 	}
