@@ -40,9 +40,9 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
+/**
+* 
+*/
 package fr.lirmm.graphik.graal.core;
 
 import java.util.Collection;
@@ -53,8 +53,10 @@ import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.UnionOfConjunctiveQueries;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * This class represents query which is the union of conjunctive queries.
@@ -88,12 +90,22 @@ public class DefaultUnionOfConjunctiveQueries implements UnionOfConjunctiveQueri
 	}
 
 	public DefaultUnionOfConjunctiveQueries(List<Term> ans,
-	    CloseableIteratorWithoutException<ConjunctiveQuery> queries) {
+			CloseableIteratorWithoutException<ConjunctiveQuery> queries) {
 		this.ans = ans;
 		this.queries = new LinkedList<ConjunctiveQuery>();
 		while (queries.hasNext()) {
 			this.queries.add(queries.next());
 		}
+		queries.close();
+	}
+
+	public DefaultUnionOfConjunctiveQueries(List<Term> ans, CloseableIterator<ConjunctiveQuery> queries) throws IteratorException {
+		this.ans = ans;
+		this.queries = new LinkedList<ConjunctiveQuery>();
+		while (queries.hasNext()) {
+			this.queries.add(queries.next());
+		}
+		queries.close();
 	}
 
 	public DefaultUnionOfConjunctiveQueries(List<Term> ans, ConjunctiveQuery... queries) {
@@ -147,8 +159,7 @@ public class DefaultUnionOfConjunctiveQueries implements UnionOfConjunctiveQueri
 
 	@Override
 	public boolean isBoolean() {
-		return this.queries.isEmpty()
-				|| this.queries.iterator().next().isBoolean();
+		return this.queries.isEmpty() || this.queries.iterator().next().isBoolean();
 	}
 
 	public void setLabel(String label) {
