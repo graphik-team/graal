@@ -384,6 +384,34 @@ public class BackwardChainingTest {
 			Assert.assertFalse("There is an error.", true);
 		}
 	}
+	
+	@Theory
+	public void constantInRulesIssue62(RulesCompilation compilation,
+	    RewritingOperator operator) throws IteratorException, ParseException {
+		RuleSet rules = new LinkedListRuleSet();
+		rules.add(DlgpParser.parseRule("p(X,a) :- q(X)."));
+
+		ConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y) :- p(X,Y).");
+
+		compilation.compile(rules.iterator());
+		PureRewriter bc = new PureRewriter(operator, true);
+		CloseableIterator<? extends ConjunctiveQuery> it = bc.execute(query, rules, compilation);
+
+		boolean found = false;
+		int i = 0;
+		while (it.hasNext()) {
+			ConjunctiveQuery next = it.next();
+			CloseableIteratorWithoutException<Atom> atomIt = next.getAtomSet().iterator();
+			while(atomIt.hasNext()) {
+				if(atomIt.next().getPredicate().equals(Predicate.EQUALITY)) {
+					found = true;
+				}
+			}
+			++i;
+		}
+		Assert.assertTrue(found);
+		Assert.assertEquals(2, i);
+	}
 
 	public static int count(CloseableIterator<?> it) throws IteratorException {
 		if (DEBUG) {
