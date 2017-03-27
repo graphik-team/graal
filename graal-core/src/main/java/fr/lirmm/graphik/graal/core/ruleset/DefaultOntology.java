@@ -69,6 +69,7 @@ import fr.lirmm.graphik.util.stream.IteratorException;
 public class DefaultOntology implements Ontology {
 
 	private Map<String, Rule> map;
+	private Map<String, NegativeConstraint> constraintsMap;
 	private Set<Predicate> vocabulary;
 	private RuleLabeler labeler;
 
@@ -78,6 +79,7 @@ public class DefaultOntology implements Ontology {
 
 	public DefaultOntology() {
 		this.map = new HashMap<String, Rule>();
+		this.constraintsMap = new HashMap<String, NegativeConstraint>();
 		this.labeler = new DefaultRuleLabeler();
 		this.vocabulary = new TreeSet<Predicate>();
 	}
@@ -109,14 +111,12 @@ public class DefaultOntology implements Ontology {
 
 	@Override
 	public Set<String> getNegativeConstraintNames() {
-		// TODO implement this method
-		throw new MethodNotImplementedError();
+		return constraintsMap.keySet();
 	}
 
 	@Override
 	public NegativeConstraint getNegativeConstraint(String name) {
-		// TODO implement this method
-		throw new MethodNotImplementedError();
+		return constraintsMap.get(name);
 	}
 
 	@Override
@@ -125,6 +125,9 @@ public class DefaultOntology implements Ontology {
 		this.vocabulary.addAll(rule.getHead().getPredicates());
 
 		this.labeler.setLabel(rule);
+		if(rule instanceof NegativeConstraint) {
+			this.constraintsMap.put(rule.getLabel(), (NegativeConstraint)rule);
+		}
 		return this.map.put(rule.getLabel(), rule) == null;
 	}
 
@@ -239,6 +242,9 @@ public class DefaultOntology implements Ontology {
 	
 	
 	private boolean removeWithoutVocReset(Rule rule) {
+		if(rule instanceof NegativeConstraint) {
+			this.constraintsMap.remove(rule.getLabel());
+		}
 		return this.map.remove(rule.getLabel()) != null;
 	}
 
