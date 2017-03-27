@@ -60,7 +60,7 @@ import fr.lirmm.graphik.graal.api.core.TermValueComparator;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Substitutions;
-import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultSubstitutionFactory;
 import fr.lirmm.graphik.util.Partition;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
@@ -168,7 +168,7 @@ public class HierarchicalCompilation extends AbstractRulesCompilation {
 	public Collection<Substitution> homomorphism(Atom father, Atom son) {
 		LinkedList<Substitution> res = new LinkedList<Substitution>();
 		if (isMappable(father.getPredicate(), son.getPredicate())) {
-			Substitution sub = SubstitutionFactory.instance().createSubstitution();
+			Substitution sub = DefaultSubstitutionFactory.instance().createSubstitution();
 			Iterator<Term> fatherTermsIt = father.getTerms().iterator();
 			Iterator<Term> sonTermsIt = son.getTerms().iterator();
 

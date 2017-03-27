@@ -67,7 +67,7 @@ import fr.lirmm.graphik.graal.core.Rules;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
-import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultSubstitutionFactory;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.Partition;
@@ -286,7 +286,7 @@ public class IDCompilation extends AbstractRulesCompilation {
 	@Override
 	public Collection<Pair<Atom, Substitution>> getRewritingOf(Atom atom) {
 		TreeSet<Pair<Atom, Substitution>> res = new TreeSet<Pair<Atom, Substitution>>();
-		res.add(new ImmutablePair<Atom, Substitution>(atom, SubstitutionFactory.instance().createSubstitution()));
+		res.add(new ImmutablePair<Atom, Substitution>(atom, DefaultSubstitutionFactory.instance().createSubstitution()));
 
 		Predicate predH = atom.getPredicate();
 		Map<Predicate, LinkedList<IDCondition>> condH = this.conditions

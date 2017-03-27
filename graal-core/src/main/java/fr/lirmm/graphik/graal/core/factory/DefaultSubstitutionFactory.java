@@ -52,14 +52,14 @@ import fr.lirmm.graphik.graal.core.HashMapSubstitution;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public final class SubstitutionFactory {
+public final class DefaultSubstitutionFactory {
 
-	private static SubstitutionFactory instance = new SubstitutionFactory();
+	private static DefaultSubstitutionFactory instance = new DefaultSubstitutionFactory();
 	
-	private SubstitutionFactory() {
+	private DefaultSubstitutionFactory() {
 	}
 
-	public static SubstitutionFactory instance() {
+	public static DefaultSubstitutionFactory instance() {
 		return instance;
 	}
 

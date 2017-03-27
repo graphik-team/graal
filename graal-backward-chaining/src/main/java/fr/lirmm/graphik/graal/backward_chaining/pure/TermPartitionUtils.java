@@ -51,7 +51,7 @@ import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultSubstitutionFactory;
 import fr.lirmm.graphik.util.Partition;
 
 /**
@@ -137,7 +137,7 @@ final class TermPartitionUtils {
 	 * null if the partition contain two constants in the same class
 	 */
 	public static Substitution getAssociatedSubstitution(Partition<Term> partition, ConjunctiveQuery context) {
-		Substitution substitution = SubstitutionFactory.instance().createSubstitution();
+		Substitution substitution = DefaultSubstitutionFactory.instance().createSubstitution();
 		// we will choose a representative for all the equivalence set of the
 		// partition
 		for (Collection<Term> set : partition) {

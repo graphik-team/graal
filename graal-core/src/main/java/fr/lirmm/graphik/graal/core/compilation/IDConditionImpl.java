@@ -61,7 +61,7 @@ import fr.lirmm.graphik.graal.api.core.TermValueComparator;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
-import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultSubstitutionFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.Partition;
@@ -190,7 +190,7 @@ class IDConditionImpl implements IDCondition {
 
 	@Override
 	public Pair<List<Term>, Substitution> generateBody(List<Term> head) {
-		Substitution s = SubstitutionFactory.instance().createSubstitution();
+		Substitution s = DefaultSubstitutionFactory.instance().createSubstitution();
 		Set<Variable> toRemoveFromPartition = new TreeSet<Variable>();
 
 		for (int i = 0; i < condHead.length; i++) {
@@ -280,7 +280,7 @@ class IDConditionImpl implements IDCondition {
 			return null;
 		}
 		Substitution s = ret.getRight();
-		Substitution homo = SubstitutionFactory.instance().createSubstitution();
+		Substitution homo = DefaultSubstitutionFactory.instance().createSubstitution();
 		List<Term> generatedBody = ret.getLeft();
 
 		// check for a simple homomorphism from generated body into 'to'

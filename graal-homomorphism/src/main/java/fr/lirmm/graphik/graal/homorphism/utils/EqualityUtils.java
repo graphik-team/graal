@@ -58,7 +58,7 @@ import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.Substitutions;
 import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
-import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultSubstitutionFactory;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
@@ -97,7 +97,7 @@ public final class EqualityUtils {
 	 */
 	public static Pair<ConjunctiveQuery, Substitution> processEquality(ConjunctiveQuery q) {
 		LinkedList<Atom> toRemove = new LinkedList<Atom>();
-		Substitution s = SubstitutionFactory.instance().createSubstitution();
+		Substitution s = DefaultSubstitutionFactory.instance().createSubstitution();
 		CloseableIteratorWithoutException<Atom> it = q.getAtomSet().iterator();
 		while (it.hasNext()) {
 			Atom a = it.next();

@@ -73,7 +73,7 @@ import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
 import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
-import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultSubstitutionFactory;
 import fr.lirmm.graphik.graal.homomorphism.PureHomomorphism;
 import fr.lirmm.graphik.util.profiler.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
@@ -335,7 +335,7 @@ final class Utils {
 			newQueriesBefore.clear();
 			newQueriesBefore.add(
 			    new ImmutablePair<InMemoryAtomSet, Substitution>(new LinkedListAtomSet(),
-			                                                     SubstitutionFactory.instance().createSubstitution()));
+			                                                     DefaultSubstitutionFactory.instance().createSubstitution()));
 
 			// we will build all the possible fact from the rewriting of the
 			// atoms

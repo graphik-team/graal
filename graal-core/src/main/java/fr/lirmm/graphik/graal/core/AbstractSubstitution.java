@@ -62,7 +62,7 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
-import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultSubstitutionFactory;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 import fr.lirmm.graphik.util.stream.IteratorException;
@@ -186,7 +186,7 @@ public abstract class AbstractSubstitution implements Substitution {
 
 	@Override
 	public Substitution compose(Substitution s) {
-		Substitution newSub = SubstitutionFactory.instance().createSubstitution(this);
+		Substitution newSub = DefaultSubstitutionFactory.instance().createSubstitution(this);
 		for (Variable term : s.getTerms()) {
 			if (!newSub.compose(term, s.createImageOf(term))) {
 				return null;
@@ -225,7 +225,7 @@ public abstract class AbstractSubstitution implements Substitution {
 
 	@Override
 	public Substitution aggregate(Substitution s) {
-		Substitution newSub = SubstitutionFactory.instance().createSubstitution(this);
+		Substitution newSub = DefaultSubstitutionFactory.instance().createSubstitution(this);
 		for (Variable term : s.getTerms()) {
 			if (!newSub.aggregate(term, s.createImageOf(term))) {
 				return null;

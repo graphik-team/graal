@@ -57,7 +57,7 @@ import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultSubstitutionFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.LinkedSet;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
@@ -275,7 +275,7 @@ public class Unifier {
 	    Atom a2, Set<Variable> frontierVars, Set<Variable> existentialVars) {
 		if (a1.getPredicate().equals(a2.getPredicate())) {
 			boolean error = false;
-			Substitution u = SubstitutionFactory.instance().createSubstitution();
+			Substitution u = DefaultSubstitutionFactory.instance().createSubstitution();
 			u.put(baseUnifier);
 
 			for (int i = 0; i < a1.getPredicate().getArity(); ++i) {

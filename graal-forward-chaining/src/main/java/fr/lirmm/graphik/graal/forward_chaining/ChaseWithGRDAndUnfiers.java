@@ -76,7 +76,7 @@ import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
-import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultSubstitutionFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.RestrictedChaseStopCondition;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
@@ -231,7 +231,7 @@ public class ChaseWithGRDAndUnfiers extends AbstractChase {
 	 * @return a Substitution which is obtained by replacing all target mark (T::) from the specified substitution by a source mark (S::).
 	 */
 	private static Substitution targetToSource(Substitution s) {
-		Substitution res = SubstitutionFactory.instance().createSubstitution();
+		Substitution res = DefaultSubstitutionFactory.instance().createSubstitution();
 		for(Variable v : s.getTerms()) {
 			res.put(DefaultTermFactory.instance().createVariable(v.getLabel().replaceAll("T::", "S::")), s.createImageOf(v));
 		}
@@ -250,7 +250,7 @@ public class ChaseWithGRDAndUnfiers extends AbstractChase {
 	}
 
 	private static Substitution forgetSource(Substitution s) {
-		Substitution res = SubstitutionFactory.instance().createSubstitution();
+		Substitution res = DefaultSubstitutionFactory.instance().createSubstitution();
 		for(Variable v : s.getTerms()) {
 			if(v.getLabel().startsWith("T::")) {
 				res.put(v, s.createImageOf(v));

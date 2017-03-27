@@ -49,7 +49,7 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.graal.core.factory.SubstitutionFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultSubstitutionFactory;
 import fr.lirmm.graphik.util.Partition;
 
 /**
@@ -116,7 +116,7 @@ public final class Substitutions {
 	}
 
 	public static Substitution aggregate(Substitution s1, Substitution s2) {
-		Substitution newSub = SubstitutionFactory.instance().createSubstitution(s1);
+		Substitution newSub = DefaultSubstitutionFactory.instance().createSubstitution(s1);
 		for (Variable term : s2.getTerms()) {
 			if (!newSub.aggregate(term, s2.createImageOf(term))) {
 				return null;
