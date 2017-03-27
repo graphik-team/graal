@@ -53,7 +53,7 @@ import org.junit.Test;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultAtomSetFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 
 /**
@@ -73,7 +73,7 @@ public class UnifierTest {
 		rule.getHead().add(TestUtils.pXY);
 		rule.getHead().add(TestUtils.pYZ);
 		
-		InMemoryAtomSet atomset = AtomSetFactory.instance().create();
+		InMemoryAtomSet atomset = DefaultAtomSetFactory.instance().create();
 		atomset.add(TestUtils.pUV);
 		atomset.add(TestUtils.pVW);
 		
@@ -87,7 +87,7 @@ public class UnifierTest {
 		rule.getBody().add(TestUtils.sX);
 		rule.getHead().add(TestUtils.pXB);
 		
-		InMemoryAtomSet atomset = AtomSetFactory.instance().create();
+		InMemoryAtomSet atomset = DefaultAtomSetFactory.instance().create();
 		atomset.add(TestUtils.pAU);
 		
 		Collection<Substitution> unifiers = Unifier.instance().computePieceUnifier(rule, atomset);
@@ -100,7 +100,7 @@ public class UnifierTest {
 		rule.getBody().add(TestUtils.sX);
 		rule.getHead().add(TestUtils.pXB);
 
-		InMemoryAtomSet atomset = AtomSetFactory.instance().create();
+		InMemoryAtomSet atomset = DefaultAtomSetFactory.instance().create();
 		atomset.add(TestUtils.pXA);
 
 		Collection<Substitution> unifiers = Unifier.instance().computePieceUnifier(rule,
@@ -114,7 +114,7 @@ public class UnifierTest {
 		rule.getBody().add(TestUtils.sX);
 		rule.getHead().add(TestUtils.pXY);
 
-		InMemoryAtomSet atomset = AtomSetFactory.instance().create();
+		InMemoryAtomSet atomset = DefaultAtomSetFactory.instance().create();
 		atomset.add(TestUtils.pUU);
 
 		Collection<Substitution> unifiers = Unifier.instance().computePieceUnifier(rule, atomset);
@@ -128,7 +128,7 @@ public class UnifierTest {
 		rule.getHead().add(TestUtils.pXY);
 		rule.getHead().add(TestUtils.pYZ);
 
-		InMemoryAtomSet atomset = AtomSetFactory.instance().create();
+		InMemoryAtomSet atomset = DefaultAtomSetFactory.instance().create();
 		atomset.add(TestUtils.pTU);
 		atomset.add(TestUtils.pUV);
 		atomset.add(TestUtils.pVW);
@@ -144,7 +144,7 @@ public class UnifierTest {
 		rule.getBody().add(TestUtils.sX);
 		rule.getHead().add(TestUtils.pXY);
 
-		InMemoryAtomSet atomset = AtomSetFactory.instance().create();
+		InMemoryAtomSet atomset = DefaultAtomSetFactory.instance().create();
 		atomset.add(TestUtils.pUV);
 		atomset.add(TestUtils.pWV);
 		atomset.add(TestUtils.pWT);
@@ -160,7 +160,7 @@ public class UnifierTest {
 		rule.getBody().add(TestUtils.pXY);
 		rule.getHead().add(TestUtils.qXY);
 
-		InMemoryAtomSet atomset = AtomSetFactory.instance().create();
+		InMemoryAtomSet atomset = DefaultAtomSetFactory.instance().create();
 		atomset.add(TestUtils.qUV);
 		atomset.add(TestUtils.pVW);
 		atomset.add(TestUtils.qTW);

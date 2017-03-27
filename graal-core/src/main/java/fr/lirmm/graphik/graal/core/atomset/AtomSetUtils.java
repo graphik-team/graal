@@ -52,7 +52,7 @@ import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
-import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultAtomSetFactory;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 import fr.lirmm.graphik.util.stream.IteratorException;
@@ -121,7 +121,7 @@ public final class AtomSetUtils {
 
 
 	public static InMemoryAtomSet minus(InMemoryAtomSet a1, InMemoryAtomSet a2) {
-		InMemoryAtomSet atomset = AtomSetFactory.instance().create();
+		InMemoryAtomSet atomset = DefaultAtomSetFactory.instance().create();
 		CloseableIteratorWithoutException<Atom> it = a1.iterator();
 		while (it.hasNext()) {
 			Atom a = it.next();
@@ -147,7 +147,7 @@ public final class AtomSetUtils {
 	}
 	
 	public static InMemoryAtomSet union(InMemoryAtomSet a1, InMemoryAtomSet a2) {
-		InMemoryAtomSet atomset = AtomSetFactory.instance().create();
+		InMemoryAtomSet atomset = DefaultAtomSetFactory.instance().create();
 		CloseableIteratorWithoutException<Atom> it = a1.iterator();
 		while (it.hasNext()) {
 			Atom a = it.next();

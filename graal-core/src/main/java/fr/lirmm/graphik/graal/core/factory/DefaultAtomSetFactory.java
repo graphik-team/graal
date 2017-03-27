@@ -58,14 +58,14 @@ import fr.lirmm.graphik.util.stream.IteratorException;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */
-public final class AtomSetFactory implements InMemoryAtomSetFactory {
+public final class DefaultAtomSetFactory implements InMemoryAtomSetFactory {
 
-	private static AtomSetFactory instance = new AtomSetFactory();
+	private static DefaultAtomSetFactory instance = new DefaultAtomSetFactory();
 
-	private AtomSetFactory() {
+	private DefaultAtomSetFactory() {
 	}
 
-	public static AtomSetFactory instance() {
+	public static DefaultAtomSetFactory instance() {
 		return instance;
 	}
 

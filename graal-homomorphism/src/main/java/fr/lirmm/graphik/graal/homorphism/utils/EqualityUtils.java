@@ -56,7 +56,7 @@ import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.Substitutions;
-import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultAtomSetFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultSubstitutionFactory;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
@@ -136,7 +136,7 @@ public final class EqualityUtils {
 		List<Term> newAns = new LinkedList<Term>(q.getAnswerVariables());
 		newAns.removeAll(s.getTerms());
 
-		InMemoryAtomSet newAtomSet = AtomSetFactory.instance().create();
+		InMemoryAtomSet newAtomSet = DefaultAtomSetFactory.instance().create();
 		CloseableIteratorWithoutException<Atom> it = q.getAtomSet().iterator();
 		while (it.hasNext()) {
 			Atom a = it.next();

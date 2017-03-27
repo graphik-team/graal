@@ -55,7 +55,7 @@ import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultAtomSetFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultSubstitutionFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
@@ -130,7 +130,7 @@ public class ConjunctiveQueryWithFixedVariables implements ConjunctiveQuery {
 
 	private static InMemoryAtomSet computeFixedQuery(InMemoryAtomSet atomset, Iterable<Term> fixedTerms) {
 		// create a Substitution for fixed query
-		InMemoryAtomSet fixedQuery = AtomSetFactory.instance().create();
+		InMemoryAtomSet fixedQuery = DefaultAtomSetFactory.instance().create();
 		Substitution fixSub = DefaultSubstitutionFactory.instance().createSubstitution();
 		for (Term t : fixedTerms) {
 			if (t.isVariable())

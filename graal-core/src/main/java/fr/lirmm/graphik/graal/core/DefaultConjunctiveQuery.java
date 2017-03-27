@@ -50,7 +50,7 @@ import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultAtomSetFactory;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 import fr.lirmm.graphik.util.stream.IteratorException;
@@ -71,7 +71,7 @@ public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 
 	public DefaultConjunctiveQuery() {
 		this.label = "";
-		this.atomSet = AtomSetFactory.instance().create();
+		this.atomSet = DefaultAtomSetFactory.instance().create();
 		this.responseVariables = new LinkedList<Term>();
 	}
 
@@ -87,7 +87,7 @@ public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 
 	public DefaultConjunctiveQuery(CloseableIterator<Atom> atomSet, CloseableIterator<Term> answerVariables) throws IteratorException {
 		this.label = "";
-		this.atomSet = AtomSetFactory.instance().create(atomSet);
+		this.atomSet = DefaultAtomSetFactory.instance().create(atomSet);
 		this.responseVariables = new LinkedList<Term>();
 		while (answerVariables.hasNext()) {
 			this.responseVariables.add(answerVariables.next());
@@ -97,7 +97,7 @@ public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 	public DefaultConjunctiveQuery(CloseableIteratorWithoutException<Atom> atomSet,
 	    CloseableIteratorWithoutException<Term> answerVariables) {
 		this.label = "";
-		this.atomSet = AtomSetFactory.instance().create(atomSet);
+		this.atomSet = DefaultAtomSetFactory.instance().create(atomSet);
 		this.responseVariables = new LinkedList<Term>();
 		while (answerVariables.hasNext()) {
 			this.responseVariables.add(answerVariables.next());
@@ -122,7 +122,7 @@ public class DefaultConjunctiveQuery implements ConjunctiveQuery {
 	// copy constructor
 	public DefaultConjunctiveQuery(ConjunctiveQuery query) {
 		this.label = query.getLabel();
-		this.atomSet = AtomSetFactory.instance().create(query.getAtomSet());
+		this.atomSet = DefaultAtomSetFactory.instance().create(query.getAtomSet());
 		this.responseVariables = new LinkedList<Term>(query.getAnswerVariables());
 	}
 

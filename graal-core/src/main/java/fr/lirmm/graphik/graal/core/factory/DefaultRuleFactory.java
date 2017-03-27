@@ -75,8 +75,8 @@ public final class DefaultRuleFactory implements RuleFactory {
 
 	@Override
 	public Rule create(Atom[] body, Atom[] head) {
-		InMemoryAtomSet bodySet = AtomSetFactory.instance().create(body);
-		InMemoryAtomSet headSet = AtomSetFactory.instance().create(head);
+		InMemoryAtomSet bodySet = DefaultAtomSetFactory.instance().create(body);
+		InMemoryAtomSet headSet = DefaultAtomSetFactory.instance().create(head);
 		return new DefaultRule(bodySet, headSet);
 	}
 
@@ -102,15 +102,15 @@ public final class DefaultRuleFactory implements RuleFactory {
 
 	@Override
 	public Rule create(Atom body, Atom head) {
-		InMemoryAtomSet bodySet = AtomSetFactory.instance().create(body);
-		InMemoryAtomSet headSet = AtomSetFactory.instance().create(head);
+		InMemoryAtomSet bodySet = DefaultAtomSetFactory.instance().create(body);
+		InMemoryAtomSet headSet = DefaultAtomSetFactory.instance().create(head);
 		return new DefaultRule(bodySet, headSet);
 	}
 
 	@Override
 	public Rule create(String label, Atom body, Atom head) {
-		InMemoryAtomSet bodySet = AtomSetFactory.instance().create(body);
-		InMemoryAtomSet headSet = AtomSetFactory.instance().create(head);
+		InMemoryAtomSet bodySet = DefaultAtomSetFactory.instance().create(body);
+		InMemoryAtomSet headSet = DefaultAtomSetFactory.instance().create(head);
 		return new DefaultRule(label, bodySet, headSet);
 	}
 

@@ -64,7 +64,7 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetUtils;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultAtomSetFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 import fr.lirmm.graphik.util.EquivalentRelation;
@@ -147,7 +147,7 @@ public final class Rules {
 		Map<Integer, InMemoryAtomSet> tmpPieces = new TreeMap<Integer, InMemoryAtomSet>();
 		for (Term e : existentials) {
 			if (tmpPieces.get(classes.getIdClass(e)) == null) {
-				tmpPieces.put(classes.getIdClass(e), AtomSetFactory
+				tmpPieces.put(classes.getIdClass(e), DefaultAtomSetFactory
 						.instance().create());
 			}
 		}
@@ -169,7 +169,7 @@ public final class Rules {
 				}
 			}
 			if (!isAffected) { // does not contain existential variable
-				atomset = AtomSetFactory.instance().create();
+				atomset = DefaultAtomSetFactory.instance().create();
 				atomset.add(a);
 				pieces.add(atomset);
 			}

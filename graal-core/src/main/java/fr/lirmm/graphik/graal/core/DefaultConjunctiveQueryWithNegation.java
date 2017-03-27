@@ -52,7 +52,7 @@ import fr.lirmm.graphik.graal.api.core.ConjunctiveQueryWithNegation;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.graal.core.factory.AtomSetFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultAtomSetFactory;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -71,7 +71,7 @@ public class DefaultConjunctiveQueryWithNegation implements ConjunctiveQueryWith
 	// /////////////////////////////////////////////////////////////////////////
 
 	public DefaultConjunctiveQueryWithNegation() {
-		this("", AtomSetFactory.instance().create(), AtomSetFactory.instance().create());
+		this("", DefaultAtomSetFactory.instance().create(), DefaultAtomSetFactory.instance().create());
 	}
 
 	public DefaultConjunctiveQueryWithNegation(InMemoryAtomSet positiveAtomSet, InMemoryAtomSet negativeAtomSet) {
@@ -112,8 +112,8 @@ public class DefaultConjunctiveQueryWithNegation implements ConjunctiveQueryWith
 
 	// copy constructor
 	public DefaultConjunctiveQueryWithNegation(ConjunctiveQueryWithNegation query) {
-		this(query.getLabel(), AtomSetFactory.instance().create(query.getPositiveAtomSet()),
-				AtomSetFactory.instance().create(query.getNegativeAtomSet()),
+		this(query.getLabel(), DefaultAtomSetFactory.instance().create(query.getPositiveAtomSet()),
+				DefaultAtomSetFactory.instance().create(query.getNegativeAtomSet()),
 				new LinkedList<Term>(query.getAnswerVariables()));
 	}
 
