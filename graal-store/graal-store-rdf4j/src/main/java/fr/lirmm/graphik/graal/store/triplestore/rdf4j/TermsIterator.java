@@ -59,9 +59,10 @@ class TermsIterator extends TupleQueryResultIterator<Term> {
 		this.utils = utils;
 	}
 
-	TermsIterator(TupleQueryResult results, String value) {
+	TermsIterator(TupleQueryResult results, String value, RDF4jUtils utils) {
 		super.it = results;
 		this.value = value;
+		this.utils = utils;
 	}
 
 	@Override

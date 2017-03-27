@@ -247,7 +247,7 @@ public class RDF4jStore extends AbstractTripleStore {
 			throw new AtomSetException(e);
 		}
 
-		return new TermsIterator(results, "x");
+		return new TermsIterator(results, "x", this.utils);
 	}
 
 	@Override

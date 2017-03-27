@@ -81,7 +81,7 @@
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-store-openrdf</artifactId>
+			<artifactId>graal-store-rdf4j</artifactId>
 			<version>${project.parent.version}</version>
 			<scope>test</scope>
 		</dependency>

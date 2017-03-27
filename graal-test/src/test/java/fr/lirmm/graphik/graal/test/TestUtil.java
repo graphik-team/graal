@@ -51,6 +51,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import org.apache.commons.io.FileUtils;
+import org.eclipse.rdf4j.repository.sail.SailRepository;
+import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import org.junit.Assert;
 
 import com.tinkerpop.blueprints.impls.tg.TinkerGraph;
@@ -67,10 +69,10 @@ import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.GraphBaseBackJumping;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.NoBackJumping;
 import fr.lirmm.graphik.graal.homomorphism.bbc.BCC;
+import fr.lirmm.graphik.graal.homomorphism.bootstrapper.AllDomainBootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.bootstrapper.DefaultBootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.bootstrapper.StarBootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.bootstrapper.StatBootstrapper;
-import fr.lirmm.graphik.graal.homomorphism.bootstrapper.AllDomainBootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC0;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2WithLimit;
@@ -79,10 +81,10 @@ import fr.lirmm.graphik.graal.homomorphism.forward_checking.SimpleFC;
 import fr.lirmm.graphik.graal.store.gdb.BlueprintsGraphDBStore;
 import fr.lirmm.graphik.graal.store.gdb.Neo4jStore;
 import fr.lirmm.graphik.graal.store.jenatdb.JenaStore;
-import fr.lirmm.graphik.graal.store.openrdf.SailStore;
 import fr.lirmm.graphik.graal.store.rdbms.adhoc.AdHocRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.HSQLDBDriver;
 import fr.lirmm.graphik.graal.store.rdbms.natural.NaturalRDBMSStore;
+import fr.lirmm.graphik.graal.store.triplestore.rdf4j.RDF4jStore;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -119,7 +121,7 @@ public final class TestUtil {
 	public static BlueprintsGraphDBStore graphStore = null;
 	public static JenaStore jenaStore = null;
 	public static Neo4jStore neo4jStore = null;
-	public static SailStore sailStore = null;
+	public static RDF4jStore sailStore = null;
 
 	public static Homomorphism[] getHomomorphisms() {
 
@@ -196,7 +198,7 @@ public final class TestUtil {
 			jenaStore = new JenaStore(JENA_TEST);
 
 			try {
-				sailStore = new SailStore();
+				sailStore = new RDF4jStore(new SailRepository(new MemoryStore()));
 			} catch (AtomSetException e) {
 				Assert.assertTrue("Error while creating SailStore", false);
 			}
