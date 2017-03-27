@@ -40,35 +40,36 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.core.factory;
+package fr.lirmm.graphik.graal.api.factory;
 
-import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.graal.api.factory.SubstitutionFactory;
-import fr.lirmm.graphik.graal.core.HashMapSubstitution;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.store.Store;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
- * @author Clément Sipieter (INRIA) <clement@6pi.fr>
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public final class DefaultSubstitutionFactory implements SubstitutionFactory {
+public interface StoreFactory {
 
-	private static DefaultSubstitutionFactory instance = new DefaultSubstitutionFactory();
+
+	Store create() throws AtomSetException;
+
+	Store create(Atom[] atoms) throws AtomSetException;
+
+	Store create(AtomSet src) throws AtomSetException, IteratorException;
+
+	Store create(InMemoryAtomSet src) throws AtomSetException;
 	
-	private DefaultSubstitutionFactory() {
-	}
+	Store create(CloseableIterator<Atom> atoms) throws AtomSetException, IteratorException;
 
-	public static DefaultSubstitutionFactory instance() {
-		return instance;
-	}
+	Store create(CloseableIteratorWithoutException<Atom> atoms) throws AtomSetException;
 
-	public Substitution createSubstitution() {
-		return new HashMapSubstitution();
-	}
+	Store create(Atom atom) throws AtomSetException;
 
-	public Substitution createSubstitution(Substitution s) {
-		return new HashMapSubstitution(s);
-	}
 }

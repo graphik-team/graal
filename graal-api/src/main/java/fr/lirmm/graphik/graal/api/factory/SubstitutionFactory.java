@@ -40,35 +40,18 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.core.factory;
+package fr.lirmm.graphik.graal.api.factory;
 
 import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.graal.api.factory.SubstitutionFactory;
-import fr.lirmm.graphik.graal.core.HashMapSubstitution;
 
 /**
- * @author Clément Sipieter (INRIA) <clement@6pi.fr>
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public final class DefaultSubstitutionFactory implements SubstitutionFactory {
+public interface SubstitutionFactory {
 
-	private static DefaultSubstitutionFactory instance = new DefaultSubstitutionFactory();
-	
-	private DefaultSubstitutionFactory() {
-	}
+	public Substitution createSubstitution();
 
-	public static DefaultSubstitutionFactory instance() {
-		return instance;
-	}
+	public Substitution createSubstitution(Substitution s);
 
-	public Substitution createSubstitution() {
-		return new HashMapSubstitution();
-	}
-
-	public Substitution createSubstitution(Substitution s) {
-		return new HashMapSubstitution(s);
-	}
 }
