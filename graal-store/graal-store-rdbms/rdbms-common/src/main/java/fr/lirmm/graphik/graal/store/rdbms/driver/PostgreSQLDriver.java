@@ -48,6 +48,7 @@ package fr.lirmm.graphik.graal.store.rdbms.driver;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -81,15 +82,50 @@ public class PostgreSQLDriver extends AbstractRdbmsDriver {
 	public PostgreSQLDriver(String host, String dbName, String user,
 			String password)
 	    throws SQLException {
-		super(openConnection(host, dbName, user, password));
+		super(openConnection(host, dbName, user, password, false));
+	}
+	
+	public PostgreSQLDriver(String host, String dbName, String user,
+			String password, boolean create)  throws SQLException {
+		super(openConnection(host, dbName, user, password, create));
 	}
 
 	public PostgreSQLDriver(String uri) throws SQLException {
-		super(DriverManager.getConnection(uri));
+		super(openConnection(uri));
 	}
 
 	private static Connection openConnection(String host, String dbName, String user,
-	    String password) throws SQLException {
+	    String password, boolean create) throws SQLException {
+		if (create) {
+			Connection con = null;
+			Statement stmt = null;
+			try {
+				con = openConnection("jdbc:postgresql://" + host
+						+ "?user=" + user + "&password=" + password);
+				stmt = con.createStatement();
+				try{
+				    stmt.executeUpdate("CREATE DATABASE " + dbName);
+				}catch(SQLException e){
+			    }
+			}finally{
+		      try{
+		         if(stmt!=null)
+		            stmt.close();
+		      }catch(SQLException e){
+		      }
+		      try{
+		         if(con!=null)
+		            con.close();
+		      }catch(SQLException e){
+		         e.printStackTrace();
+		      }
+			}
+		}
+		return openConnection("jdbc:postgresql://" + host
+				+ "/" + dbName + "?user=" + user + "&password=" + password);
+	}
+	
+	private static Connection openConnection(String uri) throws SQLException {
 		Connection connection;
 		try {
 			Class.forName("org.postgresql.Driver").newInstance();
@@ -103,9 +139,8 @@ public class PostgreSQLDriver extends AbstractRdbmsDriver {
 			LOGGER.error(e.getMessage(), e);
 			throw new SQLException(e.getMessage(), e);
 		}
-
-		connection = DriverManager.getConnection("jdbc:postgresql://" + host
-				+ "/" + dbName + "?user=" + user + "&password=" + password);
+		
+		connection = DriverManager.getConnection(uri);
 		return connection;
 	}
 	

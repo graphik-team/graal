@@ -48,11 +48,10 @@ package fr.lirmm.graphik.graal.store.rdbms.driver;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import fr.lirmm.graphik.graal.api.core.AtomSetException;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -76,7 +75,13 @@ public class MysqlDriver extends AbstractInsertOrIgnoreRdbmsDriver {
 	public MysqlDriver(String host, String dbName, String user,
 			String password)
 	    throws SQLException {
-		super(openConnection(host, dbName, user, password),
+		super(openConnection(host, dbName, user, password, false),
+				INSERT_OR_IGNORE_STATEMENT);
+	}
+	
+	public MysqlDriver(String host, String dbName, String user,
+			String password, boolean create)  throws SQLException {
+		super(openConnection(host, dbName, user, password, create),
 				INSERT_OR_IGNORE_STATEMENT);
 	}
 	
@@ -85,7 +90,32 @@ public class MysqlDriver extends AbstractInsertOrIgnoreRdbmsDriver {
 	}
 
 	private static Connection openConnection(String host, String dbName, String user,
-	    String password) throws SQLException {
+	    String password, boolean create) throws SQLException {
+		if (create) {
+			Connection con = null;
+			Statement stmt = null;
+			try {
+				con = openConnection("jdbc:mysql://" + host
+						+ "?user=" + user + "&password=" + password);
+				stmt = con.createStatement();
+				try{
+				    stmt.executeUpdate("CREATE DATABASE " + dbName);
+				}catch(SQLException e){
+			    }
+			}finally{
+		      try{
+		         if(stmt!=null)
+		            stmt.close();
+		      }catch(SQLException e){
+		      }
+		      try{
+		         if(con!=null)
+		            con.close();
+		      }catch(SQLException e){
+		         e.printStackTrace();
+		      }
+			}
+		}
 		return openConnection("jdbc:mysql://" + host
 					+ "/" + dbName + "?user=" + user + "&password=" + password);
 	}
