@@ -57,7 +57,7 @@ import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.api.kb.KnowledgeBase;
 import fr.lirmm.graphik.graal.api.kb.KnowledgeBaseException;
 import fr.lirmm.graphik.graal.api.kb.Approach;
-import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphStore;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -109,7 +109,7 @@ public class DefaultKnowledgeBaseTest {
 		Rule r = DlgpParser.parseRule("[R] p(X) :- q(X).");
 		NegativeConstraint nc = DlgpParser.parseNegativeConstraint("[NC] ! :- q(X), p(X).");
 
-		AtomSet store = new DefaultInMemoryGraphAtomSet();
+		AtomSet store = new DefaultInMemoryGraphStore();
 		store.add(aa);
 		KnowledgeBase kb = new DefaultKnowledgeBase(store,
 				new DlgpParser("[R] p(X) :- q(X). q(b). q(c). [NC] ! :- q(X), p(X)."));
@@ -136,7 +136,7 @@ public class DefaultKnowledgeBaseTest {
 		Rule r = DlgpParser.parseRule("[R1] p(x) :- q(X).");
 		NegativeConstraint nc = DlgpParser.parseNegativeConstraint("[NC] ! :- q(X), p(X).");
 
-		AtomSet store = new DefaultInMemoryGraphAtomSet();
+		AtomSet store = new DefaultInMemoryGraphStore();
 		store.add(aa);
 		store.add(ab);
 		store.add(ac);
@@ -243,7 +243,7 @@ public class DefaultKnowledgeBaseTest {
 		Rule r1 = DlgpParser.parseRule("[R1] p(x) :- q(X).");
 		Rule r2 = DlgpParser.parseRule("[R2] q(x) :- r(X).");
 
-		AtomSet store = new DefaultInMemoryGraphAtomSet();
+		AtomSet store = new DefaultInMemoryGraphStore();
 		RuleSet ruleset = new LinkedListRuleSet();
 		ruleset.add(r1);
 		ruleset.add(r2);

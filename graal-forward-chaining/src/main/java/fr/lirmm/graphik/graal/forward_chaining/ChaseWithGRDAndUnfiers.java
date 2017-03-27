@@ -74,7 +74,7 @@ import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.HashMapSubstitution;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphStore;
 import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultSubstitutionFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
@@ -132,7 +132,7 @@ public class ChaseWithGRDAndUnfiers extends AbstractChase {
 		Substitution unificator;
 		
 		Queue<Triple<Rule, Substitution, InMemoryAtomSet>> newQueue = new LinkedList<Triple<Rule, Substitution,InMemoryAtomSet>>();
-		InMemoryAtomSet newAtomSet = new DefaultInMemoryGraphAtomSet();
+		InMemoryAtomSet newAtomSet = new DefaultInMemoryGraphStore();
 		
 		try {
 			while(!queue.isEmpty()) {

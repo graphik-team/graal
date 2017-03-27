@@ -52,7 +52,7 @@ import fr.lirmm.graphik.graal.api.core.mapper.MutableMapper;
 import fr.lirmm.graphik.graal.api.kb.KnowledgeBase;
 import fr.lirmm.graphik.graal.api.kb.Approach;
 import fr.lirmm.graphik.graal.api.store.Store;
-import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphStore;
 import fr.lirmm.graphik.graal.core.mapper.MappedRuleSet;
 import fr.lirmm.graphik.graal.core.mapper.MappedStore;
 import fr.lirmm.graphik.graal.core.mapper.MapperAtomConverter;
@@ -71,7 +71,7 @@ import fr.lirmm.graphik.util.stream.converter.ConverterCloseableIterator;
  */
 public class KBBuilder {
 
-	private Store store = new DefaultInMemoryGraphAtomSet();
+	private Store store = new DefaultInMemoryGraphStore();
 	private Store mappedStore = store;
 	private RuleSet ontology = new LinkedListRuleSet();
 	private RuleSet mappedOntology = ontology;

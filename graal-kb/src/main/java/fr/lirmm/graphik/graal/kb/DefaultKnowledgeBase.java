@@ -82,7 +82,7 @@ import fr.lirmm.graphik.graal.api.kb.Approach;
 import fr.lirmm.graphik.graal.backward_chaining.pure.PureRewriter;
 import fr.lirmm.graphik.graal.core.DefaultQueryLabeler;
 import fr.lirmm.graphik.graal.core.DefaultUnionOfConjunctiveQueries;
-import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphStore;
 import fr.lirmm.graphik.graal.core.compilation.IDCompilation;
 import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
@@ -139,7 +139,7 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 	
 	public DefaultKnowledgeBase() {
 		this.ruleset = new DefaultOntology();
-		this.store = new DefaultInMemoryGraphAtomSet();
+		this.store = new DefaultInMemoryGraphStore();
 		this.queryLabeler = new DefaultQueryLabeler();
 	}
 

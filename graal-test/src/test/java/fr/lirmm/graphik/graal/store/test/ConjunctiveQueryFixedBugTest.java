@@ -59,7 +59,7 @@ import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.store.TripleStore;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphStore;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.test.TestUtil;
@@ -121,7 +121,7 @@ public class ConjunctiveQueryFixedBugTest {
 	@Theory
 	public void GraphAtomSetQuery(Homomorphism h, AtomSet store) {
 		try {
-			InMemoryAtomSet atomset = new DefaultInMemoryGraphAtomSet();
+			InMemoryAtomSet atomset = new DefaultInMemoryGraphStore();
 			atomset.add(DlgpParser.parseAtom("<P>(X)."));
 			ConjunctiveQuery query = new DefaultConjunctiveQuery(atomset);
 

@@ -58,7 +58,7 @@ import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.io.ParseException;
-import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphStore;
 import fr.lirmm.graphik.graal.core.factory.DefaultPredicateFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.homorphism.utils.EqualityUtils;
@@ -213,7 +213,7 @@ public class EqualityUtilsTest {
 	@Test
 	public void testQuery1() throws HomomorphismException, IteratorException {
 		ConjunctiveQuery q = DlgpParser.parseQuery("?(X,Y) :- b(X), Y=a.");
-		InMemoryAtomSet store = new DefaultInMemoryGraphAtomSet();
+		InMemoryAtomSet store = new DefaultInMemoryGraphStore();
 		store.addAll(DlgpParser.parseAtomSet("b(a),b(b)."));
 
 		BacktrackHomomorphism h = new BacktrackHomomorphism();
@@ -228,7 +228,7 @@ public class EqualityUtilsTest {
 	@Test
 	public void testQuery2() throws HomomorphismException, IteratorException {
 		ConjunctiveQuery q = DlgpParser.parseQuery("?(X,Y) :- p(X,Y), X=Y.");
-		InMemoryAtomSet store = new DefaultInMemoryGraphAtomSet();
+		InMemoryAtomSet store = new DefaultInMemoryGraphStore();
 		store.addAll(DlgpParser.parseAtomSet("p(a,a),p(a,b),p(b,b)."));
 
 		BacktrackHomomorphism h = new BacktrackHomomorphism();

@@ -61,7 +61,7 @@ import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphStore;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.DefaultScheduler;
 import fr.lirmm.graphik.graal.homomorphism.RecursiveBacktrackHomomorphism;
@@ -203,7 +203,7 @@ public final class TestUtil {
 				Assert.assertTrue("Error while creating SailStore", false);
 			}
 
-			return new AtomSet[] { new DefaultInMemoryGraphAtomSet(), new LinkedListAtomSet(), defaultRDBMSStore,
+			return new AtomSet[] { new DefaultInMemoryGraphStore(), new LinkedListAtomSet(), defaultRDBMSStore,
 			                       plainTableRDBMSStore, graphStore, neo4jStore, jenaStore, sailStore };
 		} catch (SQLException e) {
 			throw new Error(e);

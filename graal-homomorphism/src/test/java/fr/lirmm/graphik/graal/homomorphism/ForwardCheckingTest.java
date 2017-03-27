@@ -54,7 +54,7 @@ import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.io.ParseException;
-import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphStore;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.SimpleFC;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
@@ -71,7 +71,7 @@ public class ForwardCheckingTest {
 
 	@Test
 	public void test1() throws HomomorphismException, IteratorException, ParseException {
-		InMemoryAtomSet data = new DefaultInMemoryGraphAtomSet();
+		InMemoryAtomSet data = new DefaultInMemoryGraphStore();
 
 		data.addAll(DlgpParser.parseAtomSet("p(a,b)."));
 
@@ -90,7 +90,7 @@ public class ForwardCheckingTest {
 	public void simpleFCTest1() throws HomomorphismException, IteratorException, ParseException {
 		Profiler profiler = new CPUTimeProfiler();
 
-		InMemoryAtomSet data = new DefaultInMemoryGraphAtomSet();
+		InMemoryAtomSet data = new DefaultInMemoryGraphStore();
 		data.addAll(DlgpParser.parseAtomSet("p(a,b), q(b,c)."));
 		ConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y,Z) :- p(X,Y), q(Y,Z).");
 
@@ -109,7 +109,7 @@ public class ForwardCheckingTest {
 	public void FCTest2() throws HomomorphismException, IteratorException, ParseException {
 		Profiler profiler = new CPUTimeProfiler();
 
-		InMemoryAtomSet data = new DefaultInMemoryGraphAtomSet();
+		InMemoryAtomSet data = new DefaultInMemoryGraphStore();
 		data.addAll(DlgpParser.parseAtomSet("p(a,b), p(a,c), q(a,a), q(a,b)."));
 		ConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y,Z) :- p(X,Z), q(Y,Z).");
 
@@ -130,7 +130,7 @@ public class ForwardCheckingTest {
 
 		Predicate[] predicates = { new Predicate("p2", 2), new Predicate("p3", 3), new Predicate("p4", 4)};
 		
-		InMemoryAtomSet data = new DefaultInMemoryGraphAtomSet();
+		InMemoryAtomSet data = new DefaultInMemoryGraphStore();
 		TestUtil.addNAtoms(data, 13, predicates, 5, new Random(0));
 		ConjunctiveQuery query = DlgpParser.parseQuery("?(X5,X6,X7,X8) :- p4(X5,X6,X7,X8), p4(X8,X7,X6,X5), p3(X7,X8,X9), p2(X7,X11).");
 
@@ -153,7 +153,7 @@ public class ForwardCheckingTest {
 
 		Predicate[] predicates = { new Predicate("p", 2), new Predicate("q", 2), new Predicate("r", 2) };
 
-		InMemoryAtomSet data = new DefaultInMemoryGraphAtomSet();
+		InMemoryAtomSet data = new DefaultInMemoryGraphStore();
 		TestUtil.addNAtoms(data, 32, predicates, 5, new Random(0));
 		ConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y,Z) :- p(X,Y), q(X,Z), r(Y,Z).");
 

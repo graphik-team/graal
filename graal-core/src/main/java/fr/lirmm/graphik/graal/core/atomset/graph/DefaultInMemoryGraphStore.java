@@ -73,7 +73,7 @@ import fr.lirmm.graphik.util.stream.filter.FilterIteratorWithoutException;
 /**
  * Implementation of a graph in memory. Inherits directly from Fact.
  */
-public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet implements Store {
+public class DefaultInMemoryGraphStore extends AbstractInMemoryAtomSet implements Store {
 
 	private int size = 0;
 	
@@ -87,7 +87,7 @@ public class DefaultInMemoryGraphAtomSet extends AbstractInMemoryAtomSet impleme
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public DefaultInMemoryGraphAtomSet() {
+	public DefaultInMemoryGraphStore() {
 		this.terms = CurrentIndexFactory.instance().<Term, TermVertex>createMap(TermValueComparator.instance());
 		this.predicates = CurrentIndexFactory.instance().<Predicate, PredicateVertex>createMap();
 		this.termsByPredicatePosition = CurrentIndexFactory.instance().<Predicate, Set<Term>[]>createMap();
