@@ -42,16 +42,19 @@
  */
 package fr.lirmm.graphik.graal.core.factory;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
@@ -59,6 +62,8 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
  *
  */
 public class DefaultConjunctiveQueryFactory implements ConjunctiveQueryFactory {
+	
+	public final ConjunctiveQuery BOOLEAN_BOTTOM_QUERY; 
 
 	// /////////////////////////////////////////////////////////////////////////
 	// SINGLETON
@@ -68,6 +73,9 @@ public class DefaultConjunctiveQueryFactory implements ConjunctiveQueryFactory {
 
 	protected DefaultConjunctiveQueryFactory() {
 		super();
+		BOOLEAN_BOTTOM_QUERY = this.create(
+				DefaultAtomFactory.instance().create(Predicate.BOTTOM, DefaultTermFactory.instance().createVariable("X")),
+			        Collections.<Term>emptyList());
 	}
 
 	public static synchronized DefaultConjunctiveQueryFactory instance() {

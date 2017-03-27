@@ -94,6 +94,7 @@ import fr.lirmm.graphik.graal.forward_chaining.ConfigurableChase;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.homomorphism.DefaultHomomorphismFactory;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
+import fr.lirmm.graphik.graal.homomorphism.UniqFilter;
 import fr.lirmm.graphik.graal.rulesetanalyser.Analyser;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
@@ -101,6 +102,7 @@ import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 import fr.lirmm.graphik.util.stream.IteratorException;
+import fr.lirmm.graphik.util.stream.filter.FilterIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -109,10 +111,6 @@ import fr.lirmm.graphik.util.stream.IteratorException;
 public class DefaultKnowledgeBase extends AbstractProfilable implements KnowledgeBase {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultKnowledgeBase.class);
-	
-	private static final ConjunctiveQuery BOTTOM_QUERY = DefaultConjunctiveQueryFactory.instance().create(
-	    DefaultAtomFactory.instance().create(Predicate.BOTTOM,
-	        Collections.<Term> singletonList(DefaultTermFactory.instance().createVariable("X"))));
 
 	private final QueryLabeler queryLabeler;
 	
@@ -199,7 +197,7 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 	@Override
 	public boolean isConsistent() throws KnowledgeBaseException {
 		try {
-			CloseableIterator<Substitution> results = this.query(BOTTOM_QUERY);
+			CloseableIterator<Substitution> results = this.query(DefaultConjunctiveQueryFactory.instance().BOOLEAN_BOTTOM_QUERY);
 			boolean res = !results.hasNext();
 			results.close();
 			return res;
@@ -293,9 +291,10 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 						UnionOfConjunctiveQueries ucq = new DefaultUnionOfConjunctiveQueries(cq.getAnswerVariables(),
 						                                                                     it);
 
+						CloseableIterator<Substitution> resultIt = null;
 						Homomorphism solver = DefaultHomomorphismFactory.instance().getSolver(ucq, this.store);
 						if (solver instanceof HomomorphismWithCompilation) {
-							return ((HomomorphismWithCompilation) solver).execute(ucq, this.store,
+							resultIt = ((HomomorphismWithCompilation) solver).execute(ucq, this.store,
 							    this.ruleCompilation);
 						} else {
 							if (this.getApproach().equals(Approach.REWRITING_FIRST)) {
@@ -304,8 +303,9 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 							} else {
 								this.semiSaturate();
 							}
-							return solver.execute(ucq, this.store);
+							resultIt = solver.execute(ucq, this.store);
 						}
+						return new FilterIterator<Substitution, Substitution>(resultIt, new UniqFilter());
 					} catch (ChaseException e) {
 						throw new KnowledgeBaseException(e);
 					} catch (HomomorphismException e) {
