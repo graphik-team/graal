@@ -47,11 +47,14 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.homomorphism.ExistentialHomomorphism;
@@ -59,10 +62,14 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.homomorphism.bootstrapper.StarBootstrapper;
+import fr.lirmm.graphik.graal.homorphism.utils.EqualityHandlerConverter;
+import fr.lirmm.graphik.graal.homorphism.utils.EqualityUtils;
 import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.CloseableIterableWithoutException;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 import fr.lirmm.graphik.util.stream.IteratorException;
+import fr.lirmm.graphik.util.stream.converter.ConverterCloseableIterator;
 
 /**
  * This Backtrack is inspired by the Baget Jean-François Thesis (Chapter 5)
@@ -90,7 +97,8 @@ public class SimpleBacktrackHomomorphism extends AbstractProfilable implements E
 	// /////////////////////////////////////////////////////////////////////////
 	
 	public <U1 extends ConjunctiveQuery, U2 extends AtomSet> boolean exist(U1 q, U2 a) throws HomomorphismException {
-		Var[] vars = DefaultScheduler.instance().execute(q.getAtomSet(), Collections.<Term>emptyList(), a, NoCompilation.instance());
+		Pair<ConjunctiveQuery, Substitution> pair = EqualityUtils.processEquality(q);
+		Var[] vars = DefaultScheduler.instance().execute(pair.getLeft().getAtomSet(), Collections.<Term>emptyList(), a, NoCompilation.instance());
 		
 		Map<Variable, Var> index = new TreeMap<Variable, Var>();
 		for (Var v : vars) {

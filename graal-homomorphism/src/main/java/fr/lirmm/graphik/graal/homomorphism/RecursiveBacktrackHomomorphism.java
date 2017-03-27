@@ -48,6 +48,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,11 +62,14 @@ import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.HashMapSubstitution;
+import fr.lirmm.graphik.graal.homorphism.utils.EqualityHandlerConverter;
+import fr.lirmm.graphik.graal.homorphism.utils.EqualityUtils;
 import fr.lirmm.graphik.util.profiler.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIterableWithoutException;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
+import fr.lirmm.graphik.util.stream.converter.ConverterCloseableIterator;
 
 /**
  * Recursive implementation of a backtrack solving algorithm.
@@ -105,11 +109,14 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
 		if (LOGGER.isTraceEnabled()) {
 			LOGGER.trace(query.toString());
 		}
+		
 		if (profiler != null) {
 			profiler.start("preprocessing time");
 		}
-		List<Variable> orderedVars = order(query.getAtomSet().getVariables());
-		Collection<Atom>[] queryAtomRanked = getAtomRank(query.getAtomSet(), orderedVars);
+		Pair<ConjunctiveQuery, Substitution> pair = EqualityUtils.processEquality(query);
+		
+		List<Variable> orderedVars = order(pair.getLeft().getAtomSet().getVariables());
+		Collection<Atom>[] queryAtomRanked = getAtomRank(pair.getLeft().getAtomSet(), orderedVars);
 		if (profiler != null) {
 			profiler.stop("preprocessing time");
 		}
@@ -120,9 +127,9 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
 			if (profiler != null) {
 				profiler.start("backtracking time");
 			}
-			CloseableIteratorAdapter<Substitution> results;
+			CloseableIterator<Substitution> results;
 			if (isHomomorphism(queryAtomRanked[0], facts, new HashMapSubstitution())) {
-				results = new CloseableIteratorAdapter<Substitution>(homomorphism(query, queryAtomRanked, facts,
+				results = new CloseableIteratorAdapter<Substitution>(homomorphism(pair.getLeft(), queryAtomRanked, facts,
 						new HashMapSubstitution(), orderedVars, 1).iterator());
 
 			} else {
@@ -131,6 +138,10 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
 			}
 			if (profiler != null) {
 				profiler.stop("backtracking time");
+			}
+			
+			if(!pair.getRight().getTerms().isEmpty()) {
+				results =  new ConverterCloseableIterator<Substitution, Substitution>(results, new EqualityHandlerConverter(pair.getRight()));
 			}
 			return results;
 

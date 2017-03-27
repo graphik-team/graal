@@ -42,22 +42,26 @@
  */
 package fr.lirmm.graphik.graal.homomorphism;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
+import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.NoBackJumping;
 import fr.lirmm.graphik.graal.homomorphism.bootstrapper.Bootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.bootstrapper.StarBootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.ForwardChecking;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NoForwardChecking;
+import fr.lirmm.graphik.graal.homorphism.utils.EqualityHandlerConverter;
+import fr.lirmm.graphik.graal.homorphism.utils.EqualityUtils;
 import fr.lirmm.graphik.util.profiler.Profilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.IteratorException;
-import fr.lirmm.graphik.util.stream.Iterators;
+import fr.lirmm.graphik.util.stream.converter.ConverterCloseableIterator;
 
 /**
  * This Backtrack is inspired by the Baget Jean-François Thesis (Chapter 5)
@@ -150,9 +154,16 @@ public class BacktrackHomomorphism extends AbstractHomomorphismWithCompilation<C
 	@Override
 	public <U1 extends ConjunctiveQuery, U2 extends AtomSet> CloseableIterator<Substitution> execute(U1 q, U2 a,
 	    RulesCompilation compilation) throws HomomorphismException {
-		return new BacktrackIterator(q.getAtomSet(), a, q.getAnswerVariables(),
+		Pair<ConjunctiveQuery, Substitution> pair = EqualityUtils.processEquality(q);
+
+		CloseableIterator<Substitution> results = new BacktrackIterator(pair.getLeft().getAtomSet(), a, pair.getLeft().getAnswerVariables(),
 		                                                            this.scheduler, this.bootstrapper, this.fc,
 		                                                            this.bj, compilation, this.getProfiler());
+		
+		if(!pair.getRight().getTerms().isEmpty()) {
+			results =  new ConverterCloseableIterator<Substitution, Substitution>(results, new EqualityHandlerConverter(pair.getRight()));
+		}
+		return results;
 	}
 
 }
