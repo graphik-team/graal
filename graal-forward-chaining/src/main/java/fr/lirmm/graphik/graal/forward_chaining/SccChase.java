@@ -134,14 +134,15 @@ public class SccChase extends AbstractChase {
 
 		for (Integer scc : layers[level]) {
 			Set<Rule> component = this.sccg.getComponent(scc);
-			if (component.size() == 1) {
+			GraphOfRuleDependencies subGraph = this.grd.getSubGraph(component);
+			if (component.size() == 1 && !subGraph.hasCircuit()) {
 				try {
 					this.getRuleApplier().apply(component.iterator().next(), atomSet, tmpAtom);
 				} catch (RuleApplicationException e) {
 					throw new ChaseException("", e);
 				}
-			} else if (component.size() > 1) {
-				Chase chase = new ChaseWithGRD(this.grd.getSubGraph(component), atomSet, this.getRuleApplier());
+			} else {
+				Chase chase = new ChaseWithGRD(subGraph, atomSet, this.getRuleApplier());
 				chase.execute();
 			}
 		}
