@@ -45,6 +45,7 @@ package fr.lirmm.graphik.graal.api.backward_chaining;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
+import fr.lirmm.graphik.graal.api.util.TimeoutException;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
@@ -53,7 +54,26 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
  */
 public interface QueryRewriterWithCompilation extends QueryRewriter {
 
+	/**
+	 * Rewrite the specified query using the specified set of rules and compilation. 
+	 * @param query
+	 * @param rules
+	 * @param compilation
+	 * @return an Iterator over the rewritings.
+	 */
 	CloseableIterator<ConjunctiveQuery> execute(ConjunctiveQuery query, Iterable<Rule> rules,
 	    RulesCompilation compilation);
 
+	/**
+	 * Rewrite the specified query using the specified set of rules and compilation. If the method execution time exceed the specified timeout (in milliseconds) then 
+	 * the method will be interrupted and a {@link TimeoutException} will be throw.
+	 * @param query
+	 * @param rules
+	 * @param compilation
+	 * @param timeout
+	 * @return an Iterator over the rewritings.
+	 * @throws TimeoutException
+	 */
+	CloseableIterator<ConjunctiveQuery> execute(ConjunctiveQuery query, Iterable<Rule> rules,
+		    RulesCompilation compilation, long timeout) throws TimeoutException;
 }

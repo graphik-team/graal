@@ -113,7 +113,7 @@ class RewritingAlgorithm implements Profilable {
 		finalRewritingSet.add(pquery);
 
 		ConjunctiveQuery q;
-		while (!rewriteSetToExplore.isEmpty()) {
+		while (!Thread.currentThread().isInterrupted() && !rewriteSetToExplore.isEmpty()) {
 
 			/* take the first query to rewrite */
 			q = rewriteSetToExplore.poll();

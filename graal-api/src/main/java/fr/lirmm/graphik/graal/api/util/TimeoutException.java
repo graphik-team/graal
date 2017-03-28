@@ -40,37 +40,20 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.api.backward_chaining;
-
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.api.core.Rule;
-import fr.lirmm.graphik.graal.api.util.TimeoutException;
-import fr.lirmm.graphik.util.profiler.Profilable;
-import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
+package fr.lirmm.graphik.graal.api.util;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- * 
+ *
  */
-public interface QueryRewriter extends Profilable {
+public class TimeoutException extends Exception {
 
-	/**
-	 * Rewrite the specified query using the specified set of rules.
-	 * @param query
-	 * @param rules
-	 * @return an Iterator over the rewritings.
-	 */
-	CloseableIteratorWithoutException<ConjunctiveQuery> execute(ConjunctiveQuery query, Iterable<Rule> rules);
-	
-	/**
-	 * Rewrite the specified query using the specified set of rules. If the method execution time exceed the specified timeout (in milliseconds) then 
-	 * the method will be interrupted and a {@link TimeoutException} will be throw.
-	 * @param rules
-	 * @return an Iterator over the rewritings.
-	 */
-	CloseableIteratorWithoutException<ConjunctiveQuery> execute(ConjunctiveQuery query, Iterable<Rule> rules, long timeout) throws TimeoutException;
+	public TimeoutException(String message) {
+		super(message);
+	}
+
+	public TimeoutException(long timeout) {
+		super("The method execution was interrupted because the execution time exceeded the timeout " + timeout + "ms.");
+	}
 
 }

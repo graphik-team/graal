@@ -50,6 +50,7 @@ import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
+import fr.lirmm.graphik.graal.api.util.TimeoutException;
 import fr.lirmm.graphik.graal.core.compilation.IDCompilation;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.util.profiler.AbstractProfilable;
@@ -65,7 +66,7 @@ import fr.lirmm.graphik.util.stream.IterableAdapter;
  */
 public class PureRewriter extends AbstractProfilable implements QueryRewriterWithCompilation {
 
-	private boolean           unfolding = true;
+	private boolean unfolding = true;
 	private RewritingOperator operator;
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -98,24 +99,88 @@ public class PureRewriter extends AbstractProfilable implements QueryRewriterWit
 		RuleSet newRulSet = new LinkedListRuleSet(rules);
 		RulesCompilation compilation = new IDCompilation();
 		compilation.compile(newRulSet.iterator());
-		RewritinCloseableIterator it = new RewritinCloseableIterator(this.unfolding, query, newRulSet, compilation, this.operator);
+		RewritinCloseableIterator it = new RewritinCloseableIterator(true, query, newRulSet, compilation,
+				this.operator);
 		it.setProfiler(this.getProfiler());
 		return it;
 	}
 
 	@Override
+	public CloseableIteratorWithoutException<ConjunctiveQuery> execute(ConjunctiveQuery query, Iterable<Rule> rules, long timeout) throws TimeoutException {
+		return this.execute(query, rules, null, timeout);
+	}
+
+	@Override
 	public CloseableIteratorWithoutException<ConjunctiveQuery> execute(ConjunctiveQuery query, Iterable<Rule> rules,
-	    RulesCompilation compilation) {
-		RewritinCloseableIterator it = new RewritinCloseableIterator(this.unfolding, query, rules, compilation, this.operator);
+			RulesCompilation compilation) {
+		RewritinCloseableIterator it = new RewritinCloseableIterator(this.unfolding, query, rules, compilation,
+				this.operator);
 		it.setProfiler(this.getProfiler());
 		return it;
 	}
-	
+
+	@Override
+	public CloseableIteratorWithoutException<ConjunctiveQuery> execute(ConjunctiveQuery query, Iterable<Rule> rules, RulesCompilation compilation, long timeout) throws TimeoutException {
+		Executor exec = new Executor(this, query, rules, compilation);
+		
+		Thread thread = new Thread(exec);
+		thread.start();
+		
+		try {
+			thread.join(timeout);
+		} catch (InterruptedException e) {
+			throw new Error("The rewriting was interrupted", e);
+		}
+		
+		if (thread.isAlive()) {
+			thread.interrupt();
+			try {
+				thread.join();
+			} catch (InterruptedException e) {
+				throw new Error("The rewriting was interrupted", e);
+			}
+			throw new TimeoutException(timeout);
+		}
+		return exec.getResult();
+	}
+
 	public static CloseableIteratorWithoutException<ConjunctiveQuery> unfold(
-	    CloseableIterable<ConjunctiveQuery> pivotRewritingSet,
-	    RulesCompilation compilation) {
-		return new CloseableIteratorAdapter<ConjunctiveQuery>(Utils.unfold(new IterableAdapter(pivotRewritingSet),
-		    compilation, NoProfiler.instance()).iterator());
+			CloseableIterable<ConjunctiveQuery> pivotRewritingSet, RulesCompilation compilation) {
+		return new CloseableIteratorAdapter<ConjunctiveQuery>(
+				Utils.unfold(new IterableAdapter<ConjunctiveQuery>(pivotRewritingSet), compilation, NoProfiler.instance()).iterator());
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE
+	// /////////////////////////////////////////////////////////////////////////
+
+	private static final class Executor implements Runnable {
+
+		private PureRewriter rew;
+		private RulesCompilation comp;
+		private Iterable<Rule> rules;
+		private ConjunctiveQuery query;
+		private CloseableIteratorWithoutException<ConjunctiveQuery> res;
+
+		public Executor(PureRewriter rew, ConjunctiveQuery query, Iterable<Rule> rules, RulesCompilation compilation) {
+			this.rew = rew;
+			this.query = query;
+			this.rules = rules;
+			this.comp = compilation;
+		}
+
+		@Override
+		public void run() {
+			if(comp != null)
+				res = this.rew.execute(query, rules, comp);
+			else
+				res = this.rew.execute(query, rules);
+		}
+		
+		public CloseableIteratorWithoutException<ConjunctiveQuery> getResult() {
+			return this.res;
+		}
+		
 	}
 
 }

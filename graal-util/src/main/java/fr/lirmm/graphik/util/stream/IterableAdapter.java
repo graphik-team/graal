@@ -48,7 +48,7 @@ import java.util.Iterator;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class IterableAdapter<T> implements Iterable {
+public class IterableAdapter<T> implements Iterable<T> {
 
 	protected CloseableIterable<T> iterable;
 
@@ -57,7 +57,7 @@ public class IterableAdapter<T> implements Iterable {
 	}
 
 	@Override
-	public Iterator iterator() {
+	public Iterator<T> iterator() {
 		return new IteratorAdapter<T>(this.iterable.iterator());
 	}
 

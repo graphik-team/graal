@@ -329,6 +329,9 @@ final class Utils {
 		// ConjunctiveQuery q;
 
 		for (ConjunctiveQuery originalQuery : rewritingSet) {
+			if(Thread.currentThread().isInterrupted()) {
+				break;
+			}
 			// q = query.getIrredondant(compilation);
 			// for all atom of the query we will build a list of all the
 			// rewriting
@@ -340,7 +343,7 @@ final class Utils {
 			// we will build all the possible fact from the rewriting of the
 			// atoms
 			CloseableIteratorWithoutException<Atom> it = originalQuery.iterator();
-			while (it.hasNext()) {
+			while (!Thread.currentThread().isInterrupted() && it.hasNext()) {
 				Atom a = it.next();
 				atomsRewritings = compilation.getRewritingOf(a);
 				for (Pair<InMemoryAtomSet, Substitution> before : newQueriesBefore) {
@@ -364,6 +367,9 @@ final class Utils {
 				newQueriesAfter.clear();
 			}
 			for (Pair<InMemoryAtomSet, Substitution> before : newQueriesBefore) {
+				if(Thread.currentThread().isInterrupted()) {
+					break;
+				}
 				Substitution s = before.getRight();
 				InMemoryAtomSet atomset = before.getLeft();
 				atomset = s.createImageOf(atomset);

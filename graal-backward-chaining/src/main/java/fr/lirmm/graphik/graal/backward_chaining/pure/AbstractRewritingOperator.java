@@ -109,6 +109,9 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 	 * conserve the fact that an atom of the query can only been associated by a
 	 * single unification with an atom of the head
 	 * 
+	 * <br/>
+	 * AHR: Atomic Header Rule
+	 * 
 	 * @param q
 	 *            the query that we want unify
 	 * @param r
@@ -183,6 +186,9 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 	/**
 	 * Returns the list of all single-piece unifier between the given query and
 	 * the given rule
+	 * 
+	 * <br/>
+	 * NAHR: Not Atomic Header Rule
 	 * 
 	 * @param q
 	 *            the query that we want unify
