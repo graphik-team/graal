@@ -45,6 +45,7 @@
  */
 package fr.lirmm.graphik.graal.api.forward_chaining;
 
+import fr.lirmm.graphik.graal.api.util.TimeoutException;
 import fr.lirmm.graphik.util.profiler.Profilable;
 
 
@@ -64,9 +65,12 @@ public interface Chase extends Profilable {
 	public void execute() throws ChaseException;
 	
 	/**
-	 * Calls next() until hasNext() return false. Stop and return false if the timeout (in milliseconds) is exceeded, otherwise return true; 
+	 * Calls next() until hasNext() return false. If the method execution time exceed the specified timeout (in milliseconds) then 
+	 * the method will be interrupted and a {@link TimeoutException} will be throw.
+	 * @throws TimeoutException 
+	 * @throws ChaseException 
 	 */
-	public boolean execute(long timeout) throws ChaseException;
+	public void execute(long timeout) throws ChaseException, TimeoutException;
 	
 	/**
 	 * Execute the next step of the saturation process.

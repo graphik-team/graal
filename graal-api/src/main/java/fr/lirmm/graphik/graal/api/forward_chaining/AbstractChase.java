@@ -45,6 +45,8 @@
  */
 package fr.lirmm.graphik.graal.api.forward_chaining;
 
+
+import fr.lirmm.graphik.graal.api.util.TimeoutException;
 import fr.lirmm.graphik.util.profiler.NoProfiler;
 import fr.lirmm.graphik.util.profiler.Profiler;
 
@@ -72,7 +74,7 @@ public abstract class AbstractChase implements Chase {
 	}
 	
 	@Override
-	public boolean execute(long timeout) throws ChaseException {
+	public void execute(long timeout) throws ChaseException, TimeoutException {
 		Executor exec = new Executor(this);
 		
 		Thread thread = new Thread(exec);
@@ -91,12 +93,11 @@ public abstract class AbstractChase implements Chase {
 			} catch (InterruptedException e) {
 				throw new ChaseException("The chase was interrupted", e);
 			}
-			return false;
+			throw new TimeoutException(timeout);
 		} else {
 			if(exec.getException() != null) {
 				throw exec.getException();
 			}
-			return true;
 		}
 	}
 
