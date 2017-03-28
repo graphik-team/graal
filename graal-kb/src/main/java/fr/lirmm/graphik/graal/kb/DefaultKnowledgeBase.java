@@ -245,16 +245,6 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 		}
 	}
 
-	public void fesSaturate() throws ChaseException {
-		if (!isFESSaturated) {
-			GraphOfRuleDependencies grd = this.getFESGraphOfRuleDependencies();
-			ChaseWithGRD chase = new ChaseWithGRD(grd, this.store);
-			chase.setProfiler(this.getProfiler());
-			chase.execute();
-			this.isFESSaturated = true;
-		}
-	}
-
 	@Override
 	public CloseableIterator<Substitution> homomorphism(Query query) throws KnowledgeBaseException {
 		try {
@@ -336,103 +326,7 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 			}
 		}
 	}
-
-	@Override
-	public Approach getApproach() {
-		return this.approach;
-	}
-
-	// /////////////////////////////////////////////////////////////////////////
-	// PACKAGE METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	void setPriority(Approach p) {
-		this.approach = p;
-	}
-
-
-	// /////////////////////////////////////////////////////////////////////////
-	// PRIVATE METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	private RuleSet getFESRuleSet() {
-		if (this.fesRuleSet == null) {
-			this.analyse();
-			fesRuleSet = new LinkedListRuleSet();
-			int[] combine = getDecidableCombination();
-			List<AnalyserRuleSet> scc = this.analysedRuleSet.getSCC();
-			for (int i = 0; i < combine.length; ++i) {
-				if ((combine[i] & Analyser.COMBINE_FES) != 0) {
-					fesRuleSet.addAll(scc.get(i).iterator());
-				}
-			}
-		}
-		return this.fesRuleSet;
-	}
-
-	private RuleSet getFUSRuleSet() {
-		if (this.fusRuleSet == null) {
-			this.analyse();
-			this.fusRuleSet = new LinkedListRuleSet();
-			int[] combine = getDecidableCombination();
-			List<AnalyserRuleSet> scc = this.analysedRuleSet.getSCC();
-			for (int i = 0; i < combine.length; ++i) {
-				if ((combine[i] & Analyser.COMBINE_FUS) != 0) {
-					this.fusRuleSet.addAll(scc.get(i).iterator());
-				}
-			}
-		}
-		return this.fusRuleSet;
-	}
-
-	private GraphOfRuleDependencies getFESGraphOfRuleDependencies() {
-		if (this.fesGRD == null) {
-			RuleSet fesRuleSet = this.getFESRuleSet();
-			this.fesGRD = new GraphOfRuleDependencies(fesRuleSet);
-		}
-		return this.fesGRD;
-	}
-
-	private int[] getDecidableCombination() {
-		if (approach == Approach.SATURATION_FIRST || approach == Approach.SATURATION_ONLY) {
-			return this.analyse.combineFES();
-		} else {
-			return this.analyse.combineFUS();
-		}
-	}
-
-	private void analyse() {
-		if (!this.isAnalysed) {
-			this.analysedRuleSet = new AnalyserRuleSet(this.ruleset);
-			this.analyse = new Analyser(analysedRuleSet);
-			this.isAnalysed = true;
-		}
-	}
-
-	private void compileRule() {
-		if (!this.isCompiled) {
-			this.ruleCompilation = new IDCompilation();
-			this.ruleCompilation.compile(this.getFUSRuleSet().iterator());
-			this.isCompiled = true;
-		}
-	}
-
-	private void load(Parser<Object> parser) throws AtomSetException {
-		Object o;
-		try {
-			while (parser.hasNext()) {
-				o = parser.next();
-				if (o instanceof Rule) {
-					this.getOntology().add((Rule) o);
-				} else if (o instanceof Atom) {
-					this.getFacts().add((Atom) o);
-				}
-			}
-		} catch (IteratorException e) {
-			throw new AtomSetException(e);
-		}
-	}
-
+	
 	@Override
 	public Set<String> getRuleNames() {
 		return this.ruleset.getRuleNames();
@@ -457,6 +351,112 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 	@Override
 	public Query getQuery(String name) {
 		return this.queries.get(name);
+	}
+
+	@Override
+	public Approach getApproach() {
+		return this.approach;
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PACKAGE METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	void setPriority(Approach p) {
+		this.approach = p;
+	}
+
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+	// /////////////////////////////////////////////////////////////////////////
+	
+	protected void fesSaturate() throws ChaseException {
+		if (!isFESSaturated) {
+			GraphOfRuleDependencies grd = this.getFESGraphOfRuleDependencies();
+			ChaseWithGRD chase = new ChaseWithGRD(grd, this.store);
+			chase.setProfiler(this.getProfiler());
+			chase.execute();
+			this.isFESSaturated = true;
+		}
+	}
+
+	protected RuleSet getFESRuleSet() {
+		if (this.fesRuleSet == null) {
+			this.analyse();
+			fesRuleSet = new LinkedListRuleSet();
+			int[] combine = getDecidableCombination();
+			List<AnalyserRuleSet> scc = this.analysedRuleSet.getSCC();
+			for (int i = 0; i < combine.length; ++i) {
+				if ((combine[i] & Analyser.COMBINE_FES) != 0) {
+					fesRuleSet.addAll(scc.get(i).iterator());
+				}
+			}
+		}
+		return this.fesRuleSet;
+	}
+
+	protected RuleSet getFUSRuleSet() {
+		if (this.fusRuleSet == null) {
+			this.analyse();
+			this.fusRuleSet = new LinkedListRuleSet();
+			int[] combine = getDecidableCombination();
+			List<AnalyserRuleSet> scc = this.analysedRuleSet.getSCC();
+			for (int i = 0; i < combine.length; ++i) {
+				if ((combine[i] & Analyser.COMBINE_FUS) != 0) {
+					this.fusRuleSet.addAll(scc.get(i).iterator());
+				}
+			}
+		}
+		return this.fusRuleSet;
+	}
+
+	protected GraphOfRuleDependencies getFESGraphOfRuleDependencies() {
+		if (this.fesGRD == null) {
+			RuleSet fesRuleSet = this.getFESRuleSet();
+			this.fesGRD = new GraphOfRuleDependencies(fesRuleSet);
+		}
+		return this.fesGRD;
+	}
+
+	protected int[] getDecidableCombination() {
+		if (approach == Approach.SATURATION_FIRST || approach == Approach.SATURATION_ONLY) {
+			return this.analyse.combineFES();
+		} else {
+			return this.analyse.combineFUS();
+		}
+	}
+
+	protected void analyse() {
+		if (!this.isAnalysed) {
+			this.analysedRuleSet = new AnalyserRuleSet(this.ruleset);
+			this.analyse = new Analyser(analysedRuleSet);
+			this.isAnalysed = true;
+		}
+	}
+
+	protected void compileRule() {
+		if (!this.isCompiled) {
+			this.ruleCompilation = new IDCompilation();
+			this.ruleCompilation.compile(this.getFUSRuleSet().iterator());
+			this.isCompiled = true;
+		}
+	}
+
+	protected void load(Parser<Object> parser) throws AtomSetException {
+		Object o;
+		try {
+			while (parser.hasNext()) {
+				o = parser.next();
+				if (o instanceof Rule) {
+					this.getOntology().add((Rule) o);
+				} else if (o instanceof Atom) {
+					this.getFacts().add((Atom) o);
+				}
+			}
+		} catch (IteratorException e) {
+			throw new AtomSetException(e);
+		}
 	}
 
 };
