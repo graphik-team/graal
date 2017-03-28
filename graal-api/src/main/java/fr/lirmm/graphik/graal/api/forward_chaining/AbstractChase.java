@@ -65,10 +65,39 @@ public abstract class AbstractChase implements Chase {
 	@Override
 	public void execute() throws ChaseException {
 		this.getProfiler().start("saturation");
-		while (this.hasNext()) {
+		while (!Thread.currentThread().isInterrupted() && this.hasNext()) {
 			this.next();
 		}
 		this.getProfiler().stop("saturation");
+	}
+	
+	@Override
+	public boolean execute(long timeout) throws ChaseException {
+		Executor exec = new Executor(this);
+		
+		Thread thread = new Thread(exec);
+		thread.start();
+		
+		try {
+			thread.join(timeout);
+		} catch (InterruptedException e) {
+			throw new ChaseException("The chase was interrupted", e);
+		}
+		
+		if (thread.isAlive()) {
+			thread.interrupt();
+			try {
+				thread.join();
+			} catch (InterruptedException e) {
+				throw new ChaseException("The chase was interrupted", e);
+			}
+			return false;
+		} else {
+			if(exec.getException() != null) {
+				throw exec.getException();
+			}
+			return true;
+		}
 	}
 
 	protected RuleApplier getRuleApplier() {
@@ -87,5 +116,29 @@ public abstract class AbstractChase implements Chase {
 	@Override
 	public Profiler getProfiler() {
 		return this.profiler;
+	}
+	
+	private static final class Executor implements Runnable {
+		
+			private ChaseException e = null;
+			private Chase chase;
+			
+			public Executor(AbstractChase chase) {
+				this.chase = chase;
+			}
+			
+			@Override
+			public void run() {
+				try {
+					this.chase.execute();
+				} catch (ChaseException ex) {
+					e = ex;
+				}
+			}
+			
+			ChaseException getException() {
+				return this.e;
+			}
+		
 	}
 };

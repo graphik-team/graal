@@ -61,7 +61,12 @@ public interface Chase extends Profilable {
 	/**
 	 * Calls next() until hasNext() return false.
 	 */
-	public void execute() throws ChaseException;;
+	public void execute() throws ChaseException;
+	
+	/**
+	 * Calls next() until hasNext() return false. Stop and return false if the timeout (in milliseconds) is exceeded, otherwise return true; 
+	 */
+	public boolean execute(long timeout) throws ChaseException;
 	
 	/**
 	 * Execute the next step of the saturation process.
