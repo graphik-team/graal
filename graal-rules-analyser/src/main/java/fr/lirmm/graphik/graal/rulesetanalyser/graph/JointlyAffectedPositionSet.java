@@ -40,89 +40,84 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- package fr.lirmm.graphik.graal.rulesetanalyser.property;
+ /**
+ * 
+ */
+package fr.lirmm.graphik.graal.rulesetanalyser.graph;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.Iterator;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
- * At least one atom in the body (called a guard) contains all the variables
- * from the body.
+ * The affected position set is built from a rule set by the following
+ * procedure: (i) for each rule and for each existentially quantified variable
+ * occuring at position p[i] in its head, p[i] is affected; (ii) for each rule
+ * and for each variable x that occurs only at affected positions in its body,
+ * all positions q[j] in its head where occurs x are affected.
+ * 
+ * A variable is said to be affected if it occurs only at affected positions.
  * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * @author Swan Rocher
  * 
  */
-public final class GuardedProperty extends RuleSetProperty.Local {
+public class JointlyAffectedPositionSet extends AbstractAffectedPositionSet {
 
-	private static GuardedProperty instance = null;
-	
-	private GuardedProperty(){}
-	
-	public static synchronized GuardedProperty instance() {
-		if(instance == null) {
-			instance = new GuardedProperty();
-		}
-		return instance;	
-	}
 
-	@Override
-	public String getFullName() {
-		return "Guarded";
-	}
-
-	@Override
-	public String getDescription() {
-		return "At least one atom in the body (called a guard) contains all the variables from the body.";
+	public JointlyAffectedPositionSet(Iterable<Rule> ruleSet) {
+		super(ruleSet);
 	}
 	
-	@Override
-	public int check(Rule rule) {
-		Set<Variable> bodyVars = rule.getBody().getVariables();
-		boolean isGuarded = true;
 
-		CloseableIteratorWithoutException<Atom> it = rule.getBody().iterator();
-		while (it.hasNext()) {
-			Atom a = it.next();
-			isGuarded = true;
-			for (Term v : bodyVars) {
-				if (!a.getTerms().contains(v)) {
-					isGuarded = false;
-					break;
+	/**
+	 * for each rule and for each variable x that occurs only at affected
+	 * positions in its body, all positions q[j] in its head where occurs x are
+	 * affected.
+	 */
+	protected void step2() {
+		InMemoryAtomSet body;
+		boolean isAffected;
+		int i;
+		CloseableIteratorWithoutException<Atom> atomIt;
+		Iterator<Term> termIt;
+		Atom a;
+		Term t;
+		boolean fixPoint = false;
+
+		while (!fixPoint) {
+			fixPoint = true;
+			for (Rule rule : ruleSet) {
+				body = rule.getBody();
+				for (Variable term : rule.getBody().getVariables()) {
+					isAffected = true;
+					atomIt = body.iterator();
+					while (atomIt.hasNext() && isAffected) {
+						i = -1;
+						a = atomIt.next();
+						termIt = a.iterator();
+						while (termIt.hasNext() && isAffected) {
+							++i;
+							t = termIt.next();
+							if (term.equals(t)) {
+								if (!isAffected(a.getPredicate(), i)) {
+									isAffected = false;
+								}
+							}
+						}
+					}
+					if (isAffected) {
+						if (this.affectInHead(rule, term)) {
+							fixPoint = false;
+						}
+					}
 				}
 			}
-			if (isGuarded) {
-				break;
-			}
 		}
-
-		if (isGuarded) return 1;
-		return -1;
 	}
-
-	@Override
-	public String getLabel() {
-		return "g";
-	}
-
-	@Override
-	public Iterable<RuleSetProperty> getGeneralisations() {
-		List<RuleSetProperty> gen = new LinkedList<RuleSetProperty>();
-		gen.add(FrontierGuardedProperty.instance());
-		gen.add(WeaklyGuardedSetProperty.instance());
-		gen.add(WeaklyFrontierGuardedSetProperty.instance());
-		gen.add(JointlyFrontierGuardedSetProperty.instance());
-		gen.add(GBTSProperty.instance());
-		gen.add(BTSProperty.instance());
-		return gen;
-	}
-
 };
-

@@ -63,7 +63,7 @@ import fr.lirmm.graphik.graal.rulesetanalyser.property.RangeRestrictedProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.RuleSetProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.StickyProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.WeaklyAcyclicProperty;
-import fr.lirmm.graphik.graal.rulesetanalyser.property.WeaklyFrontierGuardedSetProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.JointlyFrontierGuardedSetProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.WeaklyGuardedSetProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.WeaklyStickyProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
@@ -89,7 +89,7 @@ public class PropertyTest {
 	private static RuleSetProperty wa = WeaklyAcyclicProperty.instance();
 	private static RuleSetProperty ws = WeaklyStickyProperty.instance();
 	private static RuleSetProperty wg = WeaklyGuardedSetProperty.instance();
-	private static RuleSetProperty wfg = WeaklyFrontierGuardedSetProperty.instance();
+	private static RuleSetProperty jfg = JointlyFrontierGuardedSetProperty.instance();
 
 	private static LinkedList<RuleSetProperty> properties = new LinkedList<RuleSetProperty>();
 
@@ -109,7 +109,7 @@ public class PropertyTest {
 		properties.add(wa);
 		properties.add(ws);
 		properties.add(wg);
-		properties.add(wfg);
+		properties.add(jfg);
 
 		try {
 
@@ -281,12 +281,12 @@ public class PropertyTest {
 	
 	@Test
 	public void weaklyFrontierGuardedTest() {
-		assertEquals(1, wfg.check(new AnalyserRuleSet(r0)));
-		assertEquals(1, wfg.check(new AnalyserRuleSet(r1)));
-		assertEquals(1, wfg.check(new AnalyserRuleSet(r2)));
-		assertEquals(1, wfg.check(new AnalyserRuleSet(r3)));
-		assertEquals(1, wfg.check(new AnalyserRuleSet(r4)));
-		assertEquals(1, wfg.check(new AnalyserRuleSet(r5)));
+		assertEquals(1, jfg.check(new AnalyserRuleSet(r0)));
+		assertEquals(1, jfg.check(new AnalyserRuleSet(r1)));
+		assertEquals(1, jfg.check(new AnalyserRuleSet(r2)));
+		assertEquals(1, jfg.check(new AnalyserRuleSet(r3)));
+		assertEquals(1, jfg.check(new AnalyserRuleSet(r4)));
+		assertEquals(1, jfg.check(new AnalyserRuleSet(r5)));
 	}
 	
 	@Test
@@ -379,10 +379,10 @@ public class PropertyTest {
 	
 	@Test
 	public void setWeaklyFrontierGuardedTest() {
-		assertEquals(1, wfg.check(new AnalyserRuleSet(rSet0)));
-		assertEquals(1, wfg.check(new AnalyserRuleSet(rSet1)));
-		assertEquals(1, wfg.check(new AnalyserRuleSet(rSet2)));
-		assertEquals(-1, wfg.check(new AnalyserRuleSet(rSet3)));
+		assertEquals(1, jfg.check(new AnalyserRuleSet(rSet0)));
+		assertEquals(1, jfg.check(new AnalyserRuleSet(rSet1)));
+		assertEquals(1, jfg.check(new AnalyserRuleSet(rSet2)));
+		assertEquals(-1, jfg.check(new AnalyserRuleSet(rSet3)));
 	}
 	
 	@Test
@@ -396,7 +396,7 @@ public class PropertyTest {
 		assertEquals(1, p.get(wa.getLabel()).intValue());
 		assertEquals(1, p.get(ws.getLabel()).intValue());
 		assertEquals(1, p.get(wg.getLabel()).intValue());
-		assertEquals(1, p.get(wfg.getLabel()).intValue());
+		assertEquals(1, p.get(jfg.getLabel()).intValue());
 		
 		analyser = new Analyser();
 		analyser.setRuleSet(rSet1);
@@ -406,7 +406,7 @@ public class PropertyTest {
 		assertEquals(-1, p.get(wa.getLabel()).intValue());
 		assertEquals(1, p.get(ws.getLabel()).intValue());
 		assertEquals(1, p.get(wg.getLabel()).intValue());
-		assertEquals(1, p.get(wfg.getLabel()).intValue());
+		assertEquals(1, p.get(jfg.getLabel()).intValue());
 		
 		analyser = new Analyser();
 		analyser.setRuleSet(rSet3);
@@ -416,7 +416,7 @@ public class PropertyTest {
 		assertEquals(-1, p.get(wa.getLabel()).intValue());
 		assertEquals(1, p.get(ws.getLabel()).intValue());
 		assertEquals(-1, p.get(wg.getLabel()).intValue());
-		assertEquals(-1, p.get(wfg.getLabel()).intValue());
+		assertEquals(-1, p.get(jfg.getLabel()).intValue());
 	}
 
 };

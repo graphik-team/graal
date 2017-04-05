@@ -40,85 +40,77 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- package fr.lirmm.graphik.graal.rulesetanalyser.property;
+ /**
+ * 
+ */
+package fr.lirmm.graphik.graal.rulesetanalyser.property;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Rule;
-import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
+import fr.lirmm.graphik.graal.core.Rules;
+import fr.lirmm.graphik.graal.rulesetanalyser.graph.JointlyAffectedPositionSet;
+import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
 
 /**
- * At least one atom in the body (called a guard) contains all the variables
- * from the body.
+ * At least one atom in the body of each rule contains all jointly-affected variable
+ * from the frontier ({@link JointlyAffectedPositionSet}).
  * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * @author Swan Rocher
  * 
  */
-public final class GuardedProperty extends RuleSetProperty.Local {
+public final class JointlyFrontierGuardedSetProperty extends RuleSetProperty.Default {
 
-	private static GuardedProperty instance = null;
-	
-	private GuardedProperty(){}
-	
-	public static synchronized GuardedProperty instance() {
-		if(instance == null) {
-			instance = new GuardedProperty();
+	private static JointlyFrontierGuardedSetProperty instance = null;
+	private JointlyFrontierGuardedSetProperty() { }
+
+	public static synchronized JointlyFrontierGuardedSetProperty instance() {
+		if (instance == null) {
+			instance = new JointlyFrontierGuardedSetProperty();
 		}
-		return instance;	
+		return instance;
 	}
 
 	@Override
 	public String getFullName() {
-		return "Guarded";
+		return "Jointly-frontier guarded";
 	}
 
 	@Override
 	public String getDescription() {
-		return "At least one atom in the body (called a guard) contains all the variables from the body.";
+		return "At least one atom in the body of each rule contains all affected variable from the frontier (cf. affected position set).";
 	}
-	
+
 	@Override
-	public int check(Rule rule) {
-		Set<Variable> bodyVars = rule.getBody().getVariables();
-		boolean isGuarded = true;
-
-		CloseableIteratorWithoutException<Atom> it = rule.getBody().iterator();
-		while (it.hasNext()) {
-			Atom a = it.next();
-			isGuarded = true;
-			for (Term v : bodyVars) {
-				if (!a.getTerms().contains(v)) {
-					isGuarded = false;
-					break;
-				}
-			}
-			if (isGuarded) {
-				break;
-			}
-		}
-
-		if (isGuarded) return 1;
+	public int check(AnalyserRuleSet ruleSet) {
+		if (this.check(ruleSet.getJointlyAffectedPositionSet())) return 1;
 		return -1;
 	}
 
 	@Override
 	public String getLabel() {
-		return "g";
+		return "jfg";
+	}
+	
+	private boolean check(JointlyAffectedPositionSet jointlyAffectedPositionSet) {
+		for (Rule r : jointlyAffectedPositionSet.getRules()) {
+			Set<Variable> affectedVars = jointlyAffectedPositionSet
+					.getAllAffectedFrontierVariables(r);
+			if (!Rules.isThereOneAtomThatContainsAllVars(r.getBody(),
+					affectedVars)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override
 	public Iterable<RuleSetProperty> getGeneralisations() {
 		List<RuleSetProperty> gen = new LinkedList<RuleSetProperty>();
-		gen.add(FrontierGuardedProperty.instance());
-		gen.add(WeaklyGuardedSetProperty.instance());
-		gen.add(WeaklyFrontierGuardedSetProperty.instance());
-		gen.add(JointlyFrontierGuardedSetProperty.instance());
 		gen.add(GBTSProperty.instance());
 		gen.add(BTSProperty.instance());
 		return gen;

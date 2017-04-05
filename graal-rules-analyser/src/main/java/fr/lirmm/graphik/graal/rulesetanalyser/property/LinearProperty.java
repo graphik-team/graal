@@ -101,6 +101,7 @@ public final class LinearProperty extends RuleSetProperty.Local {
 		gen.add(FrontierGuardedProperty.instance());
 		gen.add(WeaklyGuardedSetProperty.instance());
 		gen.add(WeaklyFrontierGuardedSetProperty.instance());
+		gen.add(JointlyFrontierGuardedSetProperty.instance());
 		gen.add(GBTSProperty.instance());
 		gen.add(BTSProperty.instance());
 		return gen;

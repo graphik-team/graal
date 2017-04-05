@@ -81,7 +81,7 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
  */
 public class GraphPositionDependencies {
 
-	private static class SpecialEdge extends DefaultEdge {
+	public static class SpecialEdge extends DefaultEdge {
 		private static final long serialVersionUID = 3660050932528046714L;
 	}
 
@@ -93,6 +93,18 @@ public class GraphPositionDependencies {
 	public GraphPositionDependencies(Iterable<Rule> rules) {
 		this.rules = rules;
 		init();
+	}
+	
+	public Set<DefaultEdge> edgeSet() {
+		return this.graph.edgeSet();
+	}
+	
+	public PredicatePosition getEdgeTarget(DefaultEdge e) {
+		return this.graph.getEdgeTarget(e);
+	}
+	
+	public PredicatePosition getEdgeSource(DefaultEdge e) {
+		return this.graph.getEdgeSource(e);
 	}
 
 	public boolean isWeaklyAcyclic() {

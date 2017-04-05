@@ -53,6 +53,7 @@ import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.Rules;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.AffectedPositionSet;
+import fr.lirmm.graphik.graal.rulesetanalyser.graph.JointlyAffectedPositionSet;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
 
 /**
@@ -112,6 +113,7 @@ public final class WeaklyGuardedSetProperty extends RuleSetProperty.Default {
 	public Iterable<RuleSetProperty> getGeneralisations() {
 		List<RuleSetProperty> gen = new LinkedList<RuleSetProperty>();
 		gen.add(WeaklyFrontierGuardedSetProperty.instance());
+		gen.add(JointlyFrontierGuardedSetProperty.instance());
 		gen.add(GBTSProperty.instance());
 		gen.add(BTSProperty.instance());
 		return gen;

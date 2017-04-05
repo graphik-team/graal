@@ -24,6 +24,7 @@ import fr.lirmm.graphik.graal.rulesetanalyser.property.RuleSetProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.StickyProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.WeaklyAcyclicProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.WeaklyFrontierGuardedSetProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.JointlyFrontierGuardedSetProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.WeaklyGuardedSetProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.WeaklyStickyProperty;
 
@@ -175,8 +176,9 @@ public class RuleSetPropertyHierarchy {
 		addToPropertyMap(propertyMap, FrontierGuardedProperty.instance());
 		addToPropertyMap(propertyMap, FrontierOneProperty.instance());
 		addToPropertyMap(propertyMap, FUSProperty.instance());
-		addToPropertyMap(propertyMap, GBTSProperty.instance());
 		addToPropertyMap(propertyMap, GuardedProperty.instance());
+		addToPropertyMap(propertyMap, GBTSProperty.instance());
+		addToPropertyMap(propertyMap, JointlyFrontierGuardedSetProperty.instance());
 		addToPropertyMap(propertyMap, LinearProperty.instance());
 		addToPropertyMap(propertyMap, MFAProperty.instance());
 		addToPropertyMap(propertyMap, MSAProperty.instance());

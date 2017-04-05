@@ -57,14 +57,14 @@ import fr.lirmm.graphik.graal.api.core.RuleLabeler;
 import fr.lirmm.graphik.graal.api.core.RuleSetException;
 import fr.lirmm.graphik.graal.core.DefaultRuleLabeler;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
-import fr.lirmm.graphik.graal.grd.ProductivityFilter;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
+import fr.lirmm.graphik.graal.grd.ProductivityFilter;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.AffectedPositionSet;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.GraphPositionDependencies;
+import fr.lirmm.graphik.graal.rulesetanalyser.graph.JointlyAffectedPositionSet;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.MarkedVariableSet;
 import fr.lirmm.graphik.util.graph.scc.StronglyConnectedComponentsGraph;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -75,6 +75,7 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 	private Collection<Rule> ruleset;
 	private GraphOfRuleDependencies grd;
 	private AffectedPositionSet affectedPositionSet;
+	private JointlyAffectedPositionSet jointlyAffectedPositionSet;
 	private GraphPositionDependencies graphPositionDependencies;
 	private MarkedVariableSet markedVariableSet;
 	private StronglyConnectedComponentsGraph<Rule> sccGraph;
@@ -183,6 +184,16 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 	}
 	
 	/**
+	 * @return the jointlyAffectedPositionSet
+	 */
+	public JointlyAffectedPositionSet getJointlyAffectedPositionSet() {
+		if(this.jointlyAffectedPositionSet == null)
+			this.computeJointlyAffectedPositionSet();
+		
+		return this.jointlyAffectedPositionSet;
+	}
+	
+	/**
 	 * @return the graphPositionDependencies
 	 */
 	public GraphPositionDependencies getGraphPositionDependencies() {
@@ -245,6 +256,10 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 	
 	private void computeAffectedPositionSet() {
 		this.affectedPositionSet = new AffectedPositionSet(this);
+	}
+	
+	private void computeJointlyAffectedPositionSet() {
+		this.jointlyAffectedPositionSet = new JointlyAffectedPositionSet(this);
 	}
 	
 	private void computeGraphPositionDependencies() {
