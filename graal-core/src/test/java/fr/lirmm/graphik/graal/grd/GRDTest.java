@@ -67,7 +67,7 @@ public class GRDTest {
 		rules.add(DefaultRuleFactory.instance().create(TestUtils.rX, TestUtils.sX));
 		rules.add(DefaultRuleFactory.instance().create(TestUtils.rX, TestUtils.pXY));
 
-		GraphOfRuleDependencies grd = new GraphOfRuleDependencies(rules, true, new AtomErasingFilter());
+		GraphOfRuleDependencies grd = new GraphOfRuleDependencies(rules, true, new ProductivityFilter());
 		Assert.assertFalse(grd.existUnifier(rules.get(0), rules.get(1)));
 		Assert.assertFalse(grd.existUnifier(rules.get(1), rules.get(0)));
 		Assert.assertTrue(grd.existUnifier(rules.get(0), rules.get(2)));

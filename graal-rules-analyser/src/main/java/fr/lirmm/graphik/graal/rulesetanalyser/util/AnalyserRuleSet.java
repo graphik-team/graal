@@ -57,7 +57,7 @@ import fr.lirmm.graphik.graal.api.core.RuleLabeler;
 import fr.lirmm.graphik.graal.api.core.RuleSetException;
 import fr.lirmm.graphik.graal.core.DefaultRuleLabeler;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
-import fr.lirmm.graphik.graal.grd.AtomErasingFilter;
+import fr.lirmm.graphik.graal.grd.ProductivityFilter;
 import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.AffectedPositionSet;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.GraphPositionDependencies;
@@ -89,10 +89,11 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 	
 	public AnalyserRuleSet(Rule rule) {
 		LinkedListRuleSet list = new LinkedListRuleSet();
-		this.labeler.setLabel(rule);
+		// do not set the label of the rule when the rule set is a singleton. 
+		// This constructor is used internally and then would override the previously defined label. 
 		list.add(rule);
 		this.ruleset = Collections.unmodifiableCollection(list);
-		this.dependencyChecker = new AtomErasingFilter();
+		this.dependencyChecker = new ProductivityFilter();
 	}
 
 	public AnalyserRuleSet(Iterable<Rule> rules) {
@@ -106,7 +107,7 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 	public AnalyserRuleSet(Iterator<Rule> rules) {
 		this.ruleset = Collections.unmodifiableCollection(new LinkedListRuleSet(rules));
 		setRuleLabels();
-		this.dependencyChecker = new AtomErasingFilter();
+		this.dependencyChecker = new ProductivityFilter();
 	}
 
 	public AnalyserRuleSet(Iterator<Rule> rules, GraphOfRuleDependencies.DependencyChecker checker) {
@@ -118,7 +119,7 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 	public AnalyserRuleSet(CloseableIterator<Rule> rules) throws RuleSetException {
 		this.ruleset = Collections.unmodifiableCollection(new LinkedListRuleSet(rules));
 		setRuleLabels();
-		this.dependencyChecker = new AtomErasingFilter();
+		this.dependencyChecker = new ProductivityFilter();
 	}
 
 	public AnalyserRuleSet(CloseableIterator<Rule> rules, GraphOfRuleDependencies.DependencyChecker checker) throws RuleSetException {
