@@ -15,6 +15,7 @@ import fr.lirmm.graphik.graal.rulesetanalyser.property.FUSProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.FrontierGuardedProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.FrontierOneProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.GBTSProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.GuardedProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.LinearProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.MFAProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.MSAProperty;
@@ -175,6 +176,7 @@ public class RuleSetPropertyHierarchy {
 		addToPropertyMap(propertyMap, FrontierOneProperty.instance());
 		addToPropertyMap(propertyMap, FUSProperty.instance());
 		addToPropertyMap(propertyMap, GBTSProperty.instance());
+		addToPropertyMap(propertyMap, GuardedProperty.instance());
 		addToPropertyMap(propertyMap, LinearProperty.instance());
 		addToPropertyMap(propertyMap, MFAProperty.instance());
 		addToPropertyMap(propertyMap, MSAProperty.instance());
