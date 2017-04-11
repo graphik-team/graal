@@ -74,7 +74,7 @@ class Atom2SubstitutionConverter implements Converter<Atom, Substitution> {
 		this.ans = ans;
 		int i = 0;
 		for(Term t : query) {
-			if(ans.contains(t))	 {
+			if(ans.contains(t) || rew.getValues().contains(t))	 {
 				variables.put((Variable) t, i);
 			}
 			++i;

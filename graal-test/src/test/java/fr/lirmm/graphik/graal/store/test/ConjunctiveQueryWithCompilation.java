@@ -50,29 +50,26 @@ import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
-import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
-import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.api.store.TripleStore;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.forward_chaining.StaticChase;
+import fr.lirmm.graphik.graal.homomorphism.AtomicQueryHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.test.HierachicalCompilationFactory;
 import fr.lirmm.graphik.graal.test.IDCompilationFactory;
 import fr.lirmm.graphik.graal.test.RulesCompilationFactory;
 import fr.lirmm.graphik.graal.test.TestUtil;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -268,6 +265,33 @@ public class ConjunctiveQueryWithCompilation {
 		Assert.assertFalse(results.hasNext());
 		results.close();
 
+	}
+	
+	@Theory
+	public void issueWithAtom2SubstitutionConverter(RulesCompilationFactory factory, AtomSet store)
+	    throws Exception {
+		Assume.assumeFalse(store instanceof TripleStore);
+		HomomorphismWithCompilation h = AtomicQueryHomomorphism.instance();
+		
+		store.addAll(DlgpParser.parseAtomSet("<P>(a,a)."));
+
+		RuleSet rules = new LinkedListRuleSet();
+		rules.add(DlgpParser.parseRule("<Q>(X,Y,X) :- <P>(X,Y)."));
+
+		RulesCompilation comp = factory.create();
+		comp.compile(rules.iterator());
+		StaticChase.executeChase(store, rules);
+
+		ConjunctiveQuery query = DlgpParser.parseQuery("?(X) :- <Q>(X,Y,Y).");
+		CloseableIterator<Substitution> results = h.execute(new DefaultConjunctiveQuery(query), store, comp);
+		Assert.assertTrue(results.hasNext());
+		results.close();
+		
+		query = DlgpParser.parseQuery("?(Y) :- <Q>(X,Y,Y).");
+		results = h.execute(new DefaultConjunctiveQuery(query), store, comp);
+		Assert.assertTrue(results.hasNext());
+		results.close();
+		
 	}
 
 }
