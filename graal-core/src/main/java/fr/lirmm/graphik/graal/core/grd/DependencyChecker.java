@@ -40,52 +40,35 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.forward_chaining;
+package fr.lirmm.graphik.graal.core.grd;
 
-import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
-import fr.lirmm.graphik.graal.api.forward_chaining.Chase;
-import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
-import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
-import fr.lirmm.graphik.graal.core.grd.DefaultGraphOfRuleDependencies;
+import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.core.Unifier;
+import fr.lirmm.graphik.util.stream.filter.Filter;
 
-/**
- * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- *
- */
-public class StaticChase {
-	
-	public static void executeChase(AtomSet atomSet, Iterable<Rule> ruleSet)
-			throws ChaseException {
-		Chase chase = new SccChase(ruleSet.iterator(), atomSet);
-		chase.execute();
-	}
-	
-	public static void executeChase(AtomSet atomSet, Iterable<Rule> ruleSet, RuleApplier ruleApplier)
-			throws ChaseException {
-		Chase chase = new SccChase(ruleSet.iterator(), atomSet, ruleApplier);
-		chase.execute();
+public abstract class DependencyChecker implements Filter<Substitution> {
+	@Override
+	public final boolean filter(Substitution s) {
+		return isValidDependency(this.rule1,this.rule2,s);
 	}
 
-	public static void executeOneStepChase(AtomSet atomSet,
-			Iterable<Rule> ruleSet) throws ChaseException {
-		Chase chase = new SccChase(ruleSet.iterator(), atomSet);
-		chase.next();
+	protected abstract boolean isValidDependency(Rule r1, Rule r2, Substitution s);
+
+	public final void setRule1(Rule r1) { 
+		Substitution s = Unifier.computeInitialSourceTermsSubstitution(r1);
+		this.rule1 = s.createImageOf(r1); 
 	}
-	
-	public static void executeChase(AtomSet atomSet, DefaultGraphOfRuleDependencies grd)
-			throws ChaseException {
-		Chase chase = new SccChase(grd, atomSet);
-		chase.execute();
+	public final void setRule2(Rule r2) { 
+		Substitution s = Unifier.computeInitialTargetTermsSubstitution(r2.getBody());
+		this.rule2 = s.createImageOf(r2); 
 	}
 
-	public static void executeOneStepChase(AtomSet atomSet,
-			DefaultGraphOfRuleDependencies grd) throws ChaseException {
-		Chase chase = new SccChase(grd, atomSet);
-		chase.next();
-	}
+	private Rule rule1;
+	private Rule rule2;
 
+	public static final DependencyChecker DEFAULT = new DependencyChecker() {
+		@Override
+		protected boolean isValidDependency(Rule r1, Rule r2, Substitution s) { return true; }
+	};
 }

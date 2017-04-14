@@ -55,12 +55,13 @@ import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.forward_chaining.AbstractChase;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
+import fr.lirmm.graphik.graal.core.grd.DefaultGraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.RestrictedChaseRuleApplier;
-import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 
 /**
@@ -96,7 +97,7 @@ public class ChaseWithGRD extends AbstractChase {
 	}
 
 	public ChaseWithGRD(Iterator<Rule> rules, AtomSet atomSet) {
-		this(new GraphOfRuleDependencies(rules), atomSet);
+		this(new DefaultGraphOfRuleDependencies(rules), atomSet);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -116,8 +117,7 @@ public class ChaseWithGRD extends AbstractChase {
 				if (rule != null) {
 					boolean val = this.getRuleApplier().apply(rule, atomSet, newAtomSet);
 					if (val) {
-						for (Integer e : this.grd.getOutgoingEdgesOf(rule)) {
-							Rule triggeredRule = this.grd.getEdgeTarget(e);
+						for (Rule triggeredRule : this.grd.getTriggeredRules(rule)) {
 							if (LOGGER.isDebugEnabled()) {
 								LOGGER.debug("-- -- Dependency: " + triggeredRule);
 							}

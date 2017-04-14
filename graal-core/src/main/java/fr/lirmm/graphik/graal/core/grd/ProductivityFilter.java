@@ -40,7 +40,7 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- package fr.lirmm.graphik.graal.grd;
+ package fr.lirmm.graphik.graal.core.grd;
 
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
@@ -48,7 +48,7 @@ import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetUtils;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 
-public class ProductivityFilter extends GraphOfRuleDependencies.DependencyChecker {
+public class ProductivityFilter extends DependencyChecker {
 
 	@Override
 	protected boolean isValidDependency(Rule r1, Rule r2, Substitution s) {

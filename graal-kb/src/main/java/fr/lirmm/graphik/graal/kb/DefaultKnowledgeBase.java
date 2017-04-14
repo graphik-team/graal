@@ -47,7 +47,6 @@ package fr.lirmm.graphik.graal.kb;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,15 +59,14 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.api.core.Ontology;
-import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.core.QueryLabeler;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.UnionOfConjunctiveQueries;
 import fr.lirmm.graphik.graal.api.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
@@ -76,22 +74,20 @@ import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
 import fr.lirmm.graphik.graal.api.io.Parser;
+import fr.lirmm.graphik.graal.api.kb.Approach;
 import fr.lirmm.graphik.graal.api.kb.KnowledgeBase;
 import fr.lirmm.graphik.graal.api.kb.KnowledgeBaseException;
-import fr.lirmm.graphik.graal.api.kb.Approach;
 import fr.lirmm.graphik.graal.backward_chaining.pure.PureRewriter;
 import fr.lirmm.graphik.graal.core.DefaultQueryLabeler;
 import fr.lirmm.graphik.graal.core.DefaultUnionOfConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphStore;
 import fr.lirmm.graphik.graal.core.compilation.IDCompilation;
-import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
+import fr.lirmm.graphik.graal.core.grd.DefaultGraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.core.ruleset.DefaultOntology;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
-import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseWithGRD;
 import fr.lirmm.graphik.graal.forward_chaining.ConfigurableChase;
-import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.homomorphism.DefaultHomomorphismFactory;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.UniqFilter;
@@ -414,7 +410,7 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 	protected GraphOfRuleDependencies getFESGraphOfRuleDependencies() {
 		if (this.fesGRD == null) {
 			RuleSet fesRuleSet = this.getFESRuleSet();
-			this.fesGRD = new GraphOfRuleDependencies(fesRuleSet);
+			this.fesGRD = new DefaultGraphOfRuleDependencies(fesRuleSet);
 		}
 		return this.fesGRD;
 	}

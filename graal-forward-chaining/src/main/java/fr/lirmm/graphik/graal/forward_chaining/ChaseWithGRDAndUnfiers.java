@@ -51,6 +51,7 @@ import java.util.List;
 import java.util.Queue;
 
 import org.apache.commons.lang3.tuple.ImmutableTriple;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +59,7 @@ import org.slf4j.LoggerFactory;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
@@ -77,13 +79,12 @@ import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphStore;
 import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultSubstitutionFactory;
+import fr.lirmm.graphik.graal.core.grd.DefaultGraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.RestrictedChaseStopCondition;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
-import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.IteratorException;
 import fr.lirmm.graphik.util.stream.Iterators;
 
@@ -119,7 +120,7 @@ public class ChaseWithGRDAndUnfiers extends AbstractChase {
 	}
 	
 	public ChaseWithGRDAndUnfiers(Iterator<Rule> rules, AtomSet atomSet) {
-		this(new GraphOfRuleDependencies(rules, true), atomSet, new DefaultRuleApplier());
+		this(new DefaultGraphOfRuleDependencies(rules, true), atomSet, new DefaultRuleApplier());
 	}
 	
 	// /////////////////////////////////////////////////////////////////////////
@@ -177,24 +178,22 @@ public class ChaseWithGRDAndUnfiers extends AbstractChase {
 									// Makes the projection compatible with triggered rules unifiers
 									Substitution compatibleProj = targetToSource(proj);
 									
-									for (Integer e : this.grd.getOutgoingEdgesOf(rule)) {
-										Rule triggeredRule = this.grd.getEdgeTarget(e);
+									for (Pair<Rule,Substitution> p : this.grd.getTriggeredRulesWithUnifiers(rule)) {
+										Rule triggeredRule = p.getKey();
+										Substitution u = p.getValue();
+										if(u != null) {
+											Substitution comp = unificator.compose(u);
+											Substitution aggreg = compatibleProj.aggregate(comp);
+											aggreg = forgetSource(aggreg);
+											if(LOGGER.isDebugEnabled()) {
+												LOGGER.debug("-- -- Dependency: {}", triggeredRule);
+												LOGGER.debug("-- -- Substitution:{} ", compatibleProj);
+												LOGGER.debug("-- -- Unificator: {}", u);
+												LOGGER.debug("-- -- Aggregation: {}\n", aggreg);
+											}
 									
-										for (Substitution u : this.grd.getUnifiers(e)) {
-											if(u != null) {
-												Substitution comp = unificator.compose(u);
-												Substitution aggreg = compatibleProj.aggregate(comp);
-												aggreg = forgetSource(aggreg);
-												if(LOGGER.isDebugEnabled()) {
-													LOGGER.debug("-- -- Dependency: {}", triggeredRule);
-													LOGGER.debug("-- -- Substitution:{} ", compatibleProj);
-													LOGGER.debug("-- -- Unificator: {}", u);
-													LOGGER.debug("-- -- Aggregation: {}\n", aggreg);
-												}
-										
-												if(aggreg != null) {
-													newQueue.add(new ImmutableTriple<Rule, Substitution, InMemoryAtomSet>(triggeredRule, aggreg, foundPart));
-												}
+											if(aggreg != null) {
+												newQueue.add(new ImmutableTriple<Rule, Substitution, InMemoryAtomSet>(triggeredRule, aggreg, foundPart));
 											}
 										}
 									}

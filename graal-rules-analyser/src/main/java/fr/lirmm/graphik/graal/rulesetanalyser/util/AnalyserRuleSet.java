@@ -56,9 +56,10 @@ import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleLabeler;
 import fr.lirmm.graphik.graal.api.core.RuleSetException;
 import fr.lirmm.graphik.graal.core.DefaultRuleLabeler;
+import fr.lirmm.graphik.graal.core.grd.DefaultGraphOfRuleDependencies;
+import fr.lirmm.graphik.graal.core.grd.DependencyChecker;
+import fr.lirmm.graphik.graal.core.grd.ProductivityFilter;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
-import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
-import fr.lirmm.graphik.graal.grd.ProductivityFilter;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.AffectedPositionSet;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.GraphPositionDependencies;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.JointlyAffectedPositionSet;
@@ -73,14 +74,14 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
 public class AnalyserRuleSet implements ImmutableRuleSet {
 
 	private Collection<Rule> ruleset;
-	private GraphOfRuleDependencies grd;
+	private DefaultGraphOfRuleDependencies grd;
 	private AffectedPositionSet affectedPositionSet;
 	private JointlyAffectedPositionSet jointlyAffectedPositionSet;
 	private GraphPositionDependencies graphPositionDependencies;
 	private MarkedVariableSet markedVariableSet;
 	private StronglyConnectedComponentsGraph<Rule> sccGraph;
 	private List<AnalyserRuleSet> scc;
-	private GraphOfRuleDependencies.DependencyChecker dependencyChecker;
+	private DependencyChecker dependencyChecker;
 	private boolean withUnifiers = false;
 	private RuleLabeler labeler = new DefaultRuleLabeler();
 	
@@ -101,7 +102,7 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 		this(rules.iterator());
 	}
 	
-	public AnalyserRuleSet(Iterable<Rule> rules, GraphOfRuleDependencies.DependencyChecker checker) {
+	public AnalyserRuleSet(Iterable<Rule> rules, DependencyChecker checker) {
 		this(rules.iterator(), checker);
 	}
 	
@@ -111,7 +112,7 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 		this.dependencyChecker = new ProductivityFilter();
 	}
 
-	public AnalyserRuleSet(Iterator<Rule> rules, GraphOfRuleDependencies.DependencyChecker checker) {
+	public AnalyserRuleSet(Iterator<Rule> rules, DependencyChecker checker) {
 		this.ruleset = Collections.unmodifiableCollection(new LinkedListRuleSet(rules));
 		setRuleLabels();
 		this.dependencyChecker = checker;
@@ -123,13 +124,13 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 		this.dependencyChecker = new ProductivityFilter();
 	}
 
-	public AnalyserRuleSet(CloseableIterator<Rule> rules, GraphOfRuleDependencies.DependencyChecker checker) throws RuleSetException {
+	public AnalyserRuleSet(CloseableIterator<Rule> rules, DependencyChecker checker) throws RuleSetException {
 		this.ruleset = Collections.unmodifiableCollection(new LinkedListRuleSet(rules));
 		setRuleLabels();
 		this.dependencyChecker = checker;
 	}
 	
-	public AnalyserRuleSet(GraphOfRuleDependencies grd) {
+	public AnalyserRuleSet(DefaultGraphOfRuleDependencies grd) {
 		Collection<Rule> c = new LinkedList<Rule>();
 		for(Rule r : grd.getRules()) {
 			this.labeler.setLabel(r);
@@ -149,7 +150,7 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 	// GETTERS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public void setDependencyChecker(GraphOfRuleDependencies.DependencyChecker c) {
+	public void setDependencyChecker(DependencyChecker c) {
 		this.dependencyChecker = c;
 	}
 	public void enableUnifiers(boolean wu) {
@@ -158,7 +159,7 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 	/**
 	 * @return the grd
 	 */
-	public GraphOfRuleDependencies getGraphOfRuleDependencies() {
+	public DefaultGraphOfRuleDependencies getGraphOfRuleDependencies() {
 		if(this.grd == null)
 			this.computeGRD();
 		
@@ -168,7 +169,7 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 	/**
 	 * @param grd
 	 */
-	public void setGraphOfRuleDependencies(GraphOfRuleDependencies grd) {
+	public void setGraphOfRuleDependencies(DefaultGraphOfRuleDependencies grd) {
 		this.grd = grd;
 		this.sccGraph = null;
 	}
@@ -245,7 +246,7 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 	}
 	
 	private void computeGRD() {
-		this.grd = new GraphOfRuleDependencies(ruleset, this.withUnifiers, this.dependencyChecker);
+		this.grd = new DefaultGraphOfRuleDependencies(ruleset, this.withUnifiers, this.dependencyChecker);
 	}
 
 	private void computeSCC() {

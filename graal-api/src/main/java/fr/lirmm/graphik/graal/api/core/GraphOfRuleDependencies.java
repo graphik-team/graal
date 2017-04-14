@@ -40,52 +40,73 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.forward_chaining;
+package fr.lirmm.graphik.graal.api.core;
 
-import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.Rule;
-import fr.lirmm.graphik.graal.api.forward_chaining.Chase;
-import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
-import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
-import fr.lirmm.graphik.graal.core.grd.DefaultGraphOfRuleDependencies;
+import java.util.Set;
+
+import org.apache.commons.lang3.tuple.Pair;
+
+import fr.lirmm.graphik.util.graph.scc.StronglyConnectedComponentsGraph;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class StaticChase {
-	
-	public static void executeChase(AtomSet atomSet, Iterable<Rule> ruleSet)
-			throws ChaseException {
-		Chase chase = new SccChase(ruleSet.iterator(), atomSet);
-		chase.execute();
-	}
-	
-	public static void executeChase(AtomSet atomSet, Iterable<Rule> ruleSet, RuleApplier ruleApplier)
-			throws ChaseException {
-		Chase chase = new SccChase(ruleSet.iterator(), atomSet, ruleApplier);
-		chase.execute();
-	}
+public interface GraphOfRuleDependencies {
 
-	public static void executeOneStepChase(AtomSet atomSet,
-			Iterable<Rule> ruleSet) throws ChaseException {
-		Chase chase = new SccChase(ruleSet.iterator(), atomSet);
-		chase.next();
-	}
+	/**
+	 * Returns true, if there exists an unifier from src to dest, false otherwise.
+	 * @param src
+	 * @param dest
+	 * @return true iff there exists an unifier from src to dest.
+	 */
+	boolean existUnifier(Rule src, Rule dest);
 	
-	public static void executeChase(AtomSet atomSet, DefaultGraphOfRuleDependencies grd)
-			throws ChaseException {
-		Chase chase = new SccChase(grd, atomSet);
-		chase.execute();
-	}
+	/**
+	 * Returns a set of Substitution representing the set of unifiers from src to dest.
+	 * @param src 
+	 * @param dest
+	 * @return a set of Substitution representing the set of unifiers from src to dest.
+	 */
+	Set<Substitution> getUnifiers(Rule src, Rule dest);
+	
+	/**
+	 * Returns all rules that can be triggered by the specified one.
+	 * @param src a Rule.
+	 * @return all rules that can be triggered by the specified one.
+	 */
+	Set<Rule> getTriggeredRules(Rule src);
+	
+	/**
+	 * Returns all pair of rule and unifier that can be triggered by the specfied rule.
+	 * @param src
+	 * @return all pair of rule and unifier that can be triggered by the specfied rule.
+	 */
+	Set<Pair<Rule,Substitution>> getTriggeredRulesWithUnifiers(Rule src);
+	
+	/**
+     * Performs cycle detection on the {@link GraphOfRuleDependencies}.
+     *
+     * @return true iff the graph contains at least one cycle.
+     */
+	boolean hasCircuit();
 
-	public static void executeOneStepChase(AtomSet atomSet,
-			DefaultGraphOfRuleDependencies grd) throws ChaseException {
-		Chase chase = new SccChase(grd, atomSet);
-		chase.next();
-	}
+	/**
+	 * Creates and return an induced SubGraph of the current one.
+	 * @param ruleSet
+	 * @return the induced subgraph by specified rules.
+	 */
+	GraphOfRuleDependencies getSubGraph(Iterable<Rule> ruleSet);
+
+	/**
+	 * @return all rules containing in this {@link GraphOfRuleDependencies}.
+	 */
+	Iterable<Rule> getRules();
+
+
+	/**
+	 * @return the graph of strongly connected components of this graph.
+	 */
+	StronglyConnectedComponentsGraph<Rule> getStronglyConnectedComponentsGraph();
 
 }

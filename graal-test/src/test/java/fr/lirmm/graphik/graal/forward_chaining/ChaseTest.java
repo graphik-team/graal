@@ -59,6 +59,7 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
@@ -68,8 +69,8 @@ import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.api.io.ParseException;
+import fr.lirmm.graphik.graal.core.grd.DefaultGraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
-import fr.lirmm.graphik.graal.grd.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.store.gdb.BlueprintsGraphDBStore;
@@ -163,7 +164,7 @@ public class ChaseTest {
 		ruleSet.add(DlgpParser.parseRule("<Q>(X,Z) :- <R>(X,Y)."));
 		ruleSet.add(DlgpParser.parseRule("<S>(X,X) :- <Q>(Y,X)."));
 
-		GraphOfRuleDependencies grd = new GraphOfRuleDependencies(ruleSet);
+		GraphOfRuleDependencies grd = new DefaultGraphOfRuleDependencies(ruleSet);
 		Chase chase = new ChaseWithGRDAndUnfiers(grd, atomSet);
 		chase.execute();
 		

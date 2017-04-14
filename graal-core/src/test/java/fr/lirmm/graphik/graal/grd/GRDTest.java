@@ -53,6 +53,8 @@ import org.junit.Test;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.core.TestUtils;
 import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
+import fr.lirmm.graphik.graal.core.grd.DefaultGraphOfRuleDependencies;
+import fr.lirmm.graphik.graal.core.grd.ProductivityFilter;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -67,7 +69,7 @@ public class GRDTest {
 		rules.add(DefaultRuleFactory.instance().create(TestUtils.rX, TestUtils.sX));
 		rules.add(DefaultRuleFactory.instance().create(TestUtils.rX, TestUtils.pXY));
 
-		GraphOfRuleDependencies grd = new GraphOfRuleDependencies(rules, true, new ProductivityFilter());
+		DefaultGraphOfRuleDependencies grd = new DefaultGraphOfRuleDependencies(rules, true, new ProductivityFilter());
 		Assert.assertFalse(grd.existUnifier(rules.get(0), rules.get(1)));
 		Assert.assertFalse(grd.existUnifier(rules.get(1), rules.get(0)));
 		Assert.assertTrue(grd.existUnifier(rules.get(0), rules.get(2)));
