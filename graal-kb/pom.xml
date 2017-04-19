@@ -12,7 +12,7 @@
 	<packaging>jar</packaging>
 	<name>fr.lirmm.graphik:graal-kb</name>
 
-	<description />
+	<description>The Graal Knowledge Base layer</description>
 
 	<developers>
 		<developer>
