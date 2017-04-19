@@ -248,12 +248,14 @@ public class DefaultGraphOfRuleDependencies implements GraphOfRuleDependencies {
 				Rule dest = this.graph.getEdgeTarget(e);
 
 				s.append(src.getLabel());
-				s.append("--");
-				for (Substitution sub : this.edgesValue.get(this.graph.getEdge(
-						src, dest))) {
-					s.append(sub);
+				s.append(" -");
+				if(this.computingUnifiers) {
+					for (Substitution sub : this.edgesValue.get(this.graph.getEdge(
+							src, dest))) {
+						s.append(sub);
+					}
 				}
-				s.append("-->");
+				s.append("-> ");
 				s.append(dest.getLabel());
 				s.append('\n');
 			}
