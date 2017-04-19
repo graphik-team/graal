@@ -297,9 +297,10 @@ public class DefaultGraphOfRuleDependencies implements GraphOfRuleDependencies {
 		if (this.computingUnifiers) {
 			return Unifier.instance().computePieceUnifier(r1,r2.getBody(),checker);
 		}
-		else {
+		else if(Unifier.instance().existPieceUnifier(r1,r2.getBody(),checker)) {
 			return Collections.<Substitution>singleton(Substitutions.emptySubstitution());
 		}
+		return Collections.<Substitution>emptySet();
 	}
 
 

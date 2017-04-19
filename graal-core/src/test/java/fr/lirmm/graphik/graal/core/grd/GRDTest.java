@@ -43,7 +43,7 @@
 /**
  * 
  */
-package fr.lirmm.graphik.graal.grd;
+package fr.lirmm.graphik.graal.core.grd;
 
 import java.util.LinkedList;
 
@@ -61,6 +61,29 @@ import fr.lirmm.graphik.graal.core.grd.ProductivityFilter;
  *
  */
 public class GRDTest {
+	
+	
+	@Test
+	public void simpleTest() {
+		LinkedList<Rule> rules = new LinkedList<Rule>();
+		rules.add(DefaultRuleFactory.instance().create(TestUtils.sX, TestUtils.rX));
+		rules.add(DefaultRuleFactory.instance().create(TestUtils.sX, TestUtils.pXY));
+
+		DefaultGraphOfRuleDependencies grd = new DefaultGraphOfRuleDependencies(rules, false);
+		Assert.assertFalse(grd.existUnifier(rules.get(0), rules.get(1)));
+		Assert.assertFalse(grd.existUnifier(rules.get(1), rules.get(0)));
+	}
+	
+	@Test
+	public void simpleTest2() {
+		LinkedList<Rule> rules = new LinkedList<Rule>();
+		rules.add(DefaultRuleFactory.instance().create(TestUtils.sX, TestUtils.pXY));
+		rules.add(DefaultRuleFactory.instance().create(TestUtils.pXX, TestUtils.rX));
+
+		DefaultGraphOfRuleDependencies grd = new DefaultGraphOfRuleDependencies(rules, false);
+		Assert.assertFalse(grd.existUnifier(rules.get(0), rules.get(1)));
+		Assert.assertFalse(grd.existUnifier(rules.get(1), rules.get(0)));
+	}
 
 	@Test
 	public void atomErasingFilterTest() {

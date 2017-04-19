@@ -74,7 +74,7 @@ public final class TestUtils {
 	public static final Term A = DefaultTermFactory.instance().createConstant("a");
 	public static final Term B = DefaultTermFactory.instance().createConstant("b");
 
-	public static final Atom pTU, pUV, pVW, pWX, pXY, pYX, pYZ, pYW, pUU, pWV, pWT, pUW, pAU, pXA, pXB;
+	public static final Atom pTU, pUV, pVW, pWX, pXY, pYX, pYZ, pYW, pUU, pWV, pWT, pUW, pAU, pXA, pXB, pXX;
 	public static final Atom qXY, qTW, qUV, qVW;
 	public static final Atom sX, rX;
 
@@ -153,6 +153,11 @@ public final class TestUtils {
 		terms[0] = X;
 		terms[1] = B;
 		pXB = new DefaultAtom(p, Arrays.asList(terms));
+		
+		terms = new Term[2];
+		terms[0] = X;
+		terms[1] = X;
+		pXX = new DefaultAtom(p, Arrays.asList(terms));
 		
 		// q
 
