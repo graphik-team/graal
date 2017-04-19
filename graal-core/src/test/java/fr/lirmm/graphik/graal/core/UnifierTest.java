@@ -62,6 +62,20 @@ import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
  */
 public class UnifierTest {
 	
+	@Test
+	public void mostGeneralTest1() {
+		Rule rule = DefaultRuleFactory.instance().create();
+		rule.getBody().add(TestUtils.pXY);
+		rule.getHead().add(TestUtils.qXY);
+
+		InMemoryAtomSet atomset = DefaultAtomSetFactory.instance().create();
+		atomset.add(TestUtils.qUV);
+
+		Collection<Substitution> unifiers = Unifier.instance().computePieceUnifier(rule, atomset);
+		print(unifiers);
+		Assert.assertEquals(1, unifiers.size());
+	}
+	
 	/**
 	 * Given s(X) -> p(X,Y), p(Y,Z). and p(U,V),p(V,W). computePieceUnifier
 	 * should return {X->U, Y->V, Z->W}
