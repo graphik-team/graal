@@ -520,7 +520,7 @@ public class BacktrackIteratorWithNot extends AbstractCloseableIterator<Substitu
 			var.domain = new HomomorphismIteratorChecker(var, bootstrapper.exec(var, h, g, this.compilation),
 			                                             var.preAtoms, g, this.negIndex, this.compilation);
 		}
-		return this.hasMoreValues(var, g);
+		return this.hasNegMoreValues(var, g);
 	}
 
 	private boolean hasNegMoreValues(Var var, AtomSet g) throws BacktrackException {
