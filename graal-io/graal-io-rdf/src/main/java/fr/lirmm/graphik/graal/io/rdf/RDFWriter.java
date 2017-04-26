@@ -55,6 +55,7 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.io.AtomWriter;
 import fr.lirmm.graphik.graal.api.io.Writer;
 import fr.lirmm.graphik.graal.api.store.WrongArityException;
+import fr.lirmm.graphik.graal.common.rdf4j.MalformedLangStringException;
 import fr.lirmm.graphik.graal.common.rdf4j.RDF4jUtils;
 import fr.lirmm.graphik.util.Prefix;
 
@@ -105,6 +106,10 @@ public class RDFWriter implements AtomWriter {
 			e.printStackTrace();
 			throw new Error("Untreated exception");
 		} catch (WrongArityException e) {
+			// TODO treat this exception
+			e.printStackTrace();
+			throw new Error("Untreated exception");
+		} catch (MalformedLangStringException e) {
 			// TODO treat this exception
 			e.printStackTrace();
 			throw new Error("Untreated exception");

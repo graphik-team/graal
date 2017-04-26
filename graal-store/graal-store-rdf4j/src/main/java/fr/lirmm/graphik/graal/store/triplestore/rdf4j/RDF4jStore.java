@@ -69,6 +69,7 @@ import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.store.WrongArityException;
+import fr.lirmm.graphik.graal.common.rdf4j.MalformedLangStringException;
 import fr.lirmm.graphik.graal.common.rdf4j.RDF4jUtils;
 import fr.lirmm.graphik.graal.core.DefaultConstantGenerator;
 import fr.lirmm.graphik.graal.core.store.AbstractTripleStore;
@@ -142,6 +143,8 @@ public class RDF4jStore extends AbstractTripleStore {
 			this.connection.add(utils.atomToStatement(atom));
 		} catch (RepositoryException e) {
 			throw new AtomSetException("Error while adding the atom " + atom, e);
+		} catch (MalformedLangStringException e) {
+			throw new AtomSetException("Error on the atom " + atom, e);
 		}
 		return true;
 	}
@@ -167,7 +170,9 @@ public class RDF4jStore extends AbstractTripleStore {
 		try {
 			this.connection.remove(utils.atomToStatement(atom));
 		} catch (RepositoryException e) {
-			throw new AtomSetException("Error while adding the atoms.", e);
+			throw new AtomSetException("Error while removing the atoms.", e);
+		} catch (MalformedLangStringException e) {
+			throw new AtomSetException("Error on the atom " + atom, e);
 		}
 		return true;
 	}
@@ -184,7 +189,12 @@ public class RDF4jStore extends AbstractTripleStore {
 
 	@Override
 	public boolean contains(Atom atom) throws AtomSetException {
-		Statement stat = utils.atomToStatement(atom);
+		Statement stat;
+		try {
+			stat = utils.atomToStatement(atom);
+		} catch (MalformedLangStringException e) {
+			throw new AtomSetException("Error on the atom " + atom, e);
+		}
 		try {
 			return this.connection.hasStatement(stat, false);
 		} catch (RepositoryException e) {
@@ -194,7 +204,12 @@ public class RDF4jStore extends AbstractTripleStore {
 
 	@Override
 	public CloseableIterator<Atom> match(Atom atom) throws AtomSetException {
-		Statement stat = utils.atomToStatement(atom);
+		Statement stat;
+		try {
+			stat = utils.atomToStatement(atom);
+		} catch (MalformedLangStringException e) {
+			throw new AtomSetException("Error on the atom " + atom, e);
+		}
 		IRI subject = (IRI) stat.getSubject();
 		if (subject.getNamespace().equals("_:")) {
 			subject = null;

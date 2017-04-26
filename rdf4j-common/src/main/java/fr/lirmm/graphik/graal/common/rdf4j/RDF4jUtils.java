@@ -72,17 +72,17 @@ public class RDF4jUtils {
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
-	
+
 	public RDF4jUtils(Prefix prefix, ValueFactory valueFactory) {
 		this.urizer = new URIzer(prefix);
 		this.valueFactory = valueFactory;
 	}
-	
+
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public Statement atomToStatement(Atom atom) throws WrongArityException {
+	public Statement atomToStatement(Atom atom) throws WrongArityException, MalformedLangStringException {
 		if (atom.getPredicate().getArity() != 2) {
 			throw new WrongArityException("Error on " + atom + ": arity " + atom.getPredicate().getArity()
 					+ " is not supported by this store. ");
@@ -99,7 +99,7 @@ public class RDF4jUtils {
 		Term term1 = valueToTerm(stat.getObject());
 		return new DefaultAtom(predicate, term0, term1);
 	}
-	
+
 	public Term valueToTerm(Value value) {
 		if (value instanceof Resource) {
 			return DefaultTermFactory.instance().createConstant(urizer.output(value.toString()));
@@ -115,15 +115,15 @@ public class RDF4jUtils {
 			return DefaultTermFactory.instance().createLiteral(uri, label);
 		}
 	}
-	
+
 	public Predicate valueToPredicate(Value value) {
 		return new Predicate(urizer.output(value.toString()), 2);
 	}
-	
+
 	public IRI createURI(Predicate p) {
 		return createURI(urizer.input(p.getIdentifier().toString()));
 	}
-	
+
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
@@ -144,16 +144,25 @@ public class RDF4jUtils {
 		return valueFactory.createIRI(string);
 	}
 
-	private Value createValue(Term t) {
+	private Value createValue(Term t) throws MalformedLangStringException {
 		if (t instanceof Literal) {
 			Literal l = (Literal) t;
-			return valueFactory.createLiteral(l.getValue().toString(),
-					valueFactory.createIRI(l.getDatatype().toString()));
+			if (l.getDatatype().equals(URIUtils.RDF_LANG_STRING)) {
+				String value = l.getValue().toString();
+				int pos = value.lastIndexOf('@');
+				if (pos < 0) {
+					throw new MalformedLangStringException("The following label does not contains lang part: " + value);
+				}
+				String label = value.substring(0, pos + 1);
+				String lang = value.substring(pos + 1);
+				return valueFactory.createLiteral(label, lang);
+			} else {
+				return valueFactory.createLiteral(l.getValue().toString(),
+						valueFactory.createIRI(l.getDatatype().toString()));
+			}
 		} else {
 			return createURI(t);
 		}
 	}
-
-
 
 }

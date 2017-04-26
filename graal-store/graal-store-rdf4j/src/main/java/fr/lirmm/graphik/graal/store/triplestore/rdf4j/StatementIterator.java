@@ -48,6 +48,7 @@ import org.eclipse.rdf4j.repository.RepositoryException;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.store.WrongArityException;
+import fr.lirmm.graphik.graal.common.rdf4j.MalformedLangStringException;
 import fr.lirmm.graphik.graal.common.rdf4j.RDF4jUtils;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
@@ -82,6 +83,8 @@ class StatementIterator implements Iteration<Statement, RepositoryException> {
 			throw new RuntimeException("An errors occurs while translating atom to statement", e);
 		} catch (IteratorException e) {
 			throw new RuntimeException("An errors occurs while iterating atoms", e);
+		} catch (MalformedLangStringException e) {
+			throw new RuntimeException("An errors occurs while translating atom to statement", e);
 		}
 	}
 
