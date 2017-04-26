@@ -51,6 +51,7 @@ import java.util.Set;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.forward_chaining.AbstractChase;
 import fr.lirmm.graphik.graal.api.forward_chaining.Chase;
@@ -72,7 +73,7 @@ public class SccChase extends AbstractChase {
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
-	private DefaultGraphOfRuleDependencies grd;
+	private GraphOfRuleDependencies grd;
 	private AtomSet atomSet;
 	private List<Atom> tmpAtom;
 	private Queue<Rule> queue = new LinkedList<Rule>();
@@ -81,7 +82,7 @@ public class SccChase extends AbstractChase {
 	int levelmax;
 	StronglyConnectedComponentsGraph<Rule> sccg;
 
-	public SccChase(DefaultGraphOfRuleDependencies grd, AtomSet atomSet, RuleApplier ruleApplier) {
+	public SccChase(GraphOfRuleDependencies grd, AtomSet atomSet, RuleApplier ruleApplier) {
 		super(ruleApplier);
 		this.grd = grd;
 		this.atomSet = atomSet;
@@ -95,7 +96,7 @@ public class SccChase extends AbstractChase {
 		this(new DefaultGraphOfRuleDependencies(rules), atomSet, ruleApplier);
 	}
 
-	public SccChase(DefaultGraphOfRuleDependencies grd, AtomSet atomSet) {
+	public SccChase(GraphOfRuleDependencies grd, AtomSet atomSet) {
 		this(grd, atomSet, RestrictedChaseRuleApplier.instance());
 	}
 
@@ -134,7 +135,8 @@ public class SccChase extends AbstractChase {
 
 		for (Integer scc : layers[level]) {
 			Set<Rule> component = this.sccg.getComponent(scc);
-			DefaultGraphOfRuleDependencies subGraph = this.grd.getSubGraph(component);
+			GraphOfRuleDependencies subGraph = this.grd.getSubGraph(component);
+
 			if (component.size() == 1 && !subGraph.hasCircuit()) {
 				try {
 					this.getRuleApplier().apply(component.iterator().next(), atomSet, tmpAtom);
