@@ -64,8 +64,9 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetUtils;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.factory.DefaultAtomSetFactory;
+import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphStore;
 import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultAtomSetFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 import fr.lirmm.graphik.util.EquivalentRelation;
 import fr.lirmm.graphik.util.TreeMapEquivalentRelation;
@@ -579,7 +580,7 @@ public final class Rules {
 
 
 	public static InMemoryAtomSet criticalInstance(final Iterable<Rule> rules) {
-		InMemoryAtomSet A = new LinkedListAtomSet();
+		InMemoryAtomSet A = new DefaultInMemoryGraphStore();
 		criticalInstance(rules,A);
 		return A;
 	}
