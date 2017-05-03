@@ -344,7 +344,9 @@ public class BacktrackIteratorWithNot extends AbstractCloseableIterator<Substitu
 						this.negPartChecked = true;
 						if(this.existNegPart()) {
 							this.goBack = true;
-							int nextLevel = bj.previousLevel(currentVar, vars);
+							Substitution sol = solutionFound(vars, ans);
+
+							int nextLevel = currentVar.previousLevel;
 							for (; level > nextLevel; --level) {
 								vars[level].image = null;
 							}
