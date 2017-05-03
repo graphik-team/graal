@@ -84,7 +84,11 @@ abstract class AbstractRDFListener extends AbstractRDFHandler {
 				datatype = new fr.lirmm.graphik.util.DefaultURI(l.getDatatype().getNamespace(),
 						l.getDatatype().getLocalName());
 			}
-			object = DefaultTermFactory.instance().createLiteral(datatype, l.getLabel());
+			String value = l.getLabel();
+			if(datatype.equals(URIUtils.RDF_LANG_STRING)) {
+				value += "@" + l.getLanguage();
+			}
+			object = DefaultTermFactory.instance().createLiteral(datatype, value);
 		} else {
 			object = DefaultTermFactory.instance().createConstant(new DefaultURI(st.getObject().toString()));
 		}
