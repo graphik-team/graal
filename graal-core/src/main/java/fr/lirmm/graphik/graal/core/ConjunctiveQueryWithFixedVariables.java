@@ -43,7 +43,7 @@
 /**
 * 
 */
-package fr.lirmm.graphik.graal.forward_chaining.halting_condition;
+package fr.lirmm.graphik.graal.core;
 
 import java.util.LinkedList;
 import java.util.List;

@@ -43,13 +43,14 @@
 /**
  * 
  */
-package fr.lirmm.graphik.graal.core;
+package fr.lirmm.graphik.graal.core.grd;
 
 import java.util.Arrays;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 
 /**
@@ -76,7 +77,7 @@ public final class TestUtils {
 
 	public static final Atom pTU, pUV, pVW, pWX, pXY, pYX, pYZ, pYW, pUU, pWV, pWT, pUW, pAU, pXA, pXB, pXX, pXZ;
 	public static final Atom qXY, qTW, qUV, qVW;
-	public static final Atom sX, sU, rX;
+	public static final Atom sX, sY, sU, sV, rX;
 
 	static {
 		Term[] terms = new Term[2];
@@ -191,10 +192,18 @@ public final class TestUtils {
 		terms = new Term[1];
 		terms[0] = X;
 		sX = new DefaultAtom(s, Arrays.asList(terms));
+		
+		terms = new Term[1];
+		terms[0] = Y;
+		sY = new DefaultAtom(s, Arrays.asList(terms));
 	
 		terms = new Term[1];
 		terms[0] = U;
 		sU = new DefaultAtom(s, Arrays.asList(terms));
+		
+		terms = new Term[1];
+		terms[0] = V;
+		sV = new DefaultAtom(s, Arrays.asList(terms));
 		
 		// r
 

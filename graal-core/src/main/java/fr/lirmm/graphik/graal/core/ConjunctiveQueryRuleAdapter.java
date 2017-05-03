@@ -40,89 +40,105 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-/**
- * 
- */
-package fr.lirmm.graphik.graal.core.factory;
+package fr.lirmm.graphik.graal.core;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.AtomSet;
+import java.util.Collections;
+import java.util.Set;
+
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.Constant;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
-import fr.lirmm.graphik.graal.api.factory.InMemoryAtomSetFactory;
+import fr.lirmm.graphik.graal.api.core.Literal;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Term.Type;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
-import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- * 
+ *
  */
-public final class DefaultAtomSetFactory implements InMemoryAtomSetFactory {
+public class ConjunctiveQueryRuleAdapter extends AbstractRule {
+	
+	private InMemoryAtomSet query;
+	private InMemoryAtomSet head = new LinkedListAtomSet();
+	private String label;
 
-	private static DefaultAtomSetFactory instance = new DefaultAtomSetFactory();
-
-	private DefaultAtomSetFactory() {
-	}
-
-	public static DefaultAtomSetFactory instance() {
-		return instance;
-	}
-
-	@Override
-	public InMemoryAtomSet create() {
-		return new LinkedListAtomSet();
-	}
-
-	@Override
-	public InMemoryAtomSet create(Atom... atoms) {
-		InMemoryAtomSet atomset = this.create();
-		for (Atom a : atoms) {
-			atomset.add(a);
-		}
-		return atomset;
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
+	
+	public ConjunctiveQueryRuleAdapter(ConjunctiveQuery query) {
+		this.query = query.getAtomSet();
+		this.label = query.getLabel();
 	}
 	
+	public ConjunctiveQueryRuleAdapter(InMemoryAtomSet query) {
+		this.query = query;
+		this.label = "";
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
 	@Override
-	public InMemoryAtomSet create(CloseableIterator<Atom> atoms) throws IteratorException {
-		InMemoryAtomSet atomset = this.create();
-		while(atoms.hasNext()) {
-			atomset.add(atoms.next());
-		}
-		return atomset;
+	public String getLabel() {
+		return this.label;
+	}
+
+	@Override
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	@Override
+	public InMemoryAtomSet getBody() {
+		return this.query;
+	}
+
+	@Override
+	public InMemoryAtomSet getHead() {
+		return head;
+	}
+
+	@Override
+	public Set<Variable> getFrontier() {
+		return Collections.emptySet();
+	}
+
+	@Override
+	public Set<Variable> getExistentials() {
+		return Collections.emptySet();
+	}
+
+	@Override
+	public Set<Term> getTerms(Type type) {
+		return this.query.getTerms(type);
+	}
+
+	@Override
+	public Set<Variable> getVariables() {
+		return this.query.getVariables();
+	}
+
+	@Override
+	public Set<Constant> getConstants() {
+		return this.query.getConstants();
+	}
+
+	@Override
+	public Set<Literal> getLiterals() {
+		return this.query.getLiterals();
+	}
+
+	@Override
+	public Set<Term> getTerms() {
+		return this.query.getTerms();
 	}
 	
-	@Override
-	public InMemoryAtomSet create(CloseableIteratorWithoutException<Atom> atoms) {
-		InMemoryAtomSet atomset = this.create();
-		while(atoms.hasNext()) {
-			atomset.add(atoms.next());
-		}
-		return atomset;
-	}
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
-	@Override
-	public InMemoryAtomSet create(AtomSet src) throws IteratorException {
-		InMemoryAtomSet atomset = this.create();
-		CloseableIterator<Atom> it = src.iterator();
-		while(it.hasNext()) {
-			Atom a = it.next();
-			atomset.add(a);
-		}
-		return atomset;
-	}
-
-	@Override
-	public InMemoryAtomSet create(InMemoryAtomSet src) {
-		try {
-			return create((AtomSet) src);
-		} catch (IteratorException e) {
-			throw new Error("Should never happen");
-		}
-	}
-
-	@Override
-	public InMemoryAtomSet create(Atom atom) {
-		return new LinkedListAtomSet(atom);
-	}
 }

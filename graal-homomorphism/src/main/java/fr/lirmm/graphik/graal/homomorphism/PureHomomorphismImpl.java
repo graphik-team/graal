@@ -114,7 +114,7 @@ class PureHomomorphismImpl extends AbstractProfilable {
 	 * @return true if there exist a homomorphism.
 	 * @throws HomomorphismException
 	 */
-	public boolean exist() throws HomomorphismException {
+	public boolean exist() throws HomomorphismException  {
 		// check if the query is empty
 		if (source == null || !source.iterator().hasNext()) {
 			if (LOGGER.isInfoEnabled()) {

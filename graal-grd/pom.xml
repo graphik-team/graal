@@ -8,10 +8,10 @@
 		<version>1.3.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>graal-forward-chaining</artifactId>
+	<artifactId>graal-grd</artifactId>
 	<packaging>jar</packaging>
-	<name>fr.lirmm.graphik:graal-forward-chaining</name>
-	<description>The graal-forward-chaining module provides implementation for chase algorithms.</description>
+	<name>fr.lirmm.graphik:graal-grd</name>
+	<description>The graal-grd module provides an implementation of the GraphOfRuleDependencies interface.</description>
 
 	<developers>
 		<developer>
@@ -39,18 +39,8 @@
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-grd</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-homomorphism</artifactId>
 			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.3.2</version>
 		</dependency>
 		<!-- TEST -->
 		<dependency>

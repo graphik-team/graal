@@ -40,35 +40,49 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.core.grd;
+ package fr.lirmm.graphik.graal.core.unifier.checker;
 
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.graal.core.Unifier;
-import fr.lirmm.graphik.util.stream.filter.Filter;
+import fr.lirmm.graphik.graal.core.atomset.AtomSetUtils;
 
-public abstract class DependencyChecker implements Filter<Substitution> {
+/**
+ * This class represents a specific case of atom erasing
+ * 
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+ *
+ */
+public class AtomErasingChecker extends AbstractUnifierChecker {
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// SINGLETON
+	// /////////////////////////////////////////////////////////////////////////
+
+	private static AtomErasingChecker instance;
+
+	protected AtomErasingChecker() {
+		super();
+	}
+
+	public static synchronized AtomErasingChecker instance() {
+		if (instance == null)
+			instance = new AtomErasingChecker();
+
+		return instance;
+	}
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// 
+	// /////////////////////////////////////////////////////////////////////////
+	
 	@Override
-	public final boolean filter(Substitution s) {
-		return isValidDependency(this.rule1,this.rule2,s);
+	public boolean isValidDependency(Rule rule, InMemoryAtomSet query, Substitution s) {
+		InMemoryAtomSet b1 = s.createImageOf(rule.getBody());
+		InMemoryAtomSet b2 = s.createImageOf(query);
+
+		return !AtomSetUtils.contains(b1,b2);
 	}
 
-	protected abstract boolean isValidDependency(Rule r1, Rule r2, Substitution s);
+};
 
-	public final void setRule1(Rule r1) { 
-		Substitution s = Unifier.computeInitialSourceTermsSubstitution(r1);
-		this.rule1 = s.createImageOf(r1); 
-	}
-	public final void setRule2(Rule r2) { 
-		Substitution s = Unifier.computeInitialTargetTermsSubstitution(r2.getBody());
-		this.rule2 = s.createImageOf(r2); 
-	}
-
-	private Rule rule1;
-	private Rule rule2;
-
-	public static final DependencyChecker DEFAULT = new DependencyChecker() {
-		@Override
-		protected boolean isValidDependency(Rule r1, Rule r2, Substitution s) { return true; }
-	};
-}

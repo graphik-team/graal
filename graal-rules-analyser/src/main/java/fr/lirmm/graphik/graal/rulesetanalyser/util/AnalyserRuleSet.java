@@ -45,6 +45,7 @@
  */
 package fr.lirmm.graphik.graal.rulesetanalyser.util;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -57,9 +58,10 @@ import fr.lirmm.graphik.graal.api.core.RuleLabeler;
 import fr.lirmm.graphik.graal.api.core.RuleSetException;
 import fr.lirmm.graphik.graal.core.DefaultRuleLabeler;
 import fr.lirmm.graphik.graal.core.grd.DefaultGraphOfRuleDependencies;
-import fr.lirmm.graphik.graal.core.grd.DependencyChecker;
-import fr.lirmm.graphik.graal.core.grd.ProductivityFilter;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
+import fr.lirmm.graphik.graal.core.unifier.checker.AtomErasingChecker;
+import fr.lirmm.graphik.graal.core.unifier.checker.DependencyChecker;
+import fr.lirmm.graphik.graal.core.unifier.checker.ProductivityChecker;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.AffectedPositionSet;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.GraphPositionDependencies;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.JointlyAffectedPositionSet;
@@ -81,7 +83,7 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 	private MarkedVariableSet markedVariableSet;
 	private StronglyConnectedComponentsGraph<Rule> sccGraph;
 	private List<AnalyserRuleSet> scc;
-	private DependencyChecker dependencyChecker;
+	private List<DependencyChecker> dependencyCheckerList;
 	private boolean withUnifiers = false;
 	private RuleLabeler labeler = new DefaultRuleLabeler();
 	
@@ -95,7 +97,10 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 		// This constructor is used internally and then would override the previously defined label. 
 		list.add(rule);
 		this.ruleset = Collections.unmodifiableCollection(list);
-		this.dependencyChecker = new ProductivityFilter();
+		this.dependencyCheckerList = new LinkedList<DependencyChecker>();
+		this.dependencyCheckerList.add(ProductivityChecker.instance());
+		this.dependencyCheckerList.add(AtomErasingChecker.instance());
+
 	}
 
 	public AnalyserRuleSet(Iterable<Rule> rules) {
@@ -109,25 +114,31 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 	public AnalyserRuleSet(Iterator<Rule> rules) {
 		this.ruleset = Collections.unmodifiableCollection(new LinkedListRuleSet(rules));
 		setRuleLabels();
-		this.dependencyChecker = new ProductivityFilter();
+		this.dependencyCheckerList = new LinkedList<DependencyChecker>();
+		this.dependencyCheckerList.add(ProductivityChecker.instance());
+		this.dependencyCheckerList.add(AtomErasingChecker.instance());
+
 	}
 
-	public AnalyserRuleSet(Iterator<Rule> rules, DependencyChecker checker) {
+	public AnalyserRuleSet(Iterator<Rule> rules, DependencyChecker... checkers) {
 		this.ruleset = Collections.unmodifiableCollection(new LinkedListRuleSet(rules));
 		setRuleLabels();
-		this.dependencyChecker = checker;
+		this.dependencyCheckerList = Arrays.asList(checkers);
 	}
 	
 	public AnalyserRuleSet(CloseableIterator<Rule> rules) throws RuleSetException {
 		this.ruleset = Collections.unmodifiableCollection(new LinkedListRuleSet(rules));
 		setRuleLabels();
-		this.dependencyChecker = new ProductivityFilter();
+		this.dependencyCheckerList = new LinkedList<DependencyChecker>();
+		this.dependencyCheckerList.add(ProductivityChecker.instance());
+		this.dependencyCheckerList.add(AtomErasingChecker.instance());
+
 	}
 
-	public AnalyserRuleSet(CloseableIterator<Rule> rules, DependencyChecker checker) throws RuleSetException {
+	public AnalyserRuleSet(CloseableIterator<Rule> rules, DependencyChecker... checkers) throws RuleSetException {
 		this.ruleset = Collections.unmodifiableCollection(new LinkedListRuleSet(rules));
 		setRuleLabels();
-		this.dependencyChecker = checker;
+		this.dependencyCheckerList = Arrays.asList(checkers);
 	}
 	
 	public AnalyserRuleSet(DefaultGraphOfRuleDependencies grd) {
@@ -150,9 +161,18 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 	// GETTERS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public void setDependencyChecker(DependencyChecker c) {
-		this.dependencyChecker = c;
+	public void addDependencyChecker(DependencyChecker checker) {
+		this.dependencyCheckerList.add(checker);
 	}
+	
+	public void removeDependencyChecker(DependencyChecker checker) {
+		this.dependencyCheckerList.remove(checker);
+	}
+	
+	public void clearDependencyChecker() {
+		this.dependencyCheckerList.clear();
+	}
+	
 	public void enableUnifiers(boolean wu) {
 		this.withUnifiers = wu;
 	}
@@ -246,7 +266,7 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 	}
 	
 	private void computeGRD() {
-		this.grd = new DefaultGraphOfRuleDependencies(ruleset, this.withUnifiers, this.dependencyChecker);
+		this.grd = new DefaultGraphOfRuleDependencies(ruleset, this.withUnifiers, this.dependencyCheckerList.toArray(new DependencyChecker[this.dependencyCheckerList.size()]));
 	}
 
 	private void computeSCC() {

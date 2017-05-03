@@ -40,89 +40,51 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-/**
- * 
- */
-package fr.lirmm.graphik.graal.core.factory;
+ package fr.lirmm.graphik.graal.core.unifier.checker;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
-import fr.lirmm.graphik.graal.api.factory.InMemoryAtomSetFactory;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.core.atomset.AtomSetUtils;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
-import fr.lirmm.graphik.util.stream.IteratorException;
 
-/**
- * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- * 
- */
-public final class DefaultAtomSetFactory implements InMemoryAtomSetFactory {
+public class ProductivityChecker implements DependencyChecker {
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// SINGLETON
+	// /////////////////////////////////////////////////////////////////////////
 
-	private static DefaultAtomSetFactory instance = new DefaultAtomSetFactory();
+	private static ProductivityChecker instance;
 
-	private DefaultAtomSetFactory() {
+	protected ProductivityChecker() {
+		super();
 	}
 
-	public static DefaultAtomSetFactory instance() {
+	public static synchronized ProductivityChecker instance() {
+		if (instance == null)
+			instance = new ProductivityChecker();
+
 		return instance;
 	}
-
-	@Override
-	public InMemoryAtomSet create() {
-		return new LinkedListAtomSet();
-	}
-
-	@Override
-	public InMemoryAtomSet create(Atom... atoms) {
-		InMemoryAtomSet atomset = this.create();
-		for (Atom a : atoms) {
-			atomset.add(a);
-		}
-		return atomset;
-	}
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// 
+	// /////////////////////////////////////////////////////////////////////////
 	
 	@Override
-	public InMemoryAtomSet create(CloseableIterator<Atom> atoms) throws IteratorException {
-		InMemoryAtomSet atomset = this.create();
-		while(atoms.hasNext()) {
-			atomset.add(atoms.next());
-		}
-		return atomset;
-	}
-	
-	@Override
-	public InMemoryAtomSet create(CloseableIteratorWithoutException<Atom> atoms) {
-		InMemoryAtomSet atomset = this.create();
-		while(atoms.hasNext()) {
-			atomset.add(atoms.next());
-		}
-		return atomset;
+	public boolean isValidDependency(Rule r1, Rule r2, Substitution s) {
+		InMemoryAtomSet b1 = s.createImageOf(r1.getBody());
+		InMemoryAtomSet h1 = s.createImageOf(r1.getHead());
+		InMemoryAtomSet b2 = s.createImageOf(r2.getBody());
+		InMemoryAtomSet h2 = s.createImageOf(r2.getHead());
+		
+		InMemoryAtomSet f = new LinkedListAtomSet();
+		f.addAll(b1.iterator());
+		f.addAll(h1.iterator());
+		f.addAll(b2.iterator());
+
+		return !AtomSetUtils.contains(f,h2);
 	}
 
-	@Override
-	public InMemoryAtomSet create(AtomSet src) throws IteratorException {
-		InMemoryAtomSet atomset = this.create();
-		CloseableIterator<Atom> it = src.iterator();
-		while(it.hasNext()) {
-			Atom a = it.next();
-			atomset.add(a);
-		}
-		return atomset;
-	}
+};
 
-	@Override
-	public InMemoryAtomSet create(InMemoryAtomSet src) {
-		try {
-			return create((AtomSet) src);
-		} catch (IteratorException e) {
-			throw new Error("Should never happen");
-		}
-	}
-
-	@Override
-	public InMemoryAtomSet create(Atom atom) {
-		return new LinkedListAtomSet(atom);
-	}
-}

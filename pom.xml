@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>fr.lirmm.graphik</groupId>
@@ -57,6 +58,7 @@ algorithms, structural analysis of decidability properties of a rule set, a text
 		<module>graal-api</module>
 		<module>graal-core</module>
 		<module>graal-homomorphism</module>
+		<module>graal-grd</module>
 		<module>graal-io</module>
 		<module>graal-kb</module>
 		<module>graal-forward-chaining</module>
@@ -64,9 +66,9 @@ algorithms, structural analysis of decidability properties of a rule set, a text
 		<module>graal-backward-chaining</module>
 		<module>graal-rules-analyser</module>
 		<module>graal-util</module>
-    <module>rdf4j-common</module>
-    <!-- <module>graal-coverage</module>-->
-  </modules>
+		<module>rdf4j-common</module>
+		<!-- <module>graal-coverage</module> -->
+	</modules>
 
 	<dependencies>
 		<dependency>

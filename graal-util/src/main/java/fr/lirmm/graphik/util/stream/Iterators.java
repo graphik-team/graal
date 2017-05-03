@@ -43,6 +43,7 @@
 package fr.lirmm.graphik.util.stream;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -227,5 +228,48 @@ public final class Iterators {
 		it.close();
 		return list;
 	}
+	
+	/**
+	 * @param it
+	 * @return a List containing all elements accessible by the specified iterator.
+
+	 */
+	public static <T> List<T> toList(CloseableIteratorWithoutException<T> it) {
+		List<T> list = new LinkedList<T>();
+		while(it.hasNext()) {
+			list.add(it.next());
+		}
+		it.close();
+		return list;
+	}
+	
+	
+	/**
+	 * @param it
+	 * @return a Set containing all elements accessible by the specified iterator.
+	 * @throws IteratorException 
+	 */
+	public static <T> Set<T> toSet(CloseableIterator<T> it) throws IteratorException {
+		Set<T> list = new HashSet<T>();
+		while(it.hasNext()) {
+			list.add(it.next());
+		}
+		it.close();
+		return list;
+	}
+	
+	/**
+	 * @param it
+	 * @return a Set containing all elements accessible by the specified iterator.
+	 */
+	public static <T> Set<T> toSet(CloseableIteratorWithoutException<T> it) {
+		Set<T> list = new HashSet<T>();
+		while(it.hasNext()) {
+			list.add(it.next());
+		}
+		it.close();
+		return list;
+	}
+
 
 }

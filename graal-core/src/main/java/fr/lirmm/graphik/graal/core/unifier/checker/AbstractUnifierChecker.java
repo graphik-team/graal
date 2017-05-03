@@ -40,33 +40,20 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.api.factory;
+package fr.lirmm.graphik.graal.core.unifier.checker;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
-import fr.lirmm.graphik.util.stream.IteratorException;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface InMemoryAtomSetFactory {
+public abstract class AbstractUnifierChecker implements UnifierChecker {
 
-	InMemoryAtomSet create();
-
-	InMemoryAtomSet create(Atom... atoms);
-
-	InMemoryAtomSet create(AtomSet src) throws IteratorException;
-
-	InMemoryAtomSet create(InMemoryAtomSet src);
-	
-	InMemoryAtomSet create(CloseableIterator<Atom> atoms) throws IteratorException;
-
-	InMemoryAtomSet create(CloseableIteratorWithoutException<Atom> atoms);
-
-	InMemoryAtomSet create(Atom atom);
+	@Override
+	public boolean isValidDependency(Rule r1, Rule r2, Substitution s) {
+		return isValidDependency(r1, r2.getBody(), s);
+	}
 
 }

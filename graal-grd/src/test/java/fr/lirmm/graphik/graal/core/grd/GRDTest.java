@@ -51,10 +51,16 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import fr.lirmm.graphik.graal.api.core.Rule;
-import fr.lirmm.graphik.graal.core.TestUtils;
+import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.api.io.ParseException;
+import fr.lirmm.graphik.graal.core.HashMapSubstitution;
+import fr.lirmm.graphik.graal.core.factory.DefaultAtomSetFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
-import fr.lirmm.graphik.graal.core.grd.DefaultGraphOfRuleDependencies;
-import fr.lirmm.graphik.graal.core.grd.ProductivityFilter;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.core.unifier.checker.AtomErasingChecker;
+import fr.lirmm.graphik.graal.core.unifier.checker.ProductivityChecker;
+import fr.lirmm.graphik.graal.core.unifier.checker.RestrictedProductivityChecker;
+import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -86,16 +92,52 @@ public class GRDTest {
 	}
 
 	@Test
-	public void atomErasingFilterTest() {
+	public void AtomErasingFilterTest() {
+		Rule r1 = DefaultRuleFactory.instance().create(DefaultAtomSetFactory.instance().create(TestUtils.pXZ), DefaultAtomSetFactory.instance().create(TestUtils.pXY,TestUtils.pYZ));
+		Rule r2 = DefaultRuleFactory.instance().create(TestUtils.pUU, TestUtils.sU);
+
+		Substitution s = new HashMapSubstitution();
+		s.put(DefaultTermFactory.instance().createVariable("X"), DefaultTermFactory.instance().createVariable("U"));
+		s.put(DefaultTermFactory.instance().createVariable("Y"), DefaultTermFactory.instance().createVariable("U"));
+		s.put(DefaultTermFactory.instance().createVariable("Z"), DefaultTermFactory.instance().createVariable("U"));
+	
+		AtomErasingChecker filter = AtomErasingChecker.instance();
+		Assert.assertFalse(filter.isValidDependency(r1, r2, s));
+	}
+	
+	@Test
+	public void ProductivityFilterTest() {
 		LinkedList<Rule> rules = new LinkedList<Rule>();
 		rules.add(DefaultRuleFactory.instance().create(TestUtils.sX, TestUtils.rX));
 		rules.add(DefaultRuleFactory.instance().create(TestUtils.rX, TestUtils.sX));
 		rules.add(DefaultRuleFactory.instance().create(TestUtils.rX, TestUtils.pXY));
 
-		DefaultGraphOfRuleDependencies grd = new DefaultGraphOfRuleDependencies(rules, true, new ProductivityFilter());
+		DefaultGraphOfRuleDependencies grd = new DefaultGraphOfRuleDependencies(rules, true, ProductivityChecker.instance());
 		Assert.assertFalse(grd.existUnifier(rules.get(0), rules.get(1)));
 		Assert.assertFalse(grd.existUnifier(rules.get(1), rules.get(0)));
 		Assert.assertTrue(grd.existUnifier(rules.get(0), rules.get(2)));
+	}
+	
+	@Test
+	public void test() throws ParseException {
+		Rule r1 = DlgpParser.parseRule("wf(X0,Y0), o(Y0) :- e(X0).");
+		Rule r2 = DlgpParser.parseRule("e(X1), wf(X1,Y1) :- o(Y1).");
+		
+		Substitution s = new HashMapSubstitution();
+		s.put(DefaultTermFactory.instance().createVariable("Y1"), DefaultTermFactory.instance().createVariable("Y0"));
+		RestrictedProductivityChecker filter = RestrictedProductivityChecker.instance();
+		Assert.assertFalse(filter.isValidDependency(r1, r2, s));
+	}
+	
+	@Test
+	public void test2() throws ParseException {
+		Rule r1 = DlgpParser.parseRule("wf(X0,Y0), o(Y0) :- e(X0).");
+		Rule r2 = DlgpParser.parseRule("wf(Y1,X1) :- o(Y1).");
+		
+		Substitution s = new HashMapSubstitution();
+		s.put(DefaultTermFactory.instance().createVariable("Y1"), DefaultTermFactory.instance().createVariable("Y0"));
+		RestrictedProductivityChecker filter = RestrictedProductivityChecker.instance();
+		Assert.assertTrue(filter.isValidDependency(r1, r2, s));
 	}
 
 }

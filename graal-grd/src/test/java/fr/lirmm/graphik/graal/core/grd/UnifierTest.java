@@ -43,9 +43,10 @@
  /**
  * 
  */
-package fr.lirmm.graphik.graal.core;
+package fr.lirmm.graphik.graal.core.grd;
 
-import java.util.Collection;
+
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -55,6 +56,10 @@ import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.core.factory.DefaultAtomSetFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
+import fr.lirmm.graphik.graal.core.unifier.DefaultUnifierAlgorithm;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
+import fr.lirmm.graphik.util.stream.IteratorException;
+import fr.lirmm.graphik.util.stream.Iterators;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -63,7 +68,7 @@ import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 public class UnifierTest {
 	
 	@Test
-	public void mostGeneralTest1() {
+	public void mostGeneralTest1() throws IteratorException {
 		Rule rule = DefaultRuleFactory.instance().create();
 		rule.getBody().add(TestUtils.pXY);
 		rule.getHead().add(TestUtils.qXY);
@@ -71,10 +76,26 @@ public class UnifierTest {
 		InMemoryAtomSet atomset = DefaultAtomSetFactory.instance().create();
 		atomset.add(TestUtils.qUV);
 
-		Collection<Substitution> unifiers = Unifier.instance().computePieceUnifier(rule, atomset);
-		print(unifiers);
-		Assert.assertEquals(1, unifiers.size());
+		CloseableIteratorWithoutException<Substitution> unifiers = DefaultUnifierAlgorithm.instance().computePieceUnifier(rule, atomset);
+		Assert.assertEquals(1, Iterators.count(unifiers));
 	}
+	
+	@Test
+	public void test2() throws IteratorException {
+		Rule rule = DefaultRuleFactory.instance().create();
+		rule.getBody().add(TestUtils.pXX);
+		rule.getHead().add(TestUtils.pXY);
+		rule.getHead().add(TestUtils.sY);
+
+		InMemoryAtomSet atomset = DefaultAtomSetFactory.instance().create();
+		atomset.add(TestUtils.pUV);
+		atomset.add(TestUtils.sU);
+		atomset.add(TestUtils.sV);
+
+		CloseableIteratorWithoutException<Substitution> unifiers =DefaultUnifierAlgorithm.instance().computePieceUnifier(rule, atomset);
+		Assert.assertEquals(1, Iterators.count(unifiers));
+	}
+	
 	
 	/**
 	 * Given s(X) -> p(X,Y), p(Y,Z). and p(U,V),p(V,W). computePieceUnifier
@@ -91,8 +112,8 @@ public class UnifierTest {
 		atomset.add(TestUtils.pUV);
 		atomset.add(TestUtils.pVW);
 		
-		Collection<Substitution> unifiers = Unifier.instance().computePieceUnifier(rule, atomset);
-		Assert.assertEquals(2, unifiers.size());
+		CloseableIteratorWithoutException<Substitution> unifiers = DefaultUnifierAlgorithm.instance().computePieceUnifier(rule, atomset);
+		Assert.assertEquals(2, Iterators.count(unifiers));
 	}
 	
 	@Test
@@ -104,8 +125,8 @@ public class UnifierTest {
 		InMemoryAtomSet atomset = DefaultAtomSetFactory.instance().create();
 		atomset.add(TestUtils.pAU);
 		
-		Collection<Substitution> unifiers = Unifier.instance().computePieceUnifier(rule, atomset);
-		Assert.assertEquals(1, unifiers.size());
+		CloseableIteratorWithoutException<Substitution> unifiers = DefaultUnifierAlgorithm.instance().computePieceUnifier(rule, atomset);
+		Assert.assertEquals(1, Iterators.count(unifiers));
 	}
 
 	@Test
@@ -117,9 +138,9 @@ public class UnifierTest {
 		InMemoryAtomSet atomset = DefaultAtomSetFactory.instance().create();
 		atomset.add(TestUtils.pXA);
 
-		Collection<Substitution> unifiers = Unifier.instance().computePieceUnifier(rule,
+		CloseableIteratorWithoutException<Substitution> unifiers = DefaultUnifierAlgorithm.instance().computePieceUnifier(rule,
 				atomset);
-		Assert.assertEquals(0, unifiers.size());
+		Assert.assertEquals(0, Iterators.count(unifiers));
 	}
 
 	@Test
@@ -131,8 +152,8 @@ public class UnifierTest {
 		InMemoryAtomSet atomset = DefaultAtomSetFactory.instance().create();
 		atomset.add(TestUtils.pUU);
 
-		Collection<Substitution> unifiers = Unifier.instance().computePieceUnifier(rule, atomset);
-		Assert.assertEquals(0, unifiers.size());
+		CloseableIteratorWithoutException<Substitution> unifiers = DefaultUnifierAlgorithm.instance().computePieceUnifier(rule, atomset);
+		Assert.assertEquals(0, Iterators.count(unifiers));
 	}
 
 	@Test
@@ -148,8 +169,8 @@ public class UnifierTest {
 		atomset.add(TestUtils.pVW);
 		atomset.add(TestUtils.pWX);
 
-		Collection<Substitution> unifiers = Unifier.instance().computePieceUnifier(rule, atomset);
-		Assert.assertEquals(2, unifiers.size());
+		CloseableIteratorWithoutException<Substitution> unifiers = DefaultUnifierAlgorithm.instance().computePieceUnifier(rule, atomset);
+		Assert.assertEquals(2, Iterators.count(unifiers));
 	}
 
 	@Test
@@ -164,8 +185,8 @@ public class UnifierTest {
 		atomset.add(TestUtils.pWT);
 		atomset.add(TestUtils.pUW);
 
-		Collection<Substitution> unifiers = Unifier.instance().computePieceUnifier(rule, atomset);
-		Assert.assertEquals(2, unifiers.size());
+		CloseableIteratorWithoutException<Substitution> unifiers = DefaultUnifierAlgorithm.instance().computePieceUnifier(rule, atomset);
+		Assert.assertEquals(2, Iterators.count(unifiers));
 	}
 
 	@Test
@@ -179,14 +200,14 @@ public class UnifierTest {
 		atomset.add(TestUtils.pVW);
 		atomset.add(TestUtils.qTW);
 
-		Collection<Substitution> unifiers = Unifier.instance().computePieceUnifier(rule, atomset);
-		print(unifiers);
-		Assert.assertEquals(2, unifiers.size());
+		CloseableIteratorWithoutException<Substitution> unifiers = DefaultUnifierAlgorithm.instance().computePieceUnifier(rule, atomset);
+		Assert.assertEquals(2, Iterators.count(unifiers));
 	}
-
-	private void print(Collection<Substitution> list) {
-		for (Substitution s : list) {
+ 
+	public void print(List<Substitution> list) {
+		for(Substitution s : list) {
 			System.out.println(s);
 		}
 	}
+
 }
