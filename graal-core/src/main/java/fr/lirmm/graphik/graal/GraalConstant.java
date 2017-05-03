@@ -16,7 +16,8 @@ public final class GraalConstant {
 	}
 
 	public static final Term freshConstant() {
-		return DefaultTermFactory.instance().createConstant("c" + (_constant_count++));
+		return DefaultTermFactory.instance().createConstant(URIUtils.createURI("c" + (_constant_count++), FRESH_PREFIX));
+
 	}
 
 	private static int _predicate_count = 0;
