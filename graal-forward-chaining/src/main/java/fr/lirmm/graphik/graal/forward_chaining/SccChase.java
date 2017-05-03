@@ -64,6 +64,12 @@ import fr.lirmm.graphik.util.graph.scc.StronglyConnectedComponentsGraph;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 
 /**
+ * This Chase apply rules following the layers of the Strongly Connected
+ * Components Graph (SCCG) of the Graph Of Rule Dependencies (GRD). It applies
+ * rules layer by layer, indeed a rule from a layer of the SCCG can not trigger
+ * a rule from a previous layer. <br/>
+ * This chase is not breadth first.
+ * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
@@ -91,7 +97,7 @@ public class SccChase extends AbstractChase {
 		}
 		init();
 	}
-	
+
 	public SccChase(Iterator<Rule> rules, AtomSet atomSet, RuleApplier ruleApplier) {
 		this(new DefaultGraphOfRuleDependencies(rules), atomSet, ruleApplier);
 	}
@@ -159,5 +165,5 @@ public class SccChase extends AbstractChase {
 	public boolean hasNext() {
 		return this.level < this.levelmax;
 	}
-	
+
 }
