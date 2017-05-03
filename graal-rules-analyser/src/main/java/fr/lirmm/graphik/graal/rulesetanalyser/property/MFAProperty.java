@@ -65,13 +65,12 @@ import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.Rules;
+import fr.lirmm.graphik.graal.core.grd.DefaultGraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
-import fr.lirmm.graphik.graal.forward_chaining.ConfigurableChase;
-import fr.lirmm.graphik.graal.forward_chaining.SccChase;
+import fr.lirmm.graphik.graal.forward_chaining.ChaseWithGRD;
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.FrontierRestrictedChaseHaltingCondition;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
-import fr.lirmm.graphik.graal.homomorphism.RecursiveBacktrackHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
 
@@ -104,11 +103,14 @@ public final class MFAProperty extends RuleSetProperty.Default {
 		return "The skolem chase executed on the critical instance does not produce any 'cycle of functional symbols'.";
 	}
 
+	/**
+	 *
+	 */
 	@Override
 	public int check(AnalyserRuleSet ruleSet) {
 		RuleSet R = translateToMFA(ruleSet);
 		AtomSet A = Rules.criticalInstance(ruleSet);
-		Chase chase = new SccChase(R.iterator(), A, new DefaultRuleApplier<AtomSet>(new FrontierRestrictedChaseHaltingCondition()));
+		Chase chase = new ChaseWithGRD(new DefaultGraphOfRuleDependencies(R), A, new DefaultRuleApplier<AtomSet>(new FrontierRestrictedChaseHaltingCondition()));
 
 		DefaultConjunctiveQuery Q = new DefaultConjunctiveQuery();
 		DefaultAtom q = new DefaultAtom(C);

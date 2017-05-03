@@ -48,7 +48,9 @@ package fr.lirmm.graphik.graal.forward_chaining.halting_condition;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,11 +94,15 @@ public class FrontierRestrictedChaseHaltingCondition implements ChaseHaltingCond
 		}
 
 		final int index = ruleIndex.get(rule).intValue();
-		String frontier = "";
-		for (Term t : rule.getFrontier()) {
-			frontier += "_";
-			frontier += t.getIdentifier();
+		StringBuilder frontierSb = new StringBuilder();
+		SortedSet<Variable> frontierSet = new TreeSet<Variable>(rule.getFrontier());
+		for (Term t : frontierSet) {
+			frontierSb.append("_");
+			frontierSb.append(t.toString());
+			frontierSb.append(substitution.createImageOf(t).toString());
 		}
+		String frontier = frontierSb.toString();
+		
 		for (Variable t : rule.getExistentials()) {
 			substitution.put(t,
 			    DefaultTermFactory.instance().createConstant("f_" + index + "_" + t.getIdentifier() + frontier));
