@@ -53,6 +53,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
@@ -141,7 +142,6 @@ import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.MathUtils;
-import fr.lirmm.graphik.util.collections.CollectionsUtils;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataMaxCardinalityImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataMinCardinalityImpl;
@@ -248,7 +248,7 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 		if (OWLAPIUtils.isIntersection(superClass)) {
 			for (OWLClassExpression c : OWLAPIUtils
 					.getObjectIntersectionOperands(superClass)) {
-				CollectionsUtils.addAll(objects, new OWLSubClassOfAxiomImpl(
+				CollectionUtils.addAll(objects, new OWLSubClassOfAxiomImpl(
 						subClass, c, emptyAnno).accept(this));
 			}
 		} else if (superClass instanceof OWLObjectComplementOf) {
@@ -256,14 +256,14 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 			operands.add(subClass);
 			operands.add(((OWLObjectComplementOf) superClass).getOperand());
 			subClass = new OWLObjectIntersectionOfImpl(operands);
-			CollectionsUtils.addAll(objects, new OWLSubClassOfAxiomImpl(
+			CollectionUtils.addAll(objects, new OWLSubClassOfAxiomImpl(
 					subClass, NOTHING, emptyAnno).accept(this));
 		} else if (superClass instanceof OWLObjectAllValuesFrom) {
 			OWLObjectAllValuesFrom allValuesFrom = (OWLObjectAllValuesFrom) superClass;
 			subClass = new OWLObjectSomeValuesFromImpl(allValuesFrom
 					.getProperty().getInverseProperty(), subClass);
 			superClass = allValuesFrom.getFiller();
-			CollectionsUtils.addAll(objects, new OWLSubClassOfAxiomImpl(
+			CollectionUtils.addAll(objects, new OWLSubClassOfAxiomImpl(
 					subClass, superClass, emptyAnno).accept(this));
 		} else if (superClass instanceof OWLObjectMaxCardinality
 				&& ((OWLObjectMaxCardinality) superClass).getCardinality() == 0) {
@@ -273,7 +273,7 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 			operands.add(new OWLObjectSomeValuesFromImpl(maxCard.getProperty(),
 					maxCard.getFiller()));
 			subClass = new OWLObjectIntersectionOfImpl(operands);
-			CollectionsUtils.addAll(objects, new OWLSubClassOfAxiomImpl(
+			CollectionUtils.addAll(objects, new OWLSubClassOfAxiomImpl(
 					subClass, NOTHING, emptyAnno).accept(this));
 		} else if (superClass instanceof OWLDataMaxCardinality
 				&& ((OWLDataMaxCardinality) superClass).getCardinality() == 0) {
@@ -283,7 +283,7 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 			operands.add(new OWLDataSomeValuesFromImpl(maxCard.getProperty(),
 					maxCard.getFiller()));
 			subClass = new OWLObjectIntersectionOfImpl(operands);
-			CollectionsUtils.addAll(objects, new OWLSubClassOfAxiomImpl(
+			CollectionUtils.addAll(objects, new OWLSubClassOfAxiomImpl(
 					subClass, NOTHING, emptyAnno).accept(this));
 		} else if (superClass instanceof OWLObjectExactCardinality
 				&& ((OWLObjectExactCardinality) superClass).getCardinality() <= 1) {
@@ -295,9 +295,9 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 					exactCard.getProperty(), exactCard.getCardinality(),
 					exactCard.getFiller());
 
-			CollectionsUtils.addAll(objects, new OWLSubClassOfAxiomImpl(
+			CollectionUtils.addAll(objects, new OWLSubClassOfAxiomImpl(
 					subClass, maxCard, emptyAnno).accept(this));
-			CollectionsUtils.addAll(objects, new OWLSubClassOfAxiomImpl(
+			CollectionUtils.addAll(objects, new OWLSubClassOfAxiomImpl(
 					subClass, minCard, emptyAnno).accept(this));
 		} else if (superClass instanceof OWLDataExactCardinality
 				&& ((OWLDataExactCardinality) superClass).getCardinality() <= 1) {
@@ -309,20 +309,20 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 					exactCard.getProperty(), exactCard.getCardinality(),
 					exactCard.getFiller());
 
-			CollectionsUtils.addAll(objects, new OWLSubClassOfAxiomImpl(
+			CollectionUtils.addAll(objects, new OWLSubClassOfAxiomImpl(
 					subClass, maxCard, emptyAnno).accept(this));
-			CollectionsUtils.addAll(objects, new OWLSubClassOfAxiomImpl(
+			CollectionUtils.addAll(objects, new OWLSubClassOfAxiomImpl(
 					subClass, minCard, emptyAnno).accept(this));
 		} else if (isSuperClass(superClass)) {
 			if (subClass instanceof OWLObjectUnionOf) {
 				for (OWLClassExpression c : OWLAPIUtils
 						.getObjectUnionOperands(subClass)) {
-					CollectionsUtils
+					CollectionUtils
 							.addAll(objects, new OWLSubClassOfAxiomImpl(c,
 									superClass, emptyAnno).accept(this));
 				}
 			} else if (isEquivClass(subClass)) {
-				CollectionsUtils.addAll(objects, mainProcess(arg));
+				CollectionUtils.addAll(objects, mainProcess(arg));
 			} else {
 				if (LOGGER.isWarnEnabled()) {
 					LOGGER.warn("[ "
@@ -358,9 +358,9 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 			it2 = classes.iterator();
 			while (it2.hasNext()) {
 				OWLClassExpression next = it2.next();
-				CollectionsUtils.addAll(objects, new OWLSubClassOfAxiomImpl(
+				CollectionUtils.addAll(objects, new OWLSubClassOfAxiomImpl(
 						classExpr, next, emptyAnno).accept(this));
-				CollectionsUtils.addAll(objects, new OWLSubClassOfAxiomImpl(
+				CollectionUtils.addAll(objects, new OWLSubClassOfAxiomImpl(
 						next, classExpr, emptyAnno).accept(this));
 			}
 		}
@@ -388,7 +388,7 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 				operands.add(next);
 				OWLClassExpression newExpr = new OWLObjectIntersectionOfImpl(
 						operands);
-				CollectionsUtils.addAll(objects, new OWLSubClassOfAxiomImpl(
+				CollectionUtils.addAll(objects, new OWLSubClassOfAxiomImpl(
 						newExpr, NOTHING, emptyAnno).accept(this));
 			}
 		}
@@ -670,7 +670,7 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 		OWLClassExpression sub = new OWLObjectOneOfImpl(
 				Collections.singleton(arg.getIndividual()));
 		OWLClassExpression sup = arg.getClassExpression();
-		CollectionsUtils.addAll(objects, new OWLSubClassOfAxiomImpl(sub, sup,
+		CollectionUtils.addAll(objects, new OWLSubClassOfAxiomImpl(sub, sup,
 				emptyAnno).accept(this));
 		return objects;
 	}
