@@ -42,12 +42,9 @@
  */
 package fr.lirmm.graphik.graal.homomorphism;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
@@ -56,18 +53,19 @@ import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
+import fr.lirmm.graphik.graal.api.homomorphism.PreparedExistentialHomomorphism;
+import fr.lirmm.graphik.graal.core.HashMapSubstitution;
+import fr.lirmm.graphik.graal.core.Substitutions;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
 import fr.lirmm.graphik.graal.homomorphism.bootstrapper.Bootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.ForwardChecking;
+import fr.lirmm.graphik.graal.homomorphism.scheduler.Scheduler;
 import fr.lirmm.graphik.util.profiler.NoProfiler;
 import fr.lirmm.graphik.util.profiler.Profilable;
 import fr.lirmm.graphik.util.profiler.Profiler;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
-import fr.lirmm.graphik.util.stream.CloseableIterableWithoutException;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
@@ -75,59 +73,39 @@ import fr.lirmm.graphik.util.stream.IteratorException;
  *
  */
 class BacktrackIterator extends AbstractCloseableIterator<Substitution>
-                        implements CloseableIterator<Substitution>, Profilable {
+		implements CloseableIterator<Substitution>, Profilable {
 
-	private Scheduler scheduler;
-	private Bootstrapper bootstrapper;
-	private ForwardChecking fc;
-	private BackJumping bj;
-
-	private InMemoryAtomSet h;
-	private AtomSet g;
-	private RulesCompilation compilation;
+	private BacktrackIteratorData data; 
+	private Substitution initialSubstitution;
 	private Substitution next = null;
-
-	private Var[] vars;
-	private Map<Variable, Var> index;
-	private Var currentVar;
-
-	private int levelMax;
+	
 	private int level;
 	private boolean goBack;
-	private List<Term> ans;
+	private Var currentVar;
 
 	private Profiler profiler;
-
-	private int nbCall = 0;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
+	
+	public BacktrackIterator(BacktrackIteratorData data, Substitution initialSubstitution) throws HomomorphismException {
 
-	public BacktrackIterator(InMemoryAtomSet h, AtomSet g, List<Term> ans, Scheduler scheduler,
-	    Bootstrapper boostrapper, ForwardChecking fc, BackJumping bj, RulesCompilation compilation, Profiler profiler) throws HomomorphismException {
-
-		this.h = h;
-		this.g = g;
-		this.ans = ans;
-		this.scheduler = scheduler;
-		this.bootstrapper = boostrapper;
-		this.fc = fc;
-		this.bj = bj;
-		this.fc.setBackJumping(bj);
-		this.compilation = compilation;
-
-		this.currentVar = null;
+		this.data = data;
+		this.profiler = data.profiler;
+		this.initialSubstitution = initialSubstitution;
+		
 		this.level = 0;
+		this.currentVar = null;
 		this.goBack = false;
+	}
 
-		this.profiler = profiler;
-		this.bootstrapper.setProfiler(profiler);
-		this.scheduler.setProfiler(profiler);
-		this.fc.setProfiler(profiler);
-		this.bj.setProfiler(profiler);
+	public BacktrackIterator(InMemoryAtomSet query, Collection<InMemoryAtomSet> negParts, AtomSet data, List<Term> ans,
+			Scheduler scheduler, Bootstrapper bootstrapper, ForwardChecking fc, BackJumping bj,
+			RulesCompilation compilation, Profiler profiler) throws HomomorphismException {
 
-		this.preprocessing();
+		this(new BacktrackIteratorData(query, negParts, data, ans, scheduler, bootstrapper, fc, bj, compilation, profiler),
+				Substitutions.emptySubstitution());
 	}
 
 	/**
@@ -135,45 +113,12 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution>
 	 * 
 	 * @param h
 	 * @param g
-	 * @throws HomomorphismException 
+	 * @throws HomomorphismException
 	 */
-	public BacktrackIterator(InMemoryAtomSet h, AtomSet g, List<Term> ans, Scheduler scheduler,
-	    Bootstrapper boostrapper, ForwardChecking fc, BackJumping bj, RulesCompilation compilation) throws HomomorphismException {
-		this(h, g, ans, scheduler, boostrapper, fc, bj, compilation, NoProfiler.instance());
-	}
-
-	private void preprocessing() throws HomomorphismException {
-		profiler.start("preprocessingTime");
-
-		// Compute order on query variables and atoms
-		vars = scheduler.execute(this.h, ans, this.g, this.compilation);
-		levelMax = vars.length - 2;
-		if (this.profiler.isProfilingEnabled()) {
-			StringBuilder sb = new StringBuilder();
-			for (int i = 1; i < vars.length - 1; ++i) {
-				sb.append(vars[i].value.toString());
-				sb.append(' ');
-			}
-			this.profiler.incr("__#cqs", 1);
-			this.profiler.put("SchedulingSubQuery" + this.profiler.get("__#cqs"), sb.toString());
-		}
-
-		index = new TreeMap<Variable, Var>();
-		for (Var v : vars) {
-			if (v.value != null)
-				this.index.put(v.value, v);
-		}
-
-		if (ans.isEmpty()) {
-			vars[levelMax + 1].previousLevel = -1;
-		}
-
-		computeAtomOrder(h, vars);
-		fc.init(vars, index);
-		bj.init(vars, index);
-
-		profiler.stop("preprocessingTime");
-
+	public BacktrackIterator(InMemoryAtomSet h, Collection<InMemoryAtomSet> negParts, AtomSet g, List<Term> ans,
+			Scheduler scheduler, Bootstrapper boostrapper, ForwardChecking fc, BackJumping bj,
+			RulesCompilation compilation) throws HomomorphismException {
+		this(h, negParts, g, ans, scheduler, boostrapper, fc, bj, compilation, NoProfiler.instance());
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -205,165 +150,152 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution>
 
 	@Override
 	public void close() {
-		for (int i = 1; i < vars.length; ++i) {
-			if (vars[i].domain != null) {
-				this.vars[i].domain.close();
+		for (int i = 1; i < this.data.varsOrder.length; ++i) {
+			if (this.data.varsOrder[i].domain != null) {
+				this.data.varsOrder[i].domain.close();
 			}
 		}
-	}
-
-	// /////////////////////////////////////////////////////////////////////////
-	// PROFILABLE METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	@Override
-	public void setProfiler(Profiler profiler) {
-		if (profiler == null) {
-			profiler = NoProfiler.instance();
-		}
-		this.profiler = profiler;
-		this.bootstrapper.setProfiler(profiler);
-		this.scheduler.setProfiler(profiler);
-		this.fc.setProfiler(profiler);
-		this.bj.setProfiler(profiler);
-	}
-
-	@Override
-	public Profiler getProfiler() {
-		return this.profiler;
-	}
-
-	// /////////////////////////////////////////////////////////////////////////
-	// OBJECT METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("{\n").append("\t{query->").append(h).append("},\n\t{level->").append(level).append("},\n\t{");
-		int i = 0;
-		for (Var v : vars) {
-			sb.append((i == level)?'*':' ');
-			String s = v.toString();
-			sb.append(s.substring(0, s.length() - 1)).append("->").append(v.image).append("\tFC{");
-			this.fc.append(sb, i).append("}");
-			this.bj.append(sb, i).append("}\n");
-			++i;
-		}
-		sb.append("}\n}\n");
-
-		return sb.toString();
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	/*
-	 * level -1 : no more answers level 0 : not initialized
+	/**
+	 * level < 0 : no more answers <br/>
+	 * level 0 : not initialized
 	 */
 	private Substitution computeNext() throws BacktrackException {
 		if (profiler != null) {
 			profiler.start("backtrackingTime");
 		}
 
-		if (level >= 0) {
-			try {
-				if (level == 0) { // first call
-					// check if the full instantiated atoms from the query are
-					// in the data
-					if (BacktrackUtils.isHomomorphism(vars[level].preAtoms, g, this.index, this.compilation)) {
-						++level;
-						if (level > levelMax) { // there is no variable
-							level = -1;
-							if (profiler != null) {
-								profiler.stop("backtrackingTime");
-							}
-							return solutionFound(vars, ans);
-						}
+		try {
+			if (level == 0) { // first call
+				// check if the full instantiated atoms from the query are in data
+				currentVar = this.data.varsOrder[level];
+				if (BacktrackUtils.isHomomorphism(this.data.varsOrder[level].preAtoms, this.data.data, this.initialSubstitution, this.data.index, this.data.compilation)) {
+					if (this.existNegParts()) {
+						reinitBackjump();
+						backtrack(false);
 					} else {
-						--level;
+						++level;
 					}
+
+				} else {
+					--level;
 				}
+			}
 
-				while (level > 0) {
-					++nbCall;
-					currentVar = vars[level];
+			while (level > 0) {
+				currentVar = this.data.varsOrder[level];
+				profiler.incr("#calls", 1);
 
-					// Homomorphism found
-					if (level > levelMax) {
-						goBack = true;
-
-						Substitution sol = solutionFound(vars, ans);
-
-						int nextLevel = currentVar.previousLevel;
-						for (; level > nextLevel; --level) {
-							vars[level].image = null;
-						}
-						if (profiler != null) {
-							profiler.stop("backtrackingTime");
-						}
-						return sol;
+				if (level > this.data.levelMax) { // Homomorphism found
+					Substitution sol = solutionFound(this.data.ans);
+					reinitBackjump();
+					backtrack(false);
+					if (profiler != null) {
+						profiler.stop("backtrackingTime");
 					}
-
-					//
+					return sol;
+				} else {
 					if (goBack) {
-						if (hasMoreValues(currentVar, g)) {
+						if (hasMoreValues(currentVar, this.data.data)) {
 							goBack = false;
 							++level;
 						} else {
-							int nextLevel = bj.previousLevel(currentVar, vars);
-							for (; level > nextLevel; --level) {
-								vars[level].image = null;
-							}
+							backtrack(true);
 						}
 					} else {
-						if (getFirstValue(currentVar, g)) {
+						if (getFirstValue(currentVar, this.data.data)) {
 							++level;
 						} else {
-							goBack = true;
-							int nextLevel = bj.previousLevel(currentVar, vars);
-							for (; level > nextLevel; --level) {
-								vars[level].image = null;
-							}
+							backtrack(true);
 						}
 					}
+
 				}
-			} catch (AtomSetException e) {
-				throw new BacktrackException("Exception during backtracking", e);
+
 			}
-			--level;
+		} catch (AtomSetException e) {
+			throw new BacktrackException("Exception during backtracking", e);
 		}
+		--level;
+
 		if (profiler != null) {
 			profiler.stop("backtrackingTime");
-			profiler.put("#calls", nbCall);
 		}
 
 		return null;
 	}
 
-	private Substitution solutionFound(Var[] vars, List<Term> ans) {
-		Substitution s = new TreeMapSubstitution();
-		for (Term t : ans) {
-			if (t instanceof Variable) {
-				Var v = this.index.get((Variable) t);
-				s.put(v.value, v.image);
+	/**
+	 * 
+	 * @param previousLevel
+	 * @param failure
+	 *            should be true iff we backtrack due to failure to find a new
+	 *            value for the current variable. Should be false if we
+	 *            backtrack due to a final success (we search an other
+	 *            homomorphism).
+	 */
+	private void backtrack(boolean failure) {
+		int previousLevel = (failure) ? this.data.bj.previousLevel(currentVar, this.data.varsOrder) : currentVar.previousLevel;
+
+		this.goBack = true;
+		for (; level > previousLevel; --level) {
+			this.data.varsOrder[level].image = null;
+		}
+	}
+
+	private void reinitBackjump() {
+		for (int i = 0; i < this.data.varsOrder.length - 1; ++i) {
+			this.data.varsOrder[i].success = true;
+		}
+	}
+
+	private boolean existNegParts() throws BacktrackException {
+		Substitution s = currentSubstitution(this.data.varsOrder);
+		s.put(initialSubstitution);
+		for (PreparedExistentialHomomorphism negPart : this.currentVar.negatedPartsToCheck) {
+			try {
+				if (negPart.exist(s)) {
+					reinitBackjump();
+					return true;
+				}
+			} catch (HomomorphismException e) {
+				throw new BacktrackException("Error while checking anegated part: ", e);
 			}
 		}
+		return false;
+	}
 
-		for (int i = 0; i < vars.length - 1; ++i) {
-			vars[i].success = true;
+	private Substitution solutionFound(List<Term> ans) {
+		Substitution s = new HashMapSubstitution();
+		for (Term t : ans) {
+			if (t instanceof Variable) {
+				Var v = this.data.index.get((Variable) t);
+				s.put(v.value, v.image);
+			}
 		}
 
 		return s;
 	}
 
+	private Substitution currentSubstitution(Var[] vars) {
+		Substitution s = new HashMapSubstitution();
+		for (int i = 1; i <= this.level; ++i) {
+			s.put(vars[i].value, vars[i].image);
+		}
+		return s;
+	}
+
 	private boolean getFirstValue(Var var, AtomSet g) throws BacktrackException {
-		if (fc.isInit(var)) {
-			var.domain = fc.getCandidatsIterator(g, var, this.index, this.compilation);
+		if (this.data.fc.isInit(var)) {
+			var.domain = this.data.fc.getCandidatsIterator(g, var, initialSubstitution, this.data.index, this.data.compilation);
 		} else {
-			var.domain = new HomomorphismIteratorChecker(var, bootstrapper.exec(var, h, g, this.compilation),
-			                                             var.preAtoms, g, this.index, this.compilation);
+			var.domain = new HomomorphismIteratorChecker(var, this.data.bootstrapper.exec(var, this.data.query, g, this.data.compilation),
+					var.preAtoms, g, initialSubstitution, this.data.index, this.data.compilation);
 		}
 		return this.hasMoreValues(var, g);
 	}
@@ -380,11 +312,11 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution>
 					var.image = DefaultTermFactory.instance().createConstant(var.image.getLabel());
 				}
 
-				if (scheduler.isAllowed(var, var.image)) {
-					if (fc.checkForward(var, g, this.index, this.compilation)) {
-						return true;
-					}
+				if (this.data.scheduler.isAllowed(var, var.image) && this.data.fc.checkForward(var, g, initialSubstitution, this.data.index, this.data.compilation)
+						&& !this.existNegParts()) {
+					return true;
 				}
+
 			}
 		} catch (IteratorException e) {
 			throw new BacktrackException("An exception occurs during data iteration", e);
@@ -393,50 +325,58 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution>
 		return false;
 	}
 
-	/**
-	 * The index 0 contains the fully instantiated atoms.
-	 * 
-	 * @param atomset
-	 * @param vars
-	 */
-	private void computeAtomOrder(CloseableIterableWithoutException<Atom> atomset, Var[] vars) {
-		int tmp, rank;
 
-		// initialisation preAtoms and postAtoms Collections
-		for (int i = 0; i < vars.length; ++i) {
-			vars[i].preAtoms = new TreeSet<Atom>();
-			vars[i].postAtoms = new TreeSet<Atom>();
-			vars[i].postVars = new TreeSet<Var>();
-			vars[i].preVars = new TreeSet<Var>();
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PROFILABLE METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	@Override
+	public void setProfiler(Profiler profiler) {
+		if (profiler == null) {
+			profiler = NoProfiler.instance();
 		}
-
-		//
-		CloseableIteratorWithoutException<Atom> it = atomset.iterator();
-		while (it.hasNext()) {
-			Atom a = it.next();
-			rank = 0;
-			for (Term t : a.getVariables()) {
-				tmp = this.index.get(t).level;
-				vars[tmp].postAtoms.add(a);
-
-				if (rank < tmp)
-					rank = tmp;
-			}
-			vars[rank].postAtoms.remove(a);
-			vars[rank].preAtoms.add(a);
-		}
-
-		for (int i = 0; i < vars.length; ++i) {
-			for (Atom a : vars[i].postAtoms) {
-				for (Variable t : a.getVariables()) {
-					Var v = this.index.get(t);
-					if (v.level > i) {
-						vars[i].postVars.add(v);
-						v.preVars.add(vars[i]);
-					}
-				}
-			}
-		}
+		this.profiler = profiler;
+		this.data.bootstrapper.setProfiler(profiler);
+		this.data.scheduler.setProfiler(profiler);
+		this.data.fc.setProfiler(profiler);
+		this.data.bj.setProfiler(profiler);
 	}
+
+	@Override
+	public Profiler getProfiler() {
+		return this.profiler;
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// OBJECT METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("{\n").append("\t{query: ").append(data.query);
+		for (InMemoryAtomSet negPart : this.data.negParts) {
+			sb.append("\u2227\u00AC").append(negPart);
+		}
+		sb.append("},\n\t{level: ").append(level).append("},\n\t{\n");
+		int i = 0;
+		for (Var v : data.varsOrder) {
+			sb.append("\t\t");
+			sb.append((i == level) ? '*' : ' ');
+			String s = v.toString();
+			sb.append(s.substring(0, s.length() - 1)).append("->").append(v.image);
+			sb.append(v.negatedPartsToCheck.isEmpty() ? "   " : " \u00AC ");
+			sb.append("\tFC{");
+			this.data.fc.append(sb, i).append("}");
+			this.data.bj.append(sb, i).append("\n");
+			++i;
+		}
+		sb.append("\t}\n}\n");
+
+		return sb.toString();
+	}
+
+
 
 }

@@ -43,13 +43,15 @@
 package fr.lirmm.graphik.graal.homomorphism;
 
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.NavigableSet;
 import java.util.Set;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.Constant;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.graal.api.homomorphism.PreparedExistentialHomomorphism;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 
@@ -61,7 +63,8 @@ public class Var implements Comparable<Var> {
 
 	public int              level;
 	public Variable         value;
-	public Term         image;
+	public Term         	image;
+	public CloseableIterator<Term> domain;
 
 	/*
 	 * Each atoms from the request graph in which this variable have the highest
@@ -73,9 +76,10 @@ public class Var implements Comparable<Var> {
 	 * this variable appears.
 	 */
 	public Collection<Atom> postAtoms;
+	
+	public List<PreparedExistentialHomomorphism> negatedPartsToCheck;
 
 	// Forward Checking
-	public CloseableIterator<Term> domain;
 	public NavigableSet<Var>       preVars;
 	public Set<Var>         postVars;
 
@@ -90,12 +94,34 @@ public class Var implements Comparable<Var> {
 	// /////////////////////////////////////////////////////////////////////////
 
 	public Var() {
+		negatedPartsToCheck = new LinkedList<PreparedExistentialHomomorphism>();
 	}
 
 	public Var(int level) {
+		this();
 		this.level = level;
 		this.previousLevel = level - 1;
 		this.nextLevel = level + 1;
+	}
+	
+	/**
+	 * copy constructor
+	 * @param v
+	 */
+	public Var(Var v) {
+		this();
+		this.image = null;
+		
+		this.value = v.value;
+		this.level = v.level;
+		this.previousLevel = v.previousLevel;
+		this.nextLevel = v.nextLevel;
+		
+		this.preVars = v.preVars;
+		this.postVars = v.postVars;
+		this.preAtoms = v.preAtoms;
+		this.postAtoms = v.postAtoms;
+		
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

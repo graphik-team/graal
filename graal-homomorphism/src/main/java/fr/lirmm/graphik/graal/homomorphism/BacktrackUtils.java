@@ -85,10 +85,10 @@ public final class BacktrackUtils {
 	 * @return true if there is a homomorphism, false otherwise.
 	 * @throws AtomSetException
 	 */
-	public static boolean isHomomorphism(Iterable<Atom> atomsFrom, AtomSet atomsTo, Map<Variable, Var> index,
+	public static boolean isHomomorphism(Iterable<Atom> atomsFrom, AtomSet atomsTo, Substitution initialSubstitution, Map<Variable, Var> index,
 	    RulesCompilation rc) throws AtomSetException {
 		for (Atom atom : atomsFrom) {
-			Atom image = BacktrackUtils.createImageOf(atom, index);
+			Atom image = BacktrackUtils.createImageOf(atom, initialSubstitution, index);
 			boolean contains = false;
 
 			for (Pair<Atom, Substitution> p : rc.getRewritingOf(image)) {
@@ -110,13 +110,14 @@ public final class BacktrackUtils {
 	 * @param map
 	 * @return an image of specified atom obtained by replacement variables contained in the map with the associated Var.image. 
 	 */
-	public static Atom createImageOf(Atom atom, Map<Variable, Var> map) {
+	public static Atom createImageOf(Atom atom, Substitution initialSubstitution, Map<Variable, Var> map) {
 		List<Term> termsSubstitut = new LinkedList<Term>();
 		for (Term term : atom.getTerms()) {
-			if (term instanceof Variable) {
-				termsSubstitut.add(imageOf((Variable) term, map));
+			Term t = initialSubstitution.createImageOf(term);
+			if (t.isVariable()) {
+				termsSubstitut.add(imageOf((Variable) t, map));
 			} else {
-				termsSubstitut.add(term);
+				termsSubstitut.add(t);
 			}
 		}
 

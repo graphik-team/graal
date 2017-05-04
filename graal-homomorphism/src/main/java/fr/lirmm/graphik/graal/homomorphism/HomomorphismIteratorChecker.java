@@ -48,6 +48,7 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.util.profiler.Profilable;
@@ -74,13 +75,14 @@ public class HomomorphismIteratorChecker extends AbstractCloseableIterator<Term>
 	private Map<Variable, Var>      map;
 	private RulesCompilation        rc;
 	private Profiler                profiler;
+	private Substitution 			initialSubstitution;
 
 	/**
 	 * Check over it, the images for var such that there exists an homomorphism
 	 * from h to g.
 	 */
 	public HomomorphismIteratorChecker(Var var, CloseableIterator<Term> it, Iterable<Atom> h, AtomSet g,
-	    Map<Variable, Var> map,
+			Substitution initialSubstitution, Map<Variable, Var> map,
 	    RulesCompilation rc) {
 		this.var = var;
 		this.it = it;
@@ -88,6 +90,7 @@ public class HomomorphismIteratorChecker extends AbstractCloseableIterator<Term>
 		this.g = g;
 		this.map = map;
 		this.rc = rc;
+		this.initialSubstitution = initialSubstitution;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -148,7 +151,7 @@ public class HomomorphismIteratorChecker extends AbstractCloseableIterator<Term>
 			profiler.incr("#isHomomorphism", 1);
 			profiler.start("isHomomorphismTime");
 		}
-		boolean res = BacktrackUtils.isHomomorphism(h, g, map, rc);
+		boolean res = BacktrackUtils.isHomomorphism(h, g, initialSubstitution, map, rc);
 		if (profiler != null) {
 			profiler.stop("isHomomorphismTime");
 		}

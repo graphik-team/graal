@@ -40,43 +40,51 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.forward_chaining.rule_applier;
+package fr.lirmm.graphik.graal.homomorphism;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.AtomSetException;
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQueryWithNegatedPart;
-import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplicationException;
-import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.core.RuleWrapper2ConjunctiveQueryWithNegation;
-import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
+import fr.lirmm.graphik.graal.api.homomorphism.PreparedHomomorphism;
+import fr.lirmm.graphik.graal.homomorphism.backjumping.NoBackJumping;
+import fr.lirmm.graphik.graal.homomorphism.bootstrapper.Bootstrapper;
+import fr.lirmm.graphik.graal.homomorphism.bootstrapper.StarBootstrapper;
+import fr.lirmm.graphik.graal.homomorphism.forward_checking.NoForwardChecking;
+import fr.lirmm.graphik.graal.homomorphism.scheduler.PatternScheduler;
+import fr.lirmm.graphik.graal.homomorphism.scheduler.DefaultPatternScheduler;
+import fr.lirmm.graphik.util.profiler.NoProfiler;
+import fr.lirmm.graphik.util.profiler.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class RestrictedChaseRuleApplier implements RuleApplier<Rule, AtomSet> {
+class PreparedBacktrackHomomorphism implements PreparedHomomorphism {
 
-	private static final RestrictedChaseRuleApplier INSTANCE = new RestrictedChaseRuleApplier();
-
+	BacktrackIteratorData data;
 	// /////////////////////////////////////////////////////////////////////////
-	// SINGLETON
+	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
-
-	public static RestrictedChaseRuleApplier instance() {
-		return INSTANCE;
+	
+	public PreparedBacktrackHomomorphism(ConjunctiveQuery query, Set<Variable> variablesToParameterize, AtomSet data, RulesCompilation compilation) throws HomomorphismException {
+		
+		this(query, variablesToParameterize, Collections.<InMemoryAtomSet>emptySet(), data, DefaultPatternScheduler.instance(), StarBootstrapper.instance(), compilation, NoProfiler.instance());
 	}
 
-	private RestrictedChaseRuleApplier() {
+
+	public PreparedBacktrackHomomorphism(ConjunctiveQuery query, Set<Variable> variablesToParameterize, Collection<InMemoryAtomSet> negParts, AtomSet data, PatternScheduler scheduler, Bootstrapper bootstrapper, RulesCompilation compilation, Profiler profiler) throws HomomorphismException {
+		
+		this.data = new BacktrackIteratorData(query.getAtomSet(), variablesToParameterize, negParts, data, query.getAnswerVariables(), scheduler, bootstrapper, NoForwardChecking.instance(), NoBackJumping.instance(), compilation, profiler);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -84,68 +92,23 @@ public class RestrictedChaseRuleApplier implements RuleApplier<Rule, AtomSet> {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public boolean apply(Rule rule, AtomSet atomSet) throws RuleApplicationException {
+	public boolean exist(Substitution s) throws HomomorphismException {
+		CloseableIterator<Substitution> results = this.execute(s);
+		boolean val;
 		try {
-			boolean res = false;
-			ConjunctiveQueryWithNegatedPart query = new RuleWrapper2ConjunctiveQueryWithNegation(rule);
-			CloseableIterator<Substitution> results;
-			
-			results = StaticHomomorphism.instance().execute(query, atomSet);
-			while (results.hasNext()) {
-				res = true;
-				Substitution proj = results.next();
-	
-				// replace variables by fresh symbol
-				for (Variable t : rule.getExistentials()) {
-					proj.put(t, atomSet.getFreshSymbolGenerator().getFreshCst());
-				}
-	
-				CloseableIteratorWithoutException<Atom> it = proj.createImageOf(rule.getHead()).iterator();
-				while (it.hasNext()) {
-					atomSet.add(it.next());
-				}
-			}
-			
-			return res;
-		} catch (HomomorphismException e) {
-			throw new RuleApplicationException("", e);
-		} catch (AtomSetException e) {
-			throw new RuleApplicationException("", e);
+			val = results.hasNext();
 		} catch (IteratorException e) {
-			throw new RuleApplicationException("", e);
+			throw new HomomorphismException(e);
 		}
-	}
-	
-	@Override
-	public boolean apply(Rule rule, AtomSet atomSet, Collection<Atom> newAtomsDest) throws RuleApplicationException {
-		try {
-			boolean res = false;
-			ConjunctiveQueryWithNegatedPart query = new RuleWrapper2ConjunctiveQueryWithNegation(rule);
-			CloseableIterator<Substitution> results;
-			
-			results = StaticHomomorphism.instance().execute(query, atomSet);
-			while (results.hasNext()) {
-				res = true;
-				Substitution proj = results.next();
-	
-				// replace variables by fresh symbol
-				for (Variable t : rule.getExistentials()) {
-					proj.put(t, atomSet.getFreshSymbolGenerator().getFreshCst());
-				}
-	
-				CloseableIteratorWithoutException<Atom> it = proj.createImageOf(rule.getHead()).iterator();
-				while (it.hasNext()) {
-					newAtomsDest.add(it.next());
-				}
-			}
-			return res;
-		} catch (HomomorphismException e) {
-			throw new RuleApplicationException("", e);
-		} catch (IteratorException e) {
-			throw new RuleApplicationException("", e);
-		}
+		results.close();
+		return val;
 	}
 
+	@Override
+	public CloseableIterator<Substitution> execute(Substitution s)
+			throws HomomorphismException {
+		return new BacktrackIterator(new BacktrackIteratorData(this.data), s);
+	}
 	
 	// /////////////////////////////////////////////////////////////////////////
 	// OBJECT OVERRIDE METHODS

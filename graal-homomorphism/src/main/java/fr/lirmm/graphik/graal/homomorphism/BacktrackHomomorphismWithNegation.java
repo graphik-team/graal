@@ -43,7 +43,7 @@
 package fr.lirmm.graphik.graal.homomorphism;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQueryWithNegation;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQueryWithNegatedPart;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
@@ -54,7 +54,8 @@ import fr.lirmm.graphik.graal.homomorphism.bootstrapper.Bootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.bootstrapper.StarBootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.ForwardChecking;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NoForwardChecking;
-import fr.lirmm.graphik.graal.homomorphism.not.BacktrackIteratorWithNot;
+import fr.lirmm.graphik.graal.homomorphism.scheduler.DefaultScheduler;
+import fr.lirmm.graphik.graal.homomorphism.scheduler.Scheduler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
@@ -66,7 +67,7 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class BacktrackHomomorphismWithNegation extends AbstractHomomorphism<ConjunctiveQueryWithNegation, AtomSet> implements Homomorphism<ConjunctiveQueryWithNegation, AtomSet> {
+public class BacktrackHomomorphismWithNegation extends AbstractHomomorphism<ConjunctiveQueryWithNegatedPart, AtomSet> implements Homomorphism<ConjunctiveQueryWithNegatedPart, AtomSet> {
 
 	private Scheduler       scheduler;
 	private Bootstrapper    bootstrapper;
@@ -143,8 +144,8 @@ public class BacktrackHomomorphismWithNegation extends AbstractHomomorphism<Conj
 	// /////////////////////////////////////////////////////////////////////////
 
 
-	public <U1 extends ConjunctiveQueryWithNegation, U2 extends AtomSet> CloseableIterator<Substitution> execute(U1 q, U2 a) throws HomomorphismException {
-		return new BacktrackIteratorWithNot(q.getPositiveAtomSet(), q.getNegativeAtomSet(), a, q.getAnswerVariables(),
+	public <U1 extends ConjunctiveQueryWithNegatedPart, U2 extends AtomSet> CloseableIterator<Substitution> execute(U1 q, U2 a) throws HomomorphismException {
+		return new BacktrackIterator(q.getPositivePart(), q.getNegatedParts(), a, q.getAnswerVariables(),
 		                                                            this.scheduler, this.bootstrapper, this.fc,
 		                                                            this.bj, NoCompilation.instance());
 	}

@@ -48,7 +48,7 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
-import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
 import fr.lirmm.graphik.graal.homomorphism.Var;
@@ -80,17 +80,17 @@ public class NFC0 extends AbstractNFC implements ForwardChecking {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc) throws BacktrackException {
+	public boolean checkForward(Var v, AtomSet g, Substitution initialSubstitution, Map<Variable, Var> map, RulesCompilation rc) throws BacktrackException {
 
 		// clear all computed candidats for post variables
 		for (Var z : v.postVars) {
 			this.clear(v, z);
 		}
 
-		for (Atom atom : v.postAtoms) {	
+		for (Atom atom : v.postAtoms) {
 			if (mustBeChecked(atom, map)) {
 				try {
-					if(!select(atom, v, g, map, rc)) {
+					if(!select(atom, v, g, initialSubstitution, map, rc)) {
 						return false;
 					}
 				} catch (IteratorException e) {
@@ -116,11 +116,10 @@ public class NFC0 extends AbstractNFC implements ForwardChecking {
 	 */
 	protected boolean mustBeChecked(Atom atom, Map<Variable, Var> map) {
 		int i = 0;
-		for (Term t : atom.getVariables()) {
+		for (Variable t : atom.getVariables()) {
 			Var z = map.get(t);
-			if (z.image != null) {
-				++i;
-				if (i > 1) {
+			if (z != null && z.image != null) {
+				if (++i > 1) {
 					return false;
 				}
 			}

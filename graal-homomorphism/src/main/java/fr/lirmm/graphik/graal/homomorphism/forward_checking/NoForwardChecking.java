@@ -5,6 +5,7 @@ import java.util.Map;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
@@ -86,16 +87,16 @@ public class NoForwardChecking extends AbstractProfilable implements ForwardChec
 	}
 
 	@Override
-	public boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc) {
+	public boolean checkForward(Var v, AtomSet g,  Substitution initialSubstitution, Map<Variable, Var> map, RulesCompilation rc) {
 		return true;
 	}
 
 	@Override
-	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Map<Variable, Var> map, RulesCompilation rc)
+	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Substitution initialSubstitution, Map<Variable, Var> map, RulesCompilation rc)
 	    throws BacktrackException {
 		HomomorphismIteratorChecker tmp;
 		try {
-			tmp = new HomomorphismIteratorChecker(var, g.termsIterator(), var.preAtoms, g, map, rc);
+			tmp = new HomomorphismIteratorChecker(var, g.termsIterator(), var.preAtoms, g, initialSubstitution, map, rc);
 		} catch (AtomSetException e) {
 			throw new BacktrackException(e);
 		}

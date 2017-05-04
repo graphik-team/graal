@@ -42,20 +42,14 @@
  */
 package fr.lirmm.graphik.graal.homomorphism.bbc;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Deque;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
@@ -64,18 +58,8 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.HashMapSubstitution;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
-import fr.lirmm.graphik.graal.homomorphism.Scheduler;
 import fr.lirmm.graphik.graal.homomorphism.Var;
-import fr.lirmm.graphik.graal.homomorphism.utils.ProbaUtils;
-import fr.lirmm.graphik.util.graph.DefaultDirectedEdge;
-import fr.lirmm.graphik.util.graph.DefaultGraph;
-import fr.lirmm.graphik.util.graph.DefaultHyperEdge;
-import fr.lirmm.graphik.util.graph.DefaultHyperGraph;
-import fr.lirmm.graphik.util.graph.DirectedEdge;
-import fr.lirmm.graphik.util.graph.Graph;
 import fr.lirmm.graphik.util.graph.HyperGraph;
-import fr.lirmm.graphik.util.profiler.AbstractProfilable;
-import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 public class BCCSchedulerNeg extends BCCScheduler {
 	
@@ -86,15 +70,15 @@ public class BCCSchedulerNeg extends BCCScheduler {
 		super(bcc, withForbiddenCandidate);
 	}
 
-	public Var[] execute(InMemoryAtomSet negH, List<Term> ans, AtomSet data, RulesCompilation rc) {
+	public Var[] execute(InMemoryAtomSet negH, Collection<Variable> frontier, AtomSet data, RulesCompilation rc) {
 		 Comparator<Integer> varComparator;
 		 Term[]              inverseMap;
 		 
+		 // Fix frontier variables
 		Substitution s = new HashMapSubstitution();
 		Term tmp = DefaultTermFactory.instance().createConstant("_tmp");
-		for(Term t : ans) {
-			if(t instanceof Variable)
-			s.put((Variable)t, tmp);
+		for(Variable t : frontier) {
+			s.put(t, tmp);
 		}
 		InMemoryAtomSet h = s.createImageOf(negH);
 		
@@ -111,7 +95,7 @@ public class BCCSchedulerNeg extends BCCScheduler {
 		TmpData d = biconnect(graph, varComparator);
 
 		Var[] vars = new Var[variables.size() + 2];
-		this.BCC.varData = new VarData[ans.size() + variables.size() + 2];
+		this.BCC.varData = new VarData[frontier.size() + variables.size() + 2];
 
 		int j = 0;
 		vars[0] = new Var(0);

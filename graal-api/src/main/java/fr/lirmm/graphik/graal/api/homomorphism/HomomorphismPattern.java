@@ -40,20 +40,27 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.homomorphism;
+package fr.lirmm.graphik.graal.api.homomorphism;
 
-import java.util.HashSet;
+import java.util.Set;
 
-import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.util.stream.filter.Filter;
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
+import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.util.profiler.Profilable;
 
-public class UniqFilter implements Filter<Substitution> {
-
-	HashSet<Substitution> sol = new HashSet<Substitution>();
+/**
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+ *
+ */
+public interface HomomorphismPattern<T1 extends Object, T2 extends AtomSet> extends Profilable {
 	
-	@Override
-	public boolean filter(Substitution s) {
-		return sol.add(s);
-	}
-	
+	/**
+	 * Creates a PreparedHomomorphism object for sending parameterized query to the store.
+	 * @param query
+	 * @param variablesToParameterize
+	 * @param data
+	 * @return a pre-configured homomorphism algorithm instance.
+	 */
+	PreparedHomomorphism prepareHomomorphism(T1 query, Set<Variable> variablesToParameterize, T2 data, RulesCompilation compilation) throws HomomorphismException;
 }

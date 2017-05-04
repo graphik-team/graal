@@ -42,78 +42,44 @@
  */
 package fr.lirmm.graphik.graal.homomorphism;
 
-import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
-import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismPattern;
+import fr.lirmm.graphik.graal.api.homomorphism.PreparedHomomorphism;
 import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 
 /**
- * Compute an order over variables from h. This scheduler put answer
- * variables first, then other variables are put in the order from
- * h.getTerms(Term.Type.VARIABLE).iterator().
- *
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class DefaultScheduler extends AbstractProfilable implements Scheduler {
+public class BacktrackHomomorphismPattern extends AbstractProfilable implements HomomorphismPattern<ConjunctiveQuery, AtomSet> {
 
-	private static DefaultScheduler instance;
+	private static final BacktrackHomomorphismPattern INSTANCE = new BacktrackHomomorphismPattern();
 
-	private DefaultScheduler() {
-		super();
+	// /////////////////////////////////////////////////////////////////////////
+	// SINGLETON
+	// /////////////////////////////////////////////////////////////////////////
+
+	public static BacktrackHomomorphismPattern instance() {
+		return INSTANCE;
 	}
 
-	public static synchronized DefaultScheduler instance() {
-		if (instance == null)
-			instance = new DefaultScheduler();
-
-		return instance;
+	private BacktrackHomomorphismPattern() {
 	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public Var[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data, RulesCompilation rc) {
-		Set<Variable> terms = h.getVariables();
-		Var[] vars = new Var[terms.size() + 2];
-
-		int level = 0;
-		vars[level] = new Var(level);
-
-		Set<Term> alreadyAffected = new TreeSet<Term>();
-		for (Term t : ans) {
-			if (t instanceof Variable && !alreadyAffected.contains(t)) {
-				++level;
-				vars[level] = new Var(level);
-				vars[level].value = (Variable) t;
-				alreadyAffected.add(t);
-			}
-		}
-
-		int lastAnswerVariable = level;
-
-		for (Term t : terms) {
-			if (!alreadyAffected.contains(t)) {
-				++level;
-				vars[level] = new Var(level);
-				vars[level].value = (Variable) t;
-			}
-		}
-
-		++level;
-		vars[level] = new Var(level);
-		vars[level].previousLevel = lastAnswerVariable;
-
-		return vars;
+	public PreparedHomomorphism prepareHomomorphism(
+			ConjunctiveQuery query, Set<Variable> variablesToParameterize, AtomSet data, RulesCompilation compilation) throws HomomorphismException {
+		return new PreparedBacktrackHomomorphism(query, variablesToParameterize, data, compilation);
 	}
-
-	@Override
-	public boolean isAllowed(Var var, Term image) {
-		return true;
-	}
-
+	
 }

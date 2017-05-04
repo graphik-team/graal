@@ -40,22 +40,65 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.api.homomorphism;
+/**
+* 
+*/
+package fr.lirmm.graphik.graal.api.core;
 
-import fr.lirmm.graphik.graal.api.core.Substitution;
+import java.util.List;
+import java.util.Set;
 
 /**
+ * This interface represents a conjunctive query with negated parts. A such
+ * query is composed of a set of atoms which must be true and other sets of
+ * atoms whose for each set at least one atom must not be true.
+ * 
+ * In the following, X is the set of free variables (answer variables), Y the
+ * set of variables that appears in the positive part minus X and Zi where i ∈
+ * [1..n] the set of variables that appears only in the negated part indexed i.
+ * Note that each variables from X must appears in the positive part. And ∀i,j ∈
+ * [1..n] such that i ≠ j, Zi ∩ Zj = ∅. ???
+ * 
+ * A conjunctive query with negated parts Q is formally defined as
+ * ∃Y∀Z1..Zn(Q+[X,Y] ∧ not(Q1[Y,Z1]) ∧ ... ∧ not(Qn[Y,Zn])) where Q+, Q1, ...,
+ * Qn are conjunctions of atoms over specified variable sets.
+ * 
+ * A mapping A from X to a set of terms is an answer to this query with respect
+ * to a set of facts iff A(F) is true, where F is the formulae associated to Q.
+ * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface PreparedExistentialHomomorphism {
-	
+public interface ConjunctiveQueryWithNegatedPart extends Query {
+
 	/**
+	 * The label (the name) for this query.
 	 * 
-	 * @param s a Substitution of all variables to parameterize into a constant term.
-	 * @return true if there exist an homomorphism, false otherwise.
-	 * @throws HomomorphismException
+	 * @return the label of this query.
 	 */
-	boolean exist(Substitution s) throws HomomorphismException;
+	String getLabel();
+
+	/**
+	 * Get the set of facts which must be true.
+	 * 
+	 * @return an atom set representing the atom conjunction of the query.
+	 */
+	InMemoryAtomSet getPositivePart();
+
+	/**
+	 * Get the set of facts which must be false (at least one).
+	 * 
+	 * @return an atom set representing a negated conjunction of atoms or
+	 *         equivalently a disjunction of negated atoms.
+	 */
+	List<InMemoryAtomSet> getNegatedParts();
+
+	/**
+	 * Get the answer variables
+	 * 
+	 * @return an Collection of Term representing the answer variables.
+	 */
+	List<Term> getAnswerVariables();
+
 
 }

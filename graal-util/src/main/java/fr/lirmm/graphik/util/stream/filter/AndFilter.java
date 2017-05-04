@@ -40,22 +40,38 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.api.homomorphism;
-
-import fr.lirmm.graphik.graal.api.core.Substitution;
+package fr.lirmm.graphik.util.stream.filter;
 
 /**
+ * This Filter implementation returns true on an element iff all filters given to 
+ * the constructor return true on this element.
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface PreparedExistentialHomomorphism {
-	
-	/**
-	 * 
-	 * @param s a Substitution of all variables to parameterize into a constant term.
-	 * @return true if there exist an homomorphism, false otherwise.
-	 * @throws HomomorphismException
-	 */
-	boolean exist(Substitution s) throws HomomorphismException;
+public class AndFilter<E> implements Filter<E> {
+
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
+
+	private Filter<E> filters[];
+
+	public AndFilter(Filter<E>... filters) {
+		this.filters = filters;
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	@Override
+	public boolean filter(E e) {
+		for(Filter<E> f : this.filters) {
+			if(!f.filter(e)) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 }

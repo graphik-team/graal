@@ -125,7 +125,6 @@ public class EqualityUtilsTest {
 		terms.remove(x);
 		terms.remove(y);
 		Assert.assertTrue(terms.isEmpty());
-		System.out.println(s.createImageOf(x));
 		Assert.assertEquals(s.createImageOf(x), s.createImageOf(y));
 		Assert.assertTrue(s.createImageOf(y).isVariable());
 
@@ -219,7 +218,7 @@ public class EqualityUtilsTest {
 		BacktrackHomomorphism h = new BacktrackHomomorphism();
 		CloseableIterator<Substitution> results = h.execute(q, store);
 		while(results.hasNext()) {
-			System.out.println(results.next());
+			results.next();
 		}
 		results.close();
 
@@ -234,7 +233,7 @@ public class EqualityUtilsTest {
 		BacktrackHomomorphism h = new BacktrackHomomorphism();
 		CloseableIterator<Substitution> results = h.execute(q, store);
 		while(results.hasNext()) {
-			System.out.println(results.next());
+			results.next();
 		}
 		results.close();
 

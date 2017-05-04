@@ -94,97 +94,97 @@ public class PatternBootstrapper extends AbstractProfilable  {
 	//
 	// /////////////////////////////////////////////////////////////////////////
 
-	public static CloseableIterator<Term> exec(final Var v, InMemoryAtomSet query, final AtomSet data,
-		    RulesCompilation compilation, Map<Variable, Var> index) throws BacktrackException {
-			Set<Term> terms = null;
-			
-			/*++ if(this.getProfiler() != null) {
-				this.getProfiler().start("BootstrapTime");
-				this.getProfiler().start("BootstrapTimeFirstPart");
-			}*/
-			Iterator<Atom> it;
-
-			Collection<Constant> constants = null;
-			Atom aa = null;
-			it = v.postAtoms.iterator();
-			while (it.hasNext()) {
-				Atom a = it.next();
-				if (constants == null || constants.isEmpty()) {
-					constants = a.getConstants();
-					aa = a;
-				}
-			}
-			it = v.preAtoms.iterator();
-			while (it.hasNext()) {
-				Atom a = it.next();
-				for(Term t : a.getTerms()) {
-					if (constants == null || constants.isEmpty()) {
-						if(t.isConstant()) {
-							constants = a.getConstants();
-							aa = a;
-						} else if(!t.equals(v.value)) {
-							constants = new LinkedList<Constant>();
-							constants.add((Constant)index.get(t).image);
-							aa = BacktrackUtils.createImageOf(a, index);
-						}
-						
-					}
-				}
-			}
-			
-			try {
-				if (constants != null && !constants.isEmpty()) {
-					terms = new TreeSet<Term>(TermValueComparator.instance());
-					for (Pair<Atom, Substitution> im : compilation.getRewritingOf(aa)) {
-						int pos = im.getLeft().indexOf(im.getRight().createImageOf(v.value));
-						CloseableIterator<Atom> match = data.match(im.getLeft());
-						while (match.hasNext()) {
-							terms.add(match.next().getTerm(pos));
-						}
-					}
-				}
-
-				/*++ if (this.getProfiler() != null) {
-					this.getProfiler().stop("BootstrapTimeFirstPart");
-				}*/
-
-				if (terms == null) {
-					it = v.postAtoms.iterator();
-					while (it.hasNext()) {
-						if (terms == null) {
-							terms = BootstrapperUtils.computeCandidatesOverRewritings(it.next(), v, data, compilation);
-						} else {
-							terms.retainAll(
-							    BootstrapperUtils.computeCandidatesOverRewritings(it.next(), v, data, compilation));
-						}
-					}
-
-					it = v.preAtoms.iterator();
-					while (it.hasNext()) {
-						if (terms == null) {
-							terms = BootstrapperUtils.computeCandidatesOverRewritings(it.next(), v, data, compilation);
-						} else {
-							terms.retainAll(
-							    BootstrapperUtils.computeCandidatesOverRewritings(it.next(), v, data, compilation));
-						}
-					}
-				}
-
-				/*++ if (this.getProfiler() != null) {
-					this.getProfiler().stop("BootstrapTime");
-				}*/
-
-				if (terms == null) {
-					return data.termsIterator();
-				} else {
-					return new CloseableIteratorAdapter<Term>(terms.iterator());
-				}
-			} catch (AtomSetException e) {
-				throw new BacktrackException(e);
-			} catch (IteratorException e) {
-				throw new BacktrackException(e);
-			}
-		}
+//	public static CloseableIterator<Term> exec(final Var v, InMemoryAtomSet query, final AtomSet data,
+//		    RulesCompilation compilation, Map<Variable, Var> index) throws BacktrackException {
+//			Set<Term> terms = null;
+//			
+//			/*++ if(this.getProfiler() != null) {
+//				this.getProfiler().start("BootstrapTime");
+//				this.getProfiler().start("BootstrapTimeFirstPart");
+//			}*/
+//			Iterator<Atom> it;
+//
+//			Collection<Constant> constants = null;
+//			Atom aa = null;
+//			it = v.postAtoms.iterator();
+//			while (it.hasNext()) {
+//				Atom a = it.next();
+//				if (constants == null || constants.isEmpty()) {
+//					constants = a.getConstants();
+//					aa = a;
+//				}
+//			}
+//			it = v.preAtoms.iterator();
+//			while (it.hasNext()) {
+//				Atom a = it.next();
+//				for(Term t : a.getTerms()) {
+//					if (constants == null || constants.isEmpty()) {
+//						if(t.isConstant()) {
+//							constants = a.getConstants();
+//							aa = a;
+//						} else if(!t.equals(v.value)) {
+//							constants = new LinkedList<Constant>();
+//							constants.add((Constant)index.get(t).image);
+//							aa = BacktrackUtils.createImageOf(a, index);
+//						}
+//						
+//					}
+//				}
+//			}
+//			
+//			try {
+//				if (constants != null && !constants.isEmpty()) {
+//					terms = new TreeSet<Term>(TermValueComparator.instance());
+//					for (Pair<Atom, Substitution> im : compilation.getRewritingOf(aa)) {
+//						int pos = im.getLeft().indexOf(im.getRight().createImageOf(v.value));
+//						CloseableIterator<Atom> match = data.match(im.getLeft());
+//						while (match.hasNext()) {
+//							terms.add(match.next().getTerm(pos));
+//						}
+//					}
+//				}
+//
+//				/*++ if (this.getProfiler() != null) {
+//					this.getProfiler().stop("BootstrapTimeFirstPart");
+//				}*/
+//
+//				if (terms == null) {
+//					it = v.postAtoms.iterator();
+//					while (it.hasNext()) {
+//						if (terms == null) {
+//							terms = BootstrapperUtils.computeCandidatesOverRewritings(it.next(), v, data, compilation);
+//						} else {
+//							terms.retainAll(
+//							    BootstrapperUtils.computeCandidatesOverRewritings(it.next(), v, data, compilation));
+//						}
+//					}
+//
+//					it = v.preAtoms.iterator();
+//					while (it.hasNext()) {
+//						if (terms == null) {
+//							terms = BootstrapperUtils.computeCandidatesOverRewritings(it.next(), v, data, compilation);
+//						} else {
+//							terms.retainAll(
+//							    BootstrapperUtils.computeCandidatesOverRewritings(it.next(), v, data, compilation));
+//						}
+//					}
+//				}
+//
+//				/*++ if (this.getProfiler() != null) {
+//					this.getProfiler().stop("BootstrapTime");
+//				}*/
+//
+//				if (terms == null) {
+//					return data.termsIterator();
+//				} else {
+//					return new CloseableIteratorAdapter<Term>(terms.iterator());
+//				}
+//			} catch (AtomSetException e) {
+//				throw new BacktrackException(e);
+//			} catch (IteratorException e) {
+//				throw new BacktrackException(e);
+//			}
+//		}
 
 
 }

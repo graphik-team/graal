@@ -40,22 +40,46 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.api.homomorphism;
+package fr.lirmm.graphik.graal.homomorphism.scheduler;
 
-import fr.lirmm.graphik.graal.api.core.Substitution;
+import java.util.List;
+
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.util.profiler.Profilable;
 
 /**
+ * The Scheduler interface provides a way to manage the backtracking order. The
+ * Var.previousLevel will be used when the backtracking algorithm is in a
+ * failure state (allow backjumping).
+ *
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface PreparedExistentialHomomorphism {
-	
+public interface Scheduler extends Profilable {
+
+
+
 	/**
-	 * 
-	 * @param s a Substitution of all variables to parameterize into a constant term.
-	 * @return true if there exist an homomorphism, false otherwise.
+	 * Compute the order.
+	 *
+	 * @param h
+	 * @param ans
+	 * @return an array of Var representing an order over its.
 	 * @throws HomomorphismException
 	 */
-	boolean exist(Substitution s) throws HomomorphismException;
+	Var[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data, RulesCompilation rc) throws HomomorphismException;
+
+	/**
+	 * @param var
+	 * @param image
+	 * @return true if the specified image is not forbidden for the specified
+	 *         var
+	 */
+	boolean isAllowed(Var var, Term image);
 
 }

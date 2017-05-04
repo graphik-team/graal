@@ -61,8 +61,9 @@ import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.graal.homomorphism.Scheduler;
+import fr.lirmm.graphik.graal.core.ConjunctiveQueryWithFixedVariables;
 import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.graal.homomorphism.scheduler.PatternScheduler;
 import fr.lirmm.graphik.graal.homomorphism.utils.ProbaUtils;
 import fr.lirmm.graphik.util.graph.DefaultDirectedEdge;
 import fr.lirmm.graphik.util.graph.DefaultGraph;
@@ -74,12 +75,12 @@ import fr.lirmm.graphik.util.graph.HyperGraph;
 import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
-class BCCScheduler extends AbstractProfilable implements Scheduler {
+class BCCScheduler extends AbstractProfilable implements PatternScheduler {
 
-	protected final BCC           BCC;
+	protected final BCC BCC;
 	private Comparator<Integer> varComparator;
-	private Term[]              inverseMap;
-	boolean                     withForbiddenCandidate;
+	private Term[] inverseMap;
+	boolean withForbiddenCandidate;
 
 	BCCScheduler(BCC BCC, boolean withForbiddenCandidate) {
 		this.BCC = BCC;
@@ -87,16 +88,19 @@ class BCCScheduler extends AbstractProfilable implements Scheduler {
 	}
 
 	@Override
-	public Var[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data, RulesCompilation rc) {
+	public Var[] execute(InMemoryAtomSet query, Set<Variable> preAffectedVars, List<Term> ans, AtomSet data,
+			RulesCompilation rc) {
+		InMemoryAtomSet fixedQuery = new ConjunctiveQueryWithFixedVariables(query, ans, preAffectedVars).getAtomSet();
 
-		Set<Variable> variables = h.getVariables();
+		Set<Variable> variables = fixedQuery.getVariables();
+		// Set<Variable> variables = query.getVariables().removeAll(preAffectedVars);
 
 		// BCC
 		Map<Term, Integer> map = new TreeMap<Term, Integer>();
 		this.inverseMap = new Term[variables.size() + 1];
-		HyperGraph graph = constructHyperGraph(h, variables, this.inverseMap, map, ans);
-		
-		double[] proba = this.computeProba(h, data, variables.size(), map, rc);
+		HyperGraph graph = constructHyperGraph(query, variables, this.inverseMap, map, ans);
+
+		double[] proba = this.computeProba(fixedQuery, data, variables.size(), map, rc);
 		this.varComparator = new IntegerComparator(proba);
 
 		TmpData d = biconnect(graph, this.varComparator);
@@ -107,7 +111,7 @@ class BCCScheduler extends AbstractProfilable implements Scheduler {
 		vars[0] = new Var(0);
 		this.BCC.varData[0] = new VarData();
 
-		int lastAnswerVariable = 0;
+		int lastAnswerVariable = -1;
 		for (int i = 1; i < d.vars.length; ++i) {
 			Var v = d.vars[i];
 			vars[v.level] = v;
@@ -130,38 +134,47 @@ class BCCScheduler extends AbstractProfilable implements Scheduler {
 		this.BCC.varData[level] = new VarData();
 		// if an homomorphism is found, go to the last answer variable
 		vars[level].previousLevel = lastAnswerVariable;
-		
-		if(this.getProfiler().isProfilingEnabled()) {
+
+		// Profiling
+		if (this.getProfiler().isProfilingEnabled()) {
 			StringBuilder sb = new StringBuilder();
-			for(Var v : vars) {
+			for (Var v : vars) {
 				sb.append(v.value);
 				sb.append(" > ");
 			}
 			this.getProfiler().put("BCCOrder", sb.toString());
 		}
-		
+
 		return vars;
+
+	}
+
+	@Override
+	public Var[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data, RulesCompilation rc) {
+		return this.execute(h, Collections.<Variable>emptySet(), ans, data, rc);
 	}
 
 	@Override
 	public boolean isAllowed(Var var, Term image) {
-		return (this.BCC.varData[var.level].forbidden == null || !this.BCC.varData[var.level].forbidden.contains(image));
+		return (this.BCC.varData[var.level].forbidden == null
+				|| !this.BCC.varData[var.level].forbidden.contains(image));
 	}
 
 	/**
 	 * @param h
 	 * @param map
 	 * @param nbVar
-	 * @return the probability to have an image for each variables which appears in h.
+	 * @return the probability to have an image for each variables which appears
+	 *         in h.
 	 */
 	protected double[] computeProba(InMemoryAtomSet h, AtomSet data, int nbVar, Map<Term, Integer> map,
-	    RulesCompilation rc) {
+			RulesCompilation rc) {
 		this.getProfiler().start("probaComputingTime");
 		final double[] proba = new double[nbVar + 1];
 		for (int i = 0; i < proba.length; ++i) {
 			proba[i] = -1.;
 		}
-		
+
 		CloseableIteratorWithoutException<Atom> it = h.iterator();
 		while (it.hasNext()) {
 			Atom a = it.next();
@@ -204,7 +217,7 @@ class BCCScheduler extends AbstractProfilable implements Scheduler {
 	}
 
 	protected static Deque<Integer> lastAccesseurs = new LinkedList<Integer>();
-	protected static int            lastTerminal;
+	protected static int lastTerminal;
 
 	protected static void biconnect(HyperGraph g, TmpData d, int v, int u, Comparator<Integer> varComparator) {
 
@@ -263,7 +276,8 @@ class BCCScheduler extends AbstractProfilable implements Scheduler {
 					d.bccGraph.addEdge(componentVertice, accesseurVertice);
 
 					if (!lastAccesseurs.isEmpty() && d.vars[lastAccesseurs.peek()].level >= d.vars[entry].level) {
-						while (!lastAccesseurs.isEmpty() && d.vars[lastAccesseurs.peek()].level >= d.vars[entry].level) {
+						while (!lastAccesseurs.isEmpty()
+								&& d.vars[lastAccesseurs.peek()].level >= d.vars[entry].level) {
 							int a = lastAccesseurs.pop();
 							if (a != accesseur) {
 								d.bccGraph.addEdge(componentVertice, d.bccGraph.addAccesseur(a));
@@ -290,16 +304,17 @@ class BCCScheduler extends AbstractProfilable implements Scheduler {
 	}
 
 	/**
-	 * The HyperGraph of variables of h. There is an edge if between two variables if they appear in a same atom.
+	 * The HyperGraph of variables of h. There is an hyper edge between a set of
+	 * variables if they appear in a same atom.
 	 * 
 	 * @param h
 	 * @return the HyperGraph of variables of h.
 	 */
 	protected static HyperGraph constructHyperGraph(InMemoryAtomSet h, Set<Variable> variables, Term[] inverseMap,
-	    Map<Term, Integer> map, Iterable<Term> ans) {
+			Map<Term, Integer> map, Iterable<Term> ans) {
 
 		int i = 0;
-		for (Term t : variables) {
+		for (Variable t : variables) {
 			inverseMap[++i] = t;
 			map.put(t, i);
 		}
@@ -309,8 +324,10 @@ class BCCScheduler extends AbstractProfilable implements Scheduler {
 		while (it.hasNext()) {
 			Atom a = it.next();
 			DefaultHyperEdge edge = new DefaultHyperEdge();
-			for (Term t : a.getVariables()) {
-				edge.addVertice(map.get(t));
+			for (Variable t : a.getVariables()) {
+				if(variables.contains(t)) {
+					edge.addVertice(map.get(t));
+				}
 			}
 			graph.add(edge);
 		}
@@ -323,14 +340,14 @@ class BCCScheduler extends AbstractProfilable implements Scheduler {
 	// /////////////////////////////////////////////////////////////////////////
 
 	protected static class TmpData {
-		Var[]               vars;
-		VarData[]           ext;
-		int                 i;
-		int                 lowpt[];
+		Var[] vars;
+		VarData[] ext;
+		int i;
+		int lowpt[];
 		Deque<DirectedEdge> stack;
-		List<Set<Integer>>  components;
-		Set<Integer>        currentComponent;
-		BCCGraph            bccGraph = new BCCGraph();
+		List<Set<Integer>> components;
+		Set<Integer> currentComponent;
+		BCCGraph bccGraph = new BCCGraph();
 
 		TmpData(int nbVertices) {
 			vars = new Var[nbVertices];
@@ -344,10 +361,10 @@ class BCCScheduler extends AbstractProfilable implements Scheduler {
 
 	protected static class BCCGraph {
 
-		public Graph    graph                       = new DefaultGraph();
-		public Object[] bccGraphMap                 = new Object[40];
-		public int[]    bccGraphEntryInverseMap     = new int[30];
-		public int[]    bccGraphAccesseurInverseMap = new int[30];
+		public Graph graph = new DefaultGraph();
+		public Object[] bccGraphMap = new Object[40];
+		public int[] bccGraphEntryInverseMap = new int[30];
+		public int[] bccGraphAccesseurInverseMap = new int[30];
 
 		BCCGraph() {
 			Arrays.fill(bccGraphEntryInverseMap, -1);

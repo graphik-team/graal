@@ -62,7 +62,6 @@ import fr.lirmm.graphik.graal.homomorphism.checker.BacktrackChecker;
 import fr.lirmm.graphik.graal.homomorphism.checker.BacktrackWithNegationChecker;
 import fr.lirmm.graphik.graal.homomorphism.checker.DefaultUnionConjunctiveQueriesChecker;
 import fr.lirmm.graphik.graal.homomorphism.checker.FullyInstantiatedQueryHomomorphismChecker;
-import fr.lirmm.graphik.graal.homomorphism.checker.SimpleBacktrackHomomorphismChecker;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -87,7 +86,7 @@ public final class DefaultExistentialHomomorphismFactory implements ExistentialH
 		this.elements.add(AtomicQueryHomomorphismChecker.instance());
 		this.elements.add(BacktrackWithNegationChecker.instance());
 		this.elements.add(AtomicQueryHomomorphismWithNegationChecker.instance());
-		this.elements.add(SimpleBacktrackHomomorphismChecker.instance());
+		//this.elements.add(SimpleBacktrackHomomorphismChecker.instance());
 	}
 	
 	public static synchronized final DefaultExistentialHomomorphismFactory instance() {

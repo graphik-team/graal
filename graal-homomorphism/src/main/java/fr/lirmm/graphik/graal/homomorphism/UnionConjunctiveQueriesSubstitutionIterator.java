@@ -45,9 +45,6 @@
  */
 package fr.lirmm.graphik.graal.homomorphism;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Query;
@@ -65,7 +62,7 @@ import fr.lirmm.graphik.util.stream.IteratorException;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class UnionConjunctiveQueriesSubstitutionIterator extends AbstractProfilable implements
+class UnionConjunctiveQueriesSubstitutionIterator extends AbstractProfilable implements
                                                                                    CloseableIterator<Substitution> {
 	
 	private AtomSet                                 atomSet;

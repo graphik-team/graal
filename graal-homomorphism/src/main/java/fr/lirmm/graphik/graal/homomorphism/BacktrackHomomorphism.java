@@ -42,21 +42,25 @@
  */
 package fr.lirmm.graphik.graal.homomorphism;
 
+import java.util.Collections;
+
 import org.apache.commons.lang3.tuple.Pair;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
-import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.NoBackJumping;
 import fr.lirmm.graphik.graal.homomorphism.bootstrapper.Bootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.bootstrapper.StarBootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.ForwardChecking;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NoForwardChecking;
+import fr.lirmm.graphik.graal.homomorphism.scheduler.DefaultScheduler;
+import fr.lirmm.graphik.graal.homomorphism.scheduler.Scheduler;
 import fr.lirmm.graphik.graal.homomorphism.utils.EqualityHandlerConverter;
 import fr.lirmm.graphik.graal.homomorphism.utils.EqualityUtils;
 import fr.lirmm.graphik.util.profiler.Profilable;
@@ -156,7 +160,7 @@ public class BacktrackHomomorphism extends AbstractHomomorphismWithCompilation<C
 	    RulesCompilation compilation) throws HomomorphismException {
 		Pair<ConjunctiveQuery, Substitution> pair = EqualityUtils.processEquality(q);
 
-		CloseableIterator<Substitution> results = new BacktrackIterator(pair.getLeft().getAtomSet(), a, pair.getLeft().getAnswerVariables(),
+		CloseableIterator<Substitution> results = new BacktrackIterator(pair.getLeft().getAtomSet(), Collections.<InMemoryAtomSet>emptyList(), a, pair.getLeft().getAnswerVariables(),
 		                                                            this.scheduler, this.bootstrapper, this.fc,
 		                                                            this.bj, compilation, this.getProfiler());
 		

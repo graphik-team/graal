@@ -42,50 +42,42 @@
  */
 package fr.lirmm.graphik.graal.core;
 
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQueryWithNegation;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQueryWithNegatedPart;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.factory.DefaultAtomSetFactory;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class DefaultConjunctiveQueryWithNegation implements ConjunctiveQueryWithNegation {
+public class DefaultConjunctiveQueryWithNegatedParts implements ConjunctiveQueryWithNegatedPart {
 
 	private String label;
 	private InMemoryAtomSet positiveAtomSet;
-	private InMemoryAtomSet negativeAtomSet;
+	private List<InMemoryAtomSet> negatedParts;
 	private List<Term> responseVariables;
-	private Set<Variable> frontierVariables;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
-
-	public DefaultConjunctiveQueryWithNegation() {
-		this("", DefaultAtomSetFactory.instance().create(), DefaultAtomSetFactory.instance().create());
+	
+	public DefaultConjunctiveQueryWithNegatedParts(InMemoryAtomSet positiveAtomSet, List<InMemoryAtomSet> negatedParts) {
+		this("", positiveAtomSet, negatedParts);
 	}
 
-	public DefaultConjunctiveQueryWithNegation(InMemoryAtomSet positiveAtomSet, InMemoryAtomSet negativeAtomSet) {
-		this("", positiveAtomSet, negativeAtomSet);
+	public DefaultConjunctiveQueryWithNegatedParts(String label, InMemoryAtomSet positiveAtomSet,
+			List<InMemoryAtomSet> negatedParts) {
+		this("", positiveAtomSet, negatedParts, new LinkedList<Term>(positiveAtomSet.getVariables()));
 	}
 
-	public DefaultConjunctiveQueryWithNegation(String label, InMemoryAtomSet positiveAtomSet,
-			InMemoryAtomSet negativeAtomSet) {
-		this("", positiveAtomSet, negativeAtomSet, new LinkedList<Term>(positiveAtomSet.getVariables()));
-	}
-
-	public DefaultConjunctiveQueryWithNegation(InMemoryAtomSet positiveAtomSet, InMemoryAtomSet negativeAtomSet,
+	public DefaultConjunctiveQueryWithNegatedParts(InMemoryAtomSet positiveAtomSet, List<InMemoryAtomSet> negatedParts,
 			List<Term> ans) {
-		this("", positiveAtomSet, negativeAtomSet, ans);
+		this("", positiveAtomSet, negatedParts, ans);
 	}
 
 	/**
@@ -101,22 +93,30 @@ public class DefaultConjunctiveQueryWithNegation implements ConjunctiveQueryWith
 	 * @param ans
 	 *            the list of answer variables
 	 */
-	public DefaultConjunctiveQueryWithNegation(String label, InMemoryAtomSet positiveAtomSet,
-			InMemoryAtomSet negativeAtomSet, List<Term> ans) {
+	public DefaultConjunctiveQueryWithNegatedParts(String label, InMemoryAtomSet positiveAtomSet,
+			List<InMemoryAtomSet> negatedParts, List<Term> ans) {
 		this.label = label;
 		this.positiveAtomSet = positiveAtomSet;
-		this.negativeAtomSet = negativeAtomSet;
+		this.negatedParts = negatedParts;
 		this.responseVariables = ans;
-		this.frontierVariables = null;
 	}
 
 	// copy constructor
-	public DefaultConjunctiveQueryWithNegation(ConjunctiveQueryWithNegation query) {
-		this(query.getLabel(), DefaultAtomSetFactory.instance().create(query.getPositiveAtomSet()),
-				DefaultAtomSetFactory.instance().create(query.getNegativeAtomSet()),
+	public DefaultConjunctiveQueryWithNegatedParts(ConjunctiveQueryWithNegatedPart query) {
+		this(query.getLabel(), DefaultAtomSetFactory.instance().create(query.getPositivePart()),
+				deepCopy(query.getNegatedParts()),
 				new LinkedList<Term>(query.getAnswerVariables()));
 	}
+	
 
+	private static List<InMemoryAtomSet> deepCopy(List<InMemoryAtomSet> sets) {
+		List<InMemoryAtomSet> negParts = new LinkedList<InMemoryAtomSet>();
+		for(InMemoryAtomSet set : sets) {
+			negParts.add(DefaultAtomSetFactory.instance().create(set));
+		}
+		return negParts;
+	}
+	
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
@@ -132,13 +132,13 @@ public class DefaultConjunctiveQueryWithNegation implements ConjunctiveQueryWith
 	}
 
 	@Override
-	public InMemoryAtomSet getPositiveAtomSet() {
+	public InMemoryAtomSet getPositivePart() {
 		return this.positiveAtomSet;
 	}
 
 	@Override
-	public InMemoryAtomSet getNegativeAtomSet() {
-		return this.negativeAtomSet;
+	public List<InMemoryAtomSet> getNegatedParts() {
+		return this.negatedParts;
 	}
 
 	/**
@@ -152,15 +152,6 @@ public class DefaultConjunctiveQueryWithNegation implements ConjunctiveQueryWith
 	@Override
 	public boolean isBoolean() {
 		return responseVariables.isEmpty();
-	}
-
-	@Override
-	public Set<Variable> getFrontierVariables() {
-		if (this.frontierVariables == null) {
-			this.computeFrontierAndExistentials();
-		}
-
-		return this.frontierVariables;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -188,9 +179,11 @@ public class DefaultConjunctiveQueryWithNegation implements ConjunctiveQueryWith
 
 		sb.append(") : ");
 		sb.append(this.positiveAtomSet);
-		sb.append(", \u22A5(");
-		sb.append(this.negativeAtomSet);
-		sb.append(")");
+		for(InMemoryAtomSet atomset : this.negatedParts) {
+			sb.append(", \u22A5(");
+			sb.append(atomset);
+			sb.append(")");
+		}
 	}
 
 	@Override
@@ -198,34 +191,16 @@ public class DefaultConjunctiveQueryWithNegation implements ConjunctiveQueryWith
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof ConjunctiveQueryWithNegation)) {
+		if (!(obj instanceof ConjunctiveQueryWithNegatedPart)) {
 			return false;
 		}
-		ConjunctiveQueryWithNegation other = (ConjunctiveQueryWithNegation) obj;
+		ConjunctiveQueryWithNegatedPart other = (ConjunctiveQueryWithNegatedPart) obj;
 		return this.equals(other);
 	}
 
-	public boolean equals(ConjunctiveQueryWithNegation other) {
-		return this.getAnswerVariables().equals(other.getAnswerVariables())
-				&& this.getPositiveAtomSet().equals(other.getPositiveAtomSet()) 
-				&& this.getNegativeAtomSet().equals(other.getNegativeAtomSet());
+	public boolean equals(ConjunctiveQueryWithNegatedPart other) {
+		return this == other;
 	}
 
-	// /////////////////////////////////////////////////////////////////////////
-	// PRIVATE METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	private void computeFrontierAndExistentials() {
-		this.frontierVariables = new TreeSet<Variable>();
-		Collection<Variable> body = this.getPositiveAtomSet().getVariables();
-
-		for (Variable termHead : this.getNegativeAtomSet().getVariables()) {
-			for (Variable termBody : body) {
-				if (termBody.equals(termHead)) {
-					this.frontierVariables.add(termHead);
-				}
-			}
-		}
-	}
 
 }

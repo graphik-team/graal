@@ -86,13 +86,13 @@ public class SimpleFC extends AbstractProfilable implements ForwardChecking {
 	}
 
 	@Override
-	public boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc)
+	public boolean checkForward(Var v, AtomSet g,  Substitution initialSubstitution, Map<Variable, Var> map, RulesCompilation rc)
 	    throws BacktrackException {
 
 		Profiler profiler = this.getProfiler();
 		for (Atom atom : v.postAtoms) {
 			boolean contains = false;
-			Atom im = BacktrackUtils.createImageOf(atom, map);
+			Atom im = BacktrackUtils.createImageOf(atom, initialSubstitution, map);
 
 			if (profiler != null) {
 				profiler.incr("#selectOne", 1);
@@ -135,11 +135,11 @@ public class SimpleFC extends AbstractProfilable implements ForwardChecking {
 	}
 
 	@Override
-	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Map<Variable, Var> map, RulesCompilation rc)
+	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Substitution initialSubstitution, Map<Variable, Var> map, RulesCompilation rc)
 	    throws BacktrackException {
 		HomomorphismIteratorChecker tmp;
 		try {
-			tmp = new HomomorphismIteratorChecker(var, g.termsIterator(), var.preAtoms, g, map, rc);
+			tmp = new HomomorphismIteratorChecker(var, g.termsIterator(), var.preAtoms, g, initialSubstitution, map, rc);
 		} catch (AtomSetException e) {
 			throw new BacktrackException(e);
 		}

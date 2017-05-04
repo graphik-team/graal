@@ -40,22 +40,25 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.api.homomorphism;
+package fr.lirmm.graphik.util.stream.filter;
 
-import fr.lirmm.graphik.graal.api.core.Substitution;
+import java.util.HashSet;
 
 /**
+ * This filter use a hashSet to discover if an element is new or not. The method
+ * {@link Object.hashCode()} must be correctly implemented.
+ * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
+ * @param <E>
  */
-public interface PreparedExistentialHomomorphism {
-	
-	/**
-	 * 
-	 * @param s a Substitution of all variables to parameterize into a constant term.
-	 * @return true if there exist an homomorphism, false otherwise.
-	 * @throws HomomorphismException
-	 */
-	boolean exist(Substitution s) throws HomomorphismException;
+public class UniqFilter<E> implements Filter<E> {
+
+	HashSet<E> sol = new HashSet<E>();
+
+	@Override
+	public boolean filter(E e) {
+		return sol.add(e);
+	}
 
 }

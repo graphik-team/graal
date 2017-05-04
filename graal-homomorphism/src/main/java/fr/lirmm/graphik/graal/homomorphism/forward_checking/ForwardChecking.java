@@ -45,8 +45,8 @@ package fr.lirmm.graphik.graal.homomorphism.forward_checking;
 import java.util.Map;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
@@ -76,14 +76,14 @@ public interface ForwardChecking extends Profilable {
 	 * @return -1 if the current affectation is acceptable, the level of the detected issue otherwise.
 	 * @throws BacktrackException
 	 */
-	boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc) throws BacktrackException;
+	boolean checkForward(Var v, AtomSet g, Substitution initialSubstitution, Map<Variable, Var> map, RulesCompilation rc) throws BacktrackException;
 
 	/**
 	 * @param var
 	 * @return an iterator over possible candidates.
 	 * @throws BacktrackException
 	 */
-	CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Map<Variable, Var> map, RulesCompilation rc)
+	CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Substitution initialSubstitution, Map<Variable, Var> map, RulesCompilation rc)
 	    throws BacktrackException;
 
 	/**

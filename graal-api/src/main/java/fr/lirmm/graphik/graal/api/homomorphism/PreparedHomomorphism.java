@@ -40,52 +40,27 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.api.core;
+package fr.lirmm.graphik.graal.api.homomorphism;
 
-import java.util.List;
-import java.util.Set;
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
- * This interface represents a conjunctive query with a negated part. A conjunctive query with negation is
- * composed of a positive set of facts, a negative set of facts and a set of answer variables.
- * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface ConjunctiveQueryWithNegation extends Query {
-
+public interface PreparedHomomorphism extends PreparedExistentialHomomorphism {
+	
 	/**
-	 * The label (the name) for this query.
+	 * Look for the homomorphisms of the specified object into the specified
+	 * atomset. For boolean query, return an Iterator of Substitution with an empty Substitution
+	 * for true and no substitution for false.
 	 * 
-	 * @return the label of this query.
+	 * @return an Iterator over Substitutions representing homomorphism found of q into a.
+	 * @throws HomomorphismException
 	 */
-	String getLabel();
-	
-	/**
-	 * Get the positive set of facts of the query.
-	 * @return an atom set representing the atom conjunction of the query.
-	 */
-	InMemoryAtomSet getPositiveAtomSet();
-	
-	/**
-	 * Get the negative set of facts of the query.
-	 * @return an atom set representing the atom conjunction of the query.
-	 */
-	InMemoryAtomSet getNegativeAtomSet();
+	 CloseableIterator<Substitution> execute(Substitution s)
+			throws HomomorphismException;
 
-	/**
-	 * Get the answer variables
-	 * @return an Collection of Term representing the answer variables.
-	 */
-	List<Term> getAnswerVariables();
-
-	/**
-	 * Get the frontier variables (i.e. variables appearing both in the positive and negative part)  
-	 * @return an Collection of Term representing the answer variables.
-	 */
-	Set<Variable> getFrontierVariables();
-	
 }

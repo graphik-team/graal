@@ -40,45 +40,25 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.homomorphism;
+package fr.lirmm.graphik.graal.homomorphism.scheduler;
 
+import java.util.List;
 import java.util.Set;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
+import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.graal.api.homomorphism.ExistentialHomomorphismPattern;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.api.homomorphism.PreparedExistentialHomomorphism;
-import fr.lirmm.graphik.util.profiler.AbstractProfilable;
+import fr.lirmm.graphik.graal.homomorphism.Var;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class SimpleBacktrackHomomorphismPattern extends AbstractProfilable implements ExistentialHomomorphismPattern<InMemoryAtomSet, AtomSet> {
-
-	private static final SimpleBacktrackHomomorphismPattern INSTANCE = new SimpleBacktrackHomomorphismPattern();
-
-	// /////////////////////////////////////////////////////////////////////////
-	// SINGLETON
-	// /////////////////////////////////////////////////////////////////////////
-
-	public static SimpleBacktrackHomomorphismPattern instance() {
-		return INSTANCE;
-	}
-
-	private SimpleBacktrackHomomorphismPattern() {
-	}
-
-	// /////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	@Override
-	public <U1 extends InMemoryAtomSet, U2 extends AtomSet> PreparedExistentialHomomorphism<U1, U2> prepareHomomorphism(
-			U1 query, Set<Variable> variablesToParameterize, U2 data) throws HomomorphismException {
-		return new SimpleBacktrackPreparedHomomorphism<U1,U2>(query, variablesToParameterize, data);
-	}
+public interface PatternScheduler extends Scheduler {
 	
+	Var[] execute(InMemoryAtomSet query, Set<Variable> preAffectedVars, List<Term> ans, AtomSet data, RulesCompilation rc) throws HomomorphismException;
+
 }

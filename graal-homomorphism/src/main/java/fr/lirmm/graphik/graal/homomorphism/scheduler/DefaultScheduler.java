@@ -40,22 +40,81 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.api.homomorphism;
+package fr.lirmm.graphik.graal.homomorphism.scheduler;
 
-import fr.lirmm.graphik.graal.api.core.Substitution;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 
 /**
+ * Compute an order over variables from h. This scheduler put answer
+ * variables first, then other variables are put in the order from
+ * h.getTerms(Term.Type.VARIABLE).iterator().
+ *
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface PreparedExistentialHomomorphism {
-	
-	/**
-	 * 
-	 * @param s a Substitution of all variables to parameterize into a constant term.
-	 * @return true if there exist an homomorphism, false otherwise.
-	 * @throws HomomorphismException
-	 */
-	boolean exist(Substitution s) throws HomomorphismException;
+public class DefaultScheduler extends AbstractProfilable implements Scheduler {
+
+	private static DefaultScheduler instance;
+
+	private DefaultScheduler() {
+		super();
+	}
+
+	public static synchronized DefaultScheduler instance() {
+		if (instance == null)
+			instance = new DefaultScheduler();
+
+		return instance;
+	}
+
+	@Override
+	public Var[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data, RulesCompilation rc) {
+		Set<Variable> terms = h.getVariables();
+		Var[] vars = new Var[terms.size() + 2];
+
+		int level = 0;
+		vars[level] = new Var(level);
+
+		Set<Term> alreadyAffected = new TreeSet<Term>();
+		for (Term t : ans) {
+			if (t instanceof Variable && !alreadyAffected.contains(t)) {
+				++level;
+				vars[level] = new Var(level);
+				vars[level].value = (Variable) t;
+				alreadyAffected.add(t);
+			}
+		}
+
+		int lastAnswerVariable = level;
+
+		for (Term t : terms) {
+			if (!alreadyAffected.contains(t)) {
+				++level;
+				vars[level] = new Var(level);
+				vars[level].value = (Variable) t;
+			}
+		}
+
+		++level;
+		vars[level] = new Var(level);
+		vars[level].previousLevel = lastAnswerVariable;
+
+		return vars;
+	}
+
+	@Override
+	public boolean isAllowed(Var var, Term image) {
+		return true;
+	}
 
 }

@@ -70,13 +70,13 @@ public class ConjunctiveQueryWithFixedVariables implements ConjunctiveQuery {
 	private List<Term> answerVariables;
 	private String label = "";
 
-	public ConjunctiveQueryWithFixedVariables(InMemoryAtomSet atomSet, Iterable<Term> fixedTerms) {
+	public ConjunctiveQueryWithFixedVariables(InMemoryAtomSet atomSet, Iterable<? extends Term> fixedTerms) {
 		this.atomSet = computeFixedQuery(atomSet, fixedTerms);
 		this.answerVariables = new LinkedList<Term>(this.atomSet.getVariables());
 	}
 
 	public ConjunctiveQueryWithFixedVariables(InMemoryAtomSet atomSet, List<Term> responseVariables,
-			Iterable<Term> fixedTerms) {
+			Iterable<? extends Term> fixedTerms) {
 
 		this.atomSet = computeFixedQuery(atomSet, fixedTerms);
 		this.answerVariables = responseVariables;
@@ -128,13 +128,14 @@ public class ConjunctiveQueryWithFixedVariables implements ConjunctiveQuery {
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	private static InMemoryAtomSet computeFixedQuery(InMemoryAtomSet atomset, Iterable<Term> fixedTerms) {
+	private static InMemoryAtomSet computeFixedQuery(InMemoryAtomSet atomset, Iterable<? extends Term> fixedTerms) {
 		// create a Substitution for fixed query
 		InMemoryAtomSet fixedQuery = DefaultAtomSetFactory.instance().create();
 		Substitution fixSub = DefaultSubstitutionFactory.instance().createSubstitution();
 		for (Term t : fixedTerms) {
-			if (t.isVariable())
+			if(t.isVariable()) {
 				fixSub.put((Variable) t, DefaultTermFactory.instance().createConstant(t.getLabel()));
+			}
 		}
 
 		// apply substitution

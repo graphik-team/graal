@@ -44,6 +44,7 @@ package fr.lirmm.graphik.graal.api.homomorphism;
 
 import java.util.Set;
 
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.util.profiler.Profilable;
 
@@ -60,5 +61,5 @@ public interface ExistentialHomomorphismPattern<T1, T2> extends Profilable {
 	 * @param data
 	 * @return a pre-configured homomorphism algorithm instance.
 	 */
-	<U1 extends T1, U2 extends T2> PreparedExistentialHomomorphism prepareHomomorphism(U1 query, Set<Variable> variablesToParameterize, U2 data) throws HomomorphismException;
+	<U1 extends T1, U2 extends T2> PreparedExistentialHomomorphism prepareHomomorphism(U1 query, Set<Variable> variablesToParameterize, U2 data, RulesCompilation compilation) throws HomomorphismException;
 }

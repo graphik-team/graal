@@ -93,8 +93,7 @@ public class BackjumpTest {
 		h.setProfiler(new CPUTimeProfiler());
 		CloseableIterator results = h.execute(query, data);
 		while (results.hasNext()) {
-
-			System.out.println(results.next());
+			results.next();
 		}
 		Assert.assertEquals(49, h.getProfiler().get("#calls"));
 	}

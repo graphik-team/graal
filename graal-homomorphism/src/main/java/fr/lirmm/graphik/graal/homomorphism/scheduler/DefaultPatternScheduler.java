@@ -40,45 +40,85 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.homomorphism;
+package fr.lirmm.graphik.graal.homomorphism.scheduler;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.util.profiler.Profilable;
+import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 
 /**
- * The Scheduler interface provides a way to manage the backtracking order. The
- * Var.previousLevel will be used when the backtracking algorithm is in a
- * failure state (allow backjumping).
+ * Compute an order over variables from h. This scheduler put answer
+ * variables first, then other variables are put in the order from
+ * h.getTerms(Term.Type.VARIABLE).iterator().
  *
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface Scheduler extends Profilable {
+public class DefaultPatternScheduler extends AbstractProfilable  implements PatternScheduler {
 
+	private static DefaultPatternScheduler instance;
 
+	private DefaultPatternScheduler() {
+		super();
+	}
 
-	/**
-	 * Compute the order.
-	 *
-	 * @param h
-	 * @param ans
-	 * @return an array of Var representing an order over its.
-	 * @throws HomomorphismException
-	 */
-	Var[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data, RulesCompilation rc) throws HomomorphismException;
+	public static synchronized DefaultPatternScheduler instance() {
+		if (instance == null)
+			instance = new DefaultPatternScheduler();
 
-	/**
-	 * @param var
-	 * @param image
-	 * @return true if the specified image is not forbidden for the specified
-	 *         var
-	 */
-	boolean isAllowed(Var var, Term image);
+		return instance;
+	}
+
+	public Var[] execute(InMemoryAtomSet h, Set<Variable> preAffectedVars, List<Term> ans, AtomSet data, RulesCompilation rc) {
+		Set<Variable> variables = h.getVariables();
+		variables.removeAll(preAffectedVars);
+		
+		Var[] vars = new Var[variables.size() + 2];
+
+		int level = 0;
+		vars[level] = new Var(level);
+
+		int lastAnswerVariable = -1;
+		Set<Variable> alreadyAffected = new HashSet<Variable>();
+		for (Variable t : variables) {
+			if (t.isVariable() && alreadyAffected.add(t)) {
+				++level;
+				vars[level] = new Var(level);
+				vars[level].value = (Variable) t;
+				
+				if (ans.contains(t)) {
+					if (level > lastAnswerVariable)
+						lastAnswerVariable = level;
+				}
+			}
+		}
+
+		++level;
+		vars[level] = new Var(level);
+		vars[level].previousLevel = lastAnswerVariable;
+		
+		return vars;
+	}
+
+	@Override
+	public Var[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data, RulesCompilation rc)
+			throws HomomorphismException {
+		return this.execute(h, Collections.<Variable>emptySet(), ans, data, rc);
+	}
+
+	@Override
+	public boolean isAllowed(Var var, Term image) {
+		return true;
+	}
 
 }

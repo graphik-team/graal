@@ -42,26 +42,26 @@
  */
 package fr.lirmm.graphik.graal.core;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQueryWithNegation;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQueryWithNegatedPart;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class RuleWrapper2ConjunctiveQueryWithNegation implements ConjunctiveQueryWithNegation {
+public class RuleWrapper2ConjunctiveQueryWithNegation implements ConjunctiveQueryWithNegatedPart {
 
 	private String label = "";
 	private Rule rule;
 	private List<Term> ans;
+	private List<InMemoryAtomSet> negParts;
 	
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -73,6 +73,7 @@ public class RuleWrapper2ConjunctiveQueryWithNegation implements ConjunctiveQuer
 		for(Term t : rule.getFrontier()) {
 			ans.add(t);
 		}
+		this.negParts = Collections.singletonList(this.rule.getHead());
 	}
 	
 	// /////////////////////////////////////////////////////////////////////////
@@ -96,23 +97,18 @@ public class RuleWrapper2ConjunctiveQueryWithNegation implements ConjunctiveQuer
 	}
 
 	@Override
-	public InMemoryAtomSet getPositiveAtomSet() {
+	public InMemoryAtomSet getPositivePart() {
 		return this.rule.getBody();
 	}
 
 	@Override
-	public InMemoryAtomSet getNegativeAtomSet() {
-		return this.rule.getHead();
+	public List<InMemoryAtomSet> getNegatedParts() {
+		return this.negParts;
 	}
 
 	@Override
 	public List<Term> getAnswerVariables() {
 		return ans;
-	}
-
-	@Override
-	public Set<Variable> getFrontierVariables() {
-		return rule.getFrontier();
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

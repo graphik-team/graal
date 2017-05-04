@@ -48,6 +48,7 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
 import fr.lirmm.graphik.graal.homomorphism.Var;
@@ -96,7 +97,7 @@ public class NFC2 extends AbstractNFC implements ForwardChecking {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public boolean checkForward(Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc) throws BacktrackException {
+	public boolean checkForward(Var v, AtomSet g, Substitution initialSubstitution, Map<Variable, Var> map, RulesCompilation rc) throws BacktrackException {
 
 		// clear all computed candidats for post variables
 		for (Var z : v.postVars) {
@@ -110,7 +111,7 @@ public class NFC2 extends AbstractNFC implements ForwardChecking {
 				int i = 0;
 				for (Variable t : atom.getVariables()) {
 					Var z = map.get(t);
-					if (z.level > v.level) {
+					if (z != null && z.level > v.level) {
 						++i;
 						varToAssign = z;
 						if (i > 1 || !this.data[z.level].candidats.get(v).init) {
@@ -123,7 +124,7 @@ public class NFC2 extends AbstractNFC implements ForwardChecking {
 
 			if (checkMode && runCheck) {
 				try {
-					if (!check(atom, v, varToAssign, g, map, rc)) {
+					if (!check(atom, v, varToAssign, g, initialSubstitution, map, rc)) {
 						return false;
 					}
 				} catch (AtomSetException e) {
@@ -131,7 +132,7 @@ public class NFC2 extends AbstractNFC implements ForwardChecking {
 				}
 			} else {
 				try {
-					if(!select(atom, v, g, map, rc)) { 
+					if(!select(atom, v, g, initialSubstitution, map, rc)) { 
 						return false;
 					}
 				} catch (IteratorException e) {

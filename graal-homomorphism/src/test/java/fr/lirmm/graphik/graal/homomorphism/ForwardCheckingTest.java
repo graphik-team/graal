@@ -118,7 +118,7 @@ public class ForwardCheckingTest {
 
 		CloseableIterator results = h.execute(query, data);
 		while (results.hasNext()) {
-			System.out.println(results.next());
+			results.next();
 		}
 		results.close();
 		Assert.assertEquals(7, profiler.get("#calls"));
@@ -140,7 +140,7 @@ public class ForwardCheckingTest {
 		CloseableIterator results = h.execute(query, data);
 		int i = 0;
 		while (results.hasNext()) {
-			System.out.println(results.next());
+			results.next();
 			++i;
 		}
 		results.close();
@@ -163,11 +163,10 @@ public class ForwardCheckingTest {
 		CloseableIterator results = h.execute(query, data);
 		int i = 0;
 		while (results.hasNext()) {
-			System.out.println(results.next());
+			results.next();
 			++i;
 		}
 		results.close();
-		System.out.println(profiler.get("#calls"));
 	}
 
 

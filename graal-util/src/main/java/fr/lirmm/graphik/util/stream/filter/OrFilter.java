@@ -40,35 +40,24 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-/**
- * 
- */
-package fr.lirmm.graphik.graal.homomorphism.checker;
-
-import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.api.core.Query;
-import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.homomorphism.AbstractChecker;
-import fr.lirmm.graphik.graal.homomorphism.SimpleBacktrackHomomorphism;
+package fr.lirmm.graphik.util.stream.filter;
 
 /**
+ * This Filter implementation returns false on an element iff all filters given to 
+ * the constructor return false on this element.
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class SimpleBacktrackHomomorphismChecker extends AbstractChecker {
-
-	private static final SimpleBacktrackHomomorphismChecker INSTANCE = new SimpleBacktrackHomomorphismChecker();
+public class OrFilter<E> implements Filter<E> {
 
 	// /////////////////////////////////////////////////////////////////////////
-	// SINGLETON
+	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public static SimpleBacktrackHomomorphismChecker instance() {
-		return INSTANCE;
-	}
+	private Filter<E> filters[];
 
-	private SimpleBacktrackHomomorphismChecker() {
+	public OrFilter(Filter<E>... filters) {
+		this.filters = filters;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -76,23 +65,13 @@ public class SimpleBacktrackHomomorphismChecker extends AbstractChecker {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public SimpleBacktrackHomomorphism getSolver() {
-		return SimpleBacktrackHomomorphism.instance();
-	}
-
-	@Override
-	public boolean check(Query query, AtomSet atomset) {
-		if (query instanceof ConjunctiveQuery) {
-			ConjunctiveQuery q = (ConjunctiveQuery) query;
-			int size = q.getAtomSet().getVariables().size();
-			return size > 0 && size <= 2;
+	public boolean filter(E e) {
+		for(Filter<E> f : this.filters) {
+			if(f.filter(e)) {
+				return true;
+			}
 		}
 		return false;
-	}
-
-	@Override
-	public int getDefaultPriority() {
-		return 30;
 	}
 
 }

@@ -46,7 +46,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQueryWithNegation;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQueryWithNegatedPart;
 import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.homomorphism.AbstractChecker;
@@ -85,17 +86,9 @@ public class AtomicQueryHomomorphismWithNegationChecker  extends AbstractChecker
 
 	@Override
 	public boolean check(Query query, AtomSet atomset) {
-		if (query instanceof ConjunctiveQueryWithNegation) {
-			ConjunctiveQueryWithNegation q = (ConjunctiveQueryWithNegation) query;
-			if(AtomSetUtils.isSingleton(q.getPositiveAtomSet())){
-				Set<Term> set = new TreeSet<Term>();
-				for (Term t : q.getPositiveAtomSet().iterator().next()) {
-					if(t.isConstant() || !set.add(t)) {
-						return false;
-					}
-				}
-				return true;
-			}
+		if (query instanceof ConjunctiveQueryWithNegatedPart) {
+			ConjunctiveQueryWithNegatedPart q = (ConjunctiveQueryWithNegatedPart) query;
+			return AtomSetUtils.isSingleton(q.getPositivePart());
 		}
 		return false;
 	}

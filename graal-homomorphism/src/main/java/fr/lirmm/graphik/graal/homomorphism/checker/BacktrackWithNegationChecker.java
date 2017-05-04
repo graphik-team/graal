@@ -46,7 +46,7 @@
 package fr.lirmm.graphik.graal.homomorphism.checker;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQueryWithNegation;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQueryWithNegatedPart;
 import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.homomorphism.AbstractChecker;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismChecker;
@@ -88,7 +88,7 @@ public class BacktrackWithNegationChecker extends AbstractChecker implements Hom
 
 	@Override
 	public boolean check(Query query, AtomSet atomset) {
-		return query instanceof ConjunctiveQueryWithNegation;
+		return query instanceof ConjunctiveQueryWithNegatedPart;
 	}
 
 	@Override

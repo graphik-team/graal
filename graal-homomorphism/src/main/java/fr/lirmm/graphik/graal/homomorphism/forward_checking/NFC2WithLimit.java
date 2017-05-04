@@ -121,7 +121,7 @@ public class NFC2WithLimit extends NFC2 implements ForwardChecking {
 	}
 
 	@Override
-	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Map<Variable, Var> map, RulesCompilation rc)
+	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Substitution initialSubstitution, Map<Variable, Var> map, RulesCompilation rc)
 	    throws BacktrackException {
 		HomomorphismIteratorChecker tmp;
 		if (this.data[var.level].last.init) {
@@ -129,11 +129,11 @@ public class NFC2WithLimit extends NFC2 implements ForwardChecking {
 			tmp = new HomomorphismIteratorChecker(
 			        var,
 			        new CloseableIteratorAdapter<Term>(this.data[var.level].last.candidats.iterator()),
-			        this.dataWithLimit[var.level].atomsToCheck, g, map, rc
+			        this.dataWithLimit[var.level].atomsToCheck, g, initialSubstitution, map, rc
 			    );
 		} else {
 			try {
-				tmp = new HomomorphismIteratorChecker(var, g.termsIterator(), var.preAtoms, g, map, rc);
+				tmp = new HomomorphismIteratorChecker(var, g.termsIterator(), var.preAtoms, g, initialSubstitution, map, rc);
 			} catch (AtomSetException e) {
 				throw new BacktrackException(e);
 			}
@@ -147,7 +147,7 @@ public class NFC2WithLimit extends NFC2 implements ForwardChecking {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-    protected boolean select(Atom atom, Var v, AtomSet g, Map<Variable, Var> map, RulesCompilation rc)
+    protected boolean select(Atom atom, Var v, AtomSet g, Substitution initialSubstitution, Map<Variable, Var> map, RulesCompilation rc)
 	    throws AtomSetException, IteratorException {
 		boolean contains = false;
 		int nbAns = 0;
@@ -158,7 +158,7 @@ public class NFC2WithLimit extends NFC2 implements ForwardChecking {
 			Atom a = rewIt.next().getLeft();
 			
 			Var[] postV = this.computePostVariablesPosition(a, v.level, map, postVarsFromThisAtom);
-			Atom im = BacktrackUtils.createImageOf(a, map);
+			Atom im = BacktrackUtils.createImageOf(a, initialSubstitution, map);
 
 			Profiler profiler = this.getProfiler();
 			if (profiler != null) {

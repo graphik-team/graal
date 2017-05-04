@@ -73,7 +73,7 @@ public class NoBackJumping extends AbstractProfilable implements BackJumping {
 
 	@Override
 	public int previousLevel(Var var, Var[] vars) {
-		return var.level - 1;
+		return var.previousLevel;
 	}
 
 	@Override

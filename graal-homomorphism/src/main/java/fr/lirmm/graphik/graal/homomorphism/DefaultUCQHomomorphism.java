@@ -46,6 +46,7 @@
 package fr.lirmm.graphik.graal.homomorphism;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.UnionOfConjunctiveQueries;
@@ -63,12 +64,12 @@ public final class DefaultUCQHomomorphism extends
                                           AbstractHomomorphismWithCompilation<UnionOfConjunctiveQueries, AtomSet>
                                           implements UCQHomomorphismWithCompilation<AtomSet> {
 
-	private Homomorphism homomorphism;
+	private Homomorphism<ConjunctiveQuery, AtomSet> homomorphism;
 
 	public DefaultUCQHomomorphism() {
 	}
 
-	public DefaultUCQHomomorphism(Homomorphism h) {
+	public DefaultUCQHomomorphism(Homomorphism<ConjunctiveQuery, AtomSet> h) {
 		this.homomorphism = h;
 	}
 

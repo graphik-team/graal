@@ -42,8 +42,6 @@
  */
 package fr.lirmm.graphik.graal.homomorphism;
 
-import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -54,6 +52,7 @@ import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.homomorphism.scheduler.Scheduler;
 import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 
 /**

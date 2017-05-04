@@ -40,74 +40,39 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.homomorphism;
-
-import java.util.Set;
-import java.util.TreeSet;
-
-import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
-import fr.lirmm.graphik.graal.api.core.RulesCompilation;
-import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.util.profiler.AbstractProfilable;
+package fr.lirmm.graphik.util.stream.filter;
 
 /**
- * Compute an order over variables from h. This scheduler put answer
- * variables first, then other variables are put in the order from
- * h.getTerms(Term.Type.VARIABLE).iterator().
- *
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class PatternScheduler extends AbstractProfilable {
+public final class Filters {
+	
+    @SuppressWarnings("rawtypes")
+	private static final Filter TRUE_FILTER = new TrueFilter();
+    @SuppressWarnings("rawtypes")
+	private static final Filter FALSE_FILTER = new FalseFilter();
 
-	private static PatternScheduler instance;
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
 
-	private PatternScheduler() {
-		super();
+	private Filters() {
+	}
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
+	
+	@SuppressWarnings("unchecked")
+	public static <T> Filter<T> alwaysTrueFilter() {
+		return (Filter<T>) TRUE_FILTER;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T> Filter<T> alwaysFalseFilter() {
+		return (Filter<T>) FALSE_FILTER;
 	}
 
-	public static synchronized PatternScheduler instance() {
-		if (instance == null)
-			instance = new PatternScheduler();
-
-		return instance;
-	}
-
-	public Var[] execute(InMemoryAtomSet h, Set<Variable> preAffectedVars, AtomSet data, RulesCompilation rc) {
-		Set<Variable> terms = h.getVariables();
-		Var[] vars = new Var[terms.size() + 2];
-
-		int level = 0;
-		vars[level] = new Var(level);
-
-		Set<Term> alreadyAffected = new TreeSet<Term>();
-		for (Term t : preAffectedVars) {
-			if (t instanceof Variable && !alreadyAffected.contains(t)) {
-				++level;
-				vars[level] = new Var(level);
-				vars[level].value = (Variable) t;
-				alreadyAffected.add(t);
-			}
-		}
-
-		// last preaffected variable
-		vars[0].nextLevel = level;
-
-		for (Term t : terms) {
-			if (!alreadyAffected.contains(t)) {
-				++level;
-				vars[level] = new Var(level);
-				vars[level].value = (Variable) t;
-			}
-		}
-
-		++level;
-		vars[level] = new Var(level);
-		vars[level].previousLevel = vars[0].nextLevel;
-		
-		return vars;
-	}
 
 }
