@@ -40,13 +40,24 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.core.unifier.checker;
+package fr.lirmm.graphik.graal.api.core.unifier;
 
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
-public interface DependencyChecker {
+/**
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+ *
+ */
+public interface UnifierAlgorithm {
+	
+	public CloseableIterator<Substitution> computePieceUnifier(Rule rule, InMemoryAtomSet query, UnifierChecker... filters);
+	
+	public CloseableIterator<Substitution> computePieceUnifier(Rule rule, Rule target, DependencyChecker... filters);
 
-	boolean isValidDependency(Rule r1, Rule r2, Substitution s);
+	public boolean existPieceUnifier(Rule rule, InMemoryAtomSet query, UnifierChecker... filters);
 
+	public boolean existPieceUnifier(Rule source, Rule target, DependencyChecker... filters);
 }

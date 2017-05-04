@@ -45,6 +45,7 @@ package fr.lirmm.graphik.graal.core.unifier.checker;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.api.core.unifier.DependencyChecker;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.ConjunctiveQueryWithFixedVariables;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;

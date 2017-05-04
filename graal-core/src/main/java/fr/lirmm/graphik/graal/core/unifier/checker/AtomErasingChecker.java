@@ -45,6 +45,7 @@
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.api.core.unifier.AbstractUnifierChecker;
 import fr.lirmm.graphik.graal.core.atomset.AtomSetUtils;
 
 /**

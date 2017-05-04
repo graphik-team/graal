@@ -45,9 +45,10 @@ package fr.lirmm.graphik.graal.core.unifier;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.api.core.unifier.DependencyChecker;
+import fr.lirmm.graphik.graal.api.core.unifier.UnifierAlgorithm;
+import fr.lirmm.graphik.graal.api.core.unifier.UnifierChecker;
 import fr.lirmm.graphik.graal.core.ConjunctiveQueryRuleAdapter;
-import fr.lirmm.graphik.graal.core.unifier.checker.DependencyChecker;
-import fr.lirmm.graphik.graal.core.unifier.checker.UnifierChecker;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
