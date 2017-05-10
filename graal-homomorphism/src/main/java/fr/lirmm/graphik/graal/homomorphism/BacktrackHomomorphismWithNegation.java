@@ -44,10 +44,10 @@ package fr.lirmm.graphik.graal.homomorphism;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQueryWithNegatedPart;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.NoBackJumping;
 import fr.lirmm.graphik.graal.homomorphism.bootstrapper.Bootstrapper;
@@ -67,7 +67,7 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class BacktrackHomomorphismWithNegation extends AbstractHomomorphism<ConjunctiveQueryWithNegatedPart, AtomSet> implements Homomorphism<ConjunctiveQueryWithNegatedPart, AtomSet> {
+public class BacktrackHomomorphismWithNegation extends AbstractHomomorphismWithCompilation<ConjunctiveQueryWithNegatedPart, AtomSet> implements HomomorphismWithCompilation<ConjunctiveQueryWithNegatedPart, AtomSet> {
 
 	private Scheduler       scheduler;
 	private Bootstrapper    bootstrapper;
@@ -144,10 +144,10 @@ public class BacktrackHomomorphismWithNegation extends AbstractHomomorphism<Conj
 	// /////////////////////////////////////////////////////////////////////////
 
 
-	public CloseableIterator<Substitution> execute(ConjunctiveQueryWithNegatedPart q, AtomSet a) throws HomomorphismException {
+	public CloseableIterator<Substitution> execute(ConjunctiveQueryWithNegatedPart q, AtomSet a, RulesCompilation compilation) throws HomomorphismException {
 		return new BacktrackIterator(q.getPositivePart(), q.getNegatedParts(), a, q.getAnswerVariables(),
 		                                                            this.scheduler, this.bootstrapper, this.fc,
-		                                                            this.bj, NoCompilation.instance());
+		                                                            this.bj, compilation);
 	}
 
 }

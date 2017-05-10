@@ -50,6 +50,8 @@ import org.junit.Test;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.RuleSet;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
@@ -57,6 +59,8 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQueryWithNegatedParts;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphStore;
+import fr.lirmm.graphik.graal.core.compilation.IDCompilation;
+import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.GraphBaseBackJumping;
 import fr.lirmm.graphik.graal.homomorphism.bbc.BCC;
@@ -238,6 +242,50 @@ public class HomomorphismTest {
 		DefaultConjunctiveQueryWithNegatedParts query = new DefaultConjunctiveQueryWithNegatedParts(positivePart, parts);
 		BacktrackHomomorphismWithNegation h = new BacktrackHomomorphismWithNegation();
 		CloseableIterator<Substitution> res = h.execute(query, data);
+		
+		
+		Assert.assertTrue(res.hasNext());
+		res.next();
+		Assert.assertFalse(res.hasNext());
+		res.close();
+	}
+	
+	
+	@Test
+	public void test6Compilation() throws HomomorphismException, IteratorException {
+		InMemoryAtomSet data = new DefaultInMemoryGraphStore();
+		
+		RuleSet rules = new LinkedListRuleSet();
+		rules.add(DlgpParser.parseRule("r(X,Y) :- s(X,Y)."));
+		RulesCompilation comp = new IDCompilation();
+		comp.compile(rules.iterator());
+		
+		data.addAll(DlgpParser.parseAtomSet("p(a,b), q(b), p(a,c), s(a,d), q(d), s(a,e)."));
+		
+		Variable y = DefaultTermFactory.instance().createVariable("Y");
+		Variable z = DefaultTermFactory.instance().createVariable("Z");
+
+		InMemoryAtomSet positivePart = new LinkedListAtomSet();
+		positivePart.addAll(DlgpParser.parseAtomSet("p(X,Y),r(X,Z)."));
+		CloseableIteratorWithoutException<Atom> it = positivePart.iterator();
+		it.next().setTerm(1, y);
+		it.next().setTerm(1, z);
+
+		LinkedList<InMemoryAtomSet> parts = new LinkedList<InMemoryAtomSet>();
+
+		InMemoryAtomSet negatedPart = new LinkedListAtomSet();
+		negatedPart.addAll(DlgpParser.parseAtomSet("q(Y)."));
+		negatedPart.iterator().next().setTerm(0, y);
+		parts.add(negatedPart);
+		
+		negatedPart = new LinkedListAtomSet();
+		negatedPart.addAll(DlgpParser.parseAtomSet("q(Z)."));
+		negatedPart.iterator().next().setTerm(0, z);
+		parts.add(negatedPart);
+
+		DefaultConjunctiveQueryWithNegatedParts query = new DefaultConjunctiveQueryWithNegatedParts(positivePart, parts);
+		BacktrackHomomorphismWithNegation h = new BacktrackHomomorphismWithNegation();
+		CloseableIterator<Substitution> res = h.execute(query, data, comp);
 		
 		
 		Assert.assertTrue(res.hasNext());
