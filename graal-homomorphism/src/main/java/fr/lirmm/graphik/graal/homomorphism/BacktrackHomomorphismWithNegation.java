@@ -144,7 +144,7 @@ public class BacktrackHomomorphismWithNegation extends AbstractHomomorphism<Conj
 	// /////////////////////////////////////////////////////////////////////////
 
 
-	public <U1 extends ConjunctiveQueryWithNegatedPart, U2 extends AtomSet> CloseableIterator<Substitution> execute(U1 q, U2 a) throws HomomorphismException {
+	public CloseableIterator<Substitution> execute(ConjunctiveQueryWithNegatedPart q, AtomSet a) throws HomomorphismException {
 		return new BacktrackIterator(q.getPositivePart(), q.getNegatedParts(), a, q.getAnswerVariables(),
 		                                                            this.scheduler, this.bootstrapper, this.fc,
 		                                                            this.bj, NoCompilation.instance());

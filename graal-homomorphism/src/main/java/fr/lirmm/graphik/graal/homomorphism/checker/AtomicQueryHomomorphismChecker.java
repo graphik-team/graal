@@ -87,7 +87,7 @@ public class AtomicQueryHomomorphismChecker extends AbstractChecker implements H
 	}
 
 	@Override
-	public boolean check(Query query, AtomSet atomset) {
+	public boolean check(Object query, AtomSet atomset) {
 		if (query instanceof ConjunctiveQuery) {
 			ConjunctiveQuery q = (ConjunctiveQuery) query;
 			return AtomSetUtils.isSingleton(q.getAtomSet());

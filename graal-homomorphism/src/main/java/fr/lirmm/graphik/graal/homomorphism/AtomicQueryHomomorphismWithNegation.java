@@ -98,7 +98,7 @@ public class AtomicQueryHomomorphismWithNegation extends AbstractHomomorphismWit
 	// HOMOMORPHISM METHODS
 	// /////////////////////////////////////////////////////////////////////////
 	
-	public <U1 extends ConjunctiveQueryWithNegatedPart, U2 extends AtomSet> CloseableIterator<Substitution> execute(U1 query, U2 data, RulesCompilation compilation) throws HomomorphismException {
+	public CloseableIterator<Substitution> execute(ConjunctiveQueryWithNegatedPart query, AtomSet data, RulesCompilation compilation) throws HomomorphismException {
 		try {
 			Atom atom = query.getPositivePart().iterator().next();
 			List<Term> ans = query.getAnswerVariables();
@@ -114,6 +114,7 @@ public class AtomicQueryHomomorphismWithNegation extends AbstractHomomorphismWit
 			
 			// manage negative parts
 			Set<Variable> variables = query.getPositivePart().getVariables();
+			@SuppressWarnings("rawtypes")
 			Filter[] filters = new Filter[query.getNegatedParts().size()];
 			int i = 0;
 			for(InMemoryAtomSet negPart : query.getNegatedParts()) {
@@ -136,13 +137,9 @@ public class AtomicQueryHomomorphismWithNegation extends AbstractHomomorphismWit
 	
 	private static class NegFilter implements Filter<Substitution> {
 
-		private AtomSet data;
-		private InMemoryAtomSet head;
 		private PreparedExistentialHomomorphism homomorphism;
 		
 		public NegFilter(InMemoryAtomSet head, Set<Variable> frontier, AtomSet data, RulesCompilation compilation) throws HomomorphismException {
-			this.data = data;
-			this.head = head;
 			ConjunctiveQuery query = DefaultConjunctiveQueryFactory.instance().create(head, Collections.<Term>emptyList());
 			this.homomorphism = BacktrackHomomorphismPattern.instance().prepareHomomorphism(query, frontier, data, compilation);
 		}
@@ -150,8 +147,7 @@ public class AtomicQueryHomomorphismWithNegation extends AbstractHomomorphismWit
 		@Override
 		public boolean filter(Substitution s) {
 			try {
-				ConjunctiveQuery nquery = DefaultConjunctiveQueryFactory.instance().create(s.createImageOf(this.head), Collections.<Term>emptyList());
-				return !StaticExistentialHomomorphism.instance().exist(nquery, data);	
+				return !homomorphism.exist(s);	
 			} catch (HomomorphismException e) {
 				// TODO treat this exception
 				e.printStackTrace();

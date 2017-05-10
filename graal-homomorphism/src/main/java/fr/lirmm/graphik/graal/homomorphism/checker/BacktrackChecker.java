@@ -47,7 +47,6 @@ package fr.lirmm.graphik.graal.homomorphism.checker;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.homomorphism.AbstractChecker;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismChecker;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphism;
@@ -87,7 +86,7 @@ public class BacktrackChecker extends AbstractChecker implements HomomorphismChe
 	}
 
 	@Override
-	public boolean check(Query query, AtomSet atomset) {
+	public boolean check(Object query, AtomSet atomset) {
 		return query instanceof ConjunctiveQuery;
 	}
 

@@ -45,16 +45,25 @@
  */
 package fr.lirmm.graphik.graal.homomorphism;
 
+import java.util.SortedSet;
+import java.util.TreeSet;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.Query;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismChecker;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactory;
-import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
+import fr.lirmm.graphik.graal.homomorphism.checker.AtomicQueryHomomorphismChecker;
+import fr.lirmm.graphik.graal.homomorphism.checker.AtomicQueryHomomorphismWithNegationChecker;
+import fr.lirmm.graphik.graal.homomorphism.checker.BacktrackChecker;
+import fr.lirmm.graphik.graal.homomorphism.checker.BacktrackWithNegationChecker;
+import fr.lirmm.graphik.graal.homomorphism.checker.DefaultUnionConjunctiveQueriesChecker;
+import fr.lirmm.graphik.graal.homomorphism.checker.FullyInstantiatedQueryHomomorphismChecker;
 import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
@@ -62,27 +71,34 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */
-public class StaticHomomorphism extends AbstractProfilable implements Homomorphism<Query, AtomSet> {
+public class StaticHomomorphism extends AbstractProfilable implements HomomorphismWithCompilation<Object, AtomSet> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(StaticHomomorphism.class);
 
-	public static HomomorphismFactory getSolverFactory() {
-		return DefaultHomomorphismFactory.instance();
-	}
+	private SortedSet<HomomorphismChecker> elements;
+
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 
 	private static StaticHomomorphism instance;
-
-	protected StaticHomomorphism() {
-		super();
+	
+	public StaticHomomorphism(boolean loadDefaultHomomorphism) {
+		this.elements = new TreeSet<HomomorphismChecker>();
+		if(loadDefaultHomomorphism) {
+			this.elements.add(BacktrackChecker.instance());
+			this.elements.add(DefaultUnionConjunctiveQueriesChecker.instance());
+			this.elements.add(FullyInstantiatedQueryHomomorphismChecker.instance());
+			this.elements.add(AtomicQueryHomomorphismChecker.instance());
+			this.elements.add(BacktrackWithNegationChecker.instance());
+			this.elements.add(AtomicQueryHomomorphismWithNegationChecker.instance());
+		}
 	}
 
 	public static synchronized StaticHomomorphism instance() {
 		if (instance == null)
-			instance = new StaticHomomorphism();
+			instance = new StaticHomomorphism(true);
 
 		return instance;
 	}
@@ -90,29 +106,78 @@ public class StaticHomomorphism extends AbstractProfilable implements Homomorphi
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
+	
+	/**
+	 * 
+	 * @param checker
+	 * @return true if this checker is not already added, false otherwise.
+	 */
+	public boolean addChecker(HomomorphismChecker checker) {
+		return this.elements.add(checker);
+	}
 
 	@Override
-	public <T1 extends Query, U2 extends AtomSet> CloseableIterator<Substitution> execute(T1 query, U2 atomSet)
+	public CloseableIterator<Substitution> execute(Object query, AtomSet atomSet)
 	    throws HomomorphismException {
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Query : " + query);
-
-		Homomorphism solver = getSolverFactory().getSolver(query, atomSet);
-		if(this.getProfiler().isProfilingEnabled()) {
-			this.getProfiler().put("solver", solver.toString());
-			solver.setProfiler(this.getProfiler());
-		}
-		return solver.execute(query, atomSet);
+		
+    	for(HomomorphismChecker e : elements) {
+    		if(e.check(query, atomSet)) {
+    			@SuppressWarnings("unchecked")
+				Homomorphism<Object, AtomSet> solver = (Homomorphism<Object, AtomSet>) e.getSolver();
+    			return solver.execute(query, atomSet);
+    		}
+    	}
+    	throw new HomomorphismException("Solver not found");
 	}
 
 	@Override
-	public <U1 extends Query, U2 extends AtomSet> boolean exist(U1 query, U2 atomset) throws HomomorphismException {
+	public boolean exist(Object query, AtomSet atomSet)
+	    throws HomomorphismException {
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Query : " + query);
-
-		Homomorphism solver = getSolverFactory().getSolver(query, atomset);
-		solver.setProfiler(this.getProfiler());
-		return solver.exist(query, atomset);
+		
+    	for(HomomorphismChecker e : elements) {
+    		if(e.check(query, atomSet)) {
+    			@SuppressWarnings("unchecked")
+				Homomorphism<Object, AtomSet> solver = (Homomorphism<Object, AtomSet>) e.getSolver();
+    			return solver.exist(query, atomSet);
+    		}
+    	}
+    	throw new HomomorphismException("Solver not found");
 	}
-
+	
+	@Override
+	public CloseableIterator<Substitution> execute(Object query, AtomSet atomSet, RulesCompilation compilation)
+	    throws HomomorphismException {
+		if (LOGGER.isDebugEnabled())
+			LOGGER.debug("Query : " + query);
+		
+    	for(HomomorphismChecker e : elements) {
+    		if(e.getSolver() instanceof HomomorphismWithCompilation && e.check(query, atomSet)) {
+    			@SuppressWarnings("unchecked")
+				HomomorphismWithCompilation<Object, AtomSet> solver = (HomomorphismWithCompilation<Object, AtomSet>) e.getSolver();
+    			return solver.execute(query, atomSet, compilation);
+    		}
+    	}
+    	throw new HomomorphismException("Solver not found");
+	}
+	
+	@Override
+	public boolean exist(Object query, AtomSet atomSet, RulesCompilation compilation)
+	    throws HomomorphismException {
+		if (LOGGER.isDebugEnabled())
+			LOGGER.debug("Query : " + query);
+    	for(HomomorphismChecker e : elements) {
+    		if(e.getSolver() instanceof HomomorphismWithCompilation && e.check(query, atomSet)) {
+    			@SuppressWarnings("unchecked")
+				HomomorphismWithCompilation<Object, AtomSet> solver = (HomomorphismWithCompilation<Object, AtomSet>) e.getSolver();
+    			return solver.exist(query, atomSet, compilation);
+    		}
+    	}
+    	throw new HomomorphismException("Solver not found");
+	}
+	
+	
 }

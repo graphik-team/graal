@@ -87,7 +87,7 @@ public class BacktrackWithNegationChecker extends AbstractChecker implements Hom
 	}
 
 	@Override
-	public boolean check(Query query, AtomSet atomset) {
+	public boolean check(Object query, AtomSet atomset) {
 		return query instanceof ConjunctiveQueryWithNegatedPart;
 	}
 

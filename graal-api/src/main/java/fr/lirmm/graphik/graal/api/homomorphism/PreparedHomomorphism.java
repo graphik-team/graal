@@ -42,7 +42,6 @@
  */
 package fr.lirmm.graphik.graal.api.homomorphism;
 
-import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 

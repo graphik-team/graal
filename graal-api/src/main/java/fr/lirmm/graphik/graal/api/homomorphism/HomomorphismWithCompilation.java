@@ -66,7 +66,7 @@ public interface HomomorphismWithCompilation<T1 extends Object, T2 extends AtomS
 	 * @return an Iterator over Substitutions representing homomorphism found of q into a.
 	 * @throws HomomorphismException
 	 */
-	<U1 extends T1, U2 extends T2> CloseableIterator<Substitution> execute(U1 q, U2 a, RulesCompilation compilation)
+	CloseableIterator<Substitution> execute(T1 q, T2 a, RulesCompilation compilation)
 			throws HomomorphismException;
 
 };

@@ -46,7 +46,6 @@
 package fr.lirmm.graphik.graal.api.homomorphism;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.Query;
 
 /**
  * Allow to know if an homomorphism solver can be applied.
@@ -64,14 +63,14 @@ public interface HomomorphismChecker extends ExistentialHomomorphismChecker {
 	 * @param atomset
 	 * @return true if the related homomorphism can handle the specified query over the specified atomset, false otherwise.
 	 */
-	boolean check(Query query, AtomSet atomset);
+	boolean check(Object query, AtomSet atomset);
 	
 	/**
 	 * Return the attached solver.
 	 * 
 	 * @return the related homomorphism algorithm.
 	 */
-	Homomorphism<? extends Query, ? extends AtomSet> getSolver();
+	Homomorphism<? extends Object, ? extends AtomSet> getSolver();
 	
 	/**
 	 * Get the priority of this solver. 0 is the lowest.

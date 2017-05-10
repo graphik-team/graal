@@ -45,57 +45,71 @@
  */
 package fr.lirmm.graphik.graal.homomorphism;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.Query;
-import fr.lirmm.graphik.graal.api.homomorphism.ExistentialHomomorphism;
-import fr.lirmm.graphik.graal.api.homomorphism.ExistentialHomomorphismFactory;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
+import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.api.core.UnionOfConjunctiveQueries;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
-import fr.lirmm.graphik.util.profiler.AbstractProfilable;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
+import fr.lirmm.graphik.graal.api.homomorphism.UCQHomomorphismWithCompilation;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
- * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- * 
+ * @author Clément Sipieter (INRIA) <clement@6pi.fr>
+ *
  */
-public class StaticExistentialHomomorphism extends AbstractProfilable implements ExistentialHomomorphism<Query, AtomSet> {
+public final class DefaultUCQHomomorphismWithCompilation extends
+                                          AbstractHomomorphismWithCompilation<UnionOfConjunctiveQueries, AtomSet>
+                                          implements UCQHomomorphismWithCompilation<AtomSet> {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(StaticExistentialHomomorphism.class);
-
-	public static ExistentialHomomorphismFactory getSolverFactory() {
-		return DefaultExistentialHomomorphismFactory.instance();
-	}
+	private HomomorphismWithCompilation<ConjunctiveQuery, AtomSet> homomorphism = null;
 
 	// /////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTOR
+	// SINGLETON
 	// /////////////////////////////////////////////////////////////////////////
 
-	private static StaticExistentialHomomorphism instance;
+	private static DefaultUCQHomomorphismWithCompilation instance;
 
-	protected StaticExistentialHomomorphism() {
+	protected DefaultUCQHomomorphismWithCompilation() {
 		super();
 	}
 
-	public static synchronized StaticExistentialHomomorphism instance() {
+	public static synchronized DefaultUCQHomomorphismWithCompilation instance() {
 		if (instance == null)
-			instance = new StaticExistentialHomomorphism();
+			instance = new DefaultUCQHomomorphismWithCompilation();
 
 		return instance;
 	}
 
-	// /////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	// /////////////////////////////////////////////////////////////////////////
+	public DefaultUCQHomomorphismWithCompilation(HomomorphismWithCompilation<ConjunctiveQuery, AtomSet> h) {
+		this.homomorphism = h;
+	}
 
 	@Override
-	public <T1 extends Query, U2 extends AtomSet> boolean exist(T1 query, U2 atomSet)
+	public CloseableIterator<Substitution> execute(UnionOfConjunctiveQueries queries, AtomSet atomset,
+	    RulesCompilation rc)
 	    throws HomomorphismException {
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("Query : " + query);
-		ExistentialHomomorphism solver = getSolverFactory().getSolver(query, atomSet);
-		return solver.exist(query, atomSet);
+		UnionConjunctiveQueriesSubstitutionIterator it = new UnionConjunctiveQueriesSubstitutionIterator(queries,
+		                                                                                                 atomset,
+		                                                                                                 homomorphism,
+		                                                                                                 rc);
+		it.setProfiler(this.getProfiler());
+		return it;
+	}
+
+	@Override
+	public boolean exist(UnionOfConjunctiveQueries q, AtomSet a,
+	    RulesCompilation compilation) throws HomomorphismException {
+		try {
+			CloseableIterator<Substitution> execute = this.execute(q, a, compilation);
+			boolean res = execute.hasNext();
+			execute.close();
+			return res;
+		} catch (IteratorException e) {
+			throw new HomomorphismException(e);
+		}
 	}
 
 }

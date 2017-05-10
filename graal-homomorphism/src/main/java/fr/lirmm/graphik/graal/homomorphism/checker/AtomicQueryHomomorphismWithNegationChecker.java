@@ -85,7 +85,7 @@ public class AtomicQueryHomomorphismWithNegationChecker  extends AbstractChecker
 	}
 
 	@Override
-	public boolean check(Query query, AtomSet atomset) {
+	public boolean check(Object query, AtomSet atomset) {
 		if (query instanceof ConjunctiveQueryWithNegatedPart) {
 			ConjunctiveQueryWithNegatedPart q = (ConjunctiveQueryWithNegatedPart) query;
 			return AtomSetUtils.isSingleton(q.getPositivePart());

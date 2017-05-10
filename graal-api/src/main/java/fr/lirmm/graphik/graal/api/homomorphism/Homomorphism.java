@@ -65,8 +65,7 @@ public interface Homomorphism<T1 extends Object, T2 extends AtomSet> extends Exi
 	 * @return an Iterator over Substitutions representing homomorphism found of q into a.
 	 * @throws HomomorphismException
 	 */
-	<U1 extends T1, U2 extends T2> CloseableIterator<Substitution> execute(U1 q, U2 a)
-			throws HomomorphismException;
+	CloseableIterator<Substitution> execute(T1 q, T2 a) throws HomomorphismException;
 
 };
 

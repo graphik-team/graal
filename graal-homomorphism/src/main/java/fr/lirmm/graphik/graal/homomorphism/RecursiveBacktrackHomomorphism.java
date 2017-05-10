@@ -277,6 +277,7 @@ public final class RecursiveBacktrackHomomorphism implements Homomorphism<Conjun
 	private static Collection<Atom>[] getAtomRank(CloseableIterableWithoutException<Atom> atomset, List<Variable> varsOrdered) {
 		int tmp, rank;
 
+		@SuppressWarnings("unchecked")
 		Collection<Atom>[] atomRank = new LinkedList[varsOrdered.size() + 1];
 		for (int i = 0; i < atomRank.length; ++i)
 			atomRank[i] = new LinkedList<Atom>();

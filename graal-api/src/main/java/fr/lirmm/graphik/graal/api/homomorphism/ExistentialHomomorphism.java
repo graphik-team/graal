@@ -42,13 +42,14 @@
  */
 package fr.lirmm.graphik.graal.api.homomorphism;
 
+import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.util.profiler.Profilable;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface ExistentialHomomorphism<T1, T2> extends Profilable {
+public interface ExistentialHomomorphism<T1 extends Object, T2 extends AtomSet> extends Profilable {
 	
 	/**
 	 * Look if there exists an homomorphism of q into a.
@@ -58,5 +59,5 @@ public interface ExistentialHomomorphism<T1, T2> extends Profilable {
 	 * @return true if there exists an homomorphism of q into a, false otherwise.
 	 * @throws HomomorphismException
 	 */
-	<U1 extends T1, U2 extends T2> boolean exist(U1 q, U2 a) throws HomomorphismException;
+	boolean exist(T1 q, T2 a) throws HomomorphismException;
 }

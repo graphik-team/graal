@@ -47,7 +47,6 @@ package fr.lirmm.graphik.graal.store.rdbms.homomorphism;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.homomorphism.AbstractChecker;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismChecker;
 import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
@@ -59,7 +58,7 @@ import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
 public class SqlHomomorphismChecker extends AbstractChecker implements HomomorphismChecker {
 
 	@Override
-	public boolean check(Query query, AtomSet atomset) {
+	public boolean check(Object query, AtomSet atomset) {
 		 return query instanceof ConjunctiveQuery && atomset instanceof RdbmsStore;
 	}
 

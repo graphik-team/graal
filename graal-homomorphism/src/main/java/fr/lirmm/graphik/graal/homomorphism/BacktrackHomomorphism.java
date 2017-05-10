@@ -156,7 +156,7 @@ public class BacktrackHomomorphism extends AbstractHomomorphismWithCompilation<C
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public <U1 extends ConjunctiveQuery, U2 extends AtomSet> CloseableIterator<Substitution> execute(U1 q, U2 a,
+	public CloseableIterator<Substitution> execute(ConjunctiveQuery q, AtomSet a,
 	    RulesCompilation compilation) throws HomomorphismException {
 		Pair<ConjunctiveQuery, Substitution> pair = EqualityUtils.processEquality(q);
 

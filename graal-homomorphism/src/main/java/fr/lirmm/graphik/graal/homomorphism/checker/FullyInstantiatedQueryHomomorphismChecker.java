@@ -47,8 +47,6 @@ package fr.lirmm.graphik.graal.homomorphism.checker;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.api.core.Query;
-import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.homomorphism.AbstractChecker;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismChecker;
 import fr.lirmm.graphik.graal.homomorphism.FullyInstantiatedQueryHomomorphism;
@@ -82,7 +80,7 @@ public class FullyInstantiatedQueryHomomorphismChecker extends AbstractChecker i
 	}
 
 	@Override
-	public boolean check(Query query, AtomSet atomset) {
+	public boolean check(Object query, AtomSet atomset) {
 		if (query instanceof ConjunctiveQuery) {
 			ConjunctiveQuery q = (ConjunctiveQuery) query;
 			return q.getAtomSet().getVariables().isEmpty();

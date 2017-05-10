@@ -103,7 +103,7 @@ public class FullyInstantiatedQueryHomomorphism extends AbstractHomomorphismWith
 	}
 	
 	@Override
-	public <U1 extends ConjunctiveQuery, U2 extends AtomSet> CloseableIterator<Substitution> execute(U1 q, U2 a) throws HomomorphismException {
+	public CloseableIterator<Substitution> execute(ConjunctiveQuery q, AtomSet a) throws HomomorphismException {
 		try {
 			CloseableIteratorWithoutException<Atom> it = q.getAtomSet().iterator();
 			boolean contains = true;
@@ -121,7 +121,7 @@ public class FullyInstantiatedQueryHomomorphism extends AbstractHomomorphismWith
 	}
 	
 	@Override
-	public <U1 extends ConjunctiveQuery, U2 extends AtomSet> CloseableIterator<Substitution> execute(U1 q, U2 a, RulesCompilation rc) throws HomomorphismException {
+	public CloseableIterator<Substitution> execute(ConjunctiveQuery q, AtomSet a, RulesCompilation rc) throws HomomorphismException {
 		try {
 			CloseableIteratorWithoutException<Atom> it = q.getAtomSet().iterator();
 			boolean contains = true;

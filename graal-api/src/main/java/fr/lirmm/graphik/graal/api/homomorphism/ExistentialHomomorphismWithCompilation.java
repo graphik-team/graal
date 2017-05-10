@@ -42,13 +42,14 @@
  */
 package fr.lirmm.graphik.graal.api.homomorphism;
 
+import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface ExistentialHomomorphismWithCompilation<T1, T2> extends ExistentialHomomorphism<T1, T2> {
+public interface ExistentialHomomorphismWithCompilation<T1 extends Object, T2 extends AtomSet> extends ExistentialHomomorphism<T1, T2> {
 	
 	/**
 	 * Look if there exists an homomorphism of q into a.
@@ -59,6 +60,6 @@ public interface ExistentialHomomorphismWithCompilation<T1, T2> extends Existent
 	 * @return true if there exists an homomorphism of q into a, false otherwise.
 	 * @throws HomomorphismException
 	 */
-	<U1 extends T1, U2 extends T2> boolean exist(U1 q, U2 a, RulesCompilation compilation) throws HomomorphismException;
+	boolean exist(T1 q, T2 a, RulesCompilation compilation) throws HomomorphismException;
 	
 }

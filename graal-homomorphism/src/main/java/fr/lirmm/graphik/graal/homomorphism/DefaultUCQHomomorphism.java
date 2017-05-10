@@ -47,12 +47,11 @@ package fr.lirmm.graphik.graal.homomorphism;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.UnionOfConjunctiveQueries;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.api.homomorphism.UCQHomomorphismWithCompilation;
+import fr.lirmm.graphik.graal.api.homomorphism.UCQHomomorphism;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
@@ -61,12 +60,26 @@ import fr.lirmm.graphik.util.stream.IteratorException;
  *
  */
 public final class DefaultUCQHomomorphism extends
-                                          AbstractHomomorphismWithCompilation<UnionOfConjunctiveQueries, AtomSet>
-                                          implements UCQHomomorphismWithCompilation<AtomSet> {
+                                          AbstractHomomorphism<UnionOfConjunctiveQueries, AtomSet>
+                                          implements UCQHomomorphism<AtomSet> {
 
-	private Homomorphism<ConjunctiveQuery, AtomSet> homomorphism;
+	private Homomorphism<ConjunctiveQuery, AtomSet> homomorphism = null;
 
-	public DefaultUCQHomomorphism() {
+	// /////////////////////////////////////////////////////////////////////////
+	// SINGLETON
+	// /////////////////////////////////////////////////////////////////////////
+
+	private static DefaultUCQHomomorphism instance;
+
+	protected DefaultUCQHomomorphism() {
+		super();
+	}
+
+	public static synchronized DefaultUCQHomomorphism instance() {
+		if (instance == null)
+			instance = new DefaultUCQHomomorphism();
+
+		return instance;
 	}
 
 	public DefaultUCQHomomorphism(Homomorphism<ConjunctiveQuery, AtomSet> h) {
@@ -74,22 +87,19 @@ public final class DefaultUCQHomomorphism extends
 	}
 
 	@Override
-	public CloseableIterator<Substitution> execute(UnionOfConjunctiveQueries queries, AtomSet atomset,
-	    RulesCompilation rc)
+	public CloseableIterator<Substitution> execute(UnionOfConjunctiveQueries queries, AtomSet atomset)
 	    throws HomomorphismException {
 		UnionConjunctiveQueriesSubstitutionIterator it = new UnionConjunctiveQueriesSubstitutionIterator(queries,
 		                                                                                                 atomset,
-		                                                                                                 homomorphism,
-		                                                                                                 rc);
+		                                                                                                 homomorphism);
 		it.setProfiler(this.getProfiler());
 		return it;
 	}
 
 	@Override
-	public <U1 extends UnionOfConjunctiveQueries, U2 extends AtomSet> boolean exist(U1 q, U2 a,
-	    RulesCompilation compilation) throws HomomorphismException {
+	public boolean exist(UnionOfConjunctiveQueries q, AtomSet a) throws HomomorphismException {
 		try {
-			CloseableIterator<Substitution> execute = this.execute(q, a, compilation);
+			CloseableIterator<Substitution> execute = this.execute(q, a);
 			boolean res = execute.hasNext();
 			execute.close();
 			return res;

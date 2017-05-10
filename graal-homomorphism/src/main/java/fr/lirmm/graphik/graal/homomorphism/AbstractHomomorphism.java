@@ -62,7 +62,7 @@ public abstract class AbstractHomomorphism<T1 extends Object, T2 extends AtomSet
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public <U1 extends T1, U2 extends T2> boolean exist(U1 q, U2 a) throws HomomorphismException {
+	public boolean exist(T1 q, T2 a) throws HomomorphismException {
 		CloseableIterator<Substitution> results = this.execute(q, a);
 		boolean val;
 		try {

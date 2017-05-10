@@ -47,7 +47,6 @@ package fr.lirmm.graphik.graal.homomorphism;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.UnionOfConjunctiveQueries;
@@ -82,11 +81,16 @@ class UnionConjunctiveQueriesSubstitutionIterator extends AbstractProfilable imp
 
 	public UnionConjunctiveQueriesSubstitutionIterator(UnionOfConjunctiveQueries queries, AtomSet atomSet,
 	    Homomorphism<ConjunctiveQuery, AtomSet> homomorphism) {
-		this(queries, atomSet, homomorphism, null);
+		this.cqueryIterator = queries.iterator();
+		this.isBooleanQuery = queries.isBoolean();
+		this.atomSet = atomSet;
+		this.tmpIt = null;
+		this.homomorphism = homomorphism;
+		this.compilation = null;
 	}
 
 	public UnionConjunctiveQueriesSubstitutionIterator(UnionOfConjunctiveQueries queries, AtomSet atomSet,
-	    Homomorphism<ConjunctiveQuery, AtomSet> homomorphism, RulesCompilation rc) {
+	    HomomorphismWithCompilation<ConjunctiveQuery, AtomSet> homomorphism, RulesCompilation rc) {
 		this.cqueryIterator = queries.iterator();
 		this.isBooleanQuery = queries.isBoolean();
 		this.atomSet = atomSet;
@@ -106,22 +110,21 @@ class UnionConjunctiveQueriesSubstitutionIterator extends AbstractProfilable imp
 				this.getProfiler().stop("SubQuery" + i++);
 			}
 			while ((this.tmpIt == null || !this.tmpIt.hasNext()) && this.cqueryIterator.hasNext()) {
-				Query q = this.cqueryIterator.next();
+				ConjunctiveQuery q = this.cqueryIterator.next();
 				this.getProfiler().start("SubQuery" + i);
-				Homomorphism solver = this.homomorphism;
 				try {
-					if (solver == null) {
-						solver = DefaultHomomorphismFactory.instance().getSolver(q, this.atomSet);
-						if (solver == null) {
-							throw new Error("Solver not found.");
+					if(this.homomorphism == null) {
+						if(this.compilation == null) {
+							this.tmpIt = StaticHomomorphism.instance().execute(q, this.atomSet);
+						} else {
+							this.tmpIt = StaticHomomorphism.instance().execute(q, this.atomSet, this.compilation);
 						}
-					}
-					solver.setProfiler(this.getProfiler());
-
-					if (this.compilation != null && solver instanceof HomomorphismWithCompilation) {
-						this.tmpIt = ((HomomorphismWithCompilation) solver).execute(q, this.atomSet, this.compilation);
 					} else {
-						this.tmpIt = solver.execute(q, this.atomSet);
+						if(this.compilation == null) {
+							this.tmpIt = this.homomorphism.execute(q, this.atomSet);
+						} else {
+							this.tmpIt = ((HomomorphismWithCompilation<ConjunctiveQuery,AtomSet>) this.homomorphism).execute(q, this.atomSet, this.compilation);
+						}
 					}
 					if (this.isBooleanQuery && this.tmpIt.hasNext()) {
 						this.cqueryIterator.close();

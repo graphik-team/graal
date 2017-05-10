@@ -86,7 +86,7 @@ public class AtomicQueryHomomorphism extends AbstractHomomorphismWithCompilation
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public <U1 extends ConjunctiveQuery, U2 extends AtomSet> CloseableIterator<Substitution> execute(U1 q, U2 a)
+	public CloseableIterator<Substitution> execute(ConjunctiveQuery q, AtomSet a)
 			throws HomomorphismException {
 		Atom atom = q.getAtomSet().iterator().next();
 		try {
@@ -98,7 +98,7 @@ public class AtomicQueryHomomorphism extends AbstractHomomorphismWithCompilation
 	}
 
 	@Override
-	public <U1 extends ConjunctiveQuery, U2 extends AtomSet> CloseableIterator<Substitution> execute(U1 q, U2 a,
+	public CloseableIterator<Substitution> execute(ConjunctiveQuery q, AtomSet a,
 			RulesCompilation rc) throws HomomorphismException {
 		try {
 			List<CloseableIterator<Substitution>> iteratorsList = new LinkedList<CloseableIterator<Substitution>>();

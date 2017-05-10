@@ -61,12 +61,12 @@ public abstract class AbstractHomomorphismWithCompilation<T1 extends Object, T2 
 
 
 	@Override
-	public <U1 extends T1, U2 extends T2> CloseableIterator<Substitution> execute(U1 q, U2 a) throws HomomorphismException {
+	public CloseableIterator<Substitution> execute(T1 q, T2 a) throws HomomorphismException {
 		return this.execute(q, a, NoCompilation.instance());
 	}
 
 	@Override
-	public <U1 extends T1, U2 extends T2> boolean exist(U1 q, U2 a, RulesCompilation compilation)
+	public boolean exist(T1 q, T2 a, RulesCompilation compilation)
 	    throws HomomorphismException {
 		CloseableIterator<Substitution> results = this.execute(q, a, compilation);
 		boolean val;
@@ -80,7 +80,7 @@ public abstract class AbstractHomomorphismWithCompilation<T1 extends Object, T2 
 	}
 
 	@Override
-	public <U1 extends T1, U2 extends T2> boolean exist(U1 source, U2 target) throws HomomorphismException {
+	public boolean exist(T1 source, T2 target) throws HomomorphismException {
 		return this.exist(source, target, NoCompilation.instance());
 	}
 
