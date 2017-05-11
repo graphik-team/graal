@@ -94,7 +94,7 @@ public class DlgpParserTest {
 		Atom a = DlgpParser.parseAtom("p(a, X).");
 		Assert.assertTrue(a.getTerm(1).isVariable());
 	}
-	
+
 	@Test
 	public void parseAtomWithPrefix() throws ParseException {
 		Atom a = DlgpParser.parseAtom("@prefix ex: <http://example.com/> ex:p(a, X).");
@@ -137,10 +137,11 @@ public class DlgpParserTest {
 		}
 		Assert.assertEquals(3, cpt);
 	}
-	
+
 	@Test
 	public void parseAtomSetWithPrefix() throws ParseException, IteratorException {
-		CloseableIterator<Atom> it = DlgpParser.parseAtomSet("@prefix ex: <http://example.com/> ex:p(a). ex:p(b), ex:p(1).");
+		CloseableIterator<Atom> it = DlgpParser
+				.parseAtomSet("@prefix ex: <http://example.com/> ex:p(a). ex:p(b), ex:p(1).");
 		int cpt = 0;
 		while (it.hasNext()) {
 			++cpt;
@@ -150,7 +151,7 @@ public class DlgpParserTest {
 		}
 		Assert.assertEquals(3, cpt);
 	}
-	
+
 	@Test(expected = DlgpParseException.class)
 	public void parseAtomSetException() throws ParseException, IteratorException {
 		CloseableIterator<Atom> it = DlgpParser.parseAtomSet("p(a). p(b) p(1).");
@@ -176,7 +177,7 @@ public class DlgpParserTest {
 		Assert.assertEquals(A, a.getTerm(0));
 		Assert.assertEquals(X, a.getTerm(1));
 	}
-	
+
 	@Test
 	public void parseQueryWithPrefix() throws ParseException {
 		ConjunctiveQuery q = DlgpParser.parseQuery("@prefix ex: <http://example.com/> ?(X) :- ex:p(a,X).");
@@ -275,7 +276,7 @@ public class DlgpParserTest {
 		Assert.assertTrue(head.getTerm(1).isVariable());
 
 	}
-		
+
 	@Test
 	public void parseRuleWithPrefix() throws ParseException {
 		Rule r = DlgpParser.parseRule("@prefix ex: <http://example.com/> ex:p(X,Y) :- ex:q(X,Z).");
@@ -315,10 +316,11 @@ public class DlgpParserTest {
 		Assert.assertEquals("N1", r.getLabel());
 
 	}
-	
+
 	@Test
 	public void parseNegativeConstraintWithPrefix() throws ParseException {
-		NegativeConstraint r = DlgpParser.parseNegativeConstraint("@prefix ex: <http://example.com/> [N1]!:-ex:p(X,Y), ex:q(X,Y).");
+		NegativeConstraint r = DlgpParser
+				.parseNegativeConstraint("@prefix ex: <http://example.com/> [N1]!:-ex:p(X,Y), ex:q(X,Y).");
 
 		CloseableIteratorWithoutException<Atom> it = r.getBody().iterator();
 		Atom body = it.next();
@@ -341,7 +343,7 @@ public class DlgpParserTest {
 	// /////////////////////////////////////////////////////////////////////////
 	// DIRECTIVE
 	// /////////////////////////////////////////////////////////////////////////
-	
+
 	@Test
 	public void commentDirectiveTest() throws ParseException {
 		DlgpParser parser = new DlgpParser("%% mydirectiveValue\n");
@@ -357,7 +359,7 @@ public class DlgpParserTest {
 		Assert.assertTrue("No element found", b);
 		parser.close();
 	}
-	
+
 	@Test
 	public void baseDirectiveTest() throws ParseException {
 		DlgpParser parser = new DlgpParser("@base <http://example.com/>\n");
@@ -373,7 +375,7 @@ public class DlgpParserTest {
 		Assert.assertTrue("No element found", b);
 		parser.close();
 	}
-	
+
 	@Test
 	public void unaDirectiveTest() throws ParseException {
 		DlgpParser parser = new DlgpParser("@una\n");
@@ -389,7 +391,7 @@ public class DlgpParserTest {
 		Assert.assertTrue("No element found", b);
 		parser.close();
 	}
-	
+
 	@Test
 	public void topDirectiveTest() throws ParseException {
 		DlgpParser parser = new DlgpParser("@top <http://example.com/top>\n");
@@ -405,113 +407,96 @@ public class DlgpParserTest {
 		Assert.assertTrue("No element found", b);
 		parser.close();
 	}
-	
+
 	// /////////////////////////////////////////////////////////////////////////
 	// Exception
 	// /////////////////////////////////////////////////////////////////////////
-	
+
 	@Test(expected = DlgpParseException.class)
 	public void exception1() throws IteratorException {
-		DlgpParser parser = new DlgpParser(
-				"?(X) :- p(a)."
-				);
+		DlgpParser parser = new DlgpParser("?(X) :- p(a).");
 		while (parser.hasNext()) {
 			parser.next();
 		}
 		parser.close();
 	}
-	
+
 	@Test(expected = DlgpParseException.class)
 	public void exception2() throws IteratorException {
-		DlgpParser parser = new DlgpParser(
-				"p(a,b.\n"
-				);
+		DlgpParser parser = new DlgpParser("p(a,b.\n");
 		while (parser.hasNext()) {
 			parser.next();
 		}
 		parser.close();
 	}
-	
+
 	@Test(expected = DlgpParseException.class)
 	public void exception3() throws IteratorException {
-		DlgpParser parser = new DlgpParser(
-				"P(a,b.\n"
-				);
+		DlgpParser parser = new DlgpParser("P(a,b.\n");
 		while (parser.hasNext()) {
 			parser.next();
 		}
 		parser.close();
 	}
-	
+
 	@Test(expected = DlgpParseException.class)
 	public void exception4() throws IteratorException {
-		DlgpParser parser = new DlgpParser(
-				"."
-				);
+		DlgpParser parser = new DlgpParser(".");
 		while (parser.hasNext()) {
 			parser.next();
 		}
 		parser.close();
 	}
-	
+
 	@Test(expected = DlgpParseException.class)
 	public void exception5() throws IteratorException {
-		DlgpParser parser = new DlgpParser(
-				" :- p(a)."
-				);
+		DlgpParser parser = new DlgpParser(" :- p(a).");
 		while (parser.hasNext()) {
 			parser.next();
 		}
 		parser.close();
 	}
-	
+
 	@Test(expected = DlgpParseException.class)
 	public void exception6() throws IteratorException {
-		DlgpParser parser = new DlgpParser(
-				"! :-."
-				);
+		DlgpParser parser = new DlgpParser("! :-.");
 		while (parser.hasNext()) {
 			parser.next();
 		}
 		parser.close();
 	}
-	
+
 	@Test(expected = DlgpParseException.class)
 	public void exception7() throws IteratorException {
-		DlgpParser parser = new DlgpParser(
-				"[label ? :- p(a)."
-				);
+		DlgpParser parser = new DlgpParser("[label ? :- p(a).");
 		while (parser.hasNext()) {
 			parser.next();
 		}
 		parser.close();
 	}
-	
+
 	@Test(expected = DlgpParseException.class)
 	public void exception8() throws IteratorException {
-		DlgpParser parser = new DlgpParser(
-				"p(a)"
-				);
+		DlgpParser parser = new DlgpParser("p(a)");
 		while (parser.hasNext()) {
 			parser.next();
 		}
 		parser.close();
 	}
+
 	@Test(expected = DlgpParseException.class)
 	public void exception9() throws IteratorException {
-		DlgpParser parser = new DlgpParser(
-				"p(a) p(b)."
-				);
+		DlgpParser parser = new DlgpParser("p(a) p(b).");
 		while (parser.hasNext()) {
 			parser.next();
 		}
 		parser.close();
 	}
-	
+
 	// /////////////////////////////////////////////////////////////////////////
-	// OTHERS
+	// MISCS
 	// /////////////////////////////////////////////////////////////////////////
-	
+
 	@Test
 	public void prefixTest() throws ParseException {
 		DlgpParser parser = new DlgpParser("@prefix pre: <http://example.com/>\n");
@@ -541,76 +526,63 @@ public class DlgpParserTest {
 		Rule r1 = DlgpParser.parseRule("[" + label + "] q(X) :- r(X).");
 		Assert.assertEquals(label, r1.getLabel());
 	}
-	
+
 	@Test
 	public void directiveOrder() throws ParseException {
-		DlgpParser parser = new DlgpParser("@base <http://example.com/>\n"
-				+ "@prefix pre: <http://example.com/>\n"
-				+ "@prefix pre2: <http://example2.com/>\n"
-				+ "@top <http://example.com/top>\n"
-				+ "@una\n");
+		DlgpParser parser = new DlgpParser("@base <http://example.com/>\n" + "@prefix pre: <http://example.com/>\n"
+				+ "@prefix pre2: <http://example2.com/>\n" + "@top <http://example.com/top>\n" + "@una\n");
 		int cpt = 0;
 		while (parser.hasNext()) {
 			++cpt;
 			parser.next();
 		}
-		Assert.assertEquals(5,cpt);
+		Assert.assertEquals(5, cpt);
 		parser.close();
 	}
-	
+
 	@Test
 	public void directiveOrder2() throws IteratorException {
-			DlgpParser parser = new DlgpParser("@prefix pre: <http://example.com/>\n"
-					+ "@prefix pre2: <http://example2.com/>\n"
-					+ "@top <http://example.com/top>\n"
-					+ "@una\n"
-					+ "@base <http://example.com/>\n");
-			int cpt = 0;
-			while (parser.hasNext()) {
-				++cpt;
-				parser.next();
-			}
-			Assert.assertEquals(5,cpt);
-			parser.close();
+		DlgpParser parser = new DlgpParser(
+				"@prefix pre: <http://example.com/>\n" + "@prefix pre2: <http://example2.com/>\n"
+						+ "@top <http://example.com/top>\n" + "@una\n" + "@base <http://example.com/>\n");
+		int cpt = 0;
+		while (parser.hasNext()) {
+			++cpt;
+			parser.next();
+		}
+		Assert.assertEquals(5, cpt);
+		parser.close();
 	}
-	
+
 	@Test
 	public void directiveOrder3() throws IteratorException {
-		DlgpParser parser = new DlgpParser( "@una\n"
-				+ "@prefix pre: <http://example.com/>\n"
-				+ "@base <http://example.com/>\n"
-				+ "@prefix pre2: <http://example2.com/>\n"
-				+ "@top <http://example.com/top>\n"
-				);
+		DlgpParser parser = new DlgpParser(
+				"@una\n" + "@prefix pre: <http://example.com/>\n" + "@base <http://example.com/>\n"
+						+ "@prefix pre2: <http://example2.com/>\n" + "@top <http://example.com/top>\n");
 		int cpt = 0;
 		while (parser.hasNext()) {
 			++cpt;
 			parser.next();
 		}
-		Assert.assertEquals(5,cpt);
+		Assert.assertEquals(5, cpt);
 		parser.close();
 	}
-	
-	@Test
+
+	@Test(expected = DlgpParseException.class)
 	public void directiveOrderWithDoublon() throws IteratorException {
-		DlgpParser parser = new DlgpParser( "@una\n"
-				+ "@top <http://example.com/top>\n"
-				+ "@prefix pre: <http://example.com/>\n"
-				+ "@base <http://example.com/>\n"
-				+ "@prefix pre2: <http://example2.com/>\n"
-				+ "@top <http://example.com/top2>\n"
-				+ "@una"
-				);
-		int cpt = 0;
+		DlgpParser parser = new DlgpParser("@una\n" + "@top <http://example.com/top>\n"
+				+ "@prefix pre: <http://example.com/>\n" + "@base <http://example.com/>\n"
+				+ "@prefix pre2: <http://example2.com/>\n" + "@top <http://example.com/top2>\n" + "@una");
 		while (parser.hasNext()) {
-			++cpt;
 			parser.next();
 		}
-		Assert.assertEquals(7,cpt);
 		parser.close();
 	}
-	
-	
+
+	// /////////////////////////////////////////////////////////////////////////
+	// FILES
+	// /////////////////////////////////////////////////////////////////////////
+
 	@Test
 	public void testSimpleFile() throws IteratorException, FileNotFoundException {
 		DlgpParser parser = new DlgpParser(new File("./src/test/resources/simple.dlp"));
@@ -620,9 +592,9 @@ public class DlgpParserTest {
 			parser.next();
 		}
 		parser.close();
-		Assert.assertEquals(21,i);
+		Assert.assertEquals(21, i);
 	}
-	
+
 	@Test
 	public void testIrisAndLiteralsFile() throws IteratorException, FileNotFoundException {
 		DlgpParser parser = new DlgpParser(new File("./src/test/resources/irisAndLiterals.dlp"));
@@ -632,9 +604,9 @@ public class DlgpParserTest {
 			parser.next();
 		}
 		parser.close();
-		Assert.assertEquals(8,i);
+		Assert.assertEquals(8, i);
 	}
-	
+
 	@Test
 	public void testCorrectFile() throws IteratorException, FileNotFoundException {
 		DlgpParser parser = new DlgpParser(new File("./src/test/resources/correct.dlp"));
@@ -643,10 +615,107 @@ public class DlgpParserTest {
 			++i;
 			parser.next();
 		}
-		Assert.assertEquals(19,i);
+		Assert.assertEquals(19, i);
 		parser.close();
 	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// URI FORMAT
+	// /////////////////////////////////////////////////////////////////////////
+
+	@Test
+	public void uriWithUnicode() throws ParseException {
+		String uri = "\\u007C\\u003e\\u0020\\u262D";
+		Atom a = DlgpParser.parseAtom("<" + uri + ">(<" + uri + ">).");
+		Assert.assertEquals("|> \u262D", a.getPredicate().getIdentifier().toString());
+	}
 	
-	
-	
+	@Test
+	public void uriWithUnicode2() throws ParseException {
+		String uri = "\\U0000007C\\U0000003e\\U00000020\\U0000262D";
+		Atom a = DlgpParser.parseAtom("<" + uri + ">(<" + uri + ">).");
+		Assert.assertEquals("|> \u262D", a.getPredicate().getIdentifier().toString());
+	}
+
+	@Test
+	public void uriWithUnicode4Bytes() throws ParseException {
+		String uri = "\\U00010000\\u003e\\U00000020";
+		Atom a = DlgpParser.parseAtom("<" + uri + ">(<" + uri + ">).");
+		String s = new String(Character.toChars(0x10000));
+		Assert.assertEquals( s + "> ",a.getPredicate().getIdentifier().toString());
+	}
+
+	@Test
+	public void uriValide() throws ParseException {
+		String uri = "/a//a///a////a/////a//////" + "abcdefghijklmnopqrstuvwxyz" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+				+ "´áéíóúýàèìòùỳ¨äëïöüÿâêîôûŷ" + "?¿.:,;!¡~'" + "0123456789₀₁₂₃₄₅₆₇₈₉₍₎₊₋₌ₐₑₒₓₔ⁰¹⁴⁵⁶⁷⁸⁹⁺⁽⁾⁼⁻"
+				+ "+-*%=()[]«»_—–#" + "ßæœçåÅøØĐħĦ" + "€$¤£" + "¶¦¬©®™ªº♯♮♭"
+				+ "ΑΒΔΕΦΓΗΙΘΚΛΜΝΟΠΧΡΣΤΥΩΞΨΖαβδεφγηιθκλμνοπχρστυωξψζ"
+				+ "‰≃≠≮≯≤≥≰≱≲≳Ω¼½¾ƒℓ⅓⅔⅛⅜⅝⅞⩽⩾←↑→↓↔↦⇒⇔∂∙∏∑∆∇√∞∫≈≡∀∃∈∉∪∩⊂⊃♀♂ℝℂℚℕℤℍ⊥‖∧∨⟦⟧⟨⟩∘" + "  " + // unbreakable
+																									// spaces
+				"////";
+		Atom a = DlgpParser.parseAtom("<" + uri + ">(<" + uri + ">).");
+
+		Assert.assertEquals(uri, a.getPredicate().getIdentifier().toString());
+		Assert.assertEquals(uri, a.getTerm(0).getIdentifier().toString());
+	}
+
+	@Test(expected = DlgpParseException.class)
+	public void uriNotValideSpace() throws ParseException {
+		String uri = "/ /";
+		DlgpParser.parseAtom("<" + uri + ">(<" + uri + ">).");
+	}
+
+	/*
+	 * @Test(expected = DlgpParseException.class) public void
+	 * uriNotValideLesserThan() throws ParseException { String uri = "/</";
+	 * DlgpParser.parseAtom("<" + uri + ">(<" + uri + ">)."); }
+	 */
+
+	@Test(expected = DlgpParseException.class)
+	public void uriNotValideGreaterThan() throws ParseException {
+		String uri = "/>/";
+		System.out.println(DlgpParser.parseAtom("<" + uri + ">(<" + uri + ">)."));
+		;
+	}
+
+	/*
+	 * @Test(expected = DlgpParseException.class) public void
+	 * uriNotValideDoubleQuotes() throws ParseException { String uri = "/\"/";
+	 * DlgpParser.parseAtom("<" + uri + ">(<" + uri + ">)."); }
+	 */
+
+	/*
+	 * @Test(expected = DlgpParseException.class) public void
+	 * uriNotValideLeftCurlyBracket() throws ParseException { String uri =
+	 * "/{/"; DlgpParser.parseAtom("<" + uri + ">(<" + uri + ">)."); }
+	 * 
+	 * @Test(expected = DlgpParseException.class) public void
+	 * uriNotValideRightCurlyBracket() throws ParseException { String uri =
+	 * "/}/"; DlgpParser.parseAtom("<" + uri + ">(<" + uri + ">)."); }
+	 */
+
+	/*
+	 * @Test(expected = DlgpParseException.class) public void uriNotValidePipe()
+	 * throws ParseException { String uri = "/|/"; DlgpParser.parseAtom("<" +
+	 * uri + ">(<" + uri + ">)."); }
+	 */
+
+	/*
+	 * @Test(expected = DlgpParseException.class) public void
+	 * uriNotValideCircumflexAccent() throws ParseException { String uri =
+	 * "/^/"; DlgpParser.parseAtom("<" + uri + ">(<" + uri + ">)."); }
+	 */
+
+	/*
+	 * @Test(expected = DlgpParseException.class) public void
+	 * uriNotValideBackQuote() throws ParseException { String uri = "/`/";
+	 * DlgpParser.parseAtom("<" + uri + ">(<" + uri + ">)."); }
+	 */
+
+	/*
+	 * @Test(expected = DlgpParseException.class) public void
+	 * uriNotValideBackSlash() throws ParseException { String uri = "/\\/";
+	 * DlgpParser.parseAtom("<" + uri + ">(<" + uri + ">)."); }
+	 */
 }

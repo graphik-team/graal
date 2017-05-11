@@ -59,14 +59,12 @@ import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.NegativeConstraint;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.VariableGenerator;
 import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.api.io.Parser;
 import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
-import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.ArrayBlockingStream;

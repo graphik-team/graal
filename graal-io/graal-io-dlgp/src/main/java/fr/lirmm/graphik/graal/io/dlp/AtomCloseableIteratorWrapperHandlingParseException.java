@@ -52,7 +52,6 @@ import fr.lirmm.graphik.util.stream.IteratorException;
 class AtomCloseableIteratorWrapperHandlingParseException extends AbstractCloseableIterator<Atom> {
 
 	private final InMemoryStream<Object> stream;
-	private final boolean hasNextCallDone = false;
 	private Object next = null;
 
 	// /////////////////////////////////////////////////////////////////////////

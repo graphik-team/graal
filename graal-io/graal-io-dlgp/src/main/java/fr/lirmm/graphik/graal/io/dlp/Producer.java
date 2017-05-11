@@ -45,8 +45,6 @@ package fr.lirmm.graphik.graal.io.dlp;
 import java.io.Reader;
 
 import fr.lirmm.graphik.dlgp2.parser.DLGP2Parser;
-import fr.lirmm.graphik.graal.api.io.ParseError;
-import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.util.stream.InMemoryStream;
 
 class Producer implements Runnable {

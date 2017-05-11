@@ -42,19 +42,23 @@
  */
 package fr.lirmm.graphik.graal.io.dlp;
 
+import org.apache.commons.lang3.text.translate.UnicodeUnescaper;
+
 import fr.lirmm.graphik.dlgp2.parser.TermFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.DefaultURI;
 import fr.lirmm.graphik.util.URI;
 
 class InternalTermFactory implements TermFactory {
+	
+	UnicodeUnescaper unescaper = new UnicodeUnescaper();
 
 	@Override
 	public Object createIRI(String s) {
 		if (s.indexOf(':') == -1) {
-			return s;
+			return decode(s);
 		}
-		return new DefaultURI(s);
+		return new DefaultURI(decode(s));
 	}
 
 	@Override
@@ -71,4 +75,49 @@ class InternalTermFactory implements TermFactory {
 	public Object createVariable(String stringValue) {
 		return DefaultTermFactory.instance().createVariable(stringValue);
 	}
+	
+	
+	 /**
+     * Unescapes a string that contains unicode escape sequences \\uXXXX and \\UXXXXXXXX.
+     * 
+     * @param st A string optionally containing unicode escape sequences.
+     * @return The translated string.
+     */
+    private String decode(String st) {
+
+        StringBuilder sb = new StringBuilder(st.length());
+
+        for (int i = 0; i < st.length(); i++) {
+            char ch = st.charAt(i);
+            if (ch == '\\') {
+                char nextChar = (i == st.length() - 1) ? '\\' : st
+                        .charAt(i + 1);
+               
+                switch (nextChar) {
+                // Hex Unicode: u????
+                case 'u':
+                    if (i >= st.length() - 5) {
+                        ch = 'u';
+                        break;
+                    }
+                    int code1 = Integer.parseInt(st.substring(i + 2, i + 6), 16);
+                    sb.append(Character.toChars(code1));
+                    i += 5;
+                    continue;
+                case 'U':
+                    if (i >= st.length() - 9) {
+                        ch = 'U';
+                        break;
+                    }
+                    int code2 = Integer.parseInt(st.substring(i + 2, i + 10), 16);
+                    sb.append(Character.toChars(code2));
+                    i += 9;
+                    continue;
+                }
+                i++;
+            }
+            sb.append(ch);
+        }
+        return sb.toString();
+    }
 }

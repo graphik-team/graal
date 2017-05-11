@@ -348,7 +348,7 @@ public class DlgpWriter extends AbstractGraalWriter {
 		Prefix prefix = this.pm.getPrefixByValue(uri.getPrefix());
 		if(prefix == null) {
 			this.write('<');
-			this.write(uri.toString());
+			this.write(encode(uri.toString()));
 			this.write('>');
 		} else {
 			this.write(prefix.getPrefixName() + ":"
@@ -371,7 +371,7 @@ public class DlgpWriter extends AbstractGraalWriter {
 				this.write(s);
 			} else {
 				this.write('<');
-				this.write(s);
+				this.write(encode(s));
 				this.write('>');
 			}
 		}
@@ -423,6 +423,19 @@ public class DlgpWriter extends AbstractGraalWriter {
 			}
 		}
 		return true;
+	}
+	
+	private String encode(String s) {
+		return s.replaceAll("\\\\", "\\\\u00" + Integer.toHexString('\\'))
+				.replaceAll(" ", "\\\\u00" + Integer.toHexString(' '))
+				.replaceAll("<", "\\\\u00" + Integer.toHexString('<'))
+				.replaceAll(">", "\\\\u00" + Integer.toHexString('>'))
+				.replaceAll("\"", "\\\\u00" + Integer.toHexString('"'))
+				.replaceAll("\\{", "\\\\u00" + Integer.toHexString('{'))
+				.replaceAll("\\}", "\\\\u00" + Integer.toHexString('}'))
+				.replaceAll("\\|", "\\\\u00" + Integer.toHexString('|'))
+				.replaceAll("\\^", "\\\\u00" + Integer.toHexString('^'))
+				.replaceAll("`", "\\\\u00" + Integer.toHexString('`'));
 	}
 	
 };

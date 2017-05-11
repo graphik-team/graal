@@ -51,7 +51,7 @@ import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
-import fr.lirmm.graphik.graal.io.dlp.DlgpWriter;
+import fr.lirmm.graphik.util.DefaultURI;
 
 
 /**
@@ -111,5 +111,53 @@ public class DlgpWriterTest {
 		Character c = s.charAt(0);
 		Assert.assertTrue("Predicate label does not begin with lower case or double quote.", Character.isLowerCase(c) || c == '<');
 	}
+	
+	@Test
+	public void writeURIForbiddenChars() throws IOException {
+		Predicate p = new Predicate(new DefaultURI("/<>\"{}|^`\\/"), 1);
+		
+		
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		DlgpWriter writer = new DlgpWriter(os);
+		
+		writer.write(new DefaultAtom(p, cst));
+		writer.flush();
 
+		String s = new String(os.toByteArray(),"UTF-8");
+		writer.close();
+		
+		Assert.assertEquals("</\\u003c\\u003e\\u0022\\u007b\\u007d\\u007c\\u005e\\u0060\\u005c/>(<A>).\n", s);
+	}
+	
+	@Test
+	public void writeValideURI() throws IOException {
+		String uri = "/a//a///a////a/////a//////" +
+				"abcdefghijklmnopqrstuvwxyz" + 
+				"ABCDEFGHIJKLMNOPQRSTUVWXYZ" + 
+				"´áéíóúýàèìòùỳ¨äëïöüÿâêîôûŷ" + 
+				"?¿.:,;!¡~'" +
+				"0123456789₀₁₂₃₄₅₆₇₈₉₍₎₊₋₌ₐₑₒₓₔ⁰¹⁴⁵⁶⁷⁸⁹⁺⁽⁾⁼⁻" +
+				"+-*%=()[]«»_—–#" +
+				"ßæœçåÅøØĐħĦ" +
+				"€$¤£" +
+				"¶¦¬©®™ªº♯♮♭" +
+				"ΑΒΔΕΦΓΗΙΘΚΛΜΝΟΠΧΡΣΤΥΩΞΨΖαβδεφγηιθκλμνοπχρστυωξψζ" +
+				"‰≃≠≮≯≤≥≰≱≲≳Ω¼½¾ƒℓ⅓⅔⅛⅜⅝⅞⩽⩾←↑→↓↔↦⇒⇔∂∙∏∑∆∇√∞∫≈≡∀∃∈∉∪∩⊂⊃♀♂ℝℂℚℕℤℍ⊥‖∧∨⟦⟧⟨⟩∘" +
+				"  " + // unbreakable spaces
+				"////";
+		Predicate p = new Predicate(new DefaultURI(uri), 1);
+		
+		
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		DlgpWriter writer = new DlgpWriter(os);
+		
+		writer.write(new DefaultAtom(p, cst));
+		writer.flush();
+
+		String s = new String(os.toByteArray(),"UTF-8");
+		writer.close();
+		
+		Assert.assertEquals("<" + uri + ">(<A>).\n", s);
+	}
+	
 }
