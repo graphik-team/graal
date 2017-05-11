@@ -46,7 +46,6 @@
 package fr.lirmm.graphik.graal.core.grd;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
