@@ -61,6 +61,8 @@ import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
 import fr.lirmm.graphik.graal.homomorphism.bootstrapper.Bootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.ForwardChecking;
 import fr.lirmm.graphik.graal.homomorphism.scheduler.Scheduler;
+import fr.lirmm.graphik.graal.homomorphism.utils.BacktrackUtils;
+import fr.lirmm.graphik.graal.homomorphism.utils.HomomorphismIteratorChecker;
 import fr.lirmm.graphik.util.profiler.NoProfiler;
 import fr.lirmm.graphik.util.profiler.Profilable;
 import fr.lirmm.graphik.util.profiler.Profiler;

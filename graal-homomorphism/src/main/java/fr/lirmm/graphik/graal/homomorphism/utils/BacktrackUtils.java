@@ -40,7 +40,7 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.homomorphism;
+package fr.lirmm.graphik.graal.homomorphism.utils;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -58,6 +58,7 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
+import fr.lirmm.graphik.graal.homomorphism.Var;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}

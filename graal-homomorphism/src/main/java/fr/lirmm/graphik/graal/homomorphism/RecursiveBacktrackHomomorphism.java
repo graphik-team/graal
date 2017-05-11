@@ -72,11 +72,15 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 import fr.lirmm.graphik.util.stream.converter.ConverterCloseableIterator;
 
 /**
- * Recursive implementation of a backtrack solving algorithm.
+ * This implementation is deprecated since 1.3. use {@link BacktrackHomomorhpism} instead. <br>
+ * 
+ * 
+ * Recursive implementation of a backtrack solving algorithm. 
  * 
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
+@Deprecated
 public final class RecursiveBacktrackHomomorphism implements Homomorphism<ConjunctiveQuery, AtomSet> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RecursiveBacktrackHomomorphism.class);

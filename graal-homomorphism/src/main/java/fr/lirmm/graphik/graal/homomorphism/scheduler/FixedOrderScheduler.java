@@ -40,102 +40,80 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.homomorphism;
+package fr.lirmm.graphik.graal.homomorphism.scheduler;
 
-import java.util.Map;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
-import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.util.profiler.Profilable;
-import fr.lirmm.graphik.util.profiler.Profiler;
-import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.IteratorException;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class HomomorphismIteratorChecker extends AbstractCloseableIterator<Term> implements Profilable {
+public class FixedOrderScheduler extends AbstractProfilable implements Scheduler {
+
+	private List<Variable> order;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
-	private CloseableIterator<Term> it;
-	private Term                    next;
-	private Var                     var;
-	private Iterable<Atom>          h;
-	private AtomSet                 g;
-	private Map<Variable, Var>      map;
-	private RulesCompilation        rc;
-	private Profiler                profiler;
-	private Substitution 			initialSubstitution;
-
-	/**
-	 * Check over it, the images for var such that there exists an homomorphism
-	 * from h to g.
-	 */
-	public HomomorphismIteratorChecker(Var var, CloseableIterator<Term> it, Iterable<Atom> h, AtomSet g,
-			Substitution initialSubstitution, Map<Variable, Var> map,
-	    RulesCompilation rc) {
-		this.var = var;
-		this.it = it;
-		this.h = h;
-		this.g = g;
-		this.map = map;
-		this.rc = rc;
-		this.initialSubstitution = initialSubstitution;
+	public FixedOrderScheduler(List<Variable> order) {
+		this.order = order;
 	}
-
+	
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public boolean hasNext() throws IteratorException {
-		try {
-			while (this.next == null && this.it.hasNext()) {
-				Term t = this.it.next();
-				if (this.check(t)) {
-					this.next = t;
-				}
+	public Var[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data, RulesCompilation rc) throws HomomorphismException {
+		Set<Variable> terms = h.getVariables();
+		Var[] vars = new Var[terms.size() + 2];
+
+		int level = 0;
+		vars[level] = new Var(level);
+
+		Set<Term> alreadyAffected = new TreeSet<Term>();
+		for (Variable v : this.order) {
+			if(!terms.contains(v)) {
+				throw new HomomorphismException("Try to schedule a variable which is not in the query :" + v);
 			}
-		} catch (AtomSetException e) {
-			throw new IteratorException(e);
+			if(alreadyAffected.contains(v)) {
+				throw new HomomorphismException("There is two occurences of the same variable in the specified order.");
+			}
+			++level;
+			vars[level] = new Var(level);
+			vars[level].value = v;
+			alreadyAffected.add(v);
 		}
-		return this.next != null;
-	}
 
+		terms.removeAll(alreadyAffected);
+		if(!terms.isEmpty()) {
+			throw new HomomorphismException("Some variables of the query are not scheduled :" + terms);
+		}
+
+		++level;
+		vars[level] = new Var(level);
+		vars[level].previousLevel = level - 1;
+
+		return vars;
+	}
+	
 	@Override
-	public Term next() throws IteratorException {
-		this.hasNext();
-		Term t = this.next;
-		this.next = null;
-		return t;
+	public boolean isAllowed(Var var, Term image) {
+		return true;
 	}
-
-	@Override
-	public void close() {
-		this.it.close();
-	}
-
-
-	@Override
-	public void setProfiler(Profiler profiler) {
-		this.profiler = profiler;
-	}
-
-	@Override
-	public Profiler getProfiler() {
-		return this.profiler;
-	}
-
+	
 	// /////////////////////////////////////////////////////////////////////////
 	// OBJECT OVERRIDE METHODS
 	// /////////////////////////////////////////////////////////////////////////
@@ -143,19 +121,5 @@ public class HomomorphismIteratorChecker extends AbstractCloseableIterator<Term>
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
-
-	private boolean check(Term t) throws AtomSetException {
-		this.var.image = t;
-		Profiler profiler = this.getProfiler();
-		if (profiler != null) {
-			profiler.incr("#isHomomorphism", 1);
-			profiler.start("isHomomorphismTime");
-		}
-		boolean res = BacktrackUtils.isHomomorphism(h, g, initialSubstitution, map, rc);
-		if (profiler != null) {
-			profiler.stop("isHomomorphismTime");
-		}
-		return res;
-	}
 
 }
