@@ -52,6 +52,7 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.DefaultURI;
+import fr.lirmm.graphik.util.Prefix;
 
 
 /**
@@ -114,7 +115,7 @@ public class DlgpWriterTest {
 	
 	@Test
 	public void writeURIForbiddenChars() throws IOException {
-		Predicate p = new Predicate(new DefaultURI("/<>\"{}|^`\\/"), 1);
+		Predicate p = new Predicate(new DefaultURI("/< >\"{}|^`\\/"), 1);
 		
 		
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -126,7 +127,8 @@ public class DlgpWriterTest {
 		String s = new String(os.toByteArray(),"UTF-8");
 		writer.close();
 		
-		Assert.assertEquals("</\\u003c\\u003e\\u0022\\u007b\\u007d\\u007c\\u005e\\u0060\\u005c/>(<A>).\n", s);
+		System.out.println(s);
+		Assert.assertEquals("</\\u003c\\u0020\\u003e\\u0022\\u007b\\u007d\\u007c\\u005e\\u0060\\u005c/>(<A>).\n", s);
 	}
 	
 	@Test
@@ -157,7 +159,43 @@ public class DlgpWriterTest {
 		String s = new String(os.toByteArray(),"UTF-8");
 		writer.close();
 		
-		Assert.assertEquals("<" + uri + ">(<A>).\n", s);
+		Assert.assertTrue(s.contains("<" + uri + ">(<A>)."));
+	}
+	
+	@Test
+	public void bug76() throws IOException {
+		Prefix p1 = new Prefix("a", "http://p#");
+		Prefix p2 = new Prefix("b", "http://p#p/");
+		Predicate p = new Predicate(new DefaultURI("http://p#p/toto"), 1);
+		
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		DlgpWriter writer = new DlgpWriter(os);
+		
+		writer.write(p1);
+		writer.write(p2);
+		writer.write(new DefaultAtom(p, cst));
+		writer.flush();
+		String s = new String(os.toByteArray(),"UTF-8");
+		writer.close();
+		
+		Assert.assertTrue(s.contains("b:toto(<A>)."));
+	}
+	
+	@Test
+	public void bugIllegalCharInPrefixedName() throws IOException {
+		Prefix p1 = new Prefix("a", "http://p#");
+		Predicate p = new Predicate(new DefaultURI("http://p#to@to"), 1);
+		
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		DlgpWriter writer = new DlgpWriter(os);
+		
+		writer.write(p1);
+		writer.write(new DefaultAtom(p, cst));
+		writer.flush();
+		String s = new String(os.toByteArray(),"UTF-8");
+		writer.close();
+		
+		Assert.assertTrue(s.contains("<http://p#to@to>(<A>)."));
 	}
 	
 }

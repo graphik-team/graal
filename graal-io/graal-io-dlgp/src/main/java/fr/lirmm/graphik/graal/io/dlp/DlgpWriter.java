@@ -53,6 +53,10 @@ import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
@@ -346,13 +350,14 @@ public class DlgpWriter extends AbstractGraalWriter {
 
 	protected void writeURI(URI uri) throws IOException {
 		Prefix prefix = this.pm.getPrefixByValue(uri.getPrefix());
-		if(prefix == null) {
+		boolean isPrefixable = prefix != null && DlgpGrammarUtils.checkLocalName(uri.getLocalname());
+		if(isPrefixable) {
+			this.write(prefix.getPrefixName() + ":"
+					+ uri.getLocalname());
+		} else {
 			this.write('<');
 			this.write(encode(uri.toString()));
 			this.write('>');
-		} else {
-			this.write(prefix.getPrefixName() + ":"
-					+ uri.getLocalname());
 		}
 	}
 
@@ -366,8 +371,7 @@ public class DlgpWriter extends AbstractGraalWriter {
 			this.writeURI((URI) identifier);
 		} else {
 			String s = identifier.toString();
-			char first = s.charAt(0);
-			if (onlySimpleChar(s) && first >= 'a' && first <= 'z') {
+			if (DlgpGrammarUtils.checkLIdent(s)) {
 				this.write(s);
 			} else {
 				this.write('<');
@@ -406,36 +410,45 @@ public class DlgpWriter extends AbstractGraalWriter {
 		}
 		return s.toString();
 	}
-
-	/**
-	 * Check if the string contains only simple char (a-z A-Z 0-9 -)
-	 * 
-	 * @param s
-	 * @return true if the string contains only simple characters, false otherwise.
-	 */
-	private static boolean onlySimpleChar(String s) {
-		char c;
-		for (int i = 0; i < s.length(); ++i) {
-			c = s.charAt(i);
-			if (!(c >= 'a' && c <= 'z') && !(c >= 'A' && c <= 'Z')
-					&& !(c >= '0' && c <= '9') && !(c == '_')) {
-				return false;
-			}
-		}
-		return true;
-	}
 	
-	private String encode(String s) {
-		return s.replaceAll("\\\\", "\\\\u00" + Integer.toHexString('\\'))
-				.replaceAll(" ", "\\\\u00" + Integer.toHexString(' '))
-				.replaceAll("<", "\\\\u00" + Integer.toHexString('<'))
-				.replaceAll(">", "\\\\u00" + Integer.toHexString('>'))
-				.replaceAll("\"", "\\\\u00" + Integer.toHexString('"'))
-				.replaceAll("\\{", "\\\\u00" + Integer.toHexString('{'))
-				.replaceAll("\\}", "\\\\u00" + Integer.toHexString('}'))
-				.replaceAll("\\|", "\\\\u00" + Integer.toHexString('|'))
-				.replaceAll("\\^", "\\\\u00" + Integer.toHexString('^'))
-				.replaceAll("`", "\\\\u00" + Integer.toHexString('`'));
+	private static Map<String, String> replacements = new HashMap<String, String>();
+	private static Pattern pattern;
+	static {
+		replacements.put("\\", "\\\\u00" + Integer.toHexString('\\'));
+		replacements.put(" ", "\\\\u00" + Integer.toHexString(' '));
+		replacements.put("<", "\\\\u00" + Integer.toHexString('<'));
+		replacements.put(">", "\\\\u00" + Integer.toHexString('>'));
+		replacements.put("\"", "\\\\u00" + Integer.toHexString('"'));
+		replacements.put("{", "\\\\u00" + Integer.toHexString('{'));
+		replacements.put("}", "\\\\u00" + Integer.toHexString('}'));
+		replacements.put("|", "\\\\u00" + Integer.toHexString('|'));
+		replacements.put("^", "\\\\u00" + Integer.toHexString('^'));
+		replacements.put("`", "\\\\u00" + Integer.toHexString('`'));
+		
+		StringBuilder regexp = new StringBuilder();
+		boolean first = true;
+		for(String key : replacements.keySet()) {
+			if(!first) {
+				regexp.append('|');
+			}
+			first = false;
+			regexp.append("\\").append(key);
+		}
+		pattern = Pattern.compile(regexp.toString());
+	}
+	/*
+	 * Replace some chararcters
+	 */
+	private static String encode(String s) {
+		StringBuffer sb = new StringBuffer();
+		Matcher m = pattern.matcher(s);
+
+		while (m.find()) {
+		    m.appendReplacement(sb, replacements.get(m.group())); 
+		}
+		m.appendTail(sb);
+
+		return sb.toString();
 	}
 	
 };
