@@ -159,8 +159,11 @@ public class DlgpWriter extends AbstractGraalWriter {
 
 	@Override
 	public DlgpWriter write(AtomSet atomset) throws IOException {
-		this.writeAtomSet(atomset.iterator(), true);
-		this.writeln(".");
+		CloseableIterator<Atom> it = atomset.iterator();
+		if(it.hasNext()) {
+			this.writeAtomSet(it, true);
+			this.writeln(".");
+		}
 
 		return this;
 	}
@@ -309,14 +312,14 @@ public class DlgpWriter extends AbstractGraalWriter {
 	protected void writeLiteral(Literal l) throws IOException {
 		if(URIUtils.XSD_STRING.equals(l.getDatatype())) {
 			this.write('"');
-			this.write(l.getValue());
+			this.write(l.getValue().toString().replaceAll("\"", "\\\\\""));
 			this.write('"');
 		} else if (URIUtils.RDF_LANG_STRING.equals(l.getDatatype())) {
 			String value = l.getValue().toString();
 			int delim = value.lastIndexOf('@');
 			if (delim > 0) {
 				this.write('"');
-				this.write(value.substring(0, delim));
+				this.write(value.substring(0, delim).replaceAll("\"", "\\\\\""));
 				this.write("\"@");
 				this.write(value.substring(delim + 1));
 			} else {
@@ -334,7 +337,7 @@ public class DlgpWriter extends AbstractGraalWriter {
 			this.write(l.getValue().toString());
 		} else {
 			this.write('"');
-			this.write(l.getValue().toString());
+			this.write(l.getValue().toString().replaceAll("\"", "\\\\\""));
 			this.write("\"^^<");
 			this.write(l.getDatatype().toString());
 			this.write('>');

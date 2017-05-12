@@ -47,12 +47,16 @@ import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Test;
 
+import fr.lirmm.graphik.graal.api.core.Literal;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
+import fr.lirmm.graphik.graal.core.atomset.AtomSetUtils;
+import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.DefaultURI;
 import fr.lirmm.graphik.util.Prefix;
+import fr.lirmm.graphik.util.URIUtils;
 
 
 /**
@@ -196,6 +200,35 @@ public class DlgpWriterTest {
 		writer.close();
 		
 		Assert.assertTrue(s.contains("<http://p#to@to>(<A>)."));
+	}
+	
+	@Test
+	public void bugDoubleQuoteInStringLiteral() throws IOException {
+		Literal l = DefaultTermFactory.instance().createLiteral(URIUtils.XSD_STRING, "test\"test");
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		DlgpWriter writer = new DlgpWriter(os);
+		
+		writer.write(new DefaultAtom(predicat, l));
+		writer.flush();
+		String s = new String(os.toByteArray(),"UTF-8");
+		writer.close();
+		
+		Assert.assertTrue(s.contains("\"test\\\"test\""));
+	}
+	
+	@Test
+	public void emptyAtomSet() throws IOException {
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		DlgpWriter writer = new DlgpWriter(os);
+		
+		writer.write(new LinkedListAtomSet());
+		writer.write(new LinkedListAtomSet());
+
+		writer.flush();
+		String s = new String(os.toByteArray(),"UTF-8");
+		writer.close();
+		
+		Assert.assertFalse(s.contains("."));
 	}
 	
 }

@@ -63,6 +63,8 @@ import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.DefaultURI;
 import fr.lirmm.graphik.util.Prefix;
+import fr.lirmm.graphik.util.URI;
+import fr.lirmm.graphik.util.URIUtils;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 import fr.lirmm.graphik.util.stream.IteratorException;
@@ -498,6 +500,17 @@ public class DlgpParserTest {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Test
+	public void backslashedDoubleQuoteTest() throws ParseException {
+		Atom a = DlgpParser.parseAtom("p(\"test\\\"test\").");
+		Term identifier = a.getTerm(0);
+		Assert.assertTrue(identifier instanceof Literal);
+		URI datatype = ((Literal) identifier).getDatatype();
+		Assert.assertEquals(URIUtils.XSD_STRING, datatype);
+		Object value = ((Literal) identifier).getValue();
+		Assert.assertEquals("test\"test", value);
+	}
+	
+	@Test
 	public void prefixTest() throws ParseException {
 		DlgpParser parser = new DlgpParser("@prefix pre: <http://example.com/>\n");
 		boolean b = false;
@@ -659,6 +672,15 @@ public class DlgpParserTest {
 		Assert.assertEquals(uri, a.getPredicate().getIdentifier().toString());
 		Assert.assertEquals(uri, a.getTerm(0).getIdentifier().toString());
 	}
+	
+	@Test
+	public void uriValidePercent() throws ParseException {
+		String uri = "%";
+		Atom a = DlgpParser.parseAtom("<" + uri + ">(<" + uri + ">).");
+
+		Assert.assertEquals(uri, a.getPredicate().getIdentifier().toString());
+		Assert.assertEquals(uri, a.getTerm(0).getIdentifier().toString());
+	}
 
 	@Test(expected = DlgpParseException.class)
 	public void uriNotValideSpace() throws ParseException {
@@ -718,4 +740,21 @@ public class DlgpParserTest {
 	 * uriNotValideBackSlash() throws ParseException { String uri = "/\\/";
 	 * DlgpParser.parseAtom("<" + uri + ">(<" + uri + ">)."); }
 	 */
+	
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// BUGS
+	// /////////////////////////////////////////////////////////////////////////
+	
+	/*@Test FIXME
+	public void bug9() throws ParseException {
+		try {
+			DlgpParser.parseAtom("@prefix o: <http://o/>\n"
+					+ "o:p(o:Jo%C5%BEe-Topori%C5%A1i%3F).");
+		} catch (Exception e) {
+			Assert.fail();
+		}
+	}*/
+	
+
 }
