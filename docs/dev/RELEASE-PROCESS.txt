@@ -16,7 +16,7 @@ mvn findbugs:check
 ~~~
 mvn release:prepare
 git checkout graal-?.?.?
-mvn deploy
+mvn deploy -P release
 ~~~
 
 ---
