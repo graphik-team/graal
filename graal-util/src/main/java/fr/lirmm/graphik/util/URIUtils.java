@@ -184,13 +184,14 @@ public final class URIUtils {
 	public static int getLocalNameIndex(String uri) {
 		int separatorIdx = uri.indexOf('#');
 
-		if (separatorIdx < 0) {
-			separatorIdx = uri.lastIndexOf('/');
-		}
+		int tmp;
+		tmp = uri.lastIndexOf('/');
+		if (tmp > separatorIdx)
+			separatorIdx = tmp;
 
-		if (separatorIdx < 0) {
-			separatorIdx = uri.lastIndexOf(':');
-		}
+		tmp = uri.lastIndexOf(':');
+		if (tmp > separatorIdx)
+			separatorIdx = tmp;
 
 		if (separatorIdx < 0) {
 			throw new IllegalArgumentException(
