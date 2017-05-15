@@ -82,6 +82,7 @@ public class DlgpWriter extends AbstractGraalWriter {
 	
 	private PrefixManager pm;
 	private Predicate top = Predicate.TOP;
+	private String base = null;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
@@ -129,8 +130,13 @@ public class DlgpWriter extends AbstractGraalWriter {
 			this.write("@una");
 			break;
 		case BASE:
-			this.write("@base ");
-			this.write(d.getValue());
+			if(!d.getValue().toString().isEmpty()) {
+				this.base  = d.getValue().toString();
+				this.write("@base ");
+				this.write('<');
+				this.write(encode(this.base));
+				this.write('>');
+			}
 			break;
 		case TOP:
 			if (d.getValue() instanceof Predicate) {
@@ -233,7 +239,7 @@ public class DlgpWriter extends AbstractGraalWriter {
 		this.write("@prefix ");
 		this.write(prefix.getPrefixName());
 		this.write(": <");
-		this.write(prefix.getPrefix());
+		this.write(encode(prefix.getPrefix()));
 		this.write(">\n");
 
 		return this;
@@ -352,15 +358,19 @@ public class DlgpWriter extends AbstractGraalWriter {
 	}
 
 	protected void writeURI(URI uri) throws IOException {
-		Prefix prefix = this.pm.getPrefixByValue(uri.getPrefix());
-		boolean isPrefixable = prefix != null && DlgpGrammarUtils.checkLocalName(uri.getLocalname());
-		if(isPrefixable) {
-			this.write(prefix.getPrefixName() + ":"
-					+ uri.getLocalname());
+		if(base != null && uri.toString().startsWith(base)) {
+			this.writeLowerIdentifier(uri.toString().substring(base.length()));
 		} else {
-			this.write('<');
-			this.write(encode(uri.toString()));
-			this.write('>');
+			Prefix prefix = this.pm.getPrefixByValue(uri.getPrefix());
+			boolean isPrefixable = prefix != null && DlgpGrammarUtils.checkLocalName(uri.getLocalname());
+			if(isPrefixable) {
+				this.write(prefix.getPrefixName() + ":"
+						+ uri.getLocalname());
+			} else {
+				this.write('<');
+				this.write(encode(uri.toString()));
+				this.write('>');
+			}
 		}
 	}
 
