@@ -57,12 +57,9 @@ import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.graal.core.filter.ConstantFilter;
-import fr.lirmm.graphik.graal.core.filter.LiteralFilter;
-import fr.lirmm.graphik.graal.core.filter.VariableFilter;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
-import fr.lirmm.graphik.util.stream.filter.FilterIteratorWithoutException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -163,18 +160,18 @@ public abstract class AbstractInMemoryAtomSet extends AbstractAtomSet implements
 	
 	@Override
 	public CloseableIteratorWithoutException<Variable> variablesIterator() {
-		return new FilterIteratorWithoutException<Term, Variable>(this.termsIterator(), VariableFilter.instance());
+		return new CloseableIteratorAdapter<Variable>(this.getVariables().iterator());
 	}
 	
 	@Override
 	public CloseableIteratorWithoutException<Constant> constantsIterator() {
-		return new FilterIteratorWithoutException<Term, Constant>(this.termsIterator(), ConstantFilter.instance());
+		return new CloseableIteratorAdapter<Constant>(this.getConstants().iterator());
 		
 	}
 	
 	@Override
 	public CloseableIteratorWithoutException<Literal> literalsIterator() {
-		return new FilterIteratorWithoutException<Term, Literal>(this.termsIterator(), LiteralFilter.instance());
+		return new CloseableIteratorAdapter<Literal>(this.getLiterals().iterator());
 	}
 
 	@Override

@@ -45,6 +45,8 @@
  */
 package fr.lirmm.graphik.graal.core.atomset;
 
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -65,6 +67,7 @@ import fr.lirmm.graphik.graal.core.filter.ConstantFilter;
 import fr.lirmm.graphik.graal.core.filter.LiteralFilter;
 import fr.lirmm.graphik.graal.core.filter.VariableFilter;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.filter.FilterIterator;
 
 /**
@@ -128,11 +131,14 @@ public abstract class AbstractAtomSet implements AtomSet {
 
 	@Override
 	public Set<Term> getTerms() throws AtomSetException {
-		Set<Term> terms = new TreeSet<Term>();
-		CloseableIterator<Term> it = this.termsIterator();
+		Set<Term> terms = new HashSet<Term>();
+		CloseableIterator<Atom> atomIt = this.iterator();
 		try {
-			while (it.hasNext()) {
-				terms.add(it.next());
+			while(atomIt.hasNext()) {
+				Iterator<Term> termIt = atomIt.next().iterator();
+				while(termIt.hasNext()) {
+					terms.add(termIt.next());
+				}
 			}
 		} catch (Exception e) {
 			throw new AtomSetException(e);
@@ -142,11 +148,17 @@ public abstract class AbstractAtomSet implements AtomSet {
 	
 	@Override
 	public Set<Variable> getVariables() throws AtomSetException {
-		Set<Variable> terms = new TreeSet<Variable>();
-		CloseableIterator<Variable> it = this.variablesIterator();
+		Set<Variable> terms = new HashSet<Variable>();
+		CloseableIterator<Atom> atomIt = this.iterator();
 		try {
-			while (it.hasNext()) {
-				terms.add(it.next());
+			while(atomIt.hasNext()) {
+				Iterator<Term> termIt = atomIt.next().iterator();
+				while(termIt.hasNext()) {
+					Term t = termIt.next();
+					if(t.isVariable()) {
+						terms.add((Variable) t);
+					}
+				}
 			}
 		} catch (Exception e) {
 			throw new AtomSetException(e);
@@ -156,11 +168,17 @@ public abstract class AbstractAtomSet implements AtomSet {
 	
 	@Override
 	public Set<Constant> getConstants() throws AtomSetException {
-		Set<Constant> terms = new TreeSet<Constant>();
-		CloseableIterator<Constant> it = this.constantsIterator();
+		Set<Constant> terms = new HashSet<Constant>();
+		CloseableIterator<Atom> atomIt = this.iterator();
 		try {
-			while (it.hasNext()) {
-				terms.add(it.next());
+			while(atomIt.hasNext()) {
+				Iterator<Term> termIt = atomIt.next().iterator();
+				while(termIt.hasNext()) {
+					Term t = termIt.next();
+					if(t.isConstant()) {
+						terms.add((Constant) t);
+					}
+				}
 			}
 		} catch (Exception e) {
 			throw new AtomSetException(e);
@@ -170,11 +188,17 @@ public abstract class AbstractAtomSet implements AtomSet {
 	
 	@Override
 	public Set<Literal> getLiterals() throws AtomSetException {
-		Set<Literal> terms = new TreeSet<Literal>();
-		CloseableIterator<Literal> it = this.literalsIterator();
+		Set<Literal> terms = new HashSet<Literal>();
+		CloseableIterator<Atom> atomIt = this.iterator();
 		try {
-			while (it.hasNext()) {
-				terms.add(it.next());
+			while(atomIt.hasNext()) {
+				Iterator<Term> termIt = atomIt.next().iterator();
+				while(termIt.hasNext()) {
+					Term t = termIt.next();
+					if(t.isLiteral()) {
+						terms.add((Literal) t);
+					}
+				}
 			}
 		} catch (Exception e) {
 			throw new AtomSetException(e);
@@ -184,23 +208,23 @@ public abstract class AbstractAtomSet implements AtomSet {
 	
 	@Override
 	public CloseableIterator<Variable> variablesIterator() throws AtomSetException {
-		return new FilterIterator<Term, Variable>(this.termsIterator(), VariableFilter.instance());
+		return new CloseableIteratorAdapter<Variable>(this.getVariables().iterator());
 	}
 	
 	@Override
 	public CloseableIterator<Constant> constantsIterator() throws AtomSetException {
-		return new FilterIterator<Term, Constant>(this.termsIterator(), ConstantFilter.instance());
+		return new CloseableIteratorAdapter<Constant>(this.getConstants().iterator());
 	}
 	
 	@Override
 	public CloseableIterator<Literal> literalsIterator() throws AtomSetException {
-		return new FilterIterator<Term, Literal>(this.termsIterator(), LiteralFilter.instance());
+		return new CloseableIteratorAdapter<Literal>(this.getLiterals().iterator());
 	}
 
 	@Override
 	@Deprecated
 	public Set<Term> getTerms(Type type) throws AtomSetException {
-		Set<Term> terms = new TreeSet<Term>();
+		Set<Term> terms = new HashSet<Term>();
 		try {
 			CloseableIterator<Term> it = this.termsIterator(type);
 			while (it.hasNext()) {
@@ -214,7 +238,7 @@ public abstract class AbstractAtomSet implements AtomSet {
 
 	@Override
 	public Set<Predicate> getPredicates() throws AtomSetException {
-		Set<Predicate> predicates = new TreeSet<Predicate>();
+		Set<Predicate> predicates = new HashSet<Predicate>();
 		CloseableIterator<Predicate> it = this.predicatesIterator();
 		try {
 			while (it.hasNext()) {

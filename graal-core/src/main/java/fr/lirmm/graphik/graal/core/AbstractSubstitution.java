@@ -127,9 +127,11 @@ public abstract class AbstractSubstitution implements Substitution {
 
 	@Override
 	public Atom createImageOf(Atom atom) {
-		List<Term> termsSubstitut = new LinkedList<Term>();
-		for (Term term : atom.getTerms())
-			termsSubstitut.add(this.createImageOf(term));
+		List<Term> terms = atom.getTerms();
+		Term[] termsSubstitut = new Term[terms.size()];
+		int i = -1;
+		for (Term term : atom)
+			termsSubstitut[++i] = this.createImageOf(term);
 
 		return new DefaultAtom(atom.getPredicate(), termsSubstitut);
 	}

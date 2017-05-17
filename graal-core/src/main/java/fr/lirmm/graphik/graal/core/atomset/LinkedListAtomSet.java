@@ -42,6 +42,7 @@
  */
 package fr.lirmm.graphik.graal.core.atomset;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.TreeSet;
@@ -100,7 +101,7 @@ public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements InMemo
 
 	@Override
 	public CloseableIteratorWithoutException<Term> termsByPredicatePosition(Predicate p, final int position) {
-		Set<Term> terms = new TreeSet<Term>();
+		Set<Term> terms = new HashSet<Term>();
 		CloseableIteratorWithoutException<Term> it = new ConverterIteratorWithoutException<Atom, Term>(this.atomsByPredicate(
 		    p), new Converter<Atom, Term>() {
 			@Override
@@ -170,7 +171,7 @@ public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements InMemo
 
 	@Override
 	public Set<Predicate> getPredicates() {
-		Set<Predicate> predicates = new TreeSet<Predicate>();
+		Set<Predicate> predicates = new HashSet<Predicate>();
 		CloseableIteratorWithoutException<Atom> it = this.iterator();
 		while (it.hasNext()) {
 			Atom a = it.next();
@@ -194,7 +195,7 @@ public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements InMemo
 
 	@Override
 	public Set<Term> getTerms() {
-		Set<Term> terms = new TreeSet<Term>();
+		Set<Term> terms = new HashSet<Term>();
 		for (Atom a : this.linkedList) {
 			terms.addAll(a.getTerms());
 		}
@@ -214,7 +215,7 @@ public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements InMemo
 	@Override
 	@Deprecated
 	public Set<Term> getTerms(Term.Type type) {
-		Set<Term> terms = new TreeSet<Term>();
+		Set<Term> terms = new HashSet<Term>();
 		for (Atom a : this.linkedList) {
 			terms.addAll(a.getTerms(type));
 		}

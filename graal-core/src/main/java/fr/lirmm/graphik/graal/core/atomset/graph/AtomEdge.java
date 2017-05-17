@@ -45,7 +45,10 @@
  */
 package fr.lirmm.graphik.graal.core.atomset.graph;
 
+import java.lang.reflect.Array;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -54,9 +57,13 @@ import java.util.TreeSet;
 import org.apache.commons.lang3.ArrayUtils;
 
 import fr.lirmm.graphik.graal.api.core.AbstractAtom;
+import fr.lirmm.graphik.graal.api.core.Constant;
+import fr.lirmm.graphik.graal.api.core.Literal;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
+import fr.lirmm.graphik.util.ArrayIterator;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -141,6 +148,40 @@ class AtomEdge extends AbstractAtom implements Edge {
 		return typedTerms;
 	}
 	
+	@Override
+	public Set<Constant> getConstants() {
+		Set<Constant> typedTerms = new HashSet<Constant>();
+		for (Term term : this.terms)
+			if (term.isConstant())
+				typedTerms.add((Constant) term);
+
+		return typedTerms;
+	}
+	
+	@Override
+	public Set<Variable> getVariables() {
+		Set<Variable> typedTerms = new HashSet<Variable>();
+		for (Term term : this.terms)
+			if (term.isVariable())
+				typedTerms.add((Variable)term);
+
+		return typedTerms;
+	}
+	
+	@Override
+	public Set<Literal> getLiterals() {
+		Set<Literal> typedTerms = new HashSet<Literal>();
+		for (Term term : this.terms)
+			if (term.isLiteral())
+				typedTerms.add((Literal)term);
+
+		return typedTerms;
+	}
+	
+	@Override
+	public Iterator<Term> iterator() {
+		return new ArrayIterator<Term>(terms);
+	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// EDGE METHODS

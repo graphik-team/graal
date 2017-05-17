@@ -46,9 +46,13 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
+
+import javax.naming.OperationNotSupportedException;
 
 import fr.lirmm.graphik.graal.api.core.AbstractAtom;
 import fr.lirmm.graphik.graal.api.core.Atom;
@@ -57,6 +61,7 @@ import fr.lirmm.graphik.graal.api.core.Literal;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.util.ArrayIterator;
 
 /**
  * Class that implements atoms.
@@ -89,9 +94,10 @@ public class DefaultAtom extends AbstractAtom implements Serializable {
 				break;
 		}
 	}
-
+	
 	public DefaultAtom(Predicate predicate, Term... terms) {
-		this(predicate, Arrays.asList(terms));
+		this.predicate = predicate;
+		this.terms = terms;
 	}
 
 	/**
@@ -116,8 +122,35 @@ public class DefaultAtom extends AbstractAtom implements Serializable {
 		return typedTerms;
 	}
 	
+	@Override
+	public Set<Constant> getConstants() {
+		Set<Constant> typedTerms = new HashSet<Constant>();
+		for (Term term : this.terms)
+			if (term.isConstant())
+				typedTerms.add((Constant) term);
+
+		return typedTerms;
+	}
 	
+	@Override
+	public Set<Variable> getVariables() {
+		Set<Variable> typedTerms = new HashSet<Variable>();
+		for (Term term : this.terms)
+			if (term.isVariable())
+				typedTerms.add((Variable)term);
+
+		return typedTerms;
+	}
 	
+	@Override
+	public Set<Literal> getLiterals() {
+		Set<Literal> typedTerms = new HashSet<Literal>();
+		for (Term term : this.terms)
+			if (term.isLiteral())
+				typedTerms.add((Literal)term);
+
+		return typedTerms;
+	}
 
 	@Override
 	public boolean contains(Term term) {
@@ -218,4 +251,9 @@ public class DefaultAtom extends AbstractAtom implements Serializable {
 		return Arrays.asList(this.terms);
 	}
 
+	@Override
+	public Iterator<Term> iterator() {
+		return new ArrayIterator(terms);
+	}
+	
 };
