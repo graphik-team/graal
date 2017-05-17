@@ -120,12 +120,14 @@ public class StaticHomomorphism extends AbstractProfilable implements Homomorphi
 	public CloseableIterator<Substitution> execute(Object query, AtomSet atomSet)
 	    throws HomomorphismException {
 		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("Query : " + query);
+			LOGGER.debug("Execute query: {}", query);
 		
     	for(HomomorphismChecker e : elements) {
     		if(e.check(query, atomSet)) {
     			@SuppressWarnings("unchecked")
 				Homomorphism<Object, AtomSet> solver = (Homomorphism<Object, AtomSet>) e.getSolver();
+    			if (LOGGER.isDebugEnabled())
+    				LOGGER.debug("Solver: {}", solver.getClass());
     			return solver.execute(query, atomSet);
     		}
     	}
@@ -136,12 +138,14 @@ public class StaticHomomorphism extends AbstractProfilable implements Homomorphi
 	public boolean exist(Object query, AtomSet atomSet)
 	    throws HomomorphismException {
 		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("Query : " + query);
+			LOGGER.debug("Exist query: {}", query);
 		
     	for(HomomorphismChecker e : elements) {
     		if(e.check(query, atomSet)) {
     			@SuppressWarnings("unchecked")
 				Homomorphism<Object, AtomSet> solver = (Homomorphism<Object, AtomSet>) e.getSolver();
+    			if (LOGGER.isDebugEnabled())
+    				LOGGER.debug("Solver: {}", solver.getClass());
     			return solver.exist(query, atomSet);
     		}
     	}
@@ -152,12 +156,14 @@ public class StaticHomomorphism extends AbstractProfilable implements Homomorphi
 	public CloseableIterator<Substitution> execute(Object query, AtomSet atomSet, RulesCompilation compilation)
 	    throws HomomorphismException {
 		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("Query : " + query);
+			LOGGER.debug("Execute query with compilation: {}", query);
 		
     	for(HomomorphismChecker e : elements) {
     		if(e.getSolver() instanceof HomomorphismWithCompilation && e.check(query, atomSet)) {
     			@SuppressWarnings("unchecked")
 				HomomorphismWithCompilation<Object, AtomSet> solver = (HomomorphismWithCompilation<Object, AtomSet>) e.getSolver();
+    			if (LOGGER.isDebugEnabled())
+    				LOGGER.debug("Solver: {}", solver.getClass());
     			return solver.execute(query, atomSet, compilation);
     		}
     	}
@@ -168,11 +174,13 @@ public class StaticHomomorphism extends AbstractProfilable implements Homomorphi
 	public boolean exist(Object query, AtomSet atomSet, RulesCompilation compilation)
 	    throws HomomorphismException {
 		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("Query : " + query);
+			LOGGER.debug("Exist query with compilation: {}", query);
     	for(HomomorphismChecker e : elements) {
     		if(e.getSolver() instanceof HomomorphismWithCompilation && e.check(query, atomSet)) {
     			@SuppressWarnings("unchecked")
 				HomomorphismWithCompilation<Object, AtomSet> solver = (HomomorphismWithCompilation<Object, AtomSet>) e.getSolver();
+    			if (LOGGER.isDebugEnabled())
+    				LOGGER.debug("Solver: {}", solver.getClass());
     			return solver.exist(query, atomSet, compilation);
     		}
     	}
