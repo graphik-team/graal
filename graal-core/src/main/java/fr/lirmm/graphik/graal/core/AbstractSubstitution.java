@@ -46,6 +46,7 @@
 package fr.lirmm.graphik.graal.core;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -82,7 +83,7 @@ public abstract class AbstractSubstitution implements Substitution {
 
 	@Override
 	public Set<Term> getValues() {
-		return new TreeSet<Term>(this.getMap().values());
+		return new HashSet<Term>(this.getMap().values());
 	}
 
 	@Override
@@ -278,11 +279,11 @@ public abstract class AbstractSubstitution implements Substitution {
 
 	// TODO to check and improve
 	public boolean equals(Substitution other) { // NOPMD
-		Set<Term> termsThis = new TreeSet<Term>();
+		Set<Term> termsThis = new HashSet<Term>();
 		termsThis.addAll(this.getTerms());
 		termsThis.addAll(this.getValues());
 
-		Set<Term> termsOther = new TreeSet<Term>();
+		Set<Term> termsOther = new HashSet<Term>();
 		termsOther.addAll(other.getTerms());
 		termsOther.addAll(other.getValues());
 

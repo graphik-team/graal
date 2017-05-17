@@ -46,6 +46,7 @@
 package fr.lirmm.graphik.graal.core;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -142,7 +143,7 @@ public class DefaultRule extends AbstractRule {
 	@Override
 	public Set<Term> getTerms() {
 		if(this.terms == null) {
-			this.terms = new TreeSet<Term>();
+			this.terms = new HashSet<Term>();
 			this.terms.addAll(this.getBody().getTerms());
 			this.terms.addAll(this.getHead().getTerms());
 		}
@@ -152,7 +153,7 @@ public class DefaultRule extends AbstractRule {
 	@Override
 	public Set<Variable> getVariables() {
 		if(this.variables == null) {
-			this.variables = new TreeSet<Variable>();
+			this.variables = new HashSet<Variable>();
 			this.variables.addAll(this.getBody().getVariables());
 			this.variables.addAll(this.getHead().getVariables());
 		}
@@ -162,7 +163,7 @@ public class DefaultRule extends AbstractRule {
 	@Override
 	public Set<Constant> getConstants() {
 		if(this.constants == null) {
-			this.constants = new TreeSet<Constant>();
+			this.constants = new HashSet<Constant>();
 			this.constants.addAll(this.getBody().getConstants());
 			this.constants.addAll(this.getHead().getConstants());
 		}
@@ -172,7 +173,7 @@ public class DefaultRule extends AbstractRule {
 	@Override
 	public Set<Literal> getLiterals() {
 		if(this.literals == null) {
-			this.literals = new TreeSet<Literal>();
+			this.literals = new HashSet<Literal>();
 			this.literals.addAll(this.getBody().getLiterals());
 			this.literals.addAll(this.getHead().getLiterals());
 		}
@@ -182,7 +183,7 @@ public class DefaultRule extends AbstractRule {
 	@Override
 	@Deprecated
 	public Set<Term> getTerms(Term.Type type) {
-		Set<Term> terms = new TreeSet<Term>();
+		Set<Term> terms = new HashSet<Term>();
 		terms.addAll(this.getBody().getTerms(type));
 		terms.addAll(this.getHead().getTerms(type));
 		return terms;

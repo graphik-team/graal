@@ -43,11 +43,11 @@
 package fr.lirmm.graphik.graal.core.atomset.graph;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
@@ -218,7 +218,7 @@ public class DefaultInMemoryGraphStore extends AbstractInMemoryAtomSet implement
 	@Override
 	@Deprecated
 	public Set<Term> getTerms(Type type) {
-		TreeSet<Term> set = new TreeSet<Term>();
+		Set<Term> set = new HashSet<Term>();
 		for (Term t : this.terms.keySet())
 			if (type.equals(t.getType()))
 				set.add(t);
