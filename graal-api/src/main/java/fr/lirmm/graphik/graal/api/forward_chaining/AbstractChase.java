@@ -46,6 +46,8 @@
 package fr.lirmm.graphik.graal.api.forward_chaining;
 
 
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.util.TimeoutException;
 import fr.lirmm.graphik.util.profiler.NoProfiler;
 import fr.lirmm.graphik.util.profiler.Profiler;
@@ -55,12 +57,12 @@ import fr.lirmm.graphik.util.profiler.Profiler;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public abstract class AbstractChase implements Chase {
+public abstract class AbstractChase<T1 extends Rule, T2 extends AtomSet> implements Chase {
 
-	private RuleApplier ruleApplier;
+	private RuleApplier<T1, T2> ruleApplier;
 	private Profiler    profiler = NoProfiler.instance();
 
-	protected AbstractChase(RuleApplier ruleApplier) {
+	protected AbstractChase(RuleApplier<T1, T2> ruleApplier) {
 		this.ruleApplier = ruleApplier;
 	}
 
@@ -101,11 +103,11 @@ public abstract class AbstractChase implements Chase {
 		}
 	}
 
-	protected RuleApplier getRuleApplier() {
+	protected RuleApplier<T1,T2> getRuleApplier() {
 		return this.ruleApplier;
 	}
 
-	protected void setRuleApplier(RuleApplier applier) {
+	protected void setRuleApplier(RuleApplier<T1,T2> applier) {
 		this.ruleApplier = applier;
 	}
 

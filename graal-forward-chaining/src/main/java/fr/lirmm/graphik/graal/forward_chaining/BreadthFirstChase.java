@@ -45,34 +45,29 @@
  */
 package fr.lirmm.graphik.graal.forward_chaining;
 
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
-import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
-import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.forward_chaining.AbstractChase;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
-import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplicationHandler;
-import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplicationHandlerException;
+import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
+import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
+import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByBodyPredicatesRuleSet;
-import fr.lirmm.graphik.graal.forward_chaining.halting_condition.ChaseStopConditionWithHandler;
-import fr.lirmm.graphik.graal.forward_chaining.halting_condition.RestrictedChaseStopCondition;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
-import fr.lirmm.graphik.graal.forward_chaining.rule_applier.TestRuleApplier;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
-import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * This chase (forward-chaining) algorithm iterates over all rules at each step.
@@ -81,33 +76,60 @@ import fr.lirmm.graphik.util.stream.IteratorException;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class DefaultChase extends AbstractChase {
+public class BreadthFirstChase extends AbstractChase {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultChase.class);
-
 	private IndexedByBodyPredicatesRuleSet ruleSet;
 	private AtomSet atomSet;
+	private Collection<Atom> tmpData = new LinkedList<Atom>();
 
 	private Map<Rule, AtomSet> rulesToCheck;
 	private Map<Rule, AtomSet> nextRulesToCheck;
-	private boolean firstCall = true;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 	
-	public DefaultChase(Iterator<Rule> rules, AtomSet atomSet) {
+	public BreadthFirstChase(Iterator<Rule> rules, AtomSet atomSet) {
 		super(new DefaultRuleApplier<AtomSet>());
 		this.atomSet = atomSet;
 		this.ruleSet = new IndexedByBodyPredicatesRuleSet();
 		init(rules);
 	}
 	
-	public DefaultChase(Iterable<Rule> rules, AtomSet atomSet) {
+	public BreadthFirstChase(Iterable<Rule> rules, AtomSet atomSet) {
 		super(new DefaultRuleApplier<AtomSet>());
 		this.atomSet = atomSet;
 		this.ruleSet = new IndexedByBodyPredicatesRuleSet();
 		init(rules.iterator());
+	}
+	
+	public BreadthFirstChase(Iterator<Rule> rules, AtomSet atomSet,
+			RuleApplier ruleApplier) {
+		super(ruleApplier);
+		this.atomSet = atomSet;
+		this.ruleSet = new IndexedByBodyPredicatesRuleSet();
+		init(rules);
+	}
+
+	public BreadthFirstChase(Iterable<Rule> rules, AtomSet atomSet,
+			RuleApplier ruleApplier) {
+		this(rules.iterator(), atomSet, ruleApplier);
+	}
+
+	public BreadthFirstChase(Iterable<Rule> rules, AtomSet atomSet,
+			Homomorphism<ConjunctiveQuery, AtomSet> solver) {
+		this(rules, atomSet, new DefaultRuleApplier<AtomSet>(solver));
+	}
+
+	public BreadthFirstChase(Iterable<Rule> rules, AtomSet atomSet, ChaseHaltingCondition haltingCondition) {
+		this(rules, atomSet, new DefaultRuleApplier<AtomSet>(haltingCondition));
+
+	}
+
+	public BreadthFirstChase(Iterable<Rule> rules, AtomSet atomSet,
+            Homomorphism<ConjunctiveQuery, AtomSet> solver,
+			ChaseHaltingCondition haltingCondition) {
+		this(rules, atomSet, new DefaultRuleApplier<AtomSet>(solver, haltingCondition));
 	}
 
 	private void init(Iterator<Rule> rules) {
@@ -122,27 +144,17 @@ public class DefaultChase extends AbstractChase {
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLICS METHODS
 	// /////////////////////////////////////////////////////////////////////////
-	
-	public void firstCall() {
-		super.setRuleApplier(
-		    new TestRuleApplier<AtomSet>(atomSet, new ChaseStopConditionWithHandler(new RestrictedChaseStopCondition(),
-		                                                                            new Handler())));
-	}
 
 	@Override
 	public void next() throws ChaseException {
-		if (firstCall) {
-			this.firstCall();
-			this.firstCall = false;
-		}
 		this.rulesToCheck = this.nextRulesToCheck;
 		this.nextRulesToCheck = new TreeMap<Rule, AtomSet>();
 		try {
 			if (!this.rulesToCheck.isEmpty()) {
-
 				if (this.getProfiler().isProfilingEnabled()) {
 					this.getProfiler().start("saturationTime");
 				}
+				
 				for (Entry<Rule, AtomSet> e : this.rulesToCheck.entrySet()) {
 
 					String key = null;
@@ -155,11 +167,17 @@ public class DefaultChase extends AbstractChase {
 						this.getProfiler().trace(rule.toString());
 						this.getProfiler().start(key);
     				}
-					this.getRuleApplier().apply(rule, data);
+					this.getRuleApplier().apply(rule, data, tmpData);
+
 					if (this.getProfiler().isProfilingEnabled()) {
 						this.getProfiler().stop(key);
 					}
     			}
+				
+				this.dispatchNewData(this.tmpData);
+				this.atomSet.addAll(new CloseableIteratorAdapter<Atom>(this.tmpData.iterator()));
+				this.tmpData.clear();
+				
 				if (this.getProfiler().isProfilingEnabled()) {
 					this.getProfiler().stop("saturationTime");
 				}
@@ -177,53 +195,28 @@ public class DefaultChase extends AbstractChase {
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE CLASS
 	// /////////////////////////////////////////////////////////////////////////
-
-	private class Handler implements RuleApplicationHandler {
-
-		Handler() {
-		}
-
-		@Override
-		public boolean preRuleApplication(Rule rule, Substitution substitution, AtomSet data) {
-			return true;
-		}
-
-		@Override
-		public CloseableIterator<Atom> postRuleApplication(Rule rule, Substitution substitution, AtomSet data,
-		    CloseableIterator<Atom> atomsToAdd) throws RuleApplicationHandlerException {
-			InMemoryAtomSet atomset = null;
-			try {
-				atomset = new LinkedListAtomSet(atomsToAdd);
-			} catch (IteratorException e) {
-				throw new RuleApplicationHandlerException("An errors occurs during iteration over data", e);
-			}
-
-			CloseableIteratorWithoutException<Atom> it = atomset.iterator();
-			while (it.hasNext()) {
-				Atom a = it.next();
-				Predicate p = a.getPredicate();
-				for (Rule r : ruleSet.getRulesByBodyPredicate(p)) {
-					if (linearRuleCheck(r)) {
-						AtomSet set = nextRulesToCheck.get(r);
-						if (set == null) {
-							set = new LinkedListAtomSet();
-							//set =  new DefaultInMemoryGraphAtomSet();
-							nextRulesToCheck.put(r, set);
-						}
-						try {
-							set.add(a);
-						} catch (AtomSetException e) {
-							throw new RuleApplicationHandlerException(e);
-						}
-					} else {
-						nextRulesToCheck.put(r, atomSet);
+	
+	protected void dispatchNewData(Collection<Atom> newData) throws ChaseException {
+		for(Atom a : newData) {
+			Predicate p = a.getPredicate();
+			for (Rule r : ruleSet.getRulesByBodyPredicate(p)) {
+				if (linearRuleCheck(r)) {
+					AtomSet set = nextRulesToCheck.get(r);
+					if (set == null) {
+						set = new LinkedListAtomSet();
+						//set =  new DefaultInMemoryGraphAtomSet();
+						nextRulesToCheck.put(r, set);
 					}
+					try {
+						set.add(a);
+					} catch (AtomSetException e) {
+						throw new ChaseException("Exception while adding data into a tmp store",e);
+					}
+				} else {
+					nextRulesToCheck.put(r, atomSet);
 				}
 			}
-
-			return atomset.iterator();
 		}
-
 	}
 
 	private static boolean linearRuleCheck(Rule r) {

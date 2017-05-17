@@ -84,8 +84,8 @@ import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.grd.DefaultGraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.core.ruleset.DefaultOntology;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
+import fr.lirmm.graphik.graal.forward_chaining.BreadthFirstChase;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseWithGRD;
-import fr.lirmm.graphik.graal.forward_chaining.ConfigurableChase;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.rulesetanalyser.Analyser;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
@@ -227,7 +227,7 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 	public void semiSaturate() throws KnowledgeBaseException {
 		if (!this.isSemiSaturated) {
 			this.compileRule();
-			Chase chase = new ConfigurableChase(this.ruleCompilation.getSaturation(), this.store);
+			Chase chase = new BreadthFirstChase(this.ruleCompilation.getSaturation(), this.store);
 			chase.setProfiler(this.getProfiler());
 			try {
 				chase.next();

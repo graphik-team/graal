@@ -103,7 +103,7 @@ public class ChaseTest {
 		LinkedList<Rule> ruleSet = new LinkedList<>();
 		ruleSet.add(DlgpParser.parseRule("<Q>(X,Y) :- <P>(X,Y)."));
 
-		Chase chase = new DefaultChase(ruleSet, atomSet);
+		Chase chase = new BreadthFirstChase(ruleSet, atomSet);
 		chase.execute();
 		
 		ConjunctiveQuery query = DlgpParser.parseQuery("? :- <P>(X,Y),<Q>(X,Y).");
@@ -119,7 +119,7 @@ public class ChaseTest {
 		LinkedList<Rule> ruleSet = new LinkedList<>();
 		ruleSet.add(DlgpParser.parseRule("<Q>(X,Z) :- <P>(X,X)."));
 
-		Chase chase = new DefaultChase(ruleSet, atomSet);
+		Chase chase = new BreadthFirstChase(ruleSet, atomSet);
 		chase.execute();
 
 		int size = 0;
@@ -142,7 +142,7 @@ public class ChaseTest {
 		ruleSet.add(DlgpParser.parseRule("<Q>(X,Z) :- <R>(X,Y)."));
 		ruleSet.add(DlgpParser.parseRule("<S>(X,X) :- <Q>(Y,X)."));
 
-		Chase chase = new DefaultChase(ruleSet, atomSet);
+		Chase chase = new BreadthFirstChase(ruleSet, atomSet);
 		chase.execute();
 		
 		int size = 0;
