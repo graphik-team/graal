@@ -42,6 +42,7 @@
  */
 package fr.lirmm.graphik.graal.homomorphism.bootstrapper;
 
+import java.util.Collection;
 import java.util.Iterator;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -49,13 +50,12 @@ import org.apache.commons.lang3.tuple.Pair;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
-import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
-import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.graal.homomorphism.VarSharedData;
 import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -89,9 +89,9 @@ public class DefaultBootstrapper extends AbstractProfilable implements Bootstrap
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public CloseableIterator<Term> exec(final Var v, InMemoryAtomSet query, final AtomSet data,
+	public CloseableIterator<Term> exec(final VarSharedData v, Collection<Atom> preAtoms, Collection<Atom> postAtoms, final AtomSet data,
 	    RulesCompilation compilation) throws BacktrackException {
-		Iterator<Atom> it = v.postAtoms.iterator();
+		Iterator<Atom> it = postAtoms.iterator();
 		if (it.hasNext()) {
 			Atom a = it.next();
 			final Iterator<Pair<Atom, Substitution>> rewritingOf = compilation.getRewritingOf(a).iterator();

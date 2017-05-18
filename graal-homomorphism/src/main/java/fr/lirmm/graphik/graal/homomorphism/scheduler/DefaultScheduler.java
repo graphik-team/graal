@@ -52,6 +52,7 @@ import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.graal.homomorphism.VarSharedData;
 import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 
 /**
@@ -78,18 +79,18 @@ public class DefaultScheduler extends AbstractProfilable implements Scheduler {
 	}
 
 	@Override
-	public Var[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data, RulesCompilation rc) {
+	public VarSharedData[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data, RulesCompilation rc) {
 		Set<Variable> terms = h.getVariables();
-		Var[] vars = new Var[terms.size() + 2];
+		VarSharedData[] vars = new VarSharedData[terms.size() + 2];
 
 		int level = 0;
-		vars[level] = new Var(level);
+		vars[level] = new VarSharedData(level);
 
 		Set<Term> alreadyAffected = new TreeSet<Term>();
 		for (Term t : ans) {
 			if (t instanceof Variable && !alreadyAffected.contains(t)) {
 				++level;
-				vars[level] = new Var(level);
+				vars[level] = new VarSharedData(level);
 				vars[level].value = (Variable) t;
 				alreadyAffected.add(t);
 			}
@@ -100,18 +101,22 @@ public class DefaultScheduler extends AbstractProfilable implements Scheduler {
 		for (Term t : terms) {
 			if (!alreadyAffected.contains(t)) {
 				++level;
-				vars[level] = new Var(level);
+				vars[level] = new VarSharedData(level);
 				vars[level].value = (Variable) t;
 			}
 		}
 
 		++level;
-		vars[level] = new Var(level);
+		vars[level] = new VarSharedData(level);
 		vars[level].previousLevel = lastAnswerVariable;
 
 		return vars;
 	}
 
+	@Override
+	public void clear() {
+		
+	}
 	@Override
 	public boolean isAllowed(Var var, Term image) {
 		return true;

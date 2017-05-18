@@ -53,6 +53,7 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.graal.homomorphism.VarSharedData;
 import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 
 /**
@@ -76,12 +77,12 @@ public class FixedOrderScheduler extends AbstractProfilable implements Scheduler
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public Var[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data, RulesCompilation rc) throws HomomorphismException {
+	public VarSharedData[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data, RulesCompilation rc) throws HomomorphismException {
 		Set<Variable> terms = h.getVariables();
-		Var[] vars = new Var[terms.size() + 2];
+		VarSharedData[] vars = new VarSharedData[terms.size() + 2];
 
 		int level = 0;
-		vars[level] = new Var(level);
+		vars[level] = new VarSharedData(level);
 
 		Set<Term> alreadyAffected = new TreeSet<Term>();
 		for (Variable v : this.order) {
@@ -92,7 +93,7 @@ public class FixedOrderScheduler extends AbstractProfilable implements Scheduler
 				throw new HomomorphismException("There is two occurences of the same variable in the specified order.");
 			}
 			++level;
-			vars[level] = new Var(level);
+			vars[level] = new VarSharedData(level);
 			vars[level].value = v;
 			alreadyAffected.add(v);
 		}
@@ -103,12 +104,15 @@ public class FixedOrderScheduler extends AbstractProfilable implements Scheduler
 		}
 
 		++level;
-		vars[level] = new Var(level);
+		vars[level] = new VarSharedData(level);
 		vars[level].previousLevel = level - 1;
 
 		return vars;
 	}
 	
+	public void clear() {
+		
+	}
 	@Override
 	public boolean isAllowed(Var var, Term image) {
 		return true;

@@ -68,28 +68,29 @@ public class HomomorphismIteratorChecker extends AbstractCloseableIterator<Term>
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
-	private CloseableIterator<Term> it;
-	private Term                    next;
-	private Var                     var;
-	private Iterable<Atom>          h;
-	private AtomSet                 g;
-	private Map<Variable, Var>      map;
-	private RulesCompilation        rc;
-	private Profiler                profiler;
-	private Substitution 			initialSubstitution;
+	private CloseableIterator<Term>	it;
+	private Term					next;
+	private Var						var;
+	private Iterable<Atom>			h;
+	private AtomSet					g;
+	private Map<Variable, Integer>	map;
+	private RulesCompilation		rc;
+	private Profiler				profiler;
+	private Substitution			initialSubstitution;
+	private Var[]					varData;
 
 	/**
 	 * Check over it, the images for var such that there exists an homomorphism
 	 * from h to g.
 	 */
 	public HomomorphismIteratorChecker(Var var, CloseableIterator<Term> it, Iterable<Atom> h, AtomSet g,
-			Substitution initialSubstitution, Map<Variable, Var> map,
-	    RulesCompilation rc) {
+	    Substitution initialSubstitution, Map<Variable, Integer> map, Var[] varData, RulesCompilation rc) {
 		this.var = var;
 		this.it = it;
 		this.h = h;
 		this.g = g;
 		this.map = map;
+		this.varData = varData;
 		this.rc = rc;
 		this.initialSubstitution = initialSubstitution;
 	}
@@ -103,7 +104,7 @@ public class HomomorphismIteratorChecker extends AbstractCloseableIterator<Term>
 		try {
 			while (this.next == null && this.it.hasNext()) {
 				Term t = this.it.next();
-				if (this.check(t)) {
+				if (this.check(t, varData)) {
 					this.next = t;
 				}
 			}
@@ -126,7 +127,6 @@ public class HomomorphismIteratorChecker extends AbstractCloseableIterator<Term>
 		this.it.close();
 	}
 
-
 	@Override
 	public void setProfiler(Profiler profiler) {
 		this.profiler = profiler;
@@ -145,14 +145,14 @@ public class HomomorphismIteratorChecker extends AbstractCloseableIterator<Term>
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	private boolean check(Term t) throws AtomSetException {
+	private boolean check(Term t, Var[] varData) throws AtomSetException {
 		this.var.image = t;
 		Profiler profiler = this.getProfiler();
 		if (profiler != null) {
 			profiler.incr("#isHomomorphism", 1);
 			profiler.start("isHomomorphismTime");
 		}
-		boolean res = BacktrackUtils.isHomomorphism(h, g, initialSubstitution, map, rc);
+		boolean res = BacktrackUtils.isHomomorphism(h, g, initialSubstitution, map, varData, rc);
 		if (profiler != null) {
 			profiler.stop("isHomomorphismTime");
 		}

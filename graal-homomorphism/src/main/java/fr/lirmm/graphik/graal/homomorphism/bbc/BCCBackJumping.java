@@ -42,10 +42,10 @@
  */
 package fr.lirmm.graphik.graal.homomorphism.bbc;
 
-import java.util.Map;
+import java.util.Arrays;
 
-import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.graal.homomorphism.VarSharedData;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
 import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 
@@ -54,8 +54,9 @@ class BCCBackJumping extends AbstractProfilable implements BackJumping {
 	/**
 	 * 
 	 */
-    private final BCC BCC;
+	private final BCC BCC;
 	private BackJumping bj;
+	boolean success[];
 
 	BCCBackJumping(BCC bcc, BackJumping bc) {
 		BCC = bcc;
@@ -63,16 +64,25 @@ class BCCBackJumping extends AbstractProfilable implements BackJumping {
 	}
 
 	@Override
-	public void init(Var[] vars, Map<Variable, Var> map) {
-		this.bj.init(vars, map);
+	public void init(VarSharedData[] vars) {
+		this.bj.init(vars);
+		this.success = new boolean[vars.length];
+		Arrays.fill(success, false);
+	}
+	
+	@Override
+	public void clear() {
+		this.bj.clear();
+		Arrays.fill(success, false);
 	}
 
 	@Override
-	public int previousLevel(Var var, Var[] vars) {
+	public int previousLevel(VarSharedData var, Var[] vars) {
 		int ret = this.bj.previousLevel(var, vars);
-		if (BCC.varData[var.level].isEntry && !vars[BCC.varData[var.level].previousLevelFailure].success) {
+		if (BCC.varData[var.level].isEntry && !success[BCC.varData[var.level].previousLevelFailure]) {
 			if (BCC.varData[BCC.varData[var.level].previousLevelFailure].forbidden != null) {
-				BCC.varData[BCC.varData[var.level].previousLevelFailure].forbidden.add(vars[BCC.varData[var.level].previousLevelFailure].image);
+				BCC.varData[BCC.varData[var.level].previousLevelFailure].forbidden
+						.add(vars[BCC.varData[var.level].previousLevelFailure].image);
 			}
 			this.getProfiler().incr("#BCCBackjumps", 1);
 			ret = BCC.varData[var.level].previousLevelFailure;
@@ -81,13 +91,26 @@ class BCCBackJumping extends AbstractProfilable implements BackJumping {
 	}
 
 	@Override
-	public void addNeighborhoodToBackjumpSet(Var from, Var to) {
+	public void addNeighborhoodToBackjumpSet(VarSharedData from, VarSharedData to) {
 		this.bj.addNeighborhoodToBackjumpSet(from, to);
 	}
-	
+
 	@Override
 	public StringBuilder append(StringBuilder sb, int level) {
 		return bj.append(sb, level);
+	}
+
+
+	@Override
+	public void success() {
+		this.bj.success();
+		Arrays.fill(success, false);
+	}
+	
+	@Override
+	public void level(int level) {
+		this.bj.level(level);
+		success[level] = false;
 	}
 
 }

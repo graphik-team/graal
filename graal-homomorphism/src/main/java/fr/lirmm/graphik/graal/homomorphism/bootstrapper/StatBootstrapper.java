@@ -43,9 +43,9 @@
 package fr.lirmm.graphik.graal.homomorphism.bootstrapper;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -53,13 +53,11 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.Constant;
-import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.TermValueComparator;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
-import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.graal.homomorphism.VarSharedData;
 import fr.lirmm.graphik.graal.homomorphism.utils.ProbaUtils;
 import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -93,7 +91,7 @@ public class StatBootstrapper extends AbstractProfilable implements Bootstrapper
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public CloseableIterator<Term> exec(final Var v, InMemoryAtomSet query, final AtomSet data,
+	public CloseableIterator<Term> exec(final VarSharedData v, Collection<Atom> preAtoms, Collection<Atom> postAtoms, final AtomSet data,
 	    RulesCompilation rc) throws BacktrackException {
 		Set<Term> terms = null;
 		
@@ -105,7 +103,7 @@ public class StatBootstrapper extends AbstractProfilable implements Bootstrapper
 
 		Collection<Constant> constants = null;
 		Atom aa = null;
-		it = v.postAtoms.iterator();
+		it = postAtoms.iterator();
 		while (it.hasNext()) {
 			Atom a = it.next();
 			if (constants == null || constants.isEmpty()) {
@@ -113,7 +111,7 @@ public class StatBootstrapper extends AbstractProfilable implements Bootstrapper
 				aa = a;
 			}
 		}
-		it = v.preAtoms.iterator();
+		it = preAtoms.iterator();
 		while (it.hasNext()) {
 			Atom a = it.next();
 			if (constants == null || constants.isEmpty()) {
@@ -123,7 +121,7 @@ public class StatBootstrapper extends AbstractProfilable implements Bootstrapper
 		}
 		try {
 			if (constants != null && !constants.isEmpty()) {
-				terms = new TreeSet<Term>(TermValueComparator.instance());
+				terms = new HashSet<Term>();
 				for (Pair<Atom, Substitution> im : rc.getRewritingOf(aa)) {
 					int pos = im.getLeft().indexOf(im.getRight().createImageOf(v.value));
 					CloseableIterator<Atom> match = data.match(im.getLeft());
@@ -141,7 +139,7 @@ public class StatBootstrapper extends AbstractProfilable implements Bootstrapper
 				Atom a = null, tmp;
 				double probaA = 1.1;
 
-				it = v.postAtoms.iterator();
+				it = postAtoms.iterator();
 				while (it.hasNext()) {
 					tmp = it.next();
 					double p = ProbaUtils.computeProba(tmp, data, rc);
@@ -151,7 +149,7 @@ public class StatBootstrapper extends AbstractProfilable implements Bootstrapper
 					}
 				}
 
-				it = v.preAtoms.iterator();
+				it = preAtoms.iterator();
 				while (it.hasNext()) {
 					tmp = it.next();
 					double p = ProbaUtils.computeProba(tmp, data, rc);

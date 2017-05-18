@@ -42,7 +42,6 @@
  */
 package fr.lirmm.graphik.graal.homomorphism;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -53,7 +52,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQueryWithNegatedPart;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
@@ -62,8 +60,6 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
-import fr.lirmm.graphik.graal.api.homomorphism.PreparedExistentialHomomorphism;
-import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAggregator;
@@ -107,10 +103,11 @@ public class AtomicQueryHomomorphismWithNegation extends AbstractHomomorphismWit
 			for (Pair<Atom, Substitution> im : compilation.getRewritingOf(atom)) {
 				iteratorsList.add(new ConverterCloseableIterator<Atom, Substitution>(data.match(im.getLeft()),
 						new Atom2SubstitutionConverter(im.getLeft(), ans, im.getRight())));
-			}			
+			}
 			
 			CloseableIterator<Substitution> subIt = new CloseableIteratorAggregator<Substitution>(
 					new CloseableIteratorAdapter<CloseableIterator<Substitution>>(iteratorsList.iterator()));
+
 			
 			// manage negative parts
 			Set<Variable> variables = query.getPositivePart().getVariables();
@@ -121,38 +118,12 @@ public class AtomicQueryHomomorphismWithNegation extends AbstractHomomorphismWit
 				Set<Variable> frontier = SetUtils.intersection(variables, negPart.getVariables());
 				filters[i++] =  new NegFilter(negPart, frontier, data, compilation);
 			}
+			@SuppressWarnings("unchecked")
 			Filter<Substitution> filter = new AndFilter<Substitution>(filters);
 			return new FilterIterator<Substitution, Substitution>(subIt, filter);
 
 		} catch (AtomSetException e) {
 			throw new HomomorphismException(e);
-		}
-	}
-
-
-	// /////////////////////////////////////////////////////////////////////////
-	// PRIVATE CLASS
-	// /////////////////////////////////////////////////////////////////////////
-	
-	
-	private static class NegFilter implements Filter<Substitution> {
-
-		private PreparedExistentialHomomorphism homomorphism;
-		
-		public NegFilter(InMemoryAtomSet head, Set<Variable> frontier, AtomSet data, RulesCompilation compilation) throws HomomorphismException {
-			ConjunctiveQuery query = DefaultConjunctiveQueryFactory.instance().create(head, Collections.<Term>emptyList());
-			this.homomorphism = BacktrackHomomorphismPattern.instance().prepareHomomorphism(query, frontier, data, compilation);
-		}
-		
-		@Override
-		public boolean filter(Substitution s) {
-			try {
-				return !homomorphism.exist(s);	
-			} catch (HomomorphismException e) {
-				// TODO treat this exception
-				e.printStackTrace();
-				throw new Error(e);
-			}
 		}
 	}
 

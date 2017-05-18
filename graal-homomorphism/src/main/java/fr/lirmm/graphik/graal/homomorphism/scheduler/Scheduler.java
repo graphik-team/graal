@@ -50,6 +50,7 @@ import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.graal.homomorphism.VarSharedData;
 import fr.lirmm.graphik.util.profiler.Profilable;
 
 /**
@@ -72,7 +73,7 @@ public interface Scheduler extends Profilable {
 	 * @return an array of Var representing an order over its.
 	 * @throws HomomorphismException
 	 */
-	Var[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data, RulesCompilation rc) throws HomomorphismException;
+	VarSharedData[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data, RulesCompilation rc) throws HomomorphismException;
 
 	/**
 	 * @param var
@@ -81,5 +82,10 @@ public interface Scheduler extends Profilable {
 	 *         var
 	 */
 	boolean isAllowed(Var var, Term image);
+
+	/**
+	 * 
+	 */
+	void clear();
 
 }

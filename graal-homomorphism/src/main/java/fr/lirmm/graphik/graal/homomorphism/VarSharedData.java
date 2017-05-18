@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2017)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,75 +40,109 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.homomorphism.utils;
+package fr.lirmm.graphik.graal.homomorphism;
 
-import org.apache.commons.lang3.tuple.Pair;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.NavigableSet;
+import java.util.Set;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.RulesCompilation;
-import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.graal.api.homomorphism.PreparedExistentialHomomorphism;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public final class ProbaUtils {
+public class VarSharedData implements Comparable<VarSharedData> {
+
+	public int level;
+	public Variable value;
+
+	/*
+	 * Each atoms from the request graph in which this variable have the highest
+	 * level.
+	 */
+	public Collection<Atom> preAtoms;
+	/*
+	 * Each atoms from the request graph that is not in preAtoms and in which
+	 * this variable appears.
+	 */
+	public Collection<Atom> postAtoms;
+
+	// Forward Checking
+	public NavigableSet<VarSharedData> preVars;
+	public Set<VarSharedData> postVars;
+
+	// BackJumping
+	public int nextLevel;
+	public int previousLevel;
+
+	public List<PreparedExistentialHomomorphism> negatedPartsToCheck;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
-	private ProbaUtils() {
+	public VarSharedData() {
+		negatedPartsToCheck = new LinkedList<PreparedExistentialHomomorphism>();
 	}
 
+	public VarSharedData(int level) {
+		this();
+		this.level = level;
+		this.previousLevel = level - 1;
+		this.nextLevel = level + 1;
+	}
+
+	/**
+	 * copy constructor
+	 * 
+	 * @param v
+	 */
+	public VarSharedData(VarSharedData v) {
+		this();
+
+		this.value = v.value;
+		this.level = v.level;
+		this.previousLevel = v.previousLevel;
+		this.nextLevel = v.nextLevel;
+
+	}
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	/**
-	 * Compute the probability to have one specific instance of the specified
-	 * atom over data
-	 * 
-	 * @param atom
-	 * @param data
-	 * @param rc
-	 * @return the probability to have the specified atom over specified data.
-	 */
-	public static double computeProba(Atom atom, AtomSet data, RulesCompilation rc) {
-		int count = 0;
-		for (Pair<Atom, Substitution> im : rc.getRewritingOf(atom)) {
-			count += data.size(im.getLeft().getPredicate());
-		}
-
-		double probaA ;
-		if(count == 0) {
-			probaA = 0.0;
-		} else {
-			int nbCst = 0;
-			int nbVar = 0;
-			for(Term t : atom) {
-				if (t.isConstant()) {
-					++nbCst;
-				} else {
-					++nbVar;
-				}
-			} 
-			int domSize = data.getDomainSize();
-			probaA = (count/(Math.pow(domSize,nbCst)) / Math.pow(data.getDomainSize(), nbVar));
-
-		}
-
-		return probaA;
-	}
-
 	// /////////////////////////////////////////////////////////////////////////
 	// OBJECT OVERRIDE METHODS
 	// /////////////////////////////////////////////////////////////////////////
+	
+	@Override
+	public int hashCode() {
+		return this.level;
+	}
 
+	/**
+	 * Use for debugging
+	 */
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append('[').append(value).append("(").append(previousLevel).append("<-").append(level).append("->")
+				.append(nextLevel).append(")");
+		sb.append("]\n");
+		return sb.toString();
+	}
+
+	@Override
+	public int compareTo(VarSharedData o) {
+		return this.level - o.level;
+	}
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
+
 
 }

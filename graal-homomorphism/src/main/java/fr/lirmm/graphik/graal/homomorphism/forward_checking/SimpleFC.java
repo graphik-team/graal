@@ -55,6 +55,7 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
 import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.graal.homomorphism.VarSharedData;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
 import fr.lirmm.graphik.graal.homomorphism.utils.BacktrackUtils;
 import fr.lirmm.graphik.graal.homomorphism.utils.HomomorphismIteratorChecker;
@@ -82,17 +83,17 @@ public class SimpleFC extends AbstractProfilable implements ForwardChecking {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public void init(Var[] vars, Map<Variable, Var> map) {
+	public void init(VarSharedData[] vars, Map<Variable, Integer> map) {
 	}
 
 	@Override
-	public boolean checkForward(Var v, AtomSet g,  Substitution initialSubstitution, Map<Variable, Var> map, RulesCompilation rc)
+	public boolean checkForward(Var v, AtomSet g,  Substitution initialSubstitution, Map<Variable, Integer> map, Var[] varData, RulesCompilation rc)
 	    throws BacktrackException {
 
 		Profiler profiler = this.getProfiler();
-		for (Atom atom : v.postAtoms) {
+		for (Atom atom : v.shared.postAtoms) {
 			boolean contains = false;
-			Atom im = BacktrackUtils.createImageOf(atom, initialSubstitution, map);
+			Atom im = BacktrackUtils.createImageOf(atom, initialSubstitution, map, varData);
 
 			if (profiler != null) {
 				profiler.incr("#selectOne", 1);
@@ -130,16 +131,16 @@ public class SimpleFC extends AbstractProfilable implements ForwardChecking {
 	}
 
 	@Override
-	public boolean isInit(Var v) {
+	public boolean isInit(int level) {
 		return false;
 	}
 
 	@Override
-	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Substitution initialSubstitution, Map<Variable, Var> map, RulesCompilation rc)
+	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Substitution initialSubstitution, Map<Variable, Integer> map, Var[] varData, RulesCompilation rc)
 	    throws BacktrackException {
 		HomomorphismIteratorChecker tmp;
 		try {
-			tmp = new HomomorphismIteratorChecker(var, g.termsIterator(), var.preAtoms, g, initialSubstitution, map, rc);
+			tmp = new HomomorphismIteratorChecker(var, g.termsIterator(), var.shared.preAtoms, g, initialSubstitution, map, varData, rc);
 		} catch (AtomSetException e) {
 			throw new BacktrackException(e);
 		}
@@ -157,10 +158,15 @@ public class SimpleFC extends AbstractProfilable implements ForwardChecking {
 		return sb.append("SimpleFC");
 	}
 
+	@Override
+	public void clear() {
+	}
 	// /////////////////////////////////////////////////////////////////////////
 	// OBJECT OVERRIDE METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
+
+	
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////

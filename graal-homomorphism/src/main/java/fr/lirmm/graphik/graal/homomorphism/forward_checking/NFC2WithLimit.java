@@ -43,10 +43,10 @@
 package fr.lirmm.graphik.graal.homomorphism.forward_checking;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -59,6 +59,7 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
 import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.graal.homomorphism.VarSharedData;
 import fr.lirmm.graphik.graal.homomorphism.utils.BacktrackUtils;
 import fr.lirmm.graphik.graal.homomorphism.utils.HomomorphismIteratorChecker;
 import fr.lirmm.graphik.util.profiler.Profiler;
@@ -109,31 +110,31 @@ public class NFC2WithLimit extends NFC2 implements ForwardChecking {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public void init(Var[] vars, java.util.Map<Variable,Var> map) {
+	public void init(VarSharedData[] vars, java.util.Map<Variable, Integer> map) {
 		super.init(vars, map);
 		
 		this.dataWithLimit = new VarDataWithLimit[vars.length];
 
 		for (int i = 0; i < vars.length; ++i) {
 			this.dataWithLimit[vars[i].level] = new VarDataWithLimit();
-			this.dataWithLimit[vars[i].level].atomsToCheck = new TreeSet<Atom>();
+			this.dataWithLimit[vars[i].level].atomsToCheck = new HashSet<Atom>();
 		}
 	}
 
 	@Override
-	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Substitution initialSubstitution, Map<Variable, Var> map, RulesCompilation rc)
+	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Substitution initialSubstitution, Map<Variable, Integer> map, Var[] varData, RulesCompilation rc)
 	    throws BacktrackException {
 		HomomorphismIteratorChecker tmp;
-		if (this.data[var.level].last.init) {
-			this.dataWithLimit[var.level].atomsToCheck.addAll(this.data[var.level].toCheckAfterAssignment);
+		if (this.data[var.shared.level].last.init) {
+			this.dataWithLimit[var.shared.level].atomsToCheck.addAll(this.data[var.shared.level].toCheckAfterAssignment);
 			tmp = new HomomorphismIteratorChecker(
 			        var,
-			        new CloseableIteratorAdapter<Term>(this.data[var.level].last.candidats.iterator()),
-			        this.dataWithLimit[var.level].atomsToCheck, g, initialSubstitution, map, rc
+			        new CloseableIteratorAdapter<Term>(this.data[var.shared.level].last.candidats.iterator()),
+			        this.dataWithLimit[var.shared.level].atomsToCheck, g, initialSubstitution, map, varData, rc
 			    );
 		} else {
 			try {
-				tmp = new HomomorphismIteratorChecker(var, g.termsIterator(), var.preAtoms, g, initialSubstitution, map, rc);
+				tmp = new HomomorphismIteratorChecker(var, g.termsIterator(), var.shared.preAtoms, g, initialSubstitution, map, varData, rc);
 			} catch (AtomSetException e) {
 				throw new BacktrackException(e);
 			}
@@ -147,18 +148,18 @@ public class NFC2WithLimit extends NFC2 implements ForwardChecking {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-    protected boolean select(Atom atom, Var v, AtomSet g, Substitution initialSubstitution, Map<Variable, Var> map, RulesCompilation rc)
+    protected boolean select(Atom atom, Var v, AtomSet g, Substitution initialSubstitution, Map<Variable, Integer> map, Var[] varData, RulesCompilation rc)
 	    throws AtomSetException, IteratorException {
 		boolean contains = false;
 		int nbAns = 0;
 		Iterator<Pair<Atom, Substitution>> rewIt = rc.getRewritingOf(atom).iterator();
-		Set<Var> postVarsFromThisAtom = new TreeSet<Var>();
+		Set<Var> postVarsFromThisAtom = new HashSet<Var>();
 
 		while (rewIt.hasNext() && nbAns < LIMIT) {
 			Atom a = rewIt.next().getLeft();
 			
-			Var[] postV = this.computePostVariablesPosition(a, v.level, map, postVarsFromThisAtom);
-			Atom im = BacktrackUtils.createImageOf(a, initialSubstitution, map);
+			Var[] postV = this.computePostVariablesPosition(a, v.shared.level, map, varData, postVarsFromThisAtom);
+			Atom im = BacktrackUtils.createImageOf(a, initialSubstitution, map, varData);
 
 			Profiler profiler = this.getProfiler();
 			if (profiler != null) {
@@ -175,7 +176,7 @@ public class NFC2WithLimit extends NFC2 implements ForwardChecking {
 				for (Term t : it.next()) {
 					++i;
 					if (postV[i] != null) {
-						this.data[postV[i].level].tmp.add(t);
+						this.data[postV[i].shared.level].tmp.add(t);
 					}
 				}
 				contains = true;
@@ -193,34 +194,34 @@ public class NFC2WithLimit extends NFC2 implements ForwardChecking {
 			for (Var z : postVarsFromThisAtom) {
 				if (!isThereAnEmptiedList) {
 					if (nbAns >= LIMIT) {
-						this.dataWithLimit[z.level].atomsToCheck.add(atom);
+						this.dataWithLimit[z.shared.level].atomsToCheck.add(atom);
 					} else {
-						AcceptableCandidats ac = this.data[z.level].candidats.get(v);
+						AcceptableCandidats ac = this.data[z.shared.level].candidats[v.shared.level];
 						if (ac.init) {
-							ac.candidats.retainAll(this.data[z.level].tmp);
+							ac.candidats.retainAll(this.data[z.shared.level].tmp);
 							isThereAnEmptiedList |= ac.candidats.isEmpty();
 							if(ac.candidats.isEmpty()) {
-								this.bj.addNeighborhoodToBackjumpSet(z, v);
+								this.bj.addNeighborhoodToBackjumpSet(z.shared, v.shared);
 							}
 						} else {
-							ac.candidats.addAll(this.data[z.level].tmp);
+							ac.candidats.addAll(this.data[z.shared.level].tmp);
 							ac.init = true;
 						}
 					}
 				}
 				
-				this.data[z.level].tmp.clear();
+				this.data[z.shared.level].tmp.clear();
 			}
 		} else {
 			Var z = postVarsFromThisAtom.iterator().next();
-			this.bj.addNeighborhoodToBackjumpSet(z, v);
+			this.bj.addNeighborhoodToBackjumpSet(z.shared, v.shared);
 		}
 		
 		return contains && !isThereAnEmptiedList;
 	}
 
 	@Override
-	protected void clear(Var v, Var z) {
+	protected void clear(VarSharedData v, VarSharedData z) {
 		super.clear(v, z);
 		this.dataWithLimit[z.level].atomsToCheck.removeAll(v.postAtoms);
 	}

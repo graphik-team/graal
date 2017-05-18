@@ -54,12 +54,14 @@ import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.PreparedHomomorphism;
+import fr.lirmm.graphik.graal.homomorphism.backjumping.GraphBaseBackJumping;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.NoBackJumping;
+import fr.lirmm.graphik.graal.homomorphism.bbc.BCC;
 import fr.lirmm.graphik.graal.homomorphism.bootstrapper.Bootstrapper;
-import fr.lirmm.graphik.graal.homomorphism.bootstrapper.StarBootstrapper;
+import fr.lirmm.graphik.graal.homomorphism.bootstrapper.StatBootstrapper;
+import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NoForwardChecking;
 import fr.lirmm.graphik.graal.homomorphism.scheduler.PatternScheduler;
-import fr.lirmm.graphik.graal.homomorphism.scheduler.DefaultPatternScheduler;
 import fr.lirmm.graphik.util.profiler.NoProfiler;
 import fr.lirmm.graphik.util.profiler.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -77,8 +79,11 @@ class PreparedBacktrackHomomorphism implements PreparedHomomorphism {
 	// /////////////////////////////////////////////////////////////////////////
 	
 	public PreparedBacktrackHomomorphism(ConjunctiveQuery query, Set<Variable> variablesToParameterize, AtomSet data, RulesCompilation compilation) throws HomomorphismException {
-		
-		this(query, variablesToParameterize, Collections.<InMemoryAtomSet>emptySet(), data, DefaultPatternScheduler.instance(), StarBootstrapper.instance(), compilation, NoProfiler.instance());
+
+		BCC bcc = new BCC(new GraphBaseBackJumping(), true);
+		this.data = new BacktrackIteratorData(query.getAtomSet(), variablesToParameterize, Collections.<InMemoryAtomSet>emptySet(), 
+				data, query.getAnswerVariables(), bcc.getBCCScheduler(), StatBootstrapper.instance(), new NFC2(), bcc.getBCCBackJumping(), compilation, NoProfiler.instance());
+
 	}
 
 
@@ -107,7 +112,7 @@ class PreparedBacktrackHomomorphism implements PreparedHomomorphism {
 	@Override
 	public CloseableIterator<Substitution> execute(Substitution s)
 			throws HomomorphismException {
-		return new BacktrackIterator(new BacktrackIteratorData(this.data), s);
+		return new BacktrackIterator(this.data, s);
 	}
 	
 	// /////////////////////////////////////////////////////////////////////////

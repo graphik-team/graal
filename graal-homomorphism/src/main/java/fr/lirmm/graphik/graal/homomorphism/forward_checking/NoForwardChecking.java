@@ -10,6 +10,7 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
 import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.graal.homomorphism.VarSharedData;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
 import fr.lirmm.graphik.graal.homomorphism.utils.HomomorphismIteratorChecker;
 import fr.lirmm.graphik.util.profiler.AbstractProfilable;
@@ -78,25 +79,29 @@ public class NoForwardChecking extends AbstractProfilable implements ForwardChec
 	}
 
 	@Override
-	public void init(Var[] vars, Map<Variable, Var> map) {
+	public void init(VarSharedData[] vars, Map<Variable, Integer> map) {
 	}
 
 	@Override
-	public boolean isInit(Var v) {
+	public boolean isInit(int level) {
 		return false;
 	}
+	
+	@Override
+	public void clear() {
+	}
 
 	@Override
-	public boolean checkForward(Var v, AtomSet g,  Substitution initialSubstitution, Map<Variable, Var> map, RulesCompilation rc) {
+	public boolean checkForward(Var v, AtomSet g,  Substitution initialSubstitution, Map<Variable, Integer> map, Var[] varData, RulesCompilation rc) {
 		return true;
 	}
 
 	@Override
-	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Substitution initialSubstitution, Map<Variable, Var> map, RulesCompilation rc)
+	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Substitution initialSubstitution, Map<Variable, Integer> map, Var[] varData, RulesCompilation rc)
 	    throws BacktrackException {
 		HomomorphismIteratorChecker tmp;
 		try {
-			tmp = new HomomorphismIteratorChecker(var, g.termsIterator(), var.preAtoms, g, initialSubstitution, map, rc);
+			tmp = new HomomorphismIteratorChecker(var, g.termsIterator(), var.shared.preAtoms, g, initialSubstitution, map, varData, rc);
 		} catch (AtomSetException e) {
 			throw new BacktrackException(e);
 		}
@@ -114,5 +119,10 @@ public class NoForwardChecking extends AbstractProfilable implements ForwardChec
 	public StringBuilder append(StringBuilder sb, int level) {
 		return sb.append("NOFC");
 	}
+	
+	public ForwardChecking clone() {
+		return this;
+	}
+
 
 }

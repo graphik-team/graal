@@ -51,6 +51,7 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
 import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.graal.homomorphism.VarSharedData;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
 import fr.lirmm.graphik.util.profiler.Profilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -61,9 +62,9 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
  */
 public interface ForwardChecking extends Profilable {
 
-	void init(Var[] vars, Map<Variable, Var> map);
+	void init(VarSharedData[] vars, Map<Variable, Integer> map);
 
-	boolean isInit(Var v);
+	boolean isInit(int level);
 	
 	void setBackJumping(BackJumping bj);
 
@@ -76,14 +77,14 @@ public interface ForwardChecking extends Profilable {
 	 * @return -1 if the current affectation is acceptable, the level of the detected issue otherwise.
 	 * @throws BacktrackException
 	 */
-	boolean checkForward(Var v, AtomSet g, Substitution initialSubstitution, Map<Variable, Var> map, RulesCompilation rc) throws BacktrackException;
+	boolean checkForward(Var v, AtomSet g, Substitution initialSubstitution, Map<Variable, Integer> map, Var[] varData, RulesCompilation rc) throws BacktrackException;
 
 	/**
 	 * @param var
 	 * @return an iterator over possible candidates.
 	 * @throws BacktrackException
 	 */
-	CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Substitution initialSubstitution, Map<Variable, Var> map, RulesCompilation rc)
+	CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Substitution initialSubstitution, Map<Variable, Integer> map, Var[] varData,  RulesCompilation rc)
 	    throws BacktrackException;
 
 	/**
@@ -92,4 +93,9 @@ public interface ForwardChecking extends Profilable {
 	 */
 	StringBuilder append(StringBuilder sb, int level);
 
+	/**
+	 * 
+	 */
+	void clear();
+		
 }

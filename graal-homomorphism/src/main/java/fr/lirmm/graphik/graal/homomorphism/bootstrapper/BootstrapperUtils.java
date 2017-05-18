@@ -42,8 +42,8 @@
  */
 package fr.lirmm.graphik.graal.homomorphism.bootstrapper;
 
+import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -54,8 +54,7 @@ import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.TermValueComparator;
-import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.graal.homomorphism.VarSharedData;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
@@ -81,9 +80,9 @@ class BootstrapperUtils {
 	 * @throws AtomSetException
 	 * @throws IteratorException
 	 */
-	public static Set<Term> computeCandidatesOverRewritings(Atom a, Var v, AtomSet data, RulesCompilation compilation)
+	public static Set<Term> computeCandidatesOverRewritings(Atom a, VarSharedData v, AtomSet data, RulesCompilation compilation)
 	    throws AtomSetException, IteratorException {
-		Set<Term> terms = new TreeSet<Term>(TermValueComparator.instance());
+		Set<Term> terms = new HashSet<Term>();
 		for (Pair<Atom, Substitution> rew : compilation.getRewritingOf(a)) {
 			Atom im = rew.getLeft();
 			Substitution sub = rew.getRight();

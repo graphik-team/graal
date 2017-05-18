@@ -42,10 +42,8 @@
  */
 package fr.lirmm.graphik.graal.homomorphism.backjumping;
 
-import java.util.Map;
-
-import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.graal.homomorphism.VarSharedData;
 import fr.lirmm.graphik.util.profiler.Profilable;
 
 /**
@@ -54,15 +52,19 @@ import fr.lirmm.graphik.util.profiler.Profilable;
  */
 public interface BackJumping extends Profilable {
 
-	void init(Var[] vars, Map<Variable, Var> map);
+	void init(VarSharedData[] vars);
+	
+	void level(int level);
+	
+	void success();
 
-	public int previousLevel(Var var, Var[] vars);
+	public int previousLevel(VarSharedData var, Var[] vars);
 
 	/**
 	 * @param from
 	 * @param to
 	 */
-	void addNeighborhoodToBackjumpSet(Var from, Var to);
+	void addNeighborhoodToBackjumpSet(VarSharedData from, VarSharedData to);
 
 	/**
 	 * @param sb
@@ -70,5 +72,10 @@ public interface BackJumping extends Profilable {
 	 * @return the StringBuilder
 	 */
 	StringBuilder append(StringBuilder sb, int level);
+
+	/**
+	 * 
+	 */
+	void clear();
 
 }

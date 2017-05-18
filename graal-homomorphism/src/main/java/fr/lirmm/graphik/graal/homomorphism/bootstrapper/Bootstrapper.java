@@ -42,12 +42,14 @@
  */
 package fr.lirmm.graphik.graal.homomorphism.bootstrapper;
 
+import java.util.Collection;
+
+import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
-import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.graal.homomorphism.VarSharedData;
 import fr.lirmm.graphik.util.profiler.Profilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
@@ -60,7 +62,7 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
  */
 public interface Bootstrapper extends Profilable {
 
-	CloseableIterator<Term> exec(Var v, InMemoryAtomSet query, AtomSet data, RulesCompilation compilation)
+	CloseableIterator<Term> exec(VarSharedData v, Collection<Atom> preAtoms, Collection<Atom> postAtoms, AtomSet data, RulesCompilation compilation)
 	    throws BacktrackException;
 
 }

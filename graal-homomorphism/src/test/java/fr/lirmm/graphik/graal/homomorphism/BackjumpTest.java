@@ -95,6 +95,6 @@ public class BackjumpTest {
 		while (results.hasNext()) {
 			results.next();
 		}
-		Assert.assertEquals(49, h.getProfiler().get("#calls"));
+		Assert.assertEquals(47, h.getProfiler().get("#calls"));
 	}
 }

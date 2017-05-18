@@ -43,15 +43,9 @@
 package fr.lirmm.graphik.graal.homomorphism;
 
 import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.NavigableSet;
-import java.util.Set;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.graal.api.homomorphism.PreparedExistentialHomomorphism;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 
@@ -61,67 +55,19 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
  */
 public class Var implements Comparable<Var> {
 
-	public int              level;
-	public Variable         value;
-	public Term         	image;
+	public VarSharedData    shared;
+	public Term             image;
 	public CloseableIterator<Term> domain;
 
-	/*
-	 * Each atoms from the request graph in which this variable have the highest
-	 * level.
-	 */
-	public Collection<Atom> preAtoms;
-	/*
-	 * Each atoms from the request graph that is not in preAtoms and in which
-	 * this variable appears.
-	 */
-	public Collection<Atom> postAtoms;
-	
-	public List<PreparedExistentialHomomorphism> negatedPartsToCheck;
-
-	// Forward Checking
-	public NavigableSet<Var>       preVars;
-	public Set<Var>         postVars;
-
-	// BackJumping
-	public int              nextLevel;
-	public int              previousLevel;
-
-	public boolean          success = false;
+	public Collection<Atom> preAtomsFixed;
+	public Collection<Atom> postAtomsFixed;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public Var() {
-		negatedPartsToCheck = new LinkedList<PreparedExistentialHomomorphism>();
-	}
-
-	public Var(int level) {
-		this();
-		this.level = level;
-		this.previousLevel = level - 1;
-		this.nextLevel = level + 1;
-	}
-	
-	/**
-	 * copy constructor
-	 * @param v
-	 */
-	public Var(Var v) {
-		this();
-		this.image = null;
-		
-		this.value = v.value;
-		this.level = v.level;
-		this.previousLevel = v.previousLevel;
-		this.nextLevel = v.nextLevel;
-		
-		this.preVars = v.preVars;
-		this.postVars = v.postVars;
-		this.preAtoms = v.preAtoms;
-		this.postAtoms = v.postAtoms;
-		
+	public Var(VarSharedData data) {
+		this.shared = data;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -131,22 +77,15 @@ public class Var implements Comparable<Var> {
 	// /////////////////////////////////////////////////////////////////////////
 	// OBJECT OVERRIDE METHODS
 	// /////////////////////////////////////////////////////////////////////////
-
-	/**
-	 * Use for debugging
-	 */
+	
 	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append('[').append(value).append("(").append(previousLevel)
-		  .append("<-").append(level).append("->").append(nextLevel).append(")");
-		sb.append("]\n");
-		return sb.toString();
+	public int hashCode() {
+		return this.shared.hashCode();
 	}
 
 	@Override
 	public int compareTo(Var o) {
-		return this.level - o.level;
+		return this.shared.compareTo(o.shared);
 	}
 
 }

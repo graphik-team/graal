@@ -42,9 +42,6 @@
  */
 package fr.lirmm.graphik.graal.homomorphism.utils;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -86,10 +83,10 @@ public final class BacktrackUtils {
 	 * @return true if there is a homomorphism, false otherwise.
 	 * @throws AtomSetException
 	 */
-	public static boolean isHomomorphism(Iterable<Atom> atomsFrom, AtomSet atomsTo, Substitution initialSubstitution, Map<Variable, Var> index,
-	    RulesCompilation rc) throws AtomSetException {
+	public static boolean isHomomorphism(Iterable<Atom> atomsFrom, AtomSet atomsTo, Substitution initialSubstitution, Map<Variable, Integer> index,
+			Var[] varData, RulesCompilation rc) throws AtomSetException {
 		for (Atom atom : atomsFrom) {
-			Atom image = BacktrackUtils.createImageOf(atom, initialSubstitution, index);
+			Atom image = BacktrackUtils.createImageOf(atom, initialSubstitution, index, varData);
 			boolean contains = false;
 
 			for (Pair<Atom, Substitution> p : rc.getRewritingOf(image)) {
@@ -111,14 +108,16 @@ public final class BacktrackUtils {
 	 * @param map
 	 * @return an image of specified atom obtained by replacement variables contained in the map with the associated Var.image. 
 	 */
-	public static Atom createImageOf(Atom atom, Substitution initialSubstitution, Map<Variable, Var> map) {
-		List<Term> termsSubstitut = new LinkedList<Term>();
-		for (Term term : atom.getTerms()) {
-			Term t = initialSubstitution.createImageOf(term);
-			if (t.isVariable()) {
-				termsSubstitut.add(imageOf((Variable) t, map));
+	public static Atom createImageOf(Atom atom, Substitution initialSubstitution, Map<Variable, Integer> map, Var[] varData) {
+		Term[] termsSubstitut = new Term[atom.getPredicate().getArity()];
+		
+		int i = -1;
+		for (Term term : atom) {
+			if (term.isVariable()) {
+				Term t = initialSubstitution.createImageOf(term);
+				termsSubstitut[++i] = t.isVariable()? imageOf((Variable) t, map, varData) : t;
 			} else {
-				termsSubstitut.add(t);
+				termsSubstitut[++i] = term;
 			}
 		}
 
@@ -131,13 +130,15 @@ public final class BacktrackUtils {
 	 * @param var
 	 * @return the variable image
 	 */
-	public static Term imageOf(Variable var, Map<Variable, Var> map) {
-		Term t = map.get(var).image;
-		if (t == null) {
-			return var;
-		} else {
-			return t;
+	public static Term imageOf(Variable var, Map<Variable, Integer> map, Var[] varData) {
+		Integer i = map.get(var);
+		if( i != null) {
+			Term t = varData[i].image;
+			if (t != null) {
+				return t;
+			}
 		}
+		return var;
 	}
 
 	/**
@@ -146,12 +147,11 @@ public final class BacktrackUtils {
 	 * @param vars
 	 * @return a Substitution obtained by association of Var.value with Var.image.
 	 */
-	public static Substitution createSubstitution(Iterator<Var> vars) {
+	public static Substitution createSubstitution(Var[] vars) {
 		Substitution s = new TreeMapSubstitution();
-		while (vars.hasNext()) {
-			Var v = vars.next();
+		for (Var v : vars) {
 			if (v.image != null) {
-				s.put(v.value, v.image);
+				s.put(v.shared.value, v.image);
 			}
 		}
 		return s;

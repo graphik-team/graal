@@ -43,11 +43,11 @@
 package fr.lirmm.graphik.graal.homomorphism.forward_checking;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -62,6 +62,7 @@ import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.Substitutions;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
 import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.graal.homomorphism.VarSharedData;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
 import fr.lirmm.graphik.graal.homomorphism.utils.BacktrackUtils;
 import fr.lirmm.graphik.graal.homomorphism.utils.HomomorphismIteratorChecker;
@@ -86,13 +87,13 @@ public abstract class AbstractNFC extends AbstractProfilable implements ForwardC
 	}
 
 	@Override
-	public void init(Var[] vars, Map<Variable, Var> map) {
+	public void init(VarSharedData[] vars, Map<Variable, Integer> map) {
 		this.data = new VarData[vars.length];
 
 		for (int i = 0; i < vars.length; ++i) {
 			this.data[vars[i].level] = new VarData();
-			this.data[vars[i].level].candidats = new TreeMap<Var, AcceptableCandidats>();
-			this.data[vars[i].level].tmp = new TreeSet<Term>();
+			this.data[vars[i].level].candidats = new AcceptableCandidats[vars.length];
+			this.data[vars[i].level].tmp = new HashSet<Term>();
 			this.data[vars[i].level].toCheckAfterAssignment = new LinkedList<Atom>();
 
 			for (Atom a : vars[i].preAtoms) {
@@ -112,36 +113,43 @@ public abstract class AbstractNFC extends AbstractProfilable implements ForwardC
 			}
 
 			AcceptableCandidats previous = new AcceptableCandidats();
-			for (Var z : vars[i].preVars) {
+			for (VarSharedData z : vars[i].preVars) {
 				AcceptableCandidats ac = new AcceptableCandidats();
 				ac.candidats = new TreeSet<Term>();
 				ac.previous = previous;
 				previous = ac;
 
-				this.data[vars[i].level].candidats.put(z, ac);
+				this.data[vars[i].level].candidats[z.level] = ac;
 			}
 			this.data[vars[i].level].last = previous;
 		}
 	}
-
+	
 	@Override
-	public boolean isInit(Var v) {
-		return this.data[v.level].last.init;
+	public void clear() {
+		for (VarData d : this.data) {
+			d.clear();
+		}
 	}
 
 	@Override
-	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Substitution initialSubstitution, Map<Variable, Var> map, RulesCompilation rc)
+	public boolean isInit(int level) {
+		return this.data[level].last.init;
+	}
+
+	@Override
+	public CloseableIterator<Term> getCandidatsIterator(AtomSet g, Var var, Substitution initialSubstitution, Map<Variable, Integer> map, Var[] varData, RulesCompilation rc)
 	    throws BacktrackException {
 		HomomorphismIteratorChecker tmp;
-		if (this.data[var.level].last.init) {
+		if (this.data[var.shared.level].last.init) {
 			tmp = new HomomorphismIteratorChecker(
 			                                      var,
 			                                      new CloseableIteratorAdapter<Term>(
-			                                                                         this.data[var.level].last.candidats.iterator()),
-			                                      this.data[var.level].toCheckAfterAssignment, g, initialSubstitution, map, rc);
+			                                                                         this.data[var.shared.level].last.candidats.iterator()),
+			                                      this.data[var.shared.level].toCheckAfterAssignment, g, initialSubstitution, map, varData, rc);
 		} else {
 			try {
-				tmp = new HomomorphismIteratorChecker(var, g.termsIterator(), var.preAtoms, g, initialSubstitution, map, rc);
+				tmp = new HomomorphismIteratorChecker(var, g.termsIterator(), var.shared.preAtoms, g, initialSubstitution, map, varData, rc);
 			} catch (AtomSetException e) {
 				throw new BacktrackException(e);
 			}
@@ -150,14 +158,14 @@ public abstract class AbstractNFC extends AbstractProfilable implements ForwardC
 		return tmp;
 	}
 
-	protected boolean check(Atom atom, Var currentVar, Var varToCompute, AtomSet g, Substitution initialSubstitution, Map<Variable, Var> map,
-	    RulesCompilation rc)
+	protected boolean check(Atom atom, VarSharedData currentVar, VarSharedData varToCompute, AtomSet g, Substitution initialSubstitution, Map<Variable, Integer> map,
+		Var[] varData, RulesCompilation rc)
 	    throws AtomSetException {
-		Substitution s = BacktrackUtils.createSubstitution(map.values().iterator());
+		Substitution s = BacktrackUtils.createSubstitution(varData);
 		s.put(initialSubstitution);
 		Atom im = s.createImageOf(atom);
 		this.data[varToCompute.level].tmp.clear();
-		Set<Term> candidats = this.data[varToCompute.level].candidats.get(currentVar).candidats;
+		Set<Term> candidats = this.data[varToCompute.level].candidats[currentVar.level].candidats;
 		
 		// FIXME bug with p(X,Y,Z) -> q(X,Y) in the compilation
 		for (Pair<Atom, Substitution> rew : rc.getRewritingOf(im)) {
@@ -190,15 +198,15 @@ public abstract class AbstractNFC extends AbstractProfilable implements ForwardC
 		}
 	}
 
-	protected boolean select(Atom atom, Var v, AtomSet g, Substitution initialSubstitution, Map<Variable, Var> map, RulesCompilation rc)
+	protected boolean select(Atom atom, Var v, AtomSet g, Substitution initialSubstitution, Map<Variable, Integer> map, Var[] varData, RulesCompilation rc)
 	    throws AtomSetException, IteratorException {
 		boolean contains = false;
-		Set<Var> postVarsFromThisAtom = new TreeSet<Var>();
+		Set<Var> postVarsFromThisAtom = new HashSet<Var>();
 
 		for (Pair<Atom, Substitution> rew : rc.getRewritingOf(atom)) {
 			Atom a = rew.getLeft();
-			Var postV[] = this.computePostVariablesPosition(a, v.level, map, postVarsFromThisAtom);
-			Atom im = BacktrackUtils.createImageOf(a, initialSubstitution, map);
+			Var postV[] = this.computePostVariablesPosition(a, v.shared.level, map, varData, postVarsFromThisAtom);
+			Atom im = BacktrackUtils.createImageOf(a, initialSubstitution, map,  varData);
 
 			Profiler profiler = this.getProfiler();
 			if (profiler != null) {
@@ -213,7 +221,7 @@ public abstract class AbstractNFC extends AbstractProfilable implements ForwardC
 				for (Term t : it.next()) {
 					++i;
 					if (postV[i] != null) {
-						this.data[postV[i].level].tmp.add(t);
+						this.data[postV[i].shared.level].tmp.add(t);
 					}
 				}
 				contains = true;
@@ -229,23 +237,23 @@ public abstract class AbstractNFC extends AbstractProfilable implements ForwardC
 			// set computed candidats for post variables
 			for (Var z : postVarsFromThisAtom) {
 				if (!isThereAnEmptiedList) {
-					AcceptableCandidats ac = this.data[z.level].candidats.get(v);
+					AcceptableCandidats ac = this.data[z.shared.level].candidats[v.shared.level];
 					if (ac.init) {
-						ac.candidats.retainAll(this.data[z.level].tmp);
+						ac.candidats.retainAll(this.data[z.shared.level].tmp);
 						isThereAnEmptiedList |= ac.candidats.isEmpty();
 						if(ac.candidats.isEmpty()) {
-							this.bj.addNeighborhoodToBackjumpSet(z, v);
+							this.bj.addNeighborhoodToBackjumpSet(z.shared, v.shared);
 						}
 					} else {
-						ac.candidats.addAll(this.data[z.level].tmp);
+						ac.candidats.addAll(this.data[z.shared.level].tmp);
 						ac.init = true;
 					}
 				}
-				this.data[z.level].tmp.clear();
+				this.data[z.shared.level].tmp.clear();
 			}
 		} else {
 			Var z = postVarsFromThisAtom.iterator().next();
-			this.bj.addNeighborhoodToBackjumpSet(z, v);
+			this.bj.addNeighborhoodToBackjumpSet(z.shared, v.shared);
 		}
 
 		return contains && !isThereAnEmptiedList;
@@ -268,23 +276,26 @@ public abstract class AbstractNFC extends AbstractProfilable implements ForwardC
 	 * each position of a variable in the specified atom with a higher level
 	 * than the specified level.
 	 */
-	protected Var[] computePostVariablesPosition(Atom atom, int level, Map<Variable, Var> map,
-	    Set<Var> postVars) {
+	protected Var[] computePostVariablesPosition(Atom atom, int level, Map<Variable, Integer> map,
+	    Var[] varData, Set<Var> postVars) {
 		Var postV[] = new Var[atom.getPredicate().getArity()];
 		int i = -1;
 		for (Term t : atom) {
 			++i;
-			Var z = map.get(t);
-			if (z != null && z.level > level) {
-				postV[i] = z;
-				postVars.add(z);
+			Integer idx = map.get(t);
+			if(idx != null) {
+				Var z = varData[idx];
+    			if (z.shared.level > level) {
+    				postV[i] = z;
+    				postVars.add(z);
+    			}
 			}
 		}
 		return postV;
 	}
 
-	protected void clear(Var v, Var z) {
-		AcceptableCandidats ac = this.data[z.level].candidats.get(v);
+	protected void clear(VarSharedData v, VarSharedData z) {
+		AcceptableCandidats ac = this.data[z.level].candidats[v.level];
 		ac.candidats.clear();
 		ac.init = false;
 		if (ac.previous.init) {
@@ -294,10 +305,20 @@ public abstract class AbstractNFC extends AbstractProfilable implements ForwardC
 	}
 
 	protected class VarData {
-		Map<Var, AcceptableCandidats> candidats;
+		AcceptableCandidats[]         candidats;
 		AcceptableCandidats           last;
 		Set<Term>                     tmp;
 		Collection<Atom>              toCheckAfterAssignment;
+
+		public void clear() {
+			this.tmp.clear();
+			for(AcceptableCandidats ac : candidats) {
+				if(ac != null) {
+					ac.candidats.clear();
+					ac.init = false;
+				}
+			}
+		}
 	}
 
 	protected class AcceptableCandidats {
@@ -331,11 +352,12 @@ public abstract class AbstractNFC extends AbstractProfilable implements ForwardC
 	
 	@Override
 	public StringBuilder append(StringBuilder sb, int level) {
-		for(Map.Entry<Var, AcceptableCandidats> e : this.data[level].candidats.entrySet()) {
-			sb.append(e.getKey().value +"=" + e.getValue().toString()+", ");
+		for(int i = 1; i < level; ++i) {
+			if(this.data[level].candidats[i] != null) {
+				sb.append(i +"=" + this.data[level].candidats[i] +", ");
+			}
 		}
 		return sb;
 	}
-	
 
 }

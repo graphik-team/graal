@@ -60,5 +60,11 @@ public class VarData {
 	public Set<Term>    forbidden;
 	public Set<Integer> compilateurs;
 	public int          previousLevelFailure;
+	/**
+	 * 
+	 */
+	public void clear() {
+		this.forbidden.clear();
+	}
 
 }

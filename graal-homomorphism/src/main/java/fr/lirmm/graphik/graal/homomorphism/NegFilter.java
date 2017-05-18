@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2017)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,85 +40,40 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.homomorphism.scheduler;
+package fr.lirmm.graphik.graal.homomorphism;
 
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.homomorphism.Var;
-import fr.lirmm.graphik.util.profiler.AbstractProfilable;
+import fr.lirmm.graphik.graal.api.homomorphism.PreparedExistentialHomomorphism;
+import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
+import fr.lirmm.graphik.util.stream.filter.Filter;
 
-/**
- * Compute an order over variables from h. This scheduler put answer
- * variables first, then other variables are put in the order from
- * h.getTerms(Term.Type.VARIABLE).iterator().
- *
- * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- *
- */
-public class DefaultPatternScheduler extends AbstractProfilable  implements PatternScheduler {
+class NegFilter implements Filter<Substitution> {
 
-	private static DefaultPatternScheduler instance;
-
-	private DefaultPatternScheduler() {
-		super();
+	private PreparedExistentialHomomorphism homomorphism;
+	
+	public NegFilter(InMemoryAtomSet head, Set<Variable> frontier, AtomSet data, RulesCompilation compilation) throws HomomorphismException {
+		ConjunctiveQuery query = DefaultConjunctiveQueryFactory.instance().create(head, Collections.<Term>emptyList());
+		this.homomorphism = BacktrackHomomorphismPattern.instance().prepareHomomorphism(query, frontier, data, compilation);
 	}
-
-	public static synchronized DefaultPatternScheduler instance() {
-		if (instance == null)
-			instance = new DefaultPatternScheduler();
-
-		return instance;
-	}
-
-	public Var[] execute(InMemoryAtomSet h, Set<Variable> preAffectedVars, List<Term> ans, AtomSet data, RulesCompilation rc) {
-		Set<Variable> variables = h.getVariables();
-		variables.removeAll(preAffectedVars);
-		
-		Var[] vars = new Var[variables.size() + 2];
-
-		int level = 0;
-		vars[level] = new Var(level);
-
-		int lastAnswerVariable = -1;
-		Set<Variable> alreadyAffected = new HashSet<Variable>();
-		for (Variable t : variables) {
-			if (t.isVariable() && alreadyAffected.add(t)) {
-				++level;
-				vars[level] = new Var(level);
-				vars[level].value = (Variable) t;
-				
-				if (ans.contains(t)) {
-					if (level > lastAnswerVariable)
-						lastAnswerVariable = level;
-				}
-			}
+	
+	@Override
+	public boolean filter(Substitution s) {
+		try {
+			return !homomorphism.exist(s);	
+		} catch (HomomorphismException e) {
+			// TODO treat this exception
+			e.printStackTrace();
+			throw new Error(e);
 		}
-
-		++level;
-		vars[level] = new Var(level);
-		vars[level].previousLevel = lastAnswerVariable;
-		
-		return vars;
 	}
-
-	@Override
-	public Var[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data, RulesCompilation rc)
-			throws HomomorphismException {
-		return this.execute(h, Collections.<Variable>emptySet(), ans, data, rc);
-	}
-
-	@Override
-	public boolean isAllowed(Var var, Term image) {
-		return true;
-	}
-
 }

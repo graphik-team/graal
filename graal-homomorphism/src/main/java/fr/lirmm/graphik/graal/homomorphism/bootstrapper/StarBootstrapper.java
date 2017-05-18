@@ -53,13 +53,12 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.Constant;
-import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.TermValueComparator;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
-import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.graal.homomorphism.VarSharedData;
 import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
@@ -91,7 +90,7 @@ public class StarBootstrapper extends AbstractProfilable implements Bootstrapper
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public CloseableIterator<Term> exec(final Var v, InMemoryAtomSet query, final AtomSet data,
+	public CloseableIterator<Term> exec(final VarSharedData v, Collection<Atom> preAtoms, Collection<Atom> postAtoms, final AtomSet data,
 	    RulesCompilation compilation) throws BacktrackException {
 		Set<Term> terms = null;
 		
@@ -103,7 +102,7 @@ public class StarBootstrapper extends AbstractProfilable implements Bootstrapper
 
 		Collection<Constant> constants = null;
 		Atom aa = null;
-		it = v.postAtoms.iterator();
+		it = postAtoms.iterator();
 		while (it.hasNext()) {
 			Atom a = it.next();
 			if (constants == null || constants.isEmpty()) {
@@ -111,7 +110,7 @@ public class StarBootstrapper extends AbstractProfilable implements Bootstrapper
 				aa = a;
 			}
 		}
-		it = v.preAtoms.iterator();
+		it = preAtoms.iterator();
 		while (it.hasNext()) {
 			Atom a = it.next();
 			if (constants == null || constants.isEmpty()) {
@@ -137,7 +136,7 @@ public class StarBootstrapper extends AbstractProfilable implements Bootstrapper
 			}
 
 			if (terms == null) {
-				it = v.postAtoms.iterator();
+				it = postAtoms.iterator();
 				while (it.hasNext()) {
 					if (terms == null) {
 						terms = BootstrapperUtils.computeCandidatesOverRewritings(it.next(), v, data, compilation);
@@ -147,7 +146,7 @@ public class StarBootstrapper extends AbstractProfilable implements Bootstrapper
 					}
 				}
 
-				it = v.preAtoms.iterator();
+				it = preAtoms.iterator();
 				while (it.hasNext()) {
 					if (terms == null) {
 						terms = BootstrapperUtils.computeCandidatesOverRewritings(it.next(), v, data, compilation);

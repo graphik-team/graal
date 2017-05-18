@@ -52,6 +52,7 @@ import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
 import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.graal.homomorphism.VarSharedData;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
@@ -80,17 +81,17 @@ public class NFC0 extends AbstractNFC implements ForwardChecking {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public boolean checkForward(Var v, AtomSet g, Substitution initialSubstitution, Map<Variable, Var> map, RulesCompilation rc) throws BacktrackException {
+	public boolean checkForward(Var v, AtomSet g, Substitution initialSubstitution, Map<Variable, Integer> map, Var[] varData, RulesCompilation rc) throws BacktrackException {
 
 		// clear all computed candidats for post variables
-		for (Var z : v.postVars) {
-			this.clear(v, z);
+		for (VarSharedData z : v.shared.postVars) {
+			this.clear(v.shared, z);
 		}
 
-		for (Atom atom : v.postAtoms) {
-			if (mustBeChecked(atom, map)) {
+		for (Atom atom : v.shared.postAtoms) {
+			if (mustBeChecked(atom, map, varData)) {
 				try {
-					if(!select(atom, v, g, initialSubstitution, map, rc)) {
+					if(!select(atom, v, g, initialSubstitution, map, varData, rc)) {
 						return false;
 					}
 				} catch (IteratorException e) {
@@ -114,14 +115,17 @@ public class NFC0 extends AbstractNFC implements ForwardChecking {
 	 * @param map
 	 * @return true if the specified atom must be checked now, false otherwise.
 	 */
-	protected boolean mustBeChecked(Atom atom, Map<Variable, Var> map) {
+	protected boolean mustBeChecked(Atom atom, Map<Variable, Integer> map, Var[] varData) {
 		int i = 0;
 		for (Variable t : atom.getVariables()) {
-			Var z = map.get(t);
-			if (z != null && z.image != null) {
-				if (++i > 1) {
-					return false;
-				}
+			Integer idx = map.get(t);
+			if(idx != null) {
+				Var z = varData[idx];
+    			if (z.image != null) {
+    				if (++i > 1) {
+    					return false;
+    				}
+    			}
 			}
 		}
 		return true;

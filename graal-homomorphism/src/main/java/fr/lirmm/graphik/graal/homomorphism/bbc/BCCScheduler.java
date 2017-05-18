@@ -47,22 +47,26 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Deque;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.graal.core.ConjunctiveQueryWithFixedVariables;
+import fr.lirmm.graphik.graal.core.factory.DefaultSubstitutionFactory;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.graal.homomorphism.VarSharedData;
 import fr.lirmm.graphik.graal.homomorphism.scheduler.PatternScheduler;
 import fr.lirmm.graphik.graal.homomorphism.utils.ProbaUtils;
 import fr.lirmm.graphik.util.graph.DefaultDirectedEdge;
@@ -88,39 +92,46 @@ class BCCScheduler extends AbstractProfilable implements PatternScheduler {
 	}
 
 	@Override
-	public Var[] execute(InMemoryAtomSet query, Set<Variable> preAffectedVars, List<Term> ans, AtomSet data,
+	public VarSharedData[] execute(InMemoryAtomSet query, Set<Variable> preAffectedVars, List<Term> ans, AtomSet data,
 			RulesCompilation rc) {
-		InMemoryAtomSet fixedQuery = new ConjunctiveQueryWithFixedVariables(query, ans, preAffectedVars).getAtomSet();
+		InMemoryAtomSet fixedQuery = (preAffectedVars.isEmpty())? query : computeFixedQuery(query, preAffectedVars);
 
+
+		// Term index
 		Set<Variable> variables = fixedQuery.getVariables();
-		// Set<Variable> variables = query.getVariables().removeAll(preAffectedVars);
-
-		// BCC
-		Map<Term, Integer> map = new TreeMap<Term, Integer>();
+		Map<Term, Integer> map = new HashMap<Term, Integer>();
 		this.inverseMap = new Term[variables.size() + 1];
-		HyperGraph graph = constructHyperGraph(query, variables, this.inverseMap, map, ans);
+		{ // init indexes
+			int i = 0;
+			for (Variable t : variables) {
+				inverseMap[++i] = t;
+				map.put(t, i);
+			}
+		}
+		
+		HyperGraph graph = constructHyperGraph(fixedQuery, variables.size(), this.inverseMap, map, ans);
 
 		double[] proba = this.computeProba(fixedQuery, data, variables.size(), map, rc);
 		this.varComparator = new IntegerComparator(proba);
 
 		TmpData d = biconnect(graph, this.varComparator);
 
-		Var[] vars = new Var[variables.size() + 2];
+		VarSharedData[] vars = new VarSharedData[variables.size() + 2];
 		this.BCC.varData = new VarData[variables.size() + 2];
 
-		vars[0] = new Var(0);
+		vars[0] = new VarSharedData(0);
 		this.BCC.varData[0] = new VarData();
 
 		int lastAnswerVariable = -1;
 		for (int i = 1; i < d.vars.length; ++i) {
-			Var v = d.vars[i];
+			VarSharedData v = d.vars[i];
 			vars[v.level] = v;
 			this.BCC.varData[v.level] = d.ext[i];
 			v.value = (Variable) this.inverseMap[i];
 			v.nextLevel = v.level + 1;
 			v.previousLevel = v.level - 1;
 			if (this.withForbiddenCandidate && this.BCC.varData[v.level].isAccesseur) {
-				this.BCC.varData[v.level].forbidden = new TreeSet<Term>();
+				this.BCC.varData[v.level].forbidden = new HashSet<Term>();
 			}
 
 			if (ans.contains(v.value)) {
@@ -130,7 +141,7 @@ class BCCScheduler extends AbstractProfilable implements PatternScheduler {
 		}
 
 		int level = variables.size() + 1;
-		vars[level] = new Var(level);
+		vars[level] = new VarSharedData(level);
 		this.BCC.varData[level] = new VarData();
 		// if an homomorphism is found, go to the last answer variable
 		vars[level].previousLevel = lastAnswerVariable;
@@ -138,7 +149,7 @@ class BCCScheduler extends AbstractProfilable implements PatternScheduler {
 		// Profiling
 		if (this.getProfiler().isProfilingEnabled()) {
 			StringBuilder sb = new StringBuilder();
-			for (Var v : vars) {
+			for (VarSharedData v : vars) {
 				sb.append(v.value);
 				sb.append(" > ");
 			}
@@ -150,14 +161,21 @@ class BCCScheduler extends AbstractProfilable implements PatternScheduler {
 	}
 
 	@Override
-	public Var[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data, RulesCompilation rc) {
+	public VarSharedData[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data, RulesCompilation rc) {
 		return this.execute(h, Collections.<Variable>emptySet(), ans, data, rc);
+	}
+	
+	@Override
+	public void clear() {
+		for(VarData d :this.BCC.varData) {
+			d.clear();
+		}
 	}
 
 	@Override
 	public boolean isAllowed(Var var, Term image) {
-		return (this.BCC.varData[var.level].forbidden == null
-				|| !this.BCC.varData[var.level].forbidden.contains(image));
+		return (this.BCC.varData[var.shared.level].forbidden == null
+				|| !this.BCC.varData[var.shared.level].forbidden.contains(image));
 	}
 
 	/**
@@ -169,11 +187,8 @@ class BCCScheduler extends AbstractProfilable implements PatternScheduler {
 	 */
 	protected double[] computeProba(InMemoryAtomSet h, AtomSet data, int nbVar, Map<Term, Integer> map,
 			RulesCompilation rc) {
-		this.getProfiler().start("probaComputingTime");
 		final double[] proba = new double[nbVar + 1];
-		for (int i = 0; i < proba.length; ++i) {
-			proba[i] = -1.;
-		}
+		Arrays.fill(proba, -1.);
 
 		CloseableIteratorWithoutException<Atom> it = h.iterator();
 		while (it.hasNext()) {
@@ -189,7 +204,6 @@ class BCCScheduler extends AbstractProfilable implements PatternScheduler {
 				}
 			}
 		}
-		this.getProfiler().start("probaComputingTime");
 		return proba;
 	}
 
@@ -242,7 +256,7 @@ class BCCScheduler extends AbstractProfilable implements PatternScheduler {
 				d.lowpt[v] = Math.min(d.lowpt[v], d.lowpt[w]);
 				if (d.lowpt[w] >= d.vars[v].level) {
 					// start new component
-					d.currentComponent = new TreeSet<Integer>();
+					d.currentComponent = new HashSet<Integer>();
 					d.components.add(d.currentComponent);
 					while (d.vars[d.stack.peek().getTail()].level >= d.vars[w].level) {
 						DirectedEdge e = d.stack.pop();
@@ -310,37 +324,44 @@ class BCCScheduler extends AbstractProfilable implements PatternScheduler {
 	 * @param h
 	 * @return the HyperGraph of variables of h.
 	 */
-	protected static HyperGraph constructHyperGraph(InMemoryAtomSet h, Set<Variable> variables, Term[] inverseMap,
+	protected static HyperGraph constructHyperGraph(InMemoryAtomSet h, int nbVariables, Term[] inverseMap,
 			Map<Term, Integer> map, Iterable<Term> ans) {
 
-		int i = 0;
-		for (Variable t : variables) {
-			inverseMap[++i] = t;
-			map.put(t, i);
-		}
-
-		HyperGraph graph = new DefaultHyperGraph(variables.size() + 1);
+		HyperGraph graph = new DefaultHyperGraph(nbVariables + 1);
 		CloseableIteratorWithoutException<Atom> it = h.iterator();
 		while (it.hasNext()) {
 			Atom a = it.next();
 			DefaultHyperEdge edge = new DefaultHyperEdge();
+			int arity = 0;
 			for (Variable t : a.getVariables()) {
-				if(variables.contains(t)) {
-					edge.addVertice(map.get(t));
-				}
+				++arity;
+				edge.addVertice(map.get(t));
 			}
-			graph.add(edge);
+			if(arity >= 2) {
+				graph.add(edge);
+			}
 		}
 
 		return graph;
 	}
+	
+	private static InMemoryAtomSet computeFixedQuery(InMemoryAtomSet atomset, Iterable<? extends Variable> fixedTerms) {
+		// create a Substitution for fixed query
+		Substitution fixSub = DefaultSubstitutionFactory.instance().createSubstitution();
+		for (Variable t : fixedTerms) {
+			fixSub.put(t, DefaultTermFactory.instance().createConstant(t.getLabel()));
+		}
+
+		return fixSub.createImageOf(atomset);
+	}
+
 
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE CLASS
 	// /////////////////////////////////////////////////////////////////////////
 
 	protected static class TmpData {
-		Var[] vars;
+		VarSharedData[] vars;
 		VarData[] ext;
 		int i;
 		int lowpt[];
@@ -350,10 +371,10 @@ class BCCScheduler extends AbstractProfilable implements PatternScheduler {
 		BCCGraph bccGraph = new BCCGraph();
 
 		TmpData(int nbVertices) {
-			vars = new Var[nbVertices];
+			vars = new VarSharedData[nbVertices];
 			ext = new VarData[nbVertices];
 			for (int i = 0; i < nbVertices; ++i) {
-				vars[i] = new Var();
+				vars[i] = new VarSharedData();
 				ext[i] = new VarData();
 			}
 		}
@@ -362,33 +383,31 @@ class BCCScheduler extends AbstractProfilable implements PatternScheduler {
 	protected static class BCCGraph {
 
 		public Graph graph = new DefaultGraph();
-		public Object[] bccGraphMap = new Object[40];
-		public int[] bccGraphEntryInverseMap = new int[30];
-		public int[] bccGraphAccesseurInverseMap = new int[30];
+		private List<Object> bccGraphMap = new ArrayList<Object>();
+		public Map<Integer,Integer> bccGraphAccesseurInverseMap = new HashMap<Integer, Integer>();
 
 		BCCGraph() {
-			Arrays.fill(bccGraphEntryInverseMap, -1);
-			Arrays.fill(bccGraphAccesseurInverseMap, -1);
+
 		}
 
 		int addAccesseur(int accesseur) {
-			int v = bccGraphAccesseurInverseMap[accesseur];
-			if (v == -1) {
+			Integer v = bccGraphAccesseurInverseMap.get(accesseur);
+			if (v == null) {
 				v = graph.addVertex();
-				bccGraphMap[v] = accesseur;
-				bccGraphAccesseurInverseMap[accesseur] = v;
+				bccGraphMap.add(accesseur);
+				bccGraphAccesseurInverseMap.put(accesseur, v);
 			}
 			return v;
 		}
 
 		int addComponent(Set<Integer> component) {
 			int v = graph.addVertex();
-			bccGraphMap[v] = component;
+			bccGraphMap.add(component);
 			return v;
 		}
 
 		Object getObject(int v) {
-			return bccGraphMap[v];
+			return bccGraphMap.get(v);
 		}
 
 		void addEdge(int v1, int v2) {
@@ -429,6 +448,7 @@ class BCCScheduler extends AbstractProfilable implements PatternScheduler {
 			if (o instanceof Integer) {
 				System.out.print("(" + inverseMap[(Integer) o] + ")");
 			} else if (o instanceof Set) {
+				@SuppressWarnings("unchecked")
 				Set<Integer> set = (Set<Integer>) o;
 				System.out.print("{");
 				for (int j : set)
@@ -437,5 +457,5 @@ class BCCScheduler extends AbstractProfilable implements PatternScheduler {
 			}
 		}
 	}
-
+	
 }

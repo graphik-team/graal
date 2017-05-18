@@ -42,17 +42,17 @@
  */
 package fr.lirmm.graphik.graal.homomorphism.backjumping;
 
-import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.Var;
+import fr.lirmm.graphik.graal.homomorphism.VarSharedData;
 import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 
 /**
  * The GraphBaseBackJumping allows jump (in case of failure) to the last
- * neighbor node from the query graph (in the search order of the variable) <br/>
+ * neighbor node from the query graph (in the search order of the variable)
+ * <br/>
  * Reference: Dechter, R. (1990). Enhancement Schemes for Constraint Processing:
  * Backjumping, Learning, and Cutset Decomposition. [Artificial Intelligence,
  * 41(3): 273-312]
@@ -72,26 +72,44 @@ public class GraphBaseBackJumping extends AbstractProfilable implements BackJump
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public void init(Var[] vars, Map<Variable, Var> map) {
+	public void init(VarSharedData[] vars) {
 		this.data = new VarData[vars.length];
 
 		for (int i = 0; i < vars.length; ++i) {
 			this.data[vars[i].level] = new VarData();
-			this.data[vars[i].level].backjumpSet = new TreeSet<Var>();
 		}
+	}
+	
+	@Override
+	public void clear() {
+		for(VarData d : data) {
+			d.clear();
+		}
+	}
+	
+	@Override
+	public void success() {
+		for (int i = 0; i < this.data.length - 1; ++i) {
+			this.data[i].success = true;
+		}
+	}
+	
+	@Override
+	public void level(int level) {
+		this.data[level].success = false;
 	}
 
 	@Override
-	public int previousLevel(Var var, Var[] vars) {
+	public int previousLevel(VarSharedData var, Var[] vars) {
 		int ret = var.previousLevel;
 
-		Var v = null, y = null;
-		
+		VarSharedData v = null, y = null;
+
 		// get the higher neighbor of var
 		if (!var.preVars.isEmpty()) {
 			v = var.preVars.last();
 		}
-		
+
 		// look for a higher var in the backjump set
 		if (!this.data[var.level].backjumpSet.isEmpty()) {
 			y = this.data[var.level].backjumpSet.last();
@@ -99,13 +117,13 @@ public class GraphBaseBackJumping extends AbstractProfilable implements BackJump
 				v = y;
 			}
 		}
-		
+
 		// update backjump set of the var v
-		if (v != null && !vars[v.level].success) {
+		if (v != null && !data[v.level].success) {
 			this.data[v.level].backjumpSet.addAll(var.preVars);
 			this.data[v.level].backjumpSet.addAll(this.data[var.level].backjumpSet);
 			this.data[v.level].backjumpSet.remove(v);
-			if(this.getProfiler().isProfilingEnabled()) {
+			if (this.getProfiler().isProfilingEnabled()) {
 				this.getProfiler().incr("#backjumps", 1);
 				this.getProfiler().incr("#varsBackjumped", var.level - v.level);
 			}
@@ -117,30 +135,38 @@ public class GraphBaseBackJumping extends AbstractProfilable implements BackJump
 	}
 
 	@Override
-	public void addNeighborhoodToBackjumpSet(Var from, Var to) {
-		for(Var v : from.preVars) {
-			if(v.level < to.level) {
+	public void addNeighborhoodToBackjumpSet(VarSharedData from, VarSharedData to) {
+		for (VarSharedData v : from.preVars) {
+			if (v.level < to.level) {
 				this.data[to.level].backjumpSet.add(v);
 			}
 		}
 	}
-	
+
 	@Override
 	public StringBuilder append(StringBuilder sb, int level) {
 		sb.append("\tBJSet{");
-		for(Var v : this.data[level].backjumpSet) {
+		for (VarSharedData v : this.data[level].backjumpSet) {
 			sb.append(v.value);
 			sb.append(", ");
 		}
 		return sb.append("}");
 	}
-	
+
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
 	private class VarData {
-		public SortedSet<Var> backjumpSet;
+		public SortedSet<VarSharedData> backjumpSet = new TreeSet<VarSharedData>();
+		public boolean success = false;
+		/**
+		 * 
+		 */
+		public void clear() {
+			this.backjumpSet.clear();
+			this.success = false;
+		}
 	}
 
 }

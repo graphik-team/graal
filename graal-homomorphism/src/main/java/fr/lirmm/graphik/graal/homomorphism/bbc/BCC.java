@@ -44,7 +44,7 @@ package fr.lirmm.graphik.graal.homomorphism.bbc;
 
 import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.NoBackJumping;
-import fr.lirmm.graphik.graal.homomorphism.scheduler.Scheduler;
+import fr.lirmm.graphik.graal.homomorphism.scheduler.PatternScheduler;
 
 /**
  * This BacktrackHomomorphism.Scheduler implementation provides an backtracking
@@ -77,7 +77,7 @@ public class BCC {
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public Scheduler getBCCScheduler() {
+	public PatternScheduler getBCCScheduler() {
 		return this.scheduler;
 	}
 

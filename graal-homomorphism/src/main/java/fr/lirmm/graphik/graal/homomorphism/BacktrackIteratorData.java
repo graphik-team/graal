@@ -44,6 +44,7 @@ package fr.lirmm.graphik.graal.homomorphism;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -79,13 +80,15 @@ class BacktrackIteratorData {
 	AtomSet data;
 
 	RulesCompilation compilation;
-	Var[] varsOrder;
-	Map<Variable, Var> index;
+	VarSharedData[] varsOrder;
+	Map<Variable, Integer> index;
 
 	int levelMax;
 	List<Term> ans;
 	Collection<InMemoryAtomSet> negParts;
-	 Profiler profiler;
+	Profiler profiler;
+	
+	boolean isOpen = false;
 
 	public BacktrackIteratorData(InMemoryAtomSet query, Set<Variable> variablesToParameterize,
 			Collection<InMemoryAtomSet> negParts, AtomSet data, List<Term> ans, PatternScheduler scheduler,
@@ -136,39 +139,6 @@ class BacktrackIteratorData {
 		this.preprocessing(null, profiler);
 	}
 
-	/**
-	 * copy constructor
-	 * 
-	 * @param data
-	 */
-	public BacktrackIteratorData(BacktrackIteratorData data) {
-
-		this.query = data.query;
-		this.negParts = data.negParts;
-		this.data = data.data;
-		this.ans = data.ans;
-		this.scheduler = data.scheduler;
-		this.bootstrapper = data.bootstrapper;
-		this.fc = data.fc;
-		this.bj = data.bj;
-		this.compilation = data.compilation;
-
-		this.levelMax = data.levelMax;
-		this.index = data.index;
-
-		this.varsOrder = copy(data.varsOrder);
-		
-		this.profiler = data.profiler;
-	}
-
-	private Var[] copy(Var[] toCopy) {
-		Var[] varsOrder = new Var[toCopy.length];
-		for (int i = 0; i < toCopy.length; ++i) {
-			varsOrder[i] = new Var(toCopy[i]);
-		}
-		return varsOrder;
-	}
-
 	private void preprocessing(Set<Variable> variablesToParameterize, Profiler profiler) throws HomomorphismException {
 		profiler.start("preprocessingTime");
 		// Compute order on query variables and atoms
@@ -187,10 +157,10 @@ class BacktrackIteratorData {
 		}
 
 		// Index Var structures by original variable object
-		this.index = new TreeMap<Variable, Var>();
-		for (Var v : this.varsOrder) {
+		this.index = new TreeMap<Variable, Integer>();
+		for (VarSharedData v : this.varsOrder) {
 			if (v.value != null) { //
-				this.index.put(v.value, v);
+				this.index.put(v.value, v.level);
 			}
 		}
 
@@ -200,7 +170,7 @@ class BacktrackIteratorData {
 
 		computeAtomOrder(this.query, this.varsOrder, this.index);
 		this.fc.init(this.varsOrder, this.index);
-		this.bj.init(this.varsOrder, this.index);
+		this.bj.init(this.varsOrder);
 
 		Set<Variable> allVarsFromH = query.getVariables();
 		for (InMemoryAtomSet negPart : this.negParts) {
@@ -212,6 +182,12 @@ class BacktrackIteratorData {
 		profiler.stop("preprocessingTime");
 
 	}
+	
+	public void clear() {
+		this.scheduler.clear();
+		this.fc.clear();
+		this.bj.clear();
+	}
 
 	/**
 	 * The index 0 contains the fully instantiated atoms.
@@ -219,16 +195,16 @@ class BacktrackIteratorData {
 	 * @param atomset
 	 * @param vars
 	 */
-	private static void computeAtomOrder(CloseableIterableWithoutException<Atom> atomset, Var[] vars,
-			Map<Variable, Var> index) {
+	private static void computeAtomOrder(CloseableIterableWithoutException<Atom> atomset, VarSharedData[] vars,
+			Map<Variable, Integer> index) {
 		int tmp, rank;
 
 		// initialisation preAtoms and postAtoms Collections
 		for (int i = 0; i < vars.length; ++i) {
-			vars[i].preAtoms = new TreeSet<Atom>();
-			vars[i].postAtoms = new TreeSet<Atom>();
-			vars[i].postVars = new TreeSet<Var>();
-			vars[i].preVars = new TreeSet<Var>();
+			vars[i].preAtoms = new HashSet<Atom>();
+			vars[i].postAtoms = new HashSet<Atom>();
+			vars[i].postVars = new HashSet<VarSharedData>();
+			vars[i].preVars = new TreeSet<VarSharedData>();
 		}
 
 		//
@@ -237,9 +213,9 @@ class BacktrackIteratorData {
 			Atom a = it.next();
 			rank = 0;
 			for (Variable t : a.getVariables()) {
-				Var v = index.get(t);
-				if (v != null) {
-					tmp = v.level;
+				Integer idx = index.get(t);
+				if (idx != null) {
+					tmp = vars[idx].level;
 					vars[tmp].postAtoms.add(a);
 
 					if (rank < tmp)
@@ -253,10 +229,12 @@ class BacktrackIteratorData {
 		for (int i = 0; i < vars.length; ++i) {
 			for (Atom a : vars[i].postAtoms) {
 				for (Variable t : a.getVariables()) {
-					Var v = index.get(t);
-					if (v != null && v.level > i) {
-						vars[i].postVars.add(v);
-						v.preVars.add(vars[i]);
+					Integer idx = index.get(t);
+					if (idx != null) {
+    					if (vars[idx].level > i) {
+    						vars[i].postVars.add(vars[idx]);
+    						vars[idx].preVars.add(vars[i]);
+    					}
 					}
 				}
 			}
@@ -271,9 +249,9 @@ class BacktrackIteratorData {
 	private int maxLevel(Set<Variable> frontier) {
 		int max = 0;
 		for (Variable v : frontier) {
-			Var var = this.index.get(v);
-			if (var.level > max) {
-				max = var.level;
+			int level = this.index.get(v);
+			if (level > max) {
+				max = level;
 			}
 		}
 		return max;
@@ -283,7 +261,7 @@ class BacktrackIteratorData {
 	// PROFLING METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	private void profilingVarOrder(Var[] varsOrder, Profiler profiler) {
+	private void profilingVarOrder(VarSharedData[] varsOrder, Profiler profiler) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 1; i < varsOrder.length - 1; ++i) {
 			sb.append(varsOrder[i].value.toString());
