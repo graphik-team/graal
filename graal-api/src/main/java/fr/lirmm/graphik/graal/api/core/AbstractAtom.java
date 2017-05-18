@@ -159,10 +159,10 @@ public abstract class AbstractAtom implements Atom {
 		sb.append(this.getPredicate().toString());
 		sb.append('(');
 		boolean bool = false;
-		for (Term term : this.getTerms()) {
+		for (Term term : this) {
 			if (bool)
 				sb.append(',');
-			sb.append(term);
+			sb.append(term.toString());
 			bool = true;
 		}
 		sb.append(')');

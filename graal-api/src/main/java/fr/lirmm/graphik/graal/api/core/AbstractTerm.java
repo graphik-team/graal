@@ -122,7 +122,19 @@ public abstract class AbstractTerm implements Term {
 
 	@Override
 	public String toString() {
-		return this.getLabel();
+		StringBuilder sb = new StringBuilder();
+		if(this.isVariable()) {
+			sb.append("VAR_");
+		} else if(this.isLiteral()) {
+			sb.append('"');
+		} else {
+			sb.append("cst_");
+		}
+		sb.append(this.getLabel());
+		if(this.isLiteral()) {
+			sb.append('"');
+		}
+		return sb.toString();
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
