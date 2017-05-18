@@ -239,11 +239,6 @@ public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements InMemo
 	}
 
 	@Override
-	public String toString() {
-		return this.linkedList.toString();
-	}
-
-	@Override
 	public boolean isEmpty() {
 		return this.linkedList.isEmpty();
 	}
