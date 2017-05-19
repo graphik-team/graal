@@ -302,11 +302,9 @@ public class DefaultInMemoryGraphStore extends AbstractInMemoryAtomSet implement
 		boolean val = predicateVertex.addNeighbor(atom);
 		if (val) {
 			++size;
-			for (Vertex v : atom.getVertices()) {
-				if (v instanceof TermVertex) {
-					TermVertex term = (TermVertex) v;
-					term.addNeighbor(atom);
-				}
+			for (Term v : atom) {
+				TermVertex term = (TermVertex) v;
+				term.addNeighbor(atom);
 			}
 
 			Set<Term>[] sets = this.termsByPredicatePosition.get(atom.getPredicate());

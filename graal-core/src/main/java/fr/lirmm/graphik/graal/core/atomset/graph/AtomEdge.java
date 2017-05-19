@@ -189,7 +189,7 @@ class AtomEdge extends AbstractAtom implements Edge {
 
 	@Override
 	public Set<Vertex> getVertices() {
-		Set<Vertex> set = new TreeSet<Vertex>(new VertexComparator());
+		Set<Vertex> set = new HashSet<Vertex>();
 		for (TermVertex t : terms)
 			set.add(t);
 
