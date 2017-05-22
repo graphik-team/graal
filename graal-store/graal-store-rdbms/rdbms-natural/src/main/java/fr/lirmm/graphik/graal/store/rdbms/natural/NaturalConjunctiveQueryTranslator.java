@@ -133,14 +133,14 @@ class NaturalConjunctiveQueryTranslator extends AbstractRdbmsConjunctiveQueryTra
 				for (Term term : atom.getTerms()) {
 					String thisTerm = currentAtom + columnsInfo.get(position).getName();
 					if (term.isConstant()) {
-						constants.add(thisTerm + " = '" + term + "'");
+						constants.add(thisTerm + " = '" + term.getIdentifier().toString() + "'");
 					} else {
-						if (lastOccurrence.containsKey(term.toString())) {
-							equivalences.add(lastOccurrence.get(term.toString()) + " = " + thisTerm);
+						if (lastOccurrence.containsKey(term.getIdentifier().toString())) {
+							equivalences.add(lastOccurrence.get(term.getIdentifier().toString()) + " = " + thisTerm);
 						}
-						lastOccurrence.put(term.toString(), thisTerm);
+						lastOccurrence.put(term.getIdentifier().toString(), thisTerm);
 						if (cquery.getAnswerVariables().contains(term))
-							columns.put(term, thisTerm + " as " + term);
+							columns.put(term, thisTerm + " as " + term.getIdentifier().toString());
 					}
 					++position;
 				}

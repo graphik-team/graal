@@ -124,14 +124,14 @@ class AdHocConjunctiveQueryTranslator extends AbstractRdbmsConjunctiveQueryTrans
 					                  + AbstractRdbmsConjunctiveQueryTranslator.PREFIX_TERM_FIELD
 					                  + position;
 					if (term.isConstant()) {
-						constants.add(thisTerm + " = '" + term + "'");
+						constants.add(thisTerm + " = '" + term.getIdentifier().toString() + "'");
 					} else {
-						if (lastOccurrence.containsKey(term.toString())) {
-							equivalences.add(lastOccurrence.get(term.toString()) + " = " + thisTerm);
+						if (lastOccurrence.containsKey(term.getIdentifier().toString())) {
+							equivalences.add(lastOccurrence.get(term.getIdentifier().toString()) + " = " + thisTerm);
 						}
-						lastOccurrence.put(term.toString(), thisTerm);
+						lastOccurrence.put(term.getIdentifier().toString(), thisTerm);
 						if (cquery.getAnswerVariables().contains(term))
-							columns.put(term, thisTerm + " as " + term);
+							columns.put(term, thisTerm + " as " + term.getIdentifier().toString());
 					}
 					++position;
 				}

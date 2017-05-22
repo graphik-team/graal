@@ -47,17 +47,13 @@ package fr.lirmm.graphik.graal.store.rdbms.rule_applier;
 
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Collection;
 import java.util.Iterator;
 
-import org.apache.commons.lang3.NotImplementedException;
-
-import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplicationException;
-import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
+import fr.lirmm.graphik.graal.api.forward_chaining.DirectRuleApplier;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
 import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
@@ -71,9 +67,9 @@ import fr.lirmm.graphik.graal.store.rdbms.util.SQLQuery;
  *
  */
 public class SQLRuleApplier<T extends RdbmsStore> implements
-		RuleApplier<Rule, T> {
+		DirectRuleApplier<Rule, T> {
 
-	private RuleApplier<Rule, T> fallback;
+	private DirectRuleApplier<Rule, T> fallback;
 
 	// //////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -91,7 +87,7 @@ public class SQLRuleApplier<T extends RdbmsStore> implements
 	 * 
 	 * @param ruleApplierFallback
 	 */
-	public SQLRuleApplier(RuleApplier<Rule, T> ruleApplierFallback) {
+	public SQLRuleApplier(DirectRuleApplier<Rule, T> ruleApplierFallback) {
 		this.fallback = ruleApplierFallback;
 	}
 
@@ -142,10 +138,4 @@ public class SQLRuleApplier<T extends RdbmsStore> implements
 		return returnValue;
 	}
 	
-	@Override
-	public boolean apply(Rule rule, T store, Collection<Atom> newAtomDest)
-			throws RuleApplicationException {
-		throw new NotImplementedException("");
-	}
-
 }

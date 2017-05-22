@@ -55,7 +55,7 @@ import fr.lirmm.graphik.graal.api.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
-import fr.lirmm.graphik.graal.forward_chaining.ConfigurableChase;
+import fr.lirmm.graphik.graal.forward_chaining.BasicChase;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.homomorphism.SqlHomomorphism;
@@ -92,11 +92,11 @@ public class RdbmsStoreTest {
 		Atom a = DlgpParser.parseAtom("<P>(a).");
 
 		store.add(a);
-		Chase chase = new ConfigurableChase(ruleSet, store, new SQLRuleApplier<RdbmsStore>(SqlHomomorphism.instance()));
+		Chase chase = new BasicChase(ruleSet, store, new SQLRuleApplier<RdbmsStore>(SqlHomomorphism.instance()));
 		try {
 			chase.execute();
 		} catch (ChaseException e) {
-			Assert.assertFalse(true);
+			Assert.fail(e.getMessage());
 		}
 
 		CloseableIterator<Atom> it = store.iterator();

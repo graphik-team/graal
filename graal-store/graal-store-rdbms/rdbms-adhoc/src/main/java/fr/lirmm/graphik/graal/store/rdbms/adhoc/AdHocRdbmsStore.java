@@ -489,7 +489,7 @@ public class AdHocRdbmsStore extends AbstractRdbmsStore {
 			int i = -1;
 			for (Term t : atom.getTerms()) {
 				++i;
-				data.put("term" + i, '\'' + StringUtils.addSlashes(t.toString()) + '\'');
+				data.put("term" + i, '\'' + StringUtils.addSlashes(t.getIdentifier().toString()) + '\'');
 			}
 			String query = this.getDriver().getInsertOrIgnoreQuery(table, data);
 

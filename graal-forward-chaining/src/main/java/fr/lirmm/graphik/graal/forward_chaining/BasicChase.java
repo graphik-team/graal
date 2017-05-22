@@ -58,13 +58,15 @@ import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
-import fr.lirmm.graphik.graal.api.forward_chaining.AbstractChase;
+import fr.lirmm.graphik.graal.api.core.RuleSet;
+import fr.lirmm.graphik.graal.api.forward_chaining.AbstractDirectChase;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
-import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
+import fr.lirmm.graphik.graal.api.forward_chaining.DirectRuleApplier;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByBodyPredicatesRuleSet;
+import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
@@ -76,69 +78,54 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class WeakBreadthFirstChase extends AbstractChase {
+public class BasicChase extends AbstractDirectChase {
 	
-	private IndexedByBodyPredicatesRuleSet ruleSet;
+	private RuleSet ruleSet;
 	private AtomSet atomSet;
-	private Collection<Atom> tmpData = new LinkedList<Atom>();
-
-	private Map<Rule, AtomSet> rulesToCheck;
-	private Map<Rule, AtomSet> nextRulesToCheck;
+	private boolean hasNext = true;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 	
-	public WeakBreadthFirstChase(Iterator<Rule> rules, AtomSet atomSet) {
+	public BasicChase(Iterator<Rule> rules, AtomSet atomSet) {
 		super(new DefaultRuleApplier<AtomSet>());
 		this.atomSet = atomSet;
-		this.ruleSet = new IndexedByBodyPredicatesRuleSet();
-		init(rules);
+		this.ruleSet = new LinkedListRuleSet(rules);
 	}
 	
-	public WeakBreadthFirstChase(Iterable<Rule> rules, AtomSet atomSet) {
+	public BasicChase(Iterable<Rule> rules, AtomSet atomSet) {
 		super(new DefaultRuleApplier<AtomSet>());
 		this.atomSet = atomSet;
-		this.ruleSet = new IndexedByBodyPredicatesRuleSet();
-		init(rules.iterator());
+		this.ruleSet = new LinkedListRuleSet(rules);
 	}
 	
-	public WeakBreadthFirstChase(Iterator<Rule> rules, AtomSet atomSet,
-			RuleApplier ruleApplier) {
+	public BasicChase(Iterator<Rule> rules, AtomSet atomSet,
+			DirectRuleApplier ruleApplier) {
 		super(ruleApplier);
 		this.atomSet = atomSet;
-		this.ruleSet = new IndexedByBodyPredicatesRuleSet();
-		init(rules);
+		this.ruleSet = new LinkedListRuleSet(rules);
 	}
 
-	public WeakBreadthFirstChase(Iterable<Rule> rules, AtomSet atomSet,
-			RuleApplier ruleApplier) {
+	public BasicChase(Iterable<Rule> rules, AtomSet atomSet,
+		DirectRuleApplier ruleApplier) {
 		this(rules.iterator(), atomSet, ruleApplier);
 	}
 
-	public WeakBreadthFirstChase(Iterable<Rule> rules, AtomSet atomSet,
+	public BasicChase(Iterable<Rule> rules, AtomSet atomSet,
 			Homomorphism<ConjunctiveQuery, AtomSet> solver) {
 		this(rules, atomSet, new DefaultRuleApplier<AtomSet>(solver));
 	}
 
-	public WeakBreadthFirstChase(Iterable<Rule> rules, AtomSet atomSet, ChaseHaltingCondition haltingCondition) {
+	public BasicChase(Iterable<Rule> rules, AtomSet atomSet, ChaseHaltingCondition haltingCondition) {
 		this(rules, atomSet, new DefaultRuleApplier<AtomSet>(haltingCondition));
 
 	}
 
-	public WeakBreadthFirstChase(Iterable<Rule> rules, AtomSet atomSet,
+	public BasicChase(Iterable<Rule> rules, AtomSet atomSet,
             Homomorphism<ConjunctiveQuery, AtomSet> solver,
 			ChaseHaltingCondition haltingCondition) {
 		this(rules, atomSet, new DefaultRuleApplier<AtomSet>(solver, haltingCondition));
-	}
-
-	private void init(Iterator<Rule> rules) {
-		this.nextRulesToCheck = new TreeMap<Rule, AtomSet>();
-		while(rules.hasNext()) {
-			Rule r = rules.next();
-			this.ruleSet.add(r);
-			this.nextRulesToCheck.put(r, atomSet);
-		}
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -147,38 +134,27 @@ public class WeakBreadthFirstChase extends AbstractChase {
 
 	@Override
 	public void next() throws ChaseException {
-		this.rulesToCheck = this.nextRulesToCheck;
-		this.nextRulesToCheck = new TreeMap<Rule, AtomSet>();
 		try {
-			if (!this.rulesToCheck.isEmpty()) {
+			this.hasNext = false;
+			for(Rule rule : this.ruleSet) {
 				if (this.getProfiler().isProfilingEnabled()) {
 					this.getProfiler().start("saturationTime");
 				}
-				
-				for (Entry<Rule, AtomSet> e : this.rulesToCheck.entrySet()) {
 
-					String key = null;
-					Rule rule = e.getKey();
-					AtomSet data = e.getValue();
+				String key = null;
+				if (this.getProfiler().isProfilingEnabled()) {
+					key = "Rule " + rule.getLabel() + " application time";
+					this.getProfiler().clear(key);
+					this.getProfiler().trace(rule.toString());
+					this.getProfiler().start(key);
+				}
+				boolean val = this.getRuleApplier().apply(rule, this.atomSet);
+				this.hasNext = this.hasNext || val;
+				
+				if (this.getProfiler().isProfilingEnabled()) {
+					this.getProfiler().stop(key);
+				}
 
-					if (this.getProfiler().isProfilingEnabled()) {
-						key = "Rule " + rule.getLabel() + " application time";
-						this.getProfiler().clear(key);
-						this.getProfiler().trace(rule.toString());
-						this.getProfiler().start(key);
-    				}
-					this.getRuleApplier().apply(rule, data, tmpData);
-					this.dispatchNewData(this.tmpData);
-					this.atomSet.addAll(new CloseableIteratorAdapter<Atom>(this.tmpData.iterator()));
-					this.tmpData.clear();
-					
-					if (this.getProfiler().isProfilingEnabled()) {
-						this.getProfiler().stop(key);
-					}
-    			}
-				
-				
-				
 				if (this.getProfiler().isProfilingEnabled()) {
 					this.getProfiler().stop("saturationTime");
 				}
@@ -190,45 +166,7 @@ public class WeakBreadthFirstChase extends AbstractChase {
 	
 	@Override
 	public boolean hasNext() {
-		return !this.nextRulesToCheck.isEmpty();
-	}
-
-	// /////////////////////////////////////////////////////////////////////////
-	// PRIVATE CLASS
-	// /////////////////////////////////////////////////////////////////////////
-	
-	protected void dispatchNewData(Collection<Atom> newData) throws ChaseException {
-		for(Atom a : newData) {
-			Predicate p = a.getPredicate();
-			for (Rule r : ruleSet.getRulesByBodyPredicate(p)) {
-				if (linearRuleCheck(r)) {
-					AtomSet set = nextRulesToCheck.get(r);
-					if (set == null) {
-						set = new LinkedListAtomSet();
-						//set =  new DefaultInMemoryGraphAtomSet();
-						nextRulesToCheck.put(r, set);
-					}
-					try {
-						set.add(a);
-					} catch (AtomSetException e) {
-						throw new ChaseException("Exception while adding data into a tmp store",e);
-					}
-				} else {
-					nextRulesToCheck.put(r, atomSet);
-				}
-			}
-		}
-	}
-
-	private static boolean linearRuleCheck(Rule r) {
-		CloseableIteratorWithoutException<Atom> it = r.getBody().iterator();
-		if (it.hasNext()) {
-			it.next();
-		} else {
-			return false;
-		}
-		return !it.hasNext();
-
+		return this.hasNext;
 	}
 
 }

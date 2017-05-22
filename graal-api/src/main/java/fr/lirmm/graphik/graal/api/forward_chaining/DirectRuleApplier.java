@@ -55,7 +55,7 @@ import fr.lirmm.graphik.graal.api.core.Rule;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface RuleApplier<R extends Rule, A extends AtomSet>  extends DirectRuleApplier<R,A> {
+public interface DirectRuleApplier<R extends Rule, A extends AtomSet> {
 
 	/**
 	 * Apply the given Rule over the given AtomSet, the new atoms are
@@ -67,18 +67,5 @@ public interface RuleApplier<R extends Rule, A extends AtomSet>  extends DirectR
 	 * @throws RuleApplicationException
 	 */
 	boolean apply(R rule, A atomSet) throws RuleApplicationException;
-	
-	/**
-	 * Apply the given Rule over the given AtomSet, the new atoms are
-	 * added into the specified newAtomDest collection.
-	 * 
-	 * @param rule
-	 * @param atomSet
-	 * @param newAtomDest
-	 * @return true iff new atoms have been added to the newAtomDest collection.
-	 * @throws RuleApplicationException
-	 */
-	boolean apply(R rule, A atomSet, Collection<Atom> newAtomDest) throws RuleApplicationException;
-
 	
 }
