@@ -45,8 +45,8 @@ package fr.lirmm.graphik.util.stream.filter;
 import java.util.HashSet;
 
 /**
- * This filter use a hashSet to discover if an element is new or not. The method
- * {@link Object.hashCode()} must be correctly implemented.
+ * This filter use a hashSet to discover if an element is new or not. The
+ * {@link Object#hashCode()} method must be correctly implemented on E.
  * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *

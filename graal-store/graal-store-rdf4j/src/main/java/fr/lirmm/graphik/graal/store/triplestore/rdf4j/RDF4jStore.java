@@ -97,7 +97,7 @@ public class RDF4jStore extends AbstractTripleStore {
 	// /////////////////////////////////////////////////////////////////////////
 	
 	/**
-	 * Construct a RDF4jStore around a {@link http://docs.rdf4j.org/javadoc/latest/org/eclipse/rdf4j/repository/Repository.html}
+	 * Construct a RDF4jStore around a <a href="http://docs.rdf4j.org/javadoc/latest/org/eclipse/rdf4j/repository/Repository.html">RDF4J Repository</a>
 	 * @param repo
 	 * @throws AtomSetException
 	 */

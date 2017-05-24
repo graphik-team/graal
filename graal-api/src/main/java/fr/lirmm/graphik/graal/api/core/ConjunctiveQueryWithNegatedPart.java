@@ -46,7 +46,6 @@
 package fr.lirmm.graphik.graal.api.core;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * This interface represents a conjunctive query with negated parts. A such
@@ -57,7 +56,7 @@ import java.util.Set;
  * set of variables that appears in the positive part minus X and Zi where i ∈
  * [1..n] the set of variables that appears only in the negated part indexed i.
  * Note that each variables from X must appears in the positive part. And ∀i,j ∈
- * [1..n] such that i ≠ j, Zi ∩ Zj = ∅. ???
+ * [1..n] such that i ≠ j, Zi ∩ Zj = ∅.
  * 
  * A conjunctive query with negated parts Q is formally defined as
  * ∃Y∀Z1..Zn(Q+[X,Y] ∧ not(Q1[Y,Z1]) ∧ ... ∧ not(Qn[Y,Zn])) where Q+, Q1, ...,
@@ -88,8 +87,7 @@ public interface ConjunctiveQueryWithNegatedPart extends Query {
 	/**
 	 * Get the set of facts which must be false (at least one).
 	 * 
-	 * @return an atom set representing a negated conjunction of atoms or
-	 *         equivalently a disjunction of negated atoms.
+	 * @return a list of atom sets representing negated conjunctions of atoms.
 	 */
 	List<InMemoryAtomSet> getNegatedParts();
 

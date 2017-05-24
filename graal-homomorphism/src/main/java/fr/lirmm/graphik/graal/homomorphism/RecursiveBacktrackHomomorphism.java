@@ -72,7 +72,7 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 import fr.lirmm.graphik.util.stream.converter.ConverterCloseableIterator;
 
 /**
- * This implementation is deprecated since 1.3. use {@link BacktrackHomomorhpism} instead. <br>
+ * This implementation is deprecated since 1.3. use {@link BacktrackHomomorphism} instead. <br>
  * 
  * 
  * Recursive implementation of a backtrack solving algorithm. 

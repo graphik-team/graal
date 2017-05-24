@@ -63,7 +63,7 @@ import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
 import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
-import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphStore;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByBodyPredicatesRuleSet;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
@@ -203,8 +203,7 @@ public class BreadthFirstChase extends AbstractChase {
 				if (linearRuleCheck(r)) {
 					AtomSet set = nextRulesToCheck.get(r);
 					if (set == null) {
-						set = new LinkedListAtomSet();
-						//set =  new DefaultInMemoryGraphAtomSet();
+						set =  new DefaultInMemoryGraphStore();
 						nextRulesToCheck.put(r, set);
 					}
 					try {

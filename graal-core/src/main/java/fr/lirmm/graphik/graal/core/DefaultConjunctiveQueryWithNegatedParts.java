@@ -87,9 +87,8 @@ public class DefaultConjunctiveQueryWithNegatedParts implements ConjunctiveQuery
 	 * @param positiveAtomSet
 	 *            the positive part of the conjunction of atom representing the
 	 *            query
-	 * @param negativeAtomSet
-	 *            the negative part of the conjunction of atom representing the
-	 *            query
+	 * @param negatedParts
+	 *            a list of negated conjunction of atoms.
 	 * @param ans
 	 *            the list of answer variables
 	 */
