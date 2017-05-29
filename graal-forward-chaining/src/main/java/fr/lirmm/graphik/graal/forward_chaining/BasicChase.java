@@ -45,18 +45,10 @@
  */
 package fr.lirmm.graphik.graal.forward_chaining;
 
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.forward_chaining.AbstractDirectChase;
@@ -64,12 +56,8 @@ import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
 import fr.lirmm.graphik.graal.api.forward_chaining.DirectRuleApplier;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
-import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.ruleset.IndexedByBodyPredicatesRuleSet;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
-import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
-import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
  * This chase (forward-chaining) algorithm iterates over all rules at each step.
@@ -78,54 +66,54 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class BasicChase extends AbstractDirectChase {
+public class BasicChase<T extends AtomSet> extends AbstractDirectChase<Rule, T> {
 	
 	private RuleSet ruleSet;
-	private AtomSet atomSet;
+	private T atomSet;
 	private boolean hasNext = true;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 	
-	public BasicChase(Iterator<Rule> rules, AtomSet atomSet) {
-		super(new DefaultRuleApplier<AtomSet>());
+	public BasicChase(Iterator<Rule> rules, T atomSet) {
+		super(new DefaultRuleApplier<T>());
 		this.atomSet = atomSet;
 		this.ruleSet = new LinkedListRuleSet(rules);
 	}
 	
-	public BasicChase(Iterable<Rule> rules, AtomSet atomSet) {
-		super(new DefaultRuleApplier<AtomSet>());
+	public BasicChase(Iterable<Rule> rules, T atomSet) {
+		super(new DefaultRuleApplier<T>());
 		this.atomSet = atomSet;
 		this.ruleSet = new LinkedListRuleSet(rules);
 	}
 	
-	public BasicChase(Iterator<Rule> rules, AtomSet atomSet,
-			DirectRuleApplier ruleApplier) {
+	public BasicChase(Iterator<Rule> rules, T atomSet,
+			DirectRuleApplier<? super Rule, ? super T> ruleApplier) {
 		super(ruleApplier);
 		this.atomSet = atomSet;
 		this.ruleSet = new LinkedListRuleSet(rules);
 	}
 
-	public BasicChase(Iterable<Rule> rules, AtomSet atomSet,
-		DirectRuleApplier ruleApplier) {
+	public BasicChase(Iterable<Rule> rules, T atomSet,
+		DirectRuleApplier<? super Rule, ? super T> ruleApplier) {
 		this(rules.iterator(), atomSet, ruleApplier);
 	}
 
-	public BasicChase(Iterable<Rule> rules, AtomSet atomSet,
-			Homomorphism<ConjunctiveQuery, AtomSet> solver) {
-		this(rules, atomSet, new DefaultRuleApplier<AtomSet>(solver));
+	public BasicChase(Iterable<Rule> rules, T atomSet,
+			Homomorphism<ConjunctiveQuery, ? super T> solver) {
+		this(rules, atomSet, new DefaultRuleApplier<T>(solver));
 	}
 
-	public BasicChase(Iterable<Rule> rules, AtomSet atomSet, ChaseHaltingCondition haltingCondition) {
-		this(rules, atomSet, new DefaultRuleApplier<AtomSet>(haltingCondition));
+	public BasicChase(Iterable<Rule> rules, T atomSet, ChaseHaltingCondition haltingCondition) {
+		this(rules, atomSet, new DefaultRuleApplier<T>(haltingCondition));
 
 	}
 
-	public BasicChase(Iterable<Rule> rules, AtomSet atomSet,
-            Homomorphism<ConjunctiveQuery, AtomSet> solver,
+	public BasicChase(Iterable<Rule> rules, T atomSet,
+            Homomorphism<ConjunctiveQuery, ? super T> solver,
 			ChaseHaltingCondition haltingCondition) {
-		this(rules, atomSet, new DefaultRuleApplier<AtomSet>(solver, haltingCondition));
+		this(rules, atomSet, new DefaultRuleApplier<T>(solver, haltingCondition));
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

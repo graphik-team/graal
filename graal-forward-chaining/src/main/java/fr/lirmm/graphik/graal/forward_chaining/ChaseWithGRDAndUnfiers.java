@@ -92,13 +92,13 @@ import fr.lirmm.graphik.util.stream.Iterators;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class ChaseWithGRDAndUnfiers extends AbstractChase {
+public class ChaseWithGRDAndUnfiers<T extends AtomSet> extends AbstractChase<Rule,T> {
 	
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(ChaseWithGRDAndUnfiers.class);
 	
 	private GraphOfRuleDependencies grd;
-	private AtomSet atomSet;
+	private T atomSet;
 	private Queue<Triple<Rule, Substitution, InMemoryAtomSet>> queue = new LinkedList<Triple<Rule, Substitution,InMemoryAtomSet>>();
 	private ChaseHaltingCondition hc =  new RestrictedChaseStopCondition();
 
@@ -106,7 +106,7 @@ public class ChaseWithGRDAndUnfiers extends AbstractChase {
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 	
-	public ChaseWithGRDAndUnfiers(GraphOfRuleDependencies grd, AtomSet atomSet, RuleApplier ruleApplier) {
+	public ChaseWithGRDAndUnfiers(GraphOfRuleDependencies grd, T atomSet, RuleApplier<Rule, ? super T> ruleApplier) {
 		super(ruleApplier);
 		this.grd = grd;
 		this.atomSet = atomSet;
@@ -115,12 +115,12 @@ public class ChaseWithGRDAndUnfiers extends AbstractChase {
 		}
 	}
 	
-	public ChaseWithGRDAndUnfiers(GraphOfRuleDependencies grd, AtomSet atomSet) {
-		this(grd, atomSet, new DefaultRuleApplier());
+	public ChaseWithGRDAndUnfiers(GraphOfRuleDependencies grd, T atomSet) {
+		this(grd, atomSet, new DefaultRuleApplier<T>());
 	}
 	
-	public ChaseWithGRDAndUnfiers(Iterator<Rule> rules, AtomSet atomSet) {
-		this(new DefaultGraphOfRuleDependencies(rules, true), atomSet, new DefaultRuleApplier());
+	public ChaseWithGRDAndUnfiers(Iterator<Rule> rules, T atomSet) {
+		this(new DefaultGraphOfRuleDependencies(rules, true), atomSet, new DefaultRuleApplier<T>());
 	}
 	
 	// /////////////////////////////////////////////////////////////////////////

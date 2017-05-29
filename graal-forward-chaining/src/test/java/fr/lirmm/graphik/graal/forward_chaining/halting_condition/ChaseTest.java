@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2017)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,52 +40,58 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.forward_chaining;
+package fr.lirmm.graphik.graal.forward_chaining.halting_condition;
 
-import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.Rule;
+import org.junit.Assert;
+import org.junit.Test;
+
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.Ontology;
 import fr.lirmm.graphik.graal.api.forward_chaining.Chase;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
-import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
-import fr.lirmm.graphik.graal.core.grd.DefaultGraphOfRuleDependencies;
+import fr.lirmm.graphik.graal.api.io.ParseException;
+import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphStore;
+import fr.lirmm.graphik.graal.core.ruleset.DefaultOntology;
+import fr.lirmm.graphik.graal.forward_chaining.BreadthFirstChase;
+import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class StaticChase {
-	
-	public static void executeChase(AtomSet atomSet, Iterable<Rule> ruleSet)
-			throws ChaseException {
-		Chase chase = new SccChase<AtomSet>(ruleSet.iterator(), atomSet);
-		chase.execute();
-	}
-	
-	public static void executeChase(AtomSet atomSet, Iterable<Rule> ruleSet, RuleApplier<Rule,AtomSet> ruleApplier)
-			throws ChaseException {
-		Chase chase = new SccChase<AtomSet>(ruleSet.iterator(), atomSet, ruleApplier);
-		chase.execute();
+public class ChaseTest {
+
+	@Test
+	public void test() throws ParseException, ChaseException {
+		Ontology onto = new DefaultOntology();
+		onto.add(DlgpParser.parseRule("p(X) :- q(X)."));
+		onto.add(DlgpParser.parseRule("q(X) :- p(X)."));
+		
+		InMemoryAtomSet store = new DefaultInMemoryGraphStore();
+		store.add(DlgpParser.parseAtom("p(a)."));
+		
+		Chase chase = new BreadthFirstChase(onto, store);
+		Assert.assertTrue(chase.hasNext());
+		chase.next();
+		Assert.assertTrue(chase.hasNext());
+		chase.next();
+		Assert.assertFalse(chase.hasNext());
 	}
 
-	public static void executeOneStepChase(AtomSet atomSet,
-			Iterable<Rule> ruleSet) throws ChaseException {
-		Chase chase = new SccChase<AtomSet>(ruleSet.iterator(), atomSet);
-		chase.next();
-	}
-	
-	public static void executeChase(AtomSet atomSet, DefaultGraphOfRuleDependencies grd)
-			throws ChaseException {
-		Chase chase = new SccChase<AtomSet>(grd, atomSet);
-		chase.execute();
-	}
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
 
-	public static void executeOneStepChase(AtomSet atomSet,
-			DefaultGraphOfRuleDependencies grd) throws ChaseException {
-		Chase chase = new SccChase<AtomSet>(grd, atomSet);
-		chase.next();
-	}
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	// /////////////////////////////////////////////////////////////////////////
+	// OBJECT OVERRIDE METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
 }

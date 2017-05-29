@@ -45,27 +45,17 @@
  */
 package fr.lirmm.graphik.graal.forward_chaining.rule_applier;
 
-import java.util.Collection;
 import java.util.LinkedList;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Rule;
-import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
-import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplicationException;
-import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
-import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.RestrictedChaseStopCondition;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * This Applier executes a call to the chaseStopCondition for all unique
@@ -74,10 +64,7 @@ import fr.lirmm.graphik.util.stream.IteratorException;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class DefaultRuleApplier<T extends AtomSet> implements RuleApplier<Rule, T> {
-
-	private ChaseHaltingCondition haltingCondition;
-	private Homomorphism<? super ConjunctiveQuery, ? super T> solver;
+public class DefaultRuleApplier<T extends AtomSet> extends AbstractRuleApplier<T> {
 
 	// //////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -108,7 +95,6 @@ public class DefaultRuleApplier<T extends AtomSet> implements RuleApplier<Rule, 
 		this(StaticHomomorphism.instance(), haltingCondition);
 	}
 
-
 	/**
 	 * Construct a DefaultRuleApplier with the given HaltingCondition,
 	 * homomorphism solver and SymbolGenerator
@@ -118,8 +104,7 @@ public class DefaultRuleApplier<T extends AtomSet> implements RuleApplier<Rule, 
 	 */
 	public DefaultRuleApplier(Homomorphism<? super ConjunctiveQuery, ? super T> homomorphismSolver,
 	    ChaseHaltingCondition haltingCondition) {
-		this.haltingCondition = haltingCondition;
-		this.solver = homomorphismSolver;
+		super(homomorphismSolver, haltingCondition);
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -127,76 +112,8 @@ public class DefaultRuleApplier<T extends AtomSet> implements RuleApplier<Rule, 
 	// //////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public boolean apply(Rule rule, T atomSet) throws RuleApplicationException {
-		boolean isChanged = false;
-		ConjunctiveQuery query = DefaultConjunctiveQueryFactory.instance().create(rule.getBody(),
-		        new LinkedList<Term>(rule.getFrontier()));
-
-		try {
-			CloseableIterator<Substitution> subIt = this.executeQuery(query, atomSet);
-			while (subIt.hasNext()) {
-				Substitution substitution = subIt.next();
-				CloseableIterator<Atom> it = this.getHaltingCondition().apply(rule, substitution, atomSet);
-				if (it.hasNext()) {
-					atomSet.addAll(it);
-					isChanged = true;
-				}
-			}
-			subIt.close();
-		} catch (HomomorphismFactoryException e) {
-			throw new RuleApplicationException("Error during rule application", e);
-		} catch (HomomorphismException e) {
-			throw new RuleApplicationException("Error during rule application", e);
-		} catch (AtomSetException e) {
-			throw new RuleApplicationException("Error during rule application", e);
-		} catch (IteratorException e) {
-			throw new RuleApplicationException("Error during rule application", e);
-		}
-
-		return isChanged;
+	protected ConjunctiveQuery generateQuery(Rule rule) {
+		return DefaultConjunctiveQueryFactory.instance().create(rule.getBody(),
+		    new LinkedList<Term>(rule.getFrontier()));
 	}
-	
-	@Override
-	public boolean apply(Rule rule, T atomSet, Collection<Atom> newAtomDest) throws RuleApplicationException {
-		boolean isChanged = false;
-		ConjunctiveQuery query = DefaultConjunctiveQueryFactory.instance().create(rule.getBody(),
-		        new LinkedList<Term>(rule.getFrontier()));
-
-		try {
-			CloseableIterator<Substitution> subIt = this.executeQuery(query, atomSet);
-			while (subIt.hasNext()) {
-				Substitution substitution = subIt.next();
-				CloseableIterator<Atom> it = this.getHaltingCondition().apply(rule, substitution, atomSet);
-				if (it.hasNext()) {
-					while(it.hasNext()) {
-						newAtomDest.add(it.next());
-					}
-					isChanged = true;
-				}
-			}
-			subIt.close();
-		} catch (HomomorphismFactoryException e) {
-			throw new RuleApplicationException("Error during rule application", e);
-		} catch (HomomorphismException e) {
-			throw new RuleApplicationException("Error during rule application", e);
-		} catch (IteratorException e) {
-			throw new RuleApplicationException("Error during rule application", e);
-		}
-
-		return isChanged;
-	}
-
-	// //////////////////////////////////////////////////////////////////////////
-	//
-	// //////////////////////////////////////////////////////////////////////////
-
-	protected ChaseHaltingCondition getHaltingCondition() {
-		return this.haltingCondition;
-	}
-
-	protected CloseableIterator<Substitution> executeQuery(ConjunctiveQuery query, T atomSet)
-	    throws HomomorphismFactoryException, HomomorphismException {
-		return this.solver.execute(query, atomSet);
-	}
-
 }

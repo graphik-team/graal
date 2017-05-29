@@ -52,8 +52,8 @@ import java.util.Iterator;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Rule;
-import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplicationException;
 import fr.lirmm.graphik.graal.api.forward_chaining.DirectRuleApplier;
+import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplicationException;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
 import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
@@ -66,10 +66,10 @@ import fr.lirmm.graphik.graal.store.rdbms.util.SQLQuery;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class SQLRuleApplier<T extends RdbmsStore> implements
-		DirectRuleApplier<Rule, T> {
+public class SQLRuleApplier implements
+		DirectRuleApplier<Rule, RdbmsStore> {
 
-	private DirectRuleApplier<Rule, T> fallback;
+	private DirectRuleApplier<Rule, ? super RdbmsStore> fallback;
 
 	// //////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -78,8 +78,8 @@ public class SQLRuleApplier<T extends RdbmsStore> implements
 	/**
 	 * Construct a SQLRuleApplier with a DefaultRuleApplier as fallback.
 	 */
-	public SQLRuleApplier(Homomorphism<ConjunctiveQuery, T> homomorphismSolver) {
-		this.fallback = new DefaultRuleApplier<T>(homomorphismSolver);
+	public SQLRuleApplier(Homomorphism<ConjunctiveQuery, ? super RdbmsStore> homomorphismSolver) {
+		this.fallback = new DefaultRuleApplier<RdbmsStore>(homomorphismSolver);
 	}
 
 	/**
@@ -87,7 +87,7 @@ public class SQLRuleApplier<T extends RdbmsStore> implements
 	 * 
 	 * @param ruleApplierFallback
 	 */
-	public SQLRuleApplier(DirectRuleApplier<Rule, T> ruleApplierFallback) {
+	public SQLRuleApplier(DirectRuleApplier<Rule, ? super RdbmsStore> ruleApplierFallback) {
 		this.fallback = ruleApplierFallback;
 	}
 
@@ -96,7 +96,7 @@ public class SQLRuleApplier<T extends RdbmsStore> implements
 	// //////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public boolean apply(Rule rule, T store)
+	public boolean apply(Rule rule, RdbmsStore store)
 			throws RuleApplicationException {
 		boolean returnValue = false;
 		if (rule.getExistentials().isEmpty()) {

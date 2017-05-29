@@ -62,6 +62,7 @@ import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
 import fr.lirmm.graphik.graal.core.grd.DefaultGraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.RestrictedChaseRuleApplier;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 
 /**
@@ -71,19 +72,19 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class ChaseWithGRD extends AbstractChase {
+public class ChaseWithGRD<T extends AtomSet> extends AbstractChase<Rule, T> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ChaseWithGRD.class);
 
 	private GraphOfRuleDependencies grd;
-	private AtomSet atomSet;
+	private T atomSet;
 	private Queue<Rule> queue = new LinkedList<Rule>();
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 
-	public ChaseWithGRD(GraphOfRuleDependencies grd, AtomSet atomSet, RuleApplier ruleApplier) {
+	public ChaseWithGRD(GraphOfRuleDependencies grd, T atomSet, RuleApplier<Rule, ? super T> ruleApplier) {
 		super(ruleApplier);
 		this.grd = grd;
 		this.atomSet = atomSet;
@@ -92,11 +93,11 @@ public class ChaseWithGRD extends AbstractChase {
 		}
 	}
 
-	public ChaseWithGRD(GraphOfRuleDependencies grd, AtomSet atomSet) {
-		this(grd, atomSet, RestrictedChaseRuleApplier.instance());
+	public ChaseWithGRD(GraphOfRuleDependencies grd, T atomSet) {
+		this(grd, atomSet, new RestrictedChaseRuleApplier<T>());
 	}
 
-	public ChaseWithGRD(Iterator<Rule> rules, AtomSet atomSet) {
+	public ChaseWithGRD(Iterator<Rule> rules, T atomSet) {
 		this(new DefaultGraphOfRuleDependencies(rules), atomSet);
 	}
 
@@ -115,8 +116,11 @@ public class ChaseWithGRD extends AbstractChase {
 
 				Rule rule = queue.poll();
 				if (rule != null) {
-					boolean val = this.getRuleApplier().apply(rule, atomSet, newAtomSet);
-					if (val) {
+					CloseableIterator<Atom> it = this.getRuleApplier().delegatedApply(rule, this.atomSet);
+					if (it.hasNext()) {
+						while(it.hasNext()) {
+							newAtomSet.add(it.next());
+						}
 						for (Rule triggeredRule : this.grd.getTriggeredRules(rule)) {
 							if (LOGGER.isDebugEnabled()) {
 								LOGGER.debug("-- -- Dependency: " + triggeredRule);
@@ -126,6 +130,7 @@ public class ChaseWithGRD extends AbstractChase {
 							}
 						}
 					}
+					it.close();
 				}
 			}
 

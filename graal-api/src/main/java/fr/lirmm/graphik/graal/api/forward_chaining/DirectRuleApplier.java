@@ -45,9 +45,6 @@
  */
 package fr.lirmm.graphik.graal.api.forward_chaining;
 
-import java.util.Collection;
-
-import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 

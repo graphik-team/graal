@@ -42,8 +42,6 @@
  */
 package fr.lirmm.graphik.graal.forward_chaining.rule_applier;
 
-import java.util.Collection;
-
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
@@ -56,6 +54,7 @@ import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.RuleWrapper2ConjunctiveQueryWithNegation;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
+import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 import fr.lirmm.graphik.util.stream.IteratorException;
@@ -64,27 +63,16 @@ import fr.lirmm.graphik.util.stream.IteratorException;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class RestrictedChaseRuleApplier implements RuleApplier<Rule, AtomSet> {
+public class RestrictedChaseRuleApplier<T extends AtomSet> implements RuleApplier<Rule, T> {
 
-	private static final RestrictedChaseRuleApplier INSTANCE = new RestrictedChaseRuleApplier();
-
-	// /////////////////////////////////////////////////////////////////////////
-	// SINGLETON
-	// /////////////////////////////////////////////////////////////////////////
-
-	public static RestrictedChaseRuleApplier instance() {
-		return INSTANCE;
-	}
-
-	private RestrictedChaseRuleApplier() {
-	}
+	private static final RuleApplier<Rule, AtomSet> FALLBACK = new DefaultRuleApplier<AtomSet>();
 
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public boolean apply(Rule rule, AtomSet atomSet) throws RuleApplicationException {
+	public boolean apply(Rule rule, T atomSet) throws RuleApplicationException {
 		try {
 			boolean res = false;
 			ConjunctiveQueryWithNegatedPart query = new RuleWrapper2ConjunctiveQueryWithNegation(rule);
@@ -115,34 +103,25 @@ public class RestrictedChaseRuleApplier implements RuleApplier<Rule, AtomSet> {
 			throw new RuleApplicationException("", e);
 		}
 	}
-	
+
 	@Override
-	public boolean apply(Rule rule, AtomSet atomSet, Collection<Atom> newAtomsDest) throws RuleApplicationException {
+	public  CloseableIterator<Atom> delegatedApply(Rule rule, T atomSet) throws RuleApplicationException {
 		try {
-			boolean res = false;
 			ConjunctiveQueryWithNegatedPart query = new RuleWrapper2ConjunctiveQueryWithNegation(rule);
-			CloseableIterator<Substitution> results;
-			
-			results = StaticHomomorphism.instance().execute(query, atomSet);
-			while (results.hasNext()) {
-				res = true;
-				Substitution proj = results.next();
-	
-				// replace variables by fresh symbol
-				for (Variable t : rule.getExistentials()) {
-					proj.put(t, atomSet.getFreshSymbolGenerator().getFreshCst());
-				}
-	
-				CloseableIteratorWithoutException<Atom> it = proj.createImageOf(rule.getHead()).iterator();
-				while (it.hasNext()) {
-					newAtomsDest.add(it.next());
-				}
-			}
-			return res;
+			CloseableIterator<Substitution> results = StaticHomomorphism.instance().execute(query, atomSet);
+			return new RuleApplierIterator(results, rule, atomSet);
 		} catch (HomomorphismException e) {
 			throw new RuleApplicationException("", e);
-		} catch (IteratorException e) {
-			throw new RuleApplicationException("", e);
+		}
+	}
+
+	@Override
+	public  CloseableIterator<Atom> delegatedApply(Rule rule, T atomSetOnWichQuerying, T atomSetOnWichCheck)
+	    throws RuleApplicationException {
+		if(atomSetOnWichQuerying == atomSetOnWichCheck) {
+			return this.delegatedApply(rule, atomSetOnWichQuerying);
+		} else {
+			return FALLBACK.delegatedApply(rule, atomSetOnWichQuerying, atomSetOnWichCheck);
 		}
 	}
 
@@ -155,4 +134,62 @@ public class RestrictedChaseRuleApplier implements RuleApplier<Rule, AtomSet> {
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
+	private static class RuleApplierIterator extends AbstractCloseableIterator<Atom> {
+
+		private CloseableIterator<Substitution> substitutionIt;
+		private CloseableIterator<Atom> localIt;
+		private boolean hasNextCallDone;
+		private Rule rule;
+		private AtomSet atomset;
+		
+		public RuleApplierIterator(CloseableIterator<Substitution> it, Rule rule, AtomSet atomset) {
+			this.substitutionIt = it;
+			this.rule = rule;
+			this.atomset = atomset;
+			this.hasNextCallDone = false;
+			this.localIt = null;
+		}
+		
+		@Override
+		public boolean hasNext() throws IteratorException {
+			if (!this.hasNextCallDone) {
+				this.hasNextCallDone = true;
+				
+				if (this.localIt != null && !this.localIt.hasNext()) {
+					this.localIt.close();
+					this.localIt = null;
+				}
+				while ((this.localIt == null || !this.localIt.hasNext()) && this.substitutionIt.hasNext()) {
+					Substitution proj = this.substitutionIt.next();
+					
+					// replace variables by fresh symbol
+					for (Variable t : rule.getExistentials()) {
+						proj.put(t, atomset.getFreshSymbolGenerator().getFreshCst());
+					}
+		
+					localIt = proj.createImageOf(rule.getHead()).iterator();
+				}
+			}
+			return this.localIt != null && this.localIt.hasNext();
+		}
+
+		@Override
+		public Atom next() throws IteratorException {
+			if (!this.hasNextCallDone)
+				this.hasNext();
+
+			this.hasNextCallDone = false;
+
+			return this.localIt.next();
+		}
+
+		@Override
+		public void close() {
+			if(localIt != null) {
+				localIt.close();
+			}
+			substitutionIt.close();
+		}
+		
+	}
 }

@@ -45,11 +45,10 @@
  */
 package fr.lirmm.graphik.graal.api.forward_chaining;
 
-import java.util.Collection;
-
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -78,7 +77,19 @@ public interface RuleApplier<R extends Rule, A extends AtomSet>  extends DirectR
 	 * @return true iff new atoms have been added to the newAtomDest collection.
 	 * @throws RuleApplicationException
 	 */
-	boolean apply(R rule, A atomSet, Collection<Atom> newAtomDest) throws RuleApplicationException;
+	CloseableIterator<Atom> delegatedApply(R rule, A atomSet) throws RuleApplicationException;
+	
+	/**
+	 * Apply the given Rule over the given AtomSet, the new atoms are
+	 * added into the specified newAtomDest collection.
+	 * 
+	 * @param rule
+	 * @param atomSet
+	 * @param newAtomDest
+	 * @return true iff new atoms have been added to the newAtomDest collection.
+	 * @throws RuleApplicationException
+	 */
+	CloseableIterator<Atom> delegatedApply(R rule, A atomSetOnWichQuerying, A atomSetOnWichCheck) throws RuleApplicationException;
 
 	
 }

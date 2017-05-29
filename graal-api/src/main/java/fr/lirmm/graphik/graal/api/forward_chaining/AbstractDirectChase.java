@@ -59,10 +59,10 @@ import fr.lirmm.graphik.util.profiler.Profiler;
  */
 public abstract class AbstractDirectChase<T1 extends Rule, T2 extends AtomSet> implements Chase {
 
-	private DirectRuleApplier<T1, T2> ruleApplier;
+	private DirectRuleApplier<? super T1, ? super T2> ruleApplier;
 	private Profiler    profiler = NoProfiler.instance();
 
-	protected AbstractDirectChase(DirectRuleApplier<T1, T2> ruleApplier) {
+	protected AbstractDirectChase(DirectRuleApplier<? super T1, ? super T2> ruleApplier) {
 		this.ruleApplier = ruleApplier;
 	}
 
@@ -103,11 +103,11 @@ public abstract class AbstractDirectChase<T1 extends Rule, T2 extends AtomSet> i
 		}
 	}
 
-	protected DirectRuleApplier<T1,T2> getRuleApplier() {
+	protected DirectRuleApplier<? super T1, ? super T2> getRuleApplier() {
 		return this.ruleApplier;
 	}
 
-	protected void setRuleApplier(DirectRuleApplier<T1,T2> applier) {
+	protected void setRuleApplier(DirectRuleApplier<? super T1, ? super T2> applier) {
 		this.ruleApplier = applier;
 	}
 
@@ -126,7 +126,7 @@ public abstract class AbstractDirectChase<T1 extends Rule, T2 extends AtomSet> i
 			private ChaseException e = null;
 			private Chase chase;
 			
-			public Executor(AbstractDirectChase chase) {
+			public Executor(AbstractDirectChase<?,?> chase) {
 				this.chase = chase;
 			}
 			

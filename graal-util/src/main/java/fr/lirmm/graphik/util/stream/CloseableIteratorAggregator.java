@@ -42,6 +42,7 @@
  */
 package fr.lirmm.graphik.util.stream;
 
+import java.util.Iterator;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -59,6 +60,10 @@ public class CloseableIteratorAggregator<E> extends AbstractCloseableIterator<E>
 
 	public CloseableIteratorAggregator(CloseableIterator<CloseableIterator<E>> metaIt) {
 		this.metaIt = metaIt;
+	}
+	
+	public CloseableIteratorAggregator(Iterator<CloseableIterator<E>> metaIt) {
+		this.metaIt = new CloseableIteratorAdapter<CloseableIterator<E>>(metaIt);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2017)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,60 +40,75 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-/**
- * 
- */
-package fr.lirmm.graphik.graal.forward_chaining.halting_condition;
-
-import java.util.Collections;
+package fr.lirmm.graphik.graal.forward_chaining.rule_applier;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
-import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
-import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
-import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
-import fr.lirmm.graphik.util.profiler.AbstractProfilable;
+import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
-import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
-/**
- * @author Clément Sipieter (INRIA) <clement@6pi.fr>
- *
- */
-public class RestrictedChaseStopCondition extends AbstractProfilable implements ChaseHaltingCondition {
+class RuleApplierIterator extends AbstractCloseableIterator<Atom> {
 
+	private CloseableIterator<Substitution> substitutionIt;
+	private CloseableIterator<Atom> localIt;
+	private boolean hasNextCallDone;
+	private Rule rule;
+	private ChaseHaltingCondition haltingCondition;
+	private AtomSet atomset;
+	
+	public RuleApplierIterator(CloseableIterator<Substitution> it, Rule rule, AtomSet atomset, ChaseHaltingCondition haltingCondition) {
+		this.substitutionIt = it;
+		this.localIt = null;
+		this.hasNextCallDone = false;
+		this.rule = rule;
+		this.haltingCondition = haltingCondition;
+		this.atomset = atomset;
+	}
+	
 	@Override
-	public CloseableIterator<Atom> apply(Rule rule, Substitution substitution, AtomSet data)
-			throws HomomorphismFactoryException, HomomorphismException {
-		InMemoryAtomSet newFacts = substitution.createImageOf(rule.getHead());
-		ConjunctiveQuery query = new DefaultConjunctiveQuery(newFacts);
-
-		try {
-			if (StaticHomomorphism.instance().execute(query, data).hasNext()) {
-				return new CloseableIteratorAdapter<Atom>(Collections.<Atom>emptyList().iterator());
+	public boolean hasNext() throws IteratorException {
+		if (!this.hasNextCallDone) {
+			this.hasNextCallDone = true;
+			
+			if (this.localIt != null && !this.localIt.hasNext()) {
+				this.localIt.close();
+				this.localIt = null;
 			}
-		} catch (IteratorException e) {
-			throw new HomomorphismException("An errors occurs while iterating results", e);
-		} catch (BacktrackException e) {
-			throw new HomomorphismException("An errors occurs while iterating results", e);
+			while ((this.localIt == null || !this.localIt.hasNext()) && this.substitutionIt.hasNext()) {
+				try {
+					localIt = haltingCondition.apply(rule, substitutionIt.next(), atomset);
+				} catch (HomomorphismFactoryException e) {
+					throw new IteratorException("Error during rule application", e);
+				} catch (HomomorphismException e) {
+					throw new IteratorException("Error during rule application", e);
+				}
+			}
 		}
-
-		// replace variables by fresh symbol
-		for (Variable t : rule.getExistentials()) {
-			substitution.put(t, data.getFreshSymbolGenerator().getFreshCst());
-		}
-		CloseableIteratorWithoutException<Atom> it = substitution.createImageOf(rule.getHead()).iterator();
-		return it;
+		return this.localIt != null && this.localIt.hasNext();
 	}
 
+	@Override
+	public Atom next() throws IteratorException {
+		if (!this.hasNextCallDone)
+			this.hasNext();
+
+		this.hasNextCallDone = false;
+
+		return this.localIt.next();
+	}
+
+	@Override
+	public void close() {
+		if(localIt != null) {
+			localIt.close();
+		}
+		substitutionIt.close();
+	}
+	
 }

@@ -92,7 +92,7 @@ public class RdbmsStoreTest {
 		Atom a = DlgpParser.parseAtom("<P>(a).");
 
 		store.add(a);
-		Chase chase = new BasicChase(ruleSet, store, new SQLRuleApplier<RdbmsStore>(SqlHomomorphism.instance()));
+		Chase chase = new BasicChase<RdbmsStore>(ruleSet, store, new SQLRuleApplier(SqlHomomorphism.instance()));
 		try {
 			chase.execute();
 		} catch (ChaseException e) {

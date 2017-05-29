@@ -59,10 +59,11 @@ import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplicationException;
 import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
 import fr.lirmm.graphik.graal.core.grd.DefaultGraphOfRuleDependencies;
-import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.RestrictedChaseRuleApplier;
 import fr.lirmm.graphik.util.graph.scc.StronglyConnectedComponentsGraph;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * This Chase apply rules following the layers of the Strongly Connected
@@ -74,14 +75,14 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class SccChase extends AbstractChase {
+public class SccChase<T extends AtomSet> extends AbstractChase<Rule,T> {
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
 	private GraphOfRuleDependencies grd;
-	private AtomSet atomSet;
+	private T atomSet;
 	private List<Atom> tmpAtom;
 	private Queue<Rule> queue = new LinkedList<Rule>();
 	private List<Integer>[] layers;
@@ -89,7 +90,7 @@ public class SccChase extends AbstractChase {
 	int levelmax;
 	StronglyConnectedComponentsGraph<Rule> sccg;
 
-	public SccChase(GraphOfRuleDependencies grd, AtomSet atomSet, RuleApplier ruleApplier) {
+	public SccChase(GraphOfRuleDependencies grd, T atomSet, RuleApplier<Rule, ? super T> ruleApplier) {
 		super(ruleApplier);
 		this.grd = grd;
 		this.atomSet = atomSet;
@@ -99,19 +100,20 @@ public class SccChase extends AbstractChase {
 		init();
 	}
 
-	public SccChase(Iterator<Rule> rules, AtomSet atomSet, RuleApplier ruleApplier) {
+	public SccChase(Iterator<Rule> rules, T atomSet, RuleApplier<Rule, ? super T> ruleApplier) {
 		this(new DefaultGraphOfRuleDependencies(rules), atomSet, ruleApplier);
 	}
 
-	public SccChase(GraphOfRuleDependencies grd, AtomSet atomSet) {
-		this(grd, atomSet, RestrictedChaseRuleApplier.instance());
+	public SccChase(GraphOfRuleDependencies grd, T atomSet) {
+		this(grd, atomSet, new RestrictedChaseRuleApplier<T>());
 	}
 
-	public SccChase(Iterator<Rule> rules, AtomSet atomSet) {
+	public SccChase(Iterator<Rule> rules, T atomSet) {
 		this(new DefaultGraphOfRuleDependencies(rules), atomSet);
 	}
 
 	// compute scc layer
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private final void init() {
 		sccg = this.grd.getStronglyConnectedComponentsGraph();
 		int[] sccLayer = sccg.computeLayers(sccg.getSources(), true);
@@ -146,12 +148,18 @@ public class SccChase extends AbstractChase {
 
 			if (component.size() == 1 && !subGraph.hasCircuit()) {
 				try {
-					this.getRuleApplier().apply(component.iterator().next(), atomSet, tmpAtom);
+					CloseableIterator<Atom> it = this.getRuleApplier().delegatedApply(component.iterator().next(), atomSet);
+					while(it.hasNext()) {
+						tmpAtom.add(it.next());
+					}
+					it.close();
 				} catch (RuleApplicationException e) {
+					throw new ChaseException("", e);
+				} catch (IteratorException e) {
 					throw new ChaseException("", e);
 				}
 			} else {
-				Chase chase = new ChaseWithGRD(subGraph, atomSet, this.getRuleApplier());
+				Chase chase = new ChaseWithGRD<T>(subGraph, atomSet, this.getRuleApplier());
 				chase.execute();
 			}
 		}

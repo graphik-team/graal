@@ -59,10 +59,10 @@ import fr.lirmm.graphik.util.profiler.Profiler;
  */
 public abstract class AbstractChase<T1 extends Rule, T2 extends AtomSet> implements Chase {
 
-	private RuleApplier<T1, T2> ruleApplier;
+	private RuleApplier<T1, ? super T2> ruleApplier;
 	private Profiler    profiler = NoProfiler.instance();
 
-	protected AbstractChase(RuleApplier<T1, T2> ruleApplier) {
+	protected AbstractChase(RuleApplier<T1, ? super T2> ruleApplier) {
 		this.ruleApplier = ruleApplier;
 	}
 
@@ -103,11 +103,11 @@ public abstract class AbstractChase<T1 extends Rule, T2 extends AtomSet> impleme
 		}
 	}
 
-	protected RuleApplier<T1,T2> getRuleApplier() {
+	protected RuleApplier<T1, ? super T2> getRuleApplier() {
 		return this.ruleApplier;
 	}
 
-	protected void setRuleApplier(RuleApplier<T1,T2> applier) {
+	protected void setRuleApplier(RuleApplier<T1, ? super T2> applier) {
 		this.ruleApplier = applier;
 	}
 
@@ -126,7 +126,7 @@ public abstract class AbstractChase<T1 extends Rule, T2 extends AtomSet> impleme
 			private ChaseException e = null;
 			private Chase chase;
 			
-			public Executor(AbstractChase chase) {
+			public Executor(AbstractChase<?,?> chase) {
 				this.chase = chase;
 			}
 			
