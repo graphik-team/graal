@@ -75,12 +75,6 @@
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-store-jenaTDB</artifactId>
-			<version>${project.parent.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-store-rdf4j</artifactId>
 			<version>${project.parent.version}</version>
 			<scope>test</scope>

@@ -80,7 +80,6 @@ import fr.lirmm.graphik.graal.homomorphism.forward_checking.SimpleFC;
 import fr.lirmm.graphik.graal.homomorphism.scheduler.DefaultScheduler;
 import fr.lirmm.graphik.graal.store.gdb.BlueprintsGraphDBStore;
 import fr.lirmm.graphik.graal.store.gdb.Neo4jStore;
-import fr.lirmm.graphik.graal.store.jenatdb.JenaStore;
 import fr.lirmm.graphik.graal.store.rdbms.adhoc.AdHocRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.HSQLDBDriver;
 import fr.lirmm.graphik.graal.store.rdbms.natural.NaturalRDBMSStore;
@@ -98,7 +97,6 @@ public final class TestUtil {
 	public static final String PLAIN_TABLE_RDBMS_TEST = "plainTable";
 	public static final String DEFAULT_RDBMS_TEST = "default";
 
-	public static final String JENA_TEST;
 	public static final String NEO4J_TEST;
 	static {
 		File jena;
@@ -111,7 +109,6 @@ public final class TestUtil {
 		}
 		rm(neo4j);
 		rm(jena);
-		JENA_TEST = jena.getAbsolutePath();
 		NEO4J_TEST = neo4j.getAbsolutePath();
 
 	}
@@ -119,7 +116,6 @@ public final class TestUtil {
 	public static AdHocRdbmsStore defaultRDBMSStore = null;
 	public static NaturalRDBMSStore plainTableRDBMSStore = null;
 	public static BlueprintsGraphDBStore graphStore = null;
-	public static JenaStore jenaStore = null;
 	public static Neo4jStore neo4jStore = null;
 	public static RDF4jStore sailStore = null;
 
@@ -185,17 +181,9 @@ public final class TestUtil {
 			rm(NEO4J_TEST);
 			neo4jStore = new Neo4jStore(NEO4J_TEST);
 
-			if (jenaStore != null) {
-				jenaStore.clear();
-				jenaStore.close();
-			}
-
 			if (sailStore != null) {
 				sailStore.close();
 			}
-
-			rm(JENA_TEST);
-			jenaStore = new JenaStore(JENA_TEST);
 
 			try {
 				sailStore = new RDF4jStore(new SailRepository(new MemoryStore()));
@@ -204,7 +192,7 @@ public final class TestUtil {
 			}
 
 			return new AtomSet[] { new DefaultInMemoryGraphStore(), new LinkedListAtomSet(), defaultRDBMSStore,
-			                       plainTableRDBMSStore, graphStore, neo4jStore, jenaStore, sailStore };
+			                       plainTableRDBMSStore, graphStore, neo4jStore, sailStore };
 		} catch (SQLException e) {
 			throw new Error(e);
 		} catch (AtomSetException e) {
