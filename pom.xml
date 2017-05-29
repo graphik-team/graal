@@ -67,6 +67,7 @@ algorithms, structural analysis of decidability properties of a rule set, a text
 		<module>graal-rules-analyser</module>
 		<module>graal-util</module>
 		<module>rdf4j-common</module>
+		<module>graal-test</module>
 		<!-- <module>graal-coverage</module> -->
 	</modules>
 
