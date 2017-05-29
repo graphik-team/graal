@@ -222,14 +222,14 @@ class AdHocConjunctiveQueryTranslator extends AbstractRdbmsConjunctiveQueryTrans
 
 		term = terms.next(); // TODO: FIX THIS => if arity = 0 -> crash ?!
 		++termIndex;
-		query.append("term").append(termIndex).append(" = \'").append(term).append('\'');
+		query.append("term").append(termIndex).append(" = \'").append(term.getIdentifier()).append('\'');
 
 		while (terms.hasNext()) {
 			term = terms.next();
 			++termIndex;
 			query.append(" AND ").append(AbstractRdbmsConjunctiveQueryTranslator.PREFIX_TERM_FIELD).append(termIndex)
 			     .append(" = \'")
-			     .append(term).append('\'');
+			     .append(term.getIdentifier()).append('\'');
 		}
 		query.append(" LIMIT 1;");
 		return new SQLQuery(query.toString());
