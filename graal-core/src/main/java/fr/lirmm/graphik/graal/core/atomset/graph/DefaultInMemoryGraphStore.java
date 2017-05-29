@@ -69,6 +69,7 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 import fr.lirmm.graphik.util.stream.Iterators;
 import fr.lirmm.graphik.util.stream.filter.Filter;
 import fr.lirmm.graphik.util.stream.filter.FilterIteratorWithoutException;
+import fr.lirmm.graphik.util.stream.filter.UniqFilter;
 
 /**
  * Implementation of a graph in memory. Inherits directly from Fact.
@@ -302,10 +303,12 @@ public class DefaultInMemoryGraphStore extends AbstractInMemoryAtomSet implement
 		boolean val = predicateVertex.addNeighbor(atom);
 		if (val) {
 			++size;
-			for (Term v : atom) {
-				TermVertex term = (TermVertex) v;
+			CloseableIteratorWithoutException<Term> it = new FilterIteratorWithoutException<Term, Term>(atom.getTerms().iterator(), new UniqFilter<Term>());
+			while(it.hasNext()) {
+				TermVertex term = (TermVertex) it.next();
 				term.addNeighbor(atom);
 			}
+			it.close();
 
 			Set<Term>[] sets = this.termsByPredicatePosition.get(atom.getPredicate());
 			int i = -1;

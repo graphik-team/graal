@@ -42,6 +42,9 @@
  */
 package fr.lirmm.graphik.util.stream.filter;
 
+import java.util.Iterator;
+
+import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
@@ -53,6 +56,10 @@ public class FilterIteratorWithoutException<U, T> extends FilterIterator<U, T> i
 
 	public FilterIteratorWithoutException(CloseableIteratorWithoutException<U> it, Filter<U> filter) {
 		super(it, filter);
+	}
+	
+	public FilterIteratorWithoutException(Iterator<U> it, Filter<U> filter) {
+		super(new CloseableIteratorAdapter<U>(it), filter);
 	}
 
 	@Override

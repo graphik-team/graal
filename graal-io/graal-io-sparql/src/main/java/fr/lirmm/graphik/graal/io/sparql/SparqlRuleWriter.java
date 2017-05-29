@@ -52,11 +52,13 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
+import fr.lirmm.graphik.graal.GraalConstant;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.io.RuleWriter;
 import fr.lirmm.graphik.util.Prefix;
+import fr.lirmm.graphik.util.URIzer;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
@@ -69,8 +71,12 @@ public class SparqlRuleWriter extends AbstractSparqlWriter implements RuleWriter
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 
+	public SparqlRuleWriter(Writer out, URIzer urizer) {
+		super(out, urizer);
+	}
+	
 	public SparqlRuleWriter(Writer out) {
-		super(out);
+		super(out, new URIzer(GraalConstant.INTERNAL_PREFIX));
 	}
 
 	public SparqlRuleWriter() {

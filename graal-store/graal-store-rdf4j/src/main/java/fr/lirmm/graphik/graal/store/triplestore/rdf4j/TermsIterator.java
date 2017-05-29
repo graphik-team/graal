@@ -49,18 +49,18 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.common.rdf4j.RDF4jUtils;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
-class TermsIterator extends TupleQueryResultIterator<Term> {
+class TermsIterator extends AbstractTupleQueryResultIterator<Term> {
 
 	String value = "term";
 	private RDF4jUtils utils;
 
 	TermsIterator(TupleQueryResult results, RDF4jUtils utils) {
-		super.it = results;
+		super(results);
 		this.utils = utils;
 	}
 
 	TermsIterator(TupleQueryResult results, String value, RDF4jUtils utils) {
-		super.it = results;
+		super(results);
 		this.value = value;
 		this.utils = utils;
 	}

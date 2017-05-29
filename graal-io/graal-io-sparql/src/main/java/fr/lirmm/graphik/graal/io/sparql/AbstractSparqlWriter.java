@@ -55,6 +55,7 @@ import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.PrefixManager;
 import fr.lirmm.graphik.util.URI;
 import fr.lirmm.graphik.util.URIUtils;
+import fr.lirmm.graphik.util.URIzer;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -63,6 +64,8 @@ import fr.lirmm.graphik.util.URIUtils;
 public class AbstractSparqlWriter extends AbstractWriter {
 
 	private PrefixManager pm;
+	private URIzer urizer;
+
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -71,9 +74,10 @@ public class AbstractSparqlWriter extends AbstractWriter {
 	/**
 	 * @param out
 	 */
-	public AbstractSparqlWriter(Writer out) {
+	public AbstractSparqlWriter(Writer out, URIzer urizer) {
 		super(out);
 		this.pm = new PrefixManager();
+		this.urizer = urizer;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -155,7 +159,7 @@ public class AbstractSparqlWriter extends AbstractWriter {
 	protected void writeIdentifier(Object identifier) throws IOException {
 
 		if (!(identifier instanceof URI)) {
-			identifier = URIUtils.createURI(GraalConstant.INTERNAL_PREFIX, identifier.toString());
+			identifier = URIUtils.createURI(urizer.input(identifier.toString()));
 		}
 		this.writeURI((URI) identifier);
 	}

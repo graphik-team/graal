@@ -123,6 +123,10 @@ public class RDF4jUtils {
 	public IRI createURI(Predicate p) {
 		return createURI(urizer.input(p.getIdentifier().toString()));
 	}
+	
+	public URIzer getURIzer() {
+		return this.urizer;
+	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS

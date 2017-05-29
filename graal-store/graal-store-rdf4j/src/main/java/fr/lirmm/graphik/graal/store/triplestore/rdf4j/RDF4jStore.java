@@ -45,6 +45,8 @@
  */
 package fr.lirmm.graphik.graal.store.triplestore.rdf4j;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -64,6 +66,7 @@ import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.ConstantGenerator;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
@@ -72,7 +75,9 @@ import fr.lirmm.graphik.graal.api.store.WrongArityException;
 import fr.lirmm.graphik.graal.common.rdf4j.MalformedLangStringException;
 import fr.lirmm.graphik.graal.common.rdf4j.RDF4jUtils;
 import fr.lirmm.graphik.graal.core.DefaultConstantGenerator;
+import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.store.AbstractTripleStore;
+import fr.lirmm.graphik.graal.io.sparql.SparqlConjunctiveQueryWriter;
 import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
@@ -204,26 +209,19 @@ public class RDF4jStore extends AbstractTripleStore {
 
 	@Override
 	public CloseableIterator<Atom> match(Atom atom) throws AtomSetException {
-		Statement stat;
+		
+		ConjunctiveQuery query = DefaultConjunctiveQueryFactory.instance().create(atom);
+		StringWriter s = new StringWriter();
+		SparqlConjunctiveQueryWriter w = new SparqlConjunctiveQueryWriter(s, this.utils.getURIzer());
 		try {
-			stat = utils.atomToStatement(atom);
-		} catch (MalformedLangStringException e) {
-			throw new AtomSetException("Error on the atom " + atom, e);
+			w.write(query);
+			w.close();
+		} catch (IOException e1) {
+			throw new AtomSetException("Error while converting to SPARQL " + atom, e1);
 		}
-		IRI subject = (IRI) stat.getSubject();
-		if (subject.getNamespace().equals("_:")) {
-			subject = null;
-		}
-		Value object = stat.getObject();
-		if (object instanceof IRI && ((IRI) object).getNamespace().equals("_:")) {
-			object = null;
-		}
-
-		try {
-			return new AtomIterator(this.connection.getStatements(subject, stat.getPredicate(), object, false), utils);
-		} catch (RepositoryException e) {
-			throw new AtomSetException(e);
-		}
+		TupleQuery sparqlQuery = this.connection.prepareTupleQuery(s.toString());
+		TupleQueryResult result = sparqlQuery.evaluate();
+		return new TupleQueryResultAtomIterator(result, atom, utils);
 	}
 
 	@Override

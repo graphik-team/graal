@@ -45,28 +45,38 @@ package fr.lirmm.graphik.graal.store.triplestore.rdf4j;
 import org.eclipse.rdf4j.query.QueryEvaluationException;
 import org.eclipse.rdf4j.query.TupleQueryResult;
 
-import fr.lirmm.graphik.graal.api.core.Predicate;
-import fr.lirmm.graphik.graal.common.rdf4j.RDF4jUtils;
+import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
-class PredicatesIterator extends AbstractTupleQueryResultIterator<Predicate> {
+abstract class AbstractTupleQueryResultIterator<E> extends AbstractCloseableIterator<E> {
 
-	private RDF4jUtils utils;
-
-	PredicatesIterator(TupleQueryResult results, RDF4jUtils utils) {
-		super(results);
-		this.utils = utils;
+	protected TupleQueryResult it;
+	
+	protected AbstractTupleQueryResultIterator(TupleQueryResult it) {
+		this.it = it;
 	}
 
 	@Override
-	public Predicate next() throws IteratorException {
+	public void close() {
 		try {
-			return utils.valueToPredicate(this.it.next().getValue("p"));
+			this.it.close();
+		} catch (QueryEvaluationException e) {
+			if (RDF4jStore.LOGGER.isErrorEnabled()) {
+				RDF4jStore.LOGGER.error("Error during iteration closing", e);
+			}
+			throw new RuntimeException("An error occurs while closing iterator", e);
+		}
+	}
+
+	@Override
+	public boolean hasNext() throws IteratorException {
+		try {
+			return this.it.hasNext();
 		} catch (QueryEvaluationException e) {
 			if (RDF4jStore.LOGGER.isErrorEnabled()) {
 				RDF4jStore.LOGGER.error("Error during iteration", e);
 			}
-			throw new IteratorException(e);
+			throw new IteratorException("An error occurs during iteration", e);
 		}
 	}
 

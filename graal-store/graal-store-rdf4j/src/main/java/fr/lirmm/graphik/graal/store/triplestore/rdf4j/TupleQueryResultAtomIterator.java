@@ -42,38 +42,42 @@
  */
 package fr.lirmm.graphik.graal.store.triplestore.rdf4j;
 
-import org.eclipse.rdf4j.query.QueryEvaluationException;
+import org.eclipse.rdf4j.query.BindingSet;
 import org.eclipse.rdf4j.query.TupleQueryResult;
 
-import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
+import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.common.rdf4j.RDF4jUtils;
+import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
-abstract class TupleQueryResultIterator<E> extends AbstractCloseableIterator<E> {
+class TupleQueryResultAtomIterator extends AbstractTupleQueryResultIterator<Atom> {
 
-	protected TupleQueryResult it;
-
-	@Override
-	public void close() {
-		try {
-			this.it.close();
-		} catch (QueryEvaluationException e) {
-			if (RDF4jStore.LOGGER.isErrorEnabled()) {
-				RDF4jStore.LOGGER.error("Error during iteration closing", e);
-			}
-			throw new RuntimeException("An error occurs while closing iterator", e);
-		}
+	private Atom atom;
+	private RDF4jUtils utils;
+	
+	TupleQueryResultAtomIterator(TupleQueryResult results, Atom atom, RDF4jUtils utils) {
+		super(results);
+		this.atom = atom;
+		this.utils = utils;
 	}
 
+
+
 	@Override
-	public boolean hasNext() throws IteratorException {
-		try {
-			return this.it.hasNext();
-		} catch (QueryEvaluationException e) {
-			if (RDF4jStore.LOGGER.isErrorEnabled()) {
-				RDF4jStore.LOGGER.error("Error during iteration", e);
+	public Atom next() throws IteratorException {
+		BindingSet bs = this.it.next();
+		Term[] terms = new Term[atom.getTerms().size()];
+		int i = 0;
+		for(Term t : atom) {
+			if(t.isVariable()) {
+				terms[i] = utils.valueToTerm(bs.getValue(t.getLabel()));
+			} else {
+				terms[i] = t;
 			}
-			throw new IteratorException("An error occurs during iteration", e);
+			++i;
 		}
+		return DefaultAtomFactory.instance().create(atom.getPredicate(), terms);
 	}
 
 }

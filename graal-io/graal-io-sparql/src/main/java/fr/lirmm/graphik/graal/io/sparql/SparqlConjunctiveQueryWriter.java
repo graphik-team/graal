@@ -52,11 +52,13 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
+import fr.lirmm.graphik.graal.GraalConstant;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.io.ConjunctiveQueryWriter;
 import fr.lirmm.graphik.util.Prefix;
+import fr.lirmm.graphik.util.URIzer;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
@@ -70,8 +72,12 @@ public class SparqlConjunctiveQueryWriter extends AbstractSparqlWriter implement
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 
+	public SparqlConjunctiveQueryWriter(Writer out, URIzer urizer) {
+		super(out, urizer);
+	}
+	
 	public SparqlConjunctiveQueryWriter(Writer out) {
-		super(out);
+		super(out, new URIzer(GraalConstant.INTERNAL_PREFIX));
 	}
 
 	public SparqlConjunctiveQueryWriter() {
