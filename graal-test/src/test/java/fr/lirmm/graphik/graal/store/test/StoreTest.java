@@ -45,6 +45,8 @@
  */
 package fr.lirmm.graphik.graal.store.test;
 
+import java.sql.SQLException;
+
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.experimental.theories.DataPoints;
@@ -66,6 +68,7 @@ import fr.lirmm.graphik.graal.core.compilation.IDCompilation;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.homomorphism.AtomicQueryHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
+import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
 import fr.lirmm.graphik.graal.test.TestUtil;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
@@ -260,7 +263,9 @@ public class StoreTest {
 	}
 
 	@Theory
-	public void caseSensitivityTest(AtomSet store) throws AtomSetException, IteratorException, ParseException {
+	public void caseSensitivityTest(AtomSet store) throws AtomSetException, IteratorException, ParseException, SQLException {
+		Assume.assumeTrue(!(store instanceof RdbmsStore) || ((RdbmsStore) store).getDriver().isCaseSensitive());
+		
 		Atom toAdd = DlgpParser.parseAtom("<P>(a,b).");
 		Atom toCheck = DlgpParser.parseAtom("<p>(a,b).");
 		Predicate predicateToCheck = new Predicate("p", 2);
