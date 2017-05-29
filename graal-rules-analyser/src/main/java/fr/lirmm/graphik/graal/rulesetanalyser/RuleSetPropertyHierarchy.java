@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.commons.collections4.IterableUtils;
+
 import fr.lirmm.graphik.graal.rulesetanalyser.property.AGRDProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.BTSProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.DisconnectedProperty;
@@ -16,6 +18,7 @@ import fr.lirmm.graphik.graal.rulesetanalyser.property.FrontierGuardedProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.FrontierOneProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.GBTSProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.GuardedProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.JointlyFrontierGuardedSetProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.LinearProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.MFAProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.MSAProperty;
@@ -24,7 +27,6 @@ import fr.lirmm.graphik.graal.rulesetanalyser.property.RuleSetProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.StickyProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.WeaklyAcyclicProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.WeaklyFrontierGuardedSetProperty;
-import fr.lirmm.graphik.graal.rulesetanalyser.property.JointlyFrontierGuardedSetProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.WeaklyGuardedSetProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.WeaklyStickyProperty;
 
@@ -188,6 +190,22 @@ public class RuleSetPropertyHierarchy {
 		addToPropertyMap(propertyMap, WeaklyFrontierGuardedSetProperty.instance());
 		addToPropertyMap(propertyMap, WeaklyGuardedSetProperty.instance());
 		addToPropertyMap(propertyMap, WeaklyStickyProperty.instance());
+		return propertyMap;
+	}
+	
+	/**
+	 * Prepare a map containing all specialization of specified rule property.
+	 * @param prop
+	 * @return a map containing all specialization of specified rule property
+	 */
+	public static final Map<String, RuleSetProperty> generatePropertyMapSpecializationOf(RuleSetProperty prop) {
+		Map<String, RuleSetProperty> propertyMap = new TreeMap<String, RuleSetProperty>();
+		addToPropertyMap(propertyMap, prop);
+		for(Map.Entry<String, RuleSetProperty> e : generatePropertyMap().entrySet()) {
+			if(IterableUtils.contains(e.getValue().getGeneralisations(), prop)) {
+				propertyMap.put(e.getKey(), e.getValue());
+			}
+		}
 		return propertyMap;
 	}
 

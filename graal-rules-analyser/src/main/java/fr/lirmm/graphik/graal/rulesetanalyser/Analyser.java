@@ -58,6 +58,11 @@ public class Analyser {
 	 * @return true only if some property ensures the rule set is decidable
 	 */
 	public boolean isDecidable() {
+		for(int i : ruleSetProperties().values()) {
+			if(i > 0) 	{
+				return true;
+			}
+		}
 		return this.combineFES() != null;
 	}
 
@@ -230,10 +235,10 @@ public class Analyser {
 		for (RuleSetProperty p : pties) {
 			if (result.get(p.getLabel()) == null) {
 				res = p.check(set);
-				result.put(p.getLabel(), new Integer(res));
+				result.put(p.getLabel(), Integer.valueOf(res));
 				if (res > 0) {
 					for (RuleSetProperty p2 : this.hierarchy.getGeneralisationsOf(p))
-						result.put(p2.getLabel(), new Integer(res));
+						result.put(p2.getLabel(), Integer.valueOf(res));
 				}
 			}
 		}

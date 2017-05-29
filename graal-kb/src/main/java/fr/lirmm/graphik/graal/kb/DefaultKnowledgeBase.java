@@ -88,6 +88,10 @@ import fr.lirmm.graphik.graal.forward_chaining.BreadthFirstChase;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseWithGRD;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.rulesetanalyser.Analyser;
+import fr.lirmm.graphik.graal.rulesetanalyser.RuleSetPropertyHierarchy;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.FESProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.FUSProperty;
+import fr.lirmm.graphik.graal.rulesetanalyser.property.RuleSetProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.profiler.AbstractProfilable;
@@ -421,7 +425,10 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 	protected void analyse() {
 		if (!this.isAnalysed) {
 			this.analysedRuleSet = new AnalyserRuleSet(this.ruleset);
+			Map<String, RuleSetProperty> properties = RuleSetPropertyHierarchy.generatePropertyMapSpecializationOf(FESProperty.instance());
+			properties.putAll(RuleSetPropertyHierarchy.generatePropertyMapSpecializationOf(FUSProperty.instance()));
 			this.analyse = new Analyser(analysedRuleSet);
+			this.analyse.setProperties(properties.values());
 			this.isAnalysed = true;
 		}
 	}
