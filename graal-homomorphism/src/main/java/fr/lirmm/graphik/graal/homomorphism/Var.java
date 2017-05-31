@@ -88,4 +88,8 @@ public class Var implements Comparable<Var> {
 		return this.shared.compareTo(o.shared);
 	}
 
+	@Override
+	public String toString() {
+		return this.shared.toString();
+	}
 }
