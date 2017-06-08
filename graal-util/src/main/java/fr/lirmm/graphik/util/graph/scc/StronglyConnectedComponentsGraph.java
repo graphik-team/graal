@@ -53,7 +53,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.jgrapht.DirectedGraph;
-import org.jgrapht.alg.KosarajuStrongConnectivityInspector;
+import org.jgrapht.alg.StrongConnectivityInspector;
 import org.jgrapht.graph.DefaultDirectedGraph;
 
 /**
@@ -64,7 +64,7 @@ import org.jgrapht.graph.DefaultDirectedGraph;
  * 
  */
 public class StronglyConnectedComponentsGraph<V> extends
-                                             DefaultDirectedGraph<Integer, Integer> {
+		DefaultDirectedGraph<Integer, Integer> {
 
 	private static final long serialVersionUID = -2816870306827502776L;
 
@@ -82,7 +82,7 @@ public class StronglyConnectedComponentsGraph<V> extends
 	 */
 	public <E> StronglyConnectedComponentsGraph(DirectedGraph<V, E> graph) {
 		this();
-		List<Set<V>> stronglyConnectedSets = new KosarajuStrongConnectivityInspector<V, E>(graph).stronglyConnectedSets();
+		List<Set<V>> stronglyConnectedSets = new StrongConnectivityInspector<V, E>(graph).stronglyConnectedSets();
 
 		// add components
 		int componentIndex = -1;
