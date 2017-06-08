@@ -53,6 +53,7 @@ import org.junit.Test;
 import fr.lirmm.graphik.graal.api.core.Ontology;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.core.DefaultRule;
+import fr.lirmm.graphik.graal.core.TestUtils;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 
 /**
@@ -62,6 +63,8 @@ import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 public class DefaultOntologyTest {
 	
 	private Rule r1 = new DefaultRule("r1", new LinkedListAtomSet(), new LinkedListAtomSet());
+	private Rule same1 = new DefaultRule("same", new LinkedListAtomSet(TestUtils.pAB), new LinkedListAtomSet());
+	private Rule same2 = new DefaultRule("same", new LinkedListAtomSet(TestUtils.pBA), new LinkedListAtomSet());
 	private Rule noName = new DefaultRule(new LinkedListAtomSet(), new LinkedListAtomSet());
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -130,6 +133,40 @@ public class DefaultOntologyTest {
 		Assert.assertTrue(ruleNames.contains(r1.getLabel()));
 		Assert.assertEquals(2, ruleNames.size());
 	}
+	
+	/**
+	 * Test method for
+	 * {@link fr.lirmm.graphik.graal.core.ruleset.DefaultOntology#add(Rule)}.
+	 */
+	@Test
+	public void testAddDifferentRulesWithSameName() {
+		// given
+		Ontology onto = new DefaultOntology();
+	
+		// when
+		onto.add(same1);
+		onto.add(same2);
+		
+		// then
+		Assert.assertEquals(2, onto.size());
+	}
+	
+	/**
+	 * Test method for
+	 * {@link fr.lirmm.graphik.graal.core.ruleset.DefaultOntology#add(Rule)}.
+	 */
+	@Test
+	public void testAddSameRuleTwice() {
+		// given
+		Ontology onto = new DefaultOntology();
+	
+		// when
+		onto.add(same1);
+		onto.add(same1);
+		
+		// then
+		Assert.assertEquals(1, onto.size());
+	}
 
 	/**
 	 * Test method for
@@ -160,6 +197,21 @@ public class DefaultOntologyTest {
 		boolean b = onto.contains(r1);
 		// then
 		Assert.assertTrue(b);
+	}
+	
+	/**
+	 * Test method for
+	 * {@link fr.lirmm.graphik.graal.core.ruleset.DefaultOntology#contains(fr.lirmm.graphik.graal.api.core.Rule)}.
+	 */
+	@Test
+	public void testContainsSameRuleLabel() {
+		// given
+		Ontology onto = new DefaultOntology();
+		onto.add(same1);
+		// when
+		boolean b = onto.contains(same2);
+		// then
+		Assert.assertFalse(b);
 	}
 
 	/**

@@ -58,7 +58,6 @@ import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.RuleSetException;
 import fr.lirmm.graphik.graal.core.DefaultRuleLabeler;
 import fr.lirmm.graphik.graal.core.stream.filter.RuleFilterIterator;
-import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
@@ -68,10 +67,10 @@ import fr.lirmm.graphik.util.stream.IteratorException;
  */
 public class DefaultOntology implements Ontology {
 
-	private Map<String, Rule> map;
+	private Map<String, Rule>               map;
 	private Map<String, NegativeConstraint> constraintsMap;
-	private Set<Predicate> vocabulary;
-	private RuleLabeler labeler;
+	private Set<Predicate>                  vocabulary;
+	private RuleLabeler                     labeler;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -121,14 +120,21 @@ public class DefaultOntology implements Ontology {
 
 	@Override
 	public boolean add(Rule rule) {
+		if (rule == null) {
+			return false;
+		}
+		if (rule.equals(this.map.get(rule.getLabel()))) {
+			return false;
+		}
 		this.vocabulary.addAll(rule.getBody().getPredicates());
 		this.vocabulary.addAll(rule.getHead().getPredicates());
 
 		this.labeler.setLabel(rule);
 		if(rule instanceof NegativeConstraint) {
-			this.constraintsMap.put(rule.getLabel(), (NegativeConstraint)rule);
+			this.constraintsMap.put(rule.getLabel(), (NegativeConstraint) rule);
 		}
 		return this.map.put(rule.getLabel(), rule) == null;
+
 	}
 
 	@Override
@@ -208,18 +214,17 @@ public class DefaultOntology implements Ontology {
 	public Iterator<Rule> iterator() {
 		return this.map.values().iterator();
 	}
-	
+
 	@Override
 	public Set<Predicate> getVocabulary() {
 		return Collections.<Predicate>unmodifiableSet(this.vocabulary);
 	}
 
-
 	@Override
 	public boolean isEmpty() {
 		return this.map.isEmpty();
 	}
-	
+
 	// /////////////////////////////////////////////////////////////////////////
 	// OBJECT OVERRIDE METHODS
 	// /////////////////////////////////////////////////////////////////////////
@@ -239,8 +244,7 @@ public class DefaultOntology implements Ontology {
 			this.vocabulary.addAll(r.getHead().getPredicates());
 		}
 	}
-	
-	
+
 	private boolean removeWithoutVocReset(Rule rule) {
 		if(rule instanceof NegativeConstraint) {
 			this.constraintsMap.remove(rule.getLabel());

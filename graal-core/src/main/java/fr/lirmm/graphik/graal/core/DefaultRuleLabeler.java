@@ -42,6 +42,7 @@
  */
 package fr.lirmm.graphik.graal.core;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import fr.lirmm.graphik.graal.api.core.Rule;
@@ -63,6 +64,7 @@ public class DefaultRuleLabeler implements RuleLabeler {
 	// /////////////////////////////////////////////////////////////////////////
 	
 	public DefaultRuleLabeler() {
+		this.alreadyAffected = new HashSet<String>();
 	}
 	
 	public DefaultRuleLabeler(Set<String> alreadyAffected) {
@@ -74,12 +76,13 @@ public class DefaultRuleLabeler implements RuleLabeler {
 	// /////////////////////////////////////////////////////////////////////////
 	
 	public void setLabel(Rule rule) {
-		if(rule.getLabel() == null || rule.getLabel().equals("") || rule.getLabel().startsWith("_")) {			
-			String label = null;
+		String label = rule.getLabel();
+		if(label == null || label.equals("") || label.startsWith("_") || alreadyAffected.contains(label)) {
 			do {
 				label = String.format(format, ++i);
-			} while(alreadyAffected != null && alreadyAffected.contains(label));
+			} while(alreadyAffected.contains(label));
 			rule.setLabel(label);
 		}
+		alreadyAffected.add(rule.getLabel());
 	}
 }
