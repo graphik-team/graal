@@ -106,6 +106,15 @@ algorithms, structural analysis of decidability properties of a rule set, a text
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>doclint-java8-disable</id>
+			<activation>
+				<jdk>[1.8,)</jdk>
+			</activation>
+			<properties>
+				<javadoc.opts>-Xdoclint:none</javadoc.opts>
+			</properties>
+		</profile>
 	</profiles>
 
 	<build>
@@ -155,7 +164,7 @@ algorithms, structural analysis of decidability properties of a rule set, a text
 					</execution>
 				</executions>
 				<configuration>
-					<additionalparam>-Xdoclint:none</additionalparam>
+					<additionalparam>${javadoc.opts}</additionalparam>
 				</configuration>
 			</plugin>
 			<plugin>
