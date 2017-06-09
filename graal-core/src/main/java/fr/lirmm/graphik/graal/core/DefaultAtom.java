@@ -50,9 +50,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
-
-import javax.naming.OperationNotSupportedException;
 
 import fr.lirmm.graphik.graal.api.core.AbstractAtom;
 import fr.lirmm.graphik.graal.api.core.Atom;
@@ -253,7 +250,7 @@ public class DefaultAtom extends AbstractAtom implements Serializable {
 
 	@Override
 	public Iterator<Term> iterator() {
-		return new ArrayIterator(terms);
+		return new ArrayIterator<Term>(terms);
 	}
 	
 };

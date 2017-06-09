@@ -210,7 +210,7 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 			this.analyse();
 			if (this.analyse.isFES()) {
 				GraphOfRuleDependencies grd = this.analysedRuleSet.getGraphOfRuleDependencies();
-				ChaseWithGRD chase = new ChaseWithGRD(grd, this.store);
+				ChaseWithGRD<AtomSet> chase = new ChaseWithGRD<>(grd, this.store);
 				chase.setProfiler(this.getProfiler());
 				try {
 					chase.execute();
@@ -369,7 +369,7 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 	protected void fesSaturate() throws ChaseException {
 		if (!isFESSaturated) {
 			GraphOfRuleDependencies grd = this.getFESGraphOfRuleDependencies();
-			ChaseWithGRD chase = new ChaseWithGRD(grd, this.store);
+			ChaseWithGRD<AtomSet> chase = new ChaseWithGRD<>(grd, this.store);
 			chase.setProfiler(this.getProfiler());
 			chase.execute();
 			this.isFESSaturated = true;

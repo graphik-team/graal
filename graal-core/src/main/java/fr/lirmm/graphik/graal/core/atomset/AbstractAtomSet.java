@@ -48,7 +48,6 @@ package fr.lirmm.graphik.graal.core.atomset;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,17 +62,14 @@ import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.graal.core.filter.ConstantFilter;
-import fr.lirmm.graphik.graal.core.filter.LiteralFilter;
-import fr.lirmm.graphik.graal.core.filter.VariableFilter;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
-import fr.lirmm.graphik.util.stream.filter.FilterIterator;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
+@SuppressWarnings("deprecation")
 public abstract class AbstractAtomSet implements AtomSet {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAtomSet.class);

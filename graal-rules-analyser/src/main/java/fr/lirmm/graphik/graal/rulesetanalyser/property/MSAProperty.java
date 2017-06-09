@@ -70,7 +70,6 @@ import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.forward_chaining.StaticChase;
-import fr.lirmm.graphik.graal.homomorphism.RecursiveBacktrackHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
 

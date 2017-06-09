@@ -65,8 +65,9 @@ public class TreeMapEquivalentRelation<T extends Comparable<T>> implements Equiv
 		return classe;
 	}
 	
+	@SafeVarargs
 	@Override
-	public int addClasse(T... elements) {
+	public final int addClasse(T... elements) {
 		Integer classe = ++maxClassesValue;
 		for(T e : elements)
 			this.classes.put(e, classe);

@@ -95,6 +95,7 @@ import fr.lirmm.graphik.util.string.StringUtils;
  *         This class represents an implementation of a store in a Relational
  *         Database System where each predicates is stored in a dedicated table.
  */
+@SuppressWarnings("deprecation")
 public class AdHocRdbmsStore extends AbstractRdbmsStore {
 	private static final Logger        LOGGER                     = LoggerFactory.getLogger(AdHocRdbmsStore.class);
 
@@ -139,7 +140,7 @@ public class AdHocRdbmsStore extends AbstractRdbmsStore {
 	                                                                + TERMS_TABLE_NAME
 	                                                                + " WHERE term = ?;";
 
-	private static final String        GET_ATOMS_BY_PREDICATE     = "SELECT * FROM %s;";
+	//private static final String        GET_ATOMS_BY_PREDICATE     = "SELECT * FROM %s;";
 
 	// counter queries
 	private static final String        GET_COUNTER_VALUE_QUERY    = "SELECT value FROM "

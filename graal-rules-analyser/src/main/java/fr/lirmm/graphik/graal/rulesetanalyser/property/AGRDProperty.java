@@ -46,7 +46,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import fr.lirmm.graphik.graal.api.core.GraphOfRuleDependencies;
-import fr.lirmm.graphik.graal.core.grd.DefaultGraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
 
 public final class AGRDProperty extends RuleSetProperty.Default {

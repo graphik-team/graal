@@ -72,6 +72,7 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
 @RunWith(Theories.class)
 public class ConjunctiveQueryFixedBugTest {
 
+	@SuppressWarnings("rawtypes")
 	@DataPoints
 	public static Homomorphism[] homomorphisms() {
 		return TestUtil.getHomomorphisms();
@@ -88,7 +89,7 @@ public class ConjunctiveQueryFixedBugTest {
 	 * return.
 	 */
 	@Theory
-	public void HomomorphismAnsVarOverwritingBug(Homomorphism h, AtomSet store) {
+	public void HomomorphismAnsVarOverwritingBug(Homomorphism<ConjunctiveQuery, AtomSet> h, AtomSet store) {
 		try {
 			store.addAll(DlgpParser.parseAtomSet("<P>(a,b)."));
 
@@ -119,7 +120,7 @@ public class ConjunctiveQueryFixedBugTest {
 	 * @param store
 	 */
 	@Theory
-	public void GraphAtomSetQuery(Homomorphism h, AtomSet store) {
+	public void GraphAtomSetQuery(Homomorphism<ConjunctiveQuery, AtomSet> h, AtomSet store) {
 		try {
 			InMemoryAtomSet atomset = new DefaultInMemoryGraphStore();
 			atomset.add(DlgpParser.parseAtom("<P>(X)."));
@@ -138,7 +139,7 @@ public class ConjunctiveQueryFixedBugTest {
 	
 	
 	@Theory
-	public void issue52(Homomorphism h, AtomSet store) {
+	public void issue52(Homomorphism<ConjunctiveQuery, AtomSet> h, AtomSet store) {
 		try {
 			store.addAll(DlgpParser.parseAtomSet("<P0>(a,b),<P1>(b,c),<P2>(c,d),<P2>(a,a)."));
 
@@ -151,7 +152,7 @@ public class ConjunctiveQueryFixedBugTest {
 	}
 	
 	@Theory
-	public void issue52Bis(Homomorphism h, AtomSet store) {
+	public void issue52Bis(Homomorphism<ConjunctiveQuery, AtomSet> h, AtomSet store) {
 		Assume.assumeFalse(store instanceof TripleStore);
 
 		try {

@@ -54,6 +54,7 @@ public class DefaultDirectedGraph implements DirectedGraph {
 	private LinkedList<Integer> adjacencyList[];
 	private int                 nbVertices;
 
+	@SuppressWarnings("unchecked")
 	public DefaultDirectedGraph(int nbVertices) {
 		this.nbVertices = nbVertices;
 		this.adjacencyList = new LinkedList[nbVertices];

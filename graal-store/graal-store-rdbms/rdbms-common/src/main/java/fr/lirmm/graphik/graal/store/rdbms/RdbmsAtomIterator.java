@@ -48,9 +48,6 @@ package fr.lirmm.graphik.graal.store.rdbms;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
@@ -73,9 +70,6 @@ import fr.lirmm.graphik.util.stream.IteratorException;
  * 
  */
 class RdbmsAtomIterator implements CloseableIterator<Atom> {
-
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(RdbmsAtomIterator.class);
 	
 	private RdbmsStore store;
 	private boolean hasNextCallDone = false;

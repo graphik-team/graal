@@ -83,6 +83,7 @@ import fr.lirmm.graphik.util.stream.IteratorException;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
+@SuppressWarnings("deprecation")
 public class Neo4jStore extends GraphDBStore {
 
 	private static final Logger LOGGER = LoggerFactory

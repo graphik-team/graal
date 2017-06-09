@@ -45,7 +45,6 @@ package fr.lirmm.graphik.graal.store.rdbms.adhoc;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.stream.converter.ConversionException;

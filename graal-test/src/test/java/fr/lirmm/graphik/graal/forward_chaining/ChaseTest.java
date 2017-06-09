@@ -49,7 +49,6 @@ import java.io.IOException;
 import java.util.LinkedList;
 
 import org.junit.Assert;
-import org.junit.Assume;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
@@ -73,7 +72,6 @@ import fr.lirmm.graphik.graal.core.grd.DefaultGraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
-import fr.lirmm.graphik.graal.store.gdb.Neo4jStore;
 import fr.lirmm.graphik.graal.test.TestUtil;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
@@ -162,7 +160,7 @@ public class ChaseTest {
 		ruleSet.add(DlgpParser.parseRule("<S>(X,X) :- <Q>(Y,X)."));
 
 		GraphOfRuleDependencies grd = new DefaultGraphOfRuleDependencies(ruleSet);
-		Chase chase = new ChaseWithGRDAndUnfiers(grd, atomSet);
+		Chase chase = new ChaseWithGRDAndUnfiers<AtomSet>(grd, atomSet);
 		chase.execute();
 		
 		int size = 0;

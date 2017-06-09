@@ -65,6 +65,7 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
+@SuppressWarnings("deprecation")
 public abstract class AbstractInMemoryAtomSet extends AbstractAtomSet implements InMemoryAtomSet {
 
 	@Override

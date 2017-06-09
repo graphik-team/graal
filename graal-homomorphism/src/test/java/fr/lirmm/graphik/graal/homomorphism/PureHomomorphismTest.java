@@ -54,7 +54,6 @@ import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.homomorphism.ExistentialHomomorphismWithCompilation;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
 import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.compilation.IDCompilation;
@@ -69,6 +68,7 @@ import fr.lirmm.graphik.util.stream.IteratorException;
 @RunWith(Theories.class)
 public class PureHomomorphismTest {
 
+	@SuppressWarnings("rawtypes")
 	@DataPoints
 	public static ExistentialHomomorphismWithCompilation[] writeableStore() {
 		ExistentialHomomorphismWithCompilation[] array = {PureHomomorphism.instance()};

@@ -61,6 +61,7 @@ import fr.lirmm.graphik.util.stream.converter.ConverterCloseableIterator;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
+@SuppressWarnings("deprecation")
 public class MappedStore extends AbstractStore {
 
 	private Store store;
@@ -143,6 +144,7 @@ public class MappedStore extends AbstractStore {
 		return store.add(mapper.map(atom));
 	}
 	
+	@SuppressWarnings("unchecked")
 	public boolean addAll(CloseableIterator<? extends Atom> it) throws AtomSetException {
 		return store.addAll(new ConverterCloseableIterator<Atom, Atom>((CloseableIterator<Atom>) it, this.converter));
 	}

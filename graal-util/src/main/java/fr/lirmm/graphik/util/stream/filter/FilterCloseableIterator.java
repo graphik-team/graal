@@ -66,6 +66,7 @@ public class FilterCloseableIterator<U, T> extends AbstractCloseableIterator<T> 
 		this.next = null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean hasNext() throws IteratorException {
 		while (this.next == null && this.it.hasNext()) {

@@ -30,7 +30,8 @@ class TrieNode<T, V> {
 	 * @param word
 	 *            the word to add
 	 */
-	public V put(V value, int index, T... word) {
+	@SafeVarargs
+	public final V put(V value, int index, T... word) {
 		if (word.length <= index) {
 			V tmp = this.value;
 			this.value = value;
@@ -51,7 +52,8 @@ class TrieNode<T, V> {
 	 * 
 	 * @return the associated value to the specified word.
 	 */
-	public V get(int index, T... word) {
+	@SafeVarargs
+	public final V get(int index, T... word) {
 		if (word.length <= index) {
 			return this.value;
 		} else {

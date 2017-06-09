@@ -63,7 +63,7 @@ public interface EquivalentRelation<T> {
 	 * @param elements
 	 * @return the affected class id
 	 */
-	int addClasse(T... elements);
+	int addClasse(@SuppressWarnings("unchecked") T... elements);
 
 	/**
 	 * @param o1

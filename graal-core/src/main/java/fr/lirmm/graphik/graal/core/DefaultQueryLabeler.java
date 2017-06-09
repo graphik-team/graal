@@ -46,7 +46,6 @@ import java.util.Set;
 
 import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.core.QueryLabeler;
-import fr.lirmm.graphik.graal.api.core.Rule;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}

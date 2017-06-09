@@ -91,6 +91,7 @@ import fr.lirmm.graphik.util.stream.converter.ConverterCloseableIterator;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
+@SuppressWarnings("deprecation")
 public class NaturalRDBMSStore extends AbstractRdbmsStore {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(NaturalRDBMSStore.class);

@@ -18,7 +18,8 @@ public class Trie<T,V>
     * @param value
     * @param word
     */
-   public V put(V value, T... word)
+   @SafeVarargs
+   public final V put(V value, T... word)
    {
       return root.put(value, 0, word);
    }
@@ -30,7 +31,8 @@ public class Trie<T,V>
     * @param word
     * @return the associated value, or null if there is no value associated.
     */
-   public V get(T... word)
+   @SafeVarargs
+   public final V get(T... word)
    {
       return root.get(0, word);
    }

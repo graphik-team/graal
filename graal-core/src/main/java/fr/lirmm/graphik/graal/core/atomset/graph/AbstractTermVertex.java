@@ -103,6 +103,7 @@ abstract class AbstractTermVertex extends AbstractTerm implements TermVertex {
 		return size;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean addNeighbor(AtomEdge a) {
 		Collection<Atom>[] map = this.index.get(a.getPredicate());

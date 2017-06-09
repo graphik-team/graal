@@ -56,6 +56,7 @@ public class AndFilter<E> implements Filter<E> {
 
 	private Filter<E> filters[];
 
+	@SafeVarargs
 	public AndFilter(Filter<E>... filters) {
 		this.filters = filters;
 	}

@@ -46,7 +46,6 @@
 package fr.lirmm.graphik.util.stream.filter;
 
 import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
 
@@ -68,6 +67,7 @@ public class FilterIterator<U, T> implements CloseableIterator<T> {
 		this.next = null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean hasNext() throws IteratorException {
 		while (this.next == null && this.it.hasNext()) {

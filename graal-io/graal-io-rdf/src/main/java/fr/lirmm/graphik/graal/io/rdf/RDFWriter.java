@@ -45,7 +45,6 @@ package fr.lirmm.graphik.graal.io.rdf;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.RDFHandlerException;

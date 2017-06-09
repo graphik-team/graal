@@ -45,7 +45,6 @@ package fr.lirmm.graphik.graal.io.sparql;
 import java.io.IOException;
 import java.io.Writer;
 
-import fr.lirmm.graphik.graal.GraalConstant;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
@@ -179,7 +178,6 @@ public class AbstractSparqlWriter extends AbstractWriter {
 	}
 
 	protected void writeSimpleIdentifier(String identifier) throws IOException {
-		char first = identifier.charAt(0);
 		identifier = identifier.replaceAll("[^a-zA-Z0-9_]", "_");
 		this.write(identifier);
 	}

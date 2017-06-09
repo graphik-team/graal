@@ -48,6 +48,8 @@ package fr.lirmm.graphik.graal.api.util;
  */
 public class TimeoutException extends Exception {
 
+	private static final long serialVersionUID = -5824235118789430114L;
+
 	public TimeoutException(String message) {
 		super(message);
 	}

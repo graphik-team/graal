@@ -264,10 +264,9 @@ public class RuleMLWriter extends AbstractGraalWriter {
 		if(!label.isEmpty()) {
 			this.writeIndent();
 			this.write("<!-- ");
-			http: // www.w3.org/2001
 			this.write(label);
 			this.write(" -->");
-		}
+		}	
 	}
 	
 	protected void writeAtomSet(CloseableIterator<Atom> it) throws IOException {

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2017)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,39 +40,48 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.util.stream.filter;
+package fr.lirmm.graphik.util.stream;
+
+import java.util.Iterator;
 
 /**
- * This Filter implementation returns false on an element iff all filters given to 
- * the constructor return false on this element.
- * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- *
- */
-public class OrFilter<E> implements Filter<E> {
+ * Remove adjacent equals elements.
+ **/
+public class UniqIterator<T> implements CloseableIterator<T> {
 
-	// /////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	// /////////////////////////////////////////////////////////////////////////
+	private CloseableIterator<T> it;
+	private T previous;
+	private T next;
 
-	private Filter<E> filters[];
-
-	@SafeVarargs
-	public OrFilter(Filter<E>... filters) {
-		this.filters = filters;
+	public UniqIterator(Iterator<T> it) {
+		this.it = new CloseableIteratorAdapter<T>(it);
 	}
 
-	// /////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	// /////////////////////////////////////////////////////////////////////////
+	public UniqIterator(CloseableIterator<T> it) {
+		this.it = it;
+	}
 
 	@Override
-	public boolean filter(E e) {
-		for(Filter<E> f : this.filters) {
-			if(f.filter(e)) {
-				return true;
+	public boolean hasNext() throws IteratorException {
+		while (this.next == null && this.it.hasNext()) {
+			T current = this.it.next();
+			if (!current.equals(this.previous)) {
+				this.next = current;
 			}
 		}
-		return false;
+		return this.next != null;
+	}
+
+	@Override
+	public T next() {
+		this.previous = next;
+		this.next = null;
+		return this.previous;
+	}
+
+	@Override
+	public void close() {
+		this.it.close();
 	}
 
 }

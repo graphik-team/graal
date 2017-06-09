@@ -176,45 +176,6 @@ public final class Iterators {
 	// PRIVATE CLASSES
 	// /////////////////////////////////////////////////////////////////////////
 
-	private static class UniqIterator<T> implements CloseableIterator<T> {
-
-		private CloseableIterator<T> it;
-		private T previous;
-		private T next;
-
-		public UniqIterator(Iterator<T> it) {
-			this.it = new CloseableIteratorAdapter<T>(it);
-		}
-
-		public UniqIterator(CloseableIterator<T> it) {
-			this.it = it;
-		}
-
-		@Override
-		public boolean hasNext() throws IteratorException {
-			while (this.next == null && this.it.hasNext()) {
-				T current = this.it.next();
-				if (!current.equals(this.previous)) {
-					this.next = current;
-				}
-			}
-			return this.next != null;
-		}
-
-		@Override
-		public T next() {
-			this.previous = next;
-			this.next = null;
-			return this.previous;
-		}
-
-		@Override
-		public void close() {
-			this.it.close();
-		}
-
-	}
-
 	/**
 	 * @param it
 	 * @return a List containing all elements accessible by the specified iterator.

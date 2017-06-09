@@ -110,7 +110,7 @@ public final class MFAProperty extends RuleSetProperty.Default {
 	public int check(AnalyserRuleSet ruleSet) {
 		RuleSet R = translateToMFA(ruleSet);
 		AtomSet A = Rules.criticalInstance(ruleSet);
-		Chase chase = new ChaseWithGRD(new DefaultGraphOfRuleDependencies(R), A, new DefaultRuleApplier(new FrontierRestrictedChaseHaltingCondition()));
+		Chase chase = new ChaseWithGRD<AtomSet>(new DefaultGraphOfRuleDependencies(R), A, new DefaultRuleApplier<AtomSet>(new FrontierRestrictedChaseHaltingCondition()));
 
 		DefaultConjunctiveQuery Q = new DefaultConjunctiveQuery();
 		DefaultAtom q = new DefaultAtom(C);

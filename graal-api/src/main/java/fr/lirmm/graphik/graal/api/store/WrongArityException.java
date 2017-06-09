@@ -50,6 +50,8 @@ import fr.lirmm.graphik.graal.api.core.AtomSetException;
  */
 public class WrongArityException extends AtomSetException {
 
+	private static final long serialVersionUID = -2581258383245952424L;
+
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////

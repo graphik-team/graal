@@ -53,7 +53,6 @@ import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.Rules;
 import fr.lirmm.graphik.graal.rulesetanalyser.graph.AffectedPositionSet;
-import fr.lirmm.graphik.graal.rulesetanalyser.graph.JointlyAffectedPositionSet;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
 
 /**

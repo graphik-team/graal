@@ -58,6 +58,7 @@ import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
+@SuppressWarnings("deprecation")
 public class ConjunctiveQueryRuleAdapter extends AbstractRule {
 	
 	private InMemoryAtomSet query;

@@ -49,7 +49,6 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.factory.DefaultAtomSetFactory;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;

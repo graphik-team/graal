@@ -89,6 +89,7 @@ public class ConjunctiveQueryWithCompilation {
 		return TestUtil.getAtomSet();
 	}
 
+	@SuppressWarnings("rawtypes")
 	@DataPoints
 	public static Homomorphism[] homomorphisms() {
 		return TestUtil.getHomomorphisms();
@@ -105,11 +106,11 @@ public class ConjunctiveQueryWithCompilation {
 
 	
 	@Theory
-	public void test1(Homomorphism hh, RulesCompilationFactory factory, AtomSet store) throws Exception {
+	public void test1(Homomorphism<ConjunctiveQuery, AtomSet> hh, RulesCompilationFactory factory, AtomSet store) throws Exception {
 		Assume.assumeFalse(store instanceof TripleStore);
 		Assume.assumeTrue(hh instanceof HomomorphismWithCompilation);
 
-		HomomorphismWithCompilation h = (HomomorphismWithCompilation) hh;
+		HomomorphismWithCompilation<ConjunctiveQuery, AtomSet> h = (HomomorphismWithCompilation<ConjunctiveQuery, AtomSet>) hh;
 		
 		store.add(DlgpParser.parseAtom("<P>(a)."));
 
@@ -131,10 +132,10 @@ public class ConjunctiveQueryWithCompilation {
 
 
 	@Theory
-	public void test2(Homomorphism hh, RulesCompilationFactory factory, AtomSet store)
+	public void test2(Homomorphism<ConjunctiveQuery, AtomSet> hh, RulesCompilationFactory factory, AtomSet store)
 	    throws Exception {
 		Assume.assumeTrue(hh instanceof HomomorphismWithCompilation);
-		HomomorphismWithCompilation h = (HomomorphismWithCompilation) hh;
+		HomomorphismWithCompilation<ConjunctiveQuery, AtomSet> h = (HomomorphismWithCompilation<ConjunctiveQuery, AtomSet>) hh;
 		
 		store.add(DlgpParser.parseAtom("<P>(a,b)."));
 
@@ -159,11 +160,11 @@ public class ConjunctiveQueryWithCompilation {
 	}
 	
 	@Theory
-	public void backtrackHomomorphismBootstrapperTest1(Homomorphism hh, RulesCompilationFactory factory, AtomSet store) throws Exception {
+	public void backtrackHomomorphismBootstrapperTest1(Homomorphism<ConjunctiveQuery, AtomSet> hh, RulesCompilationFactory factory, AtomSet store) throws Exception {
 		Assume.assumeFalse(store instanceof TripleStore);
 		Assume.assumeTrue(hh instanceof HomomorphismWithCompilation);
 		
-		HomomorphismWithCompilation h = (HomomorphismWithCompilation) hh;
+		HomomorphismWithCompilation<ConjunctiveQuery, AtomSet> h = (HomomorphismWithCompilation<ConjunctiveQuery, AtomSet>) hh;
 					
 		store.addAll(DlgpParser.parseAtomSet("<P>(b,a)."));
 		
@@ -189,11 +190,11 @@ public class ConjunctiveQueryWithCompilation {
 	}
 	
 	@Theory
-	public void backtrackHomomorphismBootstrapperTest2(Homomorphism hh, RulesCompilationFactory factory, AtomSet store) throws Exception {
+	public void backtrackHomomorphismBootstrapperTest2(Homomorphism<ConjunctiveQuery, AtomSet> hh, RulesCompilationFactory factory, AtomSet store) throws Exception {
 		Assume.assumeFalse(store instanceof TripleStore);
 		Assume.assumeTrue(hh instanceof HomomorphismWithCompilation);
 		
-		HomomorphismWithCompilation h = (HomomorphismWithCompilation) hh;
+		HomomorphismWithCompilation<ConjunctiveQuery, AtomSet> h = (HomomorphismWithCompilation<ConjunctiveQuery, AtomSet>) hh;
 		
 		store.addAll(DlgpParser.parseAtomSet("<P>(b,a)."));
 		
@@ -220,10 +221,10 @@ public class ConjunctiveQueryWithCompilation {
 	
 
 	@Theory
-	public void issue34(Homomorphism hh, RulesCompilationFactory factory, AtomSet store)
+	public void issue34(Homomorphism<ConjunctiveQuery, AtomSet> hh, RulesCompilationFactory factory, AtomSet store)
 	    throws Exception {
 		Assume.assumeTrue(hh instanceof HomomorphismWithCompilation);
-		HomomorphismWithCompilation h = (HomomorphismWithCompilation) hh;
+		HomomorphismWithCompilation<ConjunctiveQuery, AtomSet> h = (HomomorphismWithCompilation<ConjunctiveQuery, AtomSet>) hh;
 
 		store.add(DlgpParser.parseAtom("<Q>(a,b)."));
 
@@ -244,11 +245,11 @@ public class ConjunctiveQueryWithCompilation {
 	}
 
 	@Theory
-	public void issue35(Homomorphism hh, RulesCompilationFactory factory, AtomSet store)
+	public void issue35(Homomorphism<ConjunctiveQuery, AtomSet> hh, RulesCompilationFactory factory, AtomSet store)
 	    throws Exception {
 		Assume.assumeFalse(store instanceof TripleStore);
 		Assume.assumeTrue(hh instanceof HomomorphismWithCompilation);
-		HomomorphismWithCompilation h = (HomomorphismWithCompilation) hh;
+		HomomorphismWithCompilation<ConjunctiveQuery, AtomSet> h = (HomomorphismWithCompilation<ConjunctiveQuery, AtomSet>) hh;
 		
 		store.addAll(DlgpParser.parseAtomSet("<P>(a,a), <R>(a,b,b)."));
 
@@ -271,7 +272,7 @@ public class ConjunctiveQueryWithCompilation {
 	public void issueWithAtom2SubstitutionConverter(RulesCompilationFactory factory, AtomSet store)
 	    throws Exception {
 		Assume.assumeFalse(store instanceof TripleStore);
-		HomomorphismWithCompilation h = AtomicQueryHomomorphism.instance();
+		HomomorphismWithCompilation<ConjunctiveQuery, AtomSet> h = AtomicQueryHomomorphism.instance();
 		
 		store.addAll(DlgpParser.parseAtomSet("<P>(a,a)."));
 

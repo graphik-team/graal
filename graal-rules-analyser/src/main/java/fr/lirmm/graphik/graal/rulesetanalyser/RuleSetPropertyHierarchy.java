@@ -75,7 +75,6 @@ public class RuleSetPropertyHierarchy {
 
 		boolean running = true;
 		boolean is_source;
-		boolean found;
 		while (running) {
 			is_source = false;
 			// find a source

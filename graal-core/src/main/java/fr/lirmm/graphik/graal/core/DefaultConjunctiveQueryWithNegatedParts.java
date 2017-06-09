@@ -44,7 +44,6 @@ package fr.lirmm.graphik.graal.core;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQueryWithNegatedPart;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;

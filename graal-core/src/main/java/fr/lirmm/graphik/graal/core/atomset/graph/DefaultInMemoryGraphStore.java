@@ -74,6 +74,7 @@ import fr.lirmm.graphik.util.stream.filter.UniqFilter;
 /**
  * Implementation of a graph in memory. Inherits directly from Fact.
  */
+@SuppressWarnings("deprecation")
 public class DefaultInMemoryGraphStore extends AbstractInMemoryAtomSet implements Store {
 
 	private int size = 0;
@@ -289,6 +290,7 @@ public class DefaultInMemoryGraphStore extends AbstractInMemoryAtomSet implement
 		if (p == null) {
 			p = predicate;
 			this.predicates.put(p, p);
+			@SuppressWarnings("unchecked")
 			Set<Term>[] array = new Set[predicate.getArity()];
 			for (int i = 0; i < array.length; ++i) {
 				array[i] = CurrentIndexFactory.instance().<Term>createSet();

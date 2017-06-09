@@ -55,8 +55,6 @@ import org.eclipse.rdf4j.repository.sail.SailRepository;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import org.junit.Assert;
 
-import com.tinkerpop.blueprints.impls.tg.TinkerGraph;
-
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
@@ -88,6 +86,7 @@ import fr.lirmm.graphik.graal.store.triplestore.rdf4j.RDF4jStore;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
+@SuppressWarnings("deprecation")
 public final class TestUtil {
 
 	private TestUtil() {
@@ -117,6 +116,7 @@ public final class TestUtil {
 	public static Neo4jStore neo4jStore = null;
 	public static RDF4jStore sailStore = null;
 
+	@SuppressWarnings({ "rawtypes" })
 	public static Homomorphism[] getHomomorphisms() {
 
 		BCC bcc0 = new BCC(true);

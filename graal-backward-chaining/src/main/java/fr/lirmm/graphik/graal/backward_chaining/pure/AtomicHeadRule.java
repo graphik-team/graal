@@ -60,6 +60,7 @@ import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
  * @author Mélanie KÖNIG
  * 
  */
+@SuppressWarnings("deprecation")
 class AtomicHeadRule implements Rule {
 
 	private Rule rule;

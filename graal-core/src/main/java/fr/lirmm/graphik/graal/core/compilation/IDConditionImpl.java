@@ -124,7 +124,7 @@ class IDConditionImpl implements IDCondition {
 
 	@Override
 	public List<Integer> getBody() {
-		List<Integer> list = new ArrayList(condBody.length);
+		List<Integer> list = new ArrayList<Integer>(condBody.length);
 		for (int i = 0; i < condBody.length; ++i) {
 			list.add(condBody[i]);
 		}
@@ -235,7 +235,6 @@ class IDConditionImpl implements IDCondition {
 	public Partition<Term> generateUnification(List<Term> body, List<Term> head) {
 		Partition<Term> res = new Partition<Term>();
 		Term[] map = new Term[body.size()];
-		Term[] containedConstant = new Term[body.size()];
 
 		// put together term of body that must be unify according to this
 		for (int i = 0; i < condBody.length; ++i) {

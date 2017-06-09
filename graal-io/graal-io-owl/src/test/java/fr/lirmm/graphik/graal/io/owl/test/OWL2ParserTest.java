@@ -134,7 +134,7 @@ public class OWL2ParserTest {
 				Assert.assertFalse(headIt.hasNext());
 			}
 		}
-
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 1, nbRules);
 	}
 
@@ -168,7 +168,7 @@ public class OWL2ParserTest {
 				Assert.assertFalse(headIt.hasNext());
 			}
 		}
-
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 2, nbRules);
 	}
 
@@ -204,7 +204,7 @@ public class OWL2ParserTest {
 				    A.equals(body2.getPredicate()) || B.equals(body2.getPredicate()) || C.equals(body2.getPredicate()));
 			}
 		}
-
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 3, nbNegativeConstraint);
 	}
 
@@ -246,7 +246,7 @@ public class OWL2ParserTest {
 				Assert.assertFalse(headIt.hasNext());
 			}
 		}
-
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 3, nbRules);
 	}
 
@@ -288,7 +288,7 @@ public class OWL2ParserTest {
 
 			}
 		}
-
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 1, nbRules);
 	}
 
@@ -327,7 +327,7 @@ public class OWL2ParserTest {
 				Assert.assertEquals(I1, body.getTerm(1));
 			}
 		}
-
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 1, nbRules);
 	}
 
@@ -366,7 +366,7 @@ public class OWL2ParserTest {
 				Assert.assertEquals(body.getTerm(0), head.getTerm(0));
 			}
 		}
-
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 1, nbRules);
 	}
 
@@ -408,6 +408,7 @@ public class OWL2ParserTest {
 				Assert.assertEquals(body.getTerm(0), head.getTerm(0));
 			}
 		}
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 1, nbRules);
 	}
 
@@ -430,6 +431,7 @@ public class OWL2ParserTest {
 				++nbAssertions;
 			}
 		}
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 0, nbAssertions);
 	}
 
@@ -452,6 +454,7 @@ public class OWL2ParserTest {
 				++nbAssertions;
 			}
 		}
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 1, nbAssertions);
 	}
 
@@ -496,7 +499,7 @@ public class OWL2ParserTest {
 
 			}
 		}
-
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 1, nbRules);
 	}
 
@@ -519,6 +522,7 @@ public class OWL2ParserTest {
 				++nbRules;
 			}
 		}
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 1, nbRules);
 	}
 
@@ -658,7 +662,7 @@ public class OWL2ParserTest {
 				Assert.assertTrue(!body.getTerm(0).isConstant() || body.getTerm(0).equals(I1));
 			}
 		}
-
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 1, nbRules);
 	}
 
@@ -695,7 +699,7 @@ public class OWL2ParserTest {
 				Assert.assertTrue(A.equals(body2.getPredicate()) || B.equals(body2.getPredicate()));
 			}
 		}
-
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 1, nbRules);
 	}
 
@@ -742,7 +746,7 @@ public class OWL2ParserTest {
 				Assert.assertFalse(headIt.hasNext());
 			}
 		}
-
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 1, nbRules);
 	}
 
@@ -784,7 +788,7 @@ public class OWL2ParserTest {
 				Assert.assertFalse(headIt.hasNext());
 			}
 		}
-
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 3, nbRules);
 	}
 
@@ -809,7 +813,7 @@ public class OWL2ParserTest {
 				}
 			}
 		}
-
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 3, nbRules);
 	}
 
@@ -853,7 +857,7 @@ public class OWL2ParserTest {
 				Assert.assertFalse(headIt.hasNext());
 			}
 		}
-
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 3, nbRules);
 	}
 
@@ -879,6 +883,7 @@ public class OWL2ParserTest {
 				++nbRules;
 			}
 		}
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 2, nbRules);
 	}
 
@@ -900,6 +905,7 @@ public class OWL2ParserTest {
 				++nbRules;
 			}
 		}
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 3, nbRules);
 	}
 
@@ -922,6 +928,7 @@ public class OWL2ParserTest {
 				++nbRules;
 			}
 		}
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 4, nbRules);
 	}
 
@@ -943,6 +950,7 @@ public class OWL2ParserTest {
 				}
 			}
 		}
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 4, nbRules);
 	}
 
@@ -965,6 +973,7 @@ public class OWL2ParserTest {
 				++nbRules;
 			}
 		}
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 4, nbRules);
 	}
 
@@ -1004,6 +1013,7 @@ public class OWL2ParserTest {
 
 			}
 		}
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 6, nbRules);
 	}
 
@@ -1027,6 +1037,7 @@ public class OWL2ParserTest {
 				++nbAssertions;
 			}
 		}
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 1, nbAssertions);
 	}
 
@@ -1047,6 +1058,7 @@ public class OWL2ParserTest {
 				++nbAssertions;
 			}
 		}
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 6, nbAssertions);
 	}
 	// /////////////////////////////////////////////////////////////////////////
@@ -1079,7 +1091,7 @@ public class OWL2ParserTest {
 					Assert.assertEquals(subProperty.getTerm(1), property.getTerm(1));
 				}
 			}
-
+			parser.close();
 			Assert.assertEquals("Number of assertions found:", 1, nbRules);
 		} catch (Exception e) {
 			Assert.assertFalse(e.getMessage(), true);
@@ -1111,7 +1123,7 @@ public class OWL2ParserTest {
 					Assert.assertEquals(property.getTerm(1), subProperty.getTerm(1));
 				}
 			}
-
+			parser.close();
 			Assert.assertEquals("Number of assertions found:", 2, nbRules);
 		} catch (Exception e) {
 			Assert.assertFalse(e.getMessage(), true);
@@ -1143,7 +1155,7 @@ public class OWL2ParserTest {
 					Assert.assertEquals(property.getTerm(1), subProperty.getTerm(0));
 				}
 			}
-
+			parser.close();
 			Assert.assertEquals("Number of assertions found:", 2, nbRules);
 		} catch (Exception e) {
 			Assert.assertFalse(e.getMessage(), true);
@@ -1180,7 +1192,7 @@ public class OWL2ParserTest {
 					Assert.assertEquals(a1.getTerm(1), a2.getTerm(1));
 				}
 			}
-
+			parser.close();
 			Assert.assertEquals("Number of assertions found:", 1, nbRules);
 		} catch (Exception e) {
 			Assert.assertFalse(e.getMessage(), true);
@@ -1222,7 +1234,7 @@ public class OWL2ParserTest {
 
 				}
 			}
-
+			parser.close();
 			Assert.assertEquals("Number of assertions found:", 1, nbRules);
 		} catch (Exception e) {
 			Assert.assertFalse(e.getMessage(), true);
@@ -1262,7 +1274,7 @@ public class OWL2ParserTest {
 
 				}
 			}
-
+			parser.close();
 			Assert.assertEquals("Number of assertions found:", 1, nbRules);
 		} catch (Exception e) {
 			Assert.assertFalse(e.getMessage(), true);
@@ -1297,7 +1309,7 @@ public class OWL2ParserTest {
 					Assert.assertEquals(b.getTerm(0), h.getTerm(1));
 				}
 			}
-
+			parser.close();
 			Assert.assertEquals("Number of assertions found:", 1, nbRules);
 		} catch (Exception e) {
 			Assert.assertFalse(e.getMessage(), true);
@@ -1325,7 +1337,7 @@ public class OWL2ParserTest {
 					Assert.assertEquals(b.getTerm(0), b.getTerm(1));
 				}
 			}
-
+			parser.close();
 			Assert.assertEquals("Number of assertions found:", 1, nbRules);
 		} catch (Exception e) {
 			Assert.assertFalse(e.getMessage(), true);
@@ -1360,7 +1372,7 @@ public class OWL2ParserTest {
 					Assert.assertEquals(b.getTerm(1), h.getTerm(0));
 				}
 			}
-
+			parser.close();
 			Assert.assertEquals("Number of assertions found:", 1, nbRules);
 		} catch (Exception e) {
 			Assert.assertFalse(e.getMessage(), true);
@@ -1392,7 +1404,7 @@ public class OWL2ParserTest {
 					Assert.assertEquals(a1.getTerm(1), a2.getTerm(0));
 				}
 			}
-
+			parser.close();
 			Assert.assertEquals("Number of assertions found:", 1, nbRules);
 		} catch (Exception e) {
 			Assert.assertFalse(e.getMessage(), true);
@@ -1429,7 +1441,7 @@ public class OWL2ParserTest {
 					Assert.assertTrue(h.getTerm(1).equals(b1.getTerm(1)) || h.getTerm(1).equals(b2.getTerm(1)));
 				}
 			}
-
+			parser.close();
 			Assert.assertEquals("Number of assertions found:", 1, nbRules);
 		} catch (Exception e) {
 			Assert.assertFalse(e.getMessage(), true);
@@ -1463,7 +1475,7 @@ public class OWL2ParserTest {
 					found = true;
 				}
 			}
-
+			parser.close();
 			Assert.assertTrue("Number of assertions found:", found);
 		} catch (Exception e) {
 			Assert.assertFalse(e.getMessage(), true);
@@ -1493,7 +1505,7 @@ public class OWL2ParserTest {
 					found = true;
 				}
 			}
-
+			parser.close();
 			Assert.assertTrue("Number of assertions found:", found);
 		} catch (Exception e) {
 			Assert.assertFalse(e.getMessage(), true);
@@ -1537,7 +1549,7 @@ public class OWL2ParserTest {
 				Assert.assertFalse(headIt.hasNext());
 			}
 		}
-
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 1, nbRules);
 	}
 
@@ -1564,6 +1576,7 @@ public class OWL2ParserTest {
 				++nbAssertions;
 			}
 		}
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 1, nbAssertions);
 	}
 
@@ -1607,7 +1620,7 @@ public class OWL2ParserTest {
 
 			}
 		}
-
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 1, nbRules);
 	}
 
@@ -1630,6 +1643,7 @@ public class OWL2ParserTest {
 				++nbRules;
 			}
 		}
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 1, nbRules);
 	}
 
@@ -1652,6 +1666,7 @@ public class OWL2ParserTest {
 				++nbRules;
 			}
 		}
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 1, nbRules);
 	}
 
@@ -1674,6 +1689,7 @@ public class OWL2ParserTest {
 				++nbRules;
 			}
 		}
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 1, nbRules);
 	}
 
@@ -1696,6 +1712,7 @@ public class OWL2ParserTest {
 				++nbRules;
 			}
 		}
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 2, nbRules);
 	}
 
@@ -1723,7 +1740,7 @@ public class OWL2ParserTest {
 				found = true;
 			}
 		}
-
+		parser.close();
 		Assert.assertTrue("Number of assertions found:", found);
 	}
 
@@ -1751,7 +1768,7 @@ public class OWL2ParserTest {
 				found = true;
 			}
 		}
-
+		parser.close();
 		Assert.assertTrue("Number of assertions found:", found);
 	}
 
@@ -1769,11 +1786,10 @@ public class OWL2ParserTest {
 			Object o = parser.next();
 			if (!(o instanceof Prefix)) {
 				Assert.assertTrue(o instanceof Rule);
-				Rule r = (Rule) o;
 				++nbAssertions;
 			}
 		}
-
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 2, nbAssertions);
 	}
 
@@ -1791,12 +1807,10 @@ public class OWL2ParserTest {
 			Object o = parser.next();
 			if (!(o instanceof Prefix)) {
 				Assert.assertTrue(o instanceof Rule);
-				Rule r = (Rule) o;
 				++nbAssertions;
-
 			}
 		}
-
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 1, nbAssertions);
 	}
 
@@ -1812,11 +1826,10 @@ public class OWL2ParserTest {
 			Object o = parser.next();
 			if (!(o instanceof Prefix)) {
 				Assert.assertTrue(o instanceof Rule);
-				Rule r = (Rule) o;
 				++nbAssertions;
 			}
 		}
-
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 3, nbAssertions);
 	}
 
@@ -1834,12 +1847,10 @@ public class OWL2ParserTest {
 			Object o = parser.next();
 			if (!(o instanceof Prefix)) {
 				Assert.assertTrue(o instanceof Rule);
-				Rule r = (Rule) o;
 				++nbAssertions;
-
 			}
 		}
-
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 2, nbAssertions);
 	}
 
@@ -1857,12 +1868,10 @@ public class OWL2ParserTest {
 			Object o = parser.next();
 			if (!(o instanceof Prefix)) {
 				Assert.assertTrue(o instanceof Rule);
-				Rule r = (Rule) o;
 				++nbAssertions;
-
 			}
 		}
-
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 1, nbAssertions);
 	}
 
@@ -1882,12 +1891,10 @@ public class OWL2ParserTest {
 			Object o = parser.next();
 			if (!(o instanceof Prefix)) {
 				Assert.assertTrue(o instanceof Rule);
-				Rule r = (Rule) o;
 				++nbAssertions;
-
 			}
 		}
-
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 3, nbAssertions);
 	}
 
@@ -1905,11 +1912,10 @@ public class OWL2ParserTest {
 			Object o = parser.next();
 			if (!(o instanceof Prefix)) {
 				Assert.assertTrue(o instanceof Rule);
-				Rule r = (Rule) o;
 				++nbAssertions;
 			}
 		}
-
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 1, nbAssertions);
 	}
 
@@ -1940,7 +1946,7 @@ public class OWL2ParserTest {
 				Assert.assertEquals(subProperty.getTerm(1), property.getTerm(0));
 			}
 		}
-
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 1, nbRules);
 
 	}
@@ -1998,7 +2004,7 @@ public class OWL2ParserTest {
 
 			}
 		}
-
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 1, nbRules);
 
 	}
@@ -2025,6 +2031,7 @@ public class OWL2ParserTest {
 
 			}
 		}
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 1, nbFacts);
 	}
 
@@ -2061,6 +2068,7 @@ public class OWL2ParserTest {
 
 			}
 		}
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 1, nbFacts);
 		Assert.assertEquals("Number of assertions found:", 1, nbConstraint);
 	}
@@ -2082,6 +2090,7 @@ public class OWL2ParserTest {
 				found = true;
 			}
 		}
+		parser.close();
 		Assert.assertTrue("Number of assertions found:", found);
 
 	}
@@ -2108,6 +2117,7 @@ public class OWL2ParserTest {
 					}
 				}
 			}
+			parser.close();
 			Assert.assertEquals("Number of facts found:", 1, nbFacts);
 			Assert.assertEquals("Number of atoms found:", 2, nbAtoms);
 		} catch (Throwable e) {
@@ -2154,6 +2164,7 @@ public class OWL2ParserTest {
 					Assert.assertEquals(p1, b0);
 				}
 			}
+			parser.close();
 			Assert.assertEquals("Number of facts found:", 2, nbFacts);
 			Assert.assertEquals("Number of atoms found:", 6, nbAtoms);
 		} catch (Throwable e) {
@@ -2179,6 +2190,7 @@ public class OWL2ParserTest {
 				found = true;
 			}
 		}
+		parser.close();
 		Assert.assertTrue("Number of assertions found:", found);
 
 	}
@@ -2239,6 +2251,7 @@ public class OWL2ParserTest {
 				++nbAssertion;
 			}
 		}
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 0, nbAssertion);
 	}
 
@@ -2264,6 +2277,7 @@ public class OWL2ParserTest {
 
 			}
 		}
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 1, nbAssertion);
 	}
 
@@ -2285,6 +2299,7 @@ public class OWL2ParserTest {
 
 			}
 		}
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 0, nbAssertion);
 	}
 
@@ -2305,6 +2320,7 @@ public class OWL2ParserTest {
 				++nbAssertion;
 			}
 		}
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 1, nbAssertion);
 	}
 
@@ -2328,6 +2344,7 @@ public class OWL2ParserTest {
 				++nbAssertion;
 			}
 		}
+		parser.close();
 		Assert.assertEquals("Number of assertions found:", 1, nbAssertion);
 	}
 	//

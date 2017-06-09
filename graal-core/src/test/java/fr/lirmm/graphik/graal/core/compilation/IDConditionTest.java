@@ -76,8 +76,8 @@ public class IDConditionTest {
 
 	private static final Term A = DefaultTermFactory.instance().createConstant("a");
 	private static final Term B = DefaultTermFactory.instance().createConstant("b");
-	private static final Term C = DefaultTermFactory.instance().createConstant("c");
-	private static final Term D = DefaultTermFactory.instance().createConstant("d");
+	//private static final Term C = DefaultTermFactory.instance().createConstant("c");
+	//private static final Term D = DefaultTermFactory.instance().createConstant("d");
 
 	private static IDCondition createCondition(Term[] body, Term[] head) {
 		return new IDConditionImpl(Arrays.asList(body), Arrays.asList(head));

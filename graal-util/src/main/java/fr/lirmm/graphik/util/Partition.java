@@ -242,7 +242,7 @@ public class Partition<E> implements Iterable<ArrayList<E>> {
 		if (obj == null || !(obj instanceof Partition)) {
 			return false;
 		}
-		return this.equals((Partition<E>) obj);
+		return this.equals((Partition<?>) obj);
 	}
 
 	public boolean equals(Partition<E> other) { // NOPMD

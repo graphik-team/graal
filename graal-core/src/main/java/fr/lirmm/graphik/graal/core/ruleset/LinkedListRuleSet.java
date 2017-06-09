@@ -50,7 +50,6 @@ import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleSetException;
 import fr.lirmm.graphik.graal.core.stream.filter.RuleFilterIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.IteratorException;
 
 public class LinkedListRuleSet extends AbstractRuleSet implements
 		Collection<Rule> {

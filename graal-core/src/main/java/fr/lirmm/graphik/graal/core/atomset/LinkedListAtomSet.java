@@ -45,7 +45,6 @@ package fr.lirmm.graphik.graal.core.atomset;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
-import java.util.TreeSet;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;

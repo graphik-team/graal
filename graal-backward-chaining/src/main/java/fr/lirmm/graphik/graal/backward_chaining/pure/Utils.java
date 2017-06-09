@@ -350,7 +350,6 @@ final class Utils {
 					// for each possible atom at the next position clone the
 					// query and add the atom
 					for (Pair<Atom, Substitution> rew : atomsRewritings) {//
-						Atom atom = rew.getLeft();
 						copy = new LinkedListAtomSet(before.getLeft());
 						copy.add(rew.getLeft());
 						Substitution newSub = Substitutions.aggregate(before.getRight(), rew.getRight());

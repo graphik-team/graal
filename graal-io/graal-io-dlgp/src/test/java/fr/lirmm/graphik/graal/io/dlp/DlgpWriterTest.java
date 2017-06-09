@@ -51,7 +51,6 @@ import fr.lirmm.graphik.graal.api.core.Literal;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
-import fr.lirmm.graphik.graal.core.atomset.AtomSetUtils;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.DefaultURI;

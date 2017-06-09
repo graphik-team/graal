@@ -51,7 +51,6 @@ import org.junit.Test;
 import com.hp.hpl.jena.query.QueryParseException;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.Constant;
 import fr.lirmm.graphik.graal.api.core.Literal;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
@@ -71,10 +70,7 @@ public class SparqlRuleTest {
 	private static final Predicate B       = new Predicate(URIUtils.createURI(PREFIX + "B"), 1);
 	private static final Predicate P       = new Predicate(URIUtils.createURI(PREFIX + "p"), 2);
 	private static final Predicate Q       = new Predicate(URIUtils.createURI(PREFIX + "q"), 2);
-	private static final Constant  TOTO    = DefaultTermFactory.instance().createConstant(
-	                                           URIUtils.createURI(PREFIX + "toto"));
-	private static final Constant  TITI    = DefaultTermFactory.instance().createConstant(
-	                                           URIUtils.createURI(PREFIX + "titi"));
+
 	private static final Literal   STRING  = DefaultTermFactory.instance().createLiteral(URIUtils.XSD_STRING, "toto");
 	private static final Literal   INTEGER = DefaultTermFactory.instance().createLiteral(URIUtils.XSD_INTEGER, 7);
 
@@ -105,7 +101,6 @@ public class SparqlRuleTest {
 
 		try {
 			parser = new SparqlRuleParser(s);
-			Rule r = parser.getRule();
 		} catch (QueryParseException e) {
 			Assert.assertFalse("QueryParseException", true);
 		}

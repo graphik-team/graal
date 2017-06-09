@@ -51,6 +51,8 @@ package fr.lirmm.graphik.graal.io.owl;
  */
 class UnsupportedConstructor extends RuntimeException {
 
+	private static final long serialVersionUID = -2332845807329806012L;
+	
 	private Object constructor;
 
 	// /////////////////////////////////////////////////////////////////////////

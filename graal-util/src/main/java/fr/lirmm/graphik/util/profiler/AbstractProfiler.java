@@ -267,7 +267,7 @@ public abstract class AbstractProfiler implements Profiler {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{\n");
-		for (Map.Entry e : map.entrySet()) {
+		for (Map.Entry<String, Object> e : map.entrySet()) {
 			sb.append("\t").append(e.getKey()).append(": ").append(e.getValue()).append("\n");
 		}
 		sb.append("}\n");

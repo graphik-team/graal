@@ -50,9 +50,7 @@ import java.io.StringWriter;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.query.MalformedQueryException;
 import org.eclipse.rdf4j.query.QueryEvaluationException;
 import org.eclipse.rdf4j.query.QueryLanguage;
@@ -86,6 +84,7 @@ import fr.lirmm.graphik.util.stream.IteratorException;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
+@SuppressWarnings("deprecation")
 public class RDF4jStore extends AbstractTripleStore {
 
 	static final Logger LOGGER = LoggerFactory.getLogger(RDF4jStore.class);

@@ -7,6 +7,7 @@ public class ArrayIterator<T> implements Iterator<T> {
 	public T[] array;
 	int i = 0;
 	
+	@SafeVarargs
 	public ArrayIterator(T... array) {
 		this.array = array;
 	}

@@ -45,14 +45,12 @@
  */
 package fr.lirmm.graphik.graal.core.atomset.graph;
 
-import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -69,6 +67,7 @@ import fr.lirmm.graphik.util.ArrayIterator;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
+@SuppressWarnings("deprecation")
 class AtomEdge extends AbstractAtom implements Edge {
 
 	private PredicateVertex  predicate;

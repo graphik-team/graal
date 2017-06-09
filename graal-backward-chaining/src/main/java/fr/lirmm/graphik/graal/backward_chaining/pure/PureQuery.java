@@ -45,7 +45,6 @@
  */
 package fr.lirmm.graphik.graal.backward_chaining.pure;
 
-import java.util.Arrays;
 import java.util.List;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
