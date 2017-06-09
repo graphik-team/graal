@@ -85,12 +85,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-store-blueprints</artifactId>
-			<version>${project.parent.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.11</version>
