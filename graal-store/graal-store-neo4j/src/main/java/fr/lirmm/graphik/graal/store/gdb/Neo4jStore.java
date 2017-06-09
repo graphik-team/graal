@@ -346,7 +346,7 @@ public class Neo4jStore extends GraphDBStore {
 
 	@Override
 	public CloseableIterator<Atom> match(Atom atom) {
-		String query = containsAtomIntoCypherQuery(atom, false);
+		String query = matchAtomIntoCypherQuery(atom);
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(query);
 		}
@@ -480,7 +480,7 @@ public class Neo4jStore extends GraphDBStore {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("MATCH ");
-		atomToCypher(sb, a, true);
+		atomToCypher(sb, a, true, true);
 		sb.append("DELETE atom, rel_predicate");
 		int i = -1;
 		Iterator<Term> it = a.iterator();
@@ -500,13 +500,23 @@ public class Neo4jStore extends GraphDBStore {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("MATCH ");
-		atomToCypher(sb, a, checkVariableAsFixed);
+		atomToCypher(sb, a, checkVariableAsFixed, false);
+		sb.append("RETURN atom");
+
+		return sb.toString();
+	}
+	
+	private static String matchAtomIntoCypherQuery(Atom a) {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("MATCH ");
+		atomToCypher(sb, a, false, false);
 		sb.append("RETURN atom");
 
 		return sb.toString();
 	}
 
-	private static void atomToCypher(StringBuilder sb, Atom a, boolean checkVariableAsFixed) {
+	private static void atomToCypher(StringBuilder sb, Atom a, boolean checkVariableAsFixed, boolean checkType) {
 		sb.append("(atom:ATOM),");
 		predicateToCypher(sb, a.getPredicate());
 		sb.append(",");
@@ -517,8 +527,11 @@ public class Neo4jStore extends GraphDBStore {
 			// (atom)-[:TERM { index: ? }]->(term?)
 			++i;
 			if (checkVariableAsFixed || t.isConstant()) {
-				sb.append("(term").append(i).append(":TERM {value: '").append(t.getIdentifier().toString())
-				  .append("', type: '").append(getType(t)).append("' }), (atom)-[rel_term").append(i)
+				sb.append("(term").append(i).append(":TERM {value: '").append(t.getIdentifier().toString());
+				if(checkType) {
+					sb.append("', type: '").append(getType(t));
+				}
+				sb.append("' }), (atom)-[rel_term").append(i)
 				  .append(":TERM { index: ").append(i).append(" }]->(term").append(i).append("), ");
 			} else {
 				String id = t.getIdentifier().toString();
@@ -529,6 +542,7 @@ public class Neo4jStore extends GraphDBStore {
 
 		sb.append("(atom)-[rel_predicate:PREDICATE]->(predicate) ");
 	}
+
 
 	private static void predicateToCypher(StringBuilder sb, Predicate p) {
 		// (predicate:PREDICATE { value: <ID>, arity: <ARITY> })
@@ -567,7 +581,6 @@ public class Neo4jStore extends GraphDBStore {
 
 	private abstract class Neo4jElementIterator<E> extends AbstractCloseableIterator<E> {
 		ResourceIterator<Map<String, Object>> iterator;
-		Transaction                           transaction;
 		boolean isOpen = true;
 
 		/**
@@ -575,7 +588,6 @@ public class Neo4jStore extends GraphDBStore {
 		 */
 		public Neo4jElementIterator(Transaction transaction,
 				ResourceIterator<Map<String, Object>> iterator) {
-			this.transaction = transaction;
 			this.iterator = iterator;
 		}
 
@@ -595,10 +607,6 @@ public class Neo4jStore extends GraphDBStore {
 				this.close();
 				return false;
 			}
-		}
-
-		public void remove() {
-			throw new UnsupportedOperationException();
 		}
 
 	}

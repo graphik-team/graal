@@ -94,7 +94,6 @@ public class ChaseTest {
 	public void test1(AtomSet atomSet)
 	    throws AtomSetException, HomomorphismFactoryException, HomomorphismException, ChaseException,
 	    IteratorException, ParseException {
-		Assume.assumeFalse(atomSet instanceof Neo4jStore); // FIXME
 
 		atomSet.addAll(DlgpParser.parseAtomSet("<P>(X,a),<Q>(a,a)."));
 

@@ -318,8 +318,6 @@ public class ConjunctiveQueryTest {
 	 */
 	@Theory
 	public void atomicQueryOverExistentialVar(Homomorphism h, AtomSet store) {
-		Assume.assumeFalse(store instanceof Neo4jStore); // FIXME
-
 		try {
 			store.addAll(DlgpParser.parseAtomSet("<P>(X0, a)."));
 
