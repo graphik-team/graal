@@ -52,6 +52,9 @@ algorithms, structural analysis of decidability properties of a rule set, a text
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>1.7</jdk.version>
 		<jgrapht.version>0.9.0</jgrapht.version>
+		<commons-lang3.version>3.5</commons-lang3.version>
+		<commons-collections4.version>4.1</commons-collections4.version>
+		<commons-io.version>2.5</commons-io.version>
 	</properties>
 
 	<modules>
