@@ -242,26 +242,28 @@ public class Partition<E> implements Iterable<ArrayList<E>> {
 		if (obj == null || !(obj instanceof Partition)) {
 			return false;
 		}
-		return this.equals((Partition<?>) obj);
-	}
 
-	public boolean equals(Partition<E> other) { // NOPMD
-		for (ArrayList<E> list : this) {
-			for(E e1 : list) {
-				for(E e2 : list) {
-					ArrayList<E> l1 = other.getClass(e1);
-					ArrayList<E> l2 = other.getClass(e2);
+		@SuppressWarnings("unchecked")
+		Partition<Object> other = (Partition<Object>) obj;
+		@SuppressWarnings("unchecked")
+		Partition<Object> me = (Partition<Object>) this;
+
+		for (ArrayList<Object> list : me) {
+			for(Object e1 : list) {
+				for(Object e2 : list) {
+					ArrayList<Object> l1 = other.getClass(e1);
+					ArrayList<Object> l2 = other.getClass(e2);
 					if (l1 != l2 || l1 == null) {
 						return false;
 					}
 				}
 			}
 		}
-		for (ArrayList<E> list : other) {
-			for (E e1 : list) {
-				for (E e2 : list) {
-					ArrayList<E> l1 = this.getClass(e1);
-					ArrayList<E> l2 = this.getClass(e2);
+		for (ArrayList<Object> list : other) {
+			for (Object e1 : list) {
+				for (Object e2 : list) {
+					ArrayList<Object> l1 = me.getClass(e1);
+					ArrayList<Object> l2 = me.getClass(e2);
 					if (l1 != l2 || l1 == null) {
 						return false;
 					}
