@@ -73,7 +73,6 @@ import fr.lirmm.graphik.graal.core.grd.DefaultGraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
-import fr.lirmm.graphik.graal.store.gdb.BlueprintsGraphDBStore;
 import fr.lirmm.graphik.graal.store.gdb.Neo4jStore;
 import fr.lirmm.graphik.graal.test.TestUtil;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -95,7 +94,6 @@ public class ChaseTest {
 	public void test1(AtomSet atomSet)
 	    throws AtomSetException, HomomorphismFactoryException, HomomorphismException, ChaseException,
 	    IteratorException, ParseException {
-		Assume.assumeFalse(atomSet instanceof BlueprintsGraphDBStore); // FIXME
 		Assume.assumeFalse(atomSet instanceof Neo4jStore); // FIXME
 
 		atomSet.addAll(DlgpParser.parseAtomSet("<P>(X,a),<Q>(a,a)."));

@@ -78,7 +78,6 @@ import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2WithLimit;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NoForwardChecking;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.SimpleFC;
 import fr.lirmm.graphik.graal.homomorphism.scheduler.DefaultScheduler;
-import fr.lirmm.graphik.graal.store.gdb.BlueprintsGraphDBStore;
 import fr.lirmm.graphik.graal.store.gdb.Neo4jStore;
 import fr.lirmm.graphik.graal.store.rdbms.adhoc.AdHocRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.HSQLDBDriver;
@@ -115,7 +114,6 @@ public final class TestUtil {
 
 	public static AdHocRdbmsStore defaultRDBMSStore = null;
 	public static NaturalRDBMSStore plainTableRDBMSStore = null;
-	public static BlueprintsGraphDBStore graphStore = null;
 	public static Neo4jStore neo4jStore = null;
 	public static RDF4jStore sailStore = null;
 
@@ -154,10 +152,6 @@ public final class TestUtil {
 
 	public static AtomSet[] getAtomSet() {
 
-		if (graphStore != null) {
-			graphStore.close();
-		}
-
 		if (neo4jStore != null) {
 			neo4jStore.close();
 		}
@@ -177,7 +171,6 @@ public final class TestUtil {
 			defaultRDBMSStore.clear();
 			plainTableRDBMSStore.clear();
 
-			graphStore = new BlueprintsGraphDBStore(new TinkerGraph());
 			rm(NEO4J_TEST);
 			neo4jStore = new Neo4jStore(NEO4J_TEST);
 
@@ -192,7 +185,7 @@ public final class TestUtil {
 			}
 
 			return new AtomSet[] { new DefaultInMemoryGraphStore(), new LinkedListAtomSet(), defaultRDBMSStore,
-			                       plainTableRDBMSStore, graphStore, neo4jStore, sailStore };
+			                       plainTableRDBMSStore, neo4jStore, sailStore };
 		} catch (SQLException e) {
 			throw new Error(e);
 		} catch (AtomSetException e) {

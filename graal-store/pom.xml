@@ -23,7 +23,6 @@
 		<module>graal-store-rdbms</module>
 		<module>graal-store-neo4j</module>
 		<module>graal-store-rdf4j</module>
-		<module>graal-store-blueprints</module>
 	</modules>
 
 </project>

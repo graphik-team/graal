@@ -65,7 +65,6 @@ import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.forward_chaining.StaticChase;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
-import fr.lirmm.graphik.graal.store.gdb.BlueprintsGraphDBStore;
 import fr.lirmm.graphik.graal.store.gdb.Neo4jStore;
 import fr.lirmm.graphik.graal.test.TestUtil;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -319,7 +318,6 @@ public class ConjunctiveQueryTest {
 	 */
 	@Theory
 	public void atomicQueryOverExistentialVar(Homomorphism h, AtomSet store) {
-		Assume.assumeFalse(store instanceof BlueprintsGraphDBStore); // FIXME
 		Assume.assumeFalse(store instanceof Neo4jStore); // FIXME
 
 		try {
