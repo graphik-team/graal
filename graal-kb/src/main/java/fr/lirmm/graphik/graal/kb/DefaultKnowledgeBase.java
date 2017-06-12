@@ -335,6 +335,12 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 
 	@Override
 	public boolean addQuery(Query query) {
+		if (query == null) {
+			return false;
+		}
+		if (query.equals(this.queries.get(query.getLabel()))) {
+			return false;
+		}
 		this.queryLabeler.setLabel(query);
 		return this.queries.put(query.getLabel(), query) != null;
 	}

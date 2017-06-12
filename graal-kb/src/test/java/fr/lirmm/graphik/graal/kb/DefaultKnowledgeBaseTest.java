@@ -273,6 +273,43 @@ public class DefaultKnowledgeBaseTest {
 		Assert.assertEquals(q1, kb.getQuery("Q1"));
 		kb.close();
 	}
+	
+	/**
+	 * Test method for
+	 * {@link fr.lirmm.graphik.graal.kb.DefaultKnowledgeBase#addQuery(fr.lirmm.graphik.graal.api.core.Query)}.
+	 * @throws ParseException 
+	 */
+	@Test
+	public void testAddSameQueryTwice() throws ParseException {
+		Query q1 = DlgpParser.parseQuery("[Q1] ? :- p(X).");
+		KnowledgeBase kb = new DefaultKnowledgeBase();
+		kb.addQuery(q1);
+		kb.addQuery(q1);
+		Assert.assertTrue(kb.getQueryNames().contains("Q1"));
+		Assert.assertEquals(q1, kb.getQuery("Q1"));
+		Assert.assertEquals(1, kb.getQueryNames().size());
+		kb.close();
+	}
+	
+	/**
+	 * Test method for
+	 * {@link fr.lirmm.graphik.graal.kb.DefaultKnowledgeBase#addQuery(fr.lirmm.graphik.graal.api.core.Query)}.
+	 * @throws ParseException 
+	 */
+	@Test
+	public void testAddTwoQueryWithSameNames() throws ParseException {
+		Query q1 = DlgpParser.parseQuery("[Q] ? :- q1(X).");
+		Query q2 = DlgpParser.parseQuery("[Q] ? :- q2(X).");
+
+		KnowledgeBase kb = new DefaultKnowledgeBase();
+		kb.addQuery(q1);
+		kb.addQuery(q2);
+		Assert.assertTrue(kb.getQueryNames().contains("Q"));
+		Assert.assertEquals(q1, kb.getQuery("Q"));
+		Assert.assertEquals(2, kb.getQueryNames().size());
+		kb.close();
+	}
+
 
 
 

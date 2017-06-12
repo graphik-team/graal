@@ -42,6 +42,7 @@
  */
 package fr.lirmm.graphik.graal.core;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import fr.lirmm.graphik.graal.api.core.Query;
@@ -63,6 +64,7 @@ public class DefaultQueryLabeler implements QueryLabeler {
 	// /////////////////////////////////////////////////////////////////////////
 	
 	public DefaultQueryLabeler() {
+		this.alreadyAffected = new HashSet<String>();
 	}
 	
 	public DefaultQueryLabeler(Set<String> alreadyAffected) {
@@ -74,12 +76,13 @@ public class DefaultQueryLabeler implements QueryLabeler {
 	// /////////////////////////////////////////////////////////////////////////
 	
 	public void setLabel(Query query) {
-		if(query.getLabel() == null || query.getLabel().equals("") || query.getLabel().startsWith("_")) {			
-			String label = null;
+		String label = query.getLabel();
+		if(label == null || label.equals("") || label.startsWith("_") || alreadyAffected.contains(label)) {
 			do {
 				label = String.format(format, ++i);
 			} while(alreadyAffected.contains(label));
 			query.setLabel(label);
 		}
+		alreadyAffected.add(query.getLabel());
 	}
 }
