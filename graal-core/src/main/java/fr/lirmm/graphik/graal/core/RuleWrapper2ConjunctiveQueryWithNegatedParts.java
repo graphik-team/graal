@@ -40,33 +40,40 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.homomorphism.checker;
+package fr.lirmm.graphik.graal.core;
 
-import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQueryWithNegatedPart;
-import fr.lirmm.graphik.graal.api.homomorphism.AbstractChecker;
-import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismChecker;
-import fr.lirmm.graphik.graal.core.atomset.AtomSetUtils;
-import fr.lirmm.graphik.graal.homomorphism.AtomicQueryHomomorphismWithNegation;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQueryWithNegatedParts;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.util.MethodNotImplementedError;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class AtomicQueryHomomorphismWithNegationChecker  extends AbstractChecker implements HomomorphismChecker {
+public class RuleWrapper2ConjunctiveQueryWithNegatedParts implements ConjunctiveQueryWithNegatedParts {
 
-	private static final AtomicQueryHomomorphismWithNegationChecker INSTANCE = new AtomicQueryHomomorphismWithNegationChecker();
-
+	private String label = "";
+	private Rule rule;
+	private List<Term> ans;
+	private List<InMemoryAtomSet> negParts;
+	
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public static AtomicQueryHomomorphismWithNegationChecker instance() {
-		return INSTANCE;
-	}
-	
-	private AtomicQueryHomomorphismWithNegationChecker() {
-		
+	public RuleWrapper2ConjunctiveQueryWithNegatedParts(Rule rule) {
+		this.rule = rule;
+		ans = new LinkedList<Term>();
+		for(Term t : rule.getFrontier()) {
+			ans.add(t);
+		}
+		this.negParts = Collections.singletonList(this.rule.getHead());
 	}
 	
 	// /////////////////////////////////////////////////////////////////////////
@@ -74,22 +81,56 @@ public class AtomicQueryHomomorphismWithNegationChecker  extends AbstractChecker
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public AtomicQueryHomomorphismWithNegation getSolver() {
-		return AtomicQueryHomomorphismWithNegation.instance();
+	public boolean isBoolean() {
+		// TODO implement this method
+		throw new MethodNotImplementedError();
 	}
 
 	@Override
-	public boolean check(Object query, AtomSet atomset) {
-		if (query instanceof ConjunctiveQueryWithNegatedPart) {
-			ConjunctiveQueryWithNegatedPart q = (ConjunctiveQueryWithNegatedPart) query;
-			return AtomSetUtils.isSingleton(q.getPositivePart());
-		}
-		return false;
+	public void setLabel(String label) {
+		this.label = label;
+	}
+	
+	@Override
+	public String getLabel() {
+		return this.label;
 	}
 
 	@Override
-	public int getDefaultPriority() {
-		return 20;
+	public InMemoryAtomSet getPositivePart() {
+		return this.rule.getBody();
 	}
+
+	@Override
+	public List<InMemoryAtomSet> getNegatedParts() {
+		return this.negParts;
+	}
+
+	@Override
+	public List<Term> getAnswerVariables() {
+		return ans;
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// OBJECT OVERRIDE METHODS
+	// /////////////////////////////////////////////////////////////////////////
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		this.appendTo(sb);
+		return sb.toString();
+	}
+
+	@Override
+	public void appendTo(StringBuilder sb) {
+		sb.append("ConjunctiveQueryWithNegation based on: ");
+		this.rule.appendTo(sb);
+	}
+
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
 }

@@ -45,14 +45,14 @@ package fr.lirmm.graphik.graal.forward_chaining.rule_applier;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQueryWithNegatedPart;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQueryWithNegatedParts;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplicationException;
 import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.core.RuleWrapper2ConjunctiveQueryWithNegation;
+import fr.lirmm.graphik.graal.core.RuleWrapper2ConjunctiveQueryWithNegatedParts;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -75,7 +75,7 @@ public class RestrictedChaseRuleApplier<T extends AtomSet> implements RuleApplie
 	public boolean apply(Rule rule, T atomSet) throws RuleApplicationException {
 		try {
 			boolean res = false;
-			ConjunctiveQueryWithNegatedPart query = new RuleWrapper2ConjunctiveQueryWithNegation(rule);
+			ConjunctiveQueryWithNegatedParts query = new RuleWrapper2ConjunctiveQueryWithNegatedParts(rule);
 			CloseableIterator<Substitution> results;
 			
 			results = StaticHomomorphism.instance().execute(query, atomSet);
@@ -107,7 +107,7 @@ public class RestrictedChaseRuleApplier<T extends AtomSet> implements RuleApplie
 	@Override
 	public  CloseableIterator<Atom> delegatedApply(Rule rule, T atomSet) throws RuleApplicationException {
 		try {
-			ConjunctiveQueryWithNegatedPart query = new RuleWrapper2ConjunctiveQueryWithNegation(rule);
+			ConjunctiveQueryWithNegatedParts query = new RuleWrapper2ConjunctiveQueryWithNegatedParts(rule);
 			CloseableIterator<Substitution> results = StaticHomomorphism.instance().execute(query, atomSet);
 			return new RuleApplierIterator(results, rule, atomSet);
 		} catch (HomomorphismException e) {

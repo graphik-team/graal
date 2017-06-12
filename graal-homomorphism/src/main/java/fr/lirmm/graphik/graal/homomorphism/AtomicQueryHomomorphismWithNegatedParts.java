@@ -52,7 +52,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQueryWithNegatedPart;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQueryWithNegatedParts;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
@@ -74,19 +74,19 @@ import fr.lirmm.graphik.util.stream.filter.FilterIterator;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class AtomicQueryHomomorphismWithNegation extends AbstractHomomorphismWithCompilation<ConjunctiveQueryWithNegatedPart, AtomSet> implements HomomorphismWithCompilation<ConjunctiveQueryWithNegatedPart, AtomSet> {
+public class AtomicQueryHomomorphismWithNegatedParts extends AbstractHomomorphismWithCompilation<ConjunctiveQueryWithNegatedParts, AtomSet> implements HomomorphismWithCompilation<ConjunctiveQueryWithNegatedParts, AtomSet> {
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
-	private static final AtomicQueryHomomorphismWithNegation INSTANCE = new AtomicQueryHomomorphismWithNegation();
+	private static final AtomicQueryHomomorphismWithNegatedParts INSTANCE = new AtomicQueryHomomorphismWithNegatedParts();
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public static AtomicQueryHomomorphismWithNegation instance() {
+	public static AtomicQueryHomomorphismWithNegatedParts instance() {
 		return INSTANCE;
 	}
 
@@ -94,7 +94,7 @@ public class AtomicQueryHomomorphismWithNegation extends AbstractHomomorphismWit
 	// HOMOMORPHISM METHODS
 	// /////////////////////////////////////////////////////////////////////////
 	
-	public CloseableIterator<Substitution> execute(ConjunctiveQueryWithNegatedPart query, AtomSet data, RulesCompilation compilation) throws HomomorphismException {
+	public CloseableIterator<Substitution> execute(ConjunctiveQueryWithNegatedParts query, AtomSet data, RulesCompilation compilation) throws HomomorphismException {
 		try {
 			Atom atom = query.getPositivePart().iterator().next();
 			List<Term> ans = query.getAnswerVariables();

@@ -59,9 +59,9 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismChecker;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
 import fr.lirmm.graphik.graal.homomorphism.checker.AtomicQueryHomomorphismChecker;
-import fr.lirmm.graphik.graal.homomorphism.checker.AtomicQueryHomomorphismWithNegationChecker;
+import fr.lirmm.graphik.graal.homomorphism.checker.AtomicQueryHomomorphismWithNegatedPartsChecker;
 import fr.lirmm.graphik.graal.homomorphism.checker.BacktrackChecker;
-import fr.lirmm.graphik.graal.homomorphism.checker.BacktrackWithNegationChecker;
+import fr.lirmm.graphik.graal.homomorphism.checker.BacktrackWithNegatedPartsChecker;
 import fr.lirmm.graphik.graal.homomorphism.checker.DefaultUnionConjunctiveQueriesChecker;
 import fr.lirmm.graphik.graal.homomorphism.checker.FullyInstantiatedQueryHomomorphismChecker;
 import fr.lirmm.graphik.util.profiler.AbstractProfilable;
@@ -91,8 +91,8 @@ public class StaticHomomorphism extends AbstractProfilable implements Homomorphi
 			this.elements.add(DefaultUnionConjunctiveQueriesChecker.instance());
 			this.elements.add(FullyInstantiatedQueryHomomorphismChecker.instance());
 			this.elements.add(AtomicQueryHomomorphismChecker.instance());
-			this.elements.add(BacktrackWithNegationChecker.instance());
-			this.elements.add(AtomicQueryHomomorphismWithNegationChecker.instance());
+			this.elements.add(BacktrackWithNegatedPartsChecker.instance());
+			this.elements.add(AtomicQueryHomomorphismWithNegatedPartsChecker.instance());
 		}
 	}
 

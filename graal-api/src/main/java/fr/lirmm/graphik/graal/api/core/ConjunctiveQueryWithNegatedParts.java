@@ -41,58 +41,62 @@
  * knowledge of the CeCILL license and that you accept its terms.
  */
 /**
- * 
- */
-package fr.lirmm.graphik.graal.homomorphism.checker;
+* 
+*/
+package fr.lirmm.graphik.graal.api.core;
 
-import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQueryWithNegatedPart;
-import fr.lirmm.graphik.graal.api.homomorphism.AbstractChecker;
-import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismChecker;
-import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphismWithNegation;
-import fr.lirmm.graphik.graal.homomorphism.backjumping.GraphBaseBackJumping;
-import fr.lirmm.graphik.graal.homomorphism.bbc.BCC;
-import fr.lirmm.graphik.graal.homomorphism.bootstrapper.StarBootstrapper;
-import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2;
+import java.util.List;
 
 /**
+ * This interface represents a conjunctive query with negated parts. A such
+ * query is composed of a set of atoms which must be true and other sets of
+ * atoms whose for each set at least one atom must not be true.
+ * 
+ * In the following, X is the set of free variables (answer variables), Y the
+ * set of variables that appears in the positive part minus X and Zi where i ∈
+ * [1..n] the set of variables that appears only in the negated part indexed i.
+ * Note that each variables from X must appears in the positive part. And ∀i,j ∈
+ * [1..n] such that i ≠ j, Zi ∩ Zj = ∅.
+ * 
+ * A conjunctive query with negated parts Q is formally defined as
+ * ∃Y∀Z1..Zn(Q+[X,Y] ∧ not(Q1[Y,Z1]) ∧ ... ∧ not(Qn[Y,Zn])) where Q+, Q1, ...,
+ * Qn are conjunctions of atoms over specified variable sets.
+ * 
+ * A mapping A from X to a set of terms is an answer to this query with respect
+ * to a set of facts iff A(F) is true, where F is the formulae associated to Q.
+ * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class BacktrackWithNegationChecker extends AbstractChecker implements HomomorphismChecker {
-	
-	private static final BacktrackWithNegationChecker INSTANCE = new BacktrackWithNegationChecker();
+public interface ConjunctiveQueryWithNegatedParts extends Query {
 
-	// /////////////////////////////////////////////////////////////////////////
-	// SINGLETON
-	// /////////////////////////////////////////////////////////////////////////
+	/**
+	 * The label (the name) for this query.
+	 * 
+	 * @return the label of this query.
+	 */
+	String getLabel();
 
-	public static BacktrackWithNegationChecker instance() {
-		return INSTANCE;
-	}
+	/**
+	 * Get the set of facts which must be true.
+	 * 
+	 * @return an atom set representing the atom conjunction of the query.
+	 */
+	InMemoryAtomSet getPositivePart();
 
-	private BacktrackWithNegationChecker() {
-	}
+	/**
+	 * Get the set of facts which must be false (at least one).
+	 * 
+	 * @return a list of atom sets representing negated conjunctions of atoms.
+	 */
+	List<InMemoryAtomSet> getNegatedParts();
 
-	// /////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	// /////////////////////////////////////////////////////////////////////////
+	/**
+	 * Get the answer variables
+	 * 
+	 * @return an Collection of Term representing the answer variables.
+	 */
+	List<Term> getAnswerVariables();
 
-	@Override
-	public BacktrackHomomorphismWithNegation getSolver() {
-		BCC bcc = new BCC(new GraphBaseBackJumping(), true);
-		return new BacktrackHomomorphismWithNegation(bcc.getBCCScheduler(),
-				StarBootstrapper.instance(), new NFC2(), bcc.getBCCBackJumping());
-	}
-
-	@Override
-	public boolean check(Object query, AtomSet atomset) {
-		return query instanceof ConjunctiveQueryWithNegatedPart;
-	}
-
-	@Override
-	public int getDefaultPriority() {
-		return 1;
-	}
 
 }

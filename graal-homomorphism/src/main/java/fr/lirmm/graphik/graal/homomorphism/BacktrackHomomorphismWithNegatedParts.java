@@ -43,7 +43,7 @@
 package fr.lirmm.graphik.graal.homomorphism;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQueryWithNegatedPart;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQueryWithNegatedParts;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
@@ -67,35 +67,35 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class BacktrackHomomorphismWithNegation extends AbstractHomomorphismWithCompilation<ConjunctiveQueryWithNegatedPart, AtomSet> implements HomomorphismWithCompilation<ConjunctiveQueryWithNegatedPart, AtomSet> {
+public class BacktrackHomomorphismWithNegatedParts extends AbstractHomomorphismWithCompilation<ConjunctiveQueryWithNegatedParts, AtomSet> implements HomomorphismWithCompilation<ConjunctiveQueryWithNegatedParts, AtomSet> {
 
 	private Scheduler       scheduler;
 	private Bootstrapper    bootstrapper;
 	private ForwardChecking fc;
 	private BackJumping     bj;
 
-	public BacktrackHomomorphismWithNegation() {
+	public BacktrackHomomorphismWithNegatedParts() {
 		this(DefaultScheduler.instance(), StarBootstrapper.instance(), NoForwardChecking.instance(),
 		     NoBackJumping.instance());
 	}
 
-	public BacktrackHomomorphismWithNegation(Scheduler s) {
+	public BacktrackHomomorphismWithNegatedParts(Scheduler s) {
 		this(s, StarBootstrapper.instance(), NoForwardChecking.instance(), NoBackJumping.instance());
 	}
 
-	public BacktrackHomomorphismWithNegation(ForwardChecking fc) {
+	public BacktrackHomomorphismWithNegatedParts(ForwardChecking fc) {
 		this(DefaultScheduler.instance(), StarBootstrapper.instance(), fc, NoBackJumping.instance());
 	}
 
-	public BacktrackHomomorphismWithNegation(BackJumping bj) {
+	public BacktrackHomomorphismWithNegatedParts(BackJumping bj) {
 		this(DefaultScheduler.instance(), StarBootstrapper.instance(), NoForwardChecking.instance(), bj);
 	}
 
-	public BacktrackHomomorphismWithNegation(Scheduler s, BackJumping bj) {
+	public BacktrackHomomorphismWithNegatedParts(Scheduler s, BackJumping bj) {
 		this(s, StarBootstrapper.instance(), NoForwardChecking.instance(), bj);
 	}
 
-	public BacktrackHomomorphismWithNegation(Scheduler s, Bootstrapper bs, ForwardChecking fc, BackJumping bj) {
+	public BacktrackHomomorphismWithNegatedParts(Scheduler s, Bootstrapper bs, ForwardChecking fc, BackJumping bj) {
 		super();
 		this.fc = fc;
 		this.bj = bj;
@@ -144,7 +144,7 @@ public class BacktrackHomomorphismWithNegation extends AbstractHomomorphismWithC
 	// /////////////////////////////////////////////////////////////////////////
 
 
-	public CloseableIterator<Substitution> execute(ConjunctiveQueryWithNegatedPart q, AtomSet a, RulesCompilation compilation) throws HomomorphismException {
+	public CloseableIterator<Substitution> execute(ConjunctiveQueryWithNegatedParts q, AtomSet a, RulesCompilation compilation) throws HomomorphismException {
 		return new BacktrackIterator(q.getPositivePart(), q.getNegatedParts(), a, q.getAnswerVariables(),
 		                                                            this.scheduler, this.bootstrapper, this.fc,
 		                                                            this.bj, compilation);

@@ -40,97 +40,59 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.core;
+/**
+ * 
+ */
+package fr.lirmm.graphik.graal.homomorphism.checker;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQueryWithNegatedPart;
-import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
-import fr.lirmm.graphik.graal.api.core.Rule;
-import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.util.MethodNotImplementedError;
+import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQueryWithNegatedParts;
+import fr.lirmm.graphik.graal.api.homomorphism.AbstractChecker;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismChecker;
+import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphismWithNegatedParts;
+import fr.lirmm.graphik.graal.homomorphism.backjumping.GraphBaseBackJumping;
+import fr.lirmm.graphik.graal.homomorphism.bbc.BCC;
+import fr.lirmm.graphik.graal.homomorphism.bootstrapper.StarBootstrapper;
+import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class RuleWrapper2ConjunctiveQueryWithNegation implements ConjunctiveQueryWithNegatedPart {
-
-	private String label = "";
-	private Rule rule;
-	private List<Term> ans;
-	private List<InMemoryAtomSet> negParts;
+public class BacktrackWithNegatedPartsChecker extends AbstractChecker implements HomomorphismChecker {
 	
+	private static final BacktrackWithNegatedPartsChecker INSTANCE = new BacktrackWithNegatedPartsChecker();
+
 	// /////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
+	// SINGLETON
 	// /////////////////////////////////////////////////////////////////////////
 
-	public RuleWrapper2ConjunctiveQueryWithNegation(Rule rule) {
-		this.rule = rule;
-		ans = new LinkedList<Term>();
-		for(Term t : rule.getFrontier()) {
-			ans.add(t);
-		}
-		this.negParts = Collections.singletonList(this.rule.getHead());
+	public static BacktrackWithNegatedPartsChecker instance() {
+		return INSTANCE;
 	}
-	
+
+	private BacktrackWithNegatedPartsChecker() {
+	}
+
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public boolean isBoolean() {
-		// TODO implement this method
-		throw new MethodNotImplementedError();
+	public BacktrackHomomorphismWithNegatedParts getSolver() {
+		BCC bcc = new BCC(new GraphBaseBackJumping(), true);
+		return new BacktrackHomomorphismWithNegatedParts(bcc.getBCCScheduler(),
+				StarBootstrapper.instance(), new NFC2(), bcc.getBCCBackJumping());
 	}
 
 	@Override
-	public void setLabel(String label) {
-		this.label = label;
-	}
-	
-	@Override
-	public String getLabel() {
-		return this.label;
+	public boolean check(Object query, AtomSet atomset) {
+		return query instanceof ConjunctiveQueryWithNegatedParts;
 	}
 
 	@Override
-	public InMemoryAtomSet getPositivePart() {
-		return this.rule.getBody();
+	public int getDefaultPriority() {
+		return 1;
 	}
-
-	@Override
-	public List<InMemoryAtomSet> getNegatedParts() {
-		return this.negParts;
-	}
-
-	@Override
-	public List<Term> getAnswerVariables() {
-		return ans;
-	}
-
-	// /////////////////////////////////////////////////////////////////////////
-	// OBJECT OVERRIDE METHODS
-	// /////////////////////////////////////////////////////////////////////////
-	
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		this.appendTo(sb);
-		return sb.toString();
-	}
-
-	@Override
-	public void appendTo(StringBuilder sb) {
-		sb.append("ConjunctiveQueryWithNegation based on: ");
-		this.rule.appendTo(sb);
-	}
-
-	
-	// /////////////////////////////////////////////////////////////////////////
-	// PRIVATE METHODS
-	// /////////////////////////////////////////////////////////////////////////
 
 }

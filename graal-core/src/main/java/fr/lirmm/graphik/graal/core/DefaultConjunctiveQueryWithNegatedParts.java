@@ -45,7 +45,7 @@ package fr.lirmm.graphik.graal.core;
 import java.util.LinkedList;
 import java.util.List;
 
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQueryWithNegatedPart;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQueryWithNegatedParts;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.factory.DefaultAtomSetFactory;
@@ -54,7 +54,7 @@ import fr.lirmm.graphik.graal.core.factory.DefaultAtomSetFactory;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class DefaultConjunctiveQueryWithNegatedParts implements ConjunctiveQueryWithNegatedPart {
+public class DefaultConjunctiveQueryWithNegatedParts implements ConjunctiveQueryWithNegatedParts {
 
 	private String label;
 	private InMemoryAtomSet positiveAtomSet;
@@ -100,7 +100,7 @@ public class DefaultConjunctiveQueryWithNegatedParts implements ConjunctiveQuery
 	}
 
 	// copy constructor
-	public DefaultConjunctiveQueryWithNegatedParts(ConjunctiveQueryWithNegatedPart query) {
+	public DefaultConjunctiveQueryWithNegatedParts(ConjunctiveQueryWithNegatedParts query) {
 		this(query.getLabel(), DefaultAtomSetFactory.instance().create(query.getPositivePart()),
 				deepCopy(query.getNegatedParts()),
 				new LinkedList<Term>(query.getAnswerVariables()));
@@ -189,14 +189,14 @@ public class DefaultConjunctiveQueryWithNegatedParts implements ConjunctiveQuery
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof ConjunctiveQueryWithNegatedPart)) {
+		if (!(obj instanceof ConjunctiveQueryWithNegatedParts)) {
 			return false;
 		}
-		ConjunctiveQueryWithNegatedPart other = (ConjunctiveQueryWithNegatedPart) obj;
+		ConjunctiveQueryWithNegatedParts other = (ConjunctiveQueryWithNegatedParts) obj;
 		return this.equals(other);
 	}
 
-	public boolean equals(ConjunctiveQueryWithNegatedPart other) {
+	public boolean equals(ConjunctiveQueryWithNegatedParts other) {
 		return this == other;
 	}
 

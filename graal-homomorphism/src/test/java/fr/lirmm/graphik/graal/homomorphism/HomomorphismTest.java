@@ -88,7 +88,7 @@ public class HomomorphismTest {
 		negatedPart.addAll(DlgpParser.parseAtomSet("q(b)."));
 
 		DefaultConjunctiveQueryWithNegatedParts query = new DefaultConjunctiveQueryWithNegatedParts(positivePart, Collections.singletonList(negatedPart));
-		BacktrackHomomorphismWithNegation h = new BacktrackHomomorphismWithNegation();
+		BacktrackHomomorphismWithNegatedParts h = new BacktrackHomomorphismWithNegatedParts();
 		CloseableIterator<Substitution> res = h.execute(query, data);
 		
 		
@@ -113,7 +113,7 @@ public class HomomorphismTest {
 		negatedPart.addAll(DlgpParser.parseAtomSet("q(b)."));
 		parts.add(negatedPart);
 		
-		DefaultConjunctiveQueryWithNegatedParts query = new DefaultConjunctiveQueryWithNegatedParts(positivePart, parts);BacktrackHomomorphismWithNegation h = new BacktrackHomomorphismWithNegation();
+		DefaultConjunctiveQueryWithNegatedParts query = new DefaultConjunctiveQueryWithNegatedParts(positivePart, parts);BacktrackHomomorphismWithNegatedParts h = new BacktrackHomomorphismWithNegatedParts();
 		CloseableIterator<Substitution> res = h.execute(query, data);
 		
 		
@@ -134,7 +134,7 @@ public class HomomorphismTest {
 		negatedPart.addAll(DlgpParser.parseAtomSet("q(b)."));
 
 		DefaultConjunctiveQueryWithNegatedParts query = new DefaultConjunctiveQueryWithNegatedParts(positivePart, Collections.singletonList(negatedPart));
-		BacktrackHomomorphismWithNegation h = new BacktrackHomomorphismWithNegation();
+		BacktrackHomomorphismWithNegatedParts h = new BacktrackHomomorphismWithNegatedParts();
 		CloseableIterator<Substitution> res = h.execute(query, data);
 		
 		
@@ -158,7 +158,7 @@ public class HomomorphismTest {
 		parts.add(negatedPart);
 		
 		DefaultConjunctiveQueryWithNegatedParts query = new DefaultConjunctiveQueryWithNegatedParts(positivePart, parts);
-		BacktrackHomomorphismWithNegation h = new BacktrackHomomorphismWithNegation();
+		BacktrackHomomorphismWithNegatedParts h = new BacktrackHomomorphismWithNegatedParts();
 		CloseableIterator<Substitution> res = h.execute(query, data);
 		
 		
@@ -180,7 +180,7 @@ public class HomomorphismTest {
 		negatedPart.iterator().next().setTerm(0, x);
 
 		DefaultConjunctiveQueryWithNegatedParts query = new DefaultConjunctiveQueryWithNegatedParts(positivePart, Collections.singletonList(negatedPart));
-		BacktrackHomomorphismWithNegation h = new BacktrackHomomorphismWithNegation();
+		BacktrackHomomorphismWithNegatedParts h = new BacktrackHomomorphismWithNegatedParts();
 		CloseableIterator<Substitution> res = h.execute(query, data);
 		
 		
@@ -204,7 +204,7 @@ public class HomomorphismTest {
 
 		DefaultConjunctiveQueryWithNegatedParts query = new DefaultConjunctiveQueryWithNegatedParts(positivePart, Collections.singletonList(negatedPart), Collections.<Term>emptyList());
 		BCC bcc = new BCC(new GraphBaseBackJumping(), true);
-		BacktrackHomomorphismWithNegation h = new BacktrackHomomorphismWithNegation(bcc.getBCCScheduler(), StarBootstrapper.instance(), new NFC2(),
+		BacktrackHomomorphismWithNegatedParts h = new BacktrackHomomorphismWithNegatedParts(bcc.getBCCScheduler(), StarBootstrapper.instance(), new NFC2(),
                 bcc.getBCCBackJumping());
 		CloseableIterator<Substitution> res = h.execute(query, data);
 		
@@ -240,7 +240,7 @@ public class HomomorphismTest {
 		parts.add(negatedPart);
 
 		DefaultConjunctiveQueryWithNegatedParts query = new DefaultConjunctiveQueryWithNegatedParts(positivePart, parts);
-		BacktrackHomomorphismWithNegation h = new BacktrackHomomorphismWithNegation();
+		BacktrackHomomorphismWithNegatedParts h = new BacktrackHomomorphismWithNegatedParts();
 		CloseableIterator<Substitution> res = h.execute(query, data);
 		
 		
@@ -284,7 +284,7 @@ public class HomomorphismTest {
 		parts.add(negatedPart);
 
 		DefaultConjunctiveQueryWithNegatedParts query = new DefaultConjunctiveQueryWithNegatedParts(positivePart, parts);
-		BacktrackHomomorphismWithNegation h = new BacktrackHomomorphismWithNegation();
+		BacktrackHomomorphismWithNegatedParts h = new BacktrackHomomorphismWithNegatedParts();
 		CloseableIterator<Substitution> res = h.execute(query, data, comp);
 		
 		
