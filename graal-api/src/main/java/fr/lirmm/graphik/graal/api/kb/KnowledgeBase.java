@@ -40,9 +40,9 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
+/**
+* 
+*/
 package fr.lirmm.graphik.graal.api.kb;
 
 import java.io.Closeable;
@@ -53,12 +53,13 @@ import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.api.util.TimeoutException;
 import fr.lirmm.graphik.util.profiler.Profilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
- * A knowledge base is composed of facts, existential rules, negative constraints and queries. It provides
- * methods to facilitate their management.
+ * A knowledge base is composed of facts, existential rules, negative
+ * constraints and queries. It provides methods to facilitate their management.
  * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
@@ -78,12 +79,15 @@ public interface KnowledgeBase extends Profilable, Closeable {
 	 * @return an AtomSet representing a conjunction of facts.
 	 */
 	AtomSet getFacts();
-	
+
 	Set<String> getRuleNames();
+
 	Rule getRule(String name);
-	
+
 	boolean addQuery(Query query);
+
 	Set<String> getQueryNames();
+
 	Query getQuery(String name);
 
 	/**
@@ -102,30 +106,48 @@ public interface KnowledgeBase extends Profilable, Closeable {
 	void saturate() throws KnowledgeBaseException;
 
 	/**
-	 * Find an homomorphism of the query in the fact base associated with this knowledge base. 
+	 * Find an homomorphism of the query in the fact base associated with this
+	 * knowledge base.
+	 * 
 	 * @param query
-	 * @return An iterator over substitutions which represents founded homomorphisms.
+	 * @return An iterator over substitutions which represents founded
+	 *         homomorphisms.
 	 * @throws KnowledgeBaseException
 	 */
 	CloseableIterator<Substitution> homomorphism(Query query) throws KnowledgeBaseException;
 
 	/**
-	 * Execute the query over this Knowledge Base. This method uses the graal-rules-analyser module (Kiabora) to 
-	 * find a decidable way to answer.
+	 * Execute the query over this Knowledge Base. This method uses the
+	 * graal-rules-analyser module (Kiabora) to find a decidable way to answer.
+	 * 
 	 * @param query
-	 * @return an Iterator over Substitutions representing homomorphism found of q.
+	 * @return an Iterator over Substitutions representing homomorphism found of
+	 *         q.
 	 * @throws KnowledgeBaseException
 	 */
 	CloseableIterator<Substitution> query(Query query) throws KnowledgeBaseException;
-	
+
 	/**
+	 * Execute the query over this Knowledge Base. This method uses the
+	 * graal-rules-analyser module (Kiabora) to find a decidable way to answer.
+	 * If the saturation step plus the rewriting step execution time exceed the
+	 * specified timeout (in milliseconds) then the method will be interrupted
+	 * and a {@link TimeoutException} will be throw. Other steps in this method
+	 * is not taken into account for the timeout, these other steps can not be
+	 * infinite. <br>
+	 * If {@link Approach} is set to <code>REWRITING_ONLY</code> or
+	 * <code>SATURATION_ONLY<code>, the knowledge base decidability analysis
+	 * will be bypass.
 	 * 
 	 * @param query
-	 * @param timeout in seconds
-	 * @return an Iterator over Substitutions representing homomorphism found of q.
+	 * @param timeout
+	 *            in seconds
+	 * @return an Iterator over Substitutions representing homomorphism found of
+	 *         q.
 	 * @throws KnowledgeBaseException
+	 * @throws TimeoutException
 	 */
-	CloseableIterator<Substitution> query(Query query, int timeout) throws KnowledgeBaseException;
+	CloseableIterator<Substitution> query(Query query, long timeout) throws KnowledgeBaseException, TimeoutException;
 
 	/**
 	 * @throws KnowledgeBaseException
@@ -134,7 +156,9 @@ public interface KnowledgeBase extends Profilable, Closeable {
 	void semiSaturate() throws KnowledgeBaseException;
 
 	/**
-	 * Returns the defined priority of this KnowledgeBase (i.e. saturation or rewriting).
+	 * Returns the defined priority of this KnowledgeBase (i.e. saturation or
+	 * rewriting).
+	 * 
 	 * @return the defined priority of this KnowledgeBase.
 	 */
 	Approach getApproach();

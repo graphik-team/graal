@@ -75,6 +75,7 @@ import fr.lirmm.graphik.graal.api.io.Parser;
 import fr.lirmm.graphik.graal.api.kb.Approach;
 import fr.lirmm.graphik.graal.api.kb.KnowledgeBase;
 import fr.lirmm.graphik.graal.api.kb.KnowledgeBaseException;
+import fr.lirmm.graphik.graal.api.util.TimeoutException;
 import fr.lirmm.graphik.graal.backward_chaining.pure.PureRewriter;
 import fr.lirmm.graphik.graal.core.DefaultQueryLabeler;
 import fr.lirmm.graphik.graal.core.DefaultUnionOfConjunctiveQueries;
@@ -93,7 +94,6 @@ import fr.lirmm.graphik.graal.rulesetanalyser.property.FESProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.FUSProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.RuleSetProperty;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
-import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
@@ -143,7 +143,6 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 	public DefaultKnowledgeBase(Parser<Object> parser) throws AtomSetException {
 		this();
 		this.load(parser);
-		init();
 	}
 
 	public DefaultKnowledgeBase(AtomSet facts, Parser<Object> parser) throws AtomSetException {
@@ -151,18 +150,12 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 		this.store = facts;
 		this.load(parser);
 		this.queryLabeler = new DefaultQueryLabeler();
-		init();
 	}
 
 	public DefaultKnowledgeBase(AtomSet facts, RuleSet ontology) {
 		this.ruleset = new DefaultOntology(ontology);
 		this.store = facts;
 		this.queryLabeler = new DefaultQueryLabeler();
-		init();
-	}
-
-	private final void init() {
-		// this.grd = new GraphOfRuleDependencies(this.ruleset);
 	}
 
 	@Override
@@ -207,8 +200,12 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 	@Override
 	public void saturate() throws KnowledgeBaseException {
 		if (!this.isSaturated) {
-			this.analyse();
-			if (this.analyse.isFES()) {
+			boolean run = this.approach == Approach.SATURATION_ONLY;
+			if(!run) {
+				this.analyse();
+				run = this.analyse.isFES();
+			}
+			if (run) {
 				GraphOfRuleDependencies grd = this.analysedRuleSet.getGraphOfRuleDependencies();
 				ChaseWithGRD<AtomSet> chase = new ChaseWithGRD<>(grd, this.store);
 				chase.setProfiler(this.getProfiler());
@@ -303,13 +300,68 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 		} else {
 			throw new KnowledgeBaseException("No implementation found for this kind of query: " + query.getClass());
 		}
-
 	}
 
 	@Override
-	public CloseableIterator<Substitution> query(Query query, int timeout) throws KnowledgeBaseException {
-		// TODO implement this method
-		throw new MethodNotImplementedError();
+	public CloseableIterator<Substitution> query(Query query, long timeout) throws KnowledgeBaseException, TimeoutException {
+		long remainingTime = timeout;
+		if (this.isSaturated) {
+			try {
+				return StaticHomomorphism.instance().execute(query, this.store);
+			} catch (HomomorphismException e) {
+				throw new KnowledgeBaseException(e);
+			}
+		} else if (query instanceof ConjunctiveQuery) {
+			
+			ConjunctiveQuery cq = (ConjunctiveQuery) query;
+
+			if(this.approach != Approach.REWRITING_ONLY && this.approach != Approach.SATURATION_ONLY) {
+				this.analyse();
+			}
+			if (this.approach == Approach.REWRITING_ONLY || this.approach == Approach.SATURATION_ONLY || this.analyse.isDecidable()) {
+				try {
+					long time = System.currentTimeMillis();
+					this.fesSaturate(remainingTime);
+					if (timeout > 0) {
+						remainingTime -= (System.currentTimeMillis() - time);
+						if (remainingTime <= 0) {
+							throw new TimeoutException(timeout);
+						}
+					}
+					this.compileRule();
+					RuleSet fusRuleSet = this.getFUSRuleSet();
+
+					PureRewriter pure = new PureRewriter(false);
+					CloseableIteratorWithoutException<ConjunctiveQuery> it = pure.execute(cq, fusRuleSet,
+							this.ruleCompilation, remainingTime);
+					UnionOfConjunctiveQueries ucq = new DefaultUnionOfConjunctiveQueries(cq.getAnswerVariables(), it);
+
+					CloseableIterator<Substitution> resultIt = null;
+					try {
+						resultIt = StaticHomomorphism.instance().execute(ucq, this.store, this.ruleCompilation);
+					} catch (HomomorphismException e) {
+						if (this.getApproach().equals(Approach.REWRITING_FIRST)) {
+							it = PureRewriter.unfold(ucq, this.ruleCompilation);
+							ucq = new DefaultUnionOfConjunctiveQueries(cq.getAnswerVariables(), it);
+						} else {
+							this.semiSaturate();
+						}
+						resultIt = StaticHomomorphism.instance().execute(ucq, this.store);
+					}
+					return new FilterIterator<Substitution, Substitution>(resultIt, new UniqFilter<Substitution>());
+				} catch (ChaseException e) {
+					throw new KnowledgeBaseException(e);
+				} catch (HomomorphismException e) {
+					throw new KnowledgeBaseException(e);
+				}
+			} else {
+				throw new KnowledgeBaseException(
+						"No decidable combinaison found with the defined approach: " + this.getApproach());
+			}
+
+		} else {
+			throw new KnowledgeBaseException("No implementation found for this kind of query: " + query.getClass());
+		}
 	}
 
 	@Override
@@ -372,25 +424,44 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	protected void fesSaturate() throws ChaseException {
+	/**
+	 * Run saturation with a timeout at <code>timeout</code> milliseconds for this thread to die. A timeout of 0 means to wait forever. 
+	 * @param timeout in milliseconds
+	 * @throws ChaseException
+	 * @throws TimeoutException
+	 */
+	protected void fesSaturate(long timeout) throws ChaseException, TimeoutException {
 		if (!isFESSaturated) {
 			GraphOfRuleDependencies grd = this.getFESGraphOfRuleDependencies();
 			ChaseWithGRD<AtomSet> chase = new ChaseWithGRD<>(grd, this.store);
 			chase.setProfiler(this.getProfiler());
-			chase.execute();
+			chase.execute(timeout);
 			this.isFESSaturated = true;
+		}
+	}
+	
+	protected void fesSaturate() throws ChaseException {
+		try {
+			this.fesSaturate(0);
+		} catch (TimeoutException e) {
+			throw new Error("Shoul never occur");
 		}
 	}
 
 	protected RuleSet getFESRuleSet() {
 		if (this.fesRuleSet == null) {
-			this.analyse();
 			fesRuleSet = new LinkedListRuleSet();
-			int[] combine = getDecidableCombination();
-			List<AnalyserRuleSet> scc = this.analysedRuleSet.getSCC();
-			for (int i = 0; i < combine.length; ++i) {
-				if ((combine[i] & Analyser.COMBINE_FES) != 0) {
-					fesRuleSet.addAll(scc.get(i).iterator());
+
+			if (this.approach == Approach.SATURATION_ONLY) {
+				fesRuleSet.addAll(this.ruleset.iterator());
+			} else if (this.approach != Approach.REWRITING_ONLY) {
+				this.analyse();
+				int[] combine = getDecidableCombination();
+				List<AnalyserRuleSet> scc = this.analysedRuleSet.getSCC();
+				for (int i = 0; i < combine.length; ++i) {
+					if ((combine[i] & Analyser.COMBINE_FES) != 0) {
+						fesRuleSet.addAll(scc.get(i).iterator());
+					}
 				}
 			}
 		}
@@ -399,13 +470,18 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 
 	protected RuleSet getFUSRuleSet() {
 		if (this.fusRuleSet == null) {
-			this.analyse();
 			this.fusRuleSet = new LinkedListRuleSet();
-			int[] combine = getDecidableCombination();
-			List<AnalyserRuleSet> scc = this.analysedRuleSet.getSCC();
-			for (int i = 0; i < combine.length; ++i) {
-				if ((combine[i] & Analyser.COMBINE_FUS) != 0) {
-					this.fusRuleSet.addAll(scc.get(i).iterator());
+
+			if (this.approach == Approach.REWRITING_ONLY) {
+				fusRuleSet.addAll(this.ruleset.iterator());
+			} else if (this.approach != Approach.SATURATION_ONLY) {
+				this.analyse();
+				int[] combine = getDecidableCombination();
+				List<AnalyserRuleSet> scc = this.analysedRuleSet.getSCC();
+				for (int i = 0; i < combine.length; ++i) {
+					if ((combine[i] & Analyser.COMBINE_FUS) != 0) {
+						this.fusRuleSet.addAll(scc.get(i).iterator());
+					}
 				}
 			}
 		}
@@ -431,8 +507,13 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 	protected void analyse() {
 		if (!this.isAnalysed) {
 			this.analysedRuleSet = new AnalyserRuleSet(this.ruleset);
-			Map<String, RuleSetProperty> properties = RuleSetPropertyHierarchy.generatePropertyMapSpecializationOf(FESProperty.instance());
-			properties.putAll(RuleSetPropertyHierarchy.generatePropertyMapSpecializationOf(FUSProperty.instance()));
+			Map<String, RuleSetProperty> properties = new HashMap<>();
+			if(this.approach != Approach.REWRITING_ONLY) {
+				properties.putAll(RuleSetPropertyHierarchy.generatePropertyMapSpecializationOf(FESProperty.instance()));
+			}
+			if(this.approach != Approach.SATURATION_ONLY) {
+				properties.putAll(RuleSetPropertyHierarchy.generatePropertyMapSpecializationOf(FUSProperty.instance()));
+			}
 			this.analyse = new Analyser(analysedRuleSet);
 			this.analyse.setProperties(properties.values());
 			this.isAnalysed = true;

@@ -217,24 +217,6 @@ public class DefaultKnowledgeBaseTest {
 
 	/**
 	 * Test method for
-	 * {@link fr.lirmm.graphik.graal.kb.DefaultKnowledgeBase#query(fr.lirmm.graphik.graal.api.core.Query)}.
-	 * @throws AtomSetException 
-	 * @throws KnowledgeBaseException 
-	 * @throws ParseException 
-	 * @throws IteratorException 
-	 */
-	@Test
-	public void testQueryQuery() throws AtomSetException, ParseException, KnowledgeBaseException, IteratorException {
-		KnowledgeBase kb = new DefaultKnowledgeBase(
-				new DlgpParser("p(X) :- q(X). q(X) :- r(X). r(X) :- s(X).  s(a)."));
-		CloseableIterator<Substitution> res = kb.query(DlgpParser.parseQuery("? :- p(a)."));
-		Assert.assertTrue(res.hasNext());
-		res.close();
-		kb.close();
-	}
-
-	/**
-	 * Test method for
 	 * {@link fr.lirmm.graphik.graal.kb.DefaultKnowledgeBase#getRuleNames()}.
 	 * @throws ParseException 
 	 */

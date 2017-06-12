@@ -66,7 +66,7 @@ public interface Chase extends Profilable {
 	
 	/**
 	 * Calls next() until hasNext() return false. If the method execution time exceed the specified timeout (in milliseconds) then 
-	 * the method will be interrupted and a {@link TimeoutException} will be throw.
+	 * the method will be interrupted and a {@link TimeoutException} will be throw. A timeout of 0 means to wait forever.
 	 * @throws TimeoutException 
 	 * @throws ChaseException 
 	 */
