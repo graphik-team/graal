@@ -1,7 +1,7 @@
 	<property name="lib-test"		value="${lib}:lib/junit-4.11.jar"/>
 
 	<property name="src"
-	value="graal-api/src/main/java:graal-backward-chaining/src/main/java:graal-core/src/main/java:graal-forward-chaining/src/main/java:graal-homomorphism/src/main/java:graal-io/graal-io-owl/src/main/java:graal-io/graal-io-dlgp/src/main/java:graal-io/graal-io-sparql/src/main/java:graal-rules-analyser/src/main/java:graal-store/graal-store-blueprints/src/main/java:graal-store/graal-store-jenaTDB/src/main/java:graal-store/graal-store-neo4j/src/main/java:graal-store/graal-store-openrdf/src/main/java:graal-store/graal-store-rdbms/rdbms-adhoc/src/main/java:graal-store/graal-store-rdbms/rdbms-common/src/main/java:graal-store/graal-store-rdbms/rdbms-natural/src/main/java:graal-util/src/main/java:graal-io/graal-io-ruleml/src/main/java" />
+	value="graal-api/src/main/java:graal-backward-chaining/src/main/java:graal-core/src/main/java:graal-forward-chaining/src/main/java:graal-grd/src/main/java:graal-homomorphism/src/main/java:graal-io/graal-io-owl/src/main/java:graal-io/graal-io-dlgp/src/main/java:graal-io/graal-io-rdf/src/main/java:graal-io/graal-io-ruleml/src/main/java:graal-io/graal-io-sparql/src/main/java:graal-kb/src/main/java:graal-rules-analyser/src/main/java:graal-store/graal-store-neo4j/src/main/java:graal-store/graal-store-rdf4j/src/main/java:graal-store/graal-store-rdbms/rdbms-adhoc/src/main/java:graal-store/graal-store-rdbms/rdbms-common/src/main/java:graal-store/graal-store-rdbms/rdbms-natural/src/main/java:graal-util/src/main/java:rdf4j-common/src/main/java" />
 	<property name="src-test"       value="src/test/java"/>
 
 	<property name="target"         value="target"/>
