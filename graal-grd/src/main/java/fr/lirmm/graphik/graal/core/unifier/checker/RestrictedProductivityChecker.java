@@ -42,9 +42,12 @@ package fr.lirmm.graphik.graal.core.unifier.checker;
  * knowledge of the CeCILL license and that you accept its terms.
  */
 
+import java.util.Set;
+
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.core.unifier.DependencyChecker;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.ConjunctiveQueryWithFixedVariables;
@@ -86,8 +89,10 @@ public class RestrictedProductivityChecker implements DependencyChecker {
 		f.addAll(h1.iterator());
 		f.addAll(b2.iterator());
 
-		ConjunctiveQueryWithFixedVariables query = new ConjunctiveQueryWithFixedVariables(h2, s.getValues());
+		Set<Variable> fixedVariables = h2.getVariables();
+		fixedVariables.retainAll(b2.getVariables());
 		try {
+		ConjunctiveQueryWithFixedVariables query = new ConjunctiveQueryWithFixedVariables(h2, fixedVariables);
 			return !PureHomomorphism.instance().exist(query.getAtomSet(), f);
 		} catch (HomomorphismException e) {
 			// TODO treat this exception
