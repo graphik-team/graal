@@ -50,11 +50,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -65,12 +61,12 @@ import org.jgrapht.graph.DefaultDirectedGraph;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.GraphOfRuleDependencies;
-import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.unifier.DependencyChecker;
 import fr.lirmm.graphik.graal.core.LabelRuleComparator;
 import fr.lirmm.graphik.graal.core.Substitutions;
+import fr.lirmm.graphik.graal.core.ruleset.IndexedByBodyPredicatesRuleSet;
 import fr.lirmm.graphik.graal.core.unifier.DefaultUnifierAlgorithm;
 import fr.lirmm.graphik.util.LinkedSet;
 import fr.lirmm.graphik.util.graph.scc.StronglyConnectedComponentsGraph;
@@ -315,25 +311,16 @@ public class DefaultGraphOfRuleDependencies implements GraphOfRuleDependencies {
 
 	protected void computeDependencies(DependencyChecker... checkers) {
 		// preprocess
-		Map<Predicate, List<Rule>> index = new TreeMap<Predicate,List<Rule>>();
-		for (Rule r : this.graph.vertexSet()) {
-			CloseableIteratorWithoutException<Atom> it = r.getBody().iterator();
-			while (it.hasNext()) {
-				Atom a = it.next();
-				if (index.get(a.getPredicate()) == null)
-					index.put(a.getPredicate(),new LinkedList<Rule>());
-				index.get(a.getPredicate()).add(r);
-			}
-		}
+		IndexedByBodyPredicatesRuleSet index = new IndexedByBodyPredicatesRuleSet(this.graph.vertexSet());
 
-		List<Rule> candidates = null;
+		Iterable<Rule> candidates = null;
 		Set<String> marked = new TreeSet<String>();
 		for (Rule r1 : this.graph.vertexSet()) {
 			marked.clear();
 			CloseableIteratorWithoutException<Atom> it = r1.getHead().iterator();
 			while (it.hasNext()) {
 				Atom a = it.next();
-				candidates = index.get(a.getPredicate());
+				candidates = index.getRulesByBodyPredicate(a.getPredicate());
 				if (candidates != null) {
 					for (Rule r2 : candidates) {
 						if (marked.add(r2.getLabel())) {
