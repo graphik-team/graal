@@ -65,14 +65,14 @@ import org.slf4j.LoggerFactory;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.api.core.ConstantGenerator;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
+import fr.lirmm.graphik.graal.api.core.TermGenerator;
 import fr.lirmm.graphik.graal.api.store.WrongArityException;
 import fr.lirmm.graphik.graal.common.rdf4j.MalformedLangStringException;
 import fr.lirmm.graphik.graal.common.rdf4j.RDF4jUtils;
-import fr.lirmm.graphik.graal.core.DefaultConstantGenerator;
+import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.store.AbstractTripleStore;
 import fr.lirmm.graphik.graal.io.sparql.SparqlConjunctiveQueryWriter;
@@ -341,10 +341,10 @@ public class RDF4jStore extends AbstractTripleStore {
 		return this.getTerms();
 	}
 
-	private ConstantGenerator freshSymbolGenerator = new DefaultConstantGenerator("EE");
+	private TermGenerator freshSymbolGenerator = new DefaultVariableGenerator("EE");
 
 	@Override
-	public ConstantGenerator getFreshSymbolGenerator() {
+	public TermGenerator getFreshSymbolGenerator() {
 		return freshSymbolGenerator;
 	}
 

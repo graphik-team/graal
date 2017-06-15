@@ -302,6 +302,6 @@ public interface AtomSet extends CloseableIterable<Atom> {
 	/**
 	 * @return the SymbolGenerator used by this atomset.
 	 */
-	ConstantGenerator getFreshSymbolGenerator();
+	TermGenerator getFreshSymbolGenerator();
 
 }

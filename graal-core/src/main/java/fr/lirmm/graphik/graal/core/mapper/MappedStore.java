@@ -47,10 +47,10 @@ import java.io.IOException;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
-import fr.lirmm.graphik.graal.api.core.ConstantGenerator;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
+import fr.lirmm.graphik.graal.api.core.TermGenerator;
 import fr.lirmm.graphik.graal.api.core.mapper.Mapper;
 import fr.lirmm.graphik.graal.api.store.Store;
 import fr.lirmm.graphik.graal.core.store.AbstractStore;
@@ -162,7 +162,7 @@ public class MappedStore extends AbstractStore {
 	}
 
 	@Override
-	public ConstantGenerator getFreshSymbolGenerator() {
+	public TermGenerator getFreshSymbolGenerator() {
 		return store.getFreshSymbolGenerator();
 	}
 

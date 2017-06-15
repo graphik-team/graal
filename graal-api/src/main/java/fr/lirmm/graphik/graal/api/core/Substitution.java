@@ -42,6 +42,7 @@
  */
  package fr.lirmm.graphik.graal.api.core;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -83,7 +84,7 @@ public interface Substitution extends Comparable<Substitution>, AppendableToStri
 	 * @param terms
 	 * @return A list of images of each terms.
 	 */
-	List<Term> createImageOf(List<Term> terms);
+	List<Term> createImageOf(Collection<? extends Term> terms);
 
 	/**
 	 * Adds a mapping from the specified variable into the specified image to

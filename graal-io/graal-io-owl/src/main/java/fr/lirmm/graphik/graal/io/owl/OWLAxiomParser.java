@@ -191,9 +191,9 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 
 	public OWLAxiomParser(ShortFormProvider prefixManager) {
 		this.prefixManager = prefixManager;
-		this.glueVarX = freeVarGen.getFreshVar();
-		this.glueVarY = freeVarGen.getFreshVar();
-		this.glueVarZ = freeVarGen.getFreshVar();
+		this.glueVarX = freeVarGen.getFreshSymbol();
+		this.glueVarY = freeVarGen.getFreshSymbol();
+		this.glueVarZ = freeVarGen.getFreshSymbol();
 
 		this.equalityPredicate = new Predicate("=", 2);
 		this.classVisitorX = new OWLEquivalentClassExpressionVisitorImpl(
@@ -585,9 +585,9 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 		freeVarGen.setIndex(0);
 		InMemoryAtomSet body = GraalUtils.createAtomSet();
 		Term varX, varY, firstVarInChain;
-		firstVarInChain = varX = freeVarGen.getFreshVar();
+		firstVarInChain = varX = freeVarGen.getFreshSymbol();
 		for (OWLPropertyExpression pe : arg.getPropertyChain()) {
-			varY = freeVarGen.getFreshVar();
+			varY = freeVarGen.getFreshSymbol();
 			body.addAll(pe.accept(new OWLPropertyExpressionVisitorImpl(varX,
 					varY)));
 			varX = varY;
@@ -636,7 +636,7 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 
 			for (OWLObjectPropertyExpression pe : arg
 					.getObjectPropertyExpressions()) {
-				Term var = freeVarGen.getFreshVar();
+				Term var = freeVarGen.getFreshSymbol();
 
 				body.addAll(pe.accept(new OWLPropertyExpressionVisitorImpl(
 						glueVarX, var)));
@@ -646,7 +646,7 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 
 			for (OWLDataPropertyExpression pe : arg
 					.getDataPropertyExpressions()) {
-				Term var = freeVarGen.getFreshVar();
+				Term var = freeVarGen.getFreshSymbol();
 
 				body.add(DefaultAtomFactory.instance().create(GraalUtils.createPredicate(pe),
 						glueVarX, var));
@@ -1004,7 +1004,7 @@ class OWLAxiomParser implements OWLAxiomVisitorEx<Iterable<? extends Object>> {
 		private int index = 0;
 
 		@Override
-		public Variable getFreshVar() {
+		public Variable getFreshSymbol() {
 			return DefaultTermFactory.instance().createVariable("X" + index++);
 		}
 

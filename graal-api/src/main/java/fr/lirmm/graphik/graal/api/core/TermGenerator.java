@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2017)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -42,19 +42,16 @@
  */
 package fr.lirmm.graphik.graal.api.core;
 
-
 /**
- * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface VariableGenerator extends TermGenerator {
+public interface TermGenerator {
 
 	/**
-	 * Generate a fresh variable, i.e. a variable that does not already exist.
+	 * Generate a fresh term, i.e. a term which does not already exist.
 	 * 
-	 * @return a fresh variable.
+	 * @return a fresh Term.
 	 */
-	Variable getFreshSymbol();
-};
-
+	Term getFreshSymbol();
+}

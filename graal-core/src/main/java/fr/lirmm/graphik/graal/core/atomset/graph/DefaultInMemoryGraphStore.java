@@ -51,15 +51,15 @@ import java.util.Set;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
-import fr.lirmm.graphik.graal.api.core.ConstantGenerator;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
+import fr.lirmm.graphik.graal.api.core.TermGenerator;
 import fr.lirmm.graphik.graal.api.core.TermValueComparator;
 import fr.lirmm.graphik.graal.api.store.BatchProcessor;
 import fr.lirmm.graphik.graal.api.store.Store;
 import fr.lirmm.graphik.graal.core.AtomType;
-import fr.lirmm.graphik.graal.core.DefaultConstantGenerator;
+import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.core.TypeFilter;
 import fr.lirmm.graphik.graal.core.atomset.AbstractInMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.store.DefaultBatchProcessor;
@@ -83,7 +83,7 @@ public class DefaultInMemoryGraphStore extends AbstractInMemoryAtomSet implement
 	private Map<Predicate, PredicateVertex> predicates;
 
 	private Map<Predicate, Set<Term>[]> termsByPredicatePosition;
-	private ConstantGenerator freshSymbolGenerator = new DefaultConstantGenerator("EE");
+	private TermGenerator freshSymbolGenerator = new DefaultVariableGenerator("EE");
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -255,7 +255,7 @@ public class DefaultInMemoryGraphStore extends AbstractInMemoryAtomSet implement
 	}
 
 	@Override
-	public ConstantGenerator getFreshSymbolGenerator() {
+	public TermGenerator getFreshSymbolGenerator() {
 		return freshSymbolGenerator;
 	}
 	

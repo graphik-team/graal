@@ -116,7 +116,7 @@ class OWLEquivalentClassExpressionVisitorImpl extends
 
 	@Override
 	public InMemoryAtomSet visit(OWLObjectSomeValuesFrom arg) {
-		Term newGlueVariable = varGen.getFreshVar();
+		Term newGlueVariable = varGen.getFreshSymbol();
 
 		InMemoryAtomSet atomset = arg.getProperty().accept(
 				new OWLPropertyExpressionVisitorImpl(glueVariable,
@@ -133,7 +133,7 @@ class OWLEquivalentClassExpressionVisitorImpl extends
 
 	@Override
 	public InMemoryAtomSet visit(OWLDataSomeValuesFrom arg) {
-		Variable newGlueVariable = varGen.getFreshVar();
+		Variable newGlueVariable = varGen.getFreshSymbol();
 
 		InMemoryAtomSet atomset = arg.getProperty().accept(
 				new OWLPropertyExpressionVisitorImpl(glueVariable,
@@ -185,7 +185,7 @@ class OWLEquivalentClassExpressionVisitorImpl extends
 
 	@Override
 	public InMemoryAtomSet objectMinCardinality1(OWLObjectMinCardinality arg) {
-		Term newGlueVariable = varGen.getFreshVar();
+		Term newGlueVariable = varGen.getFreshSymbol();
 
 		InMemoryAtomSet atomset = arg.getProperty().accept(
 				new OWLPropertyExpressionVisitorImpl(glueVariable,
@@ -200,7 +200,7 @@ class OWLEquivalentClassExpressionVisitorImpl extends
 
 	@Override
 	public InMemoryAtomSet dataMinCardinality1(OWLDataMinCardinality arg) {
-		Variable newGlueVariable = varGen.getFreshVar();
+		Variable newGlueVariable = varGen.getFreshSymbol();
 
 		InMemoryAtomSet atomset = arg.getProperty().accept(
 				new OWLPropertyExpressionVisitorImpl(glueVariable,

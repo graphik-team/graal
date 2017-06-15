@@ -72,7 +72,7 @@ public class DefaultVariableGenerator implements VariableGenerator {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public Variable getFreshVar() {
+	public Variable getFreshSymbol() {
 		return DefaultTermFactory.instance()
 				.createVariable(this.prefix + getFreshIndex());
 	}

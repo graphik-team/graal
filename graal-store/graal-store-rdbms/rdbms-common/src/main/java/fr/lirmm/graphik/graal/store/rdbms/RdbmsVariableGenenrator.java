@@ -50,11 +50,11 @@ import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.api.core.Constant;
-import fr.lirmm.graphik.graal.api.core.ConstantGenerator;
+import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.graal.api.core.VariableGenerator;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 
-public class RdbmsSymbolGenenrator implements ConstantGenerator {
+public class RdbmsVariableGenenrator implements VariableGenerator {
 
     private Connection dbConnection;
     private final String counterName;
@@ -62,9 +62,9 @@ public class RdbmsSymbolGenenrator implements ConstantGenerator {
     private final String updateCounterValueQuery;
 
     private static final Logger LOGGER = LoggerFactory
-            .getLogger(RdbmsSymbolGenenrator.class);
+            .getLogger(RdbmsVariableGenenrator.class);
 
-    public RdbmsSymbolGenenrator(Connection connection, String counterName, String getCounterValueQuery,
+    public RdbmsVariableGenenrator(Connection connection, String counterName, String getCounterValueQuery,
             String updateCounterValueQuery) {
         this.dbConnection = connection;
         this.getCounterValueQuery = getCounterValueQuery;
@@ -73,7 +73,7 @@ public class RdbmsSymbolGenenrator implements ConstantGenerator {
     }
 
     @Override
-	public Constant getFreshCst() {
+	public Variable getFreshSymbol() {
         long value;
         PreparedStatement pstat = null;
         try {
@@ -100,7 +100,7 @@ public class RdbmsSymbolGenenrator implements ConstantGenerator {
                 }
             }
         }
-		return DefaultTermFactory.instance().createConstant("EE" + value);
+		return DefaultTermFactory.instance().createVariable("EE" + value);
     }
 
 }

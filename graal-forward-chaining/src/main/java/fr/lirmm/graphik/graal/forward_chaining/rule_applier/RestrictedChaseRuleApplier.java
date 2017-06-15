@@ -85,7 +85,7 @@ public class RestrictedChaseRuleApplier<T extends AtomSet> implements RuleApplie
 	
 				// replace variables by fresh symbol
 				for (Variable t : rule.getExistentials()) {
-					proj.put(t, atomSet.getFreshSymbolGenerator().getFreshCst());
+					proj.put(t, atomSet.getFreshSymbolGenerator().getFreshSymbol());
 				}
 	
 				CloseableIteratorWithoutException<Atom> it = proj.createImageOf(rule.getHead()).iterator();
@@ -164,7 +164,7 @@ public class RestrictedChaseRuleApplier<T extends AtomSet> implements RuleApplie
 					
 					// replace variables by fresh symbol
 					for (Variable t : rule.getExistentials()) {
-						proj.put(t, atomset.getFreshSymbolGenerator().getFreshCst());
+						proj.put(t, atomset.getFreshSymbolGenerator().getFreshSymbol());
 					}
 		
 					localIt = proj.createImageOf(rule.getHead()).iterator();

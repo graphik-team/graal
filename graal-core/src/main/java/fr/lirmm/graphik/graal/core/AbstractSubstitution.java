@@ -46,6 +46,7 @@
 package fr.lirmm.graphik.graal.core;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -91,7 +92,7 @@ public abstract class AbstractSubstitution implements Substitution {
 	}
 
 	@Override
-	public List<Term> createImageOf(List<Term> terms) {
+	public List<Term> createImageOf(Collection<? extends Term> terms) {
 		List<Term> l = new ArrayList<Term>(terms.size());
 		for (Term t : terms) {
 			l.add(this.createImageOf(t));

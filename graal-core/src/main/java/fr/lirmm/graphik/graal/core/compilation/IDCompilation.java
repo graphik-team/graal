@@ -184,7 +184,7 @@ public class IDCompilation extends AbstractRulesCompilation {
 			res = new LinkedList<IDCondition>();
 			ArrayList<Term> terms = new ArrayList<Term>(predB.getArity());
 			for (int i = 0; i < predH.getArity(); i++) {
-				terms.add(varGen.getFreshVar());
+				terms.add(varGen.getFreshSymbol());
 			}
 			res.add(new IDConditionImpl(terms, terms));
 		} else {

@@ -64,10 +64,10 @@ import org.slf4j.LoggerFactory;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.api.core.ConstantGenerator;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
+import fr.lirmm.graphik.graal.api.core.TermGenerator;
 import fr.lirmm.graphik.graal.api.core.UnsupportedAtomTypeException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.store.BatchProcessor;
@@ -78,7 +78,7 @@ import fr.lirmm.graphik.graal.core.stream.SubstitutionIterator2AtomIterator;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.store.rdbms.AbstractRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.RdbmsConjunctiveQueryTranslator;
-import fr.lirmm.graphik.graal.store.rdbms.RdbmsSymbolGenenrator;
+import fr.lirmm.graphik.graal.store.rdbms.RdbmsVariableGenenrator;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
 import fr.lirmm.graphik.graal.store.rdbms.homomorphism.SqlHomomorphism;
 import fr.lirmm.graphik.graal.store.rdbms.util.DBColumn;
@@ -334,8 +334,8 @@ public class AdHocRdbmsStore extends AbstractRdbmsStore {
 	}
 
 	@Override
-	public ConstantGenerator getFreshSymbolGenerator() {
-		return new RdbmsSymbolGenenrator(this.getConnection(), MAX_VARIABLE_ID_COUNTER, GET_COUNTER_VALUE_QUERY,
+	public TermGenerator getFreshSymbolGenerator() {
+		return new RdbmsVariableGenenrator(this.getConnection(), MAX_VARIABLE_ID_COUNTER, GET_COUNTER_VALUE_QUERY,
 		                                 UPDATE_COUNTER_VALUE_QUERY);
 	}
 

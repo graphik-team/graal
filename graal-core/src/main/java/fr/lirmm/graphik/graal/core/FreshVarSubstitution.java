@@ -80,7 +80,7 @@ public class FreshVarSubstitution extends TreeMapSubstitution {
 		if (!term.isConstant()) {
 			substitut = this.getMap().get(term);
 			if(substitut == null) {
-				substitut = gen.getFreshVar();
+				substitut = gen.getFreshSymbol();
 				this.put((Variable) term, substitut);
 			}
 		}

@@ -173,7 +173,7 @@ final class Utils {
 	public static Rule getSafeCopy(Rule rule) {
 		Substitution substitution = new TreeMapSubstitution();
 		for (Variable t : rule.getVariables()) {
-			substitution.put(t, varGen.getFreshVar());
+			substitution.put(t, varGen.getFreshSymbol());
 		}
 
 		InMemoryAtomSet body = rule.getBody();
@@ -191,7 +191,7 @@ final class Utils {
 	public static InMemoryAtomSet getSafeCopy(InMemoryAtomSet atomSet) {
 		Substitution substitution = new TreeMapSubstitution();
 		for (Variable t : atomSet.getVariables()) {
-			substitution.put(t, varGen.getFreshVar());
+			substitution.put(t, varGen.getFreshSymbol());
 		}
 
 		InMemoryAtomSet safe = new LinkedListAtomSet();

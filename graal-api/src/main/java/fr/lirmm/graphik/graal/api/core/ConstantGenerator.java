@@ -42,19 +42,17 @@
  */
 package fr.lirmm.graphik.graal.api.core;
 
-
 /**
  * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface ConstantGenerator {
+public interface ConstantGenerator extends TermGenerator {
 
 	/**
-	 * Generate a fresh constant, i.e. a constant which does not already exist. 
+	 * Generate a fresh constant, i.e. a constant which does not already exist.
 	 * 
 	 * @return a fresh Constant.
 	 */
-	Constant getFreshCst();
+	Constant getFreshSymbol();
 };
-

@@ -40,49 +40,67 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- package fr.lirmm.graphik.graal.core;
+ package fr.lirmm.graphik.graal.store.rdbms;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.api.core.Constant;
 import fr.lirmm.graphik.graal.api.core.ConstantGenerator;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 
-/**
- * Generate fresh variables by appending an incremental counter to the specified
- * prefix.
- * 
- * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- *
- */
-public class DefaultConstantGenerator implements ConstantGenerator {
-	
-	private String prefix;
-	private int index;
+public class RdbmsConstantGenenrator implements ConstantGenerator {
 
-	// /////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTOR
-	// /////////////////////////////////////////////////////////////////////////
+    private Connection dbConnection;
+    private final String counterName;
+    private final String getCounterValueQuery;
+    private final String updateCounterValueQuery;
 
-	public DefaultConstantGenerator(String prefix) {
-		this.index = 0;
-		this.prefix = prefix;
-	}
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(RdbmsConstantGenenrator.class);
 
-	// /////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	// /////////////////////////////////////////////////////////////////////////
+    public RdbmsConstantGenenrator(Connection connection, String counterName, String getCounterValueQuery,
+            String updateCounterValueQuery) {
+        this.dbConnection = connection;
+        this.getCounterValueQuery = getCounterValueQuery;
+        this.updateCounterValueQuery = updateCounterValueQuery;
+        this.counterName = counterName;
+    }
 
-	@Override
+    @Override
 	public Constant getFreshSymbol() {
-		return DefaultTermFactory.instance()
-		                         .createConstant(this.prefix + getFreshIndex());
-	}
+        long value;
+        PreparedStatement pstat = null;
+        try {
+            pstat = dbConnection.prepareStatement(this.getCounterValueQuery);
+            pstat.setString(1, counterName);
+            ResultSet result = pstat.executeQuery();
+            result.next();
+            value = result.getLong("value") + 1;
+            pstat.close();
+            pstat = dbConnection.prepareStatement(this.updateCounterValueQuery);
+            pstat.setLong(1, value);
+            pstat.setString(2, this.counterName);
+            pstat.executeUpdate();
+            pstat.close();
+        } catch (SQLException e) {
+			LOGGER.error(e.getMessage(), e);
+            value = 0; // FIXME
+        } finally {
+            if( pstat != null ) {
+                try {
+                    pstat.close();
+                } catch (SQLException e) {
+                    LOGGER.warn(e.getMessage(), e);
+                }
+            }
+        }
+		return DefaultTermFactory.instance().createConstant("EE" + value);
+    }
 
-	// /////////////////////////////////////////////////////////////////////////
-	// PRIVATE METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	private int getFreshIndex() {
-		return index++;
-	}
-
-};
+}

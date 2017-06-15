@@ -103,7 +103,7 @@ class RdbmsAtomIterator implements CloseableIterator<Atom> {
 				List<Term> terms = new LinkedList<Term>();
 				VariableGenerator gen = new DefaultVariableGenerator("X");
 				for(int i=0; i<p.getArity(); ++i) {
-					terms.add(gen.getFreshVar());
+					terms.add(gen.getFreshSymbol());
 				}
 				
 				InMemoryAtomSet atomSet = new LinkedListAtomSet();

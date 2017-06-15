@@ -57,7 +57,7 @@ import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
-import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
+import fr.lirmm.graphik.graal.core.ConjunctiveQueryWithFixedVariables;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.util.profiler.AbstractProfilable;
@@ -76,7 +76,7 @@ public class RestrictedChaseStopCondition extends AbstractProfilable implements 
 	public CloseableIterator<Atom> apply(Rule rule, Substitution substitution, AtomSet data)
 			throws HomomorphismFactoryException, HomomorphismException {
 		InMemoryAtomSet newFacts = substitution.createImageOf(rule.getHead());
-		ConjunctiveQuery query = new DefaultConjunctiveQuery(newFacts);
+		ConjunctiveQuery query = new ConjunctiveQueryWithFixedVariables(newFacts, substitution.createImageOf(rule.getFrontier()));
 
 		try {
 			if (StaticHomomorphism.instance().execute(query, data).hasNext()) {
@@ -90,7 +90,7 @@ public class RestrictedChaseStopCondition extends AbstractProfilable implements 
 
 		// replace variables by fresh symbol
 		for (Variable t : rule.getExistentials()) {
-			substitution.put(t, data.getFreshSymbolGenerator().getFreshCst());
+			substitution.put(t, data.getFreshSymbolGenerator().getFreshSymbol());
 		}
 		CloseableIteratorWithoutException<Atom> it = substitution.createImageOf(rule.getHead()).iterator();
 		return it;
