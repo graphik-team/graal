@@ -124,7 +124,7 @@ public class DlgpWriter extends AbstractGraalWriter {
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
 	
-	public void writeDirective(Directive d) throws IOException {
+	public DlgpWriter write(Directive d) throws IOException {
 		switch (d.getType()) {
 		case UNA:
 			this.write("@una");
@@ -153,6 +153,7 @@ public class DlgpWriter extends AbstractGraalWriter {
 			break;
 		}
 		this.write("\n");
+		return this;
 	}
 
 	@Override
