@@ -48,7 +48,11 @@ package fr.lirmm.graphik.graal.api.core;
 import java.io.Serializable;
 
 /**
- * A Term is either a {@link Constant} or {@link Variable}.
+ * In analogy to natural language, where a noun phrase refers to an object, 
+ * a term denotes a mathematical object referring to someone or something. 
+ * A term is either a {@link Constant} or {@link Variable}, a variable is
+ * a placeholder for an other term.
+ * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */

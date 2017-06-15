@@ -47,6 +47,8 @@ package fr.lirmm.graphik.graal.api.core;
 
 
 /**
+ * A variable is a placeholder for an other {@link Term}.
+ * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */

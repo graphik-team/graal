@@ -48,6 +48,10 @@ import java.util.Set;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
+ * The {@ling Ontology} interface is a way to manage set of {@link Rule rules},
+ * {@link NegativeConstraint constraints} and {@link Predicate predicates} (i.e.
+ * vocabulary).
+ * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */

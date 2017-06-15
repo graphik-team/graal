@@ -47,7 +47,9 @@ package fr.lirmm.graphik.graal.api.core;
 
 
 /**
- * A Constant is either a simple constant or a {@link Literal}.
+ * A constant is a symbol referring to something, is either a 
+ * simple constant or a {@link Literal}.
+ * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */

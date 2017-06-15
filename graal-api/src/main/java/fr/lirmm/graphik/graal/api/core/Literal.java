@@ -48,6 +48,10 @@ package fr.lirmm.graphik.graal.api.core;
 import fr.lirmm.graphik.util.URI;
 
 /**
+ * A Literal is a typed {@link Constant} representing strings, numbers, dates…
+ * The {@link URI} returned by {@link #getDatatype()} specifies which kind of
+ * object is represented.
+ * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
