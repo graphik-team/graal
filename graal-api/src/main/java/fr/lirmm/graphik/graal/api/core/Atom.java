@@ -98,6 +98,14 @@ public interface Atom extends Comparable<Atom>, Iterable<Term>, AppendableToStri
 	int indexOf(Term t);
 
 	/**
+	 * Returns the indexes of a given term in the atom.
+	 *
+	 * @param term
+	 * @return
+	 */
+	int[] indexesOf(Term term);
+	 
+	/**
 	 * Returns true if the term list contains the specified term.
 	 * 
 	 * @param t

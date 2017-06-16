@@ -59,8 +59,8 @@ import fr.lirmm.graphik.graal.api.core.Constant;
 import fr.lirmm.graphik.graal.api.core.Literal;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.util.ArrayIterator;
 
 /**
@@ -77,6 +77,15 @@ class AtomEdge extends AbstractAtom implements Edge {
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
+	/**
+	 * @param predicate
+	 */
+	public AtomEdge(PredicateVertex predicate) {
+		this.predicate = predicate;
+		int n = predicate.getArity();
+		this.terms = new TermVertex[n];
+	}
+	
 	/**
 	 * @param predicate
 	 * @param terms
@@ -120,6 +129,29 @@ class AtomEdge extends AbstractAtom implements Edge {
 	@Override
 	public int indexOf(Term t) {
 		return ArrayUtils.indexOf(terms, t);
+	}
+	
+	@Override
+	public int[] indexesOf(Term term) {
+		int[] result = null;
+		int resultCounter = 0;
+		int termsSize = terms.length;
+		for (int i = 0; i < termsSize; i++) {
+			if (terms[i].equals(term)) {
+				resultCounter++;
+			}
+		}
+		result = new int[resultCounter];
+		if (resultCounter != 0) {
+			int pos = 0;
+			for (int i = 0; i < termsSize; i++) {
+				if (terms[i].equals(term)) {
+					result[pos] = i;
+					pos++;
+				}
+			}
+		}
+		return result;
 	}
 
 	@Override

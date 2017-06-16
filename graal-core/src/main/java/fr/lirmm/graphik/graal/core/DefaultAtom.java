@@ -51,6 +51,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import fr.lirmm.graphik.graal.api.core.AbstractAtom;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Constant;
@@ -153,20 +155,13 @@ public class DefaultAtom extends AbstractAtom implements Serializable {
 	public boolean contains(Term term) {
 		return this.indexOf(term) >= 0;
 	}
-
+	
 	@Override
-	public int indexOf(Term term) {
-		for (int i = 0; i < this.terms.length; ++i) {
-			if (term.equals(this.terms[i])) {
-				return i;
-			}
-		}
-		return -1;
+	public int indexOf(Term t) {
+		return ArrayUtils.indexOf(terms, t);
 	}
 	
-	/**
-	 * Returns the index of a given term in the atom.
-	 */
+	@Override
 	public int[] indexesOf(Term term) {
 		int[] result = null;
 		int resultCounter = 0;
@@ -176,8 +171,8 @@ public class DefaultAtom extends AbstractAtom implements Serializable {
 				resultCounter++;
 			}
 		}
+		result = new int[resultCounter];
 		if (resultCounter != 0) {
-			result = new int[resultCounter];
 			int pos = 0;
 			for (int i = 0; i < termsSize; i++) {
 				if (terms[i].equals(term)) {

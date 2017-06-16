@@ -48,8 +48,11 @@ package fr.lirmm.graphik.graal.core;
 import java.util.Arrays;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.Constant;
+import fr.lirmm.graphik.graal.api.core.Literal;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 
 /**
@@ -63,19 +66,23 @@ public final class TestUtils {
 	public static final Predicate r = new Predicate("r", 1);
 	public static final Predicate s = new Predicate("s", 1);
 
-	public static final Term T = DefaultTermFactory.instance().createVariable("T");
-	public static final Term U = DefaultTermFactory.instance().createVariable("U");
-	public static final Term V = DefaultTermFactory.instance().createVariable("V");
-	public static final Term W = DefaultTermFactory.instance().createVariable("W");
-	public static final Term X = DefaultTermFactory.instance().createVariable("X");
-	public static final Term Y = DefaultTermFactory.instance().createVariable("Y");
-	public static final Term Z = DefaultTermFactory.instance().createVariable("Z");
+	public static final Variable T = DefaultTermFactory.instance().createVariable("T");
+	public static final Variable U = DefaultTermFactory.instance().createVariable("U");
+	public static final Variable V = DefaultTermFactory.instance().createVariable("V");
+	public static final Variable W = DefaultTermFactory.instance().createVariable("W");
+	public static final Variable X = DefaultTermFactory.instance().createVariable("X");
+	public static final Variable Y = DefaultTermFactory.instance().createVariable("Y");
+	public static final Variable Z = DefaultTermFactory.instance().createVariable("Z");
 
-	public static final Term A = DefaultTermFactory.instance().createConstant("a");
-	public static final Term B = DefaultTermFactory.instance().createConstant("b");
+	public static final Constant A = DefaultTermFactory.instance().createConstant("a");
+	public static final Constant B = DefaultTermFactory.instance().createConstant("b");
+	
+	public static final Literal ONE = DefaultTermFactory.instance().createLiteral(1);
 
 	public static final Atom pAB, pBA;
-	public static final Atom pTU, pUV, pVW, pWX, pXY, pYX, pYZ, pYW, pUU, pWV, pWT, pUW, pAU, pXA, pXB, pXX, pXZ;
+	public static final Atom pTU, pUV, pVW, pWX, pXY, pYX, pYZ, pYW, pUU, pWV, pWT, pUW, pAU, pXX, pXZ;
+	public static final Atom pXA, pXB, pXONE;
+	
 	public static final Atom qXY, qTW, qUV, qVW;
 	public static final Atom sX, sU, rX;
 
@@ -174,6 +181,11 @@ public final class TestUtils {
 		terms[0] = X;
 		terms[1] = Z;
 		pXZ = new DefaultAtom(p, Arrays.asList(terms));
+		
+		terms = new Term[2];
+		terms[0] = X;
+		terms[1] = ONE;
+		pXONE = new DefaultAtom(p, Arrays.asList(terms));
 		
 		// q
 
