@@ -43,6 +43,7 @@
 package fr.lirmm.graphik.graal.core.store;
 
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.store.BatchProcessor;
 import fr.lirmm.graphik.graal.api.store.Store;
 import fr.lirmm.graphik.graal.core.atomset.AbstractAtomSet;
@@ -62,5 +63,13 @@ public abstract class AbstractStore extends AbstractAtomSet implements Store {
 		return new DefaultBatchProcessor(this);
 	}
 
+	@Override
+	public int size(Predicate p) {
+		return Integer.MAX_VALUE;
+	}
 
+	@Override
+	public int getDomainSize() {
+		return Integer.MAX_VALUE;
+	}
 }

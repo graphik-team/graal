@@ -75,6 +75,7 @@ import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.core.store.GraphDBStore;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
@@ -232,14 +233,15 @@ public class Neo4jStore extends GraphDBStore {
 	}
 	
 	private boolean remove(Atom atom, Transaction transaction) {
-		String query = deleteAtomIntoCypherQuery(atom);
+		throw new MethodNotImplementedError();
+		/*String query = deleteAtomIntoCypherQuery(atom);
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(query);
 		}
 		ResourceIterator<Node> result = this.cypherEngine.execute(query).columnAs("atom");
 		boolean contains = result.hasNext();
 		result.close();
-		return contains;
+		return contains;*/
 	}
 
 	@Override
@@ -477,7 +479,7 @@ public class Neo4jStore extends GraphDBStore {
 	// CYPHER QUERIES GENERATION
 	// //////////////////////////////////////////////////////////////////////////
 
-	private static String deleteAtomIntoCypherQuery(Atom a) {
+	/*private static String deleteAtomIntoCypherQuery(Atom a) {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("MATCH ");
@@ -495,7 +497,7 @@ public class Neo4jStore extends GraphDBStore {
 		sb.append(" RETURN atom");
 
 		return sb.toString();
-	}
+	}*/
 
 	private static String containsAtomIntoCypherQuery(Atom a, boolean checkVariableAsFixed) {
 		StringBuilder sb = new StringBuilder();

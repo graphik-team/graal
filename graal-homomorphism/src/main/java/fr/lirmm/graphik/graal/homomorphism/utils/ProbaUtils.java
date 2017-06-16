@@ -45,10 +45,10 @@ package fr.lirmm.graphik.graal.homomorphism.utils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.store.Store;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -76,7 +76,7 @@ public final class ProbaUtils {
 	 * @param rc
 	 * @return the probability to have the specified atom over specified data.
 	 */
-	public static double computeProba(Atom atom, AtomSet data, RulesCompilation rc) {
+	public static double computeProba(Atom atom, Store data, RulesCompilation rc) {
 		int count = 0;
 		for (Pair<Atom, Substitution> im : rc.getRewritingOf(atom)) {
 			count += data.size(im.getLeft().getPredicate());

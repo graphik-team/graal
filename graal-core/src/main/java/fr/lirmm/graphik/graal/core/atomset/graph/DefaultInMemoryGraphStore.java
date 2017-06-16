@@ -63,6 +63,7 @@ import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.core.TypeFilter;
 import fr.lirmm.graphik.graal.core.atomset.AbstractInMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.store.DefaultBatchProcessor;
+import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAggregatorWithoutExeception;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
@@ -124,7 +125,7 @@ public class DefaultInMemoryGraphStore extends AbstractInMemoryAtomSet implement
 	@Override
 	public boolean remove(Atom atom) {
 		// TODO implement this method
-		throw new Error("This method isn't implemented");
+		throw new MethodNotImplementedError();
 	}
 
 	@Override

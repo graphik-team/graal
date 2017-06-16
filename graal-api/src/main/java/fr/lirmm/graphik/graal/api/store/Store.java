@@ -63,6 +63,26 @@ public interface Store extends AtomSet {
 	BatchProcessor createBatchProcessor() throws AtomSetException;
 	
 	boolean isWriteable() throws AtomSetException;
+	
+	/**
+	 * Returns the number of atoms related to the specified predicate or a
+	 * greater estimation of it. In the worst case, this method can return
+	 * {@link Integer.MAX_VALUE}.
+	 * 
+	 * @param p
+	 *            a predicate
+	 * @return the number of atoms related to the specified predicate in this store.
+	 */
+	int size(Predicate p);
+
+	/**
+	 * Returns the numbers of different terms referenced by atoms in this store
+	 * or a greater estimation of it. In the worst case, this method can return
+	 * {@link Integer.MAX_VALUE}.
+	 * 
+	 * @return the numbers of different terms referenced by atoms in this store.
+	 */
+	int getDomainSize();
 
 	@Override
 	CloseableIterator<Atom> iterator();

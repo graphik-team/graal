@@ -335,14 +335,4 @@ public abstract class AbstractAtomSet implements AtomSet {
 		return s.toString();
 	}
 
-	@Override
-	public int size(Predicate p) {
-		return Integer.MAX_VALUE;
-	}
-
-	@Override
-	public int getDomainSize() {
-		return Integer.MAX_VALUE;
-	}
-
 }

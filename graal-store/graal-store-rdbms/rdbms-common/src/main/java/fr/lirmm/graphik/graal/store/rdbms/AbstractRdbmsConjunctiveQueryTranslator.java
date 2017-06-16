@@ -108,7 +108,7 @@ public abstract class AbstractRdbmsConjunctiveQueryTranslator implements RdbmsCo
 				query.append(" and ");
 			}
 			query.append(columns.get(termIndex).getName()).append(" = '")
-			     .append(t).append("'");
+			     .append(t.getLabel()).append("'");
 			++termIndex;
 		}
 		return new SQLQuery(query.toString());

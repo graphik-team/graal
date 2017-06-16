@@ -60,10 +60,12 @@ import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.io.ParseException;
+import fr.lirmm.graphik.graal.api.store.Store;
 import fr.lirmm.graphik.graal.api.store.TripleStore;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
 import fr.lirmm.graphik.graal.test.TestUtil;
+import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
 import fr.lirmm.graphik.util.stream.Iterators;
@@ -277,6 +279,97 @@ public class StoreTest {
 
 		it = store.match(DlgpParser.parseAtom("<p>(X,Y)."));
 		Assert.assertFalse(it.hasNext());
+	}
+	
+	
+	@Theory
+	public void sizeTest(AtomSet atomset) throws ParseException, AtomSetException {
+		Assume.assumeTrue(atomset instanceof Store);
+		Store store = (Store) atomset;
+		
+		// given
+		store.add(DlgpParser.parseAtom("<P>(b,a)."));
+		store.add(DlgpParser.parseAtom("<P>(a,a)."));
+		store.add(DlgpParser.parseAtom("<P>(b,b)."));
+		store.add(DlgpParser.parseAtom("<P>(a,c)."));
+		store.add(DlgpParser.parseAtom("<Q>(a,a)."));
+		store.add(DlgpParser.parseAtom("<Q>(a,b)."));
+
+		// when
+		int sizeP = store.size(new Predicate("P",2));
+		int sizeQ = store.size(new Predicate("Q",2));
+
+		// then
+		Assert.assertTrue(4 <= sizeP);
+		Assert.assertTrue(2 <= sizeQ);
+	}
+	
+	@Theory
+	public void getDomainSizeTest(AtomSet atomset) throws ParseException, AtomSetException {
+		Assume.assumeTrue(atomset instanceof Store);
+		Store store = (Store) atomset;
+		
+		// given
+		store.add(DlgpParser.parseAtom("<P>(b,a)."));
+		store.add(DlgpParser.parseAtom("<P>(a,a)."));
+		store.add(DlgpParser.parseAtom("<P>(b,b)."));
+		store.add(DlgpParser.parseAtom("<P>(a,c)."));
+		store.add(DlgpParser.parseAtom("<Q>(a,a)."));
+		store.add(DlgpParser.parseAtom("<Q>(a,b)."));
+
+		// when
+		int domainSize = store.getDomainSize();
+
+		// then
+		Assert.assertTrue(3 <= domainSize);
+	}
+	
+	@Theory
+	public void removeTest(AtomSet store) throws AtomSetException, IteratorException {
+		// given
+		store.add(DlgpParser.parseAtom("<P>(b,a)."));
+		store.add(DlgpParser.parseAtom("<P>(a,a)."));
+		store.add(DlgpParser.parseAtom("<P>(b,b)."));
+		store.add(DlgpParser.parseAtom("<P>(a,c)."));
+		store.add(DlgpParser.parseAtom("<Q>(a,a)."));
+		store.add(DlgpParser.parseAtom("<Q>(a,b)."));
+
+		// when
+		try {
+			store.remove(DlgpParser.parseAtom("<P>(a,c)."));
+		} catch (MethodNotImplementedError e) {
+			return;
+		}
+
+		// then
+		Assert.assertFalse(store.contains(DlgpParser.parseAtom("<P>(a,c).")));
+		Assert.assertEquals(3, Iterators.count(store.atomsByPredicate(new Predicate("P",2))));
+		Assert.assertEquals(2, Iterators.count(store.atomsByPredicate(new Predicate("Q",2))));
+	}
+	
+	@Theory
+	public void removeAllTest(AtomSet store) throws AtomSetException, IteratorException {
+		// given
+		store.add(DlgpParser.parseAtom("<P>(b,a)."));
+		store.add(DlgpParser.parseAtom("<P>(a,a)."));
+		store.add(DlgpParser.parseAtom("<P>(b,b)."));
+		store.add(DlgpParser.parseAtom("<P>(a,c)."));
+		store.add(DlgpParser.parseAtom("<Q>(a,a)."));
+		store.add(DlgpParser.parseAtom("<Q>(a,b)."));
+
+		// when
+		try {
+			store.removeAll(DlgpParser.parseAtomSet("<P>(a,c), <Q>(a,a)."));
+		} catch (MethodNotImplementedError e) {
+			return;
+		}
+
+		// then
+		Assert.assertFalse(store.contains(DlgpParser.parseAtom("<P>(a,c).")));
+		Assert.assertFalse(store.contains(DlgpParser.parseAtom("<Q>(a,a).")));
+		Assert.assertEquals(3, Iterators.count(store.atomsByPredicate(new Predicate("P",2))));
+		Assert.assertEquals(1, Iterators.count(store.atomsByPredicate(new Predicate("Q",2))));
+
 	}
 
 }

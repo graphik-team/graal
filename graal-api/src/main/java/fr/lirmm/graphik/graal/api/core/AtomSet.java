@@ -285,18 +285,6 @@ public interface AtomSet extends CloseableIterable<Atom> {
 	 */
 	@Override
 	CloseableIterator<Atom> iterator();
-
-	/**
-	 * 
-	 * @param p a predicate
-	 * @return the number of atoms related to the specified predicate
-	 */
-	int size(Predicate p);
-
-	/**
-	 * @return the numbers of different terms referenced by atoms in this atom-set.
-	 */
-	int getDomainSize();
 	
 
 	/**

@@ -63,6 +63,7 @@ import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.graal.api.store.Store;
 import fr.lirmm.graphik.graal.core.factory.DefaultSubstitutionFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.homomorphism.Var;
@@ -111,7 +112,13 @@ class BCCScheduler extends AbstractProfilable implements PatternScheduler {
 		
 		HyperGraph graph = constructHyperGraph(fixedQuery, variables.size(), this.inverseMap, map, ans);
 
-		double[] proba = this.computeProba(fixedQuery, data, variables.size(), map, rc);
+		double[] proba;
+		if(data instanceof Store) {
+			proba = this.computeProba(fixedQuery, (Store) data, variables.size(), map, rc);
+		} else {
+			proba = new double[variables.size() + 1];
+			Arrays.fill(proba, 1);
+		}
 		this.varComparator = new IntegerComparator(proba);
 
 		TmpData d = biconnect(graph, this.varComparator);
@@ -179,13 +186,16 @@ class BCCScheduler extends AbstractProfilable implements PatternScheduler {
 	}
 
 	/**
+	 * 
 	 * @param h
-	 * @param map
+	 * @param data
 	 * @param nbVar
+	 * @param map
+	 * @param rc
 	 * @return the probability to have an image for each variables which appears
 	 *         in h.
 	 */
-	protected double[] computeProba(InMemoryAtomSet h, AtomSet data, int nbVar, Map<Term, Integer> map,
+	protected double[] computeProba(InMemoryAtomSet h, Store data, int nbVar, Map<Term, Integer> map,
 			RulesCompilation rc) {
 		final double[] proba = new double[nbVar + 1];
 		Arrays.fill(proba, -1.);

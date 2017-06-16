@@ -56,6 +56,7 @@ import fr.lirmm.graphik.graal.api.core.Constant;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.store.Store;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
 import fr.lirmm.graphik.graal.homomorphism.VarSharedData;
 import fr.lirmm.graphik.graal.homomorphism.utils.ProbaUtils;
@@ -74,6 +75,7 @@ import fr.lirmm.graphik.util.stream.IteratorException;
 public class StatBootstrapper extends AbstractProfilable implements Bootstrapper {
 
 	private static StatBootstrapper instance;
+	private static Bootstrapper fallback = StarBootstrapper.instance();
 
 	protected StatBootstrapper() {
 		super();
@@ -93,6 +95,10 @@ public class StatBootstrapper extends AbstractProfilable implements Bootstrapper
 	@Override
 	public CloseableIterator<Term> exec(final VarSharedData v, Collection<Atom> preAtoms, Collection<Atom> postAtoms, final AtomSet data,
 	    RulesCompilation rc) throws BacktrackException {
+		if(!(data instanceof Store)) {
+			return fallback.exec(v, preAtoms, postAtoms, data, rc);
+		}
+		Store store = (Store) data;
 		Set<Term> terms = null;
 		
 		if(this.getProfiler() != null) {
@@ -142,7 +148,7 @@ public class StatBootstrapper extends AbstractProfilable implements Bootstrapper
 				it = postAtoms.iterator();
 				while (it.hasNext()) {
 					tmp = it.next();
-					double p = ProbaUtils.computeProba(tmp, data, rc);
+					double p = ProbaUtils.computeProba(tmp, store, rc);
 					if (p < probaA) {
 						a = tmp;
 						p = probaA;
@@ -152,7 +158,7 @@ public class StatBootstrapper extends AbstractProfilable implements Bootstrapper
 				it = preAtoms.iterator();
 				while (it.hasNext()) {
 					tmp = it.next();
-					double p = ProbaUtils.computeProba(tmp, data, rc);
+					double p = ProbaUtils.computeProba(tmp, store, rc);
 					if (p < probaA) {
 						a = tmp;
 						p = probaA;
