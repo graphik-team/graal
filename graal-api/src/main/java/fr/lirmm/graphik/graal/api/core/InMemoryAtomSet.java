@@ -45,7 +45,6 @@
 import java.util.Set;
 
 import fr.lirmm.graphik.util.stream.CloseableIterableWithoutException;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
@@ -121,21 +120,17 @@ public interface InMemoryAtomSet extends AtomSet, CloseableIterableWithoutExcept
 	boolean add(Atom atom);
 
 	@Override
-	boolean addAll(CloseableIterator<? extends Atom> atoms);
-
-	@Override
-	boolean addAll(AtomSet atoms);
-
-	@Override
 	boolean remove(Atom atom);
 
 	@Override
-	boolean removeAll(CloseableIterator<? extends Atom> atoms);
-
-	@Override
-	boolean removeAll(AtomSet atoms);
-
-	@Override
 	void clear();
+
+	boolean removeAll(CloseableIteratorWithoutException<? extends Atom> atoms);
+	
+	boolean removeAll(InMemoryAtomSet atoms);
+	
+	boolean addAll(InMemoryAtomSet atoms);
+	
+	boolean addAll(CloseableIteratorWithoutException<? extends Atom> atoms);
 
 }

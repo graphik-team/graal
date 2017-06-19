@@ -72,7 +72,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
@@ -358,10 +357,10 @@ public class OWL2Parser extends AbstractCloseableIterator<Object> implements Par
 
 			@Override
 			public void exec(Object o) {
-				if (!(o instanceof AtomSet)) {
+				if (!(o instanceof InMemoryAtomSet)) {
 					LOGGER.error("AnonymousIndividuals not allowed here: " + o);
 				} else {
-					fact.addAll((AtomSet) o);
+					fact.addAll((InMemoryAtomSet) o);
 				}
 			}
 

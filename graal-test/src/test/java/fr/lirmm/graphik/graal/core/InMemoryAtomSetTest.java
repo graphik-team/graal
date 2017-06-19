@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2017)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,64 +40,69 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-package fr.lirmm.graphik.graal.homomorphism;
+package fr.lirmm.graphik.graal.core;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.experimental.theories.DataPoints;
+import org.junit.experimental.theories.Theories;
+import org.junit.experimental.theories.Theory;
+import org.junit.runner.RunWith;
 
-import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
-import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
-import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.io.ParseException;
+import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphStore;
-import fr.lirmm.graphik.graal.homomorphism.bbc.BCC;
-import fr.lirmm.graphik.graal.homomorphism.bootstrapper.AllDomainBootstrapper;
-import fr.lirmm.graphik.graal.homomorphism.forward_checking.NoForwardChecking;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
-import fr.lirmm.graphik.util.profiler.CPUTimeProfiler;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.IteratorException;
 
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
+@RunWith(Theories.class)
+public class InMemoryAtomSetTest {
 
-public class BackjumpTest {
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
 
-	/*
-	 * X1 --(p15)--> X5 --(p56)--> X6 \ (p12)--> X2 --(p24)--> X4 \ (p23)--> X3
-	 * 
-	 * solutions: X1 X2 X3 X4 X5 X6 
-	 *            b  b  c  d  a  a 
-	 *            b  b  d  d  a  a 
-	 *            b  d  a  a  a  a
-	 */
-	@Test
-	public void test1() throws HomomorphismException, IteratorException, ParseException, AtomSetException {
-		InMemoryAtomSet data = new DefaultInMemoryGraphStore();
-		
-		data.addAll(DlgpParser.parseAtomSet("p12(a,a), p12(b,b), p12(b,c), p12(b,d)."));
-		data.addAll(DlgpParser.parseAtomSet("p23(a,a), p23(b,c), p23(b,d), p23(c,a), p23(d,a)."));
-		data.addAll(DlgpParser.parseAtomSet("p24(a,a), p24(b,d), p24(d,a)."));
-		data.addAll(DlgpParser.parseAtomSet("p15(b,a), p15(b,b)."));
-		data.addAll(DlgpParser.parseAtomSet("p56(a,a)."));
-
-		ConjunctiveQuery query = DlgpParser.parseQuery("?(X1,X2,X3,X4,X5,X6) :- p12(X1,X2), p23(X2,X3), p24(X2,X4), p15(X1,X5), p56(X5,X6).");
-
-		BCC bcc = new BCC();
-		Homomorphism<ConjunctiveQuery, AtomSet> h = new BacktrackHomomorphism(bcc.getBCCScheduler(), AllDomainBootstrapper.instance(),
-		                                           NoForwardChecking.instance(), bcc.getBCCBackJumping());
-		h.setProfiler(new CPUTimeProfiler());
-		CloseableIterator<Substitution> results = h.execute(query, data);
-		while (results.hasNext()) {
-			results.next();
-		}
-		Assert.assertEquals(47, h.getProfiler().get("#calls"));
+	@DataPoints
+	public static InMemoryAtomSet[] getAtomSet() {
+		InMemoryAtomSet[] atomsets = { new DefaultInMemoryGraphStore(), new LinkedListAtomSet() };
+		return atomsets;
 	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	@Theory
+	public void bugAddAll(InMemoryAtomSet as) throws ParseException {
+		try {
+			as.addAll(DlgpParser.parseAtomSet("error"));
+		} catch (AtomSetException e) {
+			return;
+		}
+		Assert.fail();
+	}
+	
+	@Theory
+	public void bugRemoveAll(InMemoryAtomSet as) throws ParseException {
+		try {
+			as.removeAll(DlgpParser.parseAtomSet("error"));
+		} catch (AtomSetException e) {
+			return;
+		}
+		Assert.fail();
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// OBJECT OVERRIDE METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+	// /////////////////////////////////////////////////////////////////////////
+
 }

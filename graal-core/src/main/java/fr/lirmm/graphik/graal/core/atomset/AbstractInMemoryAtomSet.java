@@ -57,7 +57,6 @@ import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
@@ -78,7 +77,7 @@ public abstract class AbstractInMemoryAtomSet extends AbstractAtomSet implements
 	}
 
 	@Override
-	public boolean addAll(CloseableIterator<? extends Atom> atoms) {
+	public boolean addAll(CloseableIteratorWithoutException<? extends Atom> atoms) {
 		try {
 			return super.addAll(atoms);
 		} catch (AtomSetException e) {
@@ -87,7 +86,7 @@ public abstract class AbstractInMemoryAtomSet extends AbstractAtomSet implements
 	}
 
 	@Override
-	public boolean addAll(AtomSet atoms) {
+	public boolean addAll(InMemoryAtomSet atoms) {
 		try {
 			return super.addAll(atoms);
 		} catch (AtomSetException e) {
@@ -96,7 +95,7 @@ public abstract class AbstractInMemoryAtomSet extends AbstractAtomSet implements
 	}
 
 	@Override
-	public boolean removeAll(CloseableIterator<? extends Atom> atoms) {
+	public boolean removeAll(CloseableIteratorWithoutException<? extends Atom> atoms) {
 		try {
 			return super.removeAll(atoms);
 		} catch (AtomSetException e) {
@@ -105,7 +104,7 @@ public abstract class AbstractInMemoryAtomSet extends AbstractAtomSet implements
 	}
 
 	@Override
-	public boolean removeAll(AtomSet atoms) {
+	public boolean removeAll(InMemoryAtomSet atoms) {
 		try {
 			return super.removeAll(atoms);
 		} catch (AtomSetException e) {

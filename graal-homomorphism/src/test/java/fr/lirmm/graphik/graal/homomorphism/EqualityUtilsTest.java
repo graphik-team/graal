@@ -50,6 +50,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Constant;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
@@ -210,7 +211,7 @@ public class EqualityUtilsTest {
 	}
 
 	@Test
-	public void testQuery1() throws HomomorphismException, IteratorException {
+	public void testQuery1() throws HomomorphismException, IteratorException, AtomSetException {
 		ConjunctiveQuery q = DlgpParser.parseQuery("?(X,Y) :- b(X), Y=a.");
 		InMemoryAtomSet store = new DefaultInMemoryGraphStore();
 		store.addAll(DlgpParser.parseAtomSet("b(a),b(b)."));
@@ -225,7 +226,7 @@ public class EqualityUtilsTest {
 	}
 	
 	@Test
-	public void testQuery2() throws HomomorphismException, IteratorException {
+	public void testQuery2() throws HomomorphismException, IteratorException, AtomSetException {
 		ConjunctiveQuery q = DlgpParser.parseQuery("?(X,Y) :- p(X,Y), X=Y.");
 		InMemoryAtomSet store = new DefaultInMemoryGraphStore();
 		store.addAll(DlgpParser.parseAtomSet("p(a,a),p(a,b),p(b,b)."));

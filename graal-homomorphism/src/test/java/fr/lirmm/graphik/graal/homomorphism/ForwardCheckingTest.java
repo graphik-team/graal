@@ -49,6 +49,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
@@ -72,7 +73,7 @@ import fr.lirmm.graphik.util.stream.IteratorException;
 public class ForwardCheckingTest {
 
 	@Test
-	public void test1() throws HomomorphismException, IteratorException, ParseException {
+	public void test1() throws HomomorphismException, IteratorException, ParseException, AtomSetException {
 		InMemoryAtomSet data = new DefaultInMemoryGraphStore();
 
 		data.addAll(DlgpParser.parseAtomSet("p(a,b)."));
@@ -89,7 +90,7 @@ public class ForwardCheckingTest {
 	}
 
 	@Test
-	public void simpleFCTest1() throws HomomorphismException, IteratorException, ParseException {
+	public void simpleFCTest1() throws HomomorphismException, IteratorException, ParseException, AtomSetException {
 		Profiler profiler = new CPUTimeProfiler();
 
 		InMemoryAtomSet data = new DefaultInMemoryGraphStore();
@@ -108,7 +109,7 @@ public class ForwardCheckingTest {
 	}
 
 	@Test
-	public void FCTest2() throws HomomorphismException, IteratorException, ParseException {
+	public void FCTest2() throws HomomorphismException, IteratorException, ParseException, AtomSetException {
 		Profiler profiler = new CPUTimeProfiler();
 
 		InMemoryAtomSet data = new DefaultInMemoryGraphStore();

@@ -49,6 +49,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
@@ -78,7 +79,7 @@ import fr.lirmm.graphik.util.stream.IteratorException;
 public class HomomorphismTest {
 
 	@Test
-	public void test() throws HomomorphismException, IteratorException {
+	public void test() throws HomomorphismException, IteratorException, AtomSetException {
 		InMemoryAtomSet data = new DefaultInMemoryGraphStore();
 		data.addAll(DlgpParser.parseAtomSet("p(a,b)."));
 		
@@ -99,7 +100,7 @@ public class HomomorphismTest {
 	}
 	
 	@Test
-	public void test11() throws HomomorphismException, IteratorException {
+	public void test11() throws HomomorphismException, IteratorException, AtomSetException {
 		InMemoryAtomSet data = new DefaultInMemoryGraphStore();
 		data.addAll(DlgpParser.parseAtomSet("p(a,b)."));
 		
@@ -124,7 +125,7 @@ public class HomomorphismTest {
 	}
 	
 	@Test
-	public void test2() throws HomomorphismException, IteratorException {
+	public void test2() throws HomomorphismException, IteratorException, AtomSetException {
 		InMemoryAtomSet data = new DefaultInMemoryGraphStore();
 		data.addAll(DlgpParser.parseAtomSet("p(a,b), q(b)."));
 		
@@ -143,7 +144,7 @@ public class HomomorphismTest {
 	}
 	
 	@Test
-	public void test3() throws HomomorphismException, IteratorException {
+	public void test3() throws HomomorphismException, IteratorException, AtomSetException {
 		InMemoryAtomSet data = new DefaultInMemoryGraphStore();
 		data.addAll(DlgpParser.parseAtomSet("p(a,b), q(b)."));
 		
@@ -167,7 +168,7 @@ public class HomomorphismTest {
 	}
 	
 	@Test
-	public void test4() throws HomomorphismException, IteratorException {
+	public void test4() throws HomomorphismException, IteratorException, AtomSetException {
 		InMemoryAtomSet data = new DefaultInMemoryGraphStore();
 		data.addAll(DlgpParser.parseAtomSet("p(a,b), q(b)."));
 		
@@ -189,7 +190,7 @@ public class HomomorphismTest {
 	}
 	
 	@Test
-	public void test5() throws HomomorphismException, IteratorException {
+	public void test5() throws HomomorphismException, IteratorException, AtomSetException {
 		InMemoryAtomSet data = new DefaultInMemoryGraphStore();
 		data.addAll(DlgpParser.parseAtomSet("p(a,b), r(b,b), r(c,c), q(c), q(b)."));
 		
@@ -214,7 +215,7 @@ public class HomomorphismTest {
 	}
 	
 	@Test
-	public void test6() throws HomomorphismException, IteratorException {
+	public void test6() throws HomomorphismException, IteratorException, AtomSetException {
 		InMemoryAtomSet data = new DefaultInMemoryGraphStore();
 		data.addAll(DlgpParser.parseAtomSet("p(a,b), q(b), p(a,c), r(a,d), q(d), r(a,e)."));
 		
@@ -252,7 +253,7 @@ public class HomomorphismTest {
 	
 	
 	@Test
-	public void test6Compilation() throws HomomorphismException, IteratorException {
+	public void test6Compilation() throws HomomorphismException, IteratorException, AtomSetException {
 		InMemoryAtomSet data = new DefaultInMemoryGraphStore();
 		
 		RuleSet rules = new LinkedListRuleSet();
