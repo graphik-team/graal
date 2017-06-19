@@ -57,11 +57,15 @@ import org.junit.runner.RunWith;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplicationException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.api.store.Store;
 import fr.lirmm.graphik.graal.api.store.TripleStore;
+import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
 import fr.lirmm.graphik.graal.test.TestUtil;
@@ -370,6 +374,23 @@ public class StoreTest {
 		Assert.assertEquals(3, Iterators.count(store.atomsByPredicate(new Predicate("P",2))));
 		Assert.assertEquals(1, Iterators.count(store.atomsByPredicate(new Predicate("Q",2))));
 
+	}
+	
+	@Theory
+	public void bugConcurrentModificationException(InMemoryAtomSet store)
+	    throws IteratorException, RuleApplicationException, AtomSetException {
+		Assume.assumeTrue(store instanceof Store);
+		
+		Rule r = DlgpParser.parseRule("<T>(Z,W), <P>(Y,W) :- <P>(X,Y).");
+		store.addAll(DlgpParser.parseAtomSet("<P>(a,a)."));
+
+		try {
+			DefaultRuleApplier<InMemoryAtomSet> applier = new DefaultRuleApplier<InMemoryAtomSet>();
+			applier.apply(r, store);
+			applier.apply(r, store);
+		} catch (Exception e) {
+			Assert.fail();
+		}
 	}
 
 }

@@ -42,11 +42,11 @@
  */
 package fr.lirmm.graphik.graal.core.atomset.graph;
 
+import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -73,19 +73,19 @@ public class HashIndexFactory implements IndexFactory {
 	// /////////////////////////////////////////////////////////////////////////
 
 	public <T, U> Map<T, U> createMap() {
-		return new HashMap<T, U>();
+		return new ConcurrentHashMap<T, U>();
 	}
 
 	public <T, U> Map<T, U> createMap(Comparator<? super T> comparator) {
-		return new HashMap<T, U>();
+		return new ConcurrentHashMap<T, U>();
 	}
 
 	public <T> Set<T> createSet() {
-		return new HashSet<T>();
+		return Collections.newSetFromMap(new ConcurrentHashMap<T, Boolean>());
 	}
 
 	public <T> Set<T> createSet(Comparator<? super T> comparator) {
-		return new HashSet<T>();
+		return Collections.newSetFromMap(new ConcurrentHashMap<T, Boolean>());
 	}
 
 }
