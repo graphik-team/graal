@@ -74,13 +74,13 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.HashMapSubstitution;
-import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphStore;
 import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultSubstitutionFactory;
 import fr.lirmm.graphik.graal.core.grd.DefaultGraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.core.unifier.DefaultUnifierAlgorithm;
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.RestrictedChaseStopCondition;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
@@ -148,7 +148,7 @@ public class ChaseWithGRDAndUnfiers<T extends AtomSet> extends AbstractChase<Rul
 						LOGGER.debug("\nExecute rule: {} with unificator {}", rule, unificator);
 					}
 					
-					unifiedRule = computeInitialTargetTermsSubstitution(rule).createImageOf(rule);
+					unifiedRule = DefaultUnifierAlgorithm.computeInitialTargetTermsSubstitution(rule).createImageOf(rule);
 					unifiedRule = unificator.createImageOf(unifiedRule);
 					unifiedRule.getBody().removeAll(part);
 					unificator = targetToSource(unificator);
@@ -235,17 +235,6 @@ public class ChaseWithGRDAndUnfiers<T extends AtomSet> extends AbstractChase<Rul
 			res.put(DefaultTermFactory.instance().createVariable(v.getLabel().replaceAll("T::", "S::")), s.createImageOf(v));
 		}
 		return res;
-	}
-	
-	public static Substitution computeInitialTargetTermsSubstitution(Rule r) {
-		Substitution s = new TreeMapSubstitution();
-
-		for (Variable t2 : r.getVariables()) {
-			Variable t2b = DefaultTermFactory.instance().createVariable("T::" + t2.getIdentifier().toString());
-			s.put(t2, t2b);
-		}
-
-		return s;
 	}
 
 	private static Substitution forgetSource(Substitution s) {

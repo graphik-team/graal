@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2017)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -42,48 +42,65 @@
  */
 package fr.lirmm.graphik.graal.core;
 
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.Collections;
+import java.util.Set;
 
-import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 
 /**
- * An implementation of Susbstitution using a {@link TreeMap}
- * 
- * @author Clément Sipieter (INRIA) <clement@6pi.fr>
- * 
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+ *
  */
-public class TreeMapSubstitution extends AbstractMapBasedSubstitution {
+public class VariablePrefixSubstitution extends AbstractSubstitution {
+	
+	private String prefix;
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
 
-	private TreeMap<Variable, Term> map = new TreeMap<Variable, Term>();
-
-	public TreeMapSubstitution() {
-		super();
+	public VariablePrefixSubstitution(String prefix) {
+		this.prefix = prefix;
 	}
-
-	public TreeMapSubstitution(Substitution substitution) {
-		super();
-		for (Variable term : substitution.getTerms())
-			this.map.put(term, substitution.createImageOf(term));
-	}
-
-	/*
-	 * public TreeMapSubstitution(Partition<Term> partition) { throw new
-	 * MethodNotImplementedError(); /* super(); Iterator<ArrayList<Term>> it =
-	 * partition.iterator(); while (it.hasNext()) { ArrayList<Term> a =
-	 * it.next(); Iterator<Term> it2 = a.iterator();
-	 * 
-	 * Term representant = null; if (it2.hasNext()) { representant = it2.next();
-	 * while (it2.hasNext()) { this.put(it2.next(), representant); } }
-	 *
-	 * }
-	 */
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	protected Map<Variable, Term> getMap() {
-		return this.map;
+	public Set<Variable> getTerms() {
+		return Collections.<Variable>emptySet();
 	}
 
-};
+	@Override
+	public Set<Term> getValues() {
+		return Collections.<Term>emptySet();
+	}
+
+	@Override
+	public Term createImageOf(Term term) {
+		if(term.isVariable() && !term.getLabel().startsWith(prefix)) {
+			return DefaultTermFactory.instance().createVariable(prefix + term.getLabel());
+		}
+		return term;
+	}
+
+	@Override
+	public boolean put(Variable var, Term image) {
+		return false;
+	}
+
+	@Override
+	public boolean remove(Variable var) {
+		return false;
+	}
+
+	@Override
+	public boolean aggregate(Variable var, Term image) {
+		return false;
+	}
+
+
+}

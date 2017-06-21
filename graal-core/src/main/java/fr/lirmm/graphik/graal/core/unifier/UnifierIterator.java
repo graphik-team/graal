@@ -54,9 +54,7 @@ import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.core.unifier.DependencyChecker;
-import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.factory.DefaultSubstitutionFactory;
-import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.LinkedSet;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
@@ -78,12 +76,8 @@ class UnifierIterator extends AbstractCloseableIterator<Substitution>
 	// /////////////////////////////////////////////////////////////////////////
 	
 	public UnifierIterator(Rule source, Rule target, DependencyChecker... checkers) {
-		Substitution s1 = computeInitialSourceTermsSubstitution(source);
-		this.source = s1.createImageOf(source);
-		
-		Substitution s2 = computeInitialTargetTermsSubstitution(target);
-		this.target = s2.createImageOf(target);
-		
+		this.source = source;
+		this.target = target;
 		this.checkers = checkers;
 	}
 
@@ -107,32 +101,6 @@ class UnifierIterator extends AbstractCloseableIterator<Substitution>
 	public Substitution next() {
 		this.hasNext();
 		return this.unifiers.poll();
-	}
-
-	// /////////////////////////////////////////////////////////////////////////
-	// OBJECT OVERRIDE METHODS
-	// /////////////////////////////////////////////////////////////////////////
-	
-	public static Substitution computeInitialSourceTermsSubstitution(Rule rule) {
-		Substitution s = new TreeMapSubstitution();
-
-		for (Variable t1 : rule.getVariables()) {
-			Variable t1b = DefaultTermFactory.instance().createVariable("S::" + t1.getIdentifier().toString());
-			s.put(t1, t1b);
-		}
-
-		return s;
-	}
-
-	public static Substitution computeInitialTargetTermsSubstitution(Rule rule) {
-		Substitution s = new TreeMapSubstitution();
-
-		for (Variable t2 : rule.getVariables()) {
-			Variable t2b = DefaultTermFactory.instance().createVariable("T::" + t2.getIdentifier().toString());
-			s.put(t2, t2b);
-		}
-
-		return s;
 	}
 	
 	// /////////////////////////////////////////////////////////////////////////

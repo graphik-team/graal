@@ -283,11 +283,16 @@ public class DefaultGraphOfRuleDependencies implements GraphOfRuleDependencies {
 	}
 	
 	protected Set<Substitution> computeDependency(Rule r1, Rule r2, DependencyChecker... checkers) {
-
+		Substitution s1 = DefaultUnifierAlgorithm.getSourceVariablesSubstitution();
+		Rule source = s1.createImageOf(r1);
+		
+		Substitution s2 = DefaultUnifierAlgorithm.getTargetVariablesSubstitution();
+		Rule target = s2.createImageOf(r2);
+		
 		if (this.computingUnifiers) {
-			return Iterators.toSet(DefaultUnifierAlgorithm.instance().computePieceUnifier(r1,r2,checkers));
+			return Iterators.toSet(DefaultUnifierAlgorithm.instance().computePieceUnifier(source,target,checkers));
 		}
-		else if(DefaultUnifierAlgorithm.instance().existPieceUnifier(r1,r2,checkers)) {
+		else if(DefaultUnifierAlgorithm.instance().existPieceUnifier(source,target,checkers)) {
 			return Collections.<Substitution>singleton(Substitutions.emptySubstitution());
 		}
 		return Collections.<Substitution>emptySet();

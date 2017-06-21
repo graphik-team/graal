@@ -168,6 +168,8 @@ public class UnifierTest {
 		atomset.add(TestUtils.pUV);
 		atomset.add(TestUtils.pVW);
 		atomset.add(TestUtils.pWX);
+		
+		atomset = DefaultUnifierAlgorithm.getTargetVariablesSubstitution().createImageOf(atomset);
 
 		CloseableIteratorWithoutException<Substitution> unifiers = DefaultUnifierAlgorithm.instance().computePieceUnifier(rule, atomset);
 		Assert.assertEquals(2, Iterators.count(unifiers));

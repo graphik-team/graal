@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2017)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -40,16 +40,12 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-/**
-* 
-*/
 package fr.lirmm.graphik.graal.core;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
@@ -68,28 +64,18 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
- * @author Clément Sipieter (INRIA) <clement@6pi.fr>
- * 
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+ *
  */
 public abstract class AbstractSubstitution implements Substitution {
 
-	protected abstract Map<Variable, Term> getMap();
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
 
-	@Override
-	public Set<Variable> getTerms() {
-		return this.getMap().keySet();
-	}
-
-	@Override
-	public Set<Term> getValues() {
-		return new HashSet<Term>(this.getMap().values());
-	}
-
-	@Override
-	public Term createImageOf(Term term) {
-		Term substitut = this.getMap().get(term);
-		return (substitut == null) ? term : substitut;
-	}
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
 	public List<Term> createImageOf(Collection<? extends Term> terms) {
@@ -99,22 +85,7 @@ public abstract class AbstractSubstitution implements Substitution {
 		}
 		return l;
 	}
-
-	@Override
-	public boolean put(Variable term, Term substitute) {
-		Term actualSubstitute = this.getMap().get(term);
-		if (actualSubstitute != null && !actualSubstitute.equals(substitute)) {
-			return false;
-		}
-		this.getMap().put(term, substitute);
-		return true;
-	}
-
-	@Override
-	public boolean remove(Variable term) {
-		return this.getMap().remove(term) != null;
-	}
-
+	
 	@Override
 	public boolean put(Substitution substitution) {
 		for (Variable term : substitution.getTerms()) {
@@ -135,7 +106,7 @@ public abstract class AbstractSubstitution implements Substitution {
 
 		return new DefaultAtom(atom.getPredicate(), termsSubstitut);
 	}
-
+	
 	@Override
 	public InMemoryAtomSet createImageOf(AtomSet src) throws AtomSetException {
 		InMemoryAtomSet dest = DefaultAtomSetFactory.instance().create();
@@ -149,7 +120,7 @@ public abstract class AbstractSubstitution implements Substitution {
 		this.apply(src, dest);
 		return dest;
 	}
-
+	
 	@Override
 	public void apply(AtomSet src, AtomSet dest) throws AtomSetException {
 		CloseableIterator<Atom> it = src.iterator();
@@ -162,6 +133,7 @@ public abstract class AbstractSubstitution implements Substitution {
 			throw new AtomSetException("Error during the iteration over src");
 		}
 	}
+	
 
 	@Override
 	public void apply(InMemoryAtomSet src, InMemoryAtomSet dest) {
@@ -196,35 +168,7 @@ public abstract class AbstractSubstitution implements Substitution {
 		}
 		return newSub;
 	}
-
-	@Override
-	public boolean aggregate(Variable term, Term substitut) {
-		Term termSubstitut = this.createImageOf(term);
-		Term substitutSubstitut = this.createImageOf(substitut);
-
-		if (!termSubstitut.equals(substitutSubstitut)) {
-			if (termSubstitut.isConstant()) {
-				if (substitutSubstitut.isConstant()) {
-					return substitutSubstitut.equals(termSubstitut);
-				} else {
-					Term tmp = termSubstitut;
-					termSubstitut = substitutSubstitut;
-					substitutSubstitut = tmp;
-				}
-			}
-
-			for (Variable t : this.getTerms()) {
-				Term image = this.createImageOf(t);
-				if (termSubstitut.equals(image) && !t.equals(substitutSubstitut)) {
-					this.getMap().put(t, substitutSubstitut);
-				}
-			}
-
-			this.getMap().put((Variable) termSubstitut, substitutSubstitut);
-		}
-		return true;
-	}
-
+	
 	@Override
 	public Substitution aggregate(Substitution s) {
 		Substitution newSub = DefaultSubstitutionFactory.instance().createSubstitution(this);
@@ -235,7 +179,7 @@ public abstract class AbstractSubstitution implements Substitution {
 		}
 		return newSub;
 	}
-
+	
 	// /////////////////////////////////////////////////////////////////////////
 	// OVERRIDE OBJECT METHODS
 	// /////////////////////////////////////////////////////////////////////////
@@ -302,17 +246,6 @@ public abstract class AbstractSubstitution implements Substitution {
 
 		return true;
 	}
-	
-	@Override
-	public int hashCode() {
-		int result = 1;
-		for(Map.Entry<Variable, Term> e : this.getMap().entrySet()) {
-			int a = 31 * e.getKey().hashCode();
-			int b = 67 * e.getValue().hashCode();
-			result += a + b + (a*b);
-		}
-		return result;
-	}
 
 	@Override
 	public int compareTo(Substitution other) {
@@ -330,4 +263,5 @@ public abstract class AbstractSubstitution implements Substitution {
 		return 0;
 	}
 
-};
+
+}

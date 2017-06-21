@@ -55,7 +55,7 @@ import fr.lirmm.graphik.graal.api.core.Variable;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class HashMapSubstitution extends AbstractSubstitution {
+public class HashMapSubstitution extends AbstractMapBasedSubstitution {
 
 	private HashMap<Variable, Term> map = new HashMap<Variable, Term>();
 
