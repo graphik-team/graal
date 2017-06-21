@@ -48,22 +48,26 @@ package fr.lirmm.graphik.graal.api.core;
 import java.util.List;
 
 /**
+ * <p>
  * This interface represents a conjunctive query with negated parts. A such
  * query is composed of a set of atoms which must be true and other sets of
- * atoms whose for each set at least one atom must not be true.
- * 
+ * atoms whose for each set at least one atom must be false.
+ * </p>
+ * <p>
  * In the following, X is the set of free variables (answer variables), Y the
  * set of variables that appears in the positive part minus X and Zi where i ∈
  * [1..n] the set of variables that appears only in the negated part indexed i.
  * Note that each variables from X must appears in the positive part. And ∀i,j ∈
  * [1..n] such that i ≠ j, Zi ∩ Zj = ∅.
- * 
+ * <br/>
  * A conjunctive query with negated parts Q is formally defined as
  * ∃Y∀Z1..Zn(Q+[X,Y] ∧ not(Q1[Y,Z1]) ∧ ... ∧ not(Qn[Y,Zn])) where Q+, Q1, ...,
  * Qn are conjunctions of atoms over specified variable sets.
- * 
+ * </p>
+ * <p>
  * A mapping A from X to a set of terms is an answer to this query with respect
  * to a set of facts iff A(F) is true, where F is the formulae associated to Q.
+ * </p>
  * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
