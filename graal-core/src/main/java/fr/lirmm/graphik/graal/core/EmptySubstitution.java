@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2017)
+ * (Université de Montpellier & CNRS) (2014 - 2015)
  *
  * Contributors :
  *
@@ -42,87 +42,68 @@
  */
 package fr.lirmm.graphik.graal.core;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Collections;
+import java.util.Set;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.graal.core.factory.DefaultSubstitutionFactory;
-import fr.lirmm.graphik.util.Partition;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public final class Substitutions {
-
+public class EmptySubstitution extends AbstractSubstitution {
+	
+	private static Substitution instance;
+	
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
-	private Substitutions() {
+	private EmptySubstitution() {
 	}
-
+	
+	public static Substitution instance() {
+		if(instance == null) {
+			instance = new EmptySubstitution();
+		}
+		return instance;
+	}
+	
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public static Substitution emptySubstitution() {
-		return EmptySubstitution.instance();
+	@Override
+	public Set<Variable> getTerms() {
+		return Collections.<Variable>emptySet();
 	}
 
-	public static Substitution add(Substitution s1, Substitution s2) {
-		Substitution newSub = new TreeMapSubstitution(s1);
-		for (Variable term : s2.getTerms()) {
-			if (!newSub.put(term, s2.createImageOf(term))) {
-				return null;
-			}
-		}
-		return newSub;
+	@Override
+	public Set<Term> getValues() {
+		return Collections.<Term>emptySet();
 	}
 
-	public static Partition<Term> toPartition(Substitution s) {
-		Partition<Term> partition = new Partition<Term>();
-		for (Variable v : s.getTerms()) {
-			partition.add(v, s.createImageOf(v));
-		}
-		return partition;
+	@Override
+	public Term createImageOf(Term term) {
+		return term;
 	}
 
-	/**
-	 * Create a new Atom which is the image of the specified atom by replacing
-	 * the specified term by the specified image.
-	 * 
-	 * @param atom
-	 * @param var
-	 *            the variable to replace
-	 * @param image
-	 *            the image of the specified term
-	 * @return a new Atom which is the image of the specified atom.
-	 */
-	public static Atom createImageOf(Atom atom, Variable var, Term image) {
-		List<Term> termsSubstitut = new LinkedList<Term>();
-		for (Term t : atom.getTerms()) {
-			if (var.equals(t)) {
-				termsSubstitut.add(image);
-			} else {
-				termsSubstitut.add(t);
-			}
-		}
-
-		return new DefaultAtom(atom.getPredicate(), termsSubstitut);
+	@Override
+	public boolean put(Variable var, Term image) {
+		return false;
 	}
 
-	public static Substitution aggregate(Substitution s1, Substitution s2) {
-		Substitution newSub = DefaultSubstitutionFactory.instance().createSubstitution(s1);
-		for (Variable term : s2.getTerms()) {
-			if (!newSub.aggregate(term, s2.createImageOf(term))) {
-				return null;
-			}
-		}
-		return newSub;
+	@Override
+	public boolean remove(Variable var) {
+		return false;
 	}
+
+	@Override
+	public boolean aggregate(Variable var, Term image) {
+		return false;
+	}
+
 
 }
