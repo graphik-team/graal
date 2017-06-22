@@ -57,6 +57,9 @@ import fr.lirmm.graphik.util.profiler.Profilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
+ * The ForwardChecking interface provides a way to restrict the domain of some
+ * next variables based of the affectation of the current one.
+ * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */

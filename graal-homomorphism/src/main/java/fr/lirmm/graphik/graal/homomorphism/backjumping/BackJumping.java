@@ -47,6 +47,9 @@ import fr.lirmm.graphik.graal.homomorphism.VarSharedData;
 import fr.lirmm.graphik.util.profiler.Profilable;
 
 /**
+ * The BackJumping interface provides to allow jump over some variables when a
+ * backtrack is performed.
+ * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
