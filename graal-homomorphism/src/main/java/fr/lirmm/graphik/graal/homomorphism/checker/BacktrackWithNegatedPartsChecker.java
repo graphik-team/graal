@@ -50,10 +50,6 @@ import fr.lirmm.graphik.graal.api.core.ConjunctiveQueryWithNegatedParts;
 import fr.lirmm.graphik.graal.api.homomorphism.AbstractChecker;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismChecker;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphismWithNegatedParts;
-import fr.lirmm.graphik.graal.homomorphism.backjumping.GraphBaseBackJumping;
-import fr.lirmm.graphik.graal.homomorphism.bbc.BCC;
-import fr.lirmm.graphik.graal.homomorphism.bootstrapper.StarBootstrapper;
-import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -80,9 +76,7 @@ public class BacktrackWithNegatedPartsChecker extends AbstractChecker implements
 
 	@Override
 	public BacktrackHomomorphismWithNegatedParts getSolver() {
-		BCC bcc = new BCC(new GraphBaseBackJumping(), true);
-		return new BacktrackHomomorphismWithNegatedParts(bcc.getBCCScheduler(),
-				StarBootstrapper.instance(), new NFC2(), bcc.getBCCBackJumping());
+		return new BacktrackHomomorphismWithNegatedParts();
 	}
 
 	@Override
