@@ -46,6 +46,22 @@ import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.util.URI;
 
 /**
+ * This class allows to map a predicate name to an other predicate with the same
+ * name but prefixed.
+ * 
+ * {@code
+ * Predicate p = new Predicate("p",1);
+ * Predicate prefixedP = new Predicate("prefix#p",1);
+ * 
+ * Mapper mapper = new PrefixMapper("prefix#");
+ * 
+ * assert mapper.map(p).equals(prefixedP);
+ * assert mapper.inverse.map(prefixedP).equals(p);
+ * assert mapper.unmap(prefixedP).equals(p);
+ * assert mapper.inverse.map(p).equals(prefixedP);
+ * 
+ * }
+ * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
@@ -69,6 +85,11 @@ public class PrefixMapper extends AbstractMapper {
 
 	@Override
 	public Predicate map(Predicate predicate) {
+		return new Predicate(String.format(format, predicate.getIdentifier()), predicate.getArity());
+	}
+
+	@Override
+	public Predicate unmap(Predicate predicate) {
 		Object identifier = predicate.getIdentifier();
 		String id = null;
 		if (identifier instanceof String) {
@@ -84,11 +105,6 @@ public class PrefixMapper extends AbstractMapper {
 		} else {
 			return predicate;
 		}
-	}
-
-	@Override
-	public Predicate unmap(Predicate predicate) {
-		return new Predicate(String.format(format, predicate.getIdentifier()), predicate.getArity());
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
