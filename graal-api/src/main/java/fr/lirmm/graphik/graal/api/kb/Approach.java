@@ -43,10 +43,10 @@
 package fr.lirmm.graphik.graal.api.kb;
 
 /**
+ * {@link Approach} defines the priority for query answering (ie saturation or
+ * rewriting).
+ * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
- *
- * {@link Approach} defines the priority for query answering, i. e. when the algorithm have the choice for a rule,
- * if it rewrite with this rule or if it saturation with.
  */
 public enum Approach {
 	SATURATION_ONLY,

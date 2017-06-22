@@ -156,7 +156,7 @@ public interface KnowledgeBase extends Profilable, Closeable {
 	void semiSaturate() throws KnowledgeBaseException;
 
 	/**
-	 * Returns the defined priority of this KnowledgeBase (i.e. saturation or
+	 * Returns the defined priority of this KnowledgeBase (ie saturation or
 	 * rewriting).
 	 * 
 	 * @return the defined priority of this KnowledgeBase.

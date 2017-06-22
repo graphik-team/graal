@@ -75,6 +75,7 @@ import fr.lirmm.graphik.graal.api.io.Parser;
 import fr.lirmm.graphik.graal.api.kb.Approach;
 import fr.lirmm.graphik.graal.api.kb.KnowledgeBase;
 import fr.lirmm.graphik.graal.api.kb.KnowledgeBaseException;
+import fr.lirmm.graphik.graal.api.store.Store;
 import fr.lirmm.graphik.graal.api.util.TimeoutException;
 import fr.lirmm.graphik.graal.backward_chaining.pure.PureRewriter;
 import fr.lirmm.graphik.graal.core.DefaultQueryLabeler;
@@ -134,27 +135,41 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 
-	public DefaultKnowledgeBase() {
+	private DefaultKnowledgeBase() {
 		this.ruleset = new DefaultOntology();
 		this.store = new DefaultInMemoryGraphStore();
 		this.queryLabeler = new DefaultQueryLabeler();
 	}
 
+	/**
+	 * Constructs a DefaultKnowledgeBase with a
+	 * {@link DefaultInMemoryGraphStore} as storage. Loads {@link Rule rules} and
+	 * {@link Atom atoms} from the specified parser.
+	 */
 	public DefaultKnowledgeBase(Parser<Object> parser) throws AtomSetException {
 		this();
 		this.load(parser);
 	}
 
-	public DefaultKnowledgeBase(AtomSet facts, Parser<Object> parser) throws AtomSetException {
+	/**
+	 * Constructs a DefaultKnowledgeBase embedding the specified {@link Store}.
+	 * Loads {@link Rule rules} and supplementary {@link Atom atoms} from the specified
+	 * parser.
+	 */
+	public DefaultKnowledgeBase(AtomSet store, Parser<Object> parser) throws AtomSetException {
 		this.ruleset = new DefaultOntology();
-		this.store = facts;
+		this.store = store;
 		this.load(parser);
 		this.queryLabeler = new DefaultQueryLabeler();
 	}
 
-	public DefaultKnowledgeBase(AtomSet facts, RuleSet ontology) {
+	/**
+	 * Constructs a DefaultKnowledgeBase embedding the specified {@link Store} and .
+	 * loads {@link Rule rules} from the specified ontology.
+	 */
+	public DefaultKnowledgeBase(AtomSet store, RuleSet ontology) {
 		this.ruleset = new DefaultOntology(ontology);
-		this.store = facts;
+		this.store = store;
 		this.queryLabeler = new DefaultQueryLabeler();
 	}
 

@@ -246,7 +246,7 @@ public class DefaultKnowledgeBaseTest {
 	@Test
 	public void testAddQuery() throws ParseException {
 		Query q1 = DlgpParser.parseQuery("[Q1] ? :- p(X).");
-		KnowledgeBase kb = new DefaultKnowledgeBase();
+		KnowledgeBase kb = new KBBuilder().build();
 		kb.addQuery(q1);
 		Assert.assertTrue(kb.getQueryNames().contains("Q1"));
 		Assert.assertEquals(q1, kb.getQuery("Q1"));
@@ -261,7 +261,7 @@ public class DefaultKnowledgeBaseTest {
 	@Test
 	public void testAddSameQueryTwice() throws ParseException {
 		Query q1 = DlgpParser.parseQuery("[Q1] ? :- p(X).");
-		KnowledgeBase kb = new DefaultKnowledgeBase();
+		KnowledgeBase kb = new KBBuilder().build();
 		kb.addQuery(q1);
 		kb.addQuery(q1);
 		Assert.assertTrue(kb.getQueryNames().contains("Q1"));
@@ -280,7 +280,7 @@ public class DefaultKnowledgeBaseTest {
 		Query q1 = DlgpParser.parseQuery("[Q] ? :- q1(X).");
 		Query q2 = DlgpParser.parseQuery("[Q] ? :- q2(X).");
 
-		KnowledgeBase kb = new DefaultKnowledgeBase();
+		KnowledgeBase kb = new KBBuilder().build();
 		kb.addQuery(q1);
 		kb.addQuery(q2);
 		Assert.assertTrue(kb.getQueryNames().contains("Q"));

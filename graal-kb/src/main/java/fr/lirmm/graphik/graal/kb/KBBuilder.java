@@ -48,13 +48,10 @@ import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.RuleSetException;
 import fr.lirmm.graphik.graal.api.core.mapper.Mapper;
-import fr.lirmm.graphik.graal.api.core.mapper.MutableMapper;
-import fr.lirmm.graphik.graal.api.kb.KnowledgeBase;
 import fr.lirmm.graphik.graal.api.kb.Approach;
+import fr.lirmm.graphik.graal.api.kb.KnowledgeBase;
 import fr.lirmm.graphik.graal.api.store.Store;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphStore;
-import fr.lirmm.graphik.graal.core.mapper.MappedRuleSet;
-import fr.lirmm.graphik.graal.core.mapper.MappedStore;
 import fr.lirmm.graphik.graal.core.mapper.MapperAtomConverter;
 import fr.lirmm.graphik.graal.core.mapper.MapperRuleConverter;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
@@ -72,10 +69,7 @@ import fr.lirmm.graphik.util.stream.converter.ConverterCloseableIterator;
 public class KBBuilder {
 
 	private Store store = new DefaultInMemoryGraphStore();
-	private Store mappedStore = store;
 	private RuleSet ontology = new LinkedListRuleSet();
-	private RuleSet mappedOntology = ontology;
-	private MutableMapper mapper;
 	private Approach approach;
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -86,33 +80,40 @@ public class KBBuilder {
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
 	
+	/**
+	 * Generates a KnowledgeBase based on previous method calls on this KBBuilder.
+	 * 
+	 * @return a KnowledgeBase.
+	 */
 	public KnowledgeBase build() {
-		DefaultKnowledgeBase kb = new DefaultKnowledgeBase(this.mappedStore, this.mappedOntology);
+		DefaultKnowledgeBase kb = new DefaultKnowledgeBase(this.store, this.ontology);
 		if(this.approach != null) {
 			kb.setPriority(this.approach);
 		}
 		return kb;
 	}
 
+	/**
+	 * Defines the store which will be used in the generate KnowledgeBase.
+	 * @param store the Store to used.
+	 */
 	public void setStore(Store store) {
 		this.store = store;
-		if (mapper != null) {
-			this.mappedStore = new MappedStore(store, mapper);
-		} else {
-			this.mappedStore = store;
-		}
 	}
 	
+	/**
+	 * Defines rules which will be used in the generate KnowledgeBase.
+	 * @param rules
+	 */
 	public void setOntology(RuleSet rules) {
 		this.ontology = rules;
 	}
 
-	public void setMapper(MutableMapper mapper) {
-		this.mapper = mapper;
-		this.mappedStore = new MappedStore(store, mapper);
-		this.mappedOntology = new MappedRuleSet(ontology, mapper);
-	}
-
+	/**
+	 * Loads rules and atoms form the specified CloseableIterator.
+	 * @param it
+	 * @throws KBBuilderException
+	 */
 	public void addAll(CloseableIterator<Object> it) throws KBBuilderException {
 		Object o;
 		try {
@@ -121,7 +122,7 @@ public class KBBuilder {
 				if (o instanceof Rule) {
 					this.ontology.add((Rule) o);
 				} else if (o instanceof Atom) {
-					this.mappedStore.add((Atom) o);
+					this.store.add((Atom) o);
 				}
 			}
 		} catch (IteratorException e) {
@@ -131,14 +132,28 @@ public class KBBuilder {
 		}
 	}
 
+	/**
+	 * Loads the specified rule.
+	 * @param rule
+	 */
 	public void add(Rule rule) {
 		this.ontology.add(rule);
 	}
 
+	/**
+	 * Maps and loads the specifed rule.
+	 * @param rule
+	 * @param mapper
+	 */
 	public void add(Rule rule, Mapper mapper) {
 		this.ontology.add(mapper.map(rule));
 	}
 
+	/**
+	 * Loads rules from the specified CloseableIterator.
+	 * @param it
+	 * @throws KBBuilderException
+	 */
 	public void addRules(CloseableIterator<Object> it) throws KBBuilderException {
 		try {
 			this.ontology.addAll(new RuleFilterIterator(it));
@@ -147,6 +162,12 @@ public class KBBuilder {
 		}
 	}
 
+	/**
+	 * Maps rules from the specified CloseableIterator and loads them.
+	 * @param it
+	 * @param mapper
+	 * @throws KBBuilderException
+	 */
 	public void addRules(CloseableIterator<Object> it, Mapper mapper) throws KBBuilderException {
 		try {
 			Converter<Rule, Rule> converter = new MapperRuleConverter(mapper);
@@ -156,51 +177,71 @@ public class KBBuilder {
 		}
 	}
 
+	/**
+	 * Loads the specified atom.
+	 * @param atom
+	 * @throws KBBuilderException
+	 */
 	public void add(Atom atom) throws KBBuilderException {
 		try {
-			this.mappedStore.add(atom);
+			this.store.add(atom);
 		} catch (AtomSetException e) {
 			throw new KBBuilderException(e);
 		}
 	}
 
+	/**
+	 * Maps and loads the specified atom.
+	 * @param atom
+	 * @param mapper
+	 * @throws KBBuilderException
+	 */
 	public void add(Atom atom, Mapper mapper) throws KBBuilderException {
 		try {
-			this.mappedStore.add(mapper.map(atom));
+			this.store.add(mapper.map(atom));
 		} catch (AtomSetException e) {
 			throw new KBBuilderException(e);
 		}
 	}
 
+	/**
+	 * Loads atoms from the specified CloseableIterator.
+	 * @param it
+	 * @throws KBBuilderException
+	 */
 	public void addAtoms(CloseableIterator<Object> it) throws KBBuilderException {
 		try {
-			this.mappedStore.addAll(new AtomFilterIterator(it));
+			this.store.addAll(new AtomFilterIterator(it));
 		} catch (AtomSetException e) {
 			throw new KBBuilderException(e);
 		}
 	}
 
+	/**
+	 * Maps and loads atoms from the specified CloseableIterator.
+	 * @param it
+	 * @param mapper
+	 * @throws KBBuilderException
+	 */
 	public void addAtoms(CloseableIterator<Object> it, Mapper mapper) throws KBBuilderException {
 		try {
 			Converter<Atom, Atom> converter = new MapperAtomConverter(mapper);
-			this.mappedStore.addAll(
+			this.store.addAll(
 			    new ConverterCloseableIterator<Atom, Atom>(new AtomFilterIterator(it), converter));
 		} catch (AtomSetException e) {
 			throw new KBBuilderException(e);
 		}
 	}
 	
+	/**
+	 * Set the query answering {@link Approach approach} of this KnowledgeBase (ie saturation or
+	 * rewriting).
+	 * 
+	 * @param the approach to be used.
+	 */
 	public void setApproach(Approach approach) {
 		this.approach = approach;
 	}
 
-
-	// /////////////////////////////////////////////////////////////////////////
-	// OBJECT OVERRIDE METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	// /////////////////////////////////////////////////////////////////////////
-	// PRIVATE METHODS
-	// /////////////////////////////////////////////////////////////////////////
 
 }
