@@ -44,26 +44,23 @@
 
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.TreeSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
-import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.core.atomset.AtomSetUtils;
-import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.compilation.IDCompilation;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByHeadPredicatesRuleSet;
-import fr.lirmm.graphik.util.Partition;
+import fr.lirmm.graphik.graal.core.unifier.AtomicHeadRule;
+import fr.lirmm.graphik.graal.core.unifier.QueryUnifier;
+import fr.lirmm.graphik.graal.core.unifier.UnifierUtils;
 import fr.lirmm.graphik.util.profiler.Profilable;
 import fr.lirmm.graphik.util.profiler.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
@@ -87,158 +84,23 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 	// PRIVATE AND PROTECTED METHODS
 	// /////////////////////////////////////////////////////////////////////////
 	
-	protected LinkedList<QueryUnifier> getSinglePieceUnifiers(ConjunctiveQuery q,
+	protected List<QueryUnifier> getSinglePieceUnifiers(ConjunctiveQuery q,
 			Rule r, RulesCompilation compilation) {
 		if (atomic)
 			if (!(compilation instanceof IDCompilation))
-				return getSinglePieceUnifiersAHR(q, (AtomicHeadRule) r, compilation);
+				return UnifierUtils.getSinglePieceUnifiersAHR(q, (AtomicHeadRule) r, compilation);
 			else {
 				if(LOGGER.isWarnEnabled()) {
 					LOGGER.warn("IDCompilation is not compatible with atomic unification");
 				}
-				return getSinglePieceUnifiersNAHR(q, r, compilation);
+				return UnifierUtils.getSinglePieceUnifiersNAHR(q, r, compilation);
 			}
 		else {
-			return getSinglePieceUnifiersNAHR(q, r, compilation);
+			return UnifierUtils.getSinglePieceUnifiersNAHR(q, r, compilation);
 		}
 	}
 
-	/**
-	 * Returns the list of all single-piece unifier between the given query and
-	 * the given atomic-head rule cannot work with IDCompilation ( have to
-	 * conserve the fact that an atom of the query can only been associated by a
-	 * single unification with an atom of the head
-	 * 
-	 * <br/>
-	 * AHR: Atomic Header Rule
-	 * 
-	 * @param q
-	 *            the query that we want unify
-	 * @param r
-	 *            the atomic-head rule that we want unify
-	 * @return the ArrayList of all single-piece unifier between the query of
-	 *         the receiving object and R an atomic-head rule
-	 */
-	private LinkedList<QueryUnifier> getSinglePieceUnifiersAHR(
-			ConjunctiveQuery q, AtomicHeadRule r, RulesCompilation compilation) {
-		LinkedList<Atom> unifiableAtoms = getUnifiableAtoms(q, r, compilation);
-		LinkedList<QueryUnifier> unifiers = new LinkedList<QueryUnifier>();
 
-		Iterator<Atom> i = unifiableAtoms.iterator();
-		while (i.hasNext()) {
-			InMemoryAtomSet p = new LinkedListAtomSet();
-			Rule tmpRule = Utils.getSafeCopy(r);
-			AtomicHeadRule copy = new AtomicHeadRule(tmpRule.getBody(), tmpRule
-					.getHead().iterator().next());
-			Atom toUnif = i.next();
-			p.add(toUnif);
-			Partition<Term> partition = new Partition<Term>(toUnif.getTerms(), copy.getHead().getAtom().getTerms());
-			// compute separating variable
-			LinkedList<Term> sep = AtomSetUtils.sep(p, q.getAtomSet());
-			// compute sticky variable
-			LinkedList<Term> sticky = TermPartitionUtils.getStickyVariable(partition, sep, copy);
-			InMemoryAtomSet pBar = AtomSetUtils.minus(q.getAtomSet(), p);
-			while (partition != null && !sticky.isEmpty()) {
-
-				CloseableIteratorWithoutException<Atom> ia = pBar.iterator();
-				while (partition != null && ia.hasNext()) {
-
-					Atom a = ia.next();
-					Iterator<Term> ix = sticky.iterator();
-					while (partition != null && ix.hasNext()) {
-
-						Term x = ix.next();
-						// all the atoms of Q/P which contain x must be add to P
-						if (a.getTerms().contains(x)) {
-							// TODO use isMappable instead of isUnifiable
-							// because isUnifiable just made a call to
-							// isMappable
-							if (compilation.isMappable(a.getPredicate(), copy.getHead().getAtom().getPredicate())) {
-								p.add(a);
-								Partition<Term> part = partition.join(new Partition<Term>(a.getTerms(), copy.getHead()
-								                                                                            .getAtom()
-								                                                                            .getTerms()));
-								if (TermPartitionUtils.isAdmissible(part, copy)) {
-									partition = part;
-								} else
-									partition = null;
-							} else
-								partition = null;
-						}
-					}
-				}
-				if (partition != null) {
-					sep = AtomSetUtils.sep(p, q.getAtomSet());
-					pBar = AtomSetUtils.minus(q.getAtomSet(), p);
-					sticky = TermPartitionUtils.getStickyVariable(partition, sep, copy);
-				}
-			}
-			i.remove();
-			if (partition != null) {
-				QueryUnifier u = new QueryUnifier(p, partition, copy, q);
-				unifiers.add(u);
-			}
-		}
-
-		return unifiers;
-	}
-
-	/**
-	 * Returns the list of all single-piece unifier between the given query and
-	 * the given rule
-	 * 
-	 * <br/>
-	 * NAHR: Not Atomic Header Rule
-	 * 
-	 * @param q
-	 *            the query that we want unify
-	 * @param r
-	 *            the atomic-head rule that we want unify
-	 * @return the ArrayList of all single-piece unifier between the query of
-	 *         the receiving object and R an atomic-head rule
-	 */
-	private LinkedList<QueryUnifier> getSinglePieceUnifiersNAHR(
-			ConjunctiveQuery q, Rule r, RulesCompilation compilation) {
-		LinkedList<QueryUnifier> u = new LinkedList<QueryUnifier>();
-		Rule ruleCopy = Utils.getSafeCopy(r);
-		HashMap<Atom, LinkedList<Partition<Term>>> possibleUnification = new HashMap<Atom, LinkedList<Partition<Term>>>();
-		// compute possible unification between atoms of Q and head(R)
-		CloseableIteratorWithoutException<Atom> it = q.iterator();
-		while (it.hasNext()) {
-			Atom a = it.next();
-			CloseableIteratorWithoutException<Atom> it2 = ruleCopy.getHead().iterator();
-			while (it2.hasNext()) {
-				Atom b = it2.next();
-				if (compilation.isMappable(a.getPredicate(), b.getPredicate())) {
-					Collection<Partition<Term>> unification = compilation.getUnification(a, b);
-					for (Partition<Term> partition : unification) {
-						if (TermPartitionUtils.isAdmissible(partition, ruleCopy)) {
-							if(possibleUnification.get(a) == null)
-								possibleUnification.put(a, new LinkedList<Partition<Term>>());
-							possibleUnification.get(a).add(partition);
-						}
-					}
-				}
-			}
-		}
-
-		LinkedList<Atom> atoms = getUnifiableAtoms(q, r, compilation);
-		for (Atom a : atoms) {
-			LinkedList<Partition<Term>> partitionList = possibleUnification.get(a);
-			if (partitionList != null) {
-				Iterator<Partition<Term>> i = partitionList.iterator();
-				while (i.hasNext()) {
-					Partition<Term> unif = i.next();
-					InMemoryAtomSet p = new LinkedListAtomSet();
-					p.add(a);
-					u.addAll(extend(p, unif, possibleUnification, q, ruleCopy));
-					i.remove();
-				}
-			}
-		}
-
-		return u;
-	}
 
 	protected Collection<Rule> getUnifiableRules(CloseableIteratorWithoutException<Predicate> preds,
 			IndexedByHeadPredicatesRuleSet ruleSet, RulesCompilation compilation) {
@@ -256,34 +118,6 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 
 		return res;
 	}
-	
-	/**
-	 * Returns the list of the atoms of the query that can be unify with the
-	 * head of R
-	 * 
-	 * @param query
-	 *            the query to unify
-	 * @param r
-	 *            the rule whose has the head to unify
-	 * @return the list of the atoms of the query that have the same predicate
-	 *         as the head atom of R
-	 */
-	protected LinkedList<Atom> getUnifiableAtoms(ConjunctiveQuery query, Rule r, RulesCompilation compilation) {
-		LinkedList<Atom> answer = new LinkedList<Atom>();
-		CloseableIteratorWithoutException<Atom> it = query.iterator();
-		while (it.hasNext()) {
-			Atom a = it.next();
-			CloseableIteratorWithoutException<Atom> it2 = r.getHead().iterator();
-			while (it2.hasNext()) {
-				Atom b = it2.next();
-				// TODO use isMappable instead of isUnifiable because
-				// isUnifiable just made a call to isMappable
-				if (compilation.isMappable(a.getPredicate(), b.getPredicate()))
-					answer.add(a);
-			}
-		}
-		return answer;
-	}
 
 	/**
 	 * Aggregated Mono piece unifier
@@ -293,11 +127,10 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 	 * @param compilation
 	 * @return a List of unifiers between q and the head of r.
 	 */
-	protected LinkedList<QueryUnifier> getSRUnifier(ConjunctiveQuery q, Rule r, RulesCompilation compilation) {
-		LinkedList<QueryUnifier> unifiers = new LinkedList<QueryUnifier>();
+	protected List<QueryUnifier> getSRUnifier(ConjunctiveQuery q, Rule r, RulesCompilation compilation) {
 
 		/** compute the simple unifiers **/
-		unifiers = getSinglePieceUnifiers(q, r, compilation);
+		List<QueryUnifier> unifiers =  getSinglePieceUnifiers(q, r, compilation);
 
 		/** compute the aggregated unifier by rule **/
 		if (!unifiers.isEmpty())
@@ -309,11 +142,10 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 	/**
 	 * Returns all the aggregated unifiers compute from the given unifiers
 	 */
-	@SuppressWarnings({ "unchecked" })
 	protected LinkedList<QueryUnifier> getAggregatedUnifiers(
-			LinkedList<QueryUnifier> unifToAggregate) {
+			List<QueryUnifier> unifToAggregate) {
 		LinkedList<QueryUnifier> unifAggregated = new LinkedList<QueryUnifier>();
-		LinkedList<QueryUnifier> restOfUnifToAggregate = (LinkedList<QueryUnifier>) unifToAggregate.clone();
+		LinkedList<QueryUnifier> restOfUnifToAggregate = new LinkedList<QueryUnifier>(unifToAggregate);
 		Iterator<QueryUnifier> itr = unifToAggregate.iterator();
 		QueryUnifier u;
 		while (itr.hasNext()) {
@@ -364,87 +196,7 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 			return res;
 		}
 	}
-	
-	// /////////////////////////////////////////////////////////////////////////
-	// 
-	// /////////////////////////////////////////////////////////////////////////
 
-	private Collection<? extends QueryUnifier> extend(InMemoryAtomSet p,
-			Partition<Term> unif,
-	    HashMap<Atom, LinkedList<Partition<Term>>> possibleUnification,
-			ConjunctiveQuery q, Rule r) {
-		LinkedList<QueryUnifier> u = new LinkedList<QueryUnifier>();
-
-		// compute separating variable
-		LinkedList<Term> sep = AtomSetUtils.sep(p, q.getAtomSet());
-		// compute sticky variable
-		LinkedList<Term> sticky = TermPartitionUtils.getStickyVariable(unif, sep, r);
-		if (sticky.isEmpty()) {
-			u.add(new QueryUnifier(p, unif, r, q));
-		} else {
-			// compute Pext the atoms of Pbar linked to P by the sticky
-			// variables
-			InMemoryAtomSet pBar = AtomSetUtils.minus(q.getAtomSet(), p);
-			InMemoryAtomSet pExt = new LinkedListAtomSet();
-			InMemoryAtomSet toRemove = new LinkedListAtomSet();
-			for (Term t : sticky) {
-				pBar.removeAll(toRemove);
-				toRemove.clear();
-				CloseableIteratorWithoutException<Atom> ib = pBar.iterator();
-				while (ib.hasNext()) {
-					Atom b = ib.next();
-					if (b.getTerms().contains(t)) {
-						pExt.add(b);
-						toRemove.add(b);
-					}
-				}
-			}
-			Partition<Term> part;
-			for (Partition<Term> uExt : preUnifier(pExt, r, possibleUnification)) {
-				part = unif.join(uExt);
-				if (part != null && TermPartitionUtils.isAdmissible(part, r)) {
-					u.addAll(extend(AtomSetUtils.union(p, pExt), part,
-							possibleUnification, q, r));
-				}
-			}
-
-		}
-
-		return u;
-	}
-
-	private LinkedList<Partition<Term>> preUnifier(InMemoryAtomSet p, Rule r,
-	    HashMap<Atom, LinkedList<Partition<Term>>> possibleUnification) {
-		LinkedList<Partition<Term>> res = new LinkedList<Partition<Term>>();
-		CloseableIteratorWithoutException<Atom> it = p.iterator();
-		while (it.hasNext()) {
-			Atom a = it.next();
-			if (possibleUnification.get(a) != null)
-				for (Partition<Term> ua : possibleUnification.get(a)) {
-					InMemoryAtomSet fa = new LinkedListAtomSet();
-					fa.add(a);
-					InMemoryAtomSet aBar = null;
-					aBar = AtomSetUtils.minus(p, fa);
-
-					if (!aBar.iterator().hasNext())
-						res.add(ua);
-					else {
-						Partition<Term> part;
-						for (Partition<Term> u : preUnifier(aBar, r,
-								possibleUnification)) {
-							part = ua.join(u);
-							if (part != null && TermPartitionUtils.isAdmissible(part, r)) {
-								res.add(part);
-							}
-						}
-					}
-				}
-			else
-				return res;
-		}
-		return res;
-	}
-	
 	// /////////////////////////////////////////////////////////////////////////
 	// GETTERS
 	// /////////////////////////////////////////////////////////////////////////

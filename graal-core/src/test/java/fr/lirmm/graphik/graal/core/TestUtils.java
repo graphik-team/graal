@@ -84,7 +84,7 @@ public final class TestUtils {
 	public static final Atom pXA, pXB, pXONE;
 	
 	public static final Atom qXY, qTW, qUV, qVW;
-	public static final Atom sX, sU, rX;
+	public static final Atom sX, sU, sV, sY, rX;
 
 	static {
 		Term[] terms = new Term[2];
@@ -218,6 +218,14 @@ public final class TestUtils {
 		terms = new Term[1];
 		terms[0] = U;
 		sU = new DefaultAtom(s, Arrays.asList(terms));
+		
+		terms = new Term[1];
+		terms[0] = V;
+		sV = new DefaultAtom(s, Arrays.asList(terms));
+	
+		terms = new Term[1];
+		terms[0] = Y;
+		sY = new DefaultAtom(s, Arrays.asList(terms));
 		
 		// r
 

@@ -44,12 +44,15 @@
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByHeadPredicatesRuleSet;
+import fr.lirmm.graphik.graal.core.unifier.QueryUnifier;
+import fr.lirmm.graphik.graal.core.unifier.UnifierUtils;
 
 /**
  * Rewriting operator ARAM
@@ -78,7 +81,7 @@ public class AggregAllRulesOperator extends BasicAggregAllRulesOperator {
 	@Override
 	public Collection<ConjunctiveQuery> getRewritesFrom(ConjunctiveQuery q, IndexedByHeadPredicatesRuleSet ruleSet, RulesCompilation compilation) {	
 		LinkedList<ConjunctiveQuery> rewriteSet = new LinkedList<ConjunctiveQuery>();
-		LinkedList<QueryUnifier> unifiers;
+		List<QueryUnifier> unifiers;
 		for (Rule r : getUnifiableRules(q.getAtomSet().predicatesIterator(),
 				ruleSet, compilation)) {
 			unifiers = getSinglePieceUnifiers(q, r, compilation);
@@ -95,9 +98,9 @@ public class AggregAllRulesOperator extends BasicAggregAllRulesOperator {
 	// /////////////////////////////////////////////////////////////////////////
 	
 	@Override
-	protected LinkedList<QueryUnifier> getSRUnifier(ConjunctiveQuery q, Rule r, RulesCompilation compilation) {
-		LinkedList<QueryUnifier> unifiers = new LinkedList<QueryUnifier>();
-		LinkedList<QueryUnifier> simpleUnifiers = new LinkedList<QueryUnifier>();
+	protected List<QueryUnifier> getSRUnifier(ConjunctiveQuery q, Rule r, RulesCompilation compilation) {
+		List<QueryUnifier> unifiers = new LinkedList<QueryUnifier>();
+		List<QueryUnifier> simpleUnifiers = new LinkedList<QueryUnifier>();
 		/** compute the simple unifiers **/
 		simpleUnifiers = getSinglePieceUnifiers(q, r, compilation);
 		if (!simpleUnifiers.isEmpty()) {
@@ -126,7 +129,7 @@ public class AggregAllRulesOperator extends BasicAggregAllRulesOperator {
 	 *         as the head atom of R and that are recently created in query
 	 */
 	public LinkedList<Atom> getUnifiableAtoms(MarkedQuery query, Rule rule, RulesCompilation compilation) {
-		LinkedList<Atom> atoms = this.getUnifiableAtoms((ConjunctiveQuery)query, rule, compilation);
+		LinkedList<Atom> atoms = UnifierUtils.getUnifiableAtoms((ConjunctiveQuery)query, rule, compilation);
 		LinkedList<Atom> res = new LinkedList<Atom>();
 		
 		// keep only the recently created so marked in query
@@ -138,5 +141,6 @@ public class AggregAllRulesOperator extends BasicAggregAllRulesOperator {
 		
 		return res;
 	}
+	
 
 }

@@ -43,7 +43,7 @@
  /**
  * 
  */
-package fr.lirmm.graphik.graal.core.grd;
+package fr.lirmm.graphik.graal.core;
 
 
 import java.util.List;

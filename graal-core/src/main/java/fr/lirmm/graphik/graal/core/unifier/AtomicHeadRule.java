@@ -40,7 +40,7 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- package fr.lirmm.graphik.graal.backward_chaining.pure;
+package fr.lirmm.graphik.graal.core.unifier;
 
 import java.util.Set;
 
@@ -61,7 +61,7 @@ import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
  * 
  */
 @SuppressWarnings("deprecation")
-class AtomicHeadRule implements Rule {
+public class AtomicHeadRule implements Rule {
 
 	private Rule rule;
 
