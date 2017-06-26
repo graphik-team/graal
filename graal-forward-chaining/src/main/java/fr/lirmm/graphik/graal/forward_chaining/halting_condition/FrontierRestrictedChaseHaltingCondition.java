@@ -74,6 +74,11 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
+ * This HaltingCondition will produce new data according to a rule, a
+ * substitution and specified data if it has not already been applied with an
+ * other substitution that maps the rule's frontier in the same way. This chase
+ * is also known as semi-oblivious chase and is equivalent to the skolem chase.
+ * 
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */

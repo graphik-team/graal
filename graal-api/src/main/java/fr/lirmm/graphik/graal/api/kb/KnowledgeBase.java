@@ -118,7 +118,9 @@ public interface KnowledgeBase extends Profilable, Closeable {
 
 	/**
 	 * Execute the query over this Knowledge Base. This method uses the
-	 * graal-rules-analyser module (Kiabora) to find a decidable way to answer.
+	 * graal-rules-analyser module (Kiabora) to find a decidable way to answer, if
+	 * there are no proof of decidability an KnowledgeBaseException is throw. To
+	 * disable decidability checking, see {@link query(Query,long)}.
 	 * 
 	 * @param query
 	 * @return an Iterator over Substitutions representing homomorphism found of

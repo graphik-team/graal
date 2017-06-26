@@ -67,6 +67,10 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
+ * This HaltingCondition will produce new data according to a rule, a
+ * substitution s and specified data if s cannot be extended to a homomorphism
+ * from B ∪ H to F where B is the rule body, H the rule HEAD and F the data.
+
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
