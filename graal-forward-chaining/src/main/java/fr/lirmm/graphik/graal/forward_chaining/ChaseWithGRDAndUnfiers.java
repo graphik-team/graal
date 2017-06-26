@@ -81,7 +81,7 @@ import fr.lirmm.graphik.graal.core.factory.DefaultSubstitutionFactory;
 import fr.lirmm.graphik.graal.core.grd.DefaultGraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.core.unifier.DefaultUnifierAlgorithm;
-import fr.lirmm.graphik.graal.forward_chaining.halting_condition.RestrictedChaseStopCondition;
+import fr.lirmm.graphik.graal.forward_chaining.halting_condition.RestrictedChaseHaltingCondition;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -100,7 +100,7 @@ public class ChaseWithGRDAndUnfiers<T extends AtomSet> extends AbstractChase<Rul
 	private GraphOfRuleDependencies grd;
 	private T atomSet;
 	private Queue<Triple<Rule, Substitution, InMemoryAtomSet>> queue = new LinkedList<Triple<Rule, Substitution,InMemoryAtomSet>>();
-	private ChaseHaltingCondition hc =  new RestrictedChaseStopCondition();
+	private ChaseHaltingCondition hc =  new RestrictedChaseHaltingCondition();
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR

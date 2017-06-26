@@ -54,7 +54,7 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
-import fr.lirmm.graphik.graal.forward_chaining.halting_condition.RestrictedChaseStopCondition;
+import fr.lirmm.graphik.graal.forward_chaining.halting_condition.RestrictedChaseHaltingCondition;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 
 /**
@@ -72,7 +72,7 @@ public class DefaultRuleApplier<T extends AtomSet> extends AbstractRuleApplier<T
 
 	/**
 	 * Construct a DefaultRuleApplier with a
-	 * {@link RestrictedChaseStopCondition} and a {@link StaticHomomorphism}
+	 * {@link RestrictedChaseHaltingCondition} and a {@link StaticHomomorphism}
 	 */
 	public DefaultRuleApplier() {
 		this(StaticHomomorphism.instance());
@@ -80,10 +80,10 @@ public class DefaultRuleApplier<T extends AtomSet> extends AbstractRuleApplier<T
 
 	/**
 	 * Construct a DefaultRuleApplier with a
-	 * {@link RestrictedChaseStopCondition} and the given homomorphism solver.
+	 * {@link RestrictedChaseHaltingCondition} and the given homomorphism solver.
 	 */
 	public DefaultRuleApplier(Homomorphism<? super ConjunctiveQuery, ? super T> homomorphismSolver) {
-		this(homomorphismSolver, new RestrictedChaseStopCondition());
+		this(homomorphismSolver, new RestrictedChaseHaltingCondition());
 	}
 
 	/**

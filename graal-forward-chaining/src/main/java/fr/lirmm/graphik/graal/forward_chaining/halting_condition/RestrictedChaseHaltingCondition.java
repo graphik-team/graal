@@ -40,59 +40,60 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- package fr.lirmm.graphik.graal.forward_chaining.halting_condition;
+/**
+ * 
+ */
+package fr.lirmm.graphik.graal.forward_chaining.halting_condition;
 
 import java.util.Collections;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
-import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplicationHandler;
-import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplicationHandlerException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
+import fr.lirmm.graphik.graal.core.ConjunctiveQueryWithFixedVariables;
+import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
+import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
+import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
-public class ChaseStopConditionWithHandler implements ChaseHaltingCondition {
-
-	public ChaseStopConditionWithHandler(ChaseHaltingCondition c, RuleApplicationHandler h) {
-		this.realHaltingCondition = c;
-		this.handler = h;
-	}
-
-	public ChaseStopConditionWithHandler(ChaseHaltingCondition c) {
-		this.realHaltingCondition = c;
-		this.handler = RuleApplicationHandler.DEFAULT;
-	}
+/**
+ * @author Clément Sipieter (INRIA) <clement@6pi.fr>
+ *
+ */
+public class RestrictedChaseHaltingCondition extends AbstractProfilable implements ChaseHaltingCondition {
 
 	@Override
 	public CloseableIterator<Atom> apply(Rule rule, Substitution substitution, AtomSet data)
-	                                                                                 throws HomomorphismFactoryException,
-	                                                                                 HomomorphismException {
+			throws HomomorphismFactoryException, HomomorphismException {
+		InMemoryAtomSet newFacts = substitution.createImageOf(rule.getHead());
+		ConjunctiveQuery query = new ConjunctiveQueryWithFixedVariables(newFacts, substitution.createImageOf(rule.getFrontier()));
+
 		try {
-			if (this.handler.preRuleApplication(rule, substitution, data)) {
-				CloseableIterator<Atom> atomsToAdd = this.realHaltingCondition.apply(rule, substitution, data);
-				return this.handler.postRuleApplication(rule, substitution, data, atomsToAdd);
+			if (StaticHomomorphism.instance().execute(query, data).hasNext()) {
+				return new CloseableIteratorAdapter<Atom>(Collections.<Atom>emptyList().iterator());
 			}
-		} catch (RuleApplicationHandlerException e) {
-			throw new HomomorphismException("An errors occurs into the RuleApplicationHandler", e);
+		} catch (IteratorException e) {
+			throw new HomomorphismException("An errors occurs while iterating results", e);
+		} catch (BacktrackException e) {
+			throw new HomomorphismException("An errors occurs while iterating results", e);
 		}
-		return new CloseableIteratorAdapter<Atom>(Collections.<Atom> emptyList().iterator());
+
+		// replace variables by fresh symbol
+		for (Variable t : rule.getExistentials()) {
+			substitution.put(t, data.getFreshSymbolGenerator().getFreshSymbol());
+		}
+		CloseableIteratorWithoutException<Atom> it = substitution.createImageOf(rule.getHead()).iterator();
+		return it;
 	}
 
-	public void setHandler(RuleApplicationHandler h) {
-		this.handler = h;
-	}
-	public void setRealChaseHaltingCondition(ChaseHaltingCondition c) {
-		this.realHaltingCondition = c;
-	}
-
-	private ChaseHaltingCondition realHaltingCondition;
-	private RuleApplicationHandler handler;
-
-
-};
-
+}
