@@ -1,11 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>fr.lirmm.graphik</groupId>
 		<artifactId>graal</artifactId>
-		<version>1.3.0-SNAPSHOT</version>
+		<version>1.3.rc2</version>
 	</parent>
 
 	<artifactId>graal-coverage</artifactId>
@@ -180,44 +179,44 @@
 						<structure name="jacoco-multi Coverage Project">
 							<group name="jacoco-multi">
 								<classfiles>
-                  <fileset dir="${graal-api.directory}/target/classes"/>
-                  <fileset dir="${graal-grd.directory}/target/classes"/>
+                  <fileset dir="${graal-api.directory}/target/classes" />
+                  <fileset dir="${graal-grd.directory}/target/classes" />
                   <fileset dir="${graal-core.directory}/target/classes" />
                   <fileset dir="${graal-util.directory}/target/classes" />
                   <fileset dir="${graal-homomorphism.directory}/target/classes" />
                   <fileset dir="${graal-rules-analyser.directory}/target/classes" />
                   <fileset dir="${rdf4j-common.directory}/target/classes" />
-                  <fileset dir="${graal-io-dlgp.directory}/target/classes"/>
-                  <fileset dir="${graal-io-owl.directory}/target/classes"/>
-                  <fileset dir="${graal-io-ruleml.directory}/target/classes"/>
-                  <fileset dir="${graal-io-sparql.directory}/target/classes"/>
-                  <fileset dir="${graal-io-rdf.directory}/target/classes"/>
-                  <fileset dir="${graal-forward-chaining.directory}/target/classes"/>
-                  <fileset dir="${graal-backward-chaining.directory}/target/classes"/>
-                  <fileset dir="${graal-kb.directory}/target/classes"/>
-                  <fileset dir="${rdbms-common.directory}/target/classes"/>
-                  <fileset dir="${graal-store-neo4j.directory}/target/classes"/>
-                  <fileset dir="${graal-store-rdf4j.directory}/target/classes"/>
+                  <fileset dir="${graal-io-dlgp.directory}/target/classes" />
+                  <fileset dir="${graal-io-owl.directory}/target/classes" />
+                  <fileset dir="${graal-io-ruleml.directory}/target/classes" />
+                  <fileset dir="${graal-io-sparql.directory}/target/classes" />
+                  <fileset dir="${graal-io-rdf.directory}/target/classes" />
+                  <fileset dir="${graal-forward-chaining.directory}/target/classes" />
+                  <fileset dir="${graal-backward-chaining.directory}/target/classes" />
+                  <fileset dir="${graal-kb.directory}/target/classes" />
+                  <fileset dir="${rdbms-common.directory}/target/classes" />
+                  <fileset dir="${graal-store-neo4j.directory}/target/classes" />
+                  <fileset dir="${graal-store-rdf4j.directory}/target/classes" />
 								</classfiles>
 								<sourcefiles encoding="UTF-8">
-								  <fileset dir="${graal-api.directory}/src/main/java"/>
-                  <fileset dir="${graal-grd.directory}/src/main/java"/>
+								  <fileset dir="${graal-api.directory}/src/main/java" />
+                  <fileset dir="${graal-grd.directory}/src/main/java" />
                   <fileset dir="${graal-core.directory}/src/main/java" />
                   <fileset dir="${graal-util.directory}/src/main/java" />
                   <fileset dir="${graal-homomorphism.directory}/src/main/java" />
                   <fileset dir="${graal-rules-analyser.directory}/src/main/java" />
                   <fileset dir="${rdf4j-common.directory}/src/main/java" />
-                  <fileset dir="${graal-io-dlgp.directory}/src/main/java"/>
-                  <fileset dir="${graal-io-owl.directory}/src/main/java"/>
-                  <fileset dir="${graal-io-ruleml.directory}/src/main/java"/>
-                  <fileset dir="${graal-io-sparql.directory}/src/main/java"/>
-                  <fileset dir="${graal-io-rdf.directory}/src/main/java"/>
-                  <fileset dir="${graal-forward-chaining.directory}/src/main/java"/>
-                  <fileset dir="${graal-backward-chaining.directory}/src/main/java"/>
-                  <fileset dir="${graal-kb.directory}/src/main/java"/>
-                  <fileset dir="${rdbms-common.directory}/src/main/java"/>
-                  <fileset dir="${graal-store-neo4j.directory}/src/main/java"/>
-                  <fileset dir="${graal-store-rdf4j.directory}/src/main/java"/>
+                  <fileset dir="${graal-io-dlgp.directory}/src/main/java" />
+                  <fileset dir="${graal-io-owl.directory}/src/main/java" />
+                  <fileset dir="${graal-io-ruleml.directory}/src/main/java" />
+                  <fileset dir="${graal-io-sparql.directory}/src/main/java" />
+                  <fileset dir="${graal-io-rdf.directory}/src/main/java" />
+                  <fileset dir="${graal-forward-chaining.directory}/src/main/java" />
+                  <fileset dir="${graal-backward-chaining.directory}/src/main/java" />
+                  <fileset dir="${graal-kb.directory}/src/main/java" />
+                  <fileset dir="${rdbms-common.directory}/src/main/java" />
+                  <fileset dir="${graal-store-neo4j.directory}/src/main/java" />
+                  <fileset dir="${graal-store-rdf4j.directory}/src/main/java" />
                 </sourcefiles>
 							</group>
 						</structure>
