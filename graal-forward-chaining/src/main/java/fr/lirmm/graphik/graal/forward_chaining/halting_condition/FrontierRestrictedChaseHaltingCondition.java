@@ -104,8 +104,8 @@ public class FrontierRestrictedChaseHaltingCondition implements ChaseHaltingCond
 		SortedSet<Variable> frontierSet = new TreeSet<Variable>(rule.getFrontier());
 		for (Term t : frontierSet) {
 			frontierSb.append("_");
-			frontierSb.append(t.toString());
-			frontierSb.append(substitution.createImageOf(t).toString());
+			frontierSb.append(t.getLabel());
+			frontierSb.append(substitution.createImageOf(t).getLabel());
 		}
 		String frontier = frontierSb.toString();
 		
