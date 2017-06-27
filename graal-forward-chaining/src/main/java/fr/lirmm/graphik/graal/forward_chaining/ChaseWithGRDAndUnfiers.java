@@ -148,7 +148,7 @@ public class ChaseWithGRDAndUnfiers<T extends AtomSet> extends AbstractChase<Rul
 						LOGGER.debug("\nExecute rule: {} with unificator {}", rule, unificator);
 					}
 					
-					unifiedRule = DefaultUnifierAlgorithm.computeInitialTargetTermsSubstitution(rule).createImageOf(rule);
+					unifiedRule = DefaultUnifierAlgorithm.getTargetVariablesSubstitution().createImageOf(rule);
 					unifiedRule = unificator.createImageOf(unifiedRule);
 					unifiedRule.getBody().removeAll(part);
 					unificator = targetToSource(unificator);

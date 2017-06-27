@@ -45,15 +45,12 @@ package fr.lirmm.graphik.graal.core.unifier;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
-import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.core.unifier.DependencyChecker;
 import fr.lirmm.graphik.graal.api.core.unifier.UnifierAlgorithm;
 import fr.lirmm.graphik.graal.api.core.unifier.UnifierChecker;
 import fr.lirmm.graphik.graal.core.ConjunctiveQueryRuleAdapter;
-import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.VariablePrefixSubstitution;
 import fr.lirmm.graphik.graal.core.VariableRemovePrefixSubstitution;
-import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
@@ -136,17 +133,6 @@ public class DefaultUnifierAlgorithm implements UnifierAlgorithm {
 	private static Substitution targetReverseSubstitution = new VariableRemovePrefixSubstitution("T::");
 	public static Substitution getReverseTargetVariablesSubstitution() {
 		return targetReverseSubstitution;
-	}
-
-	public static Substitution computeInitialTargetTermsSubstitution(Rule rule) {
-		Substitution s = new TreeMapSubstitution();
-
-		for (Variable t2 : rule.getVariables()) {
-			Variable t2b = DefaultTermFactory.instance().createVariable("T::" + t2.getIdentifier().toString());
-			s.put(t2, t2b);
-		}
-
-		return s;
 	}
 
 }
