@@ -86,16 +86,27 @@ public class DefaultUnifierAlgorithm implements UnifierAlgorithm {
 
 	/**
 	 * Computes piece unifiers between the specified query and the head of the specified rule.
-	 * The
+	 * The rule and the query must not contain variables with same names. You can use {@link #getSourceVariablesSubstitution()} and
+	 * {@link #getTargetVariablesSubstitution()} to obtain equivalent rule and query without conflict on variable names.
 	 */
 	public CloseableIteratorWithoutException<Substitution> computePieceUnifier(Rule rule, InMemoryAtomSet query, UnifierChecker... filters) {
 		return new UnifierIterator(rule, new ConjunctiveQueryRuleAdapter(query), filters);
 	}
 	
+	/**
+	 * Computes piece unifiers between the head of the first rule and the body of the second.
+	 * The rules must not contain variables with same names. You can use {@link #getSourceVariablesSubstitution()} and
+	 * {@link #getTargetVariablesSubstitution()} to obtain equivalent rules without conflict on variable names.
+	 */
 	public CloseableIteratorWithoutException<Substitution> computePieceUnifier(Rule rule, Rule target, DependencyChecker... filters) {
 		return new UnifierIterator(rule, target, filters);
 	}
 
+	/**
+	 * Check if there exist a piece unifier between the specified query and the head of the specified rule.
+	 * The rule and the query must not contain variables with same names. You can use {@link #getSourceVariablesSubstitution()} and
+	 * {@link #getTargetVariablesSubstitution()} to obtain equivalent rules without conflict on variable names.
+	 */
 	public boolean existPieceUnifier(Rule rule, InMemoryAtomSet query, UnifierChecker... filters) {
 		 UnifierIterator it = new UnifierIterator(rule, new ConjunctiveQueryRuleAdapter(query), filters);
 		 boolean res = it.hasNext();
@@ -103,6 +114,11 @@ public class DefaultUnifierAlgorithm implements UnifierAlgorithm {
 		 return res;
 	}
 	
+	/**
+	 * Check if there exist piece unifiers between the head of the first rule and the body of the second.
+	 * The rules must not contain variables with same names. You can use {@link #getSourceVariablesSubstitution()} and
+	 * {@link #getTargetVariablesSubstitution()} to obtain equivalent rules without conflict on variable names.
+	 */
 	public boolean existPieceUnifier(Rule source, Rule target, DependencyChecker... filters) {
 		 UnifierIterator it = new UnifierIterator(source, target, filters);
 		 boolean res = it.hasNext();
