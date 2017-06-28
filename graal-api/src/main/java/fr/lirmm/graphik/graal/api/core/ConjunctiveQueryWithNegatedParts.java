@@ -57,11 +57,12 @@ import java.util.List;
  * In the following, X is the set of free variables (answer variables), Y the
  * set of variables that appears in the positive part minus X and Zi where i ∈
  * [1..n] the set of variables that appears only in the negated part indexed i.
- * Note that each variables from X must appears in the positive part. And ∀i,j ∈
+ * Note that each variable from X and Y must appear in the positive part but 
+ * only a subpart of them should appear in each Zi. And ∀i,j ∈
  * [1..n] such that i ≠ j, Zi ∩ Zj = ∅.
  * <br/>
  * A conjunctive query with negated parts Q is formally defined as
- * ∃Y∀Z1..Zn(Q+[X,Y] ∧ not(Q1[Y,Z1]) ∧ ... ∧ not(Qn[Y,Zn])) where Q+, Q1, ...,
+ * ∃Y∀Z1..Zn(Q+[X,Y] ∧ not(Q1[X,Y,Z1]) ∧ ... ∧ not(Qn[X,Y,Zn])) where Q+, Q1, ...,
  * Qn are conjunctions of atoms over specified variable sets.
  * </p>
  * <p>
