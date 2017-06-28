@@ -49,16 +49,16 @@ import java.util.List;
 
 /**
  * <p>
- * This interface represents a conjunctive query with negated parts. A such
+ * This interface represents a conjunctive query with negated parts. Such a 
  * query is composed of a set of atoms which must be true and other sets of
  * atoms whose for each set at least one atom must be false.
  * </p>
  * <p>
  * In the following, X is the set of free variables (answer variables), Y the
- * set of variables that appears in the positive part minus X and Zi where i ∈
- * [1..n] the set of variables that appears only in the negated part indexed i.
+ * set of variables that appear in the positive part minus X and Zi where i ∈
+ * [1..n] the set of variables that appear only in the ith negated part.
  * Note that each variable from X and Y must appear in the positive part but 
- * only a subpart of them should appear in each Zi. And ∀i,j ∈
+ * only a subpart of them may appear in each Zi. $ ∀i,j ∈
  * [1..n] such that i ≠ j, Zi ∩ Zj = ∅.
  * <br/>
  * A conjunctive query with negated parts Q is formally defined as
@@ -67,7 +67,7 @@ import java.util.List;
  * </p>
  * <p>
  * A mapping A from X to a set of terms is an answer to this query with respect
- * to a set of facts iff A(F) is true, where F is the formulae associated to Q.
+ * to a set of facts iff A(Fq) is true, where Fq is the formula associated to Q.
  * </p>
  * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
