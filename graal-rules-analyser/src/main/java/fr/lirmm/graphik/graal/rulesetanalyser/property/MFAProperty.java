@@ -71,7 +71,7 @@ import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseWithGRD;
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.FrontierRestrictedChaseHaltingCondition;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
-import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
+import fr.lirmm.graphik.graal.homomorphism.SmartHomomorphism;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
 
 /**
@@ -120,7 +120,7 @@ public final class MFAProperty extends RuleSetProperty.Default {
 		try {
 			while (chase.hasNext()) {
 				chase.next();
-				if (StaticHomomorphism.instance().exist(Q, A)) {
+				if (SmartHomomorphism.instance().exist(Q, A)) {
 					return -1;
 				}
 			}

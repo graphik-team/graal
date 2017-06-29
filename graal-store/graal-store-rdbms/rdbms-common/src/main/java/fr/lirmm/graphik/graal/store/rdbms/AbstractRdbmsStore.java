@@ -61,7 +61,7 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.core.store.AbstractStore;
-import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
+import fr.lirmm.graphik.graal.homomorphism.SmartHomomorphism;
 import fr.lirmm.graphik.graal.store.rdbms.driver.RdbmsDriver;
 import fr.lirmm.graphik.graal.store.rdbms.homomorphism.SqlHomomorphismChecker;
 import fr.lirmm.graphik.graal.store.rdbms.homomorphism.SqlUCQHomomorphismChecker;
@@ -82,8 +82,8 @@ public abstract class AbstractRdbmsStore extends AbstractStore implements RdbmsS
 	private TreeMap<Predicate, DBTable> predicateMap = new TreeMap<Predicate, DBTable>();
 
 	static {
-		StaticHomomorphism.instance().addChecker(new SqlHomomorphismChecker());
-		StaticHomomorphism.instance().addChecker(new SqlUCQHomomorphismChecker());
+		SmartHomomorphism.instance().addChecker(new SqlHomomorphismChecker());
+		SmartHomomorphism.instance().addChecker(new SqlUCQHomomorphismChecker());
 	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRdbmsStore.class);

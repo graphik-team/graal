@@ -70,7 +70,7 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.core.grd.DefaultGraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
-import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
+import fr.lirmm.graphik.graal.homomorphism.SmartHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.test.TestUtil;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -102,7 +102,7 @@ public class ChaseTest {
 		chase.execute();
 		
 		ConjunctiveQuery query = DlgpParser.parseQuery("? :- <P>(X,Y),<Q>(X,Y).");
-		Assert.assertTrue(StaticHomomorphism.instance().execute(query, atomSet).hasNext());
+		Assert.assertTrue(SmartHomomorphism.instance().execute(query, atomSet).hasNext());
 	}
 	
 	@Theory
@@ -241,7 +241,7 @@ public class ChaseTest {
 		// /////////////////////////////////////////////////////////////////////
 		// execute query
 		ConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y) :- <S>(X, Y), <P>(X,X), <Q>(Y,Y).");
-		CloseableIterator<Substitution> subReader = StaticHomomorphism.instance().execute(query, atomSet);
+		CloseableIterator<Substitution> subReader = SmartHomomorphism.instance().execute(query, atomSet);
 		Assert.assertTrue(subReader.hasNext());
 	}
 	

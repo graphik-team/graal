@@ -71,9 +71,9 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  * 
  */
-public class StaticHomomorphism extends AbstractProfilable implements HomomorphismWithCompilation<Object, AtomSet> {
+public class SmartHomomorphism extends AbstractProfilable implements HomomorphismWithCompilation<Object, AtomSet> {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(StaticHomomorphism.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(SmartHomomorphism.class);
 
 	private SortedSet<HomomorphismChecker> elements;
 
@@ -82,9 +82,9 @@ public class StaticHomomorphism extends AbstractProfilable implements Homomorphi
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 
-	private static StaticHomomorphism instance;
+	private static SmartHomomorphism instance;
 	
-	public StaticHomomorphism(boolean loadDefaultHomomorphism) {
+	public SmartHomomorphism(boolean loadDefaultHomomorphism) {
 		this.elements = new TreeSet<HomomorphismChecker>();
 		if(loadDefaultHomomorphism) {
 			this.elements.add(BacktrackChecker.instance());
@@ -96,9 +96,9 @@ public class StaticHomomorphism extends AbstractProfilable implements Homomorphi
 		}
 	}
 
-	public static synchronized StaticHomomorphism instance() {
+	public static synchronized SmartHomomorphism instance() {
 		if (instance == null)
-			instance = new StaticHomomorphism(true);
+			instance = new SmartHomomorphism(true);
 
 		return instance;
 	}

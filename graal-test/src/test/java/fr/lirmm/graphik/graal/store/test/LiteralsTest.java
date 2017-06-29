@@ -59,7 +59,7 @@ import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
+import fr.lirmm.graphik.graal.homomorphism.SmartHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.test.TestUtil;
 
@@ -81,7 +81,7 @@ public class LiteralsTest {
 		store.add(a);
 
 		ConjunctiveQuery q = new DefaultConjunctiveQuery(new LinkedListAtomSet(a), Collections.<Term> emptyList());
-		Assert.assertTrue(StaticHomomorphism.instance().execute(q, store).hasNext());
+		Assert.assertTrue(SmartHomomorphism.instance().execute(q, store).hasNext());
 
 		Atom b = store.iterator().next();
 		Assert.assertEquals(a, b);
@@ -93,7 +93,7 @@ public class LiteralsTest {
 		store.add(a);
 
 		ConjunctiveQuery q = new DefaultConjunctiveQuery(new LinkedListAtomSet(a), Collections.<Term> emptyList());
-		Assert.assertTrue(StaticHomomorphism.instance().execute(q, store).hasNext());
+		Assert.assertTrue(SmartHomomorphism.instance().execute(q, store).hasNext());
 
 		Atom b = store.iterator().next();
 		Assert.assertEquals(a, b);
@@ -105,7 +105,7 @@ public class LiteralsTest {
 		store.add(a);
 
 		ConjunctiveQuery q = new DefaultConjunctiveQuery(new LinkedListAtomSet(a), Collections.<Term> emptyList());
-		Assert.assertTrue(StaticHomomorphism.instance().execute(q, store).hasNext());
+		Assert.assertTrue(SmartHomomorphism.instance().execute(q, store).hasNext());
 
 		Atom b = store.iterator().next();
 		Assert.assertEquals(a, b);
@@ -118,7 +118,7 @@ public class LiteralsTest {
 		store.add(a);
 
 		ConjunctiveQuery q = new DefaultConjunctiveQuery(new LinkedListAtomSet(a), Collections.<Term> emptyList());
-		Assert.assertTrue(StaticHomomorphism.instance().execute(q, store).hasNext());
+		Assert.assertTrue(SmartHomomorphism.instance().execute(q, store).hasNext());
 
 		Atom b = store.iterator().next();
 		Assert.assertEquals(a, b);
@@ -130,7 +130,7 @@ public class LiteralsTest {
 		store.add(a);
 
 		ConjunctiveQuery q = new DefaultConjunctiveQuery(new LinkedListAtomSet(a), Collections.<Term> emptyList());
-		Assert.assertTrue(StaticHomomorphism.instance().execute(q, store).hasNext());
+		Assert.assertTrue(SmartHomomorphism.instance().execute(q, store).hasNext());
 
 		Atom b = store.iterator().next();
 		Assert.assertEquals(a, b);

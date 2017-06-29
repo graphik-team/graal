@@ -68,7 +68,7 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.core.ConjunctiveQueryWithFixedVariables;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
-import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
+import fr.lirmm.graphik.graal.homomorphism.SmartHomomorphism;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.IteratorException;
@@ -121,7 +121,7 @@ public class FrontierRestrictedChaseHaltingCondition implements ChaseHaltingCond
 			LOGGER.debug("Fixed Query:" + query);
 		}
 		try {
-			if (StaticHomomorphism.instance().execute(query, data).hasNext()) {
+			if (SmartHomomorphism.instance().execute(query, data).hasNext()) {
 				return new CloseableIteratorAdapter<Atom>(Collections.<Atom> emptyList().iterator());
 			}
 		} catch (IteratorException e) {

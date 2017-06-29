@@ -88,7 +88,7 @@ import fr.lirmm.graphik.graal.core.ruleset.DefaultOntology;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.forward_chaining.BreadthFirstChase;
 import fr.lirmm.graphik.graal.forward_chaining.ChaseWithGRD;
-import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
+import fr.lirmm.graphik.graal.homomorphism.SmartHomomorphism;
 import fr.lirmm.graphik.graal.rulesetanalyser.Analyser;
 import fr.lirmm.graphik.graal.rulesetanalyser.RuleSetPropertyHierarchy;
 import fr.lirmm.graphik.graal.rulesetanalyser.property.FESProperty;
@@ -258,7 +258,7 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 	@Override
 	public CloseableIterator<Substitution> homomorphism(Query query) throws KnowledgeBaseException {
 		try {
-			return StaticHomomorphism.instance().execute(query, this.store);
+			return SmartHomomorphism.instance().execute(query, this.store);
 		} catch (HomomorphismException e) {
 			throw new KnowledgeBaseException(e);
 		}
@@ -268,7 +268,7 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 	public CloseableIterator<Substitution> query(Query query) throws KnowledgeBaseException {
 		if (this.isSaturated) {
 			try {
-				return StaticHomomorphism.instance().execute(query, this.store);
+				return SmartHomomorphism.instance().execute(query, this.store);
 			} catch (HomomorphismException e) {
 				throw new KnowledgeBaseException(e);
 			}
@@ -291,7 +291,11 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 
 					CloseableIterator<Substitution> resultIt = null;
 					try {
-						resultIt = StaticHomomorphism.instance().execute(ucq, this.store, this.ruleCompilation);
+						if(this.isSemiSaturated) {
+							resultIt = SmartHomomorphism.instance().execute(query, this.store);
+						} else {
+							resultIt = SmartHomomorphism.instance().execute(ucq, this.store, this.ruleCompilation);
+						}
 					} catch (HomomorphismException e) {
 						if (this.getApproach().equals(Approach.REWRITING_FIRST)) {
 							it = PureRewriter.unfold(ucq, this.ruleCompilation);
@@ -299,7 +303,7 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 						} else {
 							this.semiSaturate();
 						}
-						resultIt = StaticHomomorphism.instance().execute(ucq, this.store);
+						resultIt = SmartHomomorphism.instance().execute(ucq, this.store);
 					}
 					return new FilterIterator<Substitution, Substitution>(resultIt, new UniqFilter<Substitution>());
 				} catch (ChaseException e) {
@@ -322,7 +326,7 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 		long remainingTime = timeout;
 		if (this.isSaturated) {
 			try {
-				return StaticHomomorphism.instance().execute(query, this.store);
+				return SmartHomomorphism.instance().execute(query, this.store);
 			} catch (HomomorphismException e) {
 				throw new KnowledgeBaseException(e);
 			}
@@ -353,7 +357,7 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 
 					CloseableIterator<Substitution> resultIt = null;
 					try {
-						resultIt = StaticHomomorphism.instance().execute(ucq, this.store, this.ruleCompilation);
+						resultIt = SmartHomomorphism.instance().execute(ucq, this.store, this.ruleCompilation);
 					} catch (HomomorphismException e) {
 						if (this.getApproach().equals(Approach.REWRITING_FIRST)) {
 							it = PureRewriter.unfold(ucq, this.ruleCompilation);
@@ -361,7 +365,7 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 						} else {
 							this.semiSaturate();
 						}
-						resultIt = StaticHomomorphism.instance().execute(ucq, this.store);
+						resultIt = SmartHomomorphism.instance().execute(ucq, this.store);
 					}
 					return new FilterIterator<Substitution, Substitution>(resultIt, new UniqFilter<Substitution>());
 				} catch (ChaseException e) {

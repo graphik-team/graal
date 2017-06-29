@@ -55,7 +55,7 @@ import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.RestrictedChaseHaltingCondition;
-import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
+import fr.lirmm.graphik.graal.homomorphism.SmartHomomorphism;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
@@ -74,10 +74,10 @@ public abstract class AbstractRuleApplier<T extends AtomSet> implements RuleAppl
 
 	/**
 	 * Construct a DefaultRuleApplier with a
-	 * {@link RestrictedChaseHaltingCondition} and a {@link StaticHomomorphism}
+	 * {@link RestrictedChaseHaltingCondition} and a {@link SmartHomomorphism}
 	 */
 	public AbstractRuleApplier() {
-		this(StaticHomomorphism.instance());
+		this(SmartHomomorphism.instance());
 	}
 
 	/**
@@ -94,7 +94,7 @@ public abstract class AbstractRuleApplier<T extends AtomSet> implements RuleAppl
 	 * @param haltingCondition
 	 */
 	public AbstractRuleApplier(ChaseHaltingCondition haltingCondition) {
-		this(StaticHomomorphism.instance(), haltingCondition);
+		this(SmartHomomorphism.instance(), haltingCondition);
 	}
 
 	/**

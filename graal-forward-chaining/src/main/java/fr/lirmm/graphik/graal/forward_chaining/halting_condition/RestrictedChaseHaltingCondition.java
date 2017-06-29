@@ -59,7 +59,7 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.core.ConjunctiveQueryWithFixedVariables;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
-import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
+import fr.lirmm.graphik.graal.homomorphism.SmartHomomorphism;
 import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
@@ -83,7 +83,7 @@ public class RestrictedChaseHaltingCondition extends AbstractProfilable implemen
 		ConjunctiveQuery query = new ConjunctiveQueryWithFixedVariables(newFacts, substitution.createImageOf(rule.getFrontier()));
 
 		try {
-			if (StaticHomomorphism.instance().execute(query, data).hasNext()) {
+			if (SmartHomomorphism.instance().execute(query, data).hasNext()) {
 				return new CloseableIteratorAdapter<Atom>(Collections.<Atom>emptyList().iterator());
 			}
 		} catch (IteratorException e) {

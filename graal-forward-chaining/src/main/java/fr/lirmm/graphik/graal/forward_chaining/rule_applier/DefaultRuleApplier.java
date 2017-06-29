@@ -55,7 +55,7 @@ import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.RestrictedChaseHaltingCondition;
-import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
+import fr.lirmm.graphik.graal.homomorphism.SmartHomomorphism;
 
 /**
  * This Applier executes a call to the chaseStopCondition for all unique
@@ -72,10 +72,10 @@ public class DefaultRuleApplier<T extends AtomSet> extends AbstractRuleApplier<T
 
 	/**
 	 * Construct a DefaultRuleApplier with a
-	 * {@link RestrictedChaseHaltingCondition} and a {@link StaticHomomorphism}
+	 * {@link RestrictedChaseHaltingCondition} and a {@link SmartHomomorphism}
 	 */
 	public DefaultRuleApplier() {
-		this(StaticHomomorphism.instance());
+		this(SmartHomomorphism.instance());
 	}
 
 	/**
@@ -92,7 +92,7 @@ public class DefaultRuleApplier<T extends AtomSet> extends AbstractRuleApplier<T
 	 * @param haltingCondition
 	 */
 	public DefaultRuleApplier(ChaseHaltingCondition haltingCondition) {
-		this(StaticHomomorphism.instance(), haltingCondition);
+		this(SmartHomomorphism.instance(), haltingCondition);
 	}
 
 	/**

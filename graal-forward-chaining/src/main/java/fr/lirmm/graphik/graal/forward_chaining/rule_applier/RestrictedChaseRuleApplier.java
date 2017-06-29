@@ -53,7 +53,7 @@ import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplicationException;
 import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.RuleWrapper2ConjunctiveQueryWithNegatedParts;
-import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
+import fr.lirmm.graphik.graal.homomorphism.SmartHomomorphism;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
@@ -78,7 +78,7 @@ public class RestrictedChaseRuleApplier<T extends AtomSet> implements RuleApplie
 			ConjunctiveQueryWithNegatedParts query = new RuleWrapper2ConjunctiveQueryWithNegatedParts(rule);
 			CloseableIterator<Substitution> results;
 			
-			results = StaticHomomorphism.instance().execute(query, atomSet);
+			results = SmartHomomorphism.instance().execute(query, atomSet);
 			while (results.hasNext()) {
 				res = true;
 				Substitution proj = results.next();
@@ -108,7 +108,7 @@ public class RestrictedChaseRuleApplier<T extends AtomSet> implements RuleApplie
 	public  CloseableIterator<Atom> delegatedApply(Rule rule, T atomSet) throws RuleApplicationException {
 		try {
 			ConjunctiveQueryWithNegatedParts query = new RuleWrapper2ConjunctiveQueryWithNegatedParts(rule);
-			CloseableIterator<Substitution> results = StaticHomomorphism.instance().execute(query, atomSet);
+			CloseableIterator<Substitution> results = SmartHomomorphism.instance().execute(query, atomSet);
 			return new RuleApplierIterator(results, rule, atomSet);
 		} catch (HomomorphismException e) {
 			throw new RuleApplicationException("", e);

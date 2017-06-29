@@ -83,7 +83,7 @@ import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.core.unifier.DefaultUnifierAlgorithm;
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.RestrictedChaseHaltingCondition;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
-import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
+import fr.lirmm.graphik.graal.homomorphism.SmartHomomorphism;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
 import fr.lirmm.graphik.util.stream.Iterators;
@@ -160,14 +160,14 @@ public class ChaseWithGRDAndUnfiers<T extends AtomSet> extends AbstractChase<Rul
 					}
 					
 					// Get projections
-					List<Substitution> projections = Iterators.toList(StaticHomomorphism.instance().execute(query, atomSet));
+					List<Substitution> projections = Iterators.toList(SmartHomomorphism.instance().execute(query, atomSet));
 
 					try {
 						for(Substitution proj : projections) {
 							InMemoryAtomSet newFacts = proj.createImageOf(unifiedRule.getHead());
 							ConjunctiveQuery q = new DefaultConjunctiveQuery(newFacts);
 
-							if (!StaticHomomorphism.instance().execute(q, newAtomSet).hasNext()) {
+							if (!SmartHomomorphism.instance().execute(q, newAtomSet).hasNext()) {
 								// Existential variables instantiation added to proj
 								CloseableIterator<Atom> it = hc.apply(unifiedRule, proj, atomSet);
 								

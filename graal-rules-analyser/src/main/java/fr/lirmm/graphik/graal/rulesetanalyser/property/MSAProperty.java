@@ -70,7 +70,7 @@ import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.forward_chaining.StaticChase;
-import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
+import fr.lirmm.graphik.graal.homomorphism.SmartHomomorphism;
 import fr.lirmm.graphik.graal.rulesetanalyser.util.AnalyserRuleSet;
 
 public final class MSAProperty extends RuleSetProperty.Default {
@@ -115,7 +115,7 @@ public final class MSAProperty extends RuleSetProperty.Default {
 		Q.getAtomSet().add(q);
 
 		try { 
-			if (StaticHomomorphism.instance().exist(Q, A))
+			if (SmartHomomorphism.instance().exist(Q, A))
 				return -1;
 			return 1;
 		}catch (HomomorphismException e) {

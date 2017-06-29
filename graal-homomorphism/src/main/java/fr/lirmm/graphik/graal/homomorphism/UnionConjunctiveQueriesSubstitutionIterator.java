@@ -115,9 +115,9 @@ class UnionConjunctiveQueriesSubstitutionIterator extends AbstractProfilable imp
 				try {
 					if(this.homomorphism == null) {
 						if(this.compilation == null) {
-							this.tmpIt = StaticHomomorphism.instance().execute(q, this.atomSet);
+							this.tmpIt = SmartHomomorphism.instance().execute(q, this.atomSet);
 						} else {
-							this.tmpIt = StaticHomomorphism.instance().execute(q, this.atomSet, this.compilation);
+							this.tmpIt = SmartHomomorphism.instance().execute(q, this.atomSet, this.compilation);
 						}
 					} else {
 						if(this.compilation == null) {
