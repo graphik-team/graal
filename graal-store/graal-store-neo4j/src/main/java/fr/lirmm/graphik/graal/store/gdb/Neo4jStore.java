@@ -47,7 +47,6 @@ package fr.lirmm.graphik.graal.store.gdb;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
