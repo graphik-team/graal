@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'/>
+    <meta name="description" content="Documentation of the chase module of Graal"/>
+    <meta name="keywords" content="graal, documentation, module, chase, forward-chaining"/>
+    <!-- Import Google Icon Font-->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/materialize.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/stylesheet.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/table.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/hljs-style.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="../js/main.js"></script>
+    <title>Chase module documentation</title>
+  </head>
+  <body>
+    <!-- HEADER -->
+    <div class="navbar-fixed">
+  <nav>
+    <div class="nav-wrapper">
+      <div id="logo-container"><a href="../" class="brand-logo">Graal</a></div>
+      <ul class="right hide-on-med-and-down">
+        <li class="active"><a href="../doc/index">Documentation</a></li>
+        <li class=""><a href="../downloads/index">Apps & Downloads</a></li>
+        <li class=""><a href="../publications">Publications</a></li>
+        <li><a href="../experiments1">Experiments</a></li>
+        <li><a href="https://github.com/graphik-team/graal/">Sources</a></li>
+      </ul>
+      <ul class="side-nav" id="nav-mobile">
+        <li class="active"><a href="../doc/index">Documentation</a></li>
+        <li class=""><a href="../downloads/index">Apps & Downloads</a></li>
+        <li class=""><a href="../publications">Publications</a></li>
+        <li><a href="../experiments1">Experiments</a></li>
+        <li><a href="https://github.com/graphik-team/graal/">Sources</a></li>
+      </ul>
+      <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+    </div>
+  </nav>
+</div>
+    <!-- BODY -->
+    <div class="row">
+      <div id="page-menu" class="col s12 m5 l3">
+<ul class="collection collapsible">
+  <li><a class="collection-item" href="../doc/index">Overview</a></li>
+  <li><a class="collection-item" href="../doc/eclipse">Getting Started with Eclipse</a></li>
+  <li><a class="collection-item" href="../doc/netbeans">Getting Started with NetBeans</a></li>
+  <li><a class="collection-item" href="../doc/without-ide">Getting Started without IDE</a></li>
+  <li><a class="collection-item" href="../doc/slf4j">SLF4J Configuration</a></li>
+  <li>
+    <div class="collapsible-header collection-item">Examples</div>
+      <ul class="collapsible-body">
+        <li><a class="collection-item" href="../doc/getting-started">Getting started with a KB</a></li>
+        <li><a class="collection-item" href="../doc/scenario1">Relational DB querying</a></li>
+        <!-- <li><a class="collection-item" href="../"><span class="todo">DBPedia querying</span></a></li>
+ -->
+        <li><a class="collection-item" href="../doc/rewriting">Query rewriting</a></li>
+        <!-- <li><a class="collection-item" href="../"><span class="todo">SPARQL rewriting</span></a></li>
+ -->
+        <li><a class="collection-item" href="../doc/owl-parser">OWL parsing</a></li>
+        <!-- <li><a class="collection-item" href="../"><span class="todo">RDF parsing</span></a></li>
+ -->
+        <!-- <li><a class="collection-item" href="../"><span class="todo">Ontology analysis</span></a></li>
+ -->
+        <!-- <li><a class="collection-item" href="../"><span class="todo">Data exchange</span></a></li>
+ -->
+      </ul>
+  </li>
+  <li>
+    <div class="collapsible-header collection-item">Technical documentation</div>
+      <ul class="collapsible-body">
+        <li><a class="collection-item" href="../doc/core-module">Core</a></li>
+        <li><a class="collection-item" href="../doc/io-dlgp-module">Dlgp IO</a></li>
+        <li><a class="collection-item" href="../doc/homomorphism-module">Homomorphism</a></li>
+        <li><a class="collection-item" href="../doc/kb-module">KB</a></li>
+        <li><a class="collection-item active" href="../doc/chase-module">Forward Chaining</a></li>
+        <li><a class="collection-item" href="../doc/backward-chaining-module">Backward Chaining</a></li>
+        <li><a class="collection-item" href="../doc/store-module">Store</a></li>
+        <li><a class="collection-item" href="../doc/ruleclasses">Rule Set Analyser</a></li>
+      </ul>
+  </li>
+  <li><a class="collection-item" href="../doc/dlgp">DLGP</a></li>
+  <li><a class="collection-item" href="../1.3.0/javadocs/">Javadoc</a></li>
+</ul>
+      </div>
+      <div id="page-content" class="col s12 m7 l9">
+        <h1>Forward-chaining (chase) module</h1>
+<a href="../modules/graal-forward-chaining">Download this module</a>
+<p>This module provides several implementations of the forward chaining mechanism, aka chase:
+<ul>
+  <li>
+  The <strong>BreadthFirstChase</strong> is the most basic one. At each step, it computes all the homomorphisms from the rule bodies to the current set of facts then perform the corresponding rule applications. At each step after the first one, rules are checked based on the presence of a predicate of their body in the head of a rule applied in the previous step. Furthermore, for optimization reasons, linear rules (with a single atom in the body) are applied over a set of atoms restricted to the atoms generated at the previous step which have the same predicate as the body rule atom.
+  </li>
+  <li>
+  The <strong>ChaseWithGRD</strong> improves the preceding basic chase by triggering rules according to the <strong>graph of rule dependencies</strong> (ie the rules checked at each step after the first one are the successors in the GRD of the rules actually applied at the previous step).
+  </li>
+  <li>
+  The <strong>SccChase</strong>  applies rules following the layers of the <strong>Graph of Strongly Connected Components</strong> (SCCG) of the Graph Of Rule Dependencies. It saturates the facts with the rules in a layer before going to the next layer.  Differently from the preceding ones, this chase is not breadth-first.
+</ul>
+</p>
+<h2>Different kinds of Chase</h2>
+<p> Several chase variants exist in the litterature that differ on the conditions of applicability of a rule (roughly, more or less redundancies can be avoided). Graal implements the
+ <em>restricted chase</em> (aka standard chase) and the <em>frontier-restricted chase</em> (aka semi-oblivious, and equivalent to skolem chase). Both are available for all previous forward chaining algorithms.
+The chase behavior can be selected by specifying
+a <a href="../1.3.0/javadocs/fr/lirmm/graphik/graal/api/forward_chaining/RuleApplier.html">RuleApplier</a>
+ to the <em>Chase</em> constructor. A <a href="../1.3.0/javadocs/fr/lirmm/graphik/graal/api/forward_chaining/RuleApplier.html">RuleApplier</a>
+ defines the conditions of rule application.
+</p>
+<p>
+The main implementation called <a href="../1.3.0/javadocs/fr/lirmm/graphik/graal/forward_chaining/rule_applier/DefaultRuleApplier.html">DefaultRuleApplier</a>
+ generates a query from the rule's body, then evaluates it with the <a href="../1.3.0/javadocs/fr/lirmm/graphik/graal/homomorphism/SmartHomomorphism.html">SmartHomomorphism</a>
+. Finally for each found substitution of the query, it calls a <a href="../1.3.0/javadocs/fr/lirmm/graphik/graal/api/forward_chaining/ChaseHaltingCondition.html">ChaseHaltingCondition</a>
+ to generate new data with respect to the kind of chase. The <a href="../1.3.0/javadocs/fr/lirmm/graphik/graal/forward_chaining/halting_condition/FrontierRestrictedChaseHaltingCondition.html">FrontierRestrictedChaseHaltingCondition</a>
+ applies a rule according to a homomorphism from its body to the data if it has not
+ already been applied with another homomorphism that maps the rule's frontier in the same way. The <a href="../1.3.0/javadocs/fr/lirmm/graphik/graal/forward_chaining/halting_condition/RestrictedChaseHaltingCondition.html">RestrictedChaseHaltingCondition</a>
+ applies a rule to a fact base <em>F</em> according to a homomorphism <em>h</em> if <em>h</em> cannot be extended to a homomorphism
+ from <em>B</em> ∪ <em>H</em> to <em>F</em> where <em>B</em> is the rule body and <em>H</em> its head.
+</p>
+<p>
+The <a href="../1.3.0/javadocs/fr/lirmm/graphik/graal/forward_chaining/rule_applier/RestrictedChaseRuleApplier.html">RestrictedChaseRuleApplier</a>
+ is an optimized implementation of the <em>restricted chase</em>. It generates a <a href="../1.3.0/javadocs/fr/lirmm/graphik/graal/api/core/ConjunctiveQueryWithNegatedParts.html">ConjunctiveQueryWithNegatedParts</a>
+ of the form <em>B ∧ ¬H</em> where <em>B</em> is the rule body and <em>H</em> the rule head (which must not be found, hence the negation).
+</p>      </div>
+    </div>
+    <!-- FOOTER -->
+    <!-- FOOTER -->
+    <footer class="page-footer">
+      <div class="container">
+        <a href="mailto:sympa@lirmm.fr?subject=SUBSCRIBE graal">Subscribe to Graal newsletter</a>
+        <p> Contacts:
+        <script type="text/javascript">
+        <!-- //encodage de l'adresse email
+                Rot17.write('<r yivw="drzckf:jzgzvkvi@czidd.wi">jzgzvkvi@czidd.wi</r>');
+                document.write(' ');
+          Rot17.write('<r yivw="drzckf:dlxezvi@czidd.wi">dlxezvi@czidd.wi</r>');
+     -->
+        </script></p>
+        <p>
+            Thanks to <a href="https://www.yourkit.com"><img style="height: 24px; bottom: -6px; border: none; box-shadow: none; margin: 0; padding: 0;" src="https://www.yourkit.com/images/yklogo.png"></a> for its <a href="https://www.yourkit.com/java/profiler/index.jsp">Java Profiler</a></br>
+            Published with <a href="https://pages.github.com">GitHub Pages</a>
+        </p>
+      </div>
+      <div class="footer-copyright">
+      <div class="container">
+          Graal maintained by <a href="https://team.inria.fr/graphik/">GraphIK team</a>
+      </div>
+    </div>
+    </footer>
+    <!-- Import jQuery before materialize.js -->
+<script type="text/javascript" src="../js/materialize.min.js"></script>
+<!-- Code highlighting -->
+<script type="text/javascript" src="../js/highlight.pack.js"></script>
+<script type="text/javascript" src="../js/init.js"></script>
+<!-- Piwik -->
+<script type="text/javascript">
+var _paq = _paq || [];
+_paq.push(['trackPageView']);
+_paq.push(['enableLinkTracking']);
+(function() {
+var u="//info-demo.lirmm.fr/analytics/";
+_paq.push(['setTrackerUrl', u+'piwik.php']);
+_paq.push(['setSiteId', 1]);
+var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+})();
+</script>
+<noscript><p><img src="//info-demo.lirmm.fr/analytics/piwik.php?idsite=1" style="border:0;" alt="" /></p></noscript>
+<!-- End Piwik Code -->
+  </body>
+</html>

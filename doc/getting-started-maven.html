@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'/>
+    <meta name="description" content="Getting Started with the Graal library"/>
+    <meta name="keywords" content="Graal, getting started, maven"/>
+    <!-- Import Google Icon Font-->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/materialize.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/stylesheet.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/table.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/hljs-style.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="../js/main.js"></script>
+    <title>Getting Started using Maven</title>
+  </head>
+  <body>
+    <!-- HEADER -->
+    <div class="navbar-fixed">
+  <nav>
+    <div class="nav-wrapper">
+      <div id="logo-container"><a href="../" class="brand-logo">Graal</a></div>
+      <ul class="right hide-on-med-and-down">
+        <li class="active"><a href="../doc/index">Documentation</a></li>
+        <li class=""><a href="../downloads/index">Apps & Downloads</a></li>
+        <li class=""><a href="../publications">Publications</a></li>
+        <li><a href="../experiments1">Experiments</a></li>
+        <li><a href="https://github.com/graphik-team/graal/">Sources</a></li>
+      </ul>
+      <ul class="side-nav" id="nav-mobile">
+        <li class="active"><a href="../doc/index">Documentation</a></li>
+        <li class=""><a href="../downloads/index">Apps & Downloads</a></li>
+        <li class=""><a href="../publications">Publications</a></li>
+        <li><a href="../experiments1">Experiments</a></li>
+        <li><a href="https://github.com/graphik-team/graal/">Sources</a></li>
+      </ul>
+      <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+    </div>
+  </nav>
+</div>
+    <!-- BODY -->
+    <div class="row">
+      <div id="page-menu" class="col s12 m5 l3">
+<ul class="collection collapsible">
+  <li><a class="collection-item" href="../doc/index">Overview</a></li>
+  <li><a class="collection-item" href="../doc/eclipse">Getting Started with Eclipse</a></li>
+  <li><a class="collection-item" href="../doc/netbeans">Getting Started with NetBeans</a></li>
+  <li><a class="collection-item" href="../doc/without-ide">Getting Started without IDE</a></li>
+  <li><a class="collection-item" href="../doc/slf4j">SLF4J Configuration</a></li>
+  <li>
+    <div class="collapsible-header collection-item">Examples</div>
+      <ul class="collapsible-body">
+        <li><a class="collection-item" href="../doc/getting-started">Getting started with a KB</a></li>
+        <li><a class="collection-item" href="../doc/scenario1">Relational DB querying</a></li>
+        <!-- <li><a class="collection-item" href="../"><span class="todo">DBPedia querying</span></a></li>
+ -->
+        <li><a class="collection-item" href="../doc/rewriting">Query rewriting</a></li>
+        <!-- <li><a class="collection-item" href="../"><span class="todo">SPARQL rewriting</span></a></li>
+ -->
+        <li><a class="collection-item" href="../doc/owl-parser">OWL parsing</a></li>
+        <!-- <li><a class="collection-item" href="../"><span class="todo">RDF parsing</span></a></li>
+ -->
+        <!-- <li><a class="collection-item" href="../"><span class="todo">Ontology analysis</span></a></li>
+ -->
+        <!-- <li><a class="collection-item" href="../"><span class="todo">Data exchange</span></a></li>
+ -->
+      </ul>
+  </li>
+  <li>
+    <div class="collapsible-header collection-item">Technical documentation</div>
+      <ul class="collapsible-body">
+        <li><a class="collection-item" href="../doc/core-module">Core</a></li>
+        <li><a class="collection-item" href="../doc/io-dlgp-module">Dlgp IO</a></li>
+        <li><a class="collection-item" href="../doc/homomorphism-module">Homomorphism</a></li>
+        <li><a class="collection-item" href="../doc/kb-module">KB</a></li>
+        <li><a class="collection-item" href="../doc/chase-module">Forward Chaining</a></li>
+        <li><a class="collection-item" href="../doc/backward-chaining-module">Backward Chaining</a></li>
+        <li><a class="collection-item" href="../doc/store-module">Store</a></li>
+        <li><a class="collection-item" href="../doc/ruleclasses">Rule Set Analyser</a></li>
+      </ul>
+  </li>
+  <li><a class="collection-item" href="../doc/dlgp">DLGP</a></li>
+  <li><a class="collection-item" href="../1.3.0/javadocs/">Javadoc</a></li>
+</ul>
+      </div>
+      <div id="page-content" class="col s12 m7 l9">
+             This example shows how to build and run a simple Graal project
+        using the Maven build tool. If you prefer, you can
+        build and run this example <a href="../doc/getting-started">without any build tool</a>.
+        <h2>Requirements</h2>
+        <ul>
+          <li>Graal requires Java 7 (JDK) or newer.</li>
+          <li><a href="https://maven.apache.org/download.cgi">Download</a>
+        and <a href="https://maven.apache.org/install.html">install</a>
+        Maven.</li>
+          <li>Download the
+          project <a href="./dl/examples/graal-getting-started.zip">graal-getting-started.zip</a> and
+          extract it where you want.</li>
+        </ul>
+        <h2>Build</h2>
+          <p>Open a terminal and go to the graal-getting-started
+          folder. Then, execute the following command:</p>
+          <code>mvn package</code>
+          <h2>Run the example</h2>
+         <p>Execute the project:</p>
+         <code>java -jar target/getting-started-1.0-SNAPSHOT.jar src/main/resources/animals.dlp</code>
+<h2>What does this example do?</h2>
+<ol>
+  <li>Create a KBBuilder:
+    <pre><code class="java">
+    KBBuilder kbb = new KBBuilder();
+    </code></pre>
+  </Li>
+  <li>Load an ontology and facts from a DLGP file:
+    <pre><code class="java">
+    kbb.addAll(new DlgpParser(new File(rootDir, "animals.dlp")));
+    </code></pre>
+  </li>
+  <li>Generate the KnowledgeBase, <em>by default facts are stored in main memory</em>:
+    <pre><code class="java">
+    KnowledgeBase kb = kbb.build();
+    </code></pre>
+  </li>
+  <li>Create a DLGP writer:
+    <pre><code class="java">
+    writer = new DlgpWriter();
+    </code></pre>
+  </li>
+  <li>Print the ontology in DLGP format:
+    <pre><code class="java">
+    writer.write("\n= Ontology =\n");
+    writer.write(kb.getOntology());
+    </code></pre>
+  </li>
+  <li>Print the facts in DLGP format:
+    <pre><code class="java">
+    writer.write("\n= Facts =\n");
+    writer.write(kb.getFacts());
+    </code></pre>
+  </li>
+  <li>Parse a query from a Java String and print it:
+    <pre><code class="java">
+    ConjunctiveQuery query = DlgpParser.parseQuery("?(X) :- mammal(X).");
+    writer.write("\n= Query =\n");
+    writer.write(query);
+    </code></pre>
+  </li>
+  <li>Query the KB, <em>here the KB will use the <strong>RulesSetAnalyser module</strong> to analyze the rule base and select a query answering technique (ie saturation, rewriting or a combination of both) :
+    <pre><code class="java">
+    CloseableIterator<Substitution> resultIterator = kb.query(query);
+    </code></pre>
+  </li>
+  <li>Iterate and print the answers:
+    <pre><code class="java">
+    if (resultIterator.hasNext()) {
+    	do {
+    		writer.write(resultIterator.next().toString());
+    		writer.write("\n");
+    	} while (resultIterator.hasNext());
+    } else {
+    	writer.write("No answers.\n");
+    }
+    </code></pre>
+  </li>
+  <li>Close resources:
+    <pre><code class="java">
+    kb.close();
+    writer.close();
+    </code></pre>
+  </li>
+</ol>
+      </div>
+    </div>
+    <!-- FOOTER -->
+    <!-- FOOTER -->
+    <footer class="page-footer">
+      <div class="container">
+        <a href="mailto:sympa@lirmm.fr?subject=SUBSCRIBE graal">Subscribe to Graal newsletter</a>
+        <p> Contacts:
+        <script type="text/javascript">
+        <!-- //encodage de l'adresse email
+                Rot17.write('<r yivw="drzckf:jzgzvkvi@czidd.wi">jzgzvkvi@czidd.wi</r>');
+                document.write(' ');
+          Rot17.write('<r yivw="drzckf:dlxezvi@czidd.wi">dlxezvi@czidd.wi</r>');
+     -->
+        </script></p>
+        <p>
+            Thanks to <a href="https://www.yourkit.com"><img style="height: 24px; bottom: -6px; border: none; box-shadow: none; margin: 0; padding: 0;" src="https://www.yourkit.com/images/yklogo.png"></a> for its <a href="https://www.yourkit.com/java/profiler/index.jsp">Java Profiler</a></br>
+            Published with <a href="https://pages.github.com">GitHub Pages</a>
+        </p>
+      </div>
+      <div class="footer-copyright">
+      <div class="container">
+          Graal maintained by <a href="https://team.inria.fr/graphik/">GraphIK team</a>
+      </div>
+    </div>
+    </footer>
+    <!-- Import jQuery before materialize.js -->
+<script type="text/javascript" src="../js/materialize.min.js"></script>
+<!-- Code highlighting -->
+<script type="text/javascript" src="../js/highlight.pack.js"></script>
+<script type="text/javascript" src="../js/init.js"></script>
+<!-- Piwik -->
+<script type="text/javascript">
+var _paq = _paq || [];
+_paq.push(['trackPageView']);
+_paq.push(['enableLinkTracking']);
+(function() {
+var u="//info-demo.lirmm.fr/analytics/";
+_paq.push(['setTrackerUrl', u+'piwik.php']);
+_paq.push(['setSiteId', 1]);
+var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+})();
+</script>
+<noscript><p><img src="//info-demo.lirmm.fr/analytics/piwik.php?idsite=1" style="border:0;" alt="" /></p></noscript>
+<!-- End Piwik Code -->
+  </body>
+</html>

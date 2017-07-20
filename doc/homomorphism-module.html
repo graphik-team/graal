@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'/>
+    <meta name="description" content="Documentation of the Homomorphism module of Graal"/>
+    <meta name="keywords" content="graal, documentation, module, homomorphism"/>
+    <!-- Import Google Icon Font-->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/materialize.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/stylesheet.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/table.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/hljs-style.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="../js/main.js"></script>
+    <title>Homomorphism module documentation</title>
+  </head>
+  <body>
+    <!-- HEADER -->
+    <div class="navbar-fixed">
+  <nav>
+    <div class="nav-wrapper">
+      <div id="logo-container"><a href="../" class="brand-logo">Graal</a></div>
+      <ul class="right hide-on-med-and-down">
+        <li class="active"><a href="../doc/index">Documentation</a></li>
+        <li class=""><a href="../downloads/index">Apps & Downloads</a></li>
+        <li class=""><a href="../publications">Publications</a></li>
+        <li><a href="../experiments1">Experiments</a></li>
+        <li><a href="https://github.com/graphik-team/graal/">Sources</a></li>
+      </ul>
+      <ul class="side-nav" id="nav-mobile">
+        <li class="active"><a href="../doc/index">Documentation</a></li>
+        <li class=""><a href="../downloads/index">Apps & Downloads</a></li>
+        <li class=""><a href="../publications">Publications</a></li>
+        <li><a href="../experiments1">Experiments</a></li>
+        <li><a href="https://github.com/graphik-team/graal/">Sources</a></li>
+      </ul>
+      <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+    </div>
+  </nav>
+</div>
+    <!-- BODY -->
+    <div class="row">
+      <div id="page-menu" class="col s12 m5 l3">
+<ul class="collection collapsible">
+  <li><a class="collection-item" href="../doc/index">Overview</a></li>
+  <li><a class="collection-item" href="../doc/eclipse">Getting Started with Eclipse</a></li>
+  <li><a class="collection-item" href="../doc/netbeans">Getting Started with NetBeans</a></li>
+  <li><a class="collection-item" href="../doc/without-ide">Getting Started without IDE</a></li>
+  <li><a class="collection-item" href="../doc/slf4j">SLF4J Configuration</a></li>
+  <li>
+    <div class="collapsible-header collection-item">Examples</div>
+      <ul class="collapsible-body">
+        <li><a class="collection-item" href="../doc/getting-started">Getting started with a KB</a></li>
+        <li><a class="collection-item" href="../doc/scenario1">Relational DB querying</a></li>
+        <!-- <li><a class="collection-item" href="../"><span class="todo">DBPedia querying</span></a></li>
+ -->
+        <li><a class="collection-item" href="../doc/rewriting">Query rewriting</a></li>
+        <!-- <li><a class="collection-item" href="../"><span class="todo">SPARQL rewriting</span></a></li>
+ -->
+        <li><a class="collection-item" href="../doc/owl-parser">OWL parsing</a></li>
+        <!-- <li><a class="collection-item" href="../"><span class="todo">RDF parsing</span></a></li>
+ -->
+        <!-- <li><a class="collection-item" href="../"><span class="todo">Ontology analysis</span></a></li>
+ -->
+        <!-- <li><a class="collection-item" href="../"><span class="todo">Data exchange</span></a></li>
+ -->
+      </ul>
+  </li>
+  <li>
+    <div class="collapsible-header collection-item">Technical documentation</div>
+      <ul class="collapsible-body">
+        <li><a class="collection-item" href="../doc/core-module">Core</a></li>
+        <li><a class="collection-item" href="../doc/io-dlgp-module">Dlgp IO</a></li>
+        <li><a class="collection-item active" href="../doc/homomorphism-module">Homomorphism</a></li>
+        <li><a class="collection-item" href="../doc/kb-module">KB</a></li>
+        <li><a class="collection-item" href="../doc/chase-module">Forward Chaining</a></li>
+        <li><a class="collection-item" href="../doc/backward-chaining-module">Backward Chaining</a></li>
+        <li><a class="collection-item" href="../doc/store-module">Store</a></li>
+        <li><a class="collection-item" href="../doc/ruleclasses">Rule Set Analyser</a></li>
+      </ul>
+  </li>
+  <li><a class="collection-item" href="../doc/dlgp">DLGP</a></li>
+  <li><a class="collection-item" href="../1.3.0/javadocs/">Javadoc</a></li>
+</ul>
+      </div>
+      <div id="page-content" class="col s12 m7 l9">
+        <h1>Homomorphism module</h1>
+<a href="../modules/graal-homomorphism">Download this module</a>
+<p>This module provides several implementations of the Homomorphism interface family.</p>
+<h2>Backtrack based homomorphisms</h2>
+<p>
+    The implementations called BacktrackHomomorphism, BacktrackHomomorphismPattern and BacktrackHomomorphismWithNegation are based on a <a href="https://en.wikipedia.org/wiki/Backtracking">backtracking search</a> over variables. Optimizations are inspired by constraint satisfaction algorithms, see in particular <a href="http://www.lirmm.fr/~baget/publications/thesis.pdf">Jean-François Baget's PhD Thesis (Chapter 5, in French)</a>, or <a href="http://www.lirmm.fr/~baget/publications/IJCAI01b.pdf">Backtracking Through Biconnected Components of a Constraint Graph</a> by J.-F. Baget, Y. Tognetti, <em>IJCAI 2001</em>.
+</p>
+<p>
+This homomorphism algorithm is configurable with :
+<dl>
+<dt>a <a href="../1.3.0/javadocs/fr/lirmm/graphik/graal/homomorphism/scheduler/Scheduler.html">Scheduler</a>
+</dt>
+<dd>defines the order in which variables are assigned.<dd>
+<dt>a <a href="../1.3.0/javadocs/fr/lirmm/graphik/graal/homomorphism/bootstrapper/Bootstrapper.html">Bootstrapper</a>
+</dt>
+<dd>computes the initial domain of a variable when it is not already restricted by the forward checking approach.<dd>
+<dt>a <a href="../1.3.0/javadocs/fr/lirmm/graphik/graal/homomorphism/forward_checking/ForwardChecking.html">ForwardChecking</a>
+ approach</dt>
+<dd>after assignation of a variable, restricts the domain of neighboring variables.<dd>
+<dt>a <a href="../1.3.0/javadocs/fr/lirmm/graphik/graal/homomorphism/backjumping/BackJumping.html">BackJumping</a>
+ approach</dt>
+<dd>allows the backtrack to jump over some variables.<dd>
+</dl>
+</p>
+<h2>Others</h2>
+<p>This module also provides other homomorphisms for particular cases such as homomorphism for a union of conjunctive queries (<a href="../1.3.0/javadocs/fr/lirmm/graphik/graal/homomorphism/DefaultUCQHomomorphism.html">DefaultUCQHomomorphism</a>
+), for atomic queries (<a href="../1.3.0/javadocs/fr/lirmm/graphik/graal/homomorphism/AtomicQueryHomomorphism.html">AtomicQueryHomomorphism</a>
+) or for a small set of facts (<a href="../1.3.0/javadocs/fr/lirmm/graphik/graal/homomorphism/PureHomomorphism.html">PureHomomorphism</a>
+). </p>
+<h2>Smart one</h2>
+<p>If you do not know which homomorphism you should use, you can use the class <a href="../1.3.0/javadocs/fr/lirmm/graphik/graal/homomorphism/SmartHomomorphism.html">SmartHomomorphism</a>
+ which will make a choice for you. This choice is made thanks to implementations of <a href="../1.3.0/javadocs/fr/lirmm/graphik/graal/api/homomorphism/HomomorphismChecker.html">HomomorphismChecker</a>
+ associated with each <em>homomorphism</em> implementation. Each <a href="../1.3.0/javadocs/fr/lirmm/graphik/graal/api/homomorphism/HomomorphismChecker.html">HomomorphismChecker</a>
+ implementation allows to check if the associated homomorphism is applicable and it defines a priority for it.</p>
+<p>You can allow <a href="../1.3.0/javadocs/fr/lirmm/graphik/graal/homomorphism/SmartHomomorphism.html">SmartHomomorphism</a>
+ to take  your own homomorphism implementation into account by loading an associated <a href="../1.3.0/javadocs/fr/lirmm/graphik/graal/api/homomorphism/HomomorphismChecker.html">HomomorphismChecker</a>
+ with the <em>addChecker</em> method.</p>
+<h2>RuleCompilation based Homomorphism</h2>
+Each homomorphism implementation described above is able to take into account a preorder associated with compiled rules: <a href="../1.3.0/javadocs/fr/lirmm/graphik/graal/api/core/RulesCompilation.html">RulesCompilation</a>
+. See the following paper for the theoretical foundations of rule compilation: <a href="https://www.ijcai.org/Proceedings/15/Papers/438.pdf">Query Rewriting for Existential Rules with Compiled Preorder</a> by M. König, M. Leclère, and M.-L. Mugnier, <em>IJCAI 2015</em>.      </div>
+    </div>
+    <!-- FOOTER -->
+    <!-- FOOTER -->
+    <footer class="page-footer">
+      <div class="container">
+        <a href="mailto:sympa@lirmm.fr?subject=SUBSCRIBE graal">Subscribe to Graal newsletter</a>
+        <p> Contacts:
+        <script type="text/javascript">
+        <!-- //encodage de l'adresse email
+                Rot17.write('<r yivw="drzckf:jzgzvkvi@czidd.wi">jzgzvkvi@czidd.wi</r>');
+                document.write(' ');
+          Rot17.write('<r yivw="drzckf:dlxezvi@czidd.wi">dlxezvi@czidd.wi</r>');
+     -->
+        </script></p>
+        <p>
+            Thanks to <a href="https://www.yourkit.com"><img style="height: 24px; bottom: -6px; border: none; box-shadow: none; margin: 0; padding: 0;" src="https://www.yourkit.com/images/yklogo.png"></a> for its <a href="https://www.yourkit.com/java/profiler/index.jsp">Java Profiler</a></br>
+            Published with <a href="https://pages.github.com">GitHub Pages</a>
+        </p>
+      </div>
+      <div class="footer-copyright">
+      <div class="container">
+          Graal maintained by <a href="https://team.inria.fr/graphik/">GraphIK team</a>
+      </div>
+    </div>
+    </footer>
+    <!-- Import jQuery before materialize.js -->
+<script type="text/javascript" src="../js/materialize.min.js"></script>
+<!-- Code highlighting -->
+<script type="text/javascript" src="../js/highlight.pack.js"></script>
+<script type="text/javascript" src="../js/init.js"></script>
+<!-- Piwik -->
+<script type="text/javascript">
+var _paq = _paq || [];
+_paq.push(['trackPageView']);
+_paq.push(['enableLinkTracking']);
+(function() {
+var u="//info-demo.lirmm.fr/analytics/";
+_paq.push(['setTrackerUrl', u+'piwik.php']);
+_paq.push(['setSiteId', 1]);
+var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+})();
+</script>
+<noscript><p><img src="//info-demo.lirmm.fr/analytics/piwik.php?idsite=1" style="border:0;" alt="" /></p></noscript>
+<!-- End Piwik Code -->
+  </body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'/>
+    <meta name="description" content="Documentation of the Core module of Graal"/>
+    <meta name="keywords" content="graal, documentation, module, core"/>
+    <!-- Import Google Icon Font-->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/materialize.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/stylesheet.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/table.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/hljs-style.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="../js/main.js"></script>
+    <title>Core module documentation</title>
+  </head>
+  <body>
+    <!-- HEADER -->
+    <div class="navbar-fixed">
+  <nav>
+    <div class="nav-wrapper">
+      <div id="logo-container"><a href="../" class="brand-logo">Graal</a></div>
+      <ul class="right hide-on-med-and-down">
+        <li class="active"><a href="../doc/index">Documentation</a></li>
+        <li class=""><a href="../downloads/index">Apps & Downloads</a></li>
+        <li class=""><a href="../publications">Publications</a></li>
+        <li><a href="../experiments1">Experiments</a></li>
+        <li><a href="https://github.com/graphik-team/graal/">Sources</a></li>
+      </ul>
+      <ul class="side-nav" id="nav-mobile">
+        <li class="active"><a href="../doc/index">Documentation</a></li>
+        <li class=""><a href="../downloads/index">Apps & Downloads</a></li>
+        <li class=""><a href="../publications">Publications</a></li>
+        <li><a href="../experiments1">Experiments</a></li>
+        <li><a href="https://github.com/graphik-team/graal/">Sources</a></li>
+      </ul>
+      <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+    </div>
+  </nav>
+</div>
+    <!-- BODY -->
+    <div class="row">
+      <div id="page-menu" class="col s12 m5 l3">
+<ul class="collection collapsible">
+  <li><a class="collection-item" href="../doc/index">Overview</a></li>
+  <li><a class="collection-item" href="../doc/eclipse">Getting Started with Eclipse</a></li>
+  <li><a class="collection-item" href="../doc/netbeans">Getting Started with NetBeans</a></li>
+  <li><a class="collection-item" href="../doc/without-ide">Getting Started without IDE</a></li>
+  <li><a class="collection-item" href="../doc/slf4j">SLF4J Configuration</a></li>
+  <li>
+    <div class="collapsible-header collection-item">Examples</div>
+      <ul class="collapsible-body">
+        <li><a class="collection-item" href="../doc/getting-started">Getting started with a KB</a></li>
+        <li><a class="collection-item" href="../doc/scenario1">Relational DB querying</a></li>
+        <!-- <li><a class="collection-item" href="../"><span class="todo">DBPedia querying</span></a></li>
+ -->
+        <li><a class="collection-item" href="../doc/rewriting">Query rewriting</a></li>
+        <!-- <li><a class="collection-item" href="../"><span class="todo">SPARQL rewriting</span></a></li>
+ -->
+        <li><a class="collection-item" href="../doc/owl-parser">OWL parsing</a></li>
+        <!-- <li><a class="collection-item" href="../"><span class="todo">RDF parsing</span></a></li>
+ -->
+        <!-- <li><a class="collection-item" href="../"><span class="todo">Ontology analysis</span></a></li>
+ -->
+        <!-- <li><a class="collection-item" href="../"><span class="todo">Data exchange</span></a></li>
+ -->
+      </ul>
+  </li>
+  <li>
+    <div class="collapsible-header collection-item">Technical documentation</div>
+      <ul class="collapsible-body">
+        <li><a class="collection-item active" href="../doc/core-module">Core</a></li>
+        <li><a class="collection-item" href="../doc/io-dlgp-module">Dlgp IO</a></li>
+        <li><a class="collection-item" href="../doc/homomorphism-module">Homomorphism</a></li>
+        <li><a class="collection-item" href="../doc/kb-module">KB</a></li>
+        <li><a class="collection-item" href="../doc/chase-module">Forward Chaining</a></li>
+        <li><a class="collection-item" href="../doc/backward-chaining-module">Backward Chaining</a></li>
+        <li><a class="collection-item" href="../doc/store-module">Store</a></li>
+        <li><a class="collection-item" href="../doc/ruleclasses">Rule Set Analyser</a></li>
+      </ul>
+  </li>
+  <li><a class="collection-item" href="../doc/dlgp">DLGP</a></li>
+  <li><a class="collection-item" href="../1.3.0/javadocs/">Javadoc</a></li>
+</ul>
+      </div>
+      <div id="page-content" class="col s12 m7 l9">
+        <h1>Core module</h1>
+<a href="../modules/graal-core">Download this module</a>
+<p>The core module provides classes that implement the main interfaces of the <em>graal-api</em>. The name of these implementations are mostly prefixed with "Default".</p>
+<h2>Interfaces</h2>
+<p>The main implemented interfaces are the following:
+  <dl>
+    <dt>Atom</dt>
+    <dd>This interface represents a logical atom. An <em>atom</em> is of the form p(e<sub>1</sub>…e<sub>k</sub>) where <em>p</em> is a predicate, <em>k &gt;= 1</em> the arity of <em>p</em>, and each e<sub>i</sub> is a term.</dd>
+    <dt>AtomSet</dt>
+    <dd>This interface represents a set of atoms. You can interpret this set as you want, disjunction or conjunction of atoms. However, in Graal, it is almost always interpreted as a conjunction.</dd>
+    <dt>ConjunctiveQuery</dt>
+    <dd>This interface represents a conjunctive query. A conjunctive query Q is a conjunction of atoms with a distinguished (ordered) subset of its variables (the answer variables). It is interpreted as the logical formula obtained from Q by existentially quantifying non-distinguished variables. When the set of answer variables is empty, Q is a <em>Boolean query</em>.</dd>
+    <dt>NegativeConstraint</dt>
+    <dd>This interface represents a negative constraint. A negative constraint C is a conjunction of atoms interpreted as the negation of its existential closure &not;∃ X C[X] where X denotes the set of variables. Equivalently, it can be seen as a rule of the form C -> ⊥, where ⊥ denotes the absurd symbol (which is always false).</dd>
+    <dt>Ontology</dt>
+    <dd>
+      This interface provides a way to manage sets of rules, negative constraints and predicates (i.e. the vocabulary).
+    </dd>
+    <dt>Rule</dt>
+    <dd>This interface represents an existential rule. An existential rule is a positive rule of the form B -> H, where B and H are conjunctions of atoms; it is interpreted as the formula ∀X(∃Y B[X,Y] -> ∃Z H[X,Z]), or equivalently ∀X∀Y(B[X,Y] -> ∃Z H[X,Z]), where X are the variables shared by B and H, Y are the variables that occur only in B and Z the variables that occur only in H. Note that the Z variables are existentially quantified.</dd>
+    <dt>Substitution</dt>
+    <dd>A substitution is an <em>mapping</em> from a set of variables to a set of terms.</dd>
+    <dt>Term</dt>
+    <dd>
+      By analogy with natural language, where a noun phrase refers to an object, a term denotes a logical object referring to someone or something. A term is either a constant or variable.
+    </dd>
+    <dt>UnionOfConjunctiveQueries</dt>
+    <dd>A union of conjunctive queries is a disjunction of conjunctive queries with the same (ordered) set of answer variables.</dd>
+</dl>
+</p>
+<h2>Factories</h2>
+<p>
+For these main classes, the core module provides factories to generate instances of these classes. The names of these factories are of the form  <strong>Default&lt;InterfaceName&gt;Factory</strong> and their (singleton) instance is accessible by the <em>instance()</em> class method.
+</p>
+<h3>Term Hierarchy</h3>
+<p>An important factory is the DefaultTermFactory which provides instances for the Term hierarchy <img src="../images/doc/term-hierarchy.svg"/></p>
+<h2>The DefaultInMemoryGraphStore</h2>
+<p>This class is an implementation of <em>Store</em>. A <em>Store</em> is an <em>AtomSet</em> assumed to contain a large dataset.
+This module provides an <em>in-memory</em> implementation called <em>DefaultInMemoryGraphStore</em>. This implementation is based on an indexed graph structure.</p>
+      </div>
+    </div>
+    <!-- FOOTER -->
+    <!-- FOOTER -->
+    <footer class="page-footer">
+      <div class="container">
+        <a href="mailto:sympa@lirmm.fr?subject=SUBSCRIBE graal">Subscribe to Graal newsletter</a>
+        <p> Contacts:
+        <script type="text/javascript">
+        <!-- //encodage de l'adresse email
+                Rot17.write('<r yivw="drzckf:jzgzvkvi@czidd.wi">jzgzvkvi@czidd.wi</r>');
+                document.write(' ');
+          Rot17.write('<r yivw="drzckf:dlxezvi@czidd.wi">dlxezvi@czidd.wi</r>');
+     -->
+        </script></p>
+        <p>
+            Thanks to <a href="https://www.yourkit.com"><img style="height: 24px; bottom: -6px; border: none; box-shadow: none; margin: 0; padding: 0;" src="https://www.yourkit.com/images/yklogo.png"></a> for its <a href="https://www.yourkit.com/java/profiler/index.jsp">Java Profiler</a></br>
+            Published with <a href="https://pages.github.com">GitHub Pages</a>
+        </p>
+      </div>
+      <div class="footer-copyright">
+      <div class="container">
+          Graal maintained by <a href="https://team.inria.fr/graphik/">GraphIK team</a>
+      </div>
+    </div>
+    </footer>
+    <!-- Import jQuery before materialize.js -->
+<script type="text/javascript" src="../js/materialize.min.js"></script>
+<!-- Code highlighting -->
+<script type="text/javascript" src="../js/highlight.pack.js"></script>
+<script type="text/javascript" src="../js/init.js"></script>
+<!-- Piwik -->
+<script type="text/javascript">
+var _paq = _paq || [];
+_paq.push(['trackPageView']);
+_paq.push(['enableLinkTracking']);
+(function() {
+var u="//info-demo.lirmm.fr/analytics/";
+_paq.push(['setTrackerUrl', u+'piwik.php']);
+_paq.push(['setSiteId', 1]);
+var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+})();
+</script>
+<noscript><p><img src="//info-demo.lirmm.fr/analytics/piwik.php?idsite=1" style="border:0;" alt="" /></p></noscript>
+<!-- End Piwik Code -->
+  </body>
+</html>

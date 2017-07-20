@@ -1,0 +1,13 @@
+@startuml
+hide empty members
+
+interface Term
+interface Constant
+interface Variable
+interface Literal
+
+Term <|-- Constant
+Term <|-- Variable
+Constant <|-- Literal
+
+@enduml

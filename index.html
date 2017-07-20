@@ -9,111 +9,134 @@ Datalog+/-."/>
 software, graal, forward chaining, chase, rewriting, backward
 chaining, query answering, OWL2, knowledge representation, knowledge
 reasoning, data engineering, java, semantic web, description logics"/>
+    <!-- Import Google Icon Font-->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen" href="./stylesheets/materialize.css"/>
     <link rel="stylesheet" type="text/css" media="screen" href="./stylesheets/stylesheet.css"/>
     <link rel="stylesheet" type="text/css" media="screen" href="./stylesheets/table.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="./stylesheets/hljs-style.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script type="text/javascript" src="./js/main.js"></script>
     <title>Graal Homepage</title>
   </head>
- <body>
+  <body>
     <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-      <header class="inner">
-        <h1 id="project_title">Graal Homepage</h1>
-      </header>
-              <div id="menu" class="outer">
-          <nav class="inner">
-            <a href="./">Home</a>
-            <a href="./documentation">Documentation</a>
-            <a href="./publications">Publications</a>
-            <a href="./experiments1">Experiments</a>
-            <a href="./downloads">Apps & Downloads</a>
-            <a href="https://github.com/graphik-team/graal/">Sources</a>
-          </nav>
-        </div>
+    <div class="navbar-fixed">
+  <nav>
+    <div class="nav-wrapper">
+      <div id="logo-container"><a href="./" class="brand-logo">Graal</a></div>
+      <ul class="right hide-on-med-and-down">
+        <li class=""><a href="./doc/index">Documentation</a></li>
+        <li class=""><a href="./downloads/index">Apps & Downloads</a></li>
+        <li class=""><a href="./publications">Publications</a></li>
+        <li><a href="./experiments1">Experiments</a></li>
+        <li><a href="https://github.com/graphik-team/graal/">Sources</a></li>
+      </ul>
+      <ul class="side-nav" id="nav-mobile">
+        <li class=""><a href="./doc/index">Documentation</a></li>
+        <li class=""><a href="./downloads/index">Apps & Downloads</a></li>
+        <li class=""><a href="./publications">Publications</a></li>
+        <li><a href="./experiments1">Experiments</a></li>
+        <li><a href="https://github.com/graphik-team/graal/">Sources</a></li>
+      </ul>
+      <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
     </div>
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <p>Graal is a Java toolkit dedicated to querying knowledge
-        bases within the framework of <strong>existential rules</strong>, aka
-        Datalog+/-. It is an open source library published
-        under <a href="http://www.cecill.info/licences/Licence_CeCILL_V2.1-fr.html">CeCILL
-        v2.1 license</a> (GPL compatible).</p>
-        <p>The main features of Graal are the following:</p>
-        <ul>
-          <li>
-            a basic layer that provides <strong>generic interfaces</strong> to store
-            and query various kinds of data (without considering the
-            rules);
-          </li>
-          <li> <strong>saturation</strong> algorithms, which apply rules on the data in a
-            forward chaining manner;
-          </li>
-          <li> <strong>query rewriting</strong> algorithms, which use the rules to reformulate a conjunctive
-            query into a minimal set (or ‘union’) of conjunctive queries;
-          </li>
-          <li> utility tools:
-            <ul>
-              <li>
-                a format called <strong>Dlgp</strong> (for ‘datalog+’) and its
-                parser;
-              </li>
-              <li>
-                a tool called <strong>Kiabora</strong>, which performs a structural analysis of an existential rule set to determine its decidability
-                properties; it also allows to decompose rules;
-              </li>
-              <li>
-                a translator from <strong>OWL 2</strong> to <strong>Dlgp</strong>;
-              </li>
-              <li>
-                a translator from <strong>Dlgp</strong> to <strong>RuleML</strong>.
-              </li>
-            </ul>
-          </li>
-        </ul>
-        <h2>Existential rule framework</h2>
-	<p>
-	  <strong>Existential rules</strong> allow to assert the existence of not-yet-known individuals.
-	  They are also known as an extension to Datalog, called
-	  <strong>Datalog+/-</strong>.
-	</p>
-	<p>
-	  This framework is particularly relevant to <strong>ontology-mediated query answering</strong>. Instead of
-	  querying databases, we query knowledge bases composed of facts (or data) and
-	  ontological knowledge expressed by existential rules and negative constraints.
-	  The considered queries are (unions of) conjunctive queries.
-	</p>
-	<p>
-	  [More: <a href="./papers/framework_en.pdf">A brief overview of the
-	    existential rule framework</a>]
-	</p>
-	<p>
-	  For a thorough theoretical presentation please see the following paper:
-	  J.-F. Baget, M. Lecl&egrave;re, M.-L. Mugnier, E. Salvat, <i>On Rules with
-	    Existential Variables:
-	    Walking the Decidability Line</i>, <strong>Artificial Intelligence Journal</strong> 175&nbsp;(9-10),
-	  pp. 1620-1654 (2011).<a href="http://www.lirmm.fr/~mugnier/ArticlesPostscript/BLMSDecidabilityLine-PreAIJ2011.pdf">
-	    Author's file (pdf)</a>.
-	</p>
-          <h2>Related standalone tools</h2>
-             <ul>
-               <li><a href="./pure">Query rewriter (Pure: basic and compilation-based versions) </a></li>
-               <li><a href="./owl2dlgp">Translator from OWL 2 to Dlgp v2</a></li>
-               <li><a href="./dlgp2ruleml">Translator from Dlgp v2 to RuleML</a></li>
-               <li><a href="./kiabora">Kiabora</a></li>
-               <li><a href="./utility-tools">Utility tools</a></li>
-             </ul>
-         <h2>Keep me informed</h2>
-           <a href="mailto:sympa@lirmm.fr?subject=SUBSCRIBE graal">Subscribe to Graal newsletter</a>
-      </section>
+  </nav>
+</div>
+    <!-- BODY -->
+    <div class="row">
+      <div id="page-content" class="col s12 m10 offset-m1 l8 offset-l2">
+<h2>What is Graal?</h2>
+<p>
+  Graal is a Java toolkit dedicated to querying knowledge
+  bases within the framework of <strong>existential rules</strong>, aka
+  Datalog+/-.
+  <br> It is an open source library published
+  under <a href="http://www.cecill.info/licences/Licence_CeCILL_V2.1-fr.html">CeCILL
+    v2.1 license</a> (GPL compatible).
+</p>
+<p>Graal has been designed in a modular way, in order to facilitate software reuse and extension.
+ It shoud make it easy to test new scenarios and techniques, in particular by combining algorithms.
+ <img src="./images/graal-presentation.svg" alt="" width="80%"/>
+</p>
+<p>The main features of Graal are currently the following:</p>
+<ul>
+  <li>
+    a <strong>data layer</strong> that provides <strong>generic interfaces</strong> to store
+    various kinds of data and query them with (union of) conjunctive queries;
+  </li>
+  <li> an <strong>ontological layer</strong>, where an ontology is a set of existential rules;
+  </li>
+  <li> a <strong>knowledge base layer</strong>, where a knowledge base is composed of a fact base (abstraction of the data via generic interfaces) and an ontology;
+  <li> algorithms to process ontology-mediated queries:
+    <ul type = "circle">
+    <li> <strong>query rewriting</strong> algorithms, which form the core of Graal techniques; these algorithms use the rules to rewrite the input query into a minimal set (ie union) of conjunctive queries; to compute the answers to a query on a knowledge base, one can evaluate the rewritten query on the fact base;</li>
+    <li><strong>forward chaining (or chase)</strong> algorithms, which apply rules on the fact base until saturation; to compute the answers to a query on a knowledge base, one can evaluate this query on the saturated fact base; these algorithms implement so-called restricted (or standard) chase and frontier-restricted chase (which behaves like the skolem chase); </li>
+    </ul>
+  </li>
+  <li>
+        a <strong>rule analyser</strong>, which performs a syntactic and structural analysis of an existential rule set; it can be used to check whether the set of rules belongs to a known decidable class, including by partioning this set into subsets that can be processed according to different paradigms while keeping completeness of query answering;
+      </li>
+  <li> <strong>utility tools</strong> to decompose and label rules.
+  </li>
+ </ul>
+ Graal supports the following IO formats:
+ <ul>
+ <li>
+     <strong>Dlgp</strong> (for ‘datalog+’), which extends datalog format;
+</li>
+<li>  <strong>OWL 2</strong> as input (subset corresponding to existential rules);
+</li>
+<li> <strong>RDF</strong> (data) and <strong>SPARQL</strong> (subset corresponding to conjunctive queries);
+</li>
+<li>
+      <strong>RuleML</strong> as output.
+      </li>
+</ul>
+<h2>The existential rule framework</h2>
+<p>
+	<strong>Existential rules</strong> are positive and conjunctive rules that allow to assert the existence of not-yet-known individuals. The framework also includes negative constraints and equality rules (these last rules not being processed by Graal yet). It extends plain datalog rules, as well as Horn description logics, as those at the core of OWL 2 tractable profiles (OWL 2 QL, EL and RL).
+</p>
+<p>
+	This framework is particularly relevant to <strong>ontology-mediated query answering</strong>. Instead of
+	querying databases, we query knowledge bases composed of facts (data) and
+	ontological knowledge expressed by existential rules.
+	Currently, the considered queries are (unions of) conjunctive queries.
+</p>
+<p>
+	[More: <a href="./papers/framework_en.pdf">A brief overview of the
+	  existential rule framework and its encoding in Dlgp</a>]
+</p>
+<p> The following papers provide introductions to the theoretical foundations of existential rules:
+    <ul>
+	<li>J.-F. Baget, M. Lecl&egrave;re, M.-L. Mugnier, E. Salvat, <i>On Rules with
+	  Existential Variables:
+	  Walking the Decidability Line</i>, <strong>Artificial Intelligence Journal</strong> 175&nbsp;(9-10),
+	pp. 1620-1654 (2011).<a href="http://www.lirmm.fr/~mugnier/ArticlesPostscript/BLMSDecidabilityLine-PreAIJ2011.pdf">pdf</a></li>
+    <li>M.-L. Mugnier, <i>Ontological Query Answering with Existential Rules (Keynote Talk)</i>. 5th Int. Con. on Web Reasoning and Rule Systems <strong>(RR 2011)</strong>, LNCS 6902, Springer, pp 2-23
+    <a href="http://www.lirmm.fr/%7Emugnier/ArticlesPostscript/MugnierRR2011-keynote.pdf">pdf</a></li>
+    <li>M.-L. Mugnier, M. Thomazo, <i>An Introduction to Ontology-Based Query Answering with Existential Rules</i>. <strong>Reasoning Web 2014</strong>, 10th International Summer School, LNCS 8714, Springer, pp. 245-278, <a href="http://www.lirmm.fr/%7Emugnier/ArticlesPostscript/RW-existential-rules.pdf">pdf file</a>
+    </li>
+    </ul>
+</p>
+<h2>Standalone tools built with Graal</h2>
+<p> In addition to Graal modules, several standalone tools are available
+<ul>
+       <li><strong><a href="./downloads/pure">pure</a></strong>: a query rewriter (basic and compilation-based versions)</li>
+       <li><strong><a href="./downloads/owl2dlgp">owl2dlgp</a></strong>: a translator from OWL 2 to Dlgp v2</li>
+       <li><strong><a href="./downloads/dlgp2ruleml">dlgp2ruleml</a></strong>: a translator from Dlgp v2 to RuleML</li>
+       <li><strong><a href="./downloads/kiabora">kiabora</a></strong>: an analyser of an existential rule set</li>
+       <li><strong><a href="./downloads/utility-tools">utility-tools</a></strong>: a set of utilities to manage rules</li>
+</ul>
+<h2>Keep me informed</h2>
+<a href="mailto:sympa@lirmm.fr?subject=SUBSCRIBE graal">Subscribe to Graal newsletter</a>
+      </div>
     </div>
     <!-- FOOTER -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
+    <!-- FOOTER -->
+    <footer class="page-footer">
+      <div class="container">
         <a href="mailto:sympa@lirmm.fr?subject=SUBSCRIBE graal">Subscribe to Graal newsletter</a>
-        <p class="copyright">Graal maintained
-        by <a href="https://team.inria.fr/graphik/">GraphIK</a>
-          team</p>
         <p> Contacts:
         <script type="text/javascript">
         <!-- //encodage de l'adresse email
@@ -126,22 +149,32 @@ reasoning, data engineering, java, semantic web, description logics"/>
             Thanks to <a href="https://www.yourkit.com"><img style="height: 24px; bottom: -6px; border: none; box-shadow: none; margin: 0; padding: 0;" src="https://www.yourkit.com/images/yklogo.png"></a> for its <a href="https://www.yourkit.com/java/profiler/index.jsp">Java Profiler</a></br>
             Published with <a href="https://pages.github.com">GitHub Pages</a>
         </p>
-      </footer>
+      </div>
+      <div class="footer-copyright">
+      <div class="container">
+          Graal maintained by <a href="https://team.inria.fr/graphik/">GraphIK team</a>
+      </div>
     </div>
-    <!-- Piwik -->
-    <script type="text/javascript">
-      var _paq = _paq || [];
-      _paq.push(['trackPageView']);
-      _paq.push(['enableLinkTracking']);
-      (function() {
-        var u="//info-demo.lirmm.fr/analytics/";
-        _paq.push(['setTrackerUrl', u+'piwik.php']);
-        _paq.push(['setSiteId', 1]);
-        var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-        g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
-      })();
-    </script>
-    <noscript><p><img src="//info-demo.lirmm.fr/analytics/piwik.php?idsite=1" style="border:0;" alt="" /></p></noscript>
-    <!-- End Piwik Code -->
+    </footer>
+    <!-- Import jQuery before materialize.js -->
+<script type="text/javascript" src="./js/materialize.min.js"></script>
+<!-- Code highlighting -->
+<script type="text/javascript" src="./js/highlight.pack.js"></script>
+<script type="text/javascript" src="./js/init.js"></script>
+<!-- Piwik -->
+<script type="text/javascript">
+var _paq = _paq || [];
+_paq.push(['trackPageView']);
+_paq.push(['enableLinkTracking']);
+(function() {
+var u="//info-demo.lirmm.fr/analytics/";
+_paq.push(['setTrackerUrl', u+'piwik.php']);
+_paq.push(['setSiteId', 1]);
+var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+})();
+</script>
+<noscript><p><img src="//info-demo.lirmm.fr/analytics/piwik.php?idsite=1" style="border:0;" alt="" /></p></noscript>
+<!-- End Piwik Code -->
   </body>
 </html>

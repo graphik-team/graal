@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'/>
+    <meta name="description" content="Pure is a compilation based query rewriter dedicated to the datalog+ framework."/>
+    <meta name="keywords" content="Pure, conjunctive query, rewriter, existential rules, ontology, datalog+"/>
+    <!-- Import Google Icon Font-->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/materialize.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/stylesheet.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/table.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/hljs-style.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="../js/main.js"></script>
+    <title>Pure rewriter</title>
+  </head>
+  <body>
+    <!-- HEADER -->
+    <div class="navbar-fixed">
+  <nav>
+    <div class="nav-wrapper">
+      <div id="logo-container"><a href="../" class="brand-logo">Graal</a></div>
+      <ul class="right hide-on-med-and-down">
+        <li class=""><a href="../doc/index">Documentation</a></li>
+        <li class="active"><a href="../downloads/index">Apps & Downloads</a></li>
+        <li class=""><a href="../publications">Publications</a></li>
+        <li><a href="../experiments1">Experiments</a></li>
+        <li><a href="https://github.com/graphik-team/graal/">Sources</a></li>
+      </ul>
+      <ul class="side-nav" id="nav-mobile">
+        <li class=""><a href="../doc/index">Documentation</a></li>
+        <li class="active"><a href="../downloads/index">Apps & Downloads</a></li>
+        <li class=""><a href="../publications">Publications</a></li>
+        <li><a href="../experiments1">Experiments</a></li>
+        <li><a href="https://github.com/graphik-team/graal/">Sources</a></li>
+      </ul>
+      <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+    </div>
+  </nav>
+</div>
+    <!-- BODY -->
+    <div class="row">
+      <div id="page-menu" class="col s12 m5 l3">
+<ul class="collection collapsible">
+  <li>
+    <div class="collection-item collapsible-header">Graal</div>
+    <ul class="collapsible-body">
+         <li><a class="collection-item" href="../modules/graal-util">graal-util</a></li>
+         <li><a class="collection-item" href="../modules/graal-api">graal-api</a></li>
+         <li><a class="collection-item" href="../modules/graal-core">graal-core</a></li>
+         <li><a class="collection-item" href="../modules/graal-io-dlgp">graal-io-dlgp</a></li>
+         <li><a class="collection-item" href="../modules/graal-homomorphism">graal-homomorphism</a></li>
+         <li><a class="collection-item" href="../modules/graal-grd">graal-grd</a></li>
+         <li><a class="collection-item" href="../modules/graal-io-owl">graal-io-owl</a></li>
+         <li><a class="collection-item" href="../modules/rdf4j-common">rdf4j-common</a></li>
+         <li><a class="collection-item" href="../modules/graal-io-rdf">graal-io-rdf</a></li>
+         <li><a class="collection-item" href="../modules/graal-io-ruleml">graal-io-ruleml</a></li>
+         <li><a class="collection-item" href="../modules/graal-io-sparql">graal-io-sparql</a></li>
+         <li><a class="collection-item" href="../modules/graal-forward-chaining">graal-forward-chaining</a></li>
+         <li><a class="collection-item" href="../modules/graal-backward-chaining">graal-backward-chaining</a></li>
+         <li><a class="collection-item" href="../modules/graal-rules-analyser">graal-rules-analyser</a></li>
+         <li><a class="collection-item" href="../modules/graal-kb">graal-kb</a></li>
+         <li><a class="collection-item" href="../modules/rdbms-common">rdbms-common</a></li>
+         <li><a class="collection-item" href="../modules/rdbms-adhoc">rdbms-adhoc</a></li>
+         <li><a class="collection-item" href="../modules/rdbms-natural">rdbms-natural</a></li>
+         <li><a class="collection-item" href="../modules/graal-store-neo4j">graal-store-neo4j</a></li>
+         <li><a class="collection-item" href="../modules/graal-store-rdf4j">graal-store-rdf4j</a></li>
+    </ul>
+  </li>
+  <li><a class="collection-item active " href="../downloads/pure">Pure</a></li>
+  <li>
+    <div class="collection-item collapsible-header">OWL2DLGP</div>
+    <ul class="collapsible-body">
+      <li><a class="collection-item" href="../downloads/owl2dlgp-online">Online</a></li>
+      <li><a class="collection-item" href="../downloads/owl2dlgp">Download</a></li>
+    </ul>
+  </li>
+  <li><a class="collection-item" href="../downloads/dlgp2ruleml">DLGP2RuleML</a></li>
+  <li>
+    <div class="collection-item collapsible-header">Kiabora</div>
+    <ul class="collapsible-body">
+      <li><a class="collection-item" href="../downloads/kiabora">Presentation</a></li>
+      <li><a class="collection-item" href="../downloads/kiabora-online">Online</a></li>
+      <li><a class="collection-item" href="../downloads/kiabora-download">Download</a></li>
+    </ul>
+  </li>
+  <li>
+    <div class="collection-item collapsible-header">Utility-Tools</div>
+    <ul class="collapsible-body">
+      <li><a class="collection-item" href="../downloads/utility-tools-online">Online</a></li>
+      <li><a class="collection-item" href="../downloads/utility-tools">Downloads</a></li>
+    </ul>
+</ul>
+      </div>
+      <div id="page-content" class="col s12 m7 l9">
+          Pure is a query rewriter: given a set of rules R and a conjunctive query q, it rewrites q using the rules in R such that, for any data set D, the answers to q over the knowledge base (R,D) can be computed by evaluating the rewritten query directly over D.
+  <p> Pure comes in two versions.
+  <ul>
+  <li> The basic version (Pure) rewrites q into a union of conjunctive queries (UCQ) of minimal cardinality (number of conjunctive queries in the UCQ).</li>
+  <li> The compilation-based version (Pure<sub>C</sub>) exploits <em>compilable rules</em> to produce a so-called <em>pivotal</em> UCQ, which is much smaller than the classical UCQ rewriting. Compilable rules are of the form <pre>atom2 :- atom1</pre> where no constant occurs and atom2 does not contain any existential variable. Such rules are at the core of any ontology. A special kind of compilable rules are <em>hierarchical rules</em> in which atom1 and atom2 have exactly the same list of variables and all variables are distinct. </li>
+  </ul>
+  A pivotal UCQ computed by Pure<sub>C</sub> can be evaluated in different ways.
+  <ul>
+  <li>It can be directly evaluated over in-memory data using a special homomorphism (that embbeds the result of the rule compilation) or over a database semi-saturated by the compilable rules. </li>
+  <li> Together with compilable rules, it forms a Datalog query that can be evaluated over data by a Datalog engine. </li>
+  <li> It can be unfolded into a classical UCQ rewriting.
+       Even when a classical UCQ is wanted, using first Pure<sub>C</sub> then unfolding the obtained pivotal UCQ is faster than using the basic version of Pure.</li>
+  </ul>
+  </p>
+        <h2>Associated publications</h2>
+            <p>See <a href="../publications#SWJ2015">SWJ 2015</a> for Pure (basic query rewriting), <a href="../publications#IJCAI2015">IJCAI 2015</a> and <a href="../publications#RuleML2015">RuleML 2015</a> for Pure<sub>C</sub> (compilation-based query rewriting).</p>
+        <h2>Getting started</h2>
+            The following program (Pure-rewriter) includes both the basic and the compilation-based versions of Pure.
+        <ul>
+            <li>Download <a href="../dl/pure-rewriter-1.1.0.jar">pure-rewriter</a></li>
+            <li>Download <a href="../dl/example.dlp">example.dlp</a>
+            (example from <a href="../publications#RuleML2015">the paper on Graal at RuleML
+            2015</a>)</li>
+        </ul>
+            <p>There are three options for compilation:</p>
+            <ul>
+              <li>NONE: no compilation</li>
+              <li>H: compilation of hierarchical rules (specific compilable rules)</li>
+              <li>ID: compilation of all compilable rules</li>
+            </ul>
+            <h3> Rewrite with compilation </h3>
+            <p>
+            Rewriting a query is decomposed into two steps.
+            <ol>
+            <li> Compiled rules are transformed into a set of compiled rules (file.idc). This step needs to be performed only once independently from any query.</li>
+            <li> Rewriting a query embbeds file.idc to compute a pivotal UCQ. </li>
+            <li> Finally, the pivotal UCQ can be unfolded into a classical UCQ rewriting if needed.
+            </ol>
+            </p>
+            <ul>
+              <li>
+                Compile the ontology into ./example.idc: <br/>
+                <code>java -jar pure-rewriter-*.jar compile ./example.dlp -f ./example.idc </code>
+              </li>
+              <li>
+                Rewrite the query using the compiled ontology file: <br/>
+                <code>java -jar pure-rewriter-*.jar rewrite ./example.dlp -q "?(X):- criticalManager(X),woman(X)." -c ./example.idc > ./pivotal.dlp </code>
+              </li>
+              <li>Unfold the pivotal query: <br/>
+              <code>java -jar pure-rewriter-*.jar unfold -c ./example.idc -q ./pivotal.dlp </code></li>
+              </ul>
+            <h3> Without compilation </h3>
+             <ul>
+              <li>
+                <code>java -jar pure-rewriter-*.jar rewrite ./example.dlp -q "?(X):- criticalManager(X),woman(X)." -c NONE </code>
+              </li>
+             </ul>
+            <h3> Other useful options </h3>
+            <ul>
+              <li>
+                Verbose mode: print informations like runtime, number of rewritings, etc.
+                <code>java -jar pure-rewriter-*.jar -v compile ./example.dlp -f ./example.idc</code>
+              <li>
+                Rewrite+compile+unfold in a single line:
+                <code>java -jar pure-rewriter-*.jar rewrite ./example.dlp -q "?(X):- criticalManager(X),woman(X)." -u </code>
+              </li>
+              <li>
+                Rewrite multiple queries from a file
+                <code>java -jar pure-rewriter-*.jar rewrite ./example.dlp -q ./queries.dlp </code>
+              </li>
+              <li>
+                More options:
+                <code>java -jar pure-rewriter-*.jar --help</code>
+            </ul>
+      </div>
+    </div>
+    <!-- FOOTER -->
+    <!-- FOOTER -->
+    <footer class="page-footer">
+      <div class="container">
+        <a href="mailto:sympa@lirmm.fr?subject=SUBSCRIBE graal">Subscribe to Graal newsletter</a>
+        <p> Contacts:
+        <script type="text/javascript">
+        <!-- //encodage de l'adresse email
+                Rot17.write('<r yivw="drzckf:jzgzvkvi@czidd.wi">jzgzvkvi@czidd.wi</r>');
+                document.write(' ');
+          Rot17.write('<r yivw="drzckf:dlxezvi@czidd.wi">dlxezvi@czidd.wi</r>');
+     -->
+        </script></p>
+        <p>
+            Thanks to <a href="https://www.yourkit.com"><img style="height: 24px; bottom: -6px; border: none; box-shadow: none; margin: 0; padding: 0;" src="https://www.yourkit.com/images/yklogo.png"></a> for its <a href="https://www.yourkit.com/java/profiler/index.jsp">Java Profiler</a></br>
+            Published with <a href="https://pages.github.com">GitHub Pages</a>
+        </p>
+      </div>
+      <div class="footer-copyright">
+      <div class="container">
+          Graal maintained by <a href="https://team.inria.fr/graphik/">GraphIK team</a>
+      </div>
+    </div>
+    </footer>
+    <!-- Import jQuery before materialize.js -->
+<script type="text/javascript" src="../js/materialize.min.js"></script>
+<!-- Code highlighting -->
+<script type="text/javascript" src="../js/highlight.pack.js"></script>
+<script type="text/javascript" src="../js/init.js"></script>
+<!-- Piwik -->
+<script type="text/javascript">
+var _paq = _paq || [];
+_paq.push(['trackPageView']);
+_paq.push(['enableLinkTracking']);
+(function() {
+var u="//info-demo.lirmm.fr/analytics/";
+_paq.push(['setTrackerUrl', u+'piwik.php']);
+_paq.push(['setSiteId', 1]);
+var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+})();
+</script>
+<noscript><p><img src="//info-demo.lirmm.fr/analytics/piwik.php?idsite=1" style="border:0;" alt="" /></p></noscript>
+<!-- End Piwik Code -->
+  </body>
+</html>

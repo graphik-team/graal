@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'/>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    <!-- Import Google Icon Font-->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/materialize.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/table.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/hljs-style.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+    <title>Kiabora - Example</title>
+  </head>
+  <body>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+      <header class="inner">
+          <h1 id="project_title">Kiabora - Example</h1>
+      </header><div class="navbar-fixed">
+  <nav>
+    <div class="nav-wrapper">
+      <div id="logo-container"><a href="" class="brand-logo">Graal</a></div>
+      <ul class="right hide-on-med-and-down">
+        <li class=""><a href="doc/index">Documentation</a></li>
+        <li class=""><a href="downloads/index">Apps & Downloads</a></li>
+        <li class=""><a href="publications">Publications</a></li>
+        <li><a href="experiments1">Experiments</a></li>
+        <li><a href="https://github.com/graphik-team/graal/">Sources</a></li>
+      </ul>
+      <ul class="side-nav" id="nav-mobile">
+        <li class=""><a href="doc/index">Documentation</a></li>
+        <li class=""><a href="downloads/index">Apps & Downloads</a></li>
+        <li class=""><a href="publications">Publications</a></li>
+        <li><a href="experiments1">Experiments</a></li>
+        <li><a href="https://github.com/graphik-team/graal/">Sources</a></li>
+      </ul>
+      <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+    </div>
+  </nav>
+</div>
+    </div>
+<ul class="collection collapsible">
+  <li>
+    <div class="collection-item collapsible-header">Graal</div>
+    <ul class="collapsible-body">
+         <li><a class="collection-item" href="modules/graal-util">graal-util</a></li>
+         <li><a class="collection-item" href="modules/graal-api">graal-api</a></li>
+         <li><a class="collection-item" href="modules/graal-core">graal-core</a></li>
+         <li><a class="collection-item" href="modules/graal-io-dlgp">graal-io-dlgp</a></li>
+         <li><a class="collection-item" href="modules/graal-homomorphism">graal-homomorphism</a></li>
+         <li><a class="collection-item" href="modules/graal-grd">graal-grd</a></li>
+         <li><a class="collection-item" href="modules/graal-io-owl">graal-io-owl</a></li>
+         <li><a class="collection-item" href="modules/rdf4j-common">rdf4j-common</a></li>
+         <li><a class="collection-item" href="modules/graal-io-rdf">graal-io-rdf</a></li>
+         <li><a class="collection-item" href="modules/graal-io-ruleml">graal-io-ruleml</a></li>
+         <li><a class="collection-item" href="modules/graal-io-sparql">graal-io-sparql</a></li>
+         <li><a class="collection-item" href="modules/graal-forward-chaining">graal-forward-chaining</a></li>
+         <li><a class="collection-item" href="modules/graal-backward-chaining">graal-backward-chaining</a></li>
+         <li><a class="collection-item" href="modules/graal-rules-analyser">graal-rules-analyser</a></li>
+         <li><a class="collection-item" href="modules/graal-kb">graal-kb</a></li>
+         <li><a class="collection-item" href="modules/rdbms-common">rdbms-common</a></li>
+         <li><a class="collection-item" href="modules/rdbms-adhoc">rdbms-adhoc</a></li>
+         <li><a class="collection-item" href="modules/rdbms-natural">rdbms-natural</a></li>
+         <li><a class="collection-item" href="modules/graal-store-neo4j">graal-store-neo4j</a></li>
+         <li><a class="collection-item" href="modules/graal-store-rdf4j">graal-store-rdf4j</a></li>
+    </ul>
+  </li>
+  <li><a class="collection-item" href="downloads/pure">Pure</a></li>
+  <li>
+    <div class="collection-item collapsible-header">OWL2DLGP</div>
+    <ul class="collapsible-body">
+      <li><a class="collection-item" href="downloads/owl2dlgp-online">Online</a></li>
+      <li><a class="collection-item" href="downloads/owl2dlgp">Download</a></li>
+    </ul>
+  </li>
+  <li><a class="collection-item" href="downloads/dlgp2ruleml">DLGP2RuleML</a></li>
+  <li>
+    <div class="collection-item collapsible-header">Kiabora</div>
+    <ul class="collapsible-body">
+      <li><a class="collection-item" href="downloads/kiabora">Presentation</a></li>
+      <li><a class="collection-item" href="downloads/kiabora-online">Online</a></li>
+      <li><a class="collection-item" href="downloads/kiabora-download">Download</a></li>
+    </ul>
+  </li>
+  <li>
+    <div class="collection-item collapsible-header">Utility-Tools</div>
+    <ul class="collapsible-body">
+      <li><a class="collection-item" href="downloads/utility-tools-online">Online</a></li>
+      <li><a class="collection-item" href="downloads/utility-tools">Downloads</a></li>
+    </ul>
+</ul>
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      	<section id="main_content" class="inner">
+    	<p>
+		Here is a little example to give an insight of what Kiabora can do.
+		</p>
+        <h2>Input file in Dlgp format:</h2>
+<pre>p(X,Z) :- p(X,Y), p(Y,Z).
+p(Y,X), q(X,Y,X) :- p(X,Y).
+q(X,Z,T) :- r(X,Y).
+r(Z,T) :- q(X,Y,Z).
+s(Z,Z,Z) :- p(X,X), r(Y,U), s(T,Y,X).
+s(Z,X,Y) :- s(X,X,X), s(Y,Y,Y).</pre>
+			<h2>Output (with all options turned on): </h2>
+<p>The '-r' option can be used to display the rule set.
+Note that unlabeled rules get a label of the form [Ri] starting with i = 0.</p>
+			<pre>
+====== RULE SET ======
+[R0] p(X, Z) :- p(X, Y), p(Y, Z).
+[R1] p(Y, X), q(X, Y, X) :- p(X, Y).
+[R2] q(X, Z, T) :- r(X, Y).
+[R3] r(Z, T) :- q(X, Y, Z).
+[R4] s(Z, Z, Z) :- p(X, X), r(Y, U), s(T, Y, X).
+[R5] s(Z, X, Y) :- s(X, X, X), s(Y, Y, Y).
+</pre>
+<p>The '-g' option can be used to display the graph of rule dependencies (GRD).
+An edge from Ri to Rj means that Ri may trigger Rj, i.e., Rj depends on Ri.
+<br/>
+The '-u' option used, hence all the piece-unifiers that support the dependencies are displayed as well.
+For instance, there are two piece-unifiers showing that R0 depends on itself.
+Since multiple rules may share variable names (or when displaying a unifier from a rule to itself),
+we use the following notation to distinguish variables :
+R::&lt;real_name&gt; represents a variable from the rule head while D::&lt;real_name&gt; a variable
+from the rule body.
+</p>
+<pre>
+======== GRD =========
+R0--{R::Y->D::Z,R::X->D::X}{R::Y->D::X,R::Z->D::Z}-->R0
+R0--{R::Y->D::Z,R::X->D::X}-->R1
+R0--{R::X->D::Z,D::X->D::Z}-->R4
+R1--{R::Y->D::X,R::X->D::Y}{R::Y->D::Y,R::Z->D::X}-->R0
+R1--{R::Y->D::X,R::X->D::Y}-->R1
+R1--{D::Y->D::X,R::X->D::X}-->R4
+R1--{R::Y->D::Y,R::Z->D::X,R::X->D::X}-->R3
+R2--{R::Y->D::Z,R::Z->D::T,R::X->D::X}-->R3
+R3--{R::Y->D::T,R::X->D::Z}-->R2
+R3--{R::Y->D::Z,R::U->D::T}-->R4
+R4--{R::X->D::Z}{R::Y->D::Z}-->R5
+R5--{R::T->D::Z,R::Y->D::X,R::X->D::Y}-->R4
+</pre>
+<p>With the '-s' option, the strongly connected components (SCCs) of the
+GRD are displayed.
+<pre>
+======== SCC =========
+C0 = {R1, R0}
+C1 = {R2, R3}
+C2 = {R4, R5}
+</pre>
+<p>
+With the '-G' option, the graph of the SCCs is displayed.
+</p>
+<pre>
+===== SCC GRAPH ======
+C0 ---> C1, C2
+C1 ---> C2
+C2
+</pre>
+<p>
+Rule properties are printed for each rule
+thanks to the '-P' option. For abstract properties (fes,fus, (g)bts), a question mark indicates that Kiabora could
+not determine if the property is satisfied.
+</p>
+<pre>
+== RULE PROPERTIES ===
++-----------------------------------------------------------------------------------------------------------------------------+
+|  -   |  X   |  -   |  -   |  X   |  -   |  -   |  ?   |  X   |  -   |  X   |  X   |  X   |  -   |  X   |  X   |  X   |  X   |  R0
+|  -   |  X   |  -   |  X   |  X   |  X   |  -   |  X   |  X   |  X   |  X   |  X   |  X   |  X   |  X   |  X   |  X   |  X   |  R1
+|  X   |  X   |  -   |  -   |  X   |  X   |  X   |  X   |  X   |  X   |  X   |  X   |  -   |  X   |  X   |  X   |  X   |  X   |  R2
+|  X   |  X   |  -   |  -   |  X   |  X   |  X   |  X   |  X   |  X   |  X   |  X   |  -   |  X   |  X   |  X   |  X   |  X   |  R3
+|  X   |  X   |  X   |  X   |  X   |  X   |  -   |  X   |  X   |  -   |  X   |  X   |  -   |  -   |  X   |  X   |  X   |  X   |  R4
+|  X   |  X   |  -   |  X   |  X   |  -   |  -   |  X   |  X   |  -   |  X   |  X   |  -   |  X   |  -   |  X   |  X   |  X   |  R5
++-----------------------------------------------------------------------------------------------------------------------------+
+| agrd | bts  | disc |  dr  | fes  |  fg  | fr1  | fus  | gbts | lin  | mfa  | msa  |  rr  |  s   |  wa  | wfg  |  wg  |  ws  |
++-----------------------------------------------------------------------------------------------------------------------------+
+</pre>
+<p>The properties of the whole rule set are displayed using the -R option.</p>
+<pre>
+===== PROPERTIES =====
++-----------------------------------------------------------------------------------------------------------------------------+
+|  -   |  ?   |  -   |  -   |  ?   |  -   |  -   |  ?   |  ?   |  -   |  -   |  -   |  -   |  -   |  -   |  -   |  -   |  -   |
++-----------------------------------------------------------------------------------------------------------------------------+
+| agrd | bts  | disc |  dr  | fes  |  fg  | fr1  | fus  | gbts | lin  | mfa  | msa  |  rr  |  s   |  wa  | wfg  |  wg  |  ws  |
++-----------------------------------------------------------------------------------------------------------------------------+
+</pre>
+<p>
+The properties of the SCCs can also be displayed with the -S option.
+These properties are used in the following combination step.
+</p>
+<pre>
+=== SCC PROPERTIES ===
++-----------------------------------------------------------------------------------------------------------------------------+
+|  -   |  X   |  -   |  -   |  X   |  -   |  -   |  ?   |  X   |  -   |  X   |  X   |  X   |  -   |  X   |  X   |  X   |  X   |  C0
+|  -   |  X   |  -   |  -   |  ?   |  X   |  X   |  X   |  X   |  X   |  -   |  -   |  -   |  X   |  -   |  X   |  X   |  X   |  C1
+|  -   |  X   |  -   |  X   |  X   |  -   |  -   |  X   |  ?   |  -   |  X   |  X   |  -   |  -   |  -   |  -   |  -   |  -   |  C2
++-----------------------------------------------------------------------------------------------------------------------------+
+| agrd | bts  | disc |  dr  | fes  |  fg  | fr1  | fus  | gbts | lin  | mfa  | msa  |  rr  |  s   |  wa  | wfg  |  wg  |  ws  |
++-----------------------------------------------------------------------------------------------------------------------------+
+</pre>
+<p>Finally, Kiabora follows some combined approach in an attempt to ensure finite query answering.
+If successful, Kiabora outputs two solutions, which respectively maximize
+the number of SCCs processed in forward chaining (fes) or in backward chaining (fus).
+Note that in this example, no decidability property has been found for the whole rule set,
+however, finite query answering can be ensured by the combined approach. Trying to maximize fes or fus yields
+the same result.
+</p>
+<pre>
+=== COMBINE (FES) ====
+C0: FES
+C1: FUS
+C2: FUS
+=== COMBINE (FUS) ====
+C0: FES
+C1: FUS
+C2: FUS
+</pre>
+		</section>
+    </div>
+    <!-- FOOTER -->
+    <footer class="page-footer">
+      <div class="container">
+        <a href="mailto:sympa@lirmm.fr?subject=SUBSCRIBE graal">Subscribe to Graal newsletter</a>
+        <p> Contacts:
+        <script type="text/javascript">
+        <!-- //encodage de l'adresse email
+                Rot17.write('<r yivw="drzckf:jzgzvkvi@czidd.wi">jzgzvkvi@czidd.wi</r>');
+                document.write(' ');
+          Rot17.write('<r yivw="drzckf:dlxezvi@czidd.wi">dlxezvi@czidd.wi</r>');
+     -->
+        </script></p>
+        <p>
+            Thanks to <a href="https://www.yourkit.com"><img style="height: 24px; bottom: -6px; border: none; box-shadow: none; margin: 0; padding: 0;" src="https://www.yourkit.com/images/yklogo.png"></a> for its <a href="https://www.yourkit.com/java/profiler/index.jsp">Java Profiler</a></br>
+            Published with <a href="https://pages.github.com">GitHub Pages</a>
+        </p>
+      </div>
+      <div class="footer-copyright">
+      <div class="container">
+          Graal maintained by <a href="https://team.inria.fr/graphik/">GraphIK team</a>
+      </div>
+    </div>
+    </footer>
+  </body>
+</html>

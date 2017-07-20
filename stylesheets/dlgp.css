@@ -1,0 +1,28 @@
+
+.dlgp-blue-token {
+    color: blue;
+}
+
+.dlgp-token {
+    color: red;
+}
+
+.turtle-token {
+    color: magenta;
+}
+
+.bnf-grammar {
+    color: brown;
+}
+
+.code {
+    font-family: mono;
+}
+
+table.noborder, .noborder tr, .noborder td {
+    border: none;
+}
+
+.noborder td {
+    padding: 4px;
+}

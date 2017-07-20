@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'/>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    <!-- Import Google Icon Font-->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/materialize.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/stylesheet.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/table.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/hljs-style.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="../js/main.js"></script>
+    <title>Kiabora</title>
+  </head>
+  <body>
+    <!-- HEADER -->
+    <div class="navbar-fixed">
+  <nav>
+    <div class="nav-wrapper">
+      <div id="logo-container"><a href="../" class="brand-logo">Graal</a></div>
+      <ul class="right hide-on-med-and-down">
+        <li class=""><a href="../doc/index">Documentation</a></li>
+        <li class="active"><a href="../downloads/index">Apps & Downloads</a></li>
+        <li class=""><a href="../publications">Publications</a></li>
+        <li><a href="../experiments1">Experiments</a></li>
+        <li><a href="https://github.com/graphik-team/graal/">Sources</a></li>
+      </ul>
+      <ul class="side-nav" id="nav-mobile">
+        <li class=""><a href="../doc/index">Documentation</a></li>
+        <li class="active"><a href="../downloads/index">Apps & Downloads</a></li>
+        <li class=""><a href="../publications">Publications</a></li>
+        <li><a href="../experiments1">Experiments</a></li>
+        <li><a href="https://github.com/graphik-team/graal/">Sources</a></li>
+      </ul>
+      <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+    </div>
+  </nav>
+</div>
+    <!-- BODY -->
+    <div class="row">
+      <div id="page-menu" class="col s12 m5 l3">
+<ul class="collection collapsible">
+  <li>
+    <div class="collection-item collapsible-header">Graal</div>
+    <ul class="collapsible-body">
+         <li><a class="collection-item" href="../modules/graal-util">graal-util</a></li>
+         <li><a class="collection-item" href="../modules/graal-api">graal-api</a></li>
+         <li><a class="collection-item" href="../modules/graal-core">graal-core</a></li>
+         <li><a class="collection-item" href="../modules/graal-io-dlgp">graal-io-dlgp</a></li>
+         <li><a class="collection-item" href="../modules/graal-homomorphism">graal-homomorphism</a></li>
+         <li><a class="collection-item" href="../modules/graal-grd">graal-grd</a></li>
+         <li><a class="collection-item" href="../modules/graal-io-owl">graal-io-owl</a></li>
+         <li><a class="collection-item" href="../modules/rdf4j-common">rdf4j-common</a></li>
+         <li><a class="collection-item" href="../modules/graal-io-rdf">graal-io-rdf</a></li>
+         <li><a class="collection-item" href="../modules/graal-io-ruleml">graal-io-ruleml</a></li>
+         <li><a class="collection-item" href="../modules/graal-io-sparql">graal-io-sparql</a></li>
+         <li><a class="collection-item" href="../modules/graal-forward-chaining">graal-forward-chaining</a></li>
+         <li><a class="collection-item" href="../modules/graal-backward-chaining">graal-backward-chaining</a></li>
+         <li><a class="collection-item" href="../modules/graal-rules-analyser">graal-rules-analyser</a></li>
+         <li><a class="collection-item" href="../modules/graal-kb">graal-kb</a></li>
+         <li><a class="collection-item" href="../modules/rdbms-common">rdbms-common</a></li>
+         <li><a class="collection-item" href="../modules/rdbms-adhoc">rdbms-adhoc</a></li>
+         <li><a class="collection-item" href="../modules/rdbms-natural">rdbms-natural</a></li>
+         <li><a class="collection-item" href="../modules/graal-store-neo4j">graal-store-neo4j</a></li>
+         <li><a class="collection-item" href="../modules/graal-store-rdf4j">graal-store-rdf4j</a></li>
+    </ul>
+  </li>
+  <li><a class="collection-item" href="../downloads/pure">Pure</a></li>
+  <li>
+    <div class="collection-item collapsible-header">OWL2DLGP</div>
+    <ul class="collapsible-body">
+      <li><a class="collection-item" href="../downloads/owl2dlgp-online">Online</a></li>
+      <li><a class="collection-item" href="../downloads/owl2dlgp">Download</a></li>
+    </ul>
+  </li>
+  <li><a class="collection-item" href="../downloads/dlgp2ruleml">DLGP2RuleML</a></li>
+  <li>
+    <div class="collection-item collapsible-header">Kiabora</div>
+    <ul class="collapsible-body">
+      <li><a class="collection-item active" href="../downloads/kiabora">Presentation</a></li>
+      <li><a class="collection-item" href="../downloads/kiabora-online">Online</a></li>
+      <li><a class="collection-item" href="../downloads/kiabora-download">Download</a></li>
+    </ul>
+  </li>
+  <li>
+    <div class="collection-item collapsible-header">Utility-Tools</div>
+    <ul class="collapsible-body">
+      <li><a class="collection-item" href="../downloads/utility-tools-online">Online</a></li>
+      <li><a class="collection-item" href="../downloads/utility-tools">Downloads</a></li>
+    </ul>
+</ul>
+      </div>
+      <div id="page-content" class="col s12 m7 l9">
+        <h1>Kiabora</h1>
+<p>Kiabora is dedicated to the analysis of a set of
+        existential rules. It can check if this set belongs to a known
+  <strong>decidable</strong> class of rules (i.e., a class of rules
+  for which conjunctive query answering is decidable)
+        either directly, or by means of its
+        <strong>Graph of Rule Dependencies (GRD)</strong>.
+        Kiabora analyzes the
+        properties of the strongly connected components in the GRD,
+        which allows to determine decidability properties of the whole rule set with
+        respect to decidability, as well as the kind of paradigm
+        (forward or backward chaining, or a mix of both) that ensures decidability.</p>
+		<p>
+		  The analysis is divided into two steps. The first step
+		  <i>determines</i> the rule classes of the entire rule set,
+		  or of part of it (a strongly connected component of the GRD for instance), while the second step
+		  <i>combines</i> these classes in an attempt to ensure finite query answering.
+		</p>
+        <a name="classes"></a>
+        <h4>Rule classes</h4>
+        <p>
+        Kiabora considers the main decidable rule classes currently known.
+        <br/>
+        <a href="../doc/ruleclasses">Overview of the rule classes processed by Kiabora</a>.
+		</p>
+		<a name="determining"></a>
+        <h4>Determining rule classes</h4>
+		<p>
+		  Rule classes are partially ordered by syntactic inclusion (a child is a specialization of its parents).
+		  If a test returns <em>success</em> for a rule class,
+		  all of its ancestors are noted as being successful
+		  without performing any other test.
+		</p>
+		<p>
+		  Only the rule classes selected by the user are considered by the analyzer,
+		  therefore the second analysis step may fail even if the
+		  tool would be able to find a solution by using other rule classes.
+		</p>
+		<p>Furthermore, the different tests may be performed on each rule independently
+		  or on a set of rules. Indeed, the analyzer first checks all <em>local properties</em> on
+		  each rule, then it computes the <a href="../doc/ruleclasses#grd">
+			Graph of Rule Dependencies</a> and
+		  checks all <em>global properties</em> on each strongly connected component of the GRD.
+		  Finally, it checks all global properties on the entire rule set.
+		</p>
+		<a name="combining"></a>
+        <h4>Combining rule classes</h4>
+		<p>Provided that each strongly connected component of the GRD belongs to a known decidable class,
+		  the second analysis step consists of combining <i>abstract</i> rule classes
+		  (i.e., <i>finite expansion set (fes)</i>, <i>finite unification set (fus)</i> and <i>(greedy) bounded treewidth set ((g)bts)</i>) to which the strongly connected components belong, in order to find a way of ensuring finite query
+		  answering.
+		</p>
+		<p>
+		  <!-- When using multiple algorithms, the <i>forward chaining</i> must be processed
+			   before any <i>backward chaining</i>.-->
+		  Indeed, a sufficient property for decidability is that no rule from a strongly connected component
+		  processed as <i>fes</i> or <i>bts</i> depends on a rule from another strongly connected component
+		  processed as <i>fus</i> or <i>bts</i>.
+		  In short:
+		  <em>FES<sup>*</sup> |&gt; BTS |&gt; FUS<sup>*</sup></em>
+		  <br>
+		  where <em>A |&gt; B</em> means "A precedes B", i.e.,
+		  no rule in (a subset processed as) A depends on a rule in (another subset processed as) B.
+		</p>
+    <h2>Associated publications</h2>
+<ul>
+  <li>
+    See <a href="../publications#KIABORA_RR2013">KIABORA: An
+    Analyzer of Existential Rule Bases (RR 2013)</a>.<br/>
+  Note that the current version of Kiabora recognizes more classes than the list given in that paper.
+  </li>
+  <li>
+    See <a href="https://hal-lirmm.ccsd.cnrs.fr/tel-01483770/">Swan Rocher's PhD thesis (2016)</a>.<br/>
+    In particular, Chapter 2 of the PhD thesis provides more details on decidable classes, including references to the relevant papers.
+  </li>
+</ul>
+  <h2>Example</h2>
+     	<p>
+		Here is a little example to give an insight of what Kiabora can do.
+		</p>
+    <h3>Input file in Datalog+ (Dlgp) format:</h3>
+<p><a href="../doc/dlgp">Dlgp</a><em> is the format used in Graal tools. It extends the usual Datalog syntax. Rules have the form
+  <pre>Head:-Body.</pre> and variables begin with an uppercase letter</em></p>
+<pre>p(X,Z) :- p(X,Y), p(Y,Z).
+p(Y,X), q(X,Y,X) :- p(X,Y).
+q(X,Z,T) :- r(X,Y).
+r(Z,T) :- q(X,Y,Z).
+s(Z,Z,Z) :- p(X,X), r(Y,U), s(T,Y,X).
+s(Z,X,Y) :- s(X,X,X), s(Y,Y,Y).</pre>
+<h3>Output (with all options turned on): </h3>
+<p><em>Displays the rule set. Note that unlabeled rules
+get a label of the form [_Ri] starting with i = 0.</em></p>
+<pre>
+====== Structures ======
+== Rule Base ==
+[_R0] p(X, Z) :- p(X, Y), p(Y, Z).
+[_R1] p(Y, X), q(X, Y, X) :- p(X, Y).
+[_R2] q(X, Z, T) :- r(X, Y).
+[_R3] r(Z, T) :- q(X, Y, Z).
+[_R4] s(Z, Z, Z) :- p(X, X), r(Y, U), s(T, Y, X).
+[_R5] s(Z, X, Y) :- s(X, X, X), s(Y, Y, Y).
+</pre>
+<p><em>Displays the graph of rule dependencies (GRD).
+An edge from Ri to Rj  means that Rj depends on Ri (i.e., there exists a fact base F such that an application of Ri to F triggers an application of Rj which effectively adds new atoms). <br/>
+For advanced users: all the single-piece unifiers that support the dependencies can be displayed as well.
+For instance, there are two single-piece unifiers showing that R0 depends on itself.
+Since the same variable names are often used in different rules (or when displaying a unifier from a rule to itself),
+we use the following notation to distinguish between variables:
+S::&lt;real_name&gt; denotes a variable from the head of the triggering rule while T::&lt;real_name&gt; denotes a variable
+from the body of the triggered rule.
+</em></p>
+<pre>
+== Graph of Rule Dependencies ==
+_R0 -{T::X->S::X,T::Y->S::Z}{T::Y->S::X,T::Z->S::Z}-> _R0
+_R0 -{T::X->S::X,T::Y->S::Z}-> _R1
+_R0 -{T::X->S::X,S::X->S::Z}-> _R4
+_R1 -{T::X->S::Y,T::Y->S::X}{T::Y->S::Y,T::Z->S::X}-> _R0
+_R1 -{T::X->S::Y,T::Y->S::X}-> _R1
+_R1 -{T::X->S::Y,S::Y->S::X}-> _R4
+_R1 -{T::X->S::X,T::Y->S::Y,T::Z->S::X}-> _R3
+_R2 -{T::X->S::X,T::Y->S::Z,T::Z->S::T}-> _R3
+_R3 -{T::X->S::Z,T::Y->S::T}-> _R2
+_R3 -{T::Y->S::Z,T::U->S::T}-> _R4
+_R4 -{T::X->S::Z}{T::Y->S::Z}-> _R5
+_R5 -{T::X->S::Y,T::Y->S::X,T::T->S::Z}-> _R4
+</pre>
+<p><em>Displays the strongly connected components (SCCs) of the
+GRD.
+</em></p>
+<pre>
+== Strongly Connected Components in the GRD ==
+C0 = {_R1, _R0}
+C1 = {_R2, _R3}
+C2 = {_R4, _R5}
+</pre>
+<p><em>
+Displays the graph of the SCCs.
+</em></p>
+<pre>
+== Graph of Strongly Connected Components ==
+C0 --> C1, C2
+C1 --> C2
+C2
+</pre>
+<p><em>Displays the predicate position graph. This option is not set by default. </em></p>
+<pre>
+== Predicate Position Graph ==
+~> indicates a special edge; positions range from 0 to the arity of the predicate
+p[0] --> p[0]
+p[1] --> p[1]
+p[0] --> p[1]
+p[0] --> q[0]
+p[0] --> q[2]
+p[1] --> p[0]
+p[1] --> q[1]
+r[0] --> q[0]
+r[0] ~> q[1]
+r[0] ~> q[2]
+q[2] --> r[0]
+q[2] ~> r[1]
+s[0] --> s[1]
+s[1] --> s[1]
+s[2] --> s[1]
+s[0] ~> s[0]
+s[0] --> s[2]
+s[1] ~> s[0]
+s[1] --> s[2]
+s[2] ~> s[0]
+s[2] --> s[2]
+</pre>
+<p><em>
+Displays the rule properties of each rule. For abstract properties (fes,fus, (g)bts), a question mark indicates that Kiabora could not determine if the property is satisfied.
+</em></p>
+<pre>
+====== Properties ======
+== rule properties ==
++-------------------------------------------------------------------------------------------------------------------------------------------+
+|  -   |  X   |  -   |  -   |  X   |  -   |  -   |  ?   |  -   |  X   |  X   |  -   |  X   |  X   |  X   |  -   |  X   |  X   |  X   |  X   | _R0
+|  -   |  X   |  -   |  X   |  X   |  X   |  -   |  X   |  X   |  X   |  X   |  X   |  X   |  X   |  X   |  X   |  X   |  X   |  X   |  X   | _R1
+|  X   |  X   |  -   |  -   |  X   |  X   |  X   |  X   |  X   |  X   |  X   |  X   |  X   |  X   |  -   |  X   |  X   |  X   |  X   |  X   | _R2
+|  X   |  X   |  -   |  -   |  X   |  X   |  X   |  X   |  X   |  X   |  X   |  X   |  X   |  X   |  -   |  X   |  X   |  X   |  X   |  X   | _R3
+|  -   |  X   |  X   |  X   |  X   |  X   |  -   |  X   |  -   |  X   |  X   |  -   |  X   |  X   |  -   |  -   |  X   |  X   |  X   |  X   | _R4
+|  -   |  X   |  -   |  X   |  ?   |  -   |  -   |  X   |  -   |  X   |  X   |  -   |  ?   |  ?   |  -   |  X   |  -   |  -   |  -   |  X   | _R5
++-------------------------------------------------------------------------------------------------------------------------------------------+
+| agrd | bts  | disc |  dr  | fes  |  fg  | fr1  | fus  |  g   | gbts | jfg  | lin  | mfa  | msa  |  rr  |  s   |  wa  | wfg  |  wg  |  ws  |
++-------------------------------------------------------------------------------------------------------------------------------------------+
+</pre>
+<p><em>
+Displays the properties of each SCC.
+These properties are then used in the combining step.
+</em></p>
+<pre>
+== Strongly connected component properties ==
++-------------------------------------------------------------------------------------------------------------------------------------------+
+|  -   |  X   |  -   |  -   |  X   |  -   |  -   |  ?   |  -   |  X   |  X   |  -   |  X   |  X   |  X   |  -   |  X   |  X   |  X   |  X   |  C0
+|  -   |  X   |  -   |  -   |  ?   |  X   |  X   |  X   |  X   |  X   |  X   |  X   |  ?   |  ?   |  -   |  X   |  -   |  X   |  X   |  X   |  C1
+|  -   |  ?   |  -   |  X   |  ?   |  -   |  -   |  X   |  -   |  ?   |  -   |  -   |  ?   |  ?   |  -   |  -   |  -   |  -   |  -   |  -   |  C2
++-------------------------------------------------------------------------------------------------------------------------------------------+
+| agrd | bts  | disc |  dr  | fes  |  fg  | fr1  | fus  |  g   | gbts | jfg  | lin  | mfa  | msa  |  rr  |  s   |  wa  | wfg  |  wg  |  ws  |
++-------------------------------------------------------------------------------------------------------------------------------------------+
+</pre>
+<p><em>Displays the properties of the entire rule set.</em></p>
+<pre>
+== Entire rule base properties ==
++-------------------------------------------------------------------------------------------------------------------------------------------+
+|  -   |  ?   |  -   |  -   |  ?   |  -   |  -   |  ?   |  -   |  ?   |  -   |  -   |  ?   |  ?   |  -   |  -   |  -   |  -   |  -   |  -   |
++-------------------------------------------------------------------------------------------------------------------------------------------+
+| agrd | bts  | disc |  dr  | fes  |  fg  | fr1  | fus  |  g   | gbts | jfg  | lin  | mfa  | msa  |  rr  |  s   |  wa  | wfg  |  wg  |  ws  |
++-------------------------------------------------------------------------------------------------------------------------------------------+
+</pre>
+<p><em>Finally, Kiabora follows some combined approach in an attempt to ensure finite query answering.
+If successful, Kiabora outputs two solutions, which respectively maximize
+the number of SCCs processed in forward chaining (fes) or in backward chaining, i.e., query rewriting (fus).
+Note that in this example, no decidability property has been found for the whole rule set,
+however, finite query answering can be ensured by the combined approach. Trying to maximize fes or fus yields
+the same result.
+</em></p>
+<pre>
+====== Combined Algorithms FES/FUS/BTS ======
+Decidable combination found
+== Priority FES ==
+FES:
+    C0
+FUS:
+    C1, C2
+BTS:
+== Priority FUS ==
+FES:
+    C0
+FUS:
+    C1, C2
+BTS:
+</pre>
+      </div>
+    </div>
+    <!-- FOOTER -->
+    <!-- FOOTER -->
+    <footer class="page-footer">
+      <div class="container">
+        <a href="mailto:sympa@lirmm.fr?subject=SUBSCRIBE graal">Subscribe to Graal newsletter</a>
+        <p> Contacts:
+        <script type="text/javascript">
+        <!-- //encodage de l'adresse email
+                Rot17.write('<r yivw="drzckf:jzgzvkvi@czidd.wi">jzgzvkvi@czidd.wi</r>');
+                document.write(' ');
+          Rot17.write('<r yivw="drzckf:dlxezvi@czidd.wi">dlxezvi@czidd.wi</r>');
+     -->
+        </script></p>
+        <p>
+            Thanks to <a href="https://www.yourkit.com"><img style="height: 24px; bottom: -6px; border: none; box-shadow: none; margin: 0; padding: 0;" src="https://www.yourkit.com/images/yklogo.png"></a> for its <a href="https://www.yourkit.com/java/profiler/index.jsp">Java Profiler</a></br>
+            Published with <a href="https://pages.github.com">GitHub Pages</a>
+        </p>
+      </div>
+      <div class="footer-copyright">
+      <div class="container">
+          Graal maintained by <a href="https://team.inria.fr/graphik/">GraphIK team</a>
+      </div>
+    </div>
+    </footer>
+    <!-- Import jQuery before materialize.js -->
+<script type="text/javascript" src="../js/materialize.min.js"></script>
+<!-- Code highlighting -->
+<script type="text/javascript" src="../js/highlight.pack.js"></script>
+<script type="text/javascript" src="../js/init.js"></script>
+<!-- Piwik -->
+<script type="text/javascript">
+var _paq = _paq || [];
+_paq.push(['trackPageView']);
+_paq.push(['enableLinkTracking']);
+(function() {
+var u="//info-demo.lirmm.fr/analytics/";
+_paq.push(['setTrackerUrl', u+'piwik.php']);
+_paq.push(['setSiteId', 1]);
+var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+})();
+</script>
+<noscript><p><img src="//info-demo.lirmm.fr/analytics/piwik.php?idsite=1" style="border:0;" alt="" /></p></noscript>
+<!-- End Piwik Code -->
+  </body>
+</html>

@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'/>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    <!-- Import Google Icon Font-->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/materialize.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/stylesheet.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/table.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/hljs-style.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="../js/main.js"></script>
+    <title>Kiabora online</title>
+  </head>
+  <body>
+    <!-- HEADER -->
+    <div class="navbar-fixed">
+  <nav>
+    <div class="nav-wrapper">
+      <div id="logo-container"><a href="../" class="brand-logo">Graal</a></div>
+      <ul class="right hide-on-med-and-down">
+        <li class=""><a href="../doc/index">Documentation</a></li>
+        <li class="active"><a href="../downloads/index">Apps & Downloads</a></li>
+        <li class=""><a href="../publications">Publications</a></li>
+        <li><a href="../experiments1">Experiments</a></li>
+        <li><a href="https://github.com/graphik-team/graal/">Sources</a></li>
+      </ul>
+      <ul class="side-nav" id="nav-mobile">
+        <li class=""><a href="../doc/index">Documentation</a></li>
+        <li class="active"><a href="../downloads/index">Apps & Downloads</a></li>
+        <li class=""><a href="../publications">Publications</a></li>
+        <li><a href="../experiments1">Experiments</a></li>
+        <li><a href="https://github.com/graphik-team/graal/">Sources</a></li>
+      </ul>
+      <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+    </div>
+  </nav>
+</div>
+    <!-- BODY -->
+    <div class="row">
+      <div id="page-menu" class="col s12 m5 l3">
+<ul class="collection collapsible">
+  <li>
+    <div class="collection-item collapsible-header">Graal</div>
+    <ul class="collapsible-body">
+         <li><a class="collection-item" href="../modules/graal-util">graal-util</a></li>
+         <li><a class="collection-item" href="../modules/graal-api">graal-api</a></li>
+         <li><a class="collection-item" href="../modules/graal-core">graal-core</a></li>
+         <li><a class="collection-item" href="../modules/graal-io-dlgp">graal-io-dlgp</a></li>
+         <li><a class="collection-item" href="../modules/graal-homomorphism">graal-homomorphism</a></li>
+         <li><a class="collection-item" href="../modules/graal-grd">graal-grd</a></li>
+         <li><a class="collection-item" href="../modules/graal-io-owl">graal-io-owl</a></li>
+         <li><a class="collection-item" href="../modules/rdf4j-common">rdf4j-common</a></li>
+         <li><a class="collection-item" href="../modules/graal-io-rdf">graal-io-rdf</a></li>
+         <li><a class="collection-item" href="../modules/graal-io-ruleml">graal-io-ruleml</a></li>
+         <li><a class="collection-item" href="../modules/graal-io-sparql">graal-io-sparql</a></li>
+         <li><a class="collection-item" href="../modules/graal-forward-chaining">graal-forward-chaining</a></li>
+         <li><a class="collection-item" href="../modules/graal-backward-chaining">graal-backward-chaining</a></li>
+         <li><a class="collection-item" href="../modules/graal-rules-analyser">graal-rules-analyser</a></li>
+         <li><a class="collection-item" href="../modules/graal-kb">graal-kb</a></li>
+         <li><a class="collection-item" href="../modules/rdbms-common">rdbms-common</a></li>
+         <li><a class="collection-item" href="../modules/rdbms-adhoc">rdbms-adhoc</a></li>
+         <li><a class="collection-item" href="../modules/rdbms-natural">rdbms-natural</a></li>
+         <li><a class="collection-item" href="../modules/graal-store-neo4j">graal-store-neo4j</a></li>
+         <li><a class="collection-item" href="../modules/graal-store-rdf4j">graal-store-rdf4j</a></li>
+    </ul>
+  </li>
+  <li><a class="collection-item" href="../downloads/pure">Pure</a></li>
+  <li>
+    <div class="collection-item collapsible-header">OWL2DLGP</div>
+    <ul class="collapsible-body">
+      <li><a class="collection-item" href="../downloads/owl2dlgp-online">Online</a></li>
+      <li><a class="collection-item" href="../downloads/owl2dlgp">Download</a></li>
+    </ul>
+  </li>
+  <li><a class="collection-item" href="../downloads/dlgp2ruleml">DLGP2RuleML</a></li>
+  <li>
+    <div class="collection-item collapsible-header">Kiabora</div>
+    <ul class="collapsible-body">
+      <li><a class="collection-item" href="../downloads/kiabora">Presentation</a></li>
+      <li><a class="collection-item active" href="../downloads/kiabora-online">Online</a></li>
+      <li><a class="collection-item" href="../downloads/kiabora-download">Download</a></li>
+    </ul>
+  </li>
+  <li>
+    <div class="collection-item collapsible-header">Utility-Tools</div>
+    <ul class="collapsible-body">
+      <li><a class="collection-item" href="../downloads/utility-tools-online">Online</a></li>
+      <li><a class="collection-item" href="../downloads/utility-tools">Downloads</a></li>
+    </ul>
+</ul>
+      </div>
+      <div id="page-content" class="col s12 m7 l9">
+		<h1>KIABORA</h1>
+		<h2>- Rule Set Analyzer -</h2>
+		<form id="kiabora_form" method="POST" action="http://graphik.lirmm.fr:8080/kiabora-web/analyse" enctype="multipart/form-data"
+		target="_blank">
+        <!-- <form method="POST" action="http://graphik.lirmm.fr:8080/kiabora-web/analyse" enctype="multipart/form-data" -->
+        <div class="row">
+          <input id="input-selector-textarea" name="input_selector" type="radio" value="textarea" checked/>
+          <label for="input-selector-textarea">From a text field</label>
+        </div>
+        <div class="row">
+          <input id="input-selector-file" name="input_selector" type="radio" value="file"/>
+          <label for="input-selector-file">From a file</label>
+        </div>
+	      <div class="row">
+          <div id="input-textarea-div" class="col s12">
+            <label for="ontology">Ontology (in DLGP)</label>
+            <textarea id="ontology" name="ontology" rows="7" ></textarea>
+				  </div>
+        </div>
+        <div class="file-field input-field row">
+          <div id="input-file-div" class="col s12">
+            <div class="btn">
+              <span>Select a DLGP File</span>
+              <input id="input-file-btn" type="file" name="file_to_load">
+            </div>
+            <div class="file-path-wrapper">
+              <input class="file-path validate" type="text">
+            </div>
+          </div>
+        </div>
+        <script type="text/javascript">
+          if($("#input-selector-textarea").is(":checked")) {
+          $("#input-file-div").hide();
+          } else {
+          $("#input-textarea-div").hide();
+          }
+          $("#input-selector-textarea").click(function(e){
+          $("#input-file-div").hide(100);
+          $("#input-textarea-div").show(100);
+          });
+          $("#input-selector-file").click(function(e){
+          $("#input-file-div").show(100);
+          $("#input-textarea-div").hide(100);
+          $("#input-file-btn").click();
+          });
+        </script>
+				<div class="row">
+				  <input class="btn waves-effect right" type="submit" value="Analyze!" />
+				</div>
+        <h2>Options</h2>
+        <!--<ul>
+            <li>
+			        <input id="save"
+				             type="CHECKBOX"
+				             name="save"
+				             checked disabled/>
+			        <label for="save">I allow Kiabora to keep results</label>
+		        </li><li>
+			      <input id="anonymize"
+				           type="CHECKBOX"
+				           name="anonymize" disabled />
+			      <label for="anonymize">but anonymize my base</label>
+		        </li>
+        </ul>-->
+			  <h3>Display the following structures:</h3>
+		    <ul>
+          <li>
+			      <input id="display_rules"
+				           type="CHECKBOX"
+				           name="display_rules"
+				           checked />
+			      <label for="display_rules">Rule base</label>
+		      </li><li>
+			      <input id="display_grd"
+				           type="CHECKBOX"
+				           name="display_grd"
+				           checked />
+			      <label for="display_grd">Graph of Rule Dependencies&nbsp;&nbsp;</label>
+            <input id="compute_unifiers"
+				           type="CHECKBOX"
+				           name="compute_unifiers"
+				           />
+			      <label for="compute_unifiers">as well as all piece-unifiers</label>
+		      </li><li>
+			      <input id="display_scc"
+				           type="CHECKBOX"
+				           name="display_scc"
+				           checked />
+			      <label for="display_scc">Strongly connected components in the GRD</label>
+		      </li><li>
+			      <input id="display_gscc"
+				           type="CHECKBOX"
+				           name="display_gscc"
+				           checked />
+			      <label for="display_gscc">Graph of GRD strongly connected components</label>
+		      </li><li>
+			      <input id="display_ppg"
+				           type="CHECKBOX"
+				           name="display_ppg"
+				           />
+			      <label for="display_ppg">Graph of predicate positions</label>
+		      </li>
+        </ul>
+			<h4>Display the properties of:</h4>
+      <ul><li>
+        <input id="unit_check" name="unit_check" type="checkbox" checked  />
+        <label for="unit_check">Each rule</label>
+	      </li>
+		    <li>
+          <input	id="scc_check" name="scc_check" type="checkbox" checked  />
+          <label for="scc_check">Each strongly connected component in the GRD</label>
+	      </li>
+			  <li>
+          <input	id="all_check" name="all_check" type="checkbox" checked  />
+          <label for="all_check">Entire rule base</label>
+      	</li>
+			</ul>
+			<h4>Check the following properties:</h4>
+      <div id="criteria">
+        <ul class="row">
+          <li class="col s12">
+			      <input id="select_all"
+				           type="CHECKBOX"
+				           name="select_all" checked />
+			      <label for="select_all">All</label>
+              <script type="text/javascript">
+                console.log("test");
+                $("#select_all").change(function(){
+                console.log("coucou");
+                $("#criteria input[type=checkbox]").prop('checked', $(this).prop("checked"));
+                });
+              </script>
+			    </li>
+          <li class="col s12 m6 l4">
+			      <input id="fes"
+				           type="CHECKBOX"
+				           name="fes"
+				           checked />
+			      <label for="fes"><i>Finite Expansion Set (fes)</i></label>
+			    </li>
+			    <li class="col s12 m6 l4">
+			      <input id="fus"
+				           type="CHECKBOX"
+				           name="fus"
+				           checked />
+			      <label for="fus"><i>Finite Unification Set (fus)</i></label>
+				  </li>
+			    <li class="col s12 m6 l4">
+			      <input id="bts"
+				           type="CHECKBOX"
+				           name="bts"
+				           checked />
+			      <label for="bts"><i>Bounded Treewidth Set (bts)</i></label>
+				  </li>
+			    <li class="col s12 m6 l4">
+			      <input id="gbts"
+				           type="CHECKBOX"
+				           name="gbts"
+				           checked />
+			      <label for="gbts"><i>Greedy Bounded Treewidth Set (gbts)</i></label>
+				  </li>
+        </ul>
+        <ul class="row">
+          <li class="col s12 m6 l4">
+			      <input id="agrd"
+				           type="CHECKBOX"
+				           name="agrd"
+				           checked />
+			      <label for="agrd">Acyclic graph of rule dependencies (aGRD)</label>
+			    </li>
+			    <li class="col s12 m6 l4">
+			      <input id="disc"
+				           type="CHECKBOX"
+				           name="disc"
+				           checked />
+			      <label for="disc">Disconnected (disc)</label>
+			    </li>
+			    <li class="col s12 m6 l4">
+			      <input id="dr"
+				           type="CHECKBOX"
+				           name="dr"
+				           checked />
+			      <label for="dr">Domain Restricted (dr)</label>
+				  </li>
+			    <li class="col s12 m6 l4">
+			      <input id="fg"
+				           type="CHECKBOX"
+				           name="fg"
+				           checked />
+			      <label for="fg">Frontier Guarded (fg)</label>
+				  </li>
+			    <li class="col s12 m6 l4">
+			      <input id="fr1"
+				           type="CHECKBOX"
+				           name="fr1"
+				           checked />
+			      <label for="fr1">Frontier-1 (fr1)</label>
+			    </li>
+			    <li class="col s12 m6 l4">
+			      <input id="g"
+				           type="CHECKBOX"
+				           name="g"
+				           checked />
+			      <label for="g">Guarded (g)</label>
+				    </li>
+            <li class="col s12 m6 l4">
+			      <input id="jfg"
+				           type="CHECKBOX"
+				           name="jfg"
+				           checked />
+			      <label for="jfg">Jointly-Frontier-Guarded<sup>1</sup> (jfg)</label>
+			    </li>
+			    <li class="col s12 m6 l4">
+			      <input id="lin"
+				           type="CHECKBOX"
+				           name="lin"
+				           checked />
+			      <label for="lin">Linear (lin)</label>
+			    </li>
+		       <li class="col s12 m6 l4">
+			      <input id="mfa"
+				           type="CHECKBOX"
+				           name="mfa"
+				           checked />
+			      <label for="mfa">Model-faithful acyclicity<sup>1</sup> (mfa)</label>
+			    </li>
+          <li class="col s12 m6 l4">
+			      <input id="msa"
+				           type="CHECKBOX"
+				           name="msa"
+				           checked />
+			      <label for="msa">Model-summarising acyclicity<sup>1</sup> (msa)</label>
+			    </li>
+				  <li class="col s12 m6 l4">
+			      <input id="rr"
+				           type="CHECKBOX"
+				           name="rr"
+				           checked />
+			      <label for="rr">Range Restricted - Datalog (rr)</label>
+			    </li>
+        	<li class="col s12 m6 l4">
+			      <input id="s"
+				           type="CHECKBOX"
+				           name="s"
+				           checked />
+			      <label for="s">Sticky<sup>1</sup> (s)</label>
+				  </li>
+          <li class="col s12 m6 l4">
+			      <input id="wa"
+				           type="CHECKBOX"
+				           name="wa"
+				           checked />
+			      <label for="wa">Weakly-Acyclic<sup>1</sup> (wa)</label>
+			    </li>
+          <li class="col s12 m6 l4">
+			      <input id="wfg"
+				           type="CHECKBOX"
+				           name="wfg"
+				           checked />
+			      <label for="wfg">Weakly-Frontier-Guarded<sup>1</sup> (wfg)</label>
+			    </li>
+          <li class="col s12 m6 l4">
+			      <input id="wg"
+				           type="CHECKBOX"
+				           name="wg"
+				           checked />
+			      <label for="wg">Weakly-Guarded<sup>1</sup> (wg)</label>
+			    </li>
+			    <li class="col s12 m6 l4">
+			      <input id="ws"
+				           type="CHECKBOX"
+				           name="ws"
+				           checked />
+			      <label for="ws">Weakly-Sticky<sup>1</sup> (ws)</label>
+			    </li>
+			  </ul>
+      </div>
+			<i>In italics: abstract classes</i><br />
+			<sup>1</sup> Global properties
+			<br />
+			<br />
+			<h4>Combining abstract classes</h4>
+			<i>Compute combinations with the following priorities:</i>
+			<ul>
+			  <li>
+			    <input id="combine_fes"
+				         type="CHECKBOX"
+				         name="combine_fes"
+				         checked />
+			    <label for="combine_fes">fes</label>
+			  </li>
+			  <li>
+			    <input id="combine_fus"
+				         type="CHECKBOX"
+				         name="combine_fus"
+				         checked />
+			    <label for="combine_fus">fus</label>
+			  </li>
+			</ul>
+      	<div class="row">
+				  <input class="btn waves-effect right" type="submit" value="Analyze!" />
+				</div>
+		</form>
+		<hr />
+		<h2>Help?</h2>
+    <h3>Display structures:</h3>
+		<dl>
+			<dt>Rule base</dt>
+      <dd>Displays each rule as well as its ID.</dd>
+			<dt>Graph of Rule dependencies</dt>
+			<dd>Lists all edges between rules in the <a href="../doc/ruleclasses#grd">
+          graph of rule dependencies (GRD)</a>. An edge from
+        <b>R1</b> to <b>R2</b> means that <b>R2</b> <i>depends on</i> <b>R1</b>
+        (i.e., there exists a fact base F such that an application of <b>R1</b> to F
+        trigger an application of <b>R2</b> which effectively adds new atoms). All the piece-unifiers that support rule dependencies may also be displayed.
+			</dd>
+      <dt>Strongly connected components in the GRD</dt>
+			<dd>
+				Lists the rules in each strongly connected components (scc).
+			</dd>
+      <dt>Graph of GRD strongly connected components</dt>
+			<dd>
+				Lists all edges between scc.
+				This graph is mostly used to combine abstract properties.
+			</dd>
+      <dt>Graph of predicate positions</dt>
+      <dd>
+        Lists all edges of the <a href="../doc/ruleclasses#gpos">Graph of predicate positions</a>. A special edge is represented by <em>~></em>.
+      </dd>
+    </dl>
+    <h3>Display the properties of:</h3>
+    <dl>
+			<dt>Each rule</dt>
+      <dd>The properties of each rule
+				independently from the others are displayed in an array.
+			</dd>
+      <dt>Each strongly connected component in the GRD</dt>
+			<dd>The properties of each scc of
+				the GRD are displayed in an array.</dd>
+      <dt>Entire rule base</dt>
+			<dd>The properties of the entire rule base are displayed in an array.</dd>
+		</dl>
+    <h3>Check properties:</h3>
+    <p>Select which properties are to be displayed and used to check decidability. More information <a href="../doc/ruleclasses.html">about rule classes here</a>.</p>
+    <h3>Combining abstract classes:</h3>
+<p>
+	If the rule base is recognized as <i>decidable</i>, Kiabora proposes ways of processing the rules according to the abstract properties <i>fes</i>, <i>gbts</i> and <i>fus</i>. The fes and fus properties are respectively associated with the forward and the backward chaining paradigms. Algorithms are known for gbts classes, however to the best of our knowledge, no implemented algorithm is available (except for specific description logics).
+    When decidability is found, Kiabora outputs two ways of partitioning the rule base while keeping the completeness of CQ answering. Each solution corresponds to a priority given to fes or to fus: it maximizes the number of strongly connected components of the GRD processed as fes or as fus.
+</p>
+      </div>
+    </div>
+    <!-- FOOTER -->
+    <!-- FOOTER -->
+    <footer class="page-footer">
+      <div class="container">
+        <a href="mailto:sympa@lirmm.fr?subject=SUBSCRIBE graal">Subscribe to Graal newsletter</a>
+        <p> Contacts:
+        <script type="text/javascript">
+        <!-- //encodage de l'adresse email
+                Rot17.write('<r yivw="drzckf:jzgzvkvi@czidd.wi">jzgzvkvi@czidd.wi</r>');
+                document.write(' ');
+          Rot17.write('<r yivw="drzckf:dlxezvi@czidd.wi">dlxezvi@czidd.wi</r>');
+     -->
+        </script></p>
+        <p>
+            Thanks to <a href="https://www.yourkit.com"><img style="height: 24px; bottom: -6px; border: none; box-shadow: none; margin: 0; padding: 0;" src="https://www.yourkit.com/images/yklogo.png"></a> for its <a href="https://www.yourkit.com/java/profiler/index.jsp">Java Profiler</a></br>
+            Published with <a href="https://pages.github.com">GitHub Pages</a>
+        </p>
+      </div>
+      <div class="footer-copyright">
+      <div class="container">
+          Graal maintained by <a href="https://team.inria.fr/graphik/">GraphIK team</a>
+      </div>
+    </div>
+    </footer>
+    <!-- Import jQuery before materialize.js -->
+<script type="text/javascript" src="../js/materialize.min.js"></script>
+<!-- Code highlighting -->
+<script type="text/javascript" src="../js/highlight.pack.js"></script>
+<script type="text/javascript" src="../js/init.js"></script>
+<!-- Piwik -->
+<script type="text/javascript">
+var _paq = _paq || [];
+_paq.push(['trackPageView']);
+_paq.push(['enableLinkTracking']);
+(function() {
+var u="//info-demo.lirmm.fr/analytics/";
+_paq.push(['setTrackerUrl', u+'piwik.php']);
+_paq.push(['setSiteId', 1]);
+var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+})();
+</script>
+<noscript><p><img src="//info-demo.lirmm.fr/analytics/piwik.php?idsite=1" style="border:0;" alt="" /></p></noscript>
+<!-- End Piwik Code -->
+  </body>
+</html>

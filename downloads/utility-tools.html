@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'/>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    <!-- Import Google Icon Font-->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/materialize.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/stylesheet.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/table.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/hljs-style.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="../js/main.js"></script>
+    <title>Utility tools</title>
+  </head>
+  <body>
+    <!-- HEADER -->
+    <div class="navbar-fixed">
+  <nav>
+    <div class="nav-wrapper">
+      <div id="logo-container"><a href="../" class="brand-logo">Graal</a></div>
+      <ul class="right hide-on-med-and-down">
+        <li class=""><a href="../doc/index">Documentation</a></li>
+        <li class="active"><a href="../downloads/index">Apps & Downloads</a></li>
+        <li class=""><a href="../publications">Publications</a></li>
+        <li><a href="../experiments1">Experiments</a></li>
+        <li><a href="https://github.com/graphik-team/graal/">Sources</a></li>
+      </ul>
+      <ul class="side-nav" id="nav-mobile">
+        <li class=""><a href="../doc/index">Documentation</a></li>
+        <li class="active"><a href="../downloads/index">Apps & Downloads</a></li>
+        <li class=""><a href="../publications">Publications</a></li>
+        <li><a href="../experiments1">Experiments</a></li>
+        <li><a href="https://github.com/graphik-team/graal/">Sources</a></li>
+      </ul>
+      <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+    </div>
+  </nav>
+</div>
+    <!-- BODY -->
+    <div class="row">
+      <div id="page-menu" class="col s12 m5 l3">
+<ul class="collection collapsible">
+  <li>
+    <div class="collection-item collapsible-header">Graal</div>
+    <ul class="collapsible-body">
+         <li><a class="collection-item" href="../modules/graal-util">graal-util</a></li>
+         <li><a class="collection-item" href="../modules/graal-api">graal-api</a></li>
+         <li><a class="collection-item" href="../modules/graal-core">graal-core</a></li>
+         <li><a class="collection-item" href="../modules/graal-io-dlgp">graal-io-dlgp</a></li>
+         <li><a class="collection-item" href="../modules/graal-homomorphism">graal-homomorphism</a></li>
+         <li><a class="collection-item" href="../modules/graal-grd">graal-grd</a></li>
+         <li><a class="collection-item" href="../modules/graal-io-owl">graal-io-owl</a></li>
+         <li><a class="collection-item" href="../modules/rdf4j-common">rdf4j-common</a></li>
+         <li><a class="collection-item" href="../modules/graal-io-rdf">graal-io-rdf</a></li>
+         <li><a class="collection-item" href="../modules/graal-io-ruleml">graal-io-ruleml</a></li>
+         <li><a class="collection-item" href="../modules/graal-io-sparql">graal-io-sparql</a></li>
+         <li><a class="collection-item" href="../modules/graal-forward-chaining">graal-forward-chaining</a></li>
+         <li><a class="collection-item" href="../modules/graal-backward-chaining">graal-backward-chaining</a></li>
+         <li><a class="collection-item" href="../modules/graal-rules-analyser">graal-rules-analyser</a></li>
+         <li><a class="collection-item" href="../modules/graal-kb">graal-kb</a></li>
+         <li><a class="collection-item" href="../modules/rdbms-common">rdbms-common</a></li>
+         <li><a class="collection-item" href="../modules/rdbms-adhoc">rdbms-adhoc</a></li>
+         <li><a class="collection-item" href="../modules/rdbms-natural">rdbms-natural</a></li>
+         <li><a class="collection-item" href="../modules/graal-store-neo4j">graal-store-neo4j</a></li>
+         <li><a class="collection-item" href="../modules/graal-store-rdf4j">graal-store-rdf4j</a></li>
+    </ul>
+  </li>
+  <li><a class="collection-item" href="../downloads/pure">Pure</a></li>
+  <li>
+    <div class="collection-item collapsible-header">OWL2DLGP</div>
+    <ul class="collapsible-body">
+      <li><a class="collection-item" href="../downloads/owl2dlgp-online">Online</a></li>
+      <li><a class="collection-item" href="../downloads/owl2dlgp">Download</a></li>
+    </ul>
+  </li>
+  <li><a class="collection-item" href="../downloads/dlgp2ruleml">DLGP2RuleML</a></li>
+  <li>
+    <div class="collection-item collapsible-header">Kiabora</div>
+    <ul class="collapsible-body">
+      <li><a class="collection-item" href="../downloads/kiabora">Presentation</a></li>
+      <li><a class="collection-item" href="../downloads/kiabora-online">Online</a></li>
+      <li><a class="collection-item" href="../downloads/kiabora-download">Download</a></li>
+    </ul>
+  </li>
+  <li>
+    <div class="collection-item collapsible-header">Utility-Tools</div>
+    <ul class="collapsible-body">
+      <li><a class="collection-item" href="../downloads/utility-tools-online">Online</a></li>
+      <li><a class="collection-item active" href="../downloads/utility-tools">Downloads</a></li>
+    </ul>
+</ul>
+      </div>
+      <div id="page-content" class="col s12 m7 l9">
+        <p>The <em>utility-tools</em> program is a set of utilities to manage
+          rules. It currently provides three services:</p>
+        <dl>
+          <dt>single-piece head decomposition</dt><dd>transforms a set of rules into a
+          set of rules with a single-piece head. In other words, it splits rule heads as much as possible
+          while keeping logical equivalence and without introducing new predicates; </dd>
+          <dt>atomic-head decomposition</dt><dd>transforms a set of rules into a set
+          of atomic-head rules. This requires to introduce new predicates. The atomic-head decomposition
+          first performs a single-piece head decomposition to minimize the number of added predicates.</dd>
+          <dt>labeler</dt><dd>adds an annotation into the label of rules
+          when they satisfy one of the patterns below:
+              <ul>
+          <li><strong>CI</strong>: Concept Inclusion - <em>B(x) :- A(x)</em></li>
+          <li><strong>RI</strong>: Role Inclusion - <em>r(x,y) :- p(x,y)</em></li>
+          <li><strong>Inv</strong>: Inverse Role - <em>r(y,x) :- p(x,y)</em></li>
+          <li><strong>Dom</strong>: Domain - <em> A(x) :- p(x,y)</em></li>
+          <li><strong>Rng</strong>: Range - <em>A(y) :- p(x,y)</em></li>
+          <li><strong>MR</strong>: Mandatory Role - <em>p(x,y) :- A(x)</em></li>
+          <li><strong>IMR</strong>: Inverse Mandatory Role - <em>
+          p(x,y) :- A(y) </em></li>
+          <li><strong>ERC</strong>: Existential quantification in rule
+            heads - <em>p(x,y), B(y) :- A(x)</em></li>
+          <li><strong>IERC</strong>: ERC with Inverse role - <em>
+          p(y,x), B(y) :- A(x)</em></li>
+          <li><strong>Trans</strong>: Transitivity - <em> p(x,z) :- p(x,y),p(y,z) </em></li>
+          <li><strong>RC</strong>: Role Composition - <em>
+          s(x,z) :- p(x,y),r(y,z)</em></li>
+          <li><strong>Func</strong>: Functional dependency - <em> x
+          = y :- BODY </em></li>
+          <li><strong>DC</strong>: Disjoint Concept - <em>! :-  A(x), B(x)</em></li>
+          <li><strong>DR</strong>: Disjoint Role - <em>! :-
+              p(x,y),r(x,y)</em></li>
+          <li><strong>NC</strong>: Negative Constraint - <em> ! BODY </em></li>
+        </ul>
+        This allows to easily extract specific kinds of rules from a rule set.
+          </dd>
+        </dl>
+        <h2>Getting started</h2>
+        <ul>
+            <li>Download <a href="../dl/utility-tools-1.0.0.jar">utility-tools</a></li>
+            <li>Download <a href="../dl/example1.dlp">example1.dlp</a></li>
+        </ul>
+        <h3> Compute single-piece head rules </h3>
+        <code>java -jar utility-tools-*.jar -p < ./example1.dlp </code>
+        <h3> Compute atomic-head rules </h3>
+        <code>java -jar utility-tools-*.jar -a < ./example1.dlp </code>
+        <h3> Label rules </h3>
+        <code>java -jar utility-tools-*.jar -l < ./example1.dlp</code>
+              </div>
+    </div>
+    <!-- FOOTER -->
+    <!-- FOOTER -->
+    <footer class="page-footer">
+      <div class="container">
+        <a href="mailto:sympa@lirmm.fr?subject=SUBSCRIBE graal">Subscribe to Graal newsletter</a>
+        <p> Contacts:
+        <script type="text/javascript">
+        <!-- //encodage de l'adresse email
+                Rot17.write('<r yivw="drzckf:jzgzvkvi@czidd.wi">jzgzvkvi@czidd.wi</r>');
+                document.write(' ');
+          Rot17.write('<r yivw="drzckf:dlxezvi@czidd.wi">dlxezvi@czidd.wi</r>');
+     -->
+        </script></p>
+        <p>
+            Thanks to <a href="https://www.yourkit.com"><img style="height: 24px; bottom: -6px; border: none; box-shadow: none; margin: 0; padding: 0;" src="https://www.yourkit.com/images/yklogo.png"></a> for its <a href="https://www.yourkit.com/java/profiler/index.jsp">Java Profiler</a></br>
+            Published with <a href="https://pages.github.com">GitHub Pages</a>
+        </p>
+      </div>
+      <div class="footer-copyright">
+      <div class="container">
+          Graal maintained by <a href="https://team.inria.fr/graphik/">GraphIK team</a>
+      </div>
+    </div>
+    </footer>
+    <!-- Import jQuery before materialize.js -->
+<script type="text/javascript" src="../js/materialize.min.js"></script>
+<!-- Code highlighting -->
+<script type="text/javascript" src="../js/highlight.pack.js"></script>
+<script type="text/javascript" src="../js/init.js"></script>
+<!-- Piwik -->
+<script type="text/javascript">
+var _paq = _paq || [];
+_paq.push(['trackPageView']);
+_paq.push(['enableLinkTracking']);
+(function() {
+var u="//info-demo.lirmm.fr/analytics/";
+_paq.push(['setTrackerUrl', u+'piwik.php']);
+_paq.push(['setSiteId', 1]);
+var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+})();
+</script>
+<noscript><p><img src="//info-demo.lirmm.fr/analytics/piwik.php?idsite=1" style="border:0;" alt="" /></p></noscript>
+<!-- End Piwik Code -->
+  </body>
+</html>
+desc="Utility tools is a set of utils to manage rules."
+keywords="Tools, rules, utils, atomic-head, singlepiece-head,
+singlepiece, atomic rule, datalog+"
+-%]

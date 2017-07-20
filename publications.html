@@ -4,30 +4,43 @@
     <meta charset='utf-8'/>
     <meta name="description" content="Publications related to Graal"/>
     <meta name="keywords" content="publication, graal, kiabora, pure"/>
+    <!-- Import Google Icon Font-->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen" href="./stylesheets/materialize.css"/>
     <link rel="stylesheet" type="text/css" media="screen" href="./stylesheets/stylesheet.css"/>
     <link rel="stylesheet" type="text/css" media="screen" href="./stylesheets/table.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="./stylesheets/hljs-style.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script type="text/javascript" src="./js/main.js"></script>
     <title>Graal Publications</title>
   </head>
   <body>
     <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <h1 id="project_title">Graal Publications</h1>
-        </header>        <div id="menu" class="outer">
-          <nav class="inner">
-            <a href="./">Home</a>
-            <a href="./documentation">Documentation</a>
-            <a href="./publications">Publications</a>
-            <a href="./experiments1">Experiments</a>
-            <a href="./downloads">Apps & Downloads</a>
-            <a href="https://github.com/graphik-team/graal/">Sources</a>
-          </nav>
-        </div>
+    <div class="navbar-fixed">
+  <nav>
+    <div class="nav-wrapper">
+      <div id="logo-container"><a href="./" class="brand-logo">Graal</a></div>
+      <ul class="right hide-on-med-and-down">
+        <li class=""><a href="./doc/index">Documentation</a></li>
+        <li class=""><a href="./downloads/index">Apps & Downloads</a></li>
+        <li class="active"><a href="./publications">Publications</a></li>
+        <li><a href="./experiments1">Experiments</a></li>
+        <li><a href="https://github.com/graphik-team/graal/">Sources</a></li>
+      </ul>
+      <ul class="side-nav" id="nav-mobile">
+        <li class=""><a href="./doc/index">Documentation</a></li>
+        <li class=""><a href="./downloads/index">Apps & Downloads</a></li>
+        <li class="active"><a href="./publications">Publications</a></li>
+        <li><a href="./experiments1">Experiments</a></li>
+        <li><a href="https://github.com/graphik-team/graal/">Sources</a></li>
+      </ul>
+      <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
     </div>
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
+  </nav>
+</div>
+    <!-- BODY -->
+    <div class="row">
+      <div id="page-content" class="col s12 m10 offset-m1 l8 offset-l2">
       <h2>Papers on the implemented tools</h2>
       <a name="RuleML2015"></a>
       <h5>Overview of Graal, with focus on the query rewriting
@@ -50,7 +63,7 @@
       </p>
       <hr/>
       <a name="KIABORA_RR2013"></a>
-      <h5>About the first version of Kiabora (web tool, works with file format DLGP v1)</h5>
+      <h5>About the first version of Kiabora</h5>
       <p>M. Leclère, M.-L. Mugnier, S.Rocher.
       <i>KIABORA: An Analyzer of Existential Rule Bases</i>,
       Proc. of the 7th International Conference on Web Reasoning and Rule Systems <strong>(RR 2013)</strong>, July 2013.
@@ -73,15 +86,13 @@ Systems, Volume 6, Number 5, 2015. <a href="http://www.semantic-web-journal.net/
 <p>M. König, M. Leclère, M.-L. Mugnier, M. Thomazo. <i>On the Exploration of the Query Rewriting Space with Existential Rules</i>, Proc. of the 7th International Conference on Web Reasoning and Rule Systems <strong>(RR 2013)</strong>, July 2013.
 <a href="http://www.lirmm.fr/%7Emugnier/ArticlesPostscript/RR2013_KLMT.pdf">pdf file</a><br>Full version: <a href="http://www.lirmm.fr/%7Emugnier/ArticlesPostscript/research-report-RR2013.pdf">Research Report LIRMM</a> 13016</p>
 <p>M. König, M. Leclère, M.-L. Mugnier, M. Thomazo. <i>A Sound and Complete Backward Chaining Algorithm for Existential Rules</i>, Proc. of the 6th International Conference on Web Reasoning and Rule Systems <strong>(RR 2012)</strong>, September 2012. Full version: <a href="http://www.lirmm.fr/%7Emugnier/ArticlesPostscript/FullTR-RR2012KonigLeclereMugnierThomazoV2.pdf">Research Report LIRMM</a> 12016 (v2 - August 2012)</p>
-      </section>
+      </div>
     </div>
     <!-- FOOTER -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
+    <!-- FOOTER -->
+    <footer class="page-footer">
+      <div class="container">
         <a href="mailto:sympa@lirmm.fr?subject=SUBSCRIBE graal">Subscribe to Graal newsletter</a>
-        <p class="copyright">Graal maintained
-        by <a href="https://team.inria.fr/graphik/">GraphIK</a>
-          team</p>
         <p> Contacts:
         <script type="text/javascript">
         <!-- //encodage de l'adresse email
@@ -94,22 +105,32 @@ Systems, Volume 6, Number 5, 2015. <a href="http://www.semantic-web-journal.net/
             Thanks to <a href="https://www.yourkit.com"><img style="height: 24px; bottom: -6px; border: none; box-shadow: none; margin: 0; padding: 0;" src="https://www.yourkit.com/images/yklogo.png"></a> for its <a href="https://www.yourkit.com/java/profiler/index.jsp">Java Profiler</a></br>
             Published with <a href="https://pages.github.com">GitHub Pages</a>
         </p>
-      </footer>
+      </div>
+      <div class="footer-copyright">
+      <div class="container">
+          Graal maintained by <a href="https://team.inria.fr/graphik/">GraphIK team</a>
+      </div>
     </div>
-    <!-- Piwik -->
-    <script type="text/javascript">
-      var _paq = _paq || [];
-      _paq.push(['trackPageView']);
-      _paq.push(['enableLinkTracking']);
-      (function() {
-        var u="//info-demo.lirmm.fr/analytics/";
-        _paq.push(['setTrackerUrl', u+'piwik.php']);
-        _paq.push(['setSiteId', 1]);
-        var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-        g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
-      })();
-    </script>
-    <noscript><p><img src="//info-demo.lirmm.fr/analytics/piwik.php?idsite=1" style="border:0;" alt="" /></p></noscript>
-    <!-- End Piwik Code -->
+    </footer>
+    <!-- Import jQuery before materialize.js -->
+<script type="text/javascript" src="./js/materialize.min.js"></script>
+<!-- Code highlighting -->
+<script type="text/javascript" src="./js/highlight.pack.js"></script>
+<script type="text/javascript" src="./js/init.js"></script>
+<!-- Piwik -->
+<script type="text/javascript">
+var _paq = _paq || [];
+_paq.push(['trackPageView']);
+_paq.push(['enableLinkTracking']);
+(function() {
+var u="//info-demo.lirmm.fr/analytics/";
+_paq.push(['setTrackerUrl', u+'piwik.php']);
+_paq.push(['setSiteId', 1]);
+var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+})();
+</script>
+<noscript><p><img src="//info-demo.lirmm.fr/analytics/piwik.php?idsite=1" style="border:0;" alt="" /></p></noscript>
+<!-- End Piwik Code -->
   </body>
 </html>

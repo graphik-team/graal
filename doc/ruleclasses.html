@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'/>
+    <meta name="description" content="Description of rule classes"/>
+    <meta name="keywords" content="graal, documentation, kiabora, ruleset-analyser, rule classes"/>
+    <!-- Import Google Icon Font-->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/materialize.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/stylesheet.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/table.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/hljs-style.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="../js/main.js"></script>
+    <title>Rule classes</title>
+  </head>
+  <body>
+    <!-- HEADER -->
+    <div class="navbar-fixed">
+  <nav>
+    <div class="nav-wrapper">
+      <div id="logo-container"><a href="../" class="brand-logo">Graal</a></div>
+      <ul class="right hide-on-med-and-down">
+        <li class="active"><a href="../doc/index">Documentation</a></li>
+        <li class=""><a href="../downloads/index">Apps & Downloads</a></li>
+        <li class=""><a href="../publications">Publications</a></li>
+        <li><a href="../experiments1">Experiments</a></li>
+        <li><a href="https://github.com/graphik-team/graal/">Sources</a></li>
+      </ul>
+      <ul class="side-nav" id="nav-mobile">
+        <li class="active"><a href="../doc/index">Documentation</a></li>
+        <li class=""><a href="../downloads/index">Apps & Downloads</a></li>
+        <li class=""><a href="../publications">Publications</a></li>
+        <li><a href="../experiments1">Experiments</a></li>
+        <li><a href="https://github.com/graphik-team/graal/">Sources</a></li>
+      </ul>
+      <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+    </div>
+  </nav>
+</div>
+    <!-- BODY -->
+    <div class="row">
+      <div id="page-menu" class="col s12 m5 l3">
+<ul class="collection collapsible">
+  <li><a class="collection-item" href="../doc/index">Overview</a></li>
+  <li><a class="collection-item" href="../doc/eclipse">Getting Started with Eclipse</a></li>
+  <li><a class="collection-item" href="../doc/netbeans">Getting Started with NetBeans</a></li>
+  <li><a class="collection-item" href="../doc/without-ide">Getting Started without IDE</a></li>
+  <li><a class="collection-item" href="../doc/slf4j">SLF4J Configuration</a></li>
+  <li>
+    <div class="collapsible-header collection-item">Examples</div>
+      <ul class="collapsible-body">
+        <li><a class="collection-item" href="../doc/getting-started">Getting started with a KB</a></li>
+        <li><a class="collection-item" href="../doc/scenario1">Relational DB querying</a></li>
+        <!-- <li><a class="collection-item" href="../"><span class="todo">DBPedia querying</span></a></li>
+ -->
+        <li><a class="collection-item" href="../doc/rewriting">Query rewriting</a></li>
+        <!-- <li><a class="collection-item" href="../"><span class="todo">SPARQL rewriting</span></a></li>
+ -->
+        <li><a class="collection-item" href="../doc/owl-parser">OWL parsing</a></li>
+        <!-- <li><a class="collection-item" href="../"><span class="todo">RDF parsing</span></a></li>
+ -->
+        <!-- <li><a class="collection-item" href="../"><span class="todo">Ontology analysis</span></a></li>
+ -->
+        <!-- <li><a class="collection-item" href="../"><span class="todo">Data exchange</span></a></li>
+ -->
+      </ul>
+  </li>
+  <li>
+    <div class="collapsible-header collection-item">Technical documentation</div>
+      <ul class="collapsible-body">
+        <li><a class="collection-item" href="../doc/core-module">Core</a></li>
+        <li><a class="collection-item" href="../doc/io-dlgp-module">Dlgp IO</a></li>
+        <li><a class="collection-item" href="../doc/homomorphism-module">Homomorphism</a></li>
+        <li><a class="collection-item" href="../doc/kb-module">KB</a></li>
+        <li><a class="collection-item" href="../doc/chase-module">Forward Chaining</a></li>
+        <li><a class="collection-item" href="../doc/backward-chaining-module">Backward Chaining</a></li>
+        <li><a class="collection-item" href="../doc/store-module">Store</a></li>
+        <li><a class="collection-item active" href="../doc/ruleclasses">Rule Set Analyser</a></li>
+      </ul>
+  </li>
+  <li><a class="collection-item" href="../doc/dlgp">DLGP</a></li>
+  <li><a class="collection-item" href="../1.3.0/javadocs/">Javadoc</a></li>
+</ul>
+      </div>
+      <div id="page-content" class="col s12 m7 l9">
+<h1>Rule Set Analyser module</h1>
+<a href="../modules/graal-rules-analyser">Download this module</a>
+<p>This module provides methods and structures to check decidable properties of a set of existential rules.
+<a href="../downloads/kiabora">Kiabora</a> is a standalone tool based on this module which exposes its functionalities.</p>
+<section id="structures" class="inner">
+        <a name="structures"></a>
+		<h2>Structures</h2>
+        <p>
+          The following structures are used by the analyzer for checking some rule classes.
+		  Furthermore, the graph of rule dependencies is also used in the
+		  combination step to define rule subsets (which correspond to its strongly connected
+		  components).
+        </p>
+        <a name="frontier"></a>
+        <h4>Frontier of a rule</h4>
+		<p> The frontier of a rule is the set of variables that occur both in the body and the head of the rule. These variables are called frontier variables.
+        <p/>
+		<a name="grd"></a>
+        <h4>Graph of rule dependencies</h4>
+		<p>
+		  The graph of rule dependencies (GRD) is a directed graph built from a rule
+		  set as follows:
+		  there is a vertex for each rule in the set and there is an edge from a
+		  rule R<sub>1</sub> to a rule R<sub>2</sub> if R<sub>2</sub> depends on R<sub>1</sub>, i.e., there is a fact base such that an application of R<sub>1</sub> may lead to trigger a new application of </i> R<sub>2</sub> that effectively adds new atoms (this application is said to be productive).
+          For advanced users: R<sub>2</sub> depends on R<sub>1</sub> if and only if there is a piece-unifier of the body of R<sub>2</sub> with the head of R<sub>1</sub> which is (1) atom-erasing and (2) productive.
+          <br/>
+          For the notion of atom-erasing piece-unifier, see f.i. <a href="http://www.lirmm.fr/~mugnier/ArticlesPostscript/BLMSDecidabilityLine-PreAIJ2011.pdf">
+			this paper</a>. Note that for efficiency reasons, Kiabora computes a weaker version of the atom-erasing test: given a piece unifier u, it simply checks that u(Body(R<sub>2</sub>))) is not included in
+            u(Body(R<sub>1</sub>))).
+          </br> The productivity condition for a piece-unifier u expresses that u(Head(R<sub>2</sub>)) is not included in u(Body(R<sub>1</sub>)) U u(Head(R<sub>1</sub>)) U u(Body(R<sub>2</sub>)).
+          <h4>Graph of restricted rule dependencies (GRRD)</h4>
+		<p>
+            In the previous GRD, a rule application is said to be productive if it adds at least one new atom to the  fact base. This corresponds to the notion of rule application performed by the simple forward chaining known as oblivious chase.
+            The forward chaining known as <em>restricted chase</em> does not perform a rule application if the atoms that would be added can be `folded' into the existing fact base (hence, it detects a form of local redundancy). The graph of restricted rule dependencies (GRRD) enforces a stronger productivity condition   so that there is a new application of R<sub>2</sub> according to the restricted chase. Hence, the GRRD
+            may have less dependency edges than the GRD.
+		</p>
+		<a name="gpos"></a>
+        <h4>Graph of Predicate Positions</h4>
+		The graph of predicate positions <!--denoted by G<sub>pos</sub>--> is a directed graph
+		built from a rule set as follows:
+		first, for each predicate p and for each of its positions p[i] a vertex is
+		added.
+		Then, for each rule and for each variable x in the frontier
+		that occurs at some position p[i] in the rule
+		body: (1) for each position r[j] where x also occurs in the rule head, a
+		<i>normal</i> edge is added
+		from p[i] to r[j], and (2) for each position q[k] in the rule head where some
+		existentially quantified variable appears, a <i>special</i> edge is added
+		from p[i] to q[k].
+		<p></p>
+		<p>In this graph, a vertex (hence a predicate position) is of <i>finite
+			rank</i> if there is no circuit containing a special edge and passing
+		  through this vertex.
+		</p>
+		<a name="marked"></a>
+        <h4>Marked Variable Set</h4>
+		<p>
+		  The marked variable set is built from a rule set by the
+		  following marking procedure:<br>
+		  (i) for each rule R<sub>i</sub> and for each variable v occurring in
+		  the body of R<sub>i</sub>, if v does not occur in all atoms of the head of R<sub>i</sub>, mark (each occurrence of) v in the body of R<sub>i</sub>;<br>
+		  (ii) apply until a fixpoint is reached: for each rule R<sub>i</sub>, if a marked variable v appears at position p[k] in the body of R<sub>i</sub>,
+		  then for each rule R<sub>j</sub> (including
+		  i = j) and for each variable x appearing at position p[k] in the head of R<sub>j</sub>,
+		  mark each occurence of x in the body of R<sub>j</sub>.
+		</p>
+    <a name="affected"></a>
+    <h4>Affected Position Set</h4>
+        <p> A position p[i] is <em>affected</em> if (1) there is an existential variable
+          occurring in position p[i] in the head of a rule, or (2) there is a frontier variable that occurs both in position p[i]
+          in the head of a rule R and in an affected position in the body of R.
+        </p>
+        <p>A variable from a rule body is said to be <em> affected</em> if it occurs in
+          some affected position.
+        </p>
+        <p>
+          The affected position set of a rule set is the set of all its affected positions.
+          </p>
+		<a name="jointly-affected"></a>
+        <h4>Jointly-Affected Position Set</h4>
+		<p>
+		  The jointly-affected position set is built from a rule set
+		  by the following procedure:<br>
+		  (i) for each rule and for each existentially quantified variable occuring
+		  at position p[i] in its head, p[i] is <em>jointly-affected</em>;<br>
+		  (ii) for each rule and for each variable x that occurs <i>only</i>
+		  at jointly-affected positions in its body, all positions q[j] in its head where x occurs are
+		  jointly-affected.
+		</p>
+		<p>A variable is said to be <em>jointly-affected</em> if it occurs <em>only</em> at jointly-affected
+		  positions.
+		</p>
+	  </section>
+		<section id="rc" class="inner">
+        <a name="rc"></a>
+		<h2>Rule Classes</h2>
+        <p>
+           <img src="../images/rc_inclusion.png" class="right" />
+		The rule classes are divided into two types: <i>abstract</i> classes, which ensure
+		 decidability of conjunctive query answering but are not recognizable, i.e., one cannot always determine if a set of rules belongs to such a class,
+		 and <i>concrete</i> classes, which may specialize one or
+		several abstract classes and are recognizable by syntactic properties.
+		</p>
+        <p>
+		In the figure on the right side, rule classes are ordered by inclusion:
+		an upwards edge from class C1 to class C2 means that C1 is included in C2.
+		If there is no edge between two classes, it means there are incomparable.
+		Note that a class was omitted in this picture for the sake of readability:
+		 <i>disconnected</i> rules, which are
+		<i>fes</i>, <i>fus</i> and <i>gbts</i>, and are a specialization of
+		<i>domain-restricted</i>, <i>weakly-acyclic</i> and <i>frontier-guarded</i>
+		rules.
+		</p>
+        <p>For information, the well-known description logics DL-Lite<sub>R</sub> and <em>EL</em>
+        have been included in the picture.
+        <p>
+		The concrete classes mentioned in italics in the figure are not considered yet by the
+		analyzer, hence they are not described below. These classes are the following:</p>
+		<ul>
+            <li>super-weak-acyclic</li>
+            <li>jointly-acyclic</li>
+			<li>sticky-join</li>
+            <li>weakly-sticky-join (w-sticky-join)</li>
+			<li>glut-fg</li>
+		</ul>
+        <a name="abstract"></a>
+		<h3>Abstract Rule Classes</h3>
+		<p>
+		These rule classes are called <em>abstract</em> because they are not characterized by a syntactic property.
+		They are used to classify concrete
+		classes. Each of these classes ensures the existence of
+		query mechanisms that halt in finite time for any (conjunctive) query and any set of facts.
+		In  general, determining if a rule (or a set of rules) belongs to one
+		of these abstract classes is known to be undecidable, except for gbts for which the question is open.
+		</p>
+            <a name="fes"></a>
+			<h4>Finite expansion set (fes)</h4>
+			<p>This abstract class ensures the finiteness of any <em>forward
+chaining</em> algorithm that saturates the facts until
+fixpoint with respect to logical equivalence. Hence, query answering can be solved by mapping the query to the saturated facts.</p>
+            <a name="fus"></a>
+			<h4>Finite unification set (fus)</h4>
+			<p>This abstract class ensures the finiteness of any <em>backward
+chaining</em> algorithm that rewrites the query in a breadth-first
+manner while maintaining a set of the <em>most general
+rewritings</em>. This class is also called UCQ-rewritable (and known to be equivalent to first-order rewritable)
+Query answering can be solved by rewriting the initial query then mapping the rewritten query to the facts.</p>
+            <a name="bts"></a>
+			<h4>(Greedy) Bounded treewidth set (bts)</h4>
+			<p>The BTS class, which strictly includes FES, ensures decidability,
+although there is currently no algorithm available for this class.
+However, <em>Greedy Bounded Treewidth Set (GBTS)</em> is an
+expressive subclass of BTS that is provided with a forward-chaining-like halting algorithm.
+Almost all currently known BTS but not FES classes are GBTS.</p>
+        <a name="concrete"></a>
+		<h3>Concrete Rule Classes</h3>
+		<p>
+		These classes are presented with their syntactic properties
+		and the abstract classes they belong to.
+		</p>
+		<p>
+		There are two kinds of syntactic properties:
+		<ul>
+		<li><strong>local properties</strong> which are checked on
+		each rule independently from the others (hence a set fulfils
+		a local property if all of its rules fullfil it);</li>
+		<li><strong>global properties</strong> which are checked on
+		a set of rules (note that the analyzer may <em>partition</em> the input set
+		of rules into subsets corresponding to the strongly connected components of the <a href='#grd'>graph of
+		rule dependencies</a> and check the global properties of each component).
+		</ul>
+		</p>
+		<p>
+		Reminder: the <em>frontier</em> of a rule is the set of
+		variables that occur n both the body and the head of the rule.
+		<p>
+            <a name="agrd"></a>
+			<h4>Acyclic graph of rule dependencies (agrd)</h4>
+				<p>This rule class property is a global property.<br/>
+				Ensures:
+				<ul>
+						<li>fes</li>
+						<li>fus</li>
+				</ul>
+				</p>
+				<p>The associated <a href='#grd'>graph of rule dependencies</a> has no circuit.</p>
+            <a name="ab"></a>
+			<h4>Atomic-body (ab)</h4>
+				See <a href='#lin'>Linear</a>.
+            <a name="dlg"></a>
+			<h4>Datalog (dlg)</h4>
+				See <a href='#rr'>Range-restricted</a>.
+            <a name="disc"></a>
+			<h4>Disconnected (disc)</h4>
+				<p>This rule class property is a local property.<br/>
+				Ensures:
+				<ul>
+						<li>fes</li>
+						<li>fus</li>
+						<li>gbts</li>
+				</ul>
+				</p>
+				<p>The frontier is empty. Note that any disconnected rule needs to be
+applied only once up to logical equivalence.</p>
+            <a name="dr"></a>
+			<h4>Domain-restricted (dr)</h4>
+				<p>This rule class property is a local property.<br/>
+				Ensures:
+				<ul>
+						<li>fus</li>
+				</ul>
+				</p>
+				<p>Each atom in the head contains all variables from the
+body or none.</p>
+            <a name="fg"></a>
+			<h4>Frontier-guarded (fg)</h4>
+				<p>This rule class property is a local property.<br/>
+				Ensures:
+				<ul>
+						<li>gbts</li>
+				</ul>
+				</p>
+				<p>At least one atom in the body contains all the variables from the
+frontier.</p>
+            <a name="fr1"></a>
+			<h4>Frontier-one (fr1)</h4>
+				<p>This rule class property is a local property.<br/>
+				Ensures:
+				<ul>
+						<li>gbts</li>
+				</ul>
+				</p>
+				<p>The frontier contains only one variable.</p>
+            <a name="g"></a>
+			<h4>Guarded (g)</h4>
+				<p>This rule class property is a local property.<br/>
+				Ensures:
+				<ul>
+						<li>gbts</li>
+				</ul>
+				</p>
+				<p>At least one atom in the body (called a <em>guard</em>) contains
+all the variables from the body.</p>
+            <a name="jfg"></a>
+			<h4>Jointly-frontier-guarded (jfg)</h4>
+				<p>This rule class property is a global property.<br/>
+				Ensures:
+				<ul>
+						<li>gbts</li>
+				</ul>
+				</p>
+				<p>At least one atom in the body of each rule contains all jointly-affected
+variables from the frontier
+(cf. <a href='#jointly-affected'>jointly-affected position set</a>).</p>
+            <a name="lin"></a>
+			<h4>Linear (lin)</h4>
+				<p>This rule class property is a local property.<br/>
+				Ensures:
+				<ul>
+						<li>fus</li>
+						<li>gbts</li>
+				</ul>
+				</p>
+				<p>The body contains a single atom.</p>
+            <a name="mfa"></a>
+			<h4>Model-faithful acyclicity (mfa)</h4>
+				<p>This rule class property is a global property.<br/>
+				Ensures:
+				<ul>
+						<li>fes</li>
+						<li>bts</li>
+				</ul>
+				</p>
+				<p>The skolem chase executed on the
+critical instance does not produce any 'cycle of
+functional symbols'.</p>
+            <a name="msa"></a>
+			<h4>Model-summarising acyclicity (msa)</h4>
+				<p>This rule class property is a global property.<br/>
+				Ensures:
+				<ul>
+						<li>fes</li>
+						<li>bts</li>
+						<li>mfa</li>
+				</ul>
+				</p>
+				<p>Approximates MFA with a lower complexity.</p>
+            <a name="rr"></a>
+			<h4>Range-restricted - or Datalog (rr)</h4>
+				<p>This rule class property is a local property.<br/>
+				Ensures:
+				<ul>
+						<li>fes</li>
+						<li>gbts</li>
+				</ul>
+				</p>
+				<p>All variables that appear in the head also occur in the
+body.</p>
+            <a name="s"></a>
+			<h4>Sticky (s)</h4>
+				<p>This rule class property is a global property.<br/>
+				Ensures:
+				<ul>
+						<li>fus</li>
+				</ul>
+				</p>
+				<p>Each marked variable occurs at most once in a rule body (cf. <a
+href='#marked'>marked variable set</a>).</p>
+            <a name="wa"></a>
+			<h4>Weakly-acyclic (wa)</h4>
+				<p>This rule class property is a global property.<br/>
+				Ensures:
+				<ul>
+						<li>fes</li>
+				</ul>
+				</p>
+				<p>All predicate positions in the <a href='#gpos'>graph of predicate positions</a>
+have finite rank (i.e., there is no circuit with a
+special edge).</p>
+            <a name="wfg"></a>
+			<h4>Weakly-frontier-guarded (wfg)</h4>
+				<p>This rule class property is a global property.<br/>
+				Ensures:
+				<ul>
+						<li>gbts</li>
+				</ul>
+				</p>
+				<p>At least one atom in the body of each rule contains all the affected
+variables from the frontier
+(cf. <a href='#affected'>affected position set</a>).</p>
+            <a name="wg"></a>
+			<h4>Weakly-guarded (wg)</h4>
+				<p>This rule class property is a global property.<br/>
+				Ensures:
+				<ul>
+						<li>gbts</li>
+				</ul>
+				</p>
+				<p>At least one atom in the body of each rule contains all the affected
+variables from the body
+(cf. <a href='#affected'>affected position set</a>).</p>
+            <a name="ws"></a>
+			<h4>Weakly-sticky (ws)</h4>
+				<p>This rule class property is a global property.<br/>
+				Ensures:
+				<ul>
+				</ul>
+				</p>
+				<p>This class does not belong to any abstract class defined earlier.
+It is a generalisation of <a href='#s'>Sticky</a> and
+<a href='#wa'>Weakly-Acyclic</a>. It relies upon the same
+<a href='#gpos'>graph of predicate positions</a> as the
+<a href='#wa'>Weakly-Acyclic</a> test and upon the same
+<a href='#marked'>marking procedure</a> as the <a
+href='#s'>Sticky</a> test.
+All marked variables that occur more than once in a rule body appear
+at some position of finite rank.</p>
+	    </section>
+      </div>
+    </div>
+    <!-- FOOTER -->
+    <!-- FOOTER -->
+    <footer class="page-footer">
+      <div class="container">
+        <a href="mailto:sympa@lirmm.fr?subject=SUBSCRIBE graal">Subscribe to Graal newsletter</a>
+        <p> Contacts:
+        <script type="text/javascript">
+        <!-- //encodage de l'adresse email
+                Rot17.write('<r yivw="drzckf:jzgzvkvi@czidd.wi">jzgzvkvi@czidd.wi</r>');
+                document.write(' ');
+          Rot17.write('<r yivw="drzckf:dlxezvi@czidd.wi">dlxezvi@czidd.wi</r>');
+     -->
+        </script></p>
+        <p>
+            Thanks to <a href="https://www.yourkit.com"><img style="height: 24px; bottom: -6px; border: none; box-shadow: none; margin: 0; padding: 0;" src="https://www.yourkit.com/images/yklogo.png"></a> for its <a href="https://www.yourkit.com/java/profiler/index.jsp">Java Profiler</a></br>
+            Published with <a href="https://pages.github.com">GitHub Pages</a>
+        </p>
+      </div>
+      <div class="footer-copyright">
+      <div class="container">
+          Graal maintained by <a href="https://team.inria.fr/graphik/">GraphIK team</a>
+      </div>
+    </div>
+    </footer>
+    <!-- Import jQuery before materialize.js -->
+<script type="text/javascript" src="../js/materialize.min.js"></script>
+<!-- Code highlighting -->
+<script type="text/javascript" src="../js/highlight.pack.js"></script>
+<script type="text/javascript" src="../js/init.js"></script>
+<!-- Piwik -->
+<script type="text/javascript">
+var _paq = _paq || [];
+_paq.push(['trackPageView']);
+_paq.push(['enableLinkTracking']);
+(function() {
+var u="//info-demo.lirmm.fr/analytics/";
+_paq.push(['setTrackerUrl', u+'piwik.php']);
+_paq.push(['setSiteId', 1]);
+var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+})();
+</script>
+<noscript><p><img src="//info-demo.lirmm.fr/analytics/piwik.php?idsite=1" style="border:0;" alt="" /></p></noscript>
+<!-- End Piwik Code -->
+  </body>
+</html>

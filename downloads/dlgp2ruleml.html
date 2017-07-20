@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'/>
+    <meta name="description" content="Translator from Dlgp to RuleML"/>
+    <meta name="keywords" content="dlgp, ruleml, translator, rule, format, existential rules,
+datalog+"/>
+    <!-- Import Google Icon Font-->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/materialize.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/stylesheet.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/table.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/hljs-style.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="../js/main.js"></script>
+    <title>Dlgp to RuleML</title>
+  </head>
+  <body>
+    <!-- HEADER -->
+    <div class="navbar-fixed">
+  <nav>
+    <div class="nav-wrapper">
+      <div id="logo-container"><a href="../" class="brand-logo">Graal</a></div>
+      <ul class="right hide-on-med-and-down">
+        <li class=""><a href="../doc/index">Documentation</a></li>
+        <li class="active"><a href="../downloads/index">Apps & Downloads</a></li>
+        <li class=""><a href="../publications">Publications</a></li>
+        <li><a href="../experiments1">Experiments</a></li>
+        <li><a href="https://github.com/graphik-team/graal/">Sources</a></li>
+      </ul>
+      <ul class="side-nav" id="nav-mobile">
+        <li class=""><a href="../doc/index">Documentation</a></li>
+        <li class="active"><a href="../downloads/index">Apps & Downloads</a></li>
+        <li class=""><a href="../publications">Publications</a></li>
+        <li><a href="../experiments1">Experiments</a></li>
+        <li><a href="https://github.com/graphik-team/graal/">Sources</a></li>
+      </ul>
+      <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+    </div>
+  </nav>
+</div>
+    <!-- BODY -->
+    <div class="row">
+      <div id="page-menu" class="col s12 m5 l3">
+<ul class="collection collapsible">
+  <li>
+    <div class="collection-item collapsible-header">Graal</div>
+    <ul class="collapsible-body">
+         <li><a class="collection-item" href="../modules/graal-util">graal-util</a></li>
+         <li><a class="collection-item" href="../modules/graal-api">graal-api</a></li>
+         <li><a class="collection-item" href="../modules/graal-core">graal-core</a></li>
+         <li><a class="collection-item" href="../modules/graal-io-dlgp">graal-io-dlgp</a></li>
+         <li><a class="collection-item" href="../modules/graal-homomorphism">graal-homomorphism</a></li>
+         <li><a class="collection-item" href="../modules/graal-grd">graal-grd</a></li>
+         <li><a class="collection-item" href="../modules/graal-io-owl">graal-io-owl</a></li>
+         <li><a class="collection-item" href="../modules/rdf4j-common">rdf4j-common</a></li>
+         <li><a class="collection-item" href="../modules/graal-io-rdf">graal-io-rdf</a></li>
+         <li><a class="collection-item" href="../modules/graal-io-ruleml">graal-io-ruleml</a></li>
+         <li><a class="collection-item" href="../modules/graal-io-sparql">graal-io-sparql</a></li>
+         <li><a class="collection-item" href="../modules/graal-forward-chaining">graal-forward-chaining</a></li>
+         <li><a class="collection-item" href="../modules/graal-backward-chaining">graal-backward-chaining</a></li>
+         <li><a class="collection-item" href="../modules/graal-rules-analyser">graal-rules-analyser</a></li>
+         <li><a class="collection-item" href="../modules/graal-kb">graal-kb</a></li>
+         <li><a class="collection-item" href="../modules/rdbms-common">rdbms-common</a></li>
+         <li><a class="collection-item" href="../modules/rdbms-adhoc">rdbms-adhoc</a></li>
+         <li><a class="collection-item" href="../modules/rdbms-natural">rdbms-natural</a></li>
+         <li><a class="collection-item" href="../modules/graal-store-neo4j">graal-store-neo4j</a></li>
+         <li><a class="collection-item" href="../modules/graal-store-rdf4j">graal-store-rdf4j</a></li>
+    </ul>
+  </li>
+  <li><a class="collection-item" href="../downloads/pure">Pure</a></li>
+  <li>
+    <div class="collection-item collapsible-header">OWL2DLGP</div>
+    <ul class="collapsible-body">
+      <li><a class="collection-item" href="../downloads/owl2dlgp-online">Online</a></li>
+      <li><a class="collection-item" href="../downloads/owl2dlgp">Download</a></li>
+    </ul>
+  </li>
+  <li><a class="collection-item active " href="../downloads/dlgp2ruleml">DLGP2RuleML</a></li>
+  <li>
+    <div class="collection-item collapsible-header">Kiabora</div>
+    <ul class="collapsible-body">
+      <li><a class="collection-item" href="../downloads/kiabora">Presentation</a></li>
+      <li><a class="collection-item" href="../downloads/kiabora-online">Online</a></li>
+      <li><a class="collection-item" href="../downloads/kiabora-download">Download</a></li>
+    </ul>
+  </li>
+  <li>
+    <div class="collection-item collapsible-header">Utility-Tools</div>
+    <ul class="collapsible-body">
+      <li><a class="collection-item" href="../downloads/utility-tools-online">Online</a></li>
+      <li><a class="collection-item" href="../downloads/utility-tools">Downloads</a></li>
+    </ul>
+</ul>
+      </div>
+      <div id="page-content" class="col s12 m7 l9">
+          <p>The <em>dlgp2ruleml</em> program
+          translates <a href="../doc/dlgp">Dlgp</a>
+          to so-called <em>Datalog+ fragment</em> of <a href="http://wiki.ruleml.org/index.php/Specification_of_Deliberation_RuleML_1.01">Deliberation RuleML 1.01</a>, which includes:</p>
+        <ul>
+          <li>positive facts,</li>
+          <li>universally quantified implications,</li>
+          <li>existentials in the heads of implications,</li>
+          <li>equality,</li>
+          <li>falsity in the heads of implications,</li>
+          <li>conjunctions in the heads of implications.</li>
+        </ul>
+        <p>The translation from Dlgp to this sublanguage of RuleML is quite
+        direct. Since this latter does not allow for existential quantification in facts, the tool translates each existential variable from the  facts into a new constant. </p>
+        <h2>Getting started</h2>
+        <ul>
+          <li>Download <a href="../dl/dlgp2ruleml-1.1.0.jar">dlgp2ruleml</a></li>
+          <li>Download <a href="../dl/example2.dlp">example2.dlp</a>
+          and its translation <a href="../dl/example2.ruleml">example2.ruleml</a></li>
+        </ul>
+         <ul>
+          <li>
+            Translate from an <em>Dlgp</em> file to a RuleML file: <br/>
+            <code>java -jar dlgp2ruleml*.jar -f ./example2.dlp -o ./example.ruleml</code>
+          </li>
+          <li>
+            Translate from the standard input (Dlgp) to the standard output (RuleML): <br/>
+            <code>java -jar dlgp2ruleml*.jar < ./example2.dlp > ./example.ruleml</code>
+          </li>
+        </ul>      </div>
+    </div>
+    <!-- FOOTER -->
+    <!-- FOOTER -->
+    <footer class="page-footer">
+      <div class="container">
+        <a href="mailto:sympa@lirmm.fr?subject=SUBSCRIBE graal">Subscribe to Graal newsletter</a>
+        <p> Contacts:
+        <script type="text/javascript">
+        <!-- //encodage de l'adresse email
+                Rot17.write('<r yivw="drzckf:jzgzvkvi@czidd.wi">jzgzvkvi@czidd.wi</r>');
+                document.write(' ');
+          Rot17.write('<r yivw="drzckf:dlxezvi@czidd.wi">dlxezvi@czidd.wi</r>');
+     -->
+        </script></p>
+        <p>
+            Thanks to <a href="https://www.yourkit.com"><img style="height: 24px; bottom: -6px; border: none; box-shadow: none; margin: 0; padding: 0;" src="https://www.yourkit.com/images/yklogo.png"></a> for its <a href="https://www.yourkit.com/java/profiler/index.jsp">Java Profiler</a></br>
+            Published with <a href="https://pages.github.com">GitHub Pages</a>
+        </p>
+      </div>
+      <div class="footer-copyright">
+      <div class="container">
+          Graal maintained by <a href="https://team.inria.fr/graphik/">GraphIK team</a>
+      </div>
+    </div>
+    </footer>
+    <!-- Import jQuery before materialize.js -->
+<script type="text/javascript" src="../js/materialize.min.js"></script>
+<!-- Code highlighting -->
+<script type="text/javascript" src="../js/highlight.pack.js"></script>
+<script type="text/javascript" src="../js/init.js"></script>
+<!-- Piwik -->
+<script type="text/javascript">
+var _paq = _paq || [];
+_paq.push(['trackPageView']);
+_paq.push(['enableLinkTracking']);
+(function() {
+var u="//info-demo.lirmm.fr/analytics/";
+_paq.push(['setTrackerUrl', u+'piwik.php']);
+_paq.push(['setSiteId', 1]);
+var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+})();
+</script>
+<noscript><p><img src="//info-demo.lirmm.fr/analytics/piwik.php?idsite=1" style="border:0;" alt="" /></p></noscript>
+<!-- End Piwik Code -->
+  </body>
+</html>

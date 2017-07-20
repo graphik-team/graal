@@ -2,39 +2,46 @@
 <html>
   <head>
     <meta charset='utf-8'/>
-    <meta name="description" content=""/>
-    <meta name="keywords" content=""/>
+    <meta name="description" content="Experiments on the rewriting with the Graal library"/>
+    <meta name="keywords" content="rewriting, experiments, graal, ontology"/>
+    <!-- Import Google Icon Font-->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen" href="./stylesheets/materialize.css"/>
     <link rel="stylesheet" type="text/css" media="screen" href="./stylesheets/stylesheet.css"/>
     <link rel="stylesheet" type="text/css" media="screen" href="./stylesheets/table.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="./stylesheets/hljs-style.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script type="text/javascript" src="./js/main.js"></script>
     <title>Graal Experiments</title>
   </head>
   <body>
     <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-      <header class="inner">
-        <h1 id="project_title">Experiments of Query Rewriting Algorithms (Pure and Pure<sub>C</sub>)</h1>
-      </header>
-              <div id="menu" class="outer">
-          <nav class="inner">
-            <a href="./">Home</a>
-            <a href="./documentation">Documentation</a>
-            <a href="./publications">Publications</a>
-            <a href="./experiments1">Experiments</a>
-            <a href="./downloads">Apps & Downloads</a>
-            <a href="https://github.com/graphik-team/graal/">Sources</a>
-          </nav>
-        </div>
+    <div class="navbar-fixed">
+  <nav>
+    <div class="nav-wrapper">
+      <div id="logo-container"><a href="./" class="brand-logo">Graal</a></div>
+      <ul class="right hide-on-med-and-down">
+        <li class=""><a href="./doc/index">Documentation</a></li>
+        <li class=""><a href="./downloads/index">Apps & Downloads</a></li>
+        <li class=""><a href="./publications">Publications</a></li>
+        <li><a href="./experiments1">Experiments</a></li>
+        <li><a href="https://github.com/graphik-team/graal/">Sources</a></li>
+      </ul>
+      <ul class="side-nav" id="nav-mobile">
+        <li class=""><a href="./doc/index">Documentation</a></li>
+        <li class=""><a href="./downloads/index">Apps & Downloads</a></li>
+        <li class=""><a href="./publications">Publications</a></li>
+        <li><a href="./experiments1">Experiments</a></li>
+        <li><a href="https://github.com/graphik-team/graal/">Sources</a></li>
+      </ul>
+      <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
     </div>
-         <div id="sub_menu" class="outer">
-       <nav class="inner">
-          <a href="./experiments1">Query Rewriting Algorithms</a>
-          <!--<a href="./experiments2"><em>Pivotal</em> query evaluation</a>-->
-        </nav>
-      </div>
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
+  </nav>
+</div>
+    <!-- BODY -->
+    <div class="row">
+      <div id="page-content" class="col s12 m10 offset-m1 l8 offset-l2">
+         <h1 id="project_title">Experiments of Query Rewriting Algorithms (Pure and Pure<sub>C</sub>)</h1>
         <h2>Benchmarks</h2>
         <p> As benchmarks dedicated to existential rules are not
         available yet, we considered rule bases obtained by
@@ -1092,15 +1099,13 @@ Almost all the unfolding time is actually spent in checking redundancies (in the
         </table>
  <p> We see that PURE<sub>C</sub> (with or without unfolding) scales well on large DL-Lite ontologies (except for extreme cases which are difficult for all tools, see Ontology O). We emphasize that, being devoted to general existential rules, it does not exploit the specificities of DL-Lite.
 See our paper <a href="./publications#IJCAI2015">at IJCAI 2015</a> for further comments on these results.
-      </section>
+              </div>
     </div>
     <!-- FOOTER -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
+    <!-- FOOTER -->
+    <footer class="page-footer">
+      <div class="container">
         <a href="mailto:sympa@lirmm.fr?subject=SUBSCRIBE graal">Subscribe to Graal newsletter</a>
-        <p class="copyright">Graal maintained
-        by <a href="https://team.inria.fr/graphik/">GraphIK</a>
-          team</p>
         <p> Contacts:
         <script type="text/javascript">
         <!-- //encodage de l'adresse email
@@ -1113,22 +1118,32 @@ See our paper <a href="./publications#IJCAI2015">at IJCAI 2015</a> for further c
             Thanks to <a href="https://www.yourkit.com"><img style="height: 24px; bottom: -6px; border: none; box-shadow: none; margin: 0; padding: 0;" src="https://www.yourkit.com/images/yklogo.png"></a> for its <a href="https://www.yourkit.com/java/profiler/index.jsp">Java Profiler</a></br>
             Published with <a href="https://pages.github.com">GitHub Pages</a>
         </p>
-      </footer>
+      </div>
+      <div class="footer-copyright">
+      <div class="container">
+          Graal maintained by <a href="https://team.inria.fr/graphik/">GraphIK team</a>
+      </div>
     </div>
-    <!-- Piwik -->
-    <script type="text/javascript">
-      var _paq = _paq || [];
-      _paq.push(['trackPageView']);
-      _paq.push(['enableLinkTracking']);
-      (function() {
-        var u="//info-demo.lirmm.fr/analytics/";
-        _paq.push(['setTrackerUrl', u+'piwik.php']);
-        _paq.push(['setSiteId', 1]);
-        var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-        g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
-      })();
-    </script>
-    <noscript><p><img src="//info-demo.lirmm.fr/analytics/piwik.php?idsite=1" style="border:0;" alt="" /></p></noscript>
-    <!-- End Piwik Code -->
+    </footer>
+    <!-- Import jQuery before materialize.js -->
+<script type="text/javascript" src="./js/materialize.min.js"></script>
+<!-- Code highlighting -->
+<script type="text/javascript" src="./js/highlight.pack.js"></script>
+<script type="text/javascript" src="./js/init.js"></script>
+<!-- Piwik -->
+<script type="text/javascript">
+var _paq = _paq || [];
+_paq.push(['trackPageView']);
+_paq.push(['enableLinkTracking']);
+(function() {
+var u="//info-demo.lirmm.fr/analytics/";
+_paq.push(['setTrackerUrl', u+'piwik.php']);
+_paq.push(['setSiteId', 1]);
+var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+})();
+</script>
+<noscript><p><img src="//info-demo.lirmm.fr/analytics/piwik.php?idsite=1" style="border:0;" alt="" /></p></noscript>
+<!-- End Piwik Code -->
   </body>
 </html>

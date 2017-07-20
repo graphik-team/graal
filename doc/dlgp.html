@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'/>
+    <meta name="description" content="Description of the DLGP format"/>
+    <meta name="keywords" content="dlgp, existential rules, graal, documentation"/>
+    <!-- Import Google Icon Font-->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/materialize.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/stylesheet.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/table.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/hljs-style.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/dlgp.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="../js/main.js"></script>
+    <title>DLGP documentation</title>
+  </head>
+  <body>
+    <!-- HEADER -->
+    <div class="navbar-fixed">
+  <nav>
+    <div class="nav-wrapper">
+      <div id="logo-container"><a href="../" class="brand-logo">Graal</a></div>
+      <ul class="right hide-on-med-and-down">
+        <li class="active"><a href="../doc/index">Documentation</a></li>
+        <li class=""><a href="../downloads/index">Apps & Downloads</a></li>
+        <li class=""><a href="../publications">Publications</a></li>
+        <li><a href="../experiments1">Experiments</a></li>
+        <li><a href="https://github.com/graphik-team/graal/">Sources</a></li>
+      </ul>
+      <ul class="side-nav" id="nav-mobile">
+        <li class="active"><a href="../doc/index">Documentation</a></li>
+        <li class=""><a href="../downloads/index">Apps & Downloads</a></li>
+        <li class=""><a href="../publications">Publications</a></li>
+        <li><a href="../experiments1">Experiments</a></li>
+        <li><a href="https://github.com/graphik-team/graal/">Sources</a></li>
+      </ul>
+      <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+    </div>
+  </nav>
+</div>
+    <!-- BODY -->
+    <div class="row">
+      <div id="page-menu" class="col s12 m5 l3">
+<ul class="collection collapsible">
+  <li><a class="collection-item" href="../doc/index">Overview</a></li>
+  <li><a class="collection-item" href="../doc/eclipse">Getting Started with Eclipse</a></li>
+  <li><a class="collection-item" href="../doc/netbeans">Getting Started with NetBeans</a></li>
+  <li><a class="collection-item" href="../doc/without-ide">Getting Started without IDE</a></li>
+  <li><a class="collection-item" href="../doc/slf4j">SLF4J Configuration</a></li>
+  <li>
+    <div class="collapsible-header collection-item">Examples</div>
+      <ul class="collapsible-body">
+        <li><a class="collection-item" href="../doc/getting-started">Getting started with a KB</a></li>
+        <li><a class="collection-item" href="../doc/scenario1">Relational DB querying</a></li>
+        <!-- <li><a class="collection-item" href="../"><span class="todo">DBPedia querying</span></a></li>
+ -->
+        <li><a class="collection-item" href="../doc/rewriting">Query rewriting</a></li>
+        <!-- <li><a class="collection-item" href="../"><span class="todo">SPARQL rewriting</span></a></li>
+ -->
+        <li><a class="collection-item" href="../doc/owl-parser">OWL parsing</a></li>
+        <!-- <li><a class="collection-item" href="../"><span class="todo">RDF parsing</span></a></li>
+ -->
+        <!-- <li><a class="collection-item" href="../"><span class="todo">Ontology analysis</span></a></li>
+ -->
+        <!-- <li><a class="collection-item" href="../"><span class="todo">Data exchange</span></a></li>
+ -->
+      </ul>
+  </li>
+  <li>
+    <div class="collapsible-header collection-item">Technical documentation</div>
+      <ul class="collapsible-body">
+        <li><a class="collection-item" href="../doc/core-module">Core</a></li>
+        <li><a class="collection-item" href="../doc/io-dlgp-module">Dlgp IO</a></li>
+        <li><a class="collection-item" href="../doc/homomorphism-module">Homomorphism</a></li>
+        <li><a class="collection-item" href="../doc/kb-module">KB</a></li>
+        <li><a class="collection-item" href="../doc/chase-module">Forward Chaining</a></li>
+        <li><a class="collection-item" href="../doc/backward-chaining-module">Backward Chaining</a></li>
+        <li><a class="collection-item" href="../doc/store-module">Store</a></li>
+        <li><a class="collection-item" href="../doc/ruleclasses">Rule Set Analyser</a></li>
+      </ul>
+  </li>
+  <li><a class="collection-item active" href="../doc/dlgp">DLGP</a></li>
+  <li><a class="collection-item" href="../1.3.0/javadocs/">Javadoc</a></li>
+</ul>
+      </div>
+      <div id="page-content" class="col s12 m7 l9">
+<h1>DLGP: An extended Datalog Syntax (Version 2.1)</h1>
+<a href="../papers/datalog+_en.pdf">Download the PDF version</a>
+<H2>Abstract:</H2>
+<p>
+This document specifies the version 2.1 of <SPAN  CLASS="textit">dlgp</SPAN>, a textual format for the existential rule / Datalog± framework.  This format is meant to be an exchange format at once human-friendly, concise and easy to parse. It can be seen as an extension of the commonly used format for plain Datalog. It is called "dlgp" for "Datalog Plus". A file may contain four kinds of knowledge elements: facts, existential rules, negative constraints and conjunctive queries.
+</p>
+<H2>Change logs</H2>
+<H3>v2.1</H3>
+<UL>
+<LI>fixes a bug when parsing a variable matching the following pattern E[0-9]+;
+</LI>
+<LI>allows to write query with empty list of answer variables like "?() :- p(X)." in addition to "? :- p(X).";
+</LI>
+<LI>allows empty query "? :- ." and so rule like "p(a) :- ." is also allowed;
+</LI>
+<LI>relaxes the order constraint on elements of the header part (@base, @prefix, @top and @una). The annotations @top and @base must still be unique.
+</LI>
+</UL>
+<H3>v2.0</H3>
+<UL>
+<LI>The main improvement in this version is the introduction of Web notions (IRI and literal, following Turtle format) to ensure compatibility with Semantic Web languages;
+</LI>
+<LI>allows spaces in label;
+</LI>
+<LI>The only incompatiblity with Version 1.0 is the impossibility to use a quoted string to denote a predicate.
+ Now, predicates have to be <span class="dlgp-token">&lt;l-ident&gt;</span>, <span class="turtle-token">&lt;IRIREF&gt;</span> or <span class="turtle-token">&lt;PrefixedName&gt;</span>.
+ Constants have been extended:  they may also be <span class="turtle-token">&lt;IRIREF&gt;</span>, <span class="turtle-token">&lt;PrefixedName&gt</span>; or any <span class="turtle-token">&lt;literal&gt;</span> (not only  integer, float et  quoted string).
+</LI>
+</UL>
+<H2>Introduction</H2>
+<p>
+The dlgp format encodes existential rules (and other constructs that can be seen as special kinds of existential rules: facts, negative constraints and conjunctive queries).
+A basic logical notion is that of an <em>atom</em>, which is composed of a <em>predicate</em> (or relation name) and arguments called <em>terms</em>. Terms can be variables or constants. Predicates can be of any arity greater or equal to one.
+</p>
+<p>
+In their simplest form, predicates and terms are encoded by string identifiers built with
+<em>letters</em> from the Latin aphabet, <em>digits</em> and the <em>underscore</em> character (<strong>_</strong>). As usually in Datalog, variables begin with an uppercase letter, while  constants and predicates begin with a lowercase letter. To make the dlgp format compatible with data from the Semantic Web, more elaborate kinds of identifiers are mandatory. The version 2.x introduces the notions of IRI and literal, according to Turtle format (<a href="http://www.w3.org/TR/turtle/">http://www.w3.org/TR/turtle/</a>). Specifically:
+<UL>
+<LI>a predicate or a constant can be denoted by an <em>IRI</em> in Turtle format, which can be written in three forms: a relative IRI, an absolute IRI or a prefixed name. Relative and absolute IRIs are strings of the form <span class="code">&lt;iri&gt;</span> (see the symbol  <span class="turtle-token">IRIREF</span>  in Turtle grammar). A prefixed name is a string prefixed by a namespace (see the symbol <span class="turtle-token">PrefixedName</span> in Turtle grammar); moreover, the classical Datalog format (a string beginning with a lowercase letter) is allowed and understood as a relative IRI;
+</LI>
+<LI>a constant can also be a literal (see the symbol <span class="turtle-token">literal</span> in Turtle grammar).
+</LI>
+</UL>
+</p>
+<p>
+For instance, here are different ways of writing a predicate:
+<UL>
+<LI><span class="code">pred</span>  (classical logic programming notation);
+</LI>
+<LI><span class="code">&lt;pred&gt;</span> (a relative IRI, whose base is specified elsewhere);
+</LI>
+<LI><span class="code">&lt;Pred&gt;</span>  (a relative IRI as well, starting with an uppercase letter);
+</LI>
+<LI><span class="code">&lt;http://exemple.org/pred&gt;</span> (an absolute IRI);
+</LI>
+<LI><span class="code">ex:pred</span> (prefixed name); in this case the IRI associated with the prefix <span class="code">ex</span> has to be introduced by a specific annotation in the file header, e.g., <span class="code">@prefix ex: &lt;http://exemple.org/&gt;</span>.
+</LI>
+</UL>
+</p>
+<p>
+All these forms are usable to encode a constant. Moreover, constants can be described by <em>literals</em>, e.g., <span class="code">-5.1</span>, <span class="code">true</span>, <span class="code">"constant"</span>, or any other Turtle literal. Note that the tokens  <span class="code">true</span> and <span class="code">false</span> are interpreted as Boolean literals and not as IRIs.
+</p>
+<p>
+The special predicate <span class="inline">=</span> encodes equality between terms (e.g., <em>X = Y</em>).
+</p>
+<p>
+<em>Sets</em> of such atoms are logically interpreted as <em>conjunctions</em> of atoms. The following four kinds of knowledge elements  are built upon sets of atoms:
+</p>
+<UL>
+<LI><em>facts</em> : a fact is a set of atoms interpreted as an existentially closed conjunction, i.e., of the form
+<em>∃X F[X]</em>, where <em>X</em> denote the set of variables occurring in
+<em>F</em>; a fact can also be seen as an existential rule with an empty body;
+</LI>
+<LI><em>(pure) existential rules</em> : an existential rule is an ordered pair of atom sets
+<em>(B,H)</em> interpreted as   <!-- MATH
+ $\forall X (\exists Y \mathcal B[X,Y] \rightarrow \exists Z \mathcal H[X,Z])$
+ -->
+<em>∀X(∃Y B[X,Y] → ∃Z H[X,Z])</em>, or, equivalently, as  <!-- MATH
+ $\forall X \forall Y (\mathcal B[X,Y] \rightarrow \exists Z \mathcal H[X,Z])$
+ -->
+<em>∀X∀Y (B[X,Y] → ∃Z H[X,Z])</em>, where <em>X, Y and Z</em> denote sets of variables (<!-- MATH
+ $\mathcal B$
+ -->
+<em>B</em> is built on <em>X</em> and <em>Y</em>, while <em>H</em> is built on <em>X</em> and <em>Z</em>, hence <em>X</em> denotes the set of variables shared by <em>B</em> and <em>H</em>);
+</LI>
+<LI><em>negative constraints</em> : a negative constraint is a set of atoms interpreted as the negation of the corresponding fact, i.e., <!-- MATH
+ $\neg (\exists X \mathcal C[X])$
+ -->
+<em>¬(∃X C[X])</em>; equivalently, it can be seen as a rule with a head restricted to the always-false symbol <em>⊥</em>: <!-- MATH
+ $\forall X (\mathcal C[X] \rightarrow \bot)$
+ -->
+<em>∀X (C[X] → ⊥)</em>;
+</LI>
+<LI><em>conjunctive queries</em> : a conjunctive query is a set of atoms provided with special variables (called the answer variables),  interpreted as an existentially quantified conjunction where answer variables are kept free.  It can also be seen as a rule of the form <!-- MATH
+ $\forall X \forall Y (\mathcal B[X,Y] \rightarrow ans(X))$ -->
+<em>∀X∀Y (B[X,Y] → ans(X))</em>, where <em>ans</em> is a special predicate and <em>X</em> is the set of answer variables.
+</LI>
+</UL>
+<p>
+A dlgp document is any sequence of such elements. The file name has extension <strong>.dlp</strong> or <strong>.dlgp</strong>. Characters are assumed to be encoded in UTF-8.  Analysis directives are introduced by the symbol <em>@</em> and comments by the symbol <em>%</em>.
+</p>
+<H2>Syntax of the dlgp format
+</H2>
+<p>
+In the following the syntax is specified by a grammar in BNF style:
+non-terminal symbols are enclosed in angle brackets <span class="dlgp-blue-token">&lt;&gt;</span>, terminal symbols are in bold font,
+the <span class="bnf-grammar">|</span> symbol indicates a choice,
+parts enclosed in square brackets  (<span class="bnf-grammar">[])</span> are optional,
+ <em>choice<sub>1</sub></em>..<em>choice<sub>1</sub></em>choice<sub>n</sub></em> indicates a choice within an interval; parts enclosed in braces
+ can be repeated from <em>0</em> to <em>n</em> times (<span class="bnf-grammar">{<em>repeated-pattern</em>}*)</span> or from 1 to <em>n</em> times (<span class="bnf-grammar">{<em>repeated-pattern-at-least-once</em>}+</span>).
+</p>
+<H3>
+Comments
+</H3>
+<P>
+Comments are introduced by the symbol  % outside Turtle tokens (i.e., outside  <span class="turtle-token">&lt;IRIREF&gt;</span> and <span class="turtle-token">&lt;literal&gt;,</span> which may themselves contain the symbol %). A comment ends at the end of the same line or at the end of the file. Moreover, comments introduced by  %% can be interpreted in a specific way. Our parser generates an event when such a specific comment is read, which can be exploited by event listeners.
+</P>
+<H3>
+Parsing Information
+</H3>
+<P>
+Please refer to Turtle syntax for building an absolute IRI from a relative IRI (and <em>@base</em> directives) or from a prefixed name (and <em>@prefix</em> directives). Note that the directive base may occur at most once. Similarly,  it is not possible to successively assign several IRIREF to the same prefix (<em>@prefix</em> directive). These two directives may occur only in the head of the file.
+</p>
+<P>
+A <span class="dlgp-token">&lt;l-ident&gt;</span> token is seen as a relative IRI, and the corresponding absolute IRI is obtained  by adding the IRI  of the <em>@base</em> directive in front of the <span class="dlgp-token">&lt;l-ident&gt;</span> token.
+</P>
+<H3>
+Elements used to define tokens
+</H3>
+<TABLE class="noborder">
+<TR><TD ALIGN="LEFT">&lt;uppercase-letter&gt; <span class="bnf-grammar">::=</span></TD>
+<TD ALIGN="LEFT"><B>A</B><span class="bnf-grammar">..</span><B>Z</B></TD>
+</TR>
+<TR><TD ALIGN="LEFT">&lt;lowercase-letter&gt; <span class="bnf-grammar">::=</span></TD>
+<TD ALIGN="LEFT"><B>a</B><span class="bnf-grammar">..</span><B>z</B></TD>
+</TR>
+<TR><TD ALIGN="LEFT">&lt;digit&gt; <span class="bnf-grammar">::=</span></TD>
+<TD ALIGN="LEFT"><B>0</B><span class="bnf-grammar">..</span><B>9</B></TD>
+</TR>
+<TR><TD ALIGN="LEFT">&lt;underscore&gt; <span class="bnf-grammar">::=</span></TD>
+<TD ALIGN="LEFT"><B>_</B></TD>
+</TR>
+<TR><TD ALIGN="LEFT">&lt;letter&gt; <span class="bnf-grammar">::=</span></TD>
+<TD ALIGN="LEFT">&lt;uppercase-letter&gt; <span class="bnf-grammar">|</span>  &lt;lowercase-letter&gt;</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&lt;simple-char&gt; <span class="bnf-grammar">::=</span></TD>
+<TD ALIGN="LEFT">&lt;letter&gt; <span class="bnf-grammar">|</span>  &lt;digit&gt; <span class="bnf-grammar">|</span> &lt;underscore&gt;</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><span class="turtle-token">&lt;PN_CHARS&gt;</span></TD>
+<TD ALIGN="LEFT"><em>see turtle grammar</em></TD>
+</TR>
+<TR><TD ALIGN="LEFT">&lt;space&gt; <span class="bnf-grammar">::=</span></TD>
+<TD ALIGN="LEFT"><span class="turtle-token">#x20</span> <em>/* #x20 = space character  */</em></TD>
+</TR>
+</TABLE>
+<H3>
+Tokens
+</H3>
+<TABLE class="noborder">
+<TR><TD ALIGN="LEFT"><span class="dlgp-token">&lt;u-ident&gt;</span> <span class="bnf-grammar">::=</span></TD>
+<TD ALIGN="LEFT">&lt;uppercase-letter&gt; <span class="bnf-grammar">{</span>&lt;simple-char&gt;<span class="bnf-grammar">}*</span></TD>
+</TR>
+<TR><TD ALIGN="LEFT"><span class="dlgp-token">&lt;l-ident&gt;</span> <span class="bnf-grammar">::=</span></TD>
+<TD ALIGN="LEFT">&lt;lowercase-letter&gt; <span class="bnf-grammar">{</span>&lt;simple-char&gt;<span class="bnf-grammar">}*</span></TD>
+</TR>
+<TR><TD ALIGN="LEFT"><span class="dlgp-token">&lt;label&gt;</span> <span class="bnf-grammar">::=</span></TD>
+<TD ALIGN="LEFT"><span class="bnf-grammar">{</span><span class="turtle-token">&lt;PN_CHARS&gt;</span> <span class="bnf-grammar">|</span>  &lt;space&gt;<span class="bnf-grammar">}*</span></TD>
+</TR>
+</TABLE>
+<H3>Global Grammar</H3>
+<TABLE class="noborder">
+  <TR>
+    <TD ALIGN="LEFT">
+      <span class="dlgp-blue-token">&lt;document&gt;</span> <span class="bnf-grammar">::=</span>
+    </TD>
+    <TD ALIGN="LEFT">
+      <span class="dlgp-blue-token">&lt;header&gt;</span> <span class="dlgp-blue-token">&lt;body&gt;</span>
+    </TD>
+  </TR>
+  <TR>
+    <TD ALIGN="LEFT">
+      <span class="dlgp-blue-token">&lt;header&gt;</span> <span class="bnf-grammar">::=</span>
+    </TD>
+    <TD ALIGN="LEFT">
+      <span class="bnf-grammar">{</span>
+      <span class="dlgp-blue-token">&lt;base&gt;</span> <span class="bnf-grammar">|</span> <span class="dlgp-blue-token">&lt;prefix&gt;</span> <span class="bnf-grammar">|</span>  <span class="dlgp-blue-token">&lt;top&gt;</span> <span class="bnf-grammar">|</span> <span class="dlgp-blue-token">&lt;una&gt;</span> <span class="bnf-grammar">}*</span>
+    </TD>
+  </TR>
+  <TR>
+    <TD ALIGN="LEFT">
+      <span class="dlgp-blue-token">&lt;base&gt;</span> <span class="bnf-grammar">::=</span>
+    </TD>
+    <TD ALIGN="LEFT">
+      <B>@base</B> <span class="turtle-token">&lt;IRIREF&gt;</span>
+    </TD>
+  </TR>
+  <TR>
+    <TD ALIGN="LEFT">
+      <span class="dlgp-blue-token">&lt;prefix&gt;</span> <span class="bnf-grammar">::=</span>
+    </TD>
+    <TD ALIGN="LEFT">
+      <B>@prefix</B> <span class="turtle-token">&lt;PNAME_NS&gt;</span> <span class="turtle-token">&lt;IRIREF&gt;</span>
+    </TD>
+  </TR>
+  <TR>
+    <TD ALIGN="LEFT">
+      <span class="dlgp-blue-token">&lt;top&gt;</span> <span class="bnf-grammar">::=</span>
+    </TD>
+    <TD ALIGN="LEFT"><B>@top</B> <span class="dlgp-token">&lt;l-ident&gt;</span> <span class="bnf-grammar">|</span></TD>
+  </TR>
+  <TR>
+    <TD ALIGN="LEFT">&nbsp;</TD>
+    <TD ALIGN="LEFT"><B>@top</B> <span class="turtle-token">&lt;IRIREF&gt;</span></TD>
+  </TR>
+  <TR>
+    <TD ALIGN="LEFT"><span class="dlgp-blue-token">&lt;una&gt;</span> <span class="bnf-grammar">::=</span></TD>
+    <TD ALIGN="LEFT"><B>@una</B></TD>
+  </TR>
+  <TR>
+    <TD ALIGN="LEFT"><span class="dlgp-blue-token">&lt;body&gt;</span> <span class="bnf-grammar">::=</span></TD>
+    <TD ALIGN="LEFT">
+      <span class="bnf-grammar">{</span><span class="dlgp-blue-token">&lt;statement&gt;</span><span class="bnf-grammar">}*</span> <span class="bnf-grammar">|</span>
+    </TD>
+  </TR>
+  <TR>
+    <TD ALIGN="LEFT">&nbsp;</TD>
+    <TD ALIGN="LEFT"><span class="bnf-grammar">{</span><span class="dlgp-blue-token">&lt;section&gt;</span><span class="bnf-grammar">}*</span></TD>
+  </TR>
+  <TR>
+    <TD ALIGN="LEFT"><span class="dlgp-blue-token">&lt;section&gt;</span> <span class="bnf-grammar">::=</span></TD>
+    <TD ALIGN="LEFT">
+      <B>@facts</B> <span class="bnf-grammar">{</span><span class="dlgp-blue-token">&lt;fact&gt;</span><span class="bnf-grammar">}*</span> <span class="bnf-grammar">|</span>
+    </TD>
+  </TR>
+  <TR>
+    <TD ALIGN="LEFT">&nbsp;</TD>
+    <TD ALIGN="LEFT">
+      <B>@rules</B> <span class="bnf-grammar">{</span><span class="dlgp-blue-token">&lt;rule&gt;</span><span class="bnf-grammar">}*</span> <span class="bnf-grammar">|</span>
+    </TD>
+  </TR>
+  <TR>
+    <TD ALIGN="LEFT">&nbsp;</TD>
+    <TD ALIGN="LEFT"><B>@constraints</B> <span class="bnf-grammar">{</span><span class="dlgp-blue-token">&lt;constraint&gt;<span class="bnf-grammar">}*</span></span> <span class="bnf-grammar">|</span> </TD>
+  </TR>
+  <TR>
+    <TD ALIGN="LEFT">&nbsp;</TD>
+    <TD ALIGN="LEFT"><B>@queries</B> <span class="bnf-grammar">{</span><span class="dlgp-blue-token">&lt;query&gt;</span><span class="bnf-grammar">}*</span></TD>
+  </TR>
+  <TR>
+    <TD ALIGN="LEFT"><span class="dlgp-blue-token">&lt;statement&gt;</span> <span class="bnf-grammar">::=</span></TD>
+    <TD ALIGN="LEFT"><span class="dlgp-blue-token">&lt;fact&gt;</span> <span class="bnf-grammar">|</span>
+      <span class="dlgp-blue-token">&lt;rule&gt;</span> <span class="bnf-grammar">|</span>
+      <span class="dlgp-blue-token">&lt;constraint&gt;</span> <span class="bnf-grammar">|</span>
+      <span class="dlgp-blue-token">&lt;query&gt;</span>
+    </TD>
+  </TR>
+  <TR>
+    <TD ALIGN="LEFT"><span class="dlgp-blue-token">&lt;fact&gt;</span> <span class="bnf-grammar">::=</span></TD>
+    <TD ALIGN="LEFT">
+      <span class="bnf-grammar">[</span> <B>[</B><span class="dlgp-token">&lt;label&gt;</span><B>]</B> <span class="bnf-grammar">]</span> <span class="dlgp-blue-token">&lt;not-empty-conjunction&gt;</span><B>.</B>
+    </TD>
+  </TR>
+  <TR>
+    <TD ALIGN="LEFT"><span class="dlgp-blue-token">&lt;rule&gt;</span> <span class="bnf-grammar">::=</span></TD>
+    <TD ALIGN="LEFT"><span class="bnf-grammar">[</span> <B>[</B><span class="dlgp-token">&lt;label&gt;</span><B>]</B> <span class="bnf-grammar">]</span> <span class="dlgp-blue-token">&lt;not-empty-conjunction&gt;</span> <B>:-</B> <span class="dlgp-blue-token">&lt;conjunction&gt;</span><B>.</B></TD>
+  </TR>
+  <TR>
+    <TD ALIGN="LEFT"><span class="dlgp-blue-token">&lt;constraint&gt;</span> <span class="bnf-grammar">::=</span></TD>
+    <TD ALIGN="LEFT"><span class="bnf-grammar">[</span> <B>[</B><span class="dlgp-token">&lt;label&gt;</span><B>]</B> <span class="bnf-grammar">]</span> <B>! :- </B><span class="dlgp-blue-token">&lt;not-empty-conjunction&gt;</span><B>.</B></TD>
+  </TR>
+  <TR>
+    <TD ALIGN="LEFT"><span class="dlgp-blue-token">&lt;query&gt;</span> <span class="bnf-grammar">::=</span></TD>
+    <TD ALIGN="LEFT">
+      <span class="bnf-grammar">[</span> <B>[</B><span class="dlgp-token">&lt;label&gt;</span><B>]</B> <span class="bnf-grammar">]</span> <B>? </B><span class="bnf-grammar">[</span><B>(</B><span class="dlgp-blue-token">&lt;term-list&gt;</span><B>)</B><span class="bnf-grammar">]</span> <B>:-</B> <span class="dlgp-blue-token">&lt;conjunction&gt;</span><B>.</B>
+    </TD>
+  </TR>
+  <TR>
+    <TD ALIGN="LEFT">
+      <span class="dlgp-blue-token">&lt;conjunction&gt;</span> <span class="bnf-grammar">::=</span>
+    </TD>
+    <TD ALIGN="LEFT"><span class="bnf-grammar">[</span><span class="dlgp-blue-token">&lt;not-empty-conjunction&gt;</span><span class="bnf-grammar">]</span></TD>
+  </TR>
+  <TR>
+    <TD ALIGN="LEFT"><span class="dlgp-blue-token">&lt;not-empty-conjunction&gt;</span> <span class="bnf-grammar">::=</span></TD>
+    <TD ALIGN="LEFT"><span class="dlgp-blue-token">&lt;atom&gt;</span> <span class="bnf-grammar">{</span><B>,</B> <span class="dlgp-blue-token">&lt;atom&gt;</span><span class="bnf-grammar">}*</span></TD>
+  </TR>
+  <TR>
+    <TD ALIGN="LEFT"><span class="dlgp-blue-token">&lt;atom&gt;</span> <span class="bnf-grammar">::=</span></TD>
+    <TD ALIGN="LEFT"><span class="dlgp-blue-token">&lt;std-atom&gt;</span> <span class="bnf-grammar">|</span>  <span class="dlgp-blue-token">&lt;equality&gt;</span></TD>
+  </TR>
+  <TR>
+    <TD ALIGN="LEFT"><span class="dlgp-blue-token">&lt;equality&gt;</span> <span class="bnf-grammar">::=</span></TD>
+    <TD ALIGN="LEFT"><span class="dlgp-blue-token">&lt;term&gt;</span> <B>=</B> <span class="dlgp-blue-token">&lt;term&gt;</span></TD>
+  </TR>
+  <TR>
+    <TD ALIGN="LEFT"><span class="dlgp-blue-token">&lt;std-atom&gt;</span> <span class="bnf-grammar">::=</span></TD>
+    <TD ALIGN="LEFT"><span class="dlgp-blue-token">&lt;predicate&gt;</span><B>(</B><span class="dlgp-blue-token">&lt;not-empty-term-list&gt;</span><B>)</B></TD>
+  </TR>
+  <TR>
+    <TD ALIGN="LEFT"><span class="dlgp-blue-token">&lt;term-list&gt;</span> <span class="bnf-grammar">::=</span></TD>
+    <TD ALIGN="LEFT"><span class="bnf-grammar">[</span><span class="dlgp-blue-token">&lt;not-empty-term-list&gt;</span><span class="bnf-grammar">]</span></TD>
+  </TR>
+  <TR>
+    <TD ALIGN="LEFT"><span class="dlgp-blue-token">&lt;not-empty-term-list&gt;</span> <span class="bnf-grammar">::=</span></TD>
+    <TD ALIGN="LEFT"><span class="dlgp-blue-token">&lt;term&gt;</span> <span class="bnf-grammar">{</span><B>,</B> <span class="dlgp-blue-token">&lt;term&gt;</span><span class="bnf-grammar">}*</span></TD>
+  </TR>
+  <TR>
+    <TD ALIGN="LEFT"><span class="dlgp-blue-token">&lt;term&gt;</span> <span class="bnf-grammar">::=</span></TD>
+    <TD ALIGN="LEFT"><span class="dlgp-blue-token">&lt;variable&gt;</span> <span class="bnf-grammar">|</span> <span class="dlgp-blue-token">&lt;constant&gt;</span></TD>
+  </TR>
+  <TR>
+    <TD ALIGN="LEFT"><span class="dlgp-blue-token">&lt;predicate&gt;</span> <span class="bnf-grammar">::=</span></TD>
+    <TD ALIGN="LEFT"><span class="dlgp-token">&lt;l-ident&gt;</span> <span class="bnf-grammar">|</span>
+      <span class="turtle-token">&lt;IRIREF&gt;</span> <span class="bnf-grammar">|</span>  <span class="turtle-token">&lt;PrefixedName&gt;</span>
+    </TD>
+  </TR>
+  <TR>
+    <TD ALIGN="LEFT"><span class="dlgp-blue-token">&lt;variable&gt;</span> <span class="bnf-grammar">::=</span></TD>
+    <TD ALIGN="LEFT"><span class="dlgp-token">&lt;u-ident&gt;</span></TD>
+  </TR>
+  <TR>
+    <TD ALIGN="LEFT"><span class="dlgp-blue-token">&lt;constant&gt;</span> <span class="bnf-grammar">::=</span></TD>
+    <TD ALIGN="LEFT">
+      <span class="dlgp-token">&lt;l-ident&gt;</span> <span class="bnf-grammar">|</span>
+      <span class="turtle-token">&lt;IRIREF&gt;</span> <span class="bnf-grammar">|</span>
+      <span class="turtle-token">&lt;PrefixedName&gt;</span> <span class="bnf-grammar">|</span>
+      <span class="turtle-token">&lt;literal&gt;</span>
+    </TD>
+  </TR>
+</TABLE>
+<p>
+The symbol @ is used to introduce several kinds of annotations:
+<UL>
+<LI>In the header:
+<UL>
+<LI><span class="code">@base</span> is a Turtle directive which defines a base to complement relative IRIs.
+This annotation is not mandatory even if relative IRIs are used in the document; a base IRI is then defined by the context of the application. This annotation must be unique.
+</LI>
+<LI><span class="code">@prefix</span> is a Turtle directive that defines a pair <em>prefix / namespace identifier</em> used to build an IRI from a prefixed name (the prefix is a string terminated by a colon and the namespace identifier is an <span class="turtle-token">&lt;IRIREF&gt;</span>). The IRI is obtained by replacing the prefix in the prefixed name by the IRI identifying the namespace associated with that prefix. All the prefixes occurring in the document must be defined by a <span class="code">@prefix</span> annotation. All the prefixes occurring in <span class="code">@prefix</span> annotations must be pairwise distinct.
+</LI>
+<LI><span class="code">@top</span> defines a predicate whose semantics is <em>⊤</em> (i.e., the knowledge base satisfies the axiom <!-- MATH
+ $\forall x \top(x)$
+ -->
+<em>∀X ⊤(X)</em>, where <em>⊤</em> is replaced by this predicate). This annotation must be unique.
+</LI>
+<LI><span class="code">@una</span> states that this knowledge base makes the Unique Name Assumption, i.e., all constants are assumed to refer to distinct objects.
+</LI>
+</UL>
+</LI>
+<LI>In the body:
+<UL>
+<LI>the directives <span class="code">@facts</span>,  <span class="code">@rules</span>, <span class="code">@constraints</span>, <span class="code">@queries</span> can be used to declare the nature of the elements that follow (respectively: facts, rules, constraints and queries). Such a directive defines a section that spans to the next annotation or to the end of the file. The interest of this kind of directive is to inform sooner the parser of the nature of the next statements.  For instance, without these directives, it is not possible to distinguish between a fact and a rule before the sequence of atoms composing the fact or the rule head has been completely analyzed. However, it may be interesting to know that a fact is coming to process it more efficiently, specially if large facts can be encountered.  However, such a directive is only an information to the parser, which can choose to ignore it.
+</LI>
+<LI>each element can be optionally preceded by a <em>label</em> enclosed in square brackets. This name is any string composed of <span class="code">&lt;PN_CHARS&gt;</span> in Turtle format as well as the space character.
+</LI>
+</UL>
+</LI>
+</UL>
+</p>
+<P>
+To encode other kinds of information about the knowledge base, it is recommended to use specific comments introduced by <span class="code">%%</span>.
+</p>
+<H4>Note on the scope of variable identifiers.</H4>
+<p>
+While the scope of a constant or a predicate identifier is the whole document, the scope of a variable is local to a  <span class="dlgp-blue-token">&lt;statement&gt;</span>. Thus two different facts, rules or constraints actually do not share any variable (more precisely, variables with the same name in different statements are each bound by their own quantifier).
+</P>
+<p>
+Example:
+<pre>
+p(X,a), q(X,Y).
+q(X,b).
+</pre>
+is logically interpreted as <!-- MATH
+ $\exists X \exists Y (p(X,a) \wedge q(X,Y)) \wedge \exists X q(X,b)$
+ -->
+<em>∃X∃Y (p(X,a) ∧ q(X,Y)) ∧ ∃X q(X,b)</em>
+</p>
+<p>
+while:
+<pre>
+  p(X,a), q(X,Y), q(X,b).
+</pre>
+is logically interpreted as <!-- MATH
+ $\exists X \exists Y (p(X,a) \wedge q(X,Y) \wedge q(X,b))$
+                              -->
+<em>∃X∃Y (p(X,a) ∧ q(X,Y) ∧ q(X,b))</em>.
+</p>
+<H2>Examples</H2>
+<H3>A simple example using annotations</H3>
+  <pre><code class="dlgp hljs">
+    @facts
+    [f1] p(a), relatedTo(a,b), q(b).
+    [f2] p(X), t(X,a,b), s(a,z).
+    t(X,a,b), relatedTo(Y,z).
+    @constraints
+    [c1] ! :- relatedTo(X,X).
+    [constraint_2] ! :- X=Y, t(X,Y,b).
+    ! :- p(X), q(X).
+    @rules
+    [r1] relatedTo(X,Y) :- p(X), t(X,Z).
+    s(X,Y), s(Y,Z) :- q(X),t(X,Z).
+    [rA 1] p(X) :- q(X).
+    Y=Z :- t(X,Y),t(X,Z).
+    s(a) :- .
+    s(Z) :- a=b, X=Y, X=a, p(X,Y).
+    @queries
+    [q1] ? (X) :- p(X), relatedTo(X,Z), t(a,Z).
+    [Query2] ? (X,Y) :- relatedTo(X,X), Y=a.
+    ? :- p(X).
+    ?() :- .
+  </code></pre>
+<H3>An example which illustrates the use of IRIs and literals</H3>
+ The three first facts have the same interpretation.
+  <pre><code class="dlgp hljs">
+    @base <http://www.example.org/>
+    @prefix ex: <http://www.example.org/>
+    @prefix inria-team: <https://team.inria.fr/>
+    @prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+    @facts
+    % use of @base
+    [f 1] <Pred>(1.5).
+    % use of @prefix
+    [f 2] ex:Pred("1.5"^^xsd:decimal).
+    % absolute IRIs
+    [f 3] <http://www.example.org/Pred>("1.5"^^<http://www.w3.org/2001/XMLSchema#decimal>).
+    % use of @base for the predicate and @prefix for the argument
+    [f 4] team(inria-team:graphik).
+  </code></pre>
+<H3>A syntactically correct but not human-friendly file</H3>
+  <pre><code class="dlgp hljs">
+    [f1] p(a), relatedTo(a,b), q(b). [f2] p(X), t(X,a,b), s(a,z).
+    [c1] !:-relatedTo(X
+    % this is a comment
+    ,X).
+    [q1]?(X) :- p(X), relatedTo(X,Z), t(a,Z).
+    t(X,a,b).
+    [r1] relatedTo(X,Y) :- p(X), t(X,Z).
+    [constraint_2] ! :- X=Y, t(X,Y,b).
+    s(X,Y), s(Y,Z) :- % This is another comment
+    q(X),t(X,Z).
+    [rA_1] p(X)
+    :-
+    q(X)
+    . Y=Z :- t(X,Y),t(X,Z).
+    [Query2]
+    ? (X,Y) :- relatedTo(X,X), Y=a.
+    s(Z) :- a=b, X=Y, X=a, p(X,Y).
+    !:- p(X), q(X).
+    relatedTo(Y,z).?    :- p(X).
+  </code></pre>
+      </div>
+    </div>
+    <!-- FOOTER -->
+    <!-- FOOTER -->
+    <footer class="page-footer">
+      <div class="container">
+        <a href="mailto:sympa@lirmm.fr?subject=SUBSCRIBE graal">Subscribe to Graal newsletter</a>
+        <p> Contacts:
+        <script type="text/javascript">
+        <!-- //encodage de l'adresse email
+                Rot17.write('<r yivw="drzckf:jzgzvkvi@czidd.wi">jzgzvkvi@czidd.wi</r>');
+                document.write(' ');
+          Rot17.write('<r yivw="drzckf:dlxezvi@czidd.wi">dlxezvi@czidd.wi</r>');
+     -->
+        </script></p>
+        <p>
+            Thanks to <a href="https://www.yourkit.com"><img style="height: 24px; bottom: -6px; border: none; box-shadow: none; margin: 0; padding: 0;" src="https://www.yourkit.com/images/yklogo.png"></a> for its <a href="https://www.yourkit.com/java/profiler/index.jsp">Java Profiler</a></br>
+            Published with <a href="https://pages.github.com">GitHub Pages</a>
+        </p>
+      </div>
+      <div class="footer-copyright">
+      <div class="container">
+          Graal maintained by <a href="https://team.inria.fr/graphik/">GraphIK team</a>
+      </div>
+    </div>
+    </footer>
+    <!-- Import jQuery before materialize.js -->
+<script type="text/javascript" src="../js/materialize.min.js"></script>
+<!-- Code highlighting -->
+<script type="text/javascript" src="../js/highlight.pack.js"></script>
+<script type="text/javascript" src="../js/init.js"></script>
+<!-- Piwik -->
+<script type="text/javascript">
+var _paq = _paq || [];
+_paq.push(['trackPageView']);
+_paq.push(['enableLinkTracking']);
+(function() {
+var u="//info-demo.lirmm.fr/analytics/";
+_paq.push(['setTrackerUrl', u+'piwik.php']);
+_paq.push(['setSiteId', 1]);
+var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+})();
+</script>
+<noscript><p><img src="//info-demo.lirmm.fr/analytics/piwik.php?idsite=1" style="border:0;" alt="" /></p></noscript>
+<!-- End Piwik Code -->
+  </body>
+</html>
