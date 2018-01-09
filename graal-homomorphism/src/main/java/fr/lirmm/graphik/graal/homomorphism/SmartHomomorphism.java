@@ -58,6 +58,7 @@ import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismChecker;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
+import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
 import fr.lirmm.graphik.graal.homomorphism.checker.AtomicQueryHomomorphismChecker;
 import fr.lirmm.graphik.graal.homomorphism.checker.AtomicQueryHomomorphismWithNegatedPartsChecker;
 import fr.lirmm.graphik.graal.homomorphism.checker.BacktrackChecker;
@@ -158,33 +159,43 @@ public class SmartHomomorphism extends AbstractProfilable implements Homomorphis
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Execute query with compilation: {}", query);
 		
-    	for(HomomorphismChecker e : elements) {
-    		if(e.getSolver() instanceof HomomorphismWithCompilation && e.check(query, atomSet)) {
-    			@SuppressWarnings("unchecked")
+		// is there really a compilation?
+		if (compilation == null || compilation == NoCompilation.instance()) {
+			return this.execute(query, atomSet);
+		}
+
+		for (HomomorphismChecker e : elements) {
+			if (e.getSolver() instanceof HomomorphismWithCompilation && e.check(query, atomSet)) {
+				@SuppressWarnings("unchecked")
 				HomomorphismWithCompilation<Object, AtomSet> solver = (HomomorphismWithCompilation<Object, AtomSet>) e.getSolver();
-    			if (LOGGER.isDebugEnabled())
-    				LOGGER.debug("Solver: {}", solver.getClass());
-    			return solver.execute(query, atomSet, compilation);
-    		}
-    	}
-    	throw new HomomorphismException("Solver not found");
+				if (LOGGER.isDebugEnabled())
+					LOGGER.debug("Solver: {}", solver.getClass());
+				return solver.execute(query, atomSet, compilation);
+			}
+		}
+		throw new HomomorphismException("Solver not found");
 	}
 	
 	@Override
-	public boolean exist(Object query, AtomSet atomSet, RulesCompilation compilation)
-	    throws HomomorphismException {
+	public boolean exist(Object query, AtomSet atomSet, RulesCompilation compilation) throws HomomorphismException {
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Exist query with compilation: {}", query);
-    	for(HomomorphismChecker e : elements) {
-    		if(e.getSolver() instanceof HomomorphismWithCompilation && e.check(query, atomSet)) {
-    			@SuppressWarnings("unchecked")
+
+		// is there really a compilation?
+		if (compilation == null || compilation == NoCompilation.instance()) {
+			return this.exist(query, atomSet);
+		}
+
+		for (HomomorphismChecker e : elements) {
+			if (e.getSolver() instanceof HomomorphismWithCompilation && e.check(query, atomSet)) {
+				@SuppressWarnings("unchecked")
 				HomomorphismWithCompilation<Object, AtomSet> solver = (HomomorphismWithCompilation<Object, AtomSet>) e.getSolver();
-    			if (LOGGER.isDebugEnabled())
-    				LOGGER.debug("Solver: {}", solver.getClass());
-    			return solver.exist(query, atomSet, compilation);
-    		}
-    	}
-    	throw new HomomorphismException("Solver not found");
+				if (LOGGER.isDebugEnabled())
+					LOGGER.debug("Solver: {}", solver.getClass());
+				return solver.exist(query, atomSet, compilation);
+			}
+		}
+		throw new HomomorphismException("Solver not found");
 	}
 	
 	
