@@ -53,6 +53,7 @@ import fr.lirmm.graphik.graal.api.core.UnionOfConjunctiveQueries;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
+import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
 import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
@@ -114,16 +115,16 @@ class UnionConjunctiveQueriesSubstitutionIterator extends AbstractProfilable imp
 				this.getProfiler().start("SubQuery" + i);
 				try {
 					if(this.homomorphism == null) {
-						if(this.compilation == null) {
-							this.tmpIt = SmartHomomorphism.instance().execute(q, this.atomSet);
-						} else {
-							this.tmpIt = SmartHomomorphism.instance().execute(q, this.atomSet, this.compilation);
-						}
+						this.tmpIt = SmartHomomorphism.instance().execute(q, this.atomSet, this.compilation);
 					} else {
-						if(this.compilation == null) {
-							this.tmpIt = this.homomorphism.execute(q, this.atomSet);
+						if(this.compilation != null && !(this.compilation instanceof NoCompilation)) {
+							if(this.homomorphism instanceof HomomorphismWithCompilation) {
+								this.tmpIt = ((HomomorphismWithCompilation<ConjunctiveQuery,AtomSet>) this.homomorphism).execute(q, this.atomSet, this.compilation);
+							} else {
+								throw new IteratorException("There is a compilation and selected homomorphism can't handle it : " + this.homomorphism.getClass());
+							}
 						} else {
-							this.tmpIt = ((HomomorphismWithCompilation<ConjunctiveQuery,AtomSet>) this.homomorphism).execute(q, this.atomSet, this.compilation);
+							this.tmpIt = this.homomorphism.execute(q, this.atomSet);
 						}
 					}
 					if (this.isBooleanQuery && this.tmpIt.hasNext()) {
