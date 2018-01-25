@@ -54,6 +54,19 @@ import fr.lirmm.graphik.graal.core.HashMapSubstitution;
 import fr.lirmm.graphik.util.stream.converter.ConversionException;
 import fr.lirmm.graphik.util.stream.converter.Converter;
 
+/**
+ * This class allow to convert Atoms into {@link Substitution} based on
+ * an atomic {@link Query} pattern.
+ * <br/>
+ * For example given: <br/>
+ * a query "p(X,Y,Z)"<br/>
+ * a list of answer terms "X, Z"<br/>
+ * <br/>
+ * the {@link Atom} "p(a,b,c)" will produce the {@link Substitution} "{X->a, Z->c}".
+ * 
+ * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
+ *
+ */
 class Atom2SubstitutionConverter implements Converter<Atom, Substitution> {
 	
 	private Map<Variable, Integer> variables = new TreeMap<Variable, Integer>();
@@ -84,11 +97,19 @@ class Atom2SubstitutionConverter implements Converter<Atom, Substitution> {
 		}
 	}
 	
+	/**
+	 * If you call this method with an atom which does not fulfill the query pattern, the behavior is not specified.
+	 * 
+	 * @param object the atom to convert
+	 * @return  the corresponding substitution
+	 */
 	@Override
 	public Substitution convert(Atom object) throws ConversionException {
 		Substitution s = new HashMapSubstitution();
-		for (Term var : ans) { 
-			s.put((Variable) var, object.getTerm(variables.get(var)));
+		for (Term var : ans) {
+			if(var.isVariable() && variables.containsKey(var)) {
+				s.put((Variable) var, object.getTerm(variables.get(var)));
+			}
 		}
 		return s;
 	}
