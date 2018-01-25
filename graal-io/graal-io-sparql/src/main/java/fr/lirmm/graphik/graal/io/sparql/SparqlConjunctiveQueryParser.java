@@ -48,12 +48,15 @@ package fr.lirmm.graphik.graal.io.sparql;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryFactory;
 
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.graal.api.io.ParseError;
 import fr.lirmm.graphik.graal.core.factory.DefaultAtomSetFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
@@ -111,6 +114,14 @@ public class SparqlConjunctiveQueryParser {
 
 		ElementVisitorImpl visitor = new ElementVisitorImpl(DefaultAtomSetFactory.instance().create());
 		sparql.getQueryPattern().visit(visitor);
+		
+		// check if answer variables appear in the query body
+		Set<Variable> bodyVars = visitor.getAtomSet().getVariables();
+		for(Term t : ans) {
+			if(t.isVariable() && !bodyVars.contains(t)) {
+				throw new ParseError("The variable ["+ t +"] of the answer list does not appear in the query body.");
+			}
+		}
 
 		this.query = DefaultConjunctiveQueryFactory.instance().create(visitor.getAtomSet(), ans);
 	}

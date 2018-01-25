@@ -135,7 +135,7 @@ abstract class AbstractDlgpListener implements ParserListener {
 			Set<Variable> bodyVars = this.atomSet.getVariables();
 			for(Term t : this.answerVars) {
 				if(t.isVariable() && !bodyVars.contains(t)) {
-					throw new ParseError("There is at least one variable in the answer list which does not appear in the query body.");
+					throw new ParseError("The variable ["+ t +"] of the answer list does not appear in the query body.");
 				}
 			}
 			this.createQuery(
