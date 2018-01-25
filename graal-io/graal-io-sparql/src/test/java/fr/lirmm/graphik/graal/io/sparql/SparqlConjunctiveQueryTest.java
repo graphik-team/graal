@@ -105,7 +105,7 @@ public class SparqlConjunctiveQueryTest {
 	public void test2() throws ParseException {
 		String query = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
 		               + "PREFIX : <http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#>"
-		               + "SELECT DISTINCT ?0 ?1 ?2"
+		               + "SELECT DISTINCT ?0 ?1 ?2 "
 		               + "WHERE"
 		               + "{"
 		               + "	?0  :worksFor ?1  ."
@@ -153,7 +153,7 @@ public class SparqlConjunctiveQueryTest {
 		               + "PREFIX : <"
 		               + PREFIX
 		               + ">"
-		               + "SELECT DISTINCT ?x ?y "
+		               + "SELECT DISTINCT ?x "
 		               + "WHERE"
 		               + "{"
 		               + "	?x a :A  ."
@@ -188,7 +188,7 @@ public class SparqlConjunctiveQueryTest {
 		               + "PREFIX : <"
 		               + PREFIX
 		               + ">"
-		               + "SELECT DISTINCT ?x ?y "
+		               + "SELECT DISTINCT ?x "
 		               + "WHERE"
 		               + "{"
 		               + "	?x :p 7 ."
@@ -208,7 +208,7 @@ public class SparqlConjunctiveQueryTest {
 		               + "PREFIX : <"
 		               + PREFIX
 		               + ">"
-		               + "SELECT DISTINCT ?x ?y "
+		               + "SELECT DISTINCT ?x "
 		               + "WHERE"
 		               + "{"
 		               + "	?x :p 'toto' ."
