@@ -95,9 +95,12 @@ public class BackjumpTest {
 		                                           NoForwardChecking.instance(), bcc.getBCCBackJumping());
 		h.setProfiler(new CPUTimeProfiler());
 		CloseableIterator<Substitution> results = h.execute(query, data);
+		int i = 0;
 		while (results.hasNext()) {
 			results.next();
+			++i;
 		}
-		Assert.assertEquals(47, h.getProfiler().get("#calls"));
+		Assert.assertEquals(3, i);
+		Assert.assertEquals(49, h.getProfiler().get("#calls"));
 	}
 }

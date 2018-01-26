@@ -53,10 +53,12 @@ import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.store.TripleStore;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphStore;
@@ -64,6 +66,8 @@ import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.test.TestUtil;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
+import fr.lirmm.graphik.util.stream.Iterators;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -165,4 +169,20 @@ public class ConjunctiveQueryFixedBugTest {
 			Assert.assertTrue(e.getMessage(), false);
 		}
 	}
+	
+	@Theory 
+	public void issue80(Homomorphism<ConjunctiveQuery, AtomSet> h, AtomSet store) throws AtomSetException, HomomorphismException, IteratorException {
+		store.addAll(DlgpParser.parseAtomSet("<P>(a,b), <P>(b,c), <P>(c,d), <P>(e,c), <P>(f,e)."));
+		
+		ConjunctiveQuery query = DlgpParser.parseQuery("?(X0,X1,X2,X3) :- <P>(X0,X1), <P>(X1,X2), <P>(X2,X3).");
+
+		CloseableIterator<Substitution> results = h.execute(query, store);
+		int nbResults = 0;
+		results = Iterators.uniq(results);
+		while(results.hasNext()) {
+			++nbResults;
+		}
+		Assert.assertEquals(2, nbResults);
+	}
+	
 }

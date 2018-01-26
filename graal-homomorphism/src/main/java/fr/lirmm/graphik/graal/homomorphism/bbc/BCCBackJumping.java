@@ -104,7 +104,7 @@ class BCCBackJumping extends AbstractProfilable implements BackJumping {
 	@Override
 	public void success() {
 		this.bj.success();
-		Arrays.fill(success, false);
+		Arrays.fill(success, true);
 	}
 	
 	@Override
