@@ -118,6 +118,11 @@ public class FixedOrderScheduler extends AbstractProfilable implements Scheduler
 		return true;
 	}
 	
+	@Override
+	public String getInfos(Var var) {
+		return Integer.toString(order.indexOf(var.shared.value));
+	}
+	
 	// /////////////////////////////////////////////////////////////////////////
 	// OBJECT OVERRIDE METHODS
 	// /////////////////////////////////////////////////////////////////////////

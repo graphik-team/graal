@@ -180,6 +180,7 @@ public class ConjunctiveQueryFixedBugTest {
 		int nbResults = 0;
 		results = Iterators.uniq(results);
 		while(results.hasNext()) {
+			results.next();
 			++nbResults;
 		}
 		Assert.assertEquals(2, nbResults);

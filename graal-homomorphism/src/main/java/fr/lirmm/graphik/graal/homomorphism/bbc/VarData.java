@@ -66,5 +66,25 @@ public class VarData {
 	public void clear() {
 		this.forbidden.clear();
 	}
+	
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("## accessor: " + accesseur);
+		sb.append(" / on failure: " + previousLevelFailure);
+		if(forbidden != null) {
+			sb.append(" // forbidden: " + forbidden);
+		}
+		if(compilateurs != null) {
+			sb.append(" // compilators: " + compilateurs);
+		}
+		if(isAccesseur)
+			sb.append(" // is accessor,");
+		if(isEntry)
+			sb.append(" // is entry,");
+		if(isTerminal)
+			sb.append(" // is terminal,");
+		
+		return sb.toString();
+	}
 
 }

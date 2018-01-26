@@ -86,12 +86,33 @@ class BCCScheduler extends AbstractProfilable implements PatternScheduler {
 	private Comparator<Integer> varComparator;
 	private Term[] inverseMap;
 	boolean withForbiddenCandidate;
+	private double ansVariableFactor = 1E-4;
 
+	/**
+	 * 
+	 * @param BCC
+	 * @param withForbiddenCandidate
+	 */
 	BCCScheduler(BCC BCC, boolean withForbiddenCandidate) {
 		this.BCC = BCC;
 		this.withForbiddenCandidate = withForbiddenCandidate;
 	}
-
+	
+	/**
+	 * 
+	 * @param BCC
+	 * @param withForbiddenCandidate
+	 * @param ansVariableFactor must be in ]0, 1], where a small value favours answer variables. 
+	 * A value of one means that answer variables will not be avantageous. 
+	 */
+	BCCScheduler(BCC BCC, boolean withForbiddenCandidate, double ansVariableFactor) {
+		this.BCC = BCC;
+		this.withForbiddenCandidate = withForbiddenCandidate;
+		if(ansVariableFactor > 0 && ansVariableFactor <=1) {
+			this.ansVariableFactor = ansVariableFactor;
+		}
+	}
+	
 	@Override
 	public VarSharedData[] execute(InMemoryAtomSet query, Set<Variable> preAffectedVars, List<Term> ans, AtomSet data,
 			RulesCompilation rc) {
@@ -118,6 +139,13 @@ class BCCScheduler extends AbstractProfilable implements PatternScheduler {
 		} else {
 			proba = new double[variables.size() + 1];
 			Arrays.fill(proba, 1);
+		}
+		// bias proba of answer variables
+		for(Term t : ans) {
+			if(t.isVariable()) {
+				int idx = map.get(t);
+				proba[idx] *= ansVariableFactor;
+			}
 		}
 		this.varComparator = new IntegerComparator(proba);
 
@@ -466,6 +494,11 @@ class BCCScheduler extends AbstractProfilable implements PatternScheduler {
 				System.out.print("}");
 			}
 		}
+	}
+
+	@Override
+	public String getInfos(Var var) {
+		return BCC.varData[var.shared.level].toString();
 	}
 	
 }

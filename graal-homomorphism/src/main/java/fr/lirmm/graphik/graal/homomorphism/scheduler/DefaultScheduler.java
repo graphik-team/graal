@@ -121,5 +121,11 @@ public class DefaultScheduler extends AbstractProfilable implements Scheduler {
 	public boolean isAllowed(Var var, Term image) {
 		return true;
 	}
+	
+	@Override
+	public String getInfos(Var var) {
+		return "";
+	}
+	
 
 }

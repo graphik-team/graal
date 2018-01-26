@@ -390,7 +390,11 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution>
 			sb.append(v.shared.negatedPartsToCheck.isEmpty() ? "   " : " \u00AC ");
 			sb.append("\tFC{");
 			this.data.fc.append(sb, i).append("}");
-			this.data.bj.append(sb, i).append("\n");
+			this.data.bj.append(sb, i).append(" ");
+			
+			sb.append(this.data.scheduler.getInfos(v));
+			sb.append("\n");
+			
 			++i;
 		}
 		sb.append("\t}\n}\n");

@@ -87,5 +87,12 @@ public interface Scheduler extends Profilable {
 	 * 
 	 */
 	void clear();
+	
+	/**
+	 * Return an informative string about specified variable
+	 * @param var
+	 * @return
+	 */
+	String getInfos(Var var);
 
 }
