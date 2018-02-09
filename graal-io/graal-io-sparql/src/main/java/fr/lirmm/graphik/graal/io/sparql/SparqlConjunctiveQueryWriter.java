@@ -111,8 +111,10 @@ public class SparqlConjunctiveQueryWriter extends AbstractSparqlWriter implement
 			throws IOException {
 
 		this.write("SELECT DISTINCT ");
-		for(Term t : query.getAnswerVariables())
+		for(Term t : query.getAnswerVariables()) {
 			this.write(t);
+			this.write(' ');
+		}
 
 		this.write("\nWHERE\n{\n");
 		boolean isFirst = true;

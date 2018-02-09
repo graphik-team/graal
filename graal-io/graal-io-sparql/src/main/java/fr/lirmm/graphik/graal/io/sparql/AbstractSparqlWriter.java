@@ -46,6 +46,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.Literal;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.io.AbstractWriter;
@@ -171,15 +172,56 @@ public class AbstractSparqlWriter extends AbstractWriter {
 		if (t.isVariable()) {
 			this.write('?');
 			this.writeSimpleIdentifier(t.getIdentifier().toString());
+		} else if (t.isLiteral()) {
+			this.writeLiteral((Literal) t);
 		} else {
 			this.writeIdentifier(t.getIdentifier());
 		}
-		this.write(' ');
 	}
 
 	protected void writeSimpleIdentifier(String identifier) throws IOException {
 		identifier = identifier.replaceAll("[^a-zA-Z0-9_]", "_");
 		this.write(identifier);
+	}
+	
+	/**
+	 * FIXME this is a copy/paste from graal-io-dlgp, this method must be shared through a tiers common module.
+	 * @param l
+	 * @throws IOException
+	 */
+	protected void writeLiteral(Literal l) throws IOException {
+		if(URIUtils.XSD_STRING.equals(l.getDatatype())) {
+			this.write('"');
+			this.write(l.getValue().toString().replaceAll("\"", "\\\\\""));
+			this.write('"');
+		} else if (URIUtils.RDF_LANG_STRING.equals(l.getDatatype())) {
+			String value = l.getValue().toString();
+			int delim = value.lastIndexOf('@');
+			if (delim > 0) {
+				this.write('"');
+				this.write(value.substring(0, delim).replaceAll("\"", "\\\\\""));
+				this.write("\"@");
+				this.write(value.substring(delim + 1));
+			} else {
+				this.write('"');
+				this.write(value);
+				this.write('"');
+			}
+		} else if (URIUtils.XSD_INTEGER.equals(l.getDatatype())) {
+			this.write(l.getValue().toString());
+		} else if (URIUtils.XSD_DECIMAL.equals(l.getDatatype())) {
+			this.write(l.getValue().toString());
+		} else if (URIUtils.XSD_DOUBLE.equals(l.getDatatype())) {
+			this.write(l.getValue().toString()); // FIXME ?
+		} else if (URIUtils.XSD_BOOLEAN.equals(l.getDatatype())) {
+			this.write(l.getValue().toString());
+		} else {
+			this.write('"');
+			this.write(l.getValue().toString().replaceAll("\"", "\\\\\""));
+			this.write("\"^^<");
+			this.write(l.getDatatype().toString());
+			this.write('>');
+		}
 	}
 
 }
