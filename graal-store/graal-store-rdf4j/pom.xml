@@ -13,8 +13,7 @@
 	<name>fr.lirmm.graphik:graal-store-rdf4j</name>
 
 	<properties>
-		<jdk.version>1.7</jdk.version>
-		<rdf4j.version>1.0.3</rdf4j.version>
+		<rdf4j.version>2.2.4</rdf4j.version>
 	</properties>
 
 	<developers>
@@ -88,19 +87,5 @@
 			<version>1.2</version>
 		</dependency>
 	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
-				<configuration>
-					<source>${jdk.version}</source>
-					<target>${jdk.version}</target>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 
 </project>

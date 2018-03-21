@@ -191,7 +191,7 @@ final class OWLAPIUtils {
 					union.add(e);
 				}
 			}
-			return new OWLObjectUnionOfImpl(union);
+			return new OWLObjectUnionOfImpl(union.stream());
 		} else if (classExpression instanceof OWLObjectIntersectionOf) {
 			List<Set<OWLClassExpression>> conjunctions = new LinkedList<>();
 			conjunctions.add(new TreeSet<OWLClassExpression>());
@@ -224,11 +224,11 @@ final class OWLAPIUtils {
 			Set<OWLClassExpression> union = new TreeSet<>();
 			if (conjunctions.size() > 1) {
 				for (Set<OWLClassExpression> conj : conjunctions) {
-					union.add(new OWLObjectIntersectionOfImpl(conj));
+					union.add(new OWLObjectIntersectionOfImpl(conj.stream()));
 				}
-				return new OWLObjectUnionOfImpl(union);
+				return new OWLObjectUnionOfImpl(union.stream());
 			} else {
-				return new OWLObjectIntersectionOfImpl(conjunctions.get(0));
+				return new OWLObjectIntersectionOfImpl(conjunctions.get(0).stream());
 			}
 		} else if (classExpression instanceof OWLObjectSomeValuesFrom) {
 			OWLObjectSomeValuesFrom expr = (OWLObjectSomeValuesFrom) classExpression;
@@ -243,7 +243,7 @@ final class OWLAPIUtils {
 					e = classExpressionDisjunctiveNormalForm(e);
 					union.add(new OWLObjectSomeValuesFromImpl(prop, e));
 				}
-				return new OWLObjectUnionOfImpl(union);
+				return new OWLObjectUnionOfImpl(union.stream());
 			}
 
 			return new OWLObjectSomeValuesFromImpl(prop, filler);
@@ -260,7 +260,7 @@ final class OWLAPIUtils {
 					e = dataRangeDisjunctiveNormalForm(e);
 					union.add(new OWLDataSomeValuesFromImpl(prop, e));
 				}
-				return new OWLObjectUnionOfImpl(union);
+				return new OWLObjectUnionOfImpl(union.stream());
 			}
 
 			return new OWLDataSomeValuesFromImpl(prop, filler);
@@ -272,9 +272,9 @@ final class OWLAPIUtils {
 			Set<OWLClassExpression> union = new TreeSet<>();
 			for (OWLIndividual i : expr.getIndividuals()) {
 				Set<OWLIndividual> individuals = Collections.singleton(i);
-				union.add(new OWLObjectOneOfImpl(individuals));
+				union.add(new OWLObjectOneOfImpl(individuals.stream()));
 			}
-			return new OWLObjectUnionOfImpl(union);
+			return new OWLObjectUnionOfImpl(union.stream());
 		} else if (classExpression instanceof OWLObjectAllValuesFrom) {
 			OWLObjectAllValuesFrom expr = (OWLObjectAllValuesFrom) classExpression;
 			return new OWLObjectAllValuesFromImpl(expr.getProperty(),

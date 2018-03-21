@@ -50,7 +50,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.jgrapht.DirectedGraph;
-import org.jgrapht.alg.StrongConnectivityInspector;
+import org.jgrapht.alg.KosarajuStrongConnectivityInspector;
+import org.jgrapht.alg.interfaces.StrongConnectivityAlgorithm;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 
@@ -133,7 +134,7 @@ public class GraphPositionDependencies {
 		if (this.isFiniteRank == null) {
 			this.isFiniteRank = new TreeSet<PredicatePosition>();
 
-			StrongConnectivityInspector<PredicatePosition, DefaultEdge> sccInspector = new StrongConnectivityInspector<PredicatePosition, DefaultEdge>(
+			StrongConnectivityAlgorithm<PredicatePosition, DefaultEdge> sccInspector = new KosarajuStrongConnectivityInspector<PredicatePosition, DefaultEdge>(
 					graph);
 			List<Set<PredicatePosition>> sccList = sccInspector
 					.stronglyConnectedSets();

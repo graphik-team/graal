@@ -48,7 +48,7 @@ import java.io.StringWriter;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.hp.hpl.jena.query.QueryParseException;
+import org.apache.jena.query.QueryParseException;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.Literal;

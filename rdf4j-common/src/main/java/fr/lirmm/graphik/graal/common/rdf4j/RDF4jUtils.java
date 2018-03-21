@@ -42,6 +42,8 @@
  */
 package fr.lirmm.graphik.graal.common.rdf4j;
 
+import java.util.Optional;
+
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.Statement;
@@ -108,9 +110,11 @@ public class RDF4jUtils {
 			URI uri = URIUtils.createURI(l.getDatatype().toString());
 			String label = l.getLabel();
 			if (uri.equals(URIUtils.RDF_LANG_STRING)) {
-				String opt = l.getLanguage();
-				label += "@";
-				label += opt;
+				Optional<String> opt = l.getLanguage();
+				if(opt.isPresent()) {
+    				label += "@";
+    				label += opt.get();
+				}
 			}
 			return DefaultTermFactory.instance().createLiteral(uri, label);
 		}

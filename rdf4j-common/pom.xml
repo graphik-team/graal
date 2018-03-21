@@ -12,8 +12,7 @@
 	<name>fr.lirmm.graphik:rdf4j-common</name>
 
 	<properties>
-		<jdk.version>1.7</jdk.version>
-		<rdf4j.version>1.0.3</rdf4j.version>
+		<rdf4j.version>2.2.4</rdf4j.version>
 	</properties>
 
 	<developers>

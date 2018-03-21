@@ -52,7 +52,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
@@ -99,7 +98,6 @@ public class Neo4jStore extends GraphDBStore {
 	}
 
 	private GraphDatabaseService graph;
-	private ExecutionEngine cypherEngine;
 	private Map<Thread, Transaction> transactions;
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -125,7 +123,6 @@ public class Neo4jStore extends GraphDBStore {
 						.assertPropertyIsUnique("value").create();*/
 			}
 
-			cypherEngine = new ExecutionEngine(graph);
 			this.successTransaction();
 		} finally {
 			this.reloadTransaction();
@@ -137,7 +134,7 @@ public class Neo4jStore extends GraphDBStore {
 	 * @param filepath
 	 */
 	public Neo4jStore(String filepath) {
-		this(new GraphDatabaseFactory().newEmbeddedDatabase(filepath));
+		this(new GraphDatabaseFactory().newEmbeddedDatabase(new File(filepath)));
 	}
 
 	/**
@@ -246,15 +243,15 @@ public class Neo4jStore extends GraphDBStore {
 	@Override
 	public CloseableIterator<Atom> iterator() {
 		this.checkTransaction();
-		return new Neo4jAtomIterator(this.getTransaction(), this.cypherEngine.execute(
-				"match (atom:ATOM) return atom").iterator());
+		return new Neo4jAtomIterator(this.getTransaction(), this.graph.execute(
+				"match (atom:ATOM) return atom"));
 	}
 
 	@Override
 	public CloseableIterator<Term> termsIterator() throws AtomSetException {
 		this.checkTransaction();
-		return new Neo4jTermIterator(this.getTransaction(), this.cypherEngine.execute(
-				"match (term:TERM) return term").iterator());
+		return new Neo4jTermIterator(this.getTransaction(), this.graph.execute(
+				"match (term:TERM) return term"));
 	}
 
 	@Override
@@ -278,9 +275,8 @@ public class Neo4jStore extends GraphDBStore {
 		Map<String, Object> params = new TreeMap<String, Object>();
 		params.put("type", type.toString());
 		this.checkTransaction();
-		return new Neo4jTermIterator(this.getTransaction(), this.cypherEngine.execute(
-				"match (term:TERM {type : { type }}) return term", params)
-				.iterator());
+		return new Neo4jTermIterator(this.getTransaction(), this.graph.execute(
+				"match (term:TERM {type : { type }}) return term", params));
 	}
 
 	@Override
@@ -301,9 +297,8 @@ public class Neo4jStore extends GraphDBStore {
 	@Override
 	public CloseableIterator<Predicate> predicatesIterator() throws AtomSetException {
 		this.checkTransaction();
-		return new Neo4jPredicateIterator(this.getTransaction(), this.cypherEngine
-				.execute("match (predicate:PREDICATE) return predicate")
-				.iterator());
+		return new Neo4jPredicateIterator(this.getTransaction(), this.graph
+				.execute("match (predicate:PREDICATE) return predicate"));
 	}
 
 	@Override
@@ -323,7 +318,7 @@ public class Neo4jStore extends GraphDBStore {
 	@Override
 	public void clear() {
 		this.checkTransaction();
-		this.cypherEngine
+		this.graph
 				.execute("MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n, r");
 		this.successTransaction();
 		this.reloadTransaction();
@@ -340,7 +335,7 @@ public class Neo4jStore extends GraphDBStore {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(query);
 		}
-		ResourceIterator<Node> result = this.cypherEngine.execute(query).columnAs("atom");
+		ResourceIterator<Node> result = this.graph.execute(query).columnAs("atom");
 		boolean res = result.hasNext();
 		result.close();
 		return res;
@@ -352,7 +347,7 @@ public class Neo4jStore extends GraphDBStore {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(query);
 		}
-		ResourceIterator<Map<String, Object>> result = this.cypherEngine.execute(query).iterator();
+		ResourceIterator<Map<String, Object>> result = this.graph.execute(query);
 
 		return new Neo4jAtomIterator(this.getTransaction(), result);
 	}
@@ -369,7 +364,7 @@ public class Neo4jStore extends GraphDBStore {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(query);
 		}
-		ResourceIterator<Map<String, Object>> result = this.cypherEngine.execute(query).iterator();
+		ResourceIterator<Map<String, Object>> result = this.graph.execute(query);
 
 		return new Neo4jAtomIterator(this.getTransaction(), result);
 	}
@@ -386,7 +381,7 @@ public class Neo4jStore extends GraphDBStore {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(query);
 		}
-		ResourceIterator<Map<String, Object>> result = this.cypherEngine.execute(query).iterator();
+		ResourceIterator<Map<String, Object>> result = this.graph.execute(query);
 
 		return new Neo4jTermIterator(this.getTransaction(), result);
 	}
@@ -413,8 +408,8 @@ public class Neo4jStore extends GraphDBStore {
 
 	private Node getTerm(Term term) {
 		Node node = null;
-		ResourceIterator<Node> it = this.graph.findNodesByLabelAndProperty(
-				NodeType.TERM, "value", term.getIdentifier()).iterator();
+		ResourceIterator<Node> it = this.graph.findNodes(
+				NodeType.TERM, "value", term.getIdentifier());
 		if (it.hasNext()) {
 			node = it.next();
 		}
@@ -447,8 +442,8 @@ public class Neo4jStore extends GraphDBStore {
 
 	private Node getPredicate(Predicate predicate) {
 		Node node = null;
-		ResourceIterator<Node> it = this.graph.findNodesByLabelAndProperty(
-				NodeType.PREDICATE, "value", predicate.getIdentifier()).iterator();
+		ResourceIterator<Node> it = this.graph.findNodes(
+				NodeType.PREDICATE, "value", predicate.getIdentifier());
 		while (node == null && it.hasNext()) {
 			Node tmp = it.next();
 			if (tmp.getProperty("arity").equals(predicate.getArity())) {

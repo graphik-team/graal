@@ -49,10 +49,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryFactory;
-import com.hp.hpl.jena.sparql.syntax.Template;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryFactory;
+import org.apache.jena.sparql.syntax.Template;
 
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.core.DefaultRule;

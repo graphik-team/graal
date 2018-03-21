@@ -226,8 +226,8 @@ public class OWL2Parser extends AbstractCloseableIterator<Object> implements Par
 	private ShortFormProvider getShortFormProvider(OWLOntology ontology) {
 		OWLDocumentFormat format = this.manager.getOntologyFormat(this.ontology);
 		DefaultPrefixManager pm = new DefaultPrefixManager();
-		if (prefixEnable && format.isPrefixOWLOntologyFormat()) {
-			PrefixDocumentFormat prefixFormat = format.asPrefixOWLOntologyFormat();
+		if (prefixEnable && format.isPrefixOWLDocumentFormat()) {
+			PrefixDocumentFormat prefixFormat = format.asPrefixOWLDocumentFormat();
 
 			Map<String, String> prefixMap = prefixFormat.getPrefixName2PrefixMap();
 
