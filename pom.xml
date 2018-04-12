@@ -76,7 +76,7 @@ algorithms, structural analysis of decidability properties of a rule set, a text
 				<version>${commons-collections4.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.commons</groupId>
+				<groupId>commons-io</groupId>
 				<artifactId>commons-io</artifactId>
 				<version>${commons-io.version}</version>
 			</dependency>
