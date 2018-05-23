@@ -59,6 +59,8 @@ import fr.lirmm.graphik.graal.api.kb.KnowledgeBaseException;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphStore;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
+import fr.lirmm.graphik.util.stream.IteratorException;
+import fr.lirmm.graphik.util.stream.Iterators;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -287,6 +289,57 @@ public class DefaultKnowledgeBaseTest {
 		Assert.assertEquals(q1, kb.getQuery("Q"));
 		Assert.assertEquals(2, kb.getQueryNames().size());
 		kb.close();
+	}
+
+	@Test(expected = KnowledgeBaseException.class)
+	public void githubIssue3_REWRITING_ONLY() throws ParseException, KBBuilderException, KnowledgeBaseException {
+		KBBuilder kbb = new KBBuilder();
+		kbb.addAll(new DlgpParser(""
+				+ "p(a)."
+				+ "q(X) :- p(X)."));
+		kbb.setApproach(Approach.REWRITING_ONLY);
+		KnowledgeBase kb = kbb.build();
+		
+		kb.saturate();
+	}
+	
+	@Test
+	public void githubIssue3_REWRITING_FIRST() throws KBBuilderException, KnowledgeBaseException, IteratorException {
+		KBBuilder kbb = new KBBuilder();
+		kbb.addAll(new DlgpParser(""
+				+ "p(a)."
+				+ "q(X) :- p(X)."));
+		kbb.setApproach(Approach.REWRITING_FIRST);
+		KnowledgeBase kb = kbb.build();
+		
+		kb.saturate();
+		Assert.assertEquals(2, Iterators.count(kb.getFacts().iterator()));
+	}
+	
+	@Test
+	public void githubIssue3_SATURATION_FIRST() throws KBBuilderException, KnowledgeBaseException, IteratorException {
+		KBBuilder kbb = new KBBuilder();
+		kbb.addAll(new DlgpParser(""
+				+ "p(a)."
+				+ "q(X) :- p(X)."));
+		kbb.setApproach(Approach.SATURATION_FIRST);
+		KnowledgeBase kb = kbb.build();
+		
+		kb.saturate();
+		Assert.assertEquals(2, Iterators.count(kb.getFacts().iterator()));
+	}
+	
+	@Test
+	public void githubIssue3_SATURATION_ONLY() throws KBBuilderException, KnowledgeBaseException, IteratorException {
+		KBBuilder kbb = new KBBuilder();
+		kbb.addAll(new DlgpParser(""
+				+ "p(a)."
+				+ "q(X) :- p(X)."));
+		kbb.setApproach(Approach.SATURATION_ONLY);
+		KnowledgeBase kb = kbb.build();
+		
+		kb.saturate();
+		Assert.assertEquals(2, Iterators.count(kb.getFacts().iterator()));
 	}
 
 

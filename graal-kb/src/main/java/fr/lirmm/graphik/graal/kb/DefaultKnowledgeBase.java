@@ -139,6 +139,7 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 		this.ruleset = new DefaultOntology();
 		this.store = new DefaultInMemoryGraphStore();
 		this.queryLabeler = new DefaultQueryLabeler();
+		this.analysedRuleSet = new AnalyserRuleSet(this.ruleset);
 	}
 
 	/**
@@ -147,8 +148,7 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 	 * {@link Atom atoms} from the specified parser.
 	 */
 	public DefaultKnowledgeBase(Parser<Object> parser) throws AtomSetException {
-		this();
-		this.load(parser);
+		this(new DefaultInMemoryGraphStore(), parser);
 	}
 
 	/**
@@ -161,6 +161,7 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 		this.store = store;
 		this.load(parser);
 		this.queryLabeler = new DefaultQueryLabeler();
+		this.analysedRuleSet = new AnalyserRuleSet(this.ruleset);
 	}
 
 	/**
@@ -171,6 +172,7 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 		this.ruleset = new DefaultOntology(ontology);
 		this.store = store;
 		this.queryLabeler = new DefaultQueryLabeler();
+		this.analysedRuleSet = new AnalyserRuleSet(this.ruleset);
 	}
 
 	@Override
@@ -198,6 +200,10 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 	public AtomSet getFacts() {
 		return store;
 	}
+	
+	public GraphOfRuleDependencies getGraphOfRuleDependencies() {
+		return this.analysedRuleSet.getGraphOfRuleDependencies();
+	}
 
 	@Override
 	public boolean isConsistent() throws KnowledgeBaseException {
@@ -214,6 +220,9 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 
 	@Override
 	public void saturate() throws KnowledgeBaseException {
+		if(this.approach == Approach.REWRITING_ONLY) {
+			throw new KnowledgeBaseException("Saturation is not allowed, this knowledge base is in rewriting only approach.");
+		}
 		if (!this.isSaturated) {
 			boolean run = this.approach == Approach.SATURATION_ONLY;
 			if(!run) {
@@ -221,7 +230,7 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 				run = this.analyse.isFES();
 			}
 			if (run) {
-				GraphOfRuleDependencies grd = this.analysedRuleSet.getGraphOfRuleDependencies();
+				GraphOfRuleDependencies grd = this.getGraphOfRuleDependencies();
 				ChaseWithGRD<AtomSet> chase = new ChaseWithGRD<>(grd, this.store);
 				chase.setProfiler(this.getProfiler());
 				try {
@@ -430,6 +439,16 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 	public Approach getApproach() {
 		return this.approach;
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder(super.toString());
+		sb.append('\n');
+		sb.append(this.ruleset.toString());
+		sb.append('\n');
+		sb.append(this.store.toString());
+		return sb.toString();
+	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// PACKAGE METHODS
@@ -525,7 +544,6 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 
 	protected void analyse() {
 		if (!this.isAnalysed) {
-			this.analysedRuleSet = new AnalyserRuleSet(this.ruleset);
 			Map<String, RuleSetProperty> properties = new HashMap<>();
 			if(this.approach != Approach.REWRITING_ONLY) {
 				properties.putAll(RuleSetPropertyHierarchy.generatePropertyMapSpecializationOf(FESProperty.instance()));
