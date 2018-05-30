@@ -128,9 +128,10 @@ public class KBBuilderTest {
 	/**
 	 * Test method for {@link fr.lirmm.graphik.graal.kb.KBBuilder#add(fr.lirmm.graphik.graal.api.core.Rule)}.
 	 * @throws ParseException 
+	 * @throws KBBuilderException 
 	 */
 	@Test
-	public void testAddRule() throws ParseException {
+	public void testAddRule() throws ParseException, KBBuilderException {
 		// Given
 		KBBuilder kbb = new KBBuilder();
 		Rule r1 = DlgpParser.parseRule("[R1] p(X) :- q(X).");
@@ -148,9 +149,10 @@ public class KBBuilderTest {
 	 * Test method for {@link fr.lirmm.graphik.graal.kb.KBBuilder#add(fr.lirmm.graphik.graal.api.core.Rule, fr.lirmm.graphik.graal.api.core.mapper.Mapper)}.
 	 * @throws ParseException 
 	 * @throws AtomSetException 
+	 * @throws KBBuilderException 
 	 */
 	@Test
-	public void testAddRuleMapper() throws ParseException, AtomSetException {		
+	public void testAddRuleMapper() throws ParseException, AtomSetException, KBBuilderException {		
 		// Given
 		KBBuilder kbb = new KBBuilder();
 		Mapper mapper = new PrefixMapper("graphik#");
@@ -310,4 +312,26 @@ public class KBBuilderTest {
 		Assert.assertEquals(Approach.SATURATION_ONLY, kb.getApproach());
 	}
 
+	
+	/**
+	 * @throws KBBuilderException 
+	 * 
+	 */
+	@Test(expected = KBBuilderException.class)
+	public void testRuleWithEqualityInHeadBehavior() throws ParseException, KBBuilderException {
+		KBBuilder kbb = new KBBuilder();
+		kbb.addAll(new DlgpParser("X=Y :- p(X,Y)."));
+		kbb.build();
+	}
+	
+	/**
+	 * @throws KBBuilderException 
+	 * 
+	 */
+	@Test(expected = KBBuilderException.class)
+	public void testRuleWithEqualityInBodyBehavior() throws ParseException, KBBuilderException {
+		KBBuilder kbb = new KBBuilder();
+		kbb.addAll(new DlgpParser("p(X,Y) :- q(X,Y), X=Y."));
+		kbb.build();
+	}
 }

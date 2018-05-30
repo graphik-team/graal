@@ -44,9 +44,9 @@ package fr.lirmm.graphik.graal.kb;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
-import fr.lirmm.graphik.graal.api.core.RuleSetException;
 import fr.lirmm.graphik.graal.api.core.mapper.Mapper;
 import fr.lirmm.graphik.graal.api.kb.Approach;
 import fr.lirmm.graphik.graal.api.kb.KnowledgeBase;
@@ -68,6 +68,8 @@ import fr.lirmm.graphik.util.stream.converter.ConverterCloseableIterator;
  */
 public class KBBuilder {
 
+	private static final String EQUALITY_PREDICATE_NOT_MANAGED_EXCEPTION = "Equality predicate is not yet managed";
+	
 	private Store store = new DefaultInMemoryGraphStore();
 	private RuleSet ontology = new LinkedListRuleSet();
 	private Approach approach;
@@ -120,7 +122,7 @@ public class KBBuilder {
 			while (it.hasNext()) {
 				o = it.next();
 				if (o instanceof Rule) {
-					this.ontology.add((Rule) o);
+					this.add((Rule) o);
 				} else if (o instanceof Atom) {
 					this.store.add((Atom) o);
 				}
@@ -135,8 +137,12 @@ public class KBBuilder {
 	/**
 	 * Loads the specified rule.
 	 * @param rule
+	 * @throws KBBuilderException 
 	 */
-	public void add(Rule rule) {
+	public void add(Rule rule) throws KBBuilderException {
+		if(rule.getBody().getPredicates().contains(Predicate.EQUALITY) || rule.getHead().getPredicates().contains(Predicate.EQUALITY)) {
+			throw new KBBuilderException(EQUALITY_PREDICATE_NOT_MANAGED_EXCEPTION);
+		}
 		this.ontology.add(rule);
 	}
 
@@ -144,20 +150,28 @@ public class KBBuilder {
 	 * Maps and loads the specifed rule.
 	 * @param rule
 	 * @param mapper
+	 * @throws KBBuilderException 
 	 */
-	public void add(Rule rule, Mapper mapper) {
-		this.ontology.add(mapper.map(rule));
+	public void add(Rule rule, Mapper mapper) throws KBBuilderException {
+		this.add(mapper.map(rule));
 	}
 
 	/**
 	 * Loads rules from the specified CloseableIterator.
+	 * 
 	 * @param it
 	 * @throws KBBuilderException
+	 * @throws  
 	 */
-	public void addRules(CloseableIterator<Object> it) throws KBBuilderException {
+	public void addRules(CloseableIterator<?> it) throws KBBuilderException {
 		try {
-			this.ontology.addAll(new RuleFilterIterator(it));
-		} catch (RuleSetException e) {
+			RuleFilterIterator ruleIt = new RuleFilterIterator(it);
+			while(ruleIt.hasNext()) {
+				Rule next = ruleIt.next();
+				this.add(next);
+			}
+			ruleIt.close();
+		} catch (IteratorException e) {
 			throw new KBBuilderException(e);
 		}
 	}
@@ -169,12 +183,8 @@ public class KBBuilder {
 	 * @throws KBBuilderException
 	 */
 	public void addRules(CloseableIterator<Object> it, Mapper mapper) throws KBBuilderException {
-		try {
-			Converter<Rule, Rule> converter = new MapperRuleConverter(mapper);
-			this.ontology.addAll(new ConverterCloseableIterator<Rule, Rule>(new RuleFilterIterator(it), converter));
-		} catch (RuleSetException e) {
-			throw new KBBuilderException(e);
-		}
+		Converter<Rule, Rule> converter = new MapperRuleConverter(mapper);
+		this.addRules(new ConverterCloseableIterator<Rule, Rule>(new RuleFilterIterator(it), converter));
 	}
 
 	/**

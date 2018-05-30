@@ -342,7 +342,4 @@ public class DefaultKnowledgeBaseTest {
 		Assert.assertEquals(2, Iterators.count(kb.getFacts().iterator()));
 	}
 
-
-
-
 }
