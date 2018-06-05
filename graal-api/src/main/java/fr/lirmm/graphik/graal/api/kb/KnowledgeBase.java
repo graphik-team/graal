@@ -143,7 +143,7 @@ public interface KnowledgeBase extends Profilable, Closeable {
 	 * 
 	 * @param query
 	 * @param timeout
-	 *            in seconds
+	 *            in milliseconds
 	 * @return an Iterator over Substitutions representing homomorphism found of
 	 *         q.
 	 * @throws KnowledgeBaseException
