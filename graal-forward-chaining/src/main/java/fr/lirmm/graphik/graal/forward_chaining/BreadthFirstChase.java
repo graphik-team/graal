@@ -45,9 +45,7 @@
 */
 package fr.lirmm.graphik.graal.forward_chaining;
 
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -56,6 +54,7 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.forward_chaining.AbstractChase;
@@ -63,17 +62,23 @@ import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
 import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
+import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphStore;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByBodyPredicatesRuleSet;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.RestrictedChaseRuleApplier;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
- * This chase (forward-chaining) algorithm iterates over all rules at each step.
- * It stops if a step does not produce new facts.
+ * At each step, this chase (forward-chaining) algorithm computes all the
+ * homomorphisms from the rule bodies to the specified AtomSet then perform
+ * the corresponding rule applications. At each step after the first one, rules
+ * are checked based on the presence of a predicate of their body in the head of
+ * a rule applied in the previous step. Furthermore, for optimization reasons,
+ * linear rules (with a single atom in the body) are applied over a set of atoms
+ * restricted to the atoms generated at the previous step which have the same
+ * predicate as the body rule atom.
  * 
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
@@ -81,8 +86,8 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 public class BreadthFirstChase extends AbstractChase<Rule, AtomSet> {
 
 	private IndexedByBodyPredicatesRuleSet ruleSet;
-	private AtomSet						   atomSet;
-	private Collection<Atom>			   tmpData = new LinkedList<Atom>();
+	private AtomSet atomSet;
+	private InMemoryAtomSet tmpData = new LinkedListAtomSet();
 
 	private Map<Rule, AtomSet> rulesToCheck;
 	private Map<Rule, AtomSet> nextRulesToCheck;
@@ -166,9 +171,7 @@ public class BreadthFirstChase extends AbstractChase<Rule, AtomSet> {
 						this.getProfiler().start(key);
 					}
 					CloseableIterator<Atom> it = this.getRuleApplier().delegatedApply(rule, data, this.atomSet);
-					while(it.hasNext()) {
-						tmpData.add(it.next());
-					}
+					tmpData.addAll(it);
 					it.close();
 
 					if (this.getProfiler().isProfilingEnabled()) {
@@ -177,7 +180,7 @@ public class BreadthFirstChase extends AbstractChase<Rule, AtomSet> {
 				}
 
 				this.dispatchNewData(this.tmpData);
-				this.atomSet.addAll(new CloseableIteratorAdapter<Atom>(this.tmpData.iterator()));
+				this.atomSet.addAll(this.tmpData);
 				this.tmpData.clear();
 
 				if (this.getProfiler().isProfilingEnabled()) {
@@ -198,8 +201,10 @@ public class BreadthFirstChase extends AbstractChase<Rule, AtomSet> {
 	// PRIVATE CLASS
 	// /////////////////////////////////////////////////////////////////////////
 
-	protected void dispatchNewData(Collection<Atom> newData) throws ChaseException {
-		for (Atom a : newData) {
+	protected void dispatchNewData(InMemoryAtomSet newData) throws ChaseException {
+		CloseableIteratorWithoutException<Atom> it = newData.iterator();
+		while (it.hasNext()) {
+			Atom a = it.next();
 			Predicate p = a.getPredicate();
 			for (Rule r : ruleSet.getRulesByBodyPredicate(p)) {
 				if (linearRuleCheck(r)) {
