@@ -40,9 +40,9 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
+/**
+* 
+*/
 package fr.lirmm.graphik.graal.forward_chaining;
 
 import java.util.Iterator;
@@ -67,7 +67,7 @@ import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
  *
  */
 public class BasicChase<T extends AtomSet> extends AbstractDirectChase<Rule, T> {
-	
+
 	private RuleSet ruleSet;
 	private T atomSet;
 	private boolean hasNext = true;
@@ -75,33 +75,30 @@ public class BasicChase<T extends AtomSet> extends AbstractDirectChase<Rule, T> 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
-	
+
 	public BasicChase(Iterator<Rule> rules, T atomSet) {
 		super(new DefaultRuleApplier<T>());
 		this.atomSet = atomSet;
 		this.ruleSet = new LinkedListRuleSet(rules);
 	}
-	
+
 	public BasicChase(Iterable<Rule> rules, T atomSet) {
 		super(new DefaultRuleApplier<T>());
 		this.atomSet = atomSet;
 		this.ruleSet = new LinkedListRuleSet(rules);
 	}
-	
-	public BasicChase(Iterator<Rule> rules, T atomSet,
-			DirectRuleApplier<? super Rule, ? super T> ruleApplier) {
+
+	public BasicChase(Iterator<Rule> rules, T atomSet, DirectRuleApplier<? super Rule, ? super T> ruleApplier) {
 		super(ruleApplier);
 		this.atomSet = atomSet;
 		this.ruleSet = new LinkedListRuleSet(rules);
 	}
 
-	public BasicChase(Iterable<Rule> rules, T atomSet,
-		DirectRuleApplier<? super Rule, ? super T> ruleApplier) {
+	public BasicChase(Iterable<Rule> rules, T atomSet, DirectRuleApplier<? super Rule, ? super T> ruleApplier) {
 		this(rules.iterator(), atomSet, ruleApplier);
 	}
 
-	public BasicChase(Iterable<Rule> rules, T atomSet,
-			Homomorphism<ConjunctiveQuery, ? super T> solver) {
+	public BasicChase(Iterable<Rule> rules, T atomSet, Homomorphism<ConjunctiveQuery, ? super T> solver) {
 		this(rules, atomSet, new DefaultRuleApplier<T>(solver));
 	}
 
@@ -110,9 +107,8 @@ public class BasicChase<T extends AtomSet> extends AbstractDirectChase<Rule, T> 
 
 	}
 
-	public BasicChase(Iterable<Rule> rules, T atomSet,
-            Homomorphism<ConjunctiveQuery, ? super T> solver,
-			ChaseHaltingCondition haltingCondition) {
+	public BasicChase(Iterable<Rule> rules, T atomSet, Homomorphism<ConjunctiveQuery, ? super T> solver,
+	    ChaseHaltingCondition haltingCondition) {
 		this(rules, atomSet, new DefaultRuleApplier<T>(solver, haltingCondition));
 	}
 
@@ -124,34 +120,29 @@ public class BasicChase<T extends AtomSet> extends AbstractDirectChase<Rule, T> 
 	public void next() throws ChaseException {
 		try {
 			this.hasNext = false;
-			for(Rule rule : this.ruleSet) {
-				if (this.getProfiler().isProfilingEnabled()) {
-					this.getProfiler().start("saturationTime");
-				}
-
+			for (Rule rule : this.ruleSet) {
 				String key = null;
 				if (this.getProfiler().isProfilingEnabled()) {
+					this.getProfiler().start("saturationTime");
+					this.getProfiler().trace(rule.toString());
 					key = "Rule " + rule.getLabel() + " application time";
 					this.getProfiler().clear(key);
-					this.getProfiler().trace(rule.toString());
 					this.getProfiler().start(key);
 				}
+
 				boolean val = this.getRuleApplier().apply(rule, this.atomSet);
 				this.hasNext = this.hasNext || val;
-				
-				if (this.getProfiler().isProfilingEnabled()) {
-					this.getProfiler().stop(key);
-				}
 
 				if (this.getProfiler().isProfilingEnabled()) {
+					this.getProfiler().stop(key);
 					this.getProfiler().stop("saturationTime");
 				}
-    		}
+			}
 		} catch (Exception e) {
 			throw new ChaseException("An error occured during saturation step.", e);
 		}
 	}
-	
+
 	@Override
 	public boolean hasNext() {
 		return this.hasNext;
