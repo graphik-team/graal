@@ -159,6 +159,12 @@ public class RDF4jStore extends AbstractTripleStore {
 			this.connection.add(new StatementIterator(utils, atom));
 		} catch (RepositoryException e) {
 			throw new AtomSetException("Error while adding the atom " + atom, e);
+		} catch (RuntimeException e) {
+			if(e.getCause() instanceof WrongArityException) {
+				// StatementIterator implements an interface which does not allow to throw an implementation of Exception
+				// so the Exception is throw through a RuntimeException
+				throw (WrongArityException) e.getCause();
+			}
 		}
 		return true;
 	}
@@ -187,6 +193,12 @@ public class RDF4jStore extends AbstractTripleStore {
 			this.connection.remove(new StatementIterator(utils, atom));
 		} catch (RepositoryException e) {
 			throw new AtomSetException("Error while removing the atoms.", e);
+		} catch (RuntimeException e) {
+			if(e.getCause() instanceof WrongArityException) {
+				// StatementIterator implements an interface which does not allow to throw an implementation of Exception
+				// so the Exception is throw through a RuntimeException
+				throw (WrongArityException) e.getCause();
+			}
 		}
 		return true;
 	}
@@ -208,6 +220,12 @@ public class RDF4jStore extends AbstractTripleStore {
 
 	@Override
 	public CloseableIterator<Atom> match(Atom atom) throws AtomSetException {
+		try {
+			// only to check validity
+			utils.atomToStatement(atom);
+		} catch (MalformedLangStringException e) {
+			throw new AtomSetException("Error on the atom " + atom, e);
+		} 
 		
 		ConjunctiveQuery query = DefaultConjunctiveQueryFactory.instance().create(atom);
 		StringWriter s = new StringWriter();
@@ -225,6 +243,10 @@ public class RDF4jStore extends AbstractTripleStore {
 
 	@Override
 	public CloseableIterator<Atom> atomsByPredicate(Predicate p) throws AtomSetException {
+		if(p.getArity() != 2) {
+			throw new WrongArityException("Error on " + p + ": arity " + p.getArity()
+				+ " is not supported by this store. ");
+		}
 		try {
 			return new AtomIterator(this.connection.getStatements(null, utils.createURI(p), null, false), utils);
 		} catch (RepositoryException e) {
@@ -234,6 +256,10 @@ public class RDF4jStore extends AbstractTripleStore {
 
 	@Override
 	public CloseableIterator<Term> termsByPredicatePosition(Predicate p, int position) throws AtomSetException {
+		if(p.getArity() != 2) {
+			throw new WrongArityException("Error on " + p + ": arity " + p.getArity()
+				+ " is not supported by this store. ");
+		}
 		TupleQuery query = null;
 		TupleQueryResult results = null;
 		try {

@@ -47,20 +47,26 @@ package fr.lirmm.graphik.graal.store.test;
 
 import org.junit.Assert;
 import org.junit.Assume;
+import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.api.store.TripleStore;
+import fr.lirmm.graphik.graal.api.store.WrongArityException;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.test.TestUtil;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -304,6 +310,29 @@ public class ConjunctiveQuery2Test {
 		} catch (Exception e) {
 			Assert.assertTrue(e.getMessage(), false);
 		}
+	}
+	
+	@Theory
+	public void testWrongArityOnTripleStoreWithHomomorphism(Homomorphism<ConjunctiveQuery, AtomSet> h, AtomSet store) throws HomomorphismException, IteratorException, AtomSetException {
+		Assume.assumeTrue(store instanceof TripleStore);
+		store.add(DlgpParser.parseAtom("p(a,b)."));
+		ConjunctiveQuery query = DlgpParser.parseQuery("? :- p(X,Y), q(Y).");
+		boolean wrongArityExceptionFound = false;
+		try {
+    		CloseableIterator<Substitution> execute = h.execute(query, store);
+    		while(execute.hasNext()) {
+    			execute.next();
+    		}
+    		execute.close();
+		} catch(IteratorException | HomomorphismException e) {
+			// look for WrongArityException in cause stack
+			Throwable cause = e;
+			while(cause != null && !(cause instanceof WrongArityException)) {
+				cause = cause.getCause();
+			}
+			wrongArityExceptionFound = cause != null;
+		}
+		Assert.assertTrue(wrongArityExceptionFound);
 	}
 
 }
