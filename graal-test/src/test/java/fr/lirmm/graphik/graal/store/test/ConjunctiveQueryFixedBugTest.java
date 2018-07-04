@@ -127,7 +127,7 @@ public class ConjunctiveQueryFixedBugTest {
 	public void GraphAtomSetQuery(Homomorphism<ConjunctiveQuery, AtomSet> h, AtomSet store) {
 		try {
 			InMemoryAtomSet atomset = new DefaultInMemoryGraphStore();
-			atomset.add(DlgpParser.parseAtom("<P>(X)."));
+			atomset.add(DlgpParser.parseAtom("<P>(X,Y)."));
 			ConjunctiveQuery query = new DefaultConjunctiveQuery(atomset);
 
 			CloseableIterator<Substitution> subReader;
