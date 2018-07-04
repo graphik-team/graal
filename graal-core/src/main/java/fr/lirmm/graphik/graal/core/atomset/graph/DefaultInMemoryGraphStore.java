@@ -253,6 +253,8 @@ public class DefaultInMemoryGraphStore extends AbstractInMemoryAtomSet implement
 	public void clear() {
 		this.terms.clear();
 		this.predicates.clear();
+		this.termsByPredicatePosition.clear();
+		this.size = 0;
 	}
 
 	@Override
