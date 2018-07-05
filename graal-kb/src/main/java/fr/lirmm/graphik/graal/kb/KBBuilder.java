@@ -116,7 +116,7 @@ public class KBBuilder {
 	 * @param it
 	 * @throws KBBuilderException
 	 */
-	public void addAll(CloseableIterator<Object> it) throws KBBuilderException {
+	public void addAll(CloseableIterator<?> it) throws KBBuilderException {
 		Object o;
 		try {
 			while (it.hasNext()) {
@@ -182,7 +182,7 @@ public class KBBuilder {
 	 * @param mapper
 	 * @throws KBBuilderException
 	 */
-	public void addRules(CloseableIterator<Object> it, Mapper mapper) throws KBBuilderException {
+	public void addRules(CloseableIterator<?> it, Mapper mapper) throws KBBuilderException {
 		Converter<Rule, Rule> converter = new MapperRuleConverter(mapper);
 		this.addRules(new ConverterCloseableIterator<Rule, Rule>(new RuleFilterIterator(it), converter));
 	}
@@ -219,7 +219,7 @@ public class KBBuilder {
 	 * @param it
 	 * @throws KBBuilderException
 	 */
-	public void addAtoms(CloseableIterator<Object> it) throws KBBuilderException {
+	public void addAtoms(CloseableIterator<?> it) throws KBBuilderException {
 		try {
 			this.store.addAll(new AtomFilterIterator(it));
 		} catch (AtomSetException e) {
@@ -233,7 +233,7 @@ public class KBBuilder {
 	 * @param mapper
 	 * @throws KBBuilderException
 	 */
-	public void addAtoms(CloseableIterator<Object> it, Mapper mapper) throws KBBuilderException {
+	public void addAtoms(CloseableIterator<?> it, Mapper mapper) throws KBBuilderException {
 		try {
 			Converter<Atom, Atom> converter = new MapperAtomConverter(mapper);
 			this.store.addAll(
