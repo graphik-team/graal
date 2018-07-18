@@ -353,12 +353,12 @@ public class BacktrackHomomorphism extends AbstractHomomorphismWithCompilation<C
 
 	@Override
 	public CloseableIterator<Substitution> execute(ConjunctiveQuery q, AtomSet a,
-	    RulesCompilation compilation) throws HomomorphismException {
+	    RulesCompilation compilation, Substitution s) throws HomomorphismException {
 		Pair<ConjunctiveQuery, Substitution> pair = EqualityUtils.processEquality(q);
 
 		CloseableIterator<Substitution> results = new BacktrackIterator(pair.getLeft().getAtomSet(), Collections.<InMemoryAtomSet>emptyList(), a, pair.getLeft().getAnswerVariables(),
 		                                                            this.scheduler, this.bootstrapper, this.fc,
-		                                                            this.bj, compilation, this.getProfiler());
+		                                                            this.bj, compilation, s, this.getProfiler());
 		
 		if(!pair.getRight().getTerms().isEmpty()) {
 			results =  new ConverterCloseableIterator<Substitution, Substitution>(results, new EqualityHandlerConverter(pair.getRight()));

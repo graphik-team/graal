@@ -94,14 +94,14 @@ public class AtomicQueryHomomorphismWithNegatedParts extends AbstractHomomorphis
 	// HOMOMORPHISM METHODS
 	// /////////////////////////////////////////////////////////////////////////
 	
-	public CloseableIterator<Substitution> execute(ConjunctiveQueryWithNegatedParts query, AtomSet data, RulesCompilation compilation) throws HomomorphismException {
+	public CloseableIterator<Substitution> execute(ConjunctiveQueryWithNegatedParts query, AtomSet data, RulesCompilation compilation, Substitution s) throws HomomorphismException {
 		try {
 			Atom atom = query.getPositivePart().iterator().next();
 			List<Term> ans = query.getAnswerVariables();
 			
 			List<CloseableIterator<Substitution>> iteratorsList = new LinkedList<CloseableIterator<Substitution>>();
 			for (Pair<Atom, Substitution> im : compilation.getRewritingOf(atom)) {
-				iteratorsList.add(new ConverterCloseableIterator<Atom, Substitution>(data.match(im.getLeft()),
+				iteratorsList.add(new ConverterCloseableIterator<Atom, Substitution>(data.match(im.getLeft(), s),
 						new Atom2SubstitutionConverter(im.getLeft(), ans, im.getRight())));
 			}
 			

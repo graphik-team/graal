@@ -47,7 +47,6 @@ package fr.lirmm.graphik.graal.forward_chaining.halting_condition;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -58,7 +57,6 @@ import org.slf4j.LoggerFactory;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
@@ -66,12 +64,11 @@ import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
-import fr.lirmm.graphik.graal.core.ConjunctiveQueryWithFixedVariables;
+import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.homomorphism.SmartHomomorphism;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
-import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * This HaltingCondition will produce new data according to a rule, a
@@ -93,8 +90,6 @@ public class FrontierRestrictedChaseHaltingCondition implements ChaseHaltingCond
 	public CloseableIterator<Atom> apply(Rule rule, Substitution substitution, AtomSet data)
 	                                                                                 throws HomomorphismFactoryException,
 	                                                                                 HomomorphismException {
-		Set<Term> fixedVars = substitution.getValues();
-
 		if (ruleIndex.get(rule) == null) {
 			ruleIndex.put(rule, _currentRuleIndex++);
 		}
@@ -105,6 +100,7 @@ public class FrontierRestrictedChaseHaltingCondition implements ChaseHaltingCond
 		for (Term t : frontierSet) {
 			frontierSb.append("_");
 			frontierSb.append(t.getLabel());
+			frontierSb.append("-");
 			frontierSb.append(substitution.createImageOf(t).getLabel());
 		}
 		String frontier = frontierSb.toString();
@@ -114,21 +110,13 @@ public class FrontierRestrictedChaseHaltingCondition implements ChaseHaltingCond
 			    DefaultTermFactory.instance().createConstant("f_" + index + "_" + t.getIdentifier() + frontier));
 		}
 
-		InMemoryAtomSet newFacts = substitution.createImageOf(rule.getHead());
-		ConjunctiveQuery query = new ConjunctiveQueryWithFixedVariables(newFacts, fixedVars);
+		ConjunctiveQuery query = DefaultConjunctiveQueryFactory.instance().create(rule.getHead());
 
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Fixed Query:" + query);
-		}
-		try {
-			if (SmartHomomorphism.instance().execute(query, data).hasNext()) {
-				return new CloseableIteratorAdapter<Atom>(Collections.<Atom> emptyList().iterator());
-			}
-		} catch (IteratorException e) {
-			throw new HomomorphismException("An errors occurs while iterating results", e);
+		if (SmartHomomorphism.instance().exist(query, data, substitution)) {
+			return new CloseableIteratorAdapter<Atom>(Collections.<Atom> emptyList().iterator());
 		}
 
-		return newFacts.iterator();
+		return substitution.createImageOf(rule.getHead()).iterator();
 	}
 
 };

@@ -60,6 +60,7 @@ import fr.lirmm.graphik.graal.api.core.Literal;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.factory.TermFactory;
+import fr.lirmm.graphik.graal.core.Substitutions;
 import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.store.rdbms.util.DBColumn;
@@ -125,7 +126,7 @@ public abstract class AbstractRdbmsConjunctiveQueryTranslator implements RdbmsCo
 				DBTable table = this.store.createPredicateTableIfNotExist(headAtom.getPredicate());
 				List<Term> terms = headAtom.getTerms();
 				ConjunctiveQuery query = DefaultConjunctiveQueryFactory.instance().create(body, terms);
-				SQLQuery selectQuery = this.translate(query);
+				SQLQuery selectQuery = this.translate(query, Substitutions.emptySubstitution());
 				if (!selectQuery.hasSchemaError()) {
 					queries.add(new SQLQuery(store.getDriver().getInsertOrIgnoreQuery(table, selectQuery.toString())));
 				}

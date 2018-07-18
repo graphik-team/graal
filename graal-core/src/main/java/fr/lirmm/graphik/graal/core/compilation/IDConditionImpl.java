@@ -47,6 +47,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -57,9 +58,9 @@ import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.TermValueComparator;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
+import fr.lirmm.graphik.graal.core.Substitutions;
 import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultSubstitutionFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
@@ -146,7 +147,7 @@ class IDConditionImpl implements IDCondition {
 		for (int i = 0; i < condBody.length; i++) {
 			if (check[condBody[i]] == null) {
 				check[condBody[i]] = body.get(i);
-			} else if (TermValueComparator.instance().compare(body.get(i), check[condBody[i]]) != 0) {
+			} else if (!Objects.equals(body.get(i), check[condBody[i]])) {
 				return false;
 			}
 		}
@@ -267,12 +268,18 @@ class IDConditionImpl implements IDCondition {
 		}
 		return res;
 	}
-
+	
 	@Override
 	public Substitution homomorphism(List<Term> head, List<Term> to) {
+		return this.homomorphism(head, to, Substitutions.emptySubstitution());
+	}
+
+	@Override
+	public Substitution homomorphism(List<Term> head, List<Term> to, Substitution initialSub) {
 		if (!checkBody(to)) {
 			return null;
 		}
+		Set<Variable> fixedTerms = initialSub.getTerms();
 
 		Pair<List<Term>, Substitution> ret = this.generateBody(head);
 		if (ret == null) {
@@ -288,8 +295,8 @@ class IDConditionImpl implements IDCondition {
 		while (itFrom.hasNext() && itTo.hasNext()) {
 			Term termFrom = itFrom.next();
 			Term termTo = itTo.next();
-			if (termFrom.isConstant()) {
-				if (!termFrom.equals(termTo)) {
+			if (termFrom.isConstant() || fixedTerms.contains(termFrom)) {
+				if (!initialSub.createImageOf(termFrom).equals(termTo)) {
 					return null;
 				}
 			} else {

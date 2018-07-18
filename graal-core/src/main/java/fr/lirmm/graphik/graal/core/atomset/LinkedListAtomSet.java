@@ -51,6 +51,7 @@ import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConstantGenerator;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.core.AtomType;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
@@ -83,9 +84,9 @@ public class LinkedListAtomSet extends AbstractInMemoryAtomSet implements InMemo
 	}
 
 	@Override
-	public CloseableIteratorWithoutException<Atom> match(Atom atom) {
-		final AtomType atomType = new AtomType(atom);
-		return new FilterIteratorWithoutException<Atom, Atom>(this.atomsByPredicate(atom.getPredicate()), new TypeFilter(atomType, atom));
+	public CloseableIteratorWithoutException<Atom> match(Atom atom, Substitution s) {
+		final AtomType atomType = new AtomType(atom, s);
+		return new FilterIteratorWithoutException<Atom, Atom>(this.atomsByPredicate(atom.getPredicate()), new TypeFilter(atomType, s.createImageOf(atom)));
 	}
 
 	@Override

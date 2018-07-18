@@ -76,12 +76,14 @@ class PureHomomorphismImpl extends AbstractProfilable {
 	private ArrayList<List<Substitution>> availableImage;
 
 	private ArrayList<Substitution> currentSubstitutionPerLevel;
+	
+	private final Substitution initialSubstitution;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 
-	public PureHomomorphismImpl(InMemoryAtomSet source, AtomSet target, RulesCompilation compilation) {
+	public PureHomomorphismImpl(InMemoryAtomSet source, AtomSet target, RulesCompilation compilation, Substitution s) {
 		this.compilation = compilation;
 		this.target = target;
 		this.source = new ArrayList<Atom>();
@@ -103,6 +105,8 @@ class PureHomomorphismImpl extends AbstractProfilable {
 		}
 		this.currentSubstitutionPerLevel.add(null);
 		this.currentSubstitutionPerLevel.set(0, new TreeMapSubstitution());
+		
+		this.initialSubstitution = s;
 
 	}
 
@@ -225,7 +229,7 @@ class PureHomomorphismImpl extends AbstractProfilable {
 			CloseableIterator<Atom> it = target.iterator();
 			while (it.hasNext()) {
 				Atom im = it.next();
-				for (Substitution s : this.compilation.homomorphism(atomSource, im)) {
+				for (Substitution s : this.compilation.homomorphism(atomSource, im, this.initialSubstitution)) {
 					images.add(s);
 				}
 			}

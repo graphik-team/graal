@@ -47,6 +47,7 @@ import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
+import fr.lirmm.graphik.graal.core.Substitutions;
 import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
@@ -62,13 +63,37 @@ public abstract class AbstractHomomorphismWithCompilation<T1 extends Object, T2 
 
 	@Override
 	public CloseableIterator<Substitution> execute(T1 q, T2 a) throws HomomorphismException {
-		return this.execute(q, a, NoCompilation.instance());
+		return this.execute(q, a, NoCompilation.instance(), Substitutions.emptySubstitution());
+	}
+	
+	@Override
+	public CloseableIterator<Substitution> execute(T1 q, T2 a, RulesCompilation compilation) throws HomomorphismException {
+		return this.execute(q, a, compilation, Substitutions.emptySubstitution());
+	}
+	
+	@Override
+	public CloseableIterator<Substitution> execute(T1 q, T2 a, Substitution s) throws HomomorphismException {
+		return this.execute(q, a, NoCompilation.instance(), s);
 	}
 
 	@Override
 	public boolean exist(T1 q, T2 a, RulesCompilation compilation)
 	    throws HomomorphismException {
-		CloseableIterator<Substitution> results = this.execute(q, a, compilation);
+		CloseableIterator<Substitution> results = this.execute(q, a, compilation, Substitutions.emptySubstitution());
+		boolean val;
+		try {
+			val = results.hasNext();
+		} catch (IteratorException e) {
+			throw new HomomorphismException(e);
+		}
+		results.close();
+		return val;
+	}
+	
+	@Override
+	public boolean exist(T1 q, T2 a, RulesCompilation compilation, Substitution s)
+	    throws HomomorphismException {
+		CloseableIterator<Substitution> results = this.execute(q, a, compilation, s);
 		boolean val;
 		try {
 			val = results.hasNext();

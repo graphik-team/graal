@@ -51,7 +51,7 @@ import fr.lirmm.graphik.graal.api.homomorphism.AbstractChecker;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismChecker;
 import fr.lirmm.graphik.graal.core.DefaultUnionOfConjunctiveQueries;
-import fr.lirmm.graphik.graal.homomorphism.DefaultUCQHomomorphismWithCompilation;
+import fr.lirmm.graphik.graal.homomorphism.DefaultUCQHomomorphism;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -83,7 +83,7 @@ public class DefaultUnionConjunctiveQueriesChecker extends AbstractChecker imple
 
 	@Override
 	public Homomorphism<? extends Query, ? extends AtomSet> getSolver() {
-		return DefaultUCQHomomorphismWithCompilation.instance();
+		return DefaultUCQHomomorphism.instance();
 	}
 
 	@Override

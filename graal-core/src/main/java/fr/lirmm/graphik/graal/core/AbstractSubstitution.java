@@ -51,12 +51,14 @@ import java.util.Set;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
+import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.factory.DefaultAtomSetFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultSubstitutionFactory;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -151,6 +153,14 @@ public abstract class AbstractSubstitution implements Substitution {
 		this.apply(rule.getHead(), substitut.getHead());
 		return substitut;
 	}
+	
+	@Override
+	public ConjunctiveQuery createImageOf(ConjunctiveQuery cq) {
+		List<Term> ans = this.createImageOf(cq.getAnswerVariables());
+		InMemoryAtomSet body = this.createImageOf(cq.getAtomSet());
+		return DefaultConjunctiveQueryFactory.instance().create(body, ans);
+	}
+
 
 	@Override
 	public boolean compose(Variable term, Term substitut) {

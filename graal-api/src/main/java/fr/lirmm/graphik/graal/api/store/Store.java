@@ -49,6 +49,7 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
@@ -88,7 +89,7 @@ public interface Store extends AtomSet {
 	CloseableIterator<Atom> iterator();
 
 	@Override
-	CloseableIterator<Atom> match(Atom atom) throws AtomSetException;
+	CloseableIterator<Atom> match(Atom atom, Substitution s) throws AtomSetException;
 
 	@Override
 	CloseableIterator<Atom> atomsByPredicate(Predicate p) throws AtomSetException;

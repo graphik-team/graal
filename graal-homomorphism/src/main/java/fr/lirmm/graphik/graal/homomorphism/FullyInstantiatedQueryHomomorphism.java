@@ -48,7 +48,6 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
@@ -84,31 +83,13 @@ public class FullyInstantiatedQueryHomomorphism extends AbstractHomomorphismWith
 	// HOMOMORPHISM METHODS
 	// /////////////////////////////////////////////////////////////////////////
 	
-	
-	public <U2 extends AtomSet> CloseableIterator<Substitution> execute(InMemoryAtomSet q, U2 a) throws HomomorphismException {
-		try {
-			CloseableIteratorWithoutException<Atom> it = q.iterator();
-			boolean contains = true;
-			while(contains && it.hasNext()) {
-				contains = a.contains(it.next());
-			}
-			if(contains) {
-				return Iterators.singletonIterator(Substitutions.emptySubstitution());
-			} else {
-				return Iterators.emptyIterator();
-			}
-		} catch (AtomSetException e) {
-			throw new HomomorphismException(e);
-		}
-	}
-	
 	@Override
-	public CloseableIterator<Substitution> execute(ConjunctiveQuery q, AtomSet a) throws HomomorphismException {
+	public CloseableIterator<Substitution> execute(ConjunctiveQuery q, AtomSet a, Substitution s) throws HomomorphismException {
 		try {
 			CloseableIteratorWithoutException<Atom> it = q.getAtomSet().iterator();
 			boolean contains = true;
 			while(contains && it.hasNext()) {
-				contains = a.contains(it.next());
+				contains = a.contains(s.createImageOf(it.next()));
 			}
 			if(contains) {
 				return Iterators.singletonIterator(Substitutions.emptySubstitution());
@@ -121,14 +102,14 @@ public class FullyInstantiatedQueryHomomorphism extends AbstractHomomorphismWith
 	}
 	
 	@Override
-	public CloseableIterator<Substitution> execute(ConjunctiveQuery q, AtomSet a, RulesCompilation rc) throws HomomorphismException {
+	public CloseableIterator<Substitution> execute(ConjunctiveQuery q, AtomSet a, RulesCompilation rc, Substitution s) throws HomomorphismException {
 		try {
 			CloseableIteratorWithoutException<Atom> it = q.getAtomSet().iterator();
 			boolean contains = true;
 			while(contains && it.hasNext()) {
 				Atom atom = it.next();
 				boolean containsAtom = false;
-				for(Pair<Atom, Substitution> im : rc.getRewritingOf(atom)) {
+				for(Pair<Atom, Substitution> im : rc.getRewritingOf(s.createImageOf(atom))) {
 					containsAtom = a.contains(im.getLeft());
 					if(containsAtom) {
 						break;

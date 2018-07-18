@@ -45,6 +45,7 @@
  */
 package fr.lirmm.graphik.graal.api.core;
 
+import java.util.Objects;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -88,14 +89,17 @@ public abstract class AbstractTerm implements Term {
 
 	@Override
 	public int compareTo(Term o) {
-		if(this.getIdentifier().equals(o.getIdentifier())) {
+		if(this.equals(o)) {
 			return 0;
 		} else {
-			if(this.getIdentifier().getClass().equals(o.getIdentifier().getClass())) {
-				return this.getIdentifier().toString().compareTo(o.getIdentifier().toString());
-			} else {
-				return this.getIdentifier().getClass().toString().compareTo(o.getIdentifier().getClass().toString());
+			int cmp = this.getType().compareTo(o.getType());
+			if(cmp == 0) {
+				cmp = this.getIdentifier().getClass().toString().compareTo(o.getIdentifier().getClass().toString());
+				if(cmp == 0) {
+					cmp = this.getIdentifier().toString().compareTo(o.getIdentifier().toString());
+				}
 			}
+			return cmp;
 		}
 	}
 
@@ -112,12 +116,14 @@ public abstract class AbstractTerm implements Term {
 	}
 
 	public boolean equals(Term term) {
-		return this.getIdentifier().equals(term.getIdentifier());
+		return Objects.equals(this.getType(), term.getType()) && 
+				Objects.equals(this.getIdentifier(), term.getIdentifier());
+
 	}
 
 	@Override
 	public int hashCode() {
-		return this.getIdentifier().hashCode();
+		return this.getIdentifier().hashCode() + 47*this.getType().hashCode();
 	}
 
 	@Override

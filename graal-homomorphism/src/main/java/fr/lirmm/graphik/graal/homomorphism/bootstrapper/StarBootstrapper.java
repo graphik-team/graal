@@ -56,7 +56,6 @@ import fr.lirmm.graphik.graal.api.core.Constant;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.TermValueComparator;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
 import fr.lirmm.graphik.graal.homomorphism.VarSharedData;
 import fr.lirmm.graphik.util.profiler.AbstractProfilable;
@@ -121,7 +120,7 @@ public class StarBootstrapper extends AbstractProfilable implements Bootstrapper
 		
 		try {
 			if (constants != null && !constants.isEmpty()) {
-				terms = new TreeSet<Term>(TermValueComparator.instance());
+				terms = new TreeSet<Term>();
 				for (Pair<Atom, Substitution> im : compilation.getRewritingOf(aa)) {
 					int pos = im.getLeft().indexOf(im.getRight().createImageOf(v.value));
 					CloseableIterator<Atom> match = data.match(im.getLeft());

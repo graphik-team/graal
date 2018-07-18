@@ -47,6 +47,7 @@ package fr.lirmm.graphik.graal.store.gdb;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -67,9 +68,11 @@ import org.slf4j.LoggerFactory;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.TermGenerator;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.core.store.GraphDBStore;
@@ -336,7 +339,7 @@ public class Neo4jStore extends GraphDBStore {
 	}
 
 	private boolean contains(Atom atom, Transaction transaction) {
-		String query = containsAtomIntoCypherQuery(atom, true);
+		String query = containsAtomIntoCypherQuery(atom);
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(query);
 		}
@@ -347,8 +350,8 @@ public class Neo4jStore extends GraphDBStore {
 	}
 
 	@Override
-	public CloseableIterator<Atom> match(Atom atom) {
-		String query = matchAtomIntoCypherQuery(atom);
+	public CloseableIterator<Atom> match(Atom atom, Substitution s) {
+		String query = matchAtomIntoCypherQuery(atom, s);
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(query);
 		}
@@ -498,27 +501,32 @@ public class Neo4jStore extends GraphDBStore {
 		return sb.toString();
 	}*/
 
-	private static String containsAtomIntoCypherQuery(Atom a, boolean checkVariableAsFixed) {
+	private static String containsAtomIntoCypherQuery(Atom a) {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("MATCH ");
-		atomToCypher(sb, a, checkVariableAsFixed, false);
+		atomToCypher(sb, a, a.getVariables(), false);
 		sb.append("RETURN atom");
 
 		return sb.toString();
 	}
 	
-	private static String matchAtomIntoCypherQuery(Atom a) {
+	private static String matchAtomIntoCypherQuery(Atom a, Substitution s) {
 		StringBuilder sb = new StringBuilder();
-
+		Set<Variable> fixedVars = new HashSet<>();
+		for(Term t : s.getValues()) {
+			if(t.isVariable()) {
+				fixedVars.add((Variable) t);
+			}
+		}
 		sb.append("MATCH ");
-		atomToCypher(sb, a, false, false);
+		atomToCypher(sb, s.createImageOf(a), fixedVars, false);
 		sb.append("RETURN atom");
 
 		return sb.toString();
 	}
 
-	private static void atomToCypher(StringBuilder sb, Atom a, boolean checkVariableAsFixed, boolean checkType) {
+	private static void atomToCypher(StringBuilder sb, Atom a, Set<Variable> fixedVars, boolean checkType) {
 		sb.append("(atom:ATOM),");
 		predicateToCypher(sb, a.getPredicate());
 		sb.append(",");
@@ -528,7 +536,7 @@ public class Neo4jStore extends GraphDBStore {
 			// (term?:TERM {value: '?', arity: ?}),
 			// (atom)-[:TERM { index: ? }]->(term?)
 			++i;
-			if (checkVariableAsFixed || t.isConstant()) {
+			if (t.isConstant() || fixedVars.contains(t)) {
 				sb.append("(term").append(i).append(":TERM {value: '").append(t.getIdentifier().toString());
 				if(checkType) {
 					sb.append("', type: '").append(getType(t));

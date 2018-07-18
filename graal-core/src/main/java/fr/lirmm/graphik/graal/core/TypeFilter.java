@@ -62,7 +62,7 @@ public class TypeFilter implements Filter<Atom> {
 				if(!e.getTerm(i).equals(e.getTerm(type.type[i]))) {
 					return false;
 				}
-			} else if (type.type[i] == AtomType.CONSTANT) {
+			} else if (type.type[i] == AtomType.CONSTANT_OR_FROZEN_VAR) {
 				if(!e.getTerm(i).equals(atom.getTerm(i))) {
 					return false;
 				}

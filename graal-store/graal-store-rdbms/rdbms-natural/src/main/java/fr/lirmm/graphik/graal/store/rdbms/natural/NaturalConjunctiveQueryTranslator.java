@@ -56,6 +56,7 @@ import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.store.rdbms.AbstractRdbmsConjunctiveQueryTranslator;
 import fr.lirmm.graphik.graal.store.rdbms.util.DBColumn;
@@ -87,7 +88,7 @@ class NaturalConjunctiveQueryTranslator extends AbstractRdbmsConjunctiveQueryTra
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public SQLQuery translate(ConjunctiveQuery cquery) throws AtomSetException {
+	public SQLQuery translate(ConjunctiveQuery cquery, Substitution s) throws AtomSetException {
 		if (cquery.getAtomSet().isEmpty()) {
 			return SQLQuery.emptyInstance();
 		}
@@ -132,8 +133,8 @@ class NaturalConjunctiveQueryTranslator extends AbstractRdbmsConjunctiveQueryTra
 				int position = 0;
 				for (Term term : atom.getTerms()) {
 					String thisTerm = currentAtom + columnsInfo.get(position).getName();
-					if (term.isConstant()) {
-						constants.add(thisTerm + " = '" + term.getIdentifier().toString() + "'");
+					if (term.isConstant() || s.getTerms().contains(term)) {
+						constants.add(thisTerm + " = '" + s.createImageOf(term).getIdentifier().toString() + "'");
 					} else {
 						if (lastOccurrence.containsKey(term.getIdentifier().toString())) {
 							equivalences.add(lastOccurrence.get(term.getIdentifier().toString()) + " = " + thisTerm);

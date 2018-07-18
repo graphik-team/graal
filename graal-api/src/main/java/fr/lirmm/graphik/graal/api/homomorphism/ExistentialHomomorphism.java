@@ -43,6 +43,7 @@
 package fr.lirmm.graphik.graal.api.homomorphism;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.util.profiler.Profilable;
 
 /**
@@ -60,4 +61,15 @@ public interface ExistentialHomomorphism<T1 extends Object, T2 extends AtomSet> 
 	 * @throws HomomorphismException
 	 */
 	boolean exist(T1 q, T2 a) throws HomomorphismException;
+	
+	/**
+	 * Look if there exists an homomorphism of q into a such that it respects the specified substitution.
+	 * 
+	 * @param q
+	 * @param a
+	 * @param s a Substitution of Variable from q into Term from a.
+	 * @return true if there exists an homomorphism of q into a, false otherwise.
+	 * @throws HomomorphismException
+	 */
+	boolean exist(T1 q, T2 a, Substitution s) throws HomomorphismException;
 }

@@ -79,13 +79,21 @@ public interface RulesCompilation extends Profilable {
 	 * 
 	 */
 	public boolean isMappable(Predicate father, Predicate son);
-
+	
 	/**
-	 * Return the list of c-homomorphisms of the atom father to the atom son i.
-	 * e. return all the homomorphisms that map father with a fact implied from
-	 * the atom son with compiled rules
+	 * Return the list of c-homomorphisms of the atom father to the atom son. <br>
+	 * ie. return all the homomorphisms that map father with a fact implied from
+	 * the atom son with compiled rules.
 	 */
 	public Collection<Substitution> homomorphism(Atom father, Atom son);
+
+	/**
+	 * Return the list of c-homomorphisms of the atom father to the atom son
+	 * such that it respects s. <br>
+	 * ie. return all the homomorphisms that map father with a fact implied from
+	 * the atom son with compiled rules.
+	 */
+	public Collection<Substitution> homomorphism(Atom father, Atom son, Substitution s);
 
 	/**
 	 * Return the list of c-unifier from the atom father to the atom son

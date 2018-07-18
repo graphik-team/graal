@@ -53,7 +53,6 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.homomorphism.Var;
 import fr.lirmm.graphik.graal.homomorphism.VarSharedData;
-import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 
 /**
  * Compute an order over variables from h. This scheduler put answer
@@ -63,7 +62,7 @@ import fr.lirmm.graphik.util.profiler.AbstractProfilable;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class DefaultScheduler extends AbstractProfilable implements Scheduler {
+public class DefaultScheduler extends AbstractScheduler implements Scheduler {
 
 	private static DefaultScheduler instance;
 
@@ -79,7 +78,9 @@ public class DefaultScheduler extends AbstractProfilable implements Scheduler {
 	}
 
 	@Override
-	public VarSharedData[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data, RulesCompilation rc) {
+	public VarSharedData[] execute(InMemoryAtomSet query, Set<Variable> preAffectedVars, List<Term> ans, AtomSet data, RulesCompilation rc) {
+		InMemoryAtomSet h = (preAffectedVars.isEmpty())? query : computeFixedQuery(query, preAffectedVars);
+
 		Set<Variable> terms = h.getVariables();
 		VarSharedData[] vars = new VarSharedData[terms.size() + 2];
 
@@ -88,7 +89,7 @@ public class DefaultScheduler extends AbstractProfilable implements Scheduler {
 
 		Set<Term> alreadyAffected = new TreeSet<Term>();
 		for (Term t : ans) {
-			if (t instanceof Variable && !alreadyAffected.contains(t)) {
+			if (terms.contains(t) && !alreadyAffected.contains(t)) {
 				++level;
 				vars[level] = new VarSharedData(level);
 				vars[level].value = (Variable) t;

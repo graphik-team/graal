@@ -57,6 +57,7 @@ import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
@@ -64,6 +65,7 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
+// TODO add cause to Errors
 @SuppressWarnings("deprecation")
 public abstract class AbstractInMemoryAtomSet extends AbstractAtomSet implements InMemoryAtomSet {
 
@@ -110,6 +112,15 @@ public abstract class AbstractInMemoryAtomSet extends AbstractAtomSet implements
 		} catch (AtomSetException e) {
 			throw new Error("It should never happen.");
 		}
+	}
+	
+	@Override
+	public CloseableIterator<Atom> match(Atom atom) throws AtomSetException {
+		try {
+			return super.match(atom);
+    	} catch (AtomSetException e) {
+    		throw new Error("It should never happen.");
+    	}
 	}
 
 	@Override

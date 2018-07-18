@@ -44,6 +44,7 @@ package fr.lirmm.graphik.graal.api.homomorphism;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -61,5 +62,17 @@ public interface ExistentialHomomorphismWithCompilation<T1 extends Object, T2 ex
 	 * @throws HomomorphismException
 	 */
 	boolean exist(T1 q, T2 a, RulesCompilation compilation) throws HomomorphismException;
+	
+	/**
+	 * Look if there exists an homomorphism of q into a such that it respects the specified substitution.
+	 * 
+	 * @param q
+	 * @param a
+	 * @param compilation
+	 * @param s a Substitution of Variable from q into Term from a.
+	 * @return true if there exists an homomorphism of q into a, false otherwise.
+	 * @throws HomomorphismException
+	 */
+	boolean exist(T1 q, T2 a, RulesCompilation compilation, Substitution s) throws HomomorphismException;
 	
 }

@@ -79,6 +79,26 @@ public class RestrictedProductivityCheckerTest {
 		// then
 		Assert.assertTrue(validDependency);
 	}
+	
+	/**
+	 * Test method for {@link fr.lirmm.graphik.graal.core.unifier.checker.RestrictedProductivityChecker#isValidDependency(fr.lirmm.graphik.graal.api.core.Rule, fr.lirmm.graphik.graal.api.core.Rule, fr.lirmm.graphik.graal.api.core.Substitution)}.
+	 * @throws ParseException 
+	 */
+	@Test
+	public void testIsInvalidDependency() throws ParseException {
+		// given
+		Rule r1 = DlgpParser.parseRule("p(U,W) :- p(U,V), p(V,W).");
+		Rule r2 = DlgpParser.parseRule("p(X,Y), p(Y,W) :- p(X,Z).");
+		Substitution s = new HashMapSubstitution();
+		s.put(TestUtils.X, TestUtils.U);
+		s.put(TestUtils.Z, TestUtils.W);
+		
+		// when
+		boolean validDependency = RestrictedProductivityChecker.instance().isValidDependency(r1, r2, s);
+		
+		// then
+		Assert.assertFalse(validDependency);
+	}
 
 
 }

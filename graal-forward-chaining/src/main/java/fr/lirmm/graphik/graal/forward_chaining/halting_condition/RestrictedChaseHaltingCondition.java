@@ -50,21 +50,17 @@ import java.util.Collections;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
-import fr.lirmm.graphik.graal.core.ConjunctiveQueryWithFixedVariables;
-import fr.lirmm.graphik.graal.homomorphism.BacktrackException;
+import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.homomorphism.SmartHomomorphism;
 import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
-import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
-import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * This HaltingCondition will produce new data according to a rule, a
@@ -79,25 +75,17 @@ public class RestrictedChaseHaltingCondition extends AbstractProfilable implemen
 	@Override
 	public CloseableIterator<Atom> apply(Rule rule, Substitution substitution, AtomSet data)
 			throws HomomorphismFactoryException, HomomorphismException {
-		InMemoryAtomSet newFacts = substitution.createImageOf(rule.getHead());
-		ConjunctiveQuery query = new ConjunctiveQueryWithFixedVariables(newFacts, substitution.createImageOf(rule.getFrontier()));
+		ConjunctiveQuery query = DefaultConjunctiveQueryFactory.instance().create(rule.getHead());
 
-		try {
-			if (SmartHomomorphism.instance().execute(query, data).hasNext()) {
-				return new CloseableIteratorAdapter<Atom>(Collections.<Atom>emptyList().iterator());
-			}
-		} catch (IteratorException e) {
-			throw new HomomorphismException("An errors occurs while iterating results", e);
-		} catch (BacktrackException e) {
-			throw new HomomorphismException("An errors occurs while iterating results", e);
+		if (SmartHomomorphism.instance().exist(query, data, substitution)) {
+			return new CloseableIteratorAdapter<Atom>(Collections.<Atom>emptyList().iterator());
 		}
 
 		// replace variables by fresh symbol
 		for (Variable t : rule.getExistentials()) {
 			substitution.put(t, data.getFreshSymbolGenerator().getFreshSymbol());
 		}
-		CloseableIteratorWithoutException<Atom> it = substitution.createImageOf(rule.getHead()).iterator();
-		return it;
+		return substitution.createImageOf(rule.getHead()).iterator();
 	}
 
 }

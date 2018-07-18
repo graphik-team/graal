@@ -46,6 +46,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Objects;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -56,7 +58,6 @@ import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.TermValueComparator;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.Substitutions;
@@ -165,7 +166,8 @@ public class HierarchicalCompilation extends AbstractRulesCompilation {
 	}
 
 	@Override
-	public Collection<Substitution> homomorphism(Atom father, Atom son) {
+	public Collection<Substitution> homomorphism(Atom father, Atom son, Substitution s) {
+		Set<Variable> fixedTerms = s.getTerms();
 		LinkedList<Substitution> res = new LinkedList<Substitution>();
 		if (isMappable(father.getPredicate(), son.getPredicate())) {
 			Substitution sub = DefaultSubstitutionFactory.instance().createSubstitution();
@@ -177,8 +179,8 @@ public class HierarchicalCompilation extends AbstractRulesCompilation {
 				fatherTerm = fatherTermsIt.next();
 				sonTerm = sonTermsIt.next();
 
-				if (fatherTerm.isConstant()) {
-					if (!fatherTerm.equals(sonTerm)) {
+				if (fatherTerm.isConstant() || fixedTerms.contains(fatherTerm)) {
+					if (!s.createImageOf(fatherTerm).equals(sonTerm)) {
 						return res;
 					}
 				} else if (!sub.getTerms().contains(fatherTerm))
@@ -206,7 +208,7 @@ public class HierarchicalCompilation extends AbstractRulesCompilation {
 		Predicate predSon = son.getPredicate();
 		Integer f = predicateIndex.get(predFather);
 		Integer s = predicateIndex.get(predSon);
-		if (f != null && s != null && TermValueComparator.instance().compare(father.getTerms(), son.getTerms()) == 0)
+		if (f != null && s != null && Objects.equals(father.getTerms(), son.getTerms()))
 			return order[f][s] == 1;
 		else
 			return false;

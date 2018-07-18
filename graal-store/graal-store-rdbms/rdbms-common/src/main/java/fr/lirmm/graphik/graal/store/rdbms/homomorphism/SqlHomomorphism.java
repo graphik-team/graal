@@ -90,11 +90,11 @@ public final class SqlHomomorphism extends AbstractHomomorphism<ConjunctiveQuery
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public CloseableIterator<Substitution> execute(ConjunctiveQuery query, RdbmsStore store)
+	public CloseableIterator<Substitution> execute(ConjunctiveQuery query, RdbmsStore store, Substitution s)
 	    throws HomomorphismException {
 		SQLQuery sqlQuery;
 		try {
-			sqlQuery = store.getConjunctiveQueryTranslator().translate(query);
+			sqlQuery = store.getConjunctiveQueryTranslator().translate(query, s);
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug("GENERATED SQL QUERY: \n" + query + "\n" + sqlQuery);
 		} catch (AtomSetException e) {

@@ -63,6 +63,7 @@ import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.ConstantGenerator;
 import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.UnsupportedAtomTypeException;
@@ -117,10 +118,18 @@ public class NaturalRDBMSStore extends AbstractRdbmsStore {
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public CloseableIterator<Atom> match(Atom atom) throws AtomSetException {
+	public CloseableIterator<Atom> match(Atom atom, Substitution s) throws AtomSetException {
 		if (!this.check(atom)) {
 			return Iterators.<Atom> emptyIterator();
 		}
+		
+		// check does not contains fixed variables
+		for(Term t : s.getValues()) {
+			if(t.isVariable()) {
+				throw new AtomSetException("We can't query specified blank node on TripleStore :" + t);
+			}
+		}
+		
 		ConjunctiveQuery query = DefaultConjunctiveQueryFactory.instance().create(new LinkedListAtomSet(atom));
 		SqlHomomorphism solver = SqlHomomorphism.instance();
 

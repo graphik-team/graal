@@ -54,13 +54,12 @@ import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.homomorphism.Var;
 import fr.lirmm.graphik.graal.homomorphism.VarSharedData;
-import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class FixedOrderScheduler extends AbstractProfilable implements Scheduler {
+public class FixedOrderScheduler extends AbstractScheduler implements Scheduler {
 
 	private List<Variable> order;
 
@@ -77,7 +76,9 @@ public class FixedOrderScheduler extends AbstractProfilable implements Scheduler
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public VarSharedData[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data, RulesCompilation rc) throws HomomorphismException {
+	public VarSharedData[] execute(InMemoryAtomSet query, Set<Variable> preAffectedVars, List<Term> ans, AtomSet data, RulesCompilation rc) throws HomomorphismException {
+		InMemoryAtomSet h = (preAffectedVars.isEmpty())? query : computeFixedQuery(query, preAffectedVars);
+
 		Set<Variable> terms = h.getVariables();
 		VarSharedData[] vars = new VarSharedData[terms.size() + 2];
 

@@ -46,18 +46,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 
 public class AtomType {
 	public static final int VARIABLE = -1;
-	public static final int CONSTANT = -2;
+	public static final int CONSTANT_OR_FROZEN_VAR = -2;
 	
 	boolean isThereConstant;
 	boolean isThereConstraint;
 	int type[];
 	int size;
 	
-	public AtomType(Atom atom) {
+	
+	public AtomType(Atom atom, Substitution s) {
 		isThereConstant = false;
 		size = atom.getPredicate().getArity();
 		type = new int[size];
@@ -65,8 +67,8 @@ public class AtomType {
 		int i = -1;
 		for(Term t : atom) {
 			++i;
-			if(t.isConstant()) {
-				type[i] = CONSTANT;
+			if(t.isConstant() || s.getTerms().contains(t)) {
+				type[i] = CONSTANT_OR_FROZEN_VAR;
 				isThereConstant = true;
 				isThereConstraint = true;
 			} else {
@@ -82,6 +84,10 @@ public class AtomType {
 		}
 	}
 	
+	public AtomType(Atom atom) {
+		this(atom, Substitutions.emptySubstitution());
+	}
+
 	public boolean isThereConstant() {
 		return this.isThereConstant;
 	}

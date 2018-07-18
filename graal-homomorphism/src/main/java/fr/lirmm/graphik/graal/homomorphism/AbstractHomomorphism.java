@@ -46,6 +46,7 @@ import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.core.Substitutions;
 import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
@@ -60,10 +61,28 @@ public abstract class AbstractHomomorphism<T1 extends Object, T2 extends AtomSet
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
-
+	@Override
+	public CloseableIterator<Substitution> execute(T1 q, T2 a)
+	    throws HomomorphismException {
+		return this.execute(q, a, Substitutions.emptySubstitution());
+	}
+	
 	@Override
 	public boolean exist(T1 q, T2 a) throws HomomorphismException {
-		CloseableIterator<Substitution> results = this.execute(q, a);
+		CloseableIterator<Substitution> results = this.execute(q, a, Substitutions.emptySubstitution());
+		boolean val;
+		try {
+			val = results.hasNext();
+		} catch (IteratorException e) {
+			throw new HomomorphismException(e);
+		}
+		results.close();
+		return val;
+	}
+	
+	@Override
+	public boolean exist(T1 q, T2 a, Substitution s) throws HomomorphismException {
+		CloseableIterator<Substitution> results = this.execute(q, a, s);
 		boolean val;
 		try {
 			val = results.hasNext();

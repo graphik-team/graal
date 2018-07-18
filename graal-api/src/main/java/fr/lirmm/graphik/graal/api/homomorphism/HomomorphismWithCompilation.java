@@ -68,6 +68,21 @@ public interface HomomorphismWithCompilation<T1 extends Object, T2 extends AtomS
 	 */
 	CloseableIterator<Substitution> execute(T1 q, T2 a, RulesCompilation compilation)
 			throws HomomorphismException;
+	
+
+	/**
+	 * Look for the homomorphisms of the specified object into the specified
+	 * atomset such that it respects the specified substitution.
+	 * 
+	 * @param q
+	 * @param a
+	 * @param compilation
+	 * @param s a Substitution of Variable from q into Term from a.
+	 * @return an Iterator over Substitutions representing homomorphism found of q into a.
+	 * @throws HomomorphismException
+	 */
+	CloseableIterator<Substitution> execute(T1 q, T2 a, RulesCompilation compilation, Substitution s)
+			throws HomomorphismException;
 
 };
 

@@ -435,15 +435,9 @@ public class PropertyTest {
 	@Test
 	public void setMFATest() {
 		assertEquals(1, mfa.check(new AnalyserRuleSet(rSetMSA)));
-		System.out.println("msa");
 		assertEquals(1, mfa.check(new AnalyserRuleSet(rSetMFA)));
-		System.out.println("mfa");
-
 		assertEquals(-1, mfa.check(new AnalyserRuleSet(rSetNotFes)));
-		System.out.println("notFes");
-
 		assertEquals(1, mfa.check(new AnalyserRuleSet(rSetSWA)));
-		System.out.println("SWA");
 
 	}
 	

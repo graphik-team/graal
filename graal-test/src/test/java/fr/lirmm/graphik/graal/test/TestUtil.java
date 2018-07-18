@@ -61,7 +61,6 @@ import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphStore;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphism;
-import fr.lirmm.graphik.graal.homomorphism.RecursiveBacktrackHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.SmartHomomorphism;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.GraphBaseBackJumping;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.NoBackJumping;
@@ -126,7 +125,7 @@ public final class TestUtil {
 		BCC bcc4 = new BCC(new GraphBaseBackJumping(), true);
 		BCC bcc5 = new BCC(new GraphBaseBackJumping(), true);
 
-		return new Homomorphism[] { SmartHomomorphism.instance(), RecursiveBacktrackHomomorphism.instance(),
+		return new Homomorphism[] { SmartHomomorphism.instance(), 
 									// Without Optimization
 		                            new BacktrackHomomorphism(DefaultScheduler.instance(), StarBootstrapper.instance(), NoForwardChecking.instance(), NoBackJumping.instance()),
 		                            // BackJumping

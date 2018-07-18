@@ -354,9 +354,9 @@ public class BacktrackHomomorphismWithNegatedParts extends
 	// /////////////////////////////////////////////////////////////////////////
 
 	public CloseableIterator<Substitution> execute(ConjunctiveQueryWithNegatedParts q, AtomSet a,
-	    RulesCompilation compilation) throws HomomorphismException {
+	    RulesCompilation compilation, Substitution s) throws HomomorphismException {
 		return new BacktrackIterator(q.getPositivePart(), q.getNegatedParts(), a, q.getAnswerVariables(),
-		                             this.scheduler, this.bootstrapper, this.fc, this.bj, compilation);
+		                             this.scheduler, this.bootstrapper, this.fc, this.bj, compilation, s);
 	}
 
 }

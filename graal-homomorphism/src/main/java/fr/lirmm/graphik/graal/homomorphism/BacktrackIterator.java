@@ -57,7 +57,6 @@ import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.PreparedExistentialHomomorphism;
 import fr.lirmm.graphik.graal.core.HashMapSubstitution;
-import fr.lirmm.graphik.graal.core.Substitutions;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
 import fr.lirmm.graphik.graal.homomorphism.bootstrapper.Bootstrapper;
@@ -127,10 +126,10 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution>
 
 	public BacktrackIterator(InMemoryAtomSet query, Collection<InMemoryAtomSet> negParts, AtomSet data, List<Term> ans,
 			Scheduler scheduler, Bootstrapper bootstrapper, ForwardChecking fc, BackJumping bj,
-			RulesCompilation compilation, Profiler profiler) throws HomomorphismException {
+			RulesCompilation compilation, Substitution s, Profiler profiler) throws HomomorphismException {
 
-		this(new BacktrackIteratorData(query, negParts, data, ans, scheduler, bootstrapper, fc, bj, compilation, profiler),
-				Substitutions.emptySubstitution());
+		this(new BacktrackIteratorData(query, s.getTerms(), negParts, data, ans, scheduler, bootstrapper, fc, bj, compilation, profiler),
+				s);
 	}
 
 	/**
@@ -142,8 +141,8 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution>
 	 */
 	public BacktrackIterator(InMemoryAtomSet h, Collection<InMemoryAtomSet> negParts, AtomSet g, List<Term> ans,
 			Scheduler scheduler, Bootstrapper boostrapper, ForwardChecking fc, BackJumping bj,
-			RulesCompilation compilation) throws HomomorphismException {
-		this(h, negParts, g, ans, scheduler, boostrapper, fc, bj, compilation, NoProfiler.instance());
+			RulesCompilation compilation, Substitution s) throws HomomorphismException {
+		this(h,negParts, g, ans, scheduler, boostrapper, fc, bj, compilation, s, NoProfiler.instance());
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -291,10 +290,12 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution>
 	private Substitution solutionFound(List<Term> ans) {
 		Substitution s = new HashMapSubstitution();
 		for (Term t : ans) {
-			if (t instanceof Variable) {
+			if (t.isVariable()) {
 				Integer idx = this.data.index.get((Variable) t);
-				Var v = this.vars[idx];
-				s.put(v.shared.value, v.image);
+				if (idx != null) {
+					Var v = this.vars[idx];
+					s.put(v.shared.value, v.image);
+				}
 			}
 		}
 

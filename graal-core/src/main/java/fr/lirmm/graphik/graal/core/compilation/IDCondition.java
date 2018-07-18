@@ -124,12 +124,19 @@ interface IDCondition {
 	 * @return true if the current IDCondition represents an identity condition, false otherwise.
 	 */
 	boolean isIdentity();
-
+	
 	/**
 	 * @param head
 	 * @param body
 	 * @return  TODO
 	 */
 	Substitution homomorphism(List<Term> head, List<Term> body);
+
+	/**
+	 * @param head
+	 * @param body
+	 * @return  TODO
+	 */
+	Substitution homomorphism(List<Term> head, List<Term> body, Substitution s);
 
 }

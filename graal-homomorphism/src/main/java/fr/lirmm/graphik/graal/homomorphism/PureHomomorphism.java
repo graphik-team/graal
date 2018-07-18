@@ -48,8 +48,10 @@ package fr.lirmm.graphik.graal.homomorphism;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.ExistentialHomomorphismWithCompilation;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.core.Substitutions;
 import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
 import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 
@@ -82,17 +84,28 @@ public class PureHomomorphism extends AbstractProfilable
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public boolean exist(InMemoryAtomSet source, AtomSet target, RulesCompilation compilation)
+	public boolean exist(InMemoryAtomSet source, AtomSet target, RulesCompilation compilation, Substitution s)
 			throws HomomorphismException {
 
-		PureHomomorphismImpl homomorphism = new PureHomomorphismImpl(source, target, compilation);
+		PureHomomorphismImpl homomorphism = new PureHomomorphismImpl(source, target, compilation, s);
 		homomorphism.setProfiler(this.getProfiler());
 		return homomorphism.exist();
 	}
 
 	@Override
-	public boolean exist(InMemoryAtomSet source, AtomSet target) throws HomomorphismException {
-		return this.exist(source, target, NoCompilation.instance());
+	public boolean exist(InMemoryAtomSet q, AtomSet a) throws HomomorphismException {
+		return this.exist(q, a, NoCompilation.instance(), Substitutions.emptySubstitution());
+	}
+
+	@Override
+	public boolean exist(InMemoryAtomSet q, AtomSet a, Substitution s) throws HomomorphismException {
+		return this.exist(q, a, NoCompilation.instance(), s);
+
+	}
+
+	@Override
+	public boolean exist(InMemoryAtomSet q, AtomSet a, RulesCompilation compilation) throws HomomorphismException {
+		return this.exist(q, a, compilation, Substitutions.emptySubstitution());
 	}
 
 }

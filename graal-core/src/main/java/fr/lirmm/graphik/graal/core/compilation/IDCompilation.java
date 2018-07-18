@@ -223,14 +223,14 @@ public class IDCompilation extends AbstractRulesCompilation {
 	}
 
 	@Override
-	public LinkedList<Substitution> homomorphism(Atom father, Atom son) {
+	public LinkedList<Substitution> homomorphism(Atom father, Atom son, Substitution s) {
 		LinkedList<Substitution> res = new LinkedList<Substitution>();
 		Predicate predB = son.getPredicate();
 		Predicate predH = father.getPredicate();
 		List<IDCondition> conds = getConditions(predB, predH);
 		for (IDCondition cond : conds) {
 			if (cond.checkBody(son.getTerms())) {
-				Substitution homo = cond.homomorphism(father.getTerms(), son.getTerms());
+				Substitution homo = cond.homomorphism(father.getTerms(), son.getTerms(), s);
 				if (homo != null) {
 					res.add(new TreeMapSubstitution(homo));
 				}

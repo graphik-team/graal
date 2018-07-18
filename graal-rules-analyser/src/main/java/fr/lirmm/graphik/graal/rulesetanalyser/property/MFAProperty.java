@@ -126,6 +126,7 @@ public final class MFAProperty extends RuleSetProperty.Default {
 			}
 		}
 		catch (ChaseException e) {
+			// TODO throw Error or RuntimeException !
 			LOGGER.warn("An error occurs during the chase: ", e);
 			return 0;
 		} catch (HomomorphismException e) {

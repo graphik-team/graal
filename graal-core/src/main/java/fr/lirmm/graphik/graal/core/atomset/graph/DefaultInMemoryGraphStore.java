@@ -52,10 +52,10 @@ import java.util.Set;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.TermGenerator;
-import fr.lirmm.graphik.graal.api.core.TermValueComparator;
 import fr.lirmm.graphik.graal.api.store.BatchProcessor;
 import fr.lirmm.graphik.graal.api.store.Store;
 import fr.lirmm.graphik.graal.core.AtomType;
@@ -91,7 +91,7 @@ public class DefaultInMemoryGraphStore extends AbstractInMemoryAtomSet implement
 	// /////////////////////////////////////////////////////////////////////////
 
 	public DefaultInMemoryGraphStore() {
-		this.terms = CurrentIndexFactory.instance().<Term, TermVertex>createMap(TermValueComparator.instance());
+		this.terms = CurrentIndexFactory.instance().<Term, TermVertex>createMap();
 		this.predicates = CurrentIndexFactory.instance().<Predicate, PredicateVertex>createMap();
 		this.termsByPredicatePosition = CurrentIndexFactory.instance().<Predicate, Set<Term>[]>createMap();
 	}
@@ -138,17 +138,17 @@ public class DefaultInMemoryGraphStore extends AbstractInMemoryAtomSet implement
 	}
 
 	@Override
-	public CloseableIteratorWithoutException<Atom> match(Atom atom) {
+	public CloseableIteratorWithoutException<Atom> match(Atom atom, Substitution s) {
 		CloseableIteratorWithoutException<Atom> it = null;
-		final AtomType atomType = new AtomType(atom);
+		final AtomType atomType = new AtomType(atom, s);
 		if(atomType.isThereConstant()) {
 			// find smallest iterator
 			int i = -1;
 			int size = Integer.MAX_VALUE;
 			for (Term t : atom.getTerms()) {
 				++i;
-				if (t.isConstant()) {
-					TermVertex tv = this.getTermVertex(t);
+				if (t.isConstant() || s.getTerms().contains(t)) {
+					TermVertex tv = this.getTermVertex(s.createImageOf(t));
 					if (tv != null) {
 						int tmpSize = tv.neighborhoodSize(atom.getPredicate(), i);
 						if(tmpSize < size) {
@@ -166,7 +166,7 @@ public class DefaultInMemoryGraphStore extends AbstractInMemoryAtomSet implement
 		}
 		
 		if(atomType.isThereConstraint()) {
-			return new FilterIteratorWithoutException<Atom, Atom>(it, new TypeFilter(atomType, atom));
+			return new FilterIteratorWithoutException<Atom, Atom>(it, new TypeFilter(atomType, s.createImageOf(atom)));
 		} else {
 			return it;
 		}

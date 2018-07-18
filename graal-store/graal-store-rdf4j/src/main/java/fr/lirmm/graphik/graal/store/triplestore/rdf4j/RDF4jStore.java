@@ -66,13 +66,14 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.TermGenerator;
 import fr.lirmm.graphik.graal.api.store.WrongArityException;
 import fr.lirmm.graphik.graal.common.rdf4j.MalformedLangStringException;
 import fr.lirmm.graphik.graal.common.rdf4j.RDF4jUtils;
-import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
+import fr.lirmm.graphik.graal.core.DefaultConstantGenerator;
 import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.store.AbstractTripleStore;
 import fr.lirmm.graphik.graal.io.sparql.SparqlConjunctiveQueryWriter;
@@ -219,13 +220,20 @@ public class RDF4jStore extends AbstractTripleStore {
 	}
 
 	@Override
-	public CloseableIterator<Atom> match(Atom atom) throws AtomSetException {
+	public CloseableIterator<Atom> match(Atom atom, Substitution initialSub) throws AtomSetException {
 		try {
 			// only to check validity
 			utils.atomToStatement(atom);
 		} catch (MalformedLangStringException e) {
 			throw new AtomSetException("Error on the atom " + atom, e);
-		} 
+		}
+		
+		// check does not contains fixed variables
+		for(Term t : initialSub.getValues()) {
+			if(t.isVariable()) {
+				throw new AtomSetException("We can't query specified blank node on TripleStore :" + t);
+			}
+		}
 		
 		ConjunctiveQuery query = DefaultConjunctiveQueryFactory.instance().create(atom);
 		StringWriter s = new StringWriter();
@@ -367,7 +375,7 @@ public class RDF4jStore extends AbstractTripleStore {
 		return this.getTerms();
 	}
 
-	private TermGenerator freshSymbolGenerator = new DefaultVariableGenerator("EE");
+	private TermGenerator freshSymbolGenerator = new DefaultConstantGenerator("EE");
 
 	@Override
 	public TermGenerator getFreshSymbolGenerator() {

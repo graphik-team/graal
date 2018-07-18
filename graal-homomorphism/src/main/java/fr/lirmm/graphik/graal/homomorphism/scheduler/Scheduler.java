@@ -43,11 +43,13 @@
 package fr.lirmm.graphik.graal.homomorphism.scheduler;
 
 import java.util.List;
+import java.util.Set;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.homomorphism.Var;
 import fr.lirmm.graphik.graal.homomorphism.VarSharedData;
@@ -73,7 +75,7 @@ public interface Scheduler extends Profilable {
 	 * @return an array of Var representing an order over its.
 	 * @throws HomomorphismException
 	 */
-	VarSharedData[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data, RulesCompilation rc) throws HomomorphismException;
+	VarSharedData[] execute(InMemoryAtomSet query, Set<Variable> preAffectedVars, List<Term> ans, AtomSet data, RulesCompilation rc) throws HomomorphismException;
 
 	/**
 	 * @param var

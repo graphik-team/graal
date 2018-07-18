@@ -65,6 +65,7 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.TermGenerator;
@@ -340,13 +341,13 @@ public class AdHocRdbmsStore extends AbstractRdbmsStore {
 	}
 
 	@Override
-	public CloseableIterator<Atom> match(Atom atom) throws AtomSetException {
+	public CloseableIterator<Atom> match(Atom atom, Substitution s) throws AtomSetException {
 
 		ConjunctiveQuery query = DefaultConjunctiveQueryFactory.instance().create(new LinkedListAtomSet(atom));
 		SqlHomomorphism solver = SqlHomomorphism.instance();
 
 		try {
-			return new SubstitutionIterator2AtomIterator(atom, solver.execute(query, this));
+			return new SubstitutionIterator2AtomIterator(atom, solver.execute(query, this, s));
 		} catch (HomomorphismException e) {
 			throw new AtomSetException(e);
 		}

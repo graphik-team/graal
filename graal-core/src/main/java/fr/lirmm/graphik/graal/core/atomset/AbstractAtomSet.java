@@ -47,13 +47,13 @@ package fr.lirmm.graphik.graal.core.atomset;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.AtomComparator;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.Constant;
@@ -62,6 +62,7 @@ import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.graal.core.Substitutions;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 
@@ -80,7 +81,7 @@ public abstract class AbstractAtomSet implements AtomSet {
 		try {
 			while (it.hasNext()) {
 				Atom a = it.next();
-				if (AtomComparator.instance().compare(atom, a) == 0)
+				if (Objects.equals(atom, a))
 					return true;
 			}
 		} catch (Exception e) {
@@ -123,6 +124,12 @@ public abstract class AbstractAtomSet implements AtomSet {
 	@Override
 	public boolean removeAll(AtomSet atomset) throws AtomSetException {
 		return this.removeAll(atomset.iterator());
+	}
+	
+
+	@Override
+	public CloseableIterator<Atom> match(Atom atom) throws AtomSetException {
+		return this.match(atom, Substitutions.emptySubstitution());
 	}
 
 	@Override

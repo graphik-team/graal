@@ -48,6 +48,7 @@ import java.io.IOException;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.TermGenerator;
@@ -97,8 +98,8 @@ public class MappedStore extends AbstractStore {
 	}
 
 	@Override
-	public CloseableIterator<Atom> match(Atom atom) throws AtomSetException {
-		CloseableIterator<Atom> match = store.match(mapper.map(atom));
+	public CloseableIterator<Atom> match(Atom atom, Substitution s) throws AtomSetException {
+		CloseableIterator<Atom> match = store.match(mapper.map(atom), s);
 		return new ConverterCloseableIterator<Atom, Atom>(match, unconverter);
 	}
 

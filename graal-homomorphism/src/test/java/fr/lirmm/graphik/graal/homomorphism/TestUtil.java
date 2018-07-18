@@ -89,7 +89,7 @@ final class TestUtil {
 
 		BCC bcc = new BCC();
 
-		return new Homomorphism[] { RecursiveBacktrackHomomorphism.instance(),
+		return new Homomorphism[] {
 		        new BacktrackHomomorphism(),
 		        new BacktrackHomomorphism(bcc.getBCCScheduler(), bcc.getBCCBackJumping()),
 		        new BacktrackHomomorphism(new NFC0()), new BacktrackHomomorphism(new NFC2()),

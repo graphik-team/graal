@@ -60,7 +60,7 @@ public interface InMemoryAtomSet extends AtomSet, CloseableIterableWithoutExcept
 	boolean contains(Atom atom);
 
 	@Override
-	CloseableIteratorWithoutException<Atom> match(Atom atom);
+	CloseableIteratorWithoutException<Atom> match(Atom atom, Substitution s);
 
 	@Override
 	CloseableIteratorWithoutException<Atom> atomsByPredicate(Predicate p);

@@ -60,15 +60,13 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
-import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.store.Store;
-import fr.lirmm.graphik.graal.core.factory.DefaultSubstitutionFactory;
-import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.homomorphism.Var;
 import fr.lirmm.graphik.graal.homomorphism.VarSharedData;
-import fr.lirmm.graphik.graal.homomorphism.scheduler.PatternScheduler;
+import fr.lirmm.graphik.graal.homomorphism.scheduler.AbstractScheduler;
+import fr.lirmm.graphik.graal.homomorphism.scheduler.Scheduler;
 import fr.lirmm.graphik.graal.homomorphism.utils.ProbaUtils;
 import fr.lirmm.graphik.util.graph.DefaultDirectedEdge;
 import fr.lirmm.graphik.util.graph.DefaultGraph;
@@ -77,10 +75,9 @@ import fr.lirmm.graphik.util.graph.DefaultHyperGraph;
 import fr.lirmm.graphik.util.graph.DirectedEdge;
 import fr.lirmm.graphik.util.graph.Graph;
 import fr.lirmm.graphik.util.graph.HyperGraph;
-import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
-class BCCScheduler extends AbstractProfilable implements PatternScheduler {
+class BCCScheduler extends AbstractScheduler implements Scheduler {
 
 	protected final BCC BCC;
 	private Comparator<Integer> varComparator;
@@ -118,7 +115,6 @@ class BCCScheduler extends AbstractProfilable implements PatternScheduler {
 			RulesCompilation rc) {
 		InMemoryAtomSet fixedQuery = (preAffectedVars.isEmpty())? query : computeFixedQuery(query, preAffectedVars);
 
-
 		// Term index
 		Set<Variable> variables = fixedQuery.getVariables();
 		Map<Term, Integer> map = new HashMap<Term, Integer>();
@@ -142,7 +138,7 @@ class BCCScheduler extends AbstractProfilable implements PatternScheduler {
 		}
 		// bias proba of answer variables
 		for(Term t : ans) {
-			if(t.isVariable()) {
+			if(variables.contains(t)) {
 				int idx = map.get(t);
 				proba[idx] *= ansVariableFactor;
 			}
@@ -193,11 +189,6 @@ class BCCScheduler extends AbstractProfilable implements PatternScheduler {
 
 		return vars;
 
-	}
-
-	@Override
-	public VarSharedData[] execute(InMemoryAtomSet h, List<Term> ans, AtomSet data, RulesCompilation rc) {
-		return this.execute(h, Collections.<Variable>emptySet(), ans, data, rc);
 	}
 	
 	@Override
@@ -382,17 +373,6 @@ class BCCScheduler extends AbstractProfilable implements PatternScheduler {
 
 		return graph;
 	}
-	
-	private static InMemoryAtomSet computeFixedQuery(InMemoryAtomSet atomset, Iterable<? extends Variable> fixedTerms) {
-		// create a Substitution for fixed query
-		Substitution fixSub = DefaultSubstitutionFactory.instance().createSubstitution();
-		for (Variable t : fixedTerms) {
-			fixSub.put(t, DefaultTermFactory.instance().createConstant(t.getLabel()));
-		}
-
-		return fixSub.createImageOf(atomset);
-	}
-
 
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE CLASS

@@ -75,6 +75,17 @@ public interface AtomSet extends CloseableIterable<Atom> {
 	 * @throws AtomSetException
 	 */
 	CloseableIterator<Atom> match(Atom atom) throws AtomSetException;
+	
+	/**
+	 * Returns an iterator over atoms that match predicate and constants from
+	 * the specified atom.
+	 * 
+	 * @param atom
+	 * @param s a substitution of Variable from atom into Term from this atom set.
+	 * @return an iterator over atoms.
+	 * @throws AtomSetException
+	 */
+	CloseableIterator<Atom> match(Atom atom, Substitution s) throws AtomSetException;
 
 	/**
 	 * Returns an iterator over all atoms with the specified predicate.

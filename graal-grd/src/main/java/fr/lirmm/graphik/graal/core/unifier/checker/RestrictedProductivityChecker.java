@@ -42,15 +42,13 @@ package fr.lirmm.graphik.graal.core.unifier.checker;
  * knowledge of the CeCILL license and that you accept its terms.
  */
 
-import java.util.Set;
-
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.core.unifier.DependencyChecker;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.core.ConjunctiveQueryWithFixedVariables;
+import fr.lirmm.graphik.graal.core.HashMapSubstitution;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.homomorphism.PureHomomorphism;
 
@@ -79,21 +77,23 @@ public class RestrictedProductivityChecker implements DependencyChecker {
 
 	@Override
 	public boolean isValidDependency(Rule r1, Rule r2, Substitution s) {
-		InMemoryAtomSet b1 = s.createImageOf(r1.getBody());
-		InMemoryAtomSet h1 = s.createImageOf(r1.getHead());
-		InMemoryAtomSet b2 = s.createImageOf(r2.getBody());
-		InMemoryAtomSet h2 = s.createImageOf(r2.getHead());
+		Substitution sub = new HashMapSubstitution(s);
+		for(Variable v : r2.getFrontier()) {
+			if(!sub.getTerms().contains(v)) {
+				sub.put(v, v);
+			}
+		}
+		InMemoryAtomSet b1 = sub.createImageOf(r1.getBody());
+		InMemoryAtomSet h1 = sub.createImageOf(r1.getHead());
+		InMemoryAtomSet b2 = sub.createImageOf(r2.getBody());
 
 		InMemoryAtomSet f = new LinkedListAtomSet();
 		f.addAll(b1.iterator());
 		f.addAll(h1.iterator());
 		f.addAll(b2.iterator());
 
-		Set<Variable> fixedVariables = h2.getVariables();
-		fixedVariables.retainAll(b2.getVariables());
 		try {
-		ConjunctiveQueryWithFixedVariables query = new ConjunctiveQueryWithFixedVariables(h2, fixedVariables);
-			return !PureHomomorphism.instance().exist(query.getAtomSet(), f);
+			return !PureHomomorphism.instance().exist(r2.getHead(), f, sub);
 		} catch (HomomorphismException e) {
 			// TODO treat this exception
 			e.printStackTrace();

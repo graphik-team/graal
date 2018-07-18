@@ -49,12 +49,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Objects;
+import java.util.Set;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.AtomComparator;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
@@ -111,7 +112,9 @@ public class NoCompilation extends AbstractRulesCompilation {
 	}
 
 	@Override
-	public Collection<Substitution> homomorphism(Atom father, Atom son) {
+	public Collection<Substitution> homomorphism(Atom father, Atom son, Substitution s) {
+		Set<Variable> fixedTerms = s.getTerms();
+
 		LinkedList<Substitution> res = new LinkedList<Substitution>();
 		if (father.getPredicate().equals(son.getPredicate())) {
 			Substitution sub = DefaultSubstitutionFactory.instance().createSubstitution();
@@ -123,8 +126,8 @@ public class NoCompilation extends AbstractRulesCompilation {
 				fatherTerm = fatherTermsIt.next();
 				sonTerm = sonTermsIt.next();
 				
-				if (fatherTerm.isConstant()) {
-					if (!fatherTerm.equals(sonTerm)) {
+				if (fatherTerm.isConstant()  || fixedTerms.contains(fatherTerm)) {
+					if (!s.createImageOf(fatherTerm).equals(sonTerm)) {
 						return res;
 					}
 				} else if (!sub.getTerms().contains(fatherTerm))
@@ -148,7 +151,7 @@ public class NoCompilation extends AbstractRulesCompilation {
 
 	@Override
 	public boolean isImplied(Atom father, Atom son) {
-		return AtomComparator.instance().compare(son, father) == 0;
+		return Objects.equals(son, father);
 	}
 
 	@Override

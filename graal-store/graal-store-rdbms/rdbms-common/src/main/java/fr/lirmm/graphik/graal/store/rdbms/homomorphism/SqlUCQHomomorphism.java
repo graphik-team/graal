@@ -53,8 +53,8 @@ import org.slf4j.LoggerFactory;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.UnionOfConjunctiveQueries;
+import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.api.homomorphism.UCQHomomorphism;
 import fr.lirmm.graphik.graal.core.Substitutions;
 import fr.lirmm.graphik.graal.homomorphism.AbstractHomomorphism;
 import fr.lirmm.graphik.graal.store.rdbms.RdbmsConjunctiveQueryTranslator;
@@ -72,7 +72,7 @@ import fr.lirmm.graphik.util.stream.converter.ConverterCloseableIterator;
  * 
  */
 public final class SqlUCQHomomorphism extends AbstractHomomorphism<UnionOfConjunctiveQueries, RdbmsStore>
-                                      implements UCQHomomorphism<RdbmsStore> {
+                                      implements Homomorphism<UnionOfConjunctiveQueries,RdbmsStore> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SqlUCQHomomorphism.class);
 
@@ -91,11 +91,11 @@ public final class SqlUCQHomomorphism extends AbstractHomomorphism<UnionOfConjun
 	// /////////////////////////////////////////////////////////////////////////
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
-
+	
 	@Override
-	public CloseableIterator<Substitution> execute(UnionOfConjunctiveQueries queries, RdbmsStore store)
+	public CloseableIterator<Substitution> execute(UnionOfConjunctiveQueries queries, RdbmsStore store, Substitution s)
 	    throws HomomorphismException {
-		SQLQuery sqlQuery = preprocessing(queries, store);
+		SQLQuery sqlQuery = preprocessing(queries, store, s);
 		if (this.getProfiler().isProfilingEnabled()) {
 			this.getProfiler().put("SQLQuery", sqlQuery);
 		}
@@ -120,7 +120,7 @@ public final class SqlUCQHomomorphism extends AbstractHomomorphism<UnionOfConjun
 		}
 	}
 
-	private static SQLQuery preprocessing(UnionOfConjunctiveQueries queries, RdbmsStore store)
+	private static SQLQuery preprocessing(UnionOfConjunctiveQueries queries, RdbmsStore store, Substitution s)
 	    throws HomomorphismException {
 		boolean emptyQuery = false;
 		CloseableIterator<ConjunctiveQuery> it = queries.iterator();
@@ -132,7 +132,7 @@ public final class SqlUCQHomomorphism extends AbstractHomomorphism<UnionOfConjun
 				return SQLQuery.hasSchemaErrorInstance();
 
 			while (it.hasNext()) {
-				SQLQuery query = translator.translate(it.next());
+				SQLQuery query = translator.translate(it.next(), s);
 				if (!query.hasSchemaError()) {
 					if (ucq.length() > 0)
 						ucq.append("\nUNION\n");

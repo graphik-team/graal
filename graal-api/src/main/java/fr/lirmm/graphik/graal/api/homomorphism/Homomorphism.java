@@ -66,6 +66,20 @@ public interface Homomorphism<T1 extends Object, T2 extends AtomSet> extends Exi
 	 * @throws HomomorphismException
 	 */
 	CloseableIterator<Substitution> execute(T1 q, T2 a) throws HomomorphismException;
+	
+	/**
+	 * Look for the homomorphisms of the specified object into the specified atomset
+	 * such that it respects the specified Substitution.
+	 * For boolean query, return a SubstitutionReader with an empty Substitution
+	 * for true and no substitution for false.
+	 * 
+	 * @param q
+	 * @param a
+	 * @param s a Substitution of Variable from q into Term from a.
+	 * @return an Iterator over Substitutions representing homomorphism found of q into a.
+	 * @throws HomomorphismException
+	 */
+	CloseableIterator<Substitution> execute(T1 q, T2 a, Substitution s) throws HomomorphismException;
 
 };
 

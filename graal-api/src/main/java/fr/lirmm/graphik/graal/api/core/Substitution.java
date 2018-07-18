@@ -200,6 +200,15 @@ public interface Substitution extends Comparable<Substitution>, AppendableToStri
 	 * @return an Rule which is the image of specified one by this substitution.
 	 */
 	Rule createImageOf(Rule rule);
+	
+	/**
+	 * Apply this substitution on the given conjunctive query.
+	 * 
+	 * @param cq
+	 *            (const)
+	 * @return an conjunctive query which is the image of specified one by this substitution.
+	 */
+	ConjunctiveQuery createImageOf(ConjunctiveQuery cq);
 
 	/**
 	 * Insert the application of this substitution on the src atom set into the
@@ -221,5 +230,6 @@ public interface Substitution extends Comparable<Substitution>, AppendableToStri
 	 * @param target
 	 */
 	void apply(InMemoryAtomSet src, InMemoryAtomSet target);
+
 
 };

@@ -86,11 +86,11 @@ public class AtomicQueryHomomorphism extends AbstractHomomorphismWithCompilation
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public CloseableIterator<Substitution> execute(ConjunctiveQuery q, AtomSet a)
+	public CloseableIterator<Substitution> execute(ConjunctiveQuery q, AtomSet a, Substitution s)
 			throws HomomorphismException {
 		Atom atom = q.getAtomSet().iterator().next();
 		try {
-			return new ConverterCloseableIterator<Atom, Substitution>(a.match(atom),
+			return new ConverterCloseableIterator<Atom, Substitution>(a.match(atom, s),
 					new Atom2SubstitutionConverter(atom, q.getAnswerVariables()));
 		} catch (AtomSetException e) {
 			throw new HomomorphismException(e);
@@ -99,12 +99,12 @@ public class AtomicQueryHomomorphism extends AbstractHomomorphismWithCompilation
 
 	@Override
 	public CloseableIterator<Substitution> execute(ConjunctiveQuery q, AtomSet a,
-			RulesCompilation rc) throws HomomorphismException {
+			RulesCompilation rc, Substitution s) throws HomomorphismException {
 		try {
 			List<CloseableIterator<Substitution>> iteratorsList = new LinkedList<CloseableIterator<Substitution>>();
 			Atom atom = q.getAtomSet().iterator().next();
 			for (Pair<Atom, Substitution> im : rc.getRewritingOf(atom)) {
-				iteratorsList.add(new ConverterCloseableIterator<Atom, Substitution>(a.match(im.getLeft()),
+				iteratorsList.add(new ConverterCloseableIterator<Atom, Substitution>(a.match(im.getLeft(), s),
 						new Atom2SubstitutionConverter(im.getLeft(), q.getAnswerVariables(), im.getRight())));
 			}
 			return new CloseableIteratorAggregator<Substitution>(

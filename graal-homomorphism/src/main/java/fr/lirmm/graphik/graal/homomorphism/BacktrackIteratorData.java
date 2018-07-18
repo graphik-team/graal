@@ -64,7 +64,6 @@ import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
 import fr.lirmm.graphik.graal.homomorphism.bootstrapper.Bootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.ForwardChecking;
-import fr.lirmm.graphik.graal.homomorphism.scheduler.PatternScheduler;
 import fr.lirmm.graphik.graal.homomorphism.scheduler.Scheduler;
 import fr.lirmm.graphik.util.profiler.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIterableWithoutException;
@@ -89,9 +88,9 @@ class BacktrackIteratorData {
 	Profiler profiler;
 	
 	boolean isOpen = false;
-
+	
 	public BacktrackIteratorData(InMemoryAtomSet query, Set<Variable> variablesToParameterize,
-			Collection<InMemoryAtomSet> negParts, AtomSet data, List<Term> ans, PatternScheduler scheduler,
+			Collection<InMemoryAtomSet> negParts, AtomSet data, List<Term> ans, Scheduler scheduler,
 			Bootstrapper bootstrapper, ForwardChecking fc, BackJumping bj, RulesCompilation compilation,
 			Profiler profiler) throws HomomorphismException {
 
@@ -115,40 +114,11 @@ class BacktrackIteratorData {
 		this.preprocessing(variablesToParameterize, profiler);
 	}
 
-	public BacktrackIteratorData(InMemoryAtomSet query, Collection<InMemoryAtomSet> negParts, AtomSet data,
-			List<Term> ans, Scheduler scheduler, Bootstrapper bootstrapper, ForwardChecking fc, BackJumping bj,
-			RulesCompilation compilation, Profiler profiler) throws HomomorphismException {
-
-		this.query = query;
-		this.negParts = negParts;
-		this.data = data;
-		this.ans = ans;
-		this.scheduler = scheduler;
-		this.bootstrapper = bootstrapper;
-		this.fc = fc;
-		this.bj = bj;
-		this.fc.setBackJumping(bj);
-		this.compilation = compilation;
-
-		this.profiler = profiler;
-		this.bootstrapper.setProfiler(profiler);
-		this.scheduler.setProfiler(profiler);
-		this.fc.setProfiler(profiler);
-		this.bj.setProfiler(profiler);
-
-		this.preprocessing(null, profiler);
-	}
 
 	private void preprocessing(Set<Variable> variablesToParameterize, Profiler profiler) throws HomomorphismException {
 		profiler.start("preprocessingTime");
 		// Compute order on query variables and atoms
-		if (variablesToParameterize != null && !variablesToParameterize.isEmpty()) {
-			assert this.scheduler instanceof PatternScheduler;
-			PatternScheduler sched = (PatternScheduler) this.scheduler;
-			this.varsOrder = sched.execute(this.query, variablesToParameterize, ans, this.data, this.compilation);
-		} else {
-			this.varsOrder = this.scheduler.execute(this.query, ans, this.data, this.compilation);
-		}
+		this.varsOrder = this.scheduler.execute(this.query, variablesToParameterize, ans, this.data, this.compilation);
 		this.levelMax = varsOrder.length - 2;
 
 		// PROFILING
@@ -173,8 +143,11 @@ class BacktrackIteratorData {
 		this.bj.init(this.varsOrder);
 
 		Set<Variable> allVarsFromH = query.getVariables();
+		allVarsFromH.removeAll(variablesToParameterize);
 		for (InMemoryAtomSet negPart : this.negParts) {
-			Set<Variable> frontier = SetUtils.intersection(allVarsFromH, negPart.getVariables());
+			Set<Variable> allVarsFromNegPart = negPart.getVariables();
+			allVarsFromNegPart.removeAll(variablesToParameterize);
+			Set<Variable> frontier = SetUtils.intersection(allVarsFromH, allVarsFromNegPart);
 			this.varsOrder[maxLevel(frontier)].negatedPartsToCheck.add(BacktrackHomomorphismPattern.instance()
 					.prepareHomomorphism(new DefaultConjunctiveQuery(negPart, Collections.<Term>emptyList()), frontier,
 							this.data, this.compilation));

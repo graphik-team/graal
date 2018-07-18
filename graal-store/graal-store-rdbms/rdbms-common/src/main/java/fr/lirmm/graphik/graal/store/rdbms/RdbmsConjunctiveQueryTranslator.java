@@ -49,6 +49,7 @@ import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.store.rdbms.util.DBColumn;
 import fr.lirmm.graphik.graal.store.rdbms.util.DBTable;
@@ -64,11 +65,12 @@ public interface RdbmsConjunctiveQueryTranslator {
 	 * Translates a ConjunctiveQuery into an SQL query
 	 * 
 	 * @param query
+	 * @param s a Substitution of Variable from query into Term from database.
 	 * @return the String representation of an SQL query which is equivalent to
 	 *         the specified {@link ConjunctiveQuery}.
 	 * @throws AtomSetException
 	 */
-	SQLQuery translate(ConjunctiveQuery query) throws AtomSetException;
+	SQLQuery translate(ConjunctiveQuery query, Substitution s) throws AtomSetException;
 
 	/**
 	 * Translates a rule into an "INSERT ... SELECT ..." SQL statement.

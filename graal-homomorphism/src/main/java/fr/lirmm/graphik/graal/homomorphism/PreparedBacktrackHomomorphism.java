@@ -61,7 +61,7 @@ import fr.lirmm.graphik.graal.homomorphism.bootstrapper.Bootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.bootstrapper.StatBootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NoForwardChecking;
-import fr.lirmm.graphik.graal.homomorphism.scheduler.PatternScheduler;
+import fr.lirmm.graphik.graal.homomorphism.scheduler.Scheduler;
 import fr.lirmm.graphik.util.profiler.NoProfiler;
 import fr.lirmm.graphik.util.profiler.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -87,7 +87,7 @@ class PreparedBacktrackHomomorphism implements PreparedHomomorphism {
 	}
 
 
-	public PreparedBacktrackHomomorphism(ConjunctiveQuery query, Set<Variable> variablesToParameterize, Collection<InMemoryAtomSet> negParts, AtomSet data, PatternScheduler scheduler, Bootstrapper bootstrapper, RulesCompilation compilation, Profiler profiler) throws HomomorphismException {
+	public PreparedBacktrackHomomorphism(ConjunctiveQuery query, Set<Variable> variablesToParameterize, Collection<InMemoryAtomSet> negParts, AtomSet data, Scheduler scheduler, Bootstrapper bootstrapper, RulesCompilation compilation, Profiler profiler) throws HomomorphismException {
 		
 		this.data = new BacktrackIteratorData(query.getAtomSet(), variablesToParameterize, negParts, data, query.getAnswerVariables(), scheduler, bootstrapper, NoForwardChecking.instance(), NoBackJumping.instance(), compilation, profiler);
 	}
