@@ -132,7 +132,7 @@ public abstract class AbstractSubstitution implements Substitution {
 				dest.add(this.createImageOf(a));
 			}
 		} catch (IteratorException e) {
-			throw new AtomSetException("Error during the iteration over src");
+			throw new AtomSetException("Error during the iteration over src", e);
 		}
 	}
 	

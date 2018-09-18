@@ -132,7 +132,7 @@ public class NFC2 extends AbstractNFC implements ForwardChecking {
 						return false;
 					}
 				} catch (AtomSetException e) {
-					throw new BacktrackException("An error occurs while checking current candidate");
+					throw new BacktrackException("An error occurs while checking current candidate", e);
 				}
 			} else {
 				try {
@@ -140,9 +140,9 @@ public class NFC2 extends AbstractNFC implements ForwardChecking {
 						return false;
 					}
 				} catch (IteratorException e) {
-					throw new BacktrackException("An error occurs while selecting candidates for next steps ");
+					throw new BacktrackException("An error occurs while selecting candidates for next steps ", e);
 				} catch (AtomSetException e) {
-					throw new BacktrackException("An error occurs while selecting candidates for next steps ");
+					throw new BacktrackException("An error occurs while selecting candidates for next steps ", e);
 				}
 			}
 		}

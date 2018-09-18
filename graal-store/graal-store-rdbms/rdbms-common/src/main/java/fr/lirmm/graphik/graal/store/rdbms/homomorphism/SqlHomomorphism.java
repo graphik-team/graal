@@ -112,7 +112,7 @@ public final class SqlHomomorphism extends AbstractHomomorphism<ConjunctiveQuery
 				                                      new ResultSet2SubstitutionConverter(store.getConjunctiveQueryTranslator(),
 				                                                                          query.getAnswerVariables()));
 			} catch (Exception e) {
-				throw new HomomorphismException(e.getMessage(), e);
+				throw new HomomorphismException("Error while evaluating the following query: [" + query + "] translated to SQL as: " + sqlQuery, e);
 			}
 		}
 	}
