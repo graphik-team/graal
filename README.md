@@ -7,7 +7,7 @@
 * install [git](http://www.git-scm.com/)
 * clone the repository
 ~~~
-  git clone git@github.com:graphik-team/graal.git
+  git clone https://github.com/graphik-team/graal.git
 ~~~
 
 * build the project
