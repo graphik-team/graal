@@ -50,6 +50,7 @@ import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.graal.core.Substitutions;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
 import fr.lirmm.graphik.graal.store.rdbms.RdbmsConjunctiveQueryTranslator;
 import fr.lirmm.graphik.util.stream.converter.ConversionException;
@@ -64,14 +65,20 @@ public class ResultSet2SubstitutionConverter implements Converter<ResultSet, Sub
 
 	private List<Term> ans;
 	private RdbmsConjunctiveQueryTranslator queryTranslator;
+	private Substitution varMap;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
 	public ResultSet2SubstitutionConverter(RdbmsConjunctiveQueryTranslator queryTranslator, List<Term> ans) {
+		this(queryTranslator, ans, Substitutions.emptySubstitution());
+	}
+	
+	public ResultSet2SubstitutionConverter(RdbmsConjunctiveQueryTranslator queryTranslator, List<Term> ans, Substitution varMap) {
 		this.queryTranslator = queryTranslator;
 		this.ans = ans;
+		this.varMap = varMap;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -85,7 +92,7 @@ public class ResultSet2SubstitutionConverter implements Converter<ResultSet, Sub
 			if (!ans.isEmpty()) {
 				for (Term t : ans) {
 					if (t.isVariable()) {
-						int i = result.findColumn(t.getLabel());
+						int i = result.findColumn(this.varMap.createImageOf(t).getLabel());
 						int type = result.getMetaData().getColumnType(i);
 						String value = result.getString(i);
 						Term substitut = this.queryTranslator.createTermFromColumnType(type, value);

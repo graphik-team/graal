@@ -45,6 +45,8 @@
  */
 package fr.lirmm.graphik.graal.core;
 
+import java.util.List;
+
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.core.VariableGenerator;
@@ -70,6 +72,12 @@ public class FreshVarSubstitution extends TreeMapSubstitution {
 		this.gen = gen;
 	}
 	
+	public FreshVarSubstitution(VariableGenerator gen, List<Term> termsToSubstitute) {
+		this(gen);
+		for(Term t : termsToSubstitute) {
+			this.createImageOf(t);
+		}
+	}
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////

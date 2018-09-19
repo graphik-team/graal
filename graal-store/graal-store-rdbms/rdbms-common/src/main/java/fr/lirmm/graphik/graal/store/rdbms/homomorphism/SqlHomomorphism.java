@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2017)
+ * (Université de Montpellier & CNRS) (2014 - 2018)
  *
  * Contributors :
  *
@@ -55,6 +55,8 @@ import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
+import fr.lirmm.graphik.graal.core.FreshVarSubstitution;
 import fr.lirmm.graphik.graal.core.Substitutions;
 import fr.lirmm.graphik.graal.homomorphism.AbstractHomomorphism;
 import fr.lirmm.graphik.graal.store.rdbms.RdbmsStore;
@@ -93,8 +95,10 @@ public final class SqlHomomorphism extends AbstractHomomorphism<ConjunctiveQuery
 	public CloseableIterator<Substitution> execute(ConjunctiveQuery query, RdbmsStore store, Substitution s)
 	    throws HomomorphismException {
 		SQLQuery sqlQuery;
+		// ensure answer variable names are SQL compatible by substituting each
+		FreshVarSubstitution varMap = new FreshVarSubstitution(new DefaultVariableGenerator("VAR"), query.getAnswerVariables());
 		try {
-			sqlQuery = store.getConjunctiveQueryTranslator().translate(query, s);
+			sqlQuery = store.getConjunctiveQueryTranslator().translate(varMap.createImageOf(query), s);
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug("GENERATED SQL QUERY: \n" + query + "\n" + sqlQuery);
 		} catch (AtomSetException e) {
@@ -109,8 +113,8 @@ public final class SqlHomomorphism extends AbstractHomomorphism<ConjunctiveQuery
 				ResultSet results = store.getDriver().createStatement().executeQuery(sqlQuery.toString());
 				CloseableIterator<ResultSet> resultsIt = new ResultSetCloseableIterator(results);
 				return new ConverterCloseableIterator<ResultSet, Substitution>(resultsIt,
-				                                      new ResultSet2SubstitutionConverter(store.getConjunctiveQueryTranslator(),
-				                                                                          query.getAnswerVariables()));
+				                                                               new ResultSet2SubstitutionConverter(store.getConjunctiveQueryTranslator(),
+				                                                                                                   query.getAnswerVariables(), varMap));
 			} catch (Exception e) {
 				throw new HomomorphismException("Error while evaluating the following query: [" + query + "] translated to SQL as: " + sqlQuery, e);
 			}
