@@ -132,9 +132,10 @@ class NaturalConjunctiveQueryTranslator extends AbstractRdbmsConjunctiveQueryTra
 				List<DBColumn> columnsInfo = tableColumns.get(atom);
 				int position = 0;
 				for (Term term : atom.getTerms()) {
-					String thisTerm = currentAtom + columnsInfo.get(position).getName();
+					DBColumn column = columnsInfo.get(position);
+					String thisTerm = currentAtom + column.getName();
 					if (term.isConstant() || s.getTerms().contains(term)) {
-						constants.add(thisTerm + " = '" + s.createImageOf(term).getIdentifier().toString() + "'");
+						constants.add(thisTerm + " = " + this.formatFromColumnType(column, term));
 					} else {
 						if (lastOccurrence.containsKey(term.getIdentifier().toString())) {
 							equivalences.add(lastOccurrence.get(term.getIdentifier().toString()) + " = " + thisTerm);
