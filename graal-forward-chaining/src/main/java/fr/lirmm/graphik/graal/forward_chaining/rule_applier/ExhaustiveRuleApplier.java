@@ -46,7 +46,7 @@
 package fr.lirmm.graphik.graal.forward_chaining.rule_applier;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
@@ -80,7 +80,7 @@ public class ExhaustiveRuleApplier<T extends AtomSet> extends AbstractRuleApplie
 	 * Construct a ExhaustiveRuleApplier with a
 	 * {@link RestrictedChaseHaltingCondition} and the given homomorphism solver.
 	 */
-	public ExhaustiveRuleApplier(Homomorphism<? super ConjunctiveQuery, ? super T> homomorphismSolver) {
+	public ExhaustiveRuleApplier(Homomorphism<? super Query, ? super T> homomorphismSolver) {
 		this(homomorphismSolver, new RestrictedChaseHaltingCondition());
 	}
 
@@ -100,7 +100,7 @@ public class ExhaustiveRuleApplier<T extends AtomSet> extends AbstractRuleApplie
 	 * @param haltingCondition
 	 * @param homomorphismSolver
 	 */
-	public ExhaustiveRuleApplier(Homomorphism<? super ConjunctiveQuery, ? super T> homomorphismSolver,
+	public ExhaustiveRuleApplier(Homomorphism<? super Query, ? super T> homomorphismSolver,
 	    ChaseHaltingCondition haltingCondition) {
 		super(homomorphismSolver, haltingCondition);
 	}
@@ -110,7 +110,7 @@ public class ExhaustiveRuleApplier<T extends AtomSet> extends AbstractRuleApplie
 	// //////////////////////////////////////////////////////////////////////////
 
 	@Override
-	protected ConjunctiveQuery generateQuery(Rule rule) {
+	protected Query generateQuery(Rule rule) {
 		return DefaultConjunctiveQueryFactory.instance().create(rule.getBody());
 	}
 	
