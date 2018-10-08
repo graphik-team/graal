@@ -42,6 +42,7 @@
  */
 package fr.lirmm.graphik.graal.backward_chaining;
 
+
 import java.util.List;
 import java.util.Set;
 
@@ -411,6 +412,48 @@ public class BackwardChainingTest {
 		}
 		Assert.assertTrue(found);
 		Assert.assertEquals(2, i);
+	}
+	
+	@Theory
+	public void issue97variableNameConflict(RulesCompilation compilation,
+	    RewritingOperator operator) throws IteratorException, ParseException {
+		
+		Predicate s = new Predicate("s", 3);
+		Predicate t = new Predicate("t", 2);
+
+		RuleSet rules = new LinkedListRuleSet();
+		rules.add(DlgpParser.parseRule("p(X,Y) :- s(X,Z,Y)."));
+		rules.add(DlgpParser.parseRule("q(Y) :- t(Y,W)."));
+
+
+		ConjunctiveQuery query = DlgpParser.parseQuery("?(X,Y) :- p(X,Y), q(Y).");
+
+		compilation.compile(rules.iterator());
+		PureRewriter bc = new PureRewriter(operator, true);
+		CloseableIterator<? extends ConjunctiveQuery> it = bc.execute(query, rules, compilation);
+
+		boolean found = false;
+		int i = 0;
+		while (it.hasNext()) {
+			ConjunctiveQuery next = it.next();
+			Set<Predicate> predicates = next.getAtomSet().getPredicates();
+			if(predicates.contains(s) && predicates.contains(t)) {
+				found = true;
+				CloseableIteratorWithoutException<Atom> iterator = next.getAtomSet().iterator();
+				Atom a1 = iterator.next();
+				Atom a2 = iterator.next();
+				if(a1.getPredicate().equals(t)) {
+					Atom tmp = a1;
+					a1 = a2;
+					a2 = tmp;
+				}
+				// relevant check
+				Assert.assertNotEquals(a1.getTerm(1), a2.getTerm(1));
+			}
+			++i;
+		}
+		Assert.assertTrue(found);
+		Assert.assertEquals(4, i);
 	}
 
 	public static int count(CloseableIterator<?> it) throws IteratorException {

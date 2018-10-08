@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2017)
+ * (Université de Montpellier & CNRS) (2014 - 2018)
  *
  * Contributors :
  *
@@ -40,63 +40,14 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
-package fr.lirmm.graphik.graal.core;
+package fr.lirmm.graphik.graal.api.core;
 
-import java.util.List;
-
-import fr.lirmm.graphik.graal.api.core.FreshVarMapper;
-import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.graal.api.core.VariableGenerator;
-
-/**
- * @see FreshVarMapper
- * 
+/** 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class FreshVarSubstitution extends TreeMapSubstitution {
+public interface FreshVarMapper<T> {
 	
-	private VariableGenerator gen;
-	
-	// /////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	// /////////////////////////////////////////////////////////////////////////
-	
-	public FreshVarSubstitution() {
-		this(new DefaultVariableGenerator("X"
-				+ Integer.toString(FreshVarSubstitution.class.hashCode())));
-	}
-	
-	public FreshVarSubstitution(VariableGenerator gen) {
-		this.gen = gen;
-	}
-	
-	public FreshVarSubstitution(VariableGenerator gen, List<Term> termsToSubstitute) {
-		this(gen);
-		for(Term t : termsToSubstitute) {
-			this.createImageOf(t);
-		}
-	}
-	// /////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	// /////////////////////////////////////////////////////////////////////////
-	
-	@Override
-	public Term createImageOf(Term term) {
-		Term substitut = term;
-		if (!term.isConstant()) {
-			substitut = this.getMap().get(term);
-			if(substitut == null) {
-				substitut = gen.getFreshSymbol();
-				this.put((Variable) term, substitut);
-			}
-		}
-		return substitut;
-	}
-	
+	Variable getImageOf(T object);
 
 }

@@ -54,12 +54,16 @@ import java.util.TreeSet;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
+import fr.lirmm.graphik.graal.api.core.FreshVarMapper;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
+import fr.lirmm.graphik.graal.api.core.VariableGenerator;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
+import fr.lirmm.graphik.graal.core.DefaultFreshVarMapper;
+import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.core.Substitutions;
 import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultSubstitutionFactory;
@@ -74,6 +78,8 @@ import fr.lirmm.graphik.util.Partition;
  * 
  */
 class IDConditionImpl implements IDCondition {
+	
+	private VariableGenerator varGen;
 
 	private int[] condBody;
 	private int[] condHead;
@@ -83,11 +89,18 @@ class IDConditionImpl implements IDCondition {
 	// //////////////////////////////////////////////////////////////////////////
 
 	public IDConditionImpl(int[] condBody, int[] condHead) {
-		this.condBody = condBody;
-		this.condHead = condHead;
+		this(condBody, condHead, new DefaultVariableGenerator("X"
+				+ Integer.toString(IDCompilation.class.hashCode())));
 	}
 
+
 	public IDConditionImpl(List<Term> body, List<Term> head) {
+		this(body, head, new DefaultVariableGenerator("X"
+				+ Integer.toString(IDCompilation.class.hashCode())));
+	}
+	
+	public IDConditionImpl(List<Term> body, List<Term> head, DefaultVariableGenerator varGen) {
+		this.varGen = varGen;
 
 		// code the condition on the body terms
 		condBody = new int[body.size()];
@@ -117,6 +130,14 @@ class IDConditionImpl implements IDCondition {
 				i++;
 			}
 		}
+	}
+
+
+
+	public IDConditionImpl(int[] condBody, int[] condHead, VariableGenerator varGen) {
+		this.condBody = condBody;
+		this.condHead = condHead;
+		this.varGen = varGen;
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -193,9 +214,10 @@ class IDConditionImpl implements IDCondition {
 	public Pair<List<Term>, Substitution> generateBody(List<Term> head) {
 		Substitution s = DefaultSubstitutionFactory.instance().createSubstitution();
 		Set<Variable> toRemoveFromPartition = new TreeSet<Variable>();
+		FreshVarMapper<Integer> freshVar = new DefaultFreshVarMapper<>(varGen);
 
 		for (int i = 0; i < condHead.length; i++) {
-			Variable v = DefaultTermFactory.instance().createVariable(condHead[i]);
+			Variable v = freshVar.getImageOf(condHead[i]);
 			toRemoveFromPartition.add(v);
 			if (!s.aggregate(v, head.get(i))) {
 				return null;
@@ -204,7 +226,7 @@ class IDConditionImpl implements IDCondition {
 
 		List<Term> body = new ArrayList<Term>(condBody.length);
 		for (int i = 0; i < condBody.length; i++) {
-			Variable v = DefaultTermFactory.instance().createVariable(condBody[i]);
+			Variable v = freshVar.getImageOf(condBody[i]);
 			toRemoveFromPartition.add(v);
 			body.add(s.createImageOf(v));
 		}
@@ -218,9 +240,10 @@ class IDConditionImpl implements IDCondition {
 
 	@Override
 	public List<Term> generateHead() {
+		FreshVarMapper<Integer> freshVar = new DefaultFreshVarMapper<>(varGen);
 		List<Term> head = new LinkedList<Term>();
 		for (int i = 0; i < this.condHead.length; ++i) {
-			head.add(DefaultTermFactory.instance().createVariable("X" + this.condHead[i]));
+			head.add(freshVar.getImageOf(this.condHead[i]));
 		}
 		return head;
 	}
@@ -362,7 +385,7 @@ class IDConditionImpl implements IDCondition {
 			newCondHead[i] = map[newCondHead[i]];
 		}
 
-		return new IDConditionImpl(newCondBody, newCondHead);
+		return new IDConditionImpl(newCondBody, newCondHead, varGen);
 	}
 
 	// //////////////////////////////////////////////////////////////////////////

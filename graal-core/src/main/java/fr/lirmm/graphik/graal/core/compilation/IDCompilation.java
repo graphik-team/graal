@@ -186,7 +186,7 @@ public class IDCompilation extends AbstractRulesCompilation {
 			for (int i = 0; i < predH.getArity(); i++) {
 				terms.add(varGen.getFreshSymbol());
 			}
-			res.add(new IDConditionImpl(terms, terms));
+			res.add(new IDConditionImpl(terms, terms, varGen));
 		} else {
 			Map<Predicate, LinkedList<IDCondition>> condH = this.conditions
 					.get(predH);
@@ -325,7 +325,7 @@ public class IDCompilation extends AbstractRulesCompilation {
 			Rule ru = compilable.next();
 			b = ru.getBody().iterator().next();
 			h = ru.getHead().iterator().next();
-			IDCondition cond = new IDConditionImpl(b.getTerms(), h.getTerms());
+			IDCondition cond = new IDConditionImpl(b.getTerms(), h.getTerms(), varGen);
 			addCondition(b.getPredicate(), h.getPredicate(), cond,
 					this.conditions);
 		}

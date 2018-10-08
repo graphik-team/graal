@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2017)
+ * (Université de Montpellier & CNRS) (2014 - 2018)
  *
  * Contributors :
  *
@@ -40,60 +40,53 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
 package fr.lirmm.graphik.graal.core;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import fr.lirmm.graphik.graal.api.core.FreshVarMapper;
-import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.core.VariableGenerator;
 
 /**
- * @see FreshVarMapper
- * 
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class FreshVarSubstitution extends TreeMapSubstitution {
+public class DefaultFreshVarMapper<T> implements FreshVarMapper<T> {
 	
+	private Map<T, Variable> mapping = new HashMap<>();
 	private VariableGenerator gen;
 	
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 	
-	public FreshVarSubstitution() {
+	public DefaultFreshVarMapper() {
 		this(new DefaultVariableGenerator("X"
-				+ Integer.toString(FreshVarSubstitution.class.hashCode())));
+				+ Integer.toString(FreshVarMapper.class.hashCode())));
 	}
 	
-	public FreshVarSubstitution(VariableGenerator gen) {
+	public DefaultFreshVarMapper(VariableGenerator gen) {
 		this.gen = gen;
 	}
 	
-	public FreshVarSubstitution(VariableGenerator gen, List<Term> termsToSubstitute) {
+	public DefaultFreshVarMapper(VariableGenerator gen, List<T> objectsToSubstitute) {
 		this(gen);
-		for(Term t : termsToSubstitute) {
-			this.createImageOf(t);
+		for(T t : objectsToSubstitute) {
+			this.getImageOf(t);
 		}
 	}
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
 	
-	@Override
-	public Term createImageOf(Term term) {
-		Term substitut = term;
-		if (!term.isConstant()) {
-			substitut = this.getMap().get(term);
-			if(substitut == null) {
-				substitut = gen.getFreshSymbol();
-				this.put((Variable) term, substitut);
-			}
+	public Variable getImageOf(T object) {
+		Variable substitut = this.mapping.get(object);
+		if(substitut == null) {
+			substitut = gen.getFreshSymbol();
+			this.mapping.put(object, substitut);
 		}
 		return substitut;
 	}
