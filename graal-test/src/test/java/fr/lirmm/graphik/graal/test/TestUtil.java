@@ -75,6 +75,7 @@ import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2WithLimit;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NoForwardChecking;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.SimpleFC;
 import fr.lirmm.graphik.graal.homomorphism.scheduler.DefaultScheduler;
+import fr.lirmm.graphik.graal.homomorphism.scheduler.ComparableOrderScheduler;
 import fr.lirmm.graphik.graal.store.gdb.Neo4jStore;
 import fr.lirmm.graphik.graal.store.rdbms.adhoc.AdHocRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.driver.HSQLDBDriver;
@@ -127,18 +128,18 @@ public final class TestUtil {
 
 		return new Homomorphism[] { SmartHomomorphism.instance(), 
 									// Without Optimization
-		                            new BacktrackHomomorphism(DefaultScheduler.instance(), StarBootstrapper.instance(), NoForwardChecking.instance(), NoBackJumping.instance()),
+		                            new BacktrackHomomorphism(ComparableOrderScheduler.instance(), StarBootstrapper.instance(), NoForwardChecking.instance(), NoBackJumping.instance()),
 		                            // BackJumping
-		                            new BacktrackHomomorphism(DefaultScheduler.instance(), StarBootstrapper.instance(), NoForwardChecking.instance(), new GraphBaseBackJumping()),
+		                            new BacktrackHomomorphism(ComparableOrderScheduler.instance(), StarBootstrapper.instance(), NoForwardChecking.instance(), new GraphBaseBackJumping()),
 		                            // BCC
 		                            new BacktrackHomomorphism(bcc0.getBCCScheduler(), StarBootstrapper.instance(), NoForwardChecking.instance(), bcc0.getBCCBackJumping()),
 		                            new BacktrackHomomorphism(bcc1.getBCCScheduler(), StarBootstrapper.instance(), NoForwardChecking.instance(), bcc1.getBCCBackJumping()),
 		                            // Forward Checking
-		                            new BacktrackHomomorphism(DefaultScheduler.instance(), StarBootstrapper.instance(),new NFC0(), new GraphBaseBackJumping()), 
-		                            new BacktrackHomomorphism(DefaultScheduler.instance(), StarBootstrapper.instance(),new NFC2(), new GraphBaseBackJumping()),
-		                            new BacktrackHomomorphism(DefaultScheduler.instance(), StarBootstrapper.instance(),new NFC2(true), new GraphBaseBackJumping()),
-		                            new BacktrackHomomorphism(DefaultScheduler.instance(), StarBootstrapper.instance(),new SimpleFC(), new GraphBaseBackJumping()),
-		                            new BacktrackHomomorphism(DefaultScheduler.instance(), StarBootstrapper.instance(),new NFC2WithLimit(8), new GraphBaseBackJumping()),
+		                            new BacktrackHomomorphism(ComparableOrderScheduler.instance(), StarBootstrapper.instance(),new NFC0(), new GraphBaseBackJumping()), 
+		                            new BacktrackHomomorphism(ComparableOrderScheduler.instance(), StarBootstrapper.instance(),new NFC2(), new GraphBaseBackJumping()),
+		                            new BacktrackHomomorphism(ComparableOrderScheduler.instance(), StarBootstrapper.instance(),new NFC2(true), new GraphBaseBackJumping()),
+		                            new BacktrackHomomorphism(ComparableOrderScheduler.instance(), StarBootstrapper.instance(),new SimpleFC(), new GraphBaseBackJumping()),
+		                            new BacktrackHomomorphism(ComparableOrderScheduler.instance(), StarBootstrapper.instance(),new NFC2WithLimit(8), new GraphBaseBackJumping()),
 		                            // Bootstrapper
 		                            new BacktrackHomomorphism(bcc2.getBCCScheduler(), StarBootstrapper.instance(), new NFC2(), bcc2.getBCCBackJumping()),
 		                            new BacktrackHomomorphism(bcc3.getBCCScheduler(), StatBootstrapper.instance(), new NFC2(), bcc3.getBCCBackJumping()),

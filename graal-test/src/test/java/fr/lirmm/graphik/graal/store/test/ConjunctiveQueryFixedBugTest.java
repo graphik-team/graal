@@ -45,24 +45,36 @@
  */
 package fr.lirmm.graphik.graal.store.test;
 
+import java.util.LinkedList;
+
 import org.junit.Assert;
 import org.junit.Assume;
+import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
+import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.api.store.Store;
 import fr.lirmm.graphik.graal.api.store.TripleStore;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphStore;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphism;
+import fr.lirmm.graphik.graal.homomorphism.backjumping.NoBackJumping;
+import fr.lirmm.graphik.graal.homomorphism.bootstrapper.StarBootstrapper;
+import fr.lirmm.graphik.graal.homomorphism.forward_checking.NoForwardChecking;
+import fr.lirmm.graphik.graal.homomorphism.scheduler.DefaultScheduler;
+import fr.lirmm.graphik.graal.homomorphism.scheduler.FixedOrderScheduler;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.test.TestUtil;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -186,4 +198,27 @@ public class ConjunctiveQueryFixedBugTest {
 		Assert.assertEquals(2, nbResults);
 	}
 	
+	/**
+	 * Issue with scheduler hazard ordering, test fail in normal mode but not in debug mode
+	 */
+	@Test
+	public void atomicQueryOverExistentialVar() {
+		try {
+			Store store = new DefaultInMemoryGraphStore();
+			Variable x = DefaultTermFactory.instance().createVariable("X");
+			Variable y = DefaultTermFactory.instance().createVariable("Y");
+			Homomorphism<ConjunctiveQuery, AtomSet> h = new BacktrackHomomorphism(new FixedOrderScheduler(x, y), StarBootstrapper.instance(), NoForwardChecking.instance(), NoBackJumping.instance());
+
+			store.addAll(DlgpParser.parseAtomSet("<P>(X0, a)."));
+		
+			ConjunctiveQuery query = DlgpParser.parseQuery("? :- <P>(X,Y).");
+			CloseableIterator<Substitution> subReader = h.execute(query, store);
+			Assert.assertTrue(subReader.hasNext());
+			subReader.next();
+			Assert.assertFalse(subReader.hasNext());
+			subReader.close();
+		} catch (Exception e) {
+			Assert.assertTrue(e.getMessage(), false);
+		}
+	}
 }

@@ -42,7 +42,8 @@
  */
 package fr.lirmm.graphik.graal.homomorphism.scheduler;
 
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -52,70 +53,70 @@ import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
-import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.homomorphism.Var;
 import fr.lirmm.graphik.graal.homomorphism.VarSharedData;
 
 /**
+ * Compute an order over variables from h. This scheduler put answer
+ * variables first, then other variables are put in the lexical order.
+ *
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class FixedOrderScheduler extends AbstractScheduler implements Scheduler {
+public class ComparableOrderScheduler extends AbstractScheduler implements Scheduler {
 
-	private List<Variable> order;
+	private static ComparableOrderScheduler instance;
 
-	// /////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	// /////////////////////////////////////////////////////////////////////////
-
-	public FixedOrderScheduler(List<Variable> order) {
-		this.order = order;
+	private ComparableOrderScheduler() {
+		super();
 	}
-	
-	public FixedOrderScheduler(Variable... order) {
-		this.order = Arrays.asList(order);
+
+	public static synchronized ComparableOrderScheduler instance() {
+		if (instance == null)
+			instance = new ComparableOrderScheduler();
+
+		return instance;
 	}
-	
-	// /////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public VarSharedData[] execute(InMemoryAtomSet query, Set<Variable> preAffectedVars, List<Term> ans, AtomSet data, RulesCompilation rc) throws HomomorphismException {
+	public VarSharedData[] execute(InMemoryAtomSet query, Set<Variable> preAffectedVars, List<Term> ans, AtomSet data, RulesCompilation rc) {
 		InMemoryAtomSet h = (preAffectedVars.isEmpty())? query : computeFixedQuery(query, preAffectedVars);
 
-		Set<Variable> terms = h.getVariables();
+		List<Variable> terms = new LinkedList<>(h.getVariables());
+		Collections.sort(terms);
 		VarSharedData[] vars = new VarSharedData[terms.size() + 2];
 
 		int level = 0;
 		vars[level] = new VarSharedData(level);
 
 		Set<Term> alreadyAffected = new TreeSet<Term>();
-		for (Variable v : this.order) {
-			if(!terms.contains(v)) {
-				throw new HomomorphismException("Try to schedule a variable which is not in the query :" + v);
+		for (Term t : ans) {
+			if (terms.contains(t) && !alreadyAffected.contains(t)) {
+				++level;
+				vars[level] = new VarSharedData(level);
+				vars[level].value = (Variable) t;
+				alreadyAffected.add(t);
 			}
-			if(alreadyAffected.contains(v)) {
-				throw new HomomorphismException("There is two occurences of the same variable in the specified order.");
-			}
-			++level;
-			vars[level] = new VarSharedData(level);
-			vars[level].value = v;
-			alreadyAffected.add(v);
 		}
 
-		terms.removeAll(alreadyAffected);
-		if(!terms.isEmpty()) {
-			throw new HomomorphismException("Some variables of the query are not scheduled :" + terms);
+		int lastAnswerVariable = level;
+
+		for (Term t : terms) {
+			if (!alreadyAffected.contains(t)) {
+				++level;
+				vars[level] = new VarSharedData(level);
+				vars[level].value = (Variable) t;
+			}
 		}
 
 		++level;
 		vars[level] = new VarSharedData(level);
-		vars[level].previousLevel = level - 1;
+		vars[level].previousLevel = lastAnswerVariable;
 
 		return vars;
 	}
-	
+
+	@Override
 	public void clear() {
 		
 	}
@@ -126,15 +127,8 @@ public class FixedOrderScheduler extends AbstractScheduler implements Scheduler 
 	
 	@Override
 	public String getInfos(Var var) {
-		return Integer.toString(order.indexOf(var.shared.value));
+		return "";
 	}
 	
-	// /////////////////////////////////////////////////////////////////////////
-	// OBJECT OVERRIDE METHODS
-	// /////////////////////////////////////////////////////////////////////////
-
-	// /////////////////////////////////////////////////////////////////////////
-	// PRIVATE METHODS
-	// /////////////////////////////////////////////////////////////////////////
 
 }
