@@ -301,7 +301,7 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 					CloseableIterator<Substitution> resultIt = null;
 					try {
 						if(this.isSemiSaturated) {
-							resultIt = SmartHomomorphism.instance().execute(query, this.store);
+							resultIt = SmartHomomorphism.instance().execute(ucq, this.store);
 						} else {
 							resultIt = SmartHomomorphism.instance().execute(ucq, this.store, this.ruleCompilation);
 						}

@@ -52,6 +52,7 @@ import fr.lirmm.graphik.graal.api.core.NegativeConstraint;
 import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.api.kb.Approach;
 import fr.lirmm.graphik.graal.api.kb.KnowledgeBase;
@@ -59,6 +60,7 @@ import fr.lirmm.graphik.graal.api.kb.KnowledgeBaseException;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphStore;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
 import fr.lirmm.graphik.util.stream.Iterators;
 
@@ -340,6 +342,20 @@ public class DefaultKnowledgeBaseTest {
 		
 		kb.saturate();
 		Assert.assertEquals(2, Iterators.count(kb.getFacts().iterator()));
+	}
+	
+	@Test
+	public void issue101() throws KBBuilderException, KnowledgeBaseException, IteratorException {
+		KBBuilder kbb = new KBBuilder();
+		kbb.addAll(new DlgpParser(""
+				+ "p(a)."
+				+ "q(X) :- p(X)."
+				+ "s(X,Y) :- q(X)."));
+		KnowledgeBase kb = kbb.build();
+		
+		kb.semiSaturate();
+		CloseableIterator<Substitution> results = kb.query(DlgpParser.parseQuery("? :- s(X,Y)."));
+		Assert.assertEquals(1, Iterators.count(results));
 	}
 
 }
