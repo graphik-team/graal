@@ -87,7 +87,7 @@ class AdHocConjunctiveQueryTranslator extends AbstractRdbmsConjunctiveQueryTrans
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public SQLQuery translate(ConjunctiveQuery cquery, Substitution s) throws AtomSetException {
+	public SQLQuery translate(ConjunctiveQuery cquery, Substitution initialSub) throws AtomSetException {
 		if (cquery.getAtomSet().isEmpty()) {
 			return SQLQuery.emptyInstance();
 		}
@@ -124,8 +124,8 @@ class AdHocConjunctiveQueryTranslator extends AbstractRdbmsConjunctiveQueryTrans
 					String thisTerm = currentAtom
 					                  + AbstractRdbmsConjunctiveQueryTranslator.PREFIX_TERM_FIELD
 					                  + position;
-					if (term.isConstant() || s.getTerms().contains(term)) {
-						constants.add(thisTerm + " = '" + s.createImageOf(term).getIdentifier().toString() + "'");
+					if (term.isConstant() || initialSub.getTerms().contains(term)) {
+						constants.add(thisTerm + " = '" + initialSub.createImageOf(term).getIdentifier().toString() + "'");
 					} else {
 						if (lastOccurrence.containsKey(term.getIdentifier().toString())) {
 							equivalences.add(lastOccurrence.get(term.getIdentifier().toString()) + " = " + thisTerm);

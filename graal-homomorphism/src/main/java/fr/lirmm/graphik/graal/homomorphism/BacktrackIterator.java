@@ -327,11 +327,6 @@ class BacktrackIterator extends AbstractCloseableIterator<Substitution>
 				this.data.bj.level(var.shared.level);
 				var.image = var.domain.next();
 
-				// Fix for existential variable in data
-				if (!var.image.isConstant()) {
-					var.image = DefaultTermFactory.instance().createConstant(var.image.getLabel());
-				}
-
 				if (this.data.scheduler.isAllowed(var, var.image) && this.data.fc.checkForward(var, g, initialSubstitution, this.data.index, this.vars, this.data.compilation)
 						&& !this.existNegParts()) {
 					return true;

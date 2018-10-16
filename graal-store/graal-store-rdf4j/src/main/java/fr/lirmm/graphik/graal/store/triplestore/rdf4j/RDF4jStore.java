@@ -235,6 +235,7 @@ public class RDF4jStore extends AbstractTripleStore {
 			}
 		}
 		
+		atom = initialSub.createImageOf(atom);
 		ConjunctiveQuery query = DefaultConjunctiveQueryFactory.instance().create(atom);
 		StringWriter s = new StringWriter();
 		SparqlConjunctiveQueryWriter w = new SparqlConjunctiveQueryWriter(s, this.utils.getURIzer());

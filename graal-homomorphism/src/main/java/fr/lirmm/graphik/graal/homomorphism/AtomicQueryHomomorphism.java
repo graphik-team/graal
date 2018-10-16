@@ -42,6 +42,7 @@
  */
 package fr.lirmm.graphik.graal.homomorphism;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -53,10 +54,14 @@ import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.core.factory.DefaultSubstitutionFactory;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAggregator;
+import fr.lirmm.graphik.util.stream.Iterators;
 import fr.lirmm.graphik.util.stream.converter.ConverterCloseableIterator;
 
 /**
@@ -90,8 +95,23 @@ public class AtomicQueryHomomorphism extends AbstractHomomorphismWithCompilation
 			throws HomomorphismException {
 		Atom atom = q.getAtomSet().iterator().next();
 		try {
-			return new ConverterCloseableIterator<Atom, Substitution>(a.match(atom, s),
-					new Atom2SubstitutionConverter(atom, q.getAnswerVariables()));
+			Atom queryAtom = s.createImageOf(atom);
+			if(queryAtom.getVariables().isEmpty()) {
+				if(a.contains(queryAtom)) {
+    				Substitution newSub = DefaultSubstitutionFactory.instance().createSubstitution();
+    				for(Term t : q.getAnswerVariables()) {
+    					if(t.isVariable()) {
+    						newSub.put((Variable) t, s.createImageOf(t));
+    					}
+    				}
+    				return new CloseableIteratorAdapter<>(Collections.singleton(newSub).iterator());
+				} else {
+					return Iterators.emptyIterator();
+				}
+			} else {
+    			return new ConverterCloseableIterator<Atom, Substitution>(a.match(atom, s),
+    					new Atom2SubstitutionConverter(atom, q.getAnswerVariables()));
+			}
 		} catch (AtomSetException e) {
 			throw new HomomorphismException(e);
 		}
@@ -100,15 +120,37 @@ public class AtomicQueryHomomorphism extends AbstractHomomorphismWithCompilation
 	@Override
 	public CloseableIterator<Substitution> execute(ConjunctiveQuery q, AtomSet a,
 			RulesCompilation rc, Substitution s) throws HomomorphismException {
+		Atom atom = q.getAtomSet().iterator().next();
 		try {
-			List<CloseableIterator<Substitution>> iteratorsList = new LinkedList<CloseableIterator<Substitution>>();
-			Atom atom = q.getAtomSet().iterator().next();
-			for (Pair<Atom, Substitution> im : rc.getRewritingOf(atom)) {
-				iteratorsList.add(new ConverterCloseableIterator<Atom, Substitution>(a.match(im.getLeft(), s),
-						new Atom2SubstitutionConverter(im.getLeft(), q.getAnswerVariables(), im.getRight())));
+			Atom queryAtom = s.createImageOf(atom);
+			if(queryAtom.getVariables().isEmpty()) {
+				boolean contains = false;
+				for (Pair<Atom, Substitution> im : rc.getRewritingOf(queryAtom)) {
+					if(a.contains(im.getLeft())) {
+						contains = true;
+						break;
+					}
+				}
+				if(contains) {
+    				Substitution newSub = DefaultSubstitutionFactory.instance().createSubstitution();
+    				for(Term t : q.getAnswerVariables()) {
+    					if(t.isVariable()) {
+    						newSub.put((Variable) t, s.createImageOf(t));
+    					}
+    				}
+    				return new CloseableIteratorAdapter<>(Collections.singleton(newSub).iterator());
+				} else {
+					return Iterators.emptyIterator();
+				}
+			} else {
+    			List<CloseableIterator<Substitution>> iteratorsList = new LinkedList<CloseableIterator<Substitution>>();
+    			for (Pair<Atom, Substitution> im : rc.getRewritingOf(atom)) {
+    				iteratorsList.add(new ConverterCloseableIterator<Atom, Substitution>(a.match(im.getLeft(), s),
+    						new Atom2SubstitutionConverter(im.getLeft(), q.getAnswerVariables(), im.getRight())));
+    			}
+    			return new CloseableIteratorAggregator<Substitution>(
+    					new CloseableIteratorAdapter<CloseableIterator<Substitution>>(iteratorsList.iterator()));
 			}
-			return new CloseableIteratorAggregator<Substitution>(
-					new CloseableIteratorAdapter<CloseableIterator<Substitution>>(iteratorsList.iterator()));
 		} catch (AtomSetException e) {
 			throw new HomomorphismException(e);
 		}

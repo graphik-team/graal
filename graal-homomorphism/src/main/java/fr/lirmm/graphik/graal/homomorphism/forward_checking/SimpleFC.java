@@ -93,17 +93,17 @@ public class SimpleFC extends AbstractProfilable implements ForwardChecking {
 		Profiler profiler = this.getProfiler();
 		for (Atom atom : v.shared.postAtoms) {
 			boolean contains = false;
-			Atom im = BacktrackUtils.createImageOf(atom, initialSubstitution, map, varData);
+			Substitution newInitialSubstitution = BacktrackUtils.createSubstitution(initialSubstitution, varData);
 
 			if (profiler != null) {
 				profiler.incr("#selectOne", 1);
 				profiler.start("selectOneTime");
 			}
-			for (Pair<Atom, Substitution> rew : rc.getRewritingOf(im)) {
+			for (Pair<Atom, Substitution> rew : rc.getRewritingOf(atom)) {
 				Atom a = rew.getLeft();
 				CloseableIterator<Atom> matchIt = null;
 				try {
-					matchIt = g.match(a);
+					matchIt = g.match(a, newInitialSubstitution);
 					if (matchIt.hasNext()) {
 						contains = true;
 						break;

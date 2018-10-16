@@ -66,19 +66,21 @@ public class ResultSet2SubstitutionConverter implements Converter<ResultSet, Sub
 	private List<Term> ans;
 	private RdbmsConjunctiveQueryTranslator queryTranslator;
 	private Substitution varMap;
+	private Substitution initialSub;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
 	public ResultSet2SubstitutionConverter(RdbmsConjunctiveQueryTranslator queryTranslator, List<Term> ans) {
-		this(queryTranslator, ans, Substitutions.emptySubstitution());
+		this(queryTranslator, ans,  Substitutions.emptySubstitution(), Substitutions.emptySubstitution());
 	}
 	
-	public ResultSet2SubstitutionConverter(RdbmsConjunctiveQueryTranslator queryTranslator, List<Term> ans, Substitution varMap) {
+	public ResultSet2SubstitutionConverter(RdbmsConjunctiveQueryTranslator queryTranslator, List<Term> ans, Substitution varMap, Substitution initialSub) {
 		this.queryTranslator = queryTranslator;
 		this.ans = ans;
 		this.varMap = varMap;
+		this.initialSub = initialSub;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -92,11 +94,15 @@ public class ResultSet2SubstitutionConverter implements Converter<ResultSet, Sub
 			if (!ans.isEmpty()) {
 				for (Term t : ans) {
 					if (t.isVariable()) {
-						int i = result.findColumn(this.varMap.createImageOf(t).getLabel());
-						int type = result.getMetaData().getColumnType(i);
-						String value = result.getString(i);
-						Term substitut = this.queryTranslator.createTermFromColumnType(type, value);
-						substitution.put((Variable) t, substitut);
+						if (this.initialSub.getTerms().contains(t)) {
+							substitution.put((Variable) t, this.initialSub.createImageOf(t));
+						} else {
+							int i = result.findColumn(this.varMap.createImageOf(t).getLabel());
+							int type = result.getMetaData().getColumnType(i);
+							String value = result.getString(i);
+							Term substitut = this.queryTranslator.createTermFromColumnType(type, value);
+							substitution.put((Variable) t, substitut);
+						}
 					}
 				}
 			}

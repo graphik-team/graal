@@ -206,7 +206,7 @@ public abstract class AbstractNFC extends AbstractProfilable implements ForwardC
 		for (Pair<Atom, Substitution> rew : rc.getRewritingOf(atom)) {
 			Atom a = rew.getLeft();
 			Var postV[] = this.computePostVariablesPosition(a, v.shared.level, map, varData, postVarsFromThisAtom);
-			Atom im = BacktrackUtils.createImageOf(a, initialSubstitution, map,  varData);
+			Substitution newInitialSubstitution = BacktrackUtils.createSubstitution(initialSubstitution, varData);
 
 			Profiler profiler = this.getProfiler();
 			if (profiler != null) {
@@ -214,7 +214,7 @@ public abstract class AbstractNFC extends AbstractProfilable implements ForwardC
 				profiler.start("SelectTime");
 			}
 			int nbAns = 0;
-			CloseableIterator<? extends Atom> it = g.match(im);
+			CloseableIterator<? extends Atom> it = g.match(a, newInitialSubstitution);
 			while (it.hasNext()) {
 				++nbAns;
 				int i = -1;

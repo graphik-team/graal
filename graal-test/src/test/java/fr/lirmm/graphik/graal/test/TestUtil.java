@@ -69,6 +69,7 @@ import fr.lirmm.graphik.graal.homomorphism.bootstrapper.AllDomainBootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.bootstrapper.DefaultBootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.bootstrapper.StarBootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.bootstrapper.StatBootstrapper;
+import fr.lirmm.graphik.graal.homomorphism.forward_checking.ForwardChecking;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC0;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2WithLimit;
@@ -193,6 +194,10 @@ public final class TestUtil {
 		}
 	}
 
+	public static ForwardChecking[] getForwardChecking() {
+		return new ForwardChecking[] { NoForwardChecking.instance(), new SimpleFC(), new NFC0(), new NFC2(), new NFC2(true), new NFC2WithLimit(8), new NFC2WithLimit(8, true)};
+	}
+	
 	private static void rm(String path) {
 		rm(new File(path));
 	}

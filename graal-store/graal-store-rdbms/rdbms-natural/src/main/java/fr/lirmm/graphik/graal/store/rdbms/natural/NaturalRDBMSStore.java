@@ -134,7 +134,7 @@ public class NaturalRDBMSStore extends AbstractRdbmsStore {
 		SqlHomomorphism solver = SqlHomomorphism.instance();
 
 		try {
-			return new SubstitutionIterator2AtomIterator(atom, solver.execute(query, this));
+			return new SubstitutionIterator2AtomIterator(atom, solver.execute(query, this, s));
 		} catch (HomomorphismException e) {
 			throw new AtomSetException(e);
 		}

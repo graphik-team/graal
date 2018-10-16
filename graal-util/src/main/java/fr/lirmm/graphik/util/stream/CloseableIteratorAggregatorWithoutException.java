@@ -46,7 +46,7 @@ package fr.lirmm.graphik.util.stream;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public class CloseableIteratorAggregatorWithoutExeception<E> extends AbstractCloseableIterator<E>
+public class CloseableIteratorAggregatorWithoutException<E> extends AbstractCloseableIterator<E>
 		implements CloseableIteratorWithoutException<E> {
 
 	private CloseableIteratorWithoutException<CloseableIteratorWithoutException<E>> metaIt;
@@ -57,7 +57,7 @@ public class CloseableIteratorAggregatorWithoutExeception<E> extends AbstractClo
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 
-	public CloseableIteratorAggregatorWithoutExeception(
+	public CloseableIteratorAggregatorWithoutException(
 			CloseableIteratorWithoutException<CloseableIteratorWithoutException<E>> metaIt) {
 		this.metaIt = metaIt;
 	}

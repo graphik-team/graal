@@ -75,7 +75,7 @@ public class FreshVarSubstitution extends TreeMapSubstitution {
 		this.gen = gen;
 	}
 	
-	public FreshVarSubstitution(VariableGenerator gen, List<Term> termsToSubstitute) {
+	public FreshVarSubstitution(VariableGenerator gen, Iterable<Term> termsToSubstitute) {
 		this(gen);
 		for(Term t : termsToSubstitute) {
 			this.createImageOf(t);

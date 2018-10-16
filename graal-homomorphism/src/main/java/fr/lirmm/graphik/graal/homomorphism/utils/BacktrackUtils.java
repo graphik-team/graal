@@ -156,5 +156,21 @@ public final class BacktrackUtils {
 		}
 		return s;
 	}
+	
+	/**
+	 * Extract image of variables from Var class in a Substitution.
+	 * 
+	 * @param vars
+	 * @return a Substitution obtained by association of Var.value with Var.image.
+	 */
+	public static Substitution createSubstitution(Substitution initialSubstitution, Var[] vars) {
+		Substitution s = new TreeMapSubstitution(initialSubstitution);
+		for (Var v : vars) {
+			if (v.image != null) {
+				s.put(v.shared.value, v.image);
+			}
+		}
+		return s;
+	}
 
 }

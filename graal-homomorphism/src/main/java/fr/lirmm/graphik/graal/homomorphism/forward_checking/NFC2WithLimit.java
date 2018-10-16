@@ -159,7 +159,7 @@ public class NFC2WithLimit extends NFC2 implements ForwardChecking {
 			Atom a = rewIt.next().getLeft();
 			
 			Var[] postV = this.computePostVariablesPosition(a, v.shared.level, map, varData, postVarsFromThisAtom);
-			Atom im = BacktrackUtils.createImageOf(a, initialSubstitution, map, varData);
+			Substitution newInitialSubstitution = BacktrackUtils.createSubstitution(initialSubstitution, varData);
 
 			Profiler profiler = this.getProfiler();
 			if (profiler != null) {
@@ -168,7 +168,7 @@ public class NFC2WithLimit extends NFC2 implements ForwardChecking {
 			}
 			
 			int cpt = 0;
-			CloseableIterator<? extends Atom> it = g.match(im);
+			CloseableIterator<? extends Atom> it = g.match(a, newInitialSubstitution);
 			while (it.hasNext() && nbAns < LIMIT) {
 				++nbAns;
 				++cpt;

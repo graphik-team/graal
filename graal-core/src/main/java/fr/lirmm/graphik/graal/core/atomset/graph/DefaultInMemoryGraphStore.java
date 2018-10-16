@@ -65,7 +65,7 @@ import fr.lirmm.graphik.graal.core.atomset.AbstractInMemoryAtomSet;
 import fr.lirmm.graphik.graal.core.store.DefaultBatchProcessor;
 import fr.lirmm.graphik.util.MethodNotImplementedError;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
-import fr.lirmm.graphik.util.stream.CloseableIteratorAggregatorWithoutExeception;
+import fr.lirmm.graphik.util.stream.CloseableIteratorAggregatorWithoutException;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 import fr.lirmm.graphik.util.stream.Iterators;
 import fr.lirmm.graphik.util.stream.filter.Filter;
@@ -117,7 +117,7 @@ public class DefaultInMemoryGraphStore extends AbstractInMemoryAtomSet implement
 		while (predicatesIt.hasNext()) {
 			list.add(this.atomsByPredicate(predicatesIt.next()));
 		}
-		return new CloseableIteratorAggregatorWithoutExeception<Atom>(
+		return new CloseableIteratorAggregatorWithoutException<Atom>(
 				new CloseableIteratorAdapter<CloseableIteratorWithoutException<Atom>>(list.iterator()));
 
 	}

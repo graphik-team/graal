@@ -47,12 +47,14 @@ package fr.lirmm.graphik.graal.store.rdbms.homomorphism;
 
 import java.sql.ResultSet;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
@@ -95,8 +97,15 @@ public final class SqlHomomorphism extends AbstractHomomorphism<ConjunctiveQuery
 	public CloseableIterator<Substitution> execute(ConjunctiveQuery query, RdbmsStore store, Substitution s)
 	    throws HomomorphismException {
 		SQLQuery sqlQuery;
-		// ensure answer variable names are SQL compatible by substituting each
-		FreshVarSubstitution varMap = new FreshVarSubstitution(new DefaultVariableGenerator("VAR"), query.getAnswerVariables());
+		// be aware to does not overwrite fixed variables (variable in s)
+		FreshVarSubstitution varMap = new FreshVarSubstitution(new DefaultVariableGenerator("VAR"),
+		                                                       CollectionUtils.removeAll(query.getAnswerVariables(),
+		                                                           s.getTerms()));
+		// prevent variable from initial substitution to be substitut by a fresh variable
+		for (Variable v : s.getTerms()) {
+			varMap.put(v, v);
+		}
+
 		try {
 			sqlQuery = store.getConjunctiveQueryTranslator().translate(varMap.createImageOf(query), s);
 			if (LOGGER.isDebugEnabled())
@@ -114,7 +123,7 @@ public final class SqlHomomorphism extends AbstractHomomorphism<ConjunctiveQuery
 				CloseableIterator<ResultSet> resultsIt = new ResultSetCloseableIterator(results);
 				return new ConverterCloseableIterator<ResultSet, Substitution>(resultsIt,
 				                                                               new ResultSet2SubstitutionConverter(store.getConjunctiveQueryTranslator(),
-				                                                                                                   query.getAnswerVariables(), varMap));
+				                                                                                                   query.getAnswerVariables(), varMap, s));
 			} catch (Exception e) {
 				throw new HomomorphismException("Error while evaluating the following query: [" + query + "] translated to SQL as: " + sqlQuery, e);
 			}
