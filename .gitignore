@@ -35,6 +35,7 @@ graal-examples/src/main/java/fr/lirmm/graphik/graal/test/*
 .metadata
 .project
 .settings
+.vscode
 target
 
 # Logs and databases #
