@@ -55,7 +55,6 @@ import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
-import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
@@ -66,7 +65,6 @@ import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
-import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.api.store.Store;
 import fr.lirmm.graphik.graal.api.store.TripleStore;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
@@ -74,17 +72,13 @@ import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphStore;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.forward_chaining.StaticChase;
 import fr.lirmm.graphik.graal.homomorphism.BacktrackHomomorphism;
-import fr.lirmm.graphik.graal.homomorphism.backjumping.GraphBaseBackJumping;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.NoBackJumping;
-import fr.lirmm.graphik.graal.homomorphism.bbc.BCC;
 import fr.lirmm.graphik.graal.homomorphism.bootstrapper.AllDomainBootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.bootstrapper.StarBootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.ForwardChecking;
-import fr.lirmm.graphik.graal.homomorphism.forward_checking.NFC2;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.NoForwardChecking;
-import fr.lirmm.graphik.graal.homomorphism.scheduler.DefaultScheduler;
+import fr.lirmm.graphik.graal.homomorphism.scheduler.ComparableOrderScheduler;
 import fr.lirmm.graphik.graal.homomorphism.scheduler.FixedOrderScheduler;
-import fr.lirmm.graphik.graal.homomorphism.scheduler.LexicalOrderScheduler;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.test.TestUtil;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -240,7 +234,7 @@ public class ConjunctiveQueryFixedBugTest {
 	@Theory
 	public void existentialVariableInDataTest(ForwardChecking fc) throws AtomSetException, ChaseException, HomomorphismException, IteratorException {
 		Store store = new DefaultInMemoryGraphStore();
-        Homomorphism<ConjunctiveQuery, AtomSet> h = new BacktrackHomomorphism(LexicalOrderScheduler.instance(), AllDomainBootstrapper.instance(), fc, NoBackJumping.instance());
+        Homomorphism<ConjunctiveQuery, AtomSet> h = new BacktrackHomomorphism(ComparableOrderScheduler.instance(), AllDomainBootstrapper.instance(), fc, NoBackJumping.instance());
 
 			
 		store.addAll(DlgpParser.parseAtomSet("<P>(a,b)."));
