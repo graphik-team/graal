@@ -1,0 +1,9 @@
+@prefix ex: <http://www.test.com/>
+
+@facts
+
+ex:is_a(caesar,ex:person).
+
+@rules
+
+ex:is_a(X,ex:human) :- ex:is_a(X,ex:person).

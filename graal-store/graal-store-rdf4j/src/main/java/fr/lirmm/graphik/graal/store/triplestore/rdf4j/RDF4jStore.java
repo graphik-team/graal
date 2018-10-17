@@ -419,5 +419,11 @@ public class RDF4jStore extends AbstractTripleStore {
 		return null;
 	}
 
+	public RepositoryConnection getConnection() {
+		return connection;
+	}
 
+	public RDF4jUtils getUtils() {
+		return utils;
+	}
 }
