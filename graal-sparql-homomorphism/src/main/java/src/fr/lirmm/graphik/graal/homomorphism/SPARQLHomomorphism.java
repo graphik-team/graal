@@ -58,6 +58,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
@@ -78,8 +79,8 @@ import fr.lirmm.graphik.util.stream.converter.ConverterCloseableIterator;
  * @author Mathieu Dodard
  * @author Renaud Colin
  */
-public class SPARQLHomomorphism extends AbstractHomomorphism<ConjunctiveQuery, RDF4jStore> implements
-		Homomorphism<ConjunctiveQuery, RDF4jStore>, HomomorphismWithCompilation<ConjunctiveQuery, RDF4jStore> {
+public class SPARQLHomomorphism extends AbstractHomomorphism<Query, RDF4jStore>
+		implements Homomorphism<Query, RDF4jStore>, HomomorphismWithCompilation<Query, RDF4jStore> {
 
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(SPARQLHomomorphism.class);
@@ -116,21 +117,22 @@ public class SPARQLHomomorphism extends AbstractHomomorphism<ConjunctiveQuery, R
 	 * @throws HomomorphismException
 	 **/
 	@Override
-	public CloseableIterator<Substitution> execute(ConjunctiveQuery query, RDF4jStore store)
-			throws HomomorphismException {
+	public CloseableIterator<Substitution> execute(Query query, RDF4jStore store) throws HomomorphismException {
+		ConjunctiveQuery cquery = (ConjunctiveQuery) query;
+
 		StringWriter stringWriter = new StringWriter();
 		SparqlConjunctiveQueryWriter writer = new SparqlConjunctiveQueryWriter(stringWriter);
 
 		try {
-			writer.write(query);
+			writer.write((ConjunctiveQuery) cquery);
 			String sparqlQuery = stringWriter.toString();
 			RepositoryConnection conn = store.getConnection();
 
-			if (query.getAtomSet().isEmpty()) { // empty query
+			if (cquery.getAtomSet().isEmpty()) { // empty query
 				return Iterators.<Substitution>singletonIterator(Substitutions.emptySubstitution());
 			}
 
-			if (query.getAnswerVariables().isEmpty()) { // ask query
+			if (cquery.getAnswerVariables().isEmpty()) { // ask query
 				BooleanQuery boolQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, sparqlQuery);
 
 				boolean resp = boolQuery.evaluate();
@@ -147,7 +149,7 @@ public class SPARQLHomomorphism extends AbstractHomomorphism<ConjunctiveQuery, R
 
 			CloseableIterator<TupleQueryResult> iterator = new TupleQueryResultCloseableIterator(tupleQueryResult);
 			TupleQueryResult2SubstitutionConverter convertIt = new TupleQueryResult2SubstitutionConverter(
-					query.getAnswerVariables(), store.getUtils());
+					cquery.getAnswerVariables(), store.getUtils());
 
 			return new ConverterCloseableIterator<TupleQueryResult, Substitution>(iterator, convertIt); // translate
 
@@ -171,21 +173,22 @@ public class SPARQLHomomorphism extends AbstractHomomorphism<ConjunctiveQuery, R
 	 * @throws HomomorphismException
 	 **/
 	@Override
-	public CloseableIterator<Substitution> execute(ConjunctiveQuery query, RDF4jStore store,
-			RulesCompilation compilation) throws HomomorphismException {
+	public CloseableIterator<Substitution> execute(Query query, RDF4jStore store, RulesCompilation compilation)
+			throws HomomorphismException {
+		ConjunctiveQuery cquery = (ConjunctiveQuery) query;
 
 		if (compilation == null)
-			return execute(query, store);
+			return execute(cquery, store);
 
 		StringBuilder stringWriter = new StringBuilder();
 		// get conjunctive query translation into SPARQL
-//		SparqlConjunctiveQueryWriter writer = new SparqlConjunctiveQueryWriter(stringWriter);
+//		SparqlQueryWriter writer = new SparqlQueryWriter(stringWriter);
 
 		{
 			DefaultUnionOfConjunctiveQueries ucq = new DefaultUnionOfConjunctiveQueries();
-			ucq.add(query);
-			ucq.setAnswerVariables(query.getAnswerVariables());
-//			CloseableIteratorWithoutException<ConjunctiveQuery> unfold = PureRewriter.unfold(ucq, compilation);
+			ucq.add(cquery);
+			ucq.setAnswerVariables(cquery.getAnswerVariables());
+//			CloseableIteratorWithoutException<Query> unfold = PureRewriter.unfold(ucq, compilation);
 //			DefaultUnionOfConjunctiveQueries queriesUnion = new DefaultUnionOfConjunctiveQueries(
 //					query.getAnswerVariables(), unfold);
 
@@ -195,11 +198,11 @@ public class SPARQLHomomorphism extends AbstractHomomorphism<ConjunctiveQuery, R
 			RepositoryConnection conn = store.getConnection();
 
 			// check if it is not an empty query
-			if (query.getAtomSet().isEmpty())
+			if (cquery.getAtomSet().isEmpty())
 				return Iterators.<Substitution>singletonIterator(Substitutions.emptySubstitution());
 
 			// check if it is not a boolean query
-			if (query.getAnswerVariables().isEmpty()) {
+			if (cquery.getAnswerVariables().isEmpty()) {
 
 				BooleanQuery boolQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, sparqlQuery);
 				boolean resp = boolQuery.evaluate();
@@ -217,7 +220,7 @@ public class SPARQLHomomorphism extends AbstractHomomorphism<ConjunctiveQuery, R
 
 			// send answer variables and an RDF4J Utils instance
 			TupleQueryResult2SubstitutionConverter convertIt = new TupleQueryResult2SubstitutionConverter(
-					query.getAnswerVariables(), store.getUtils());
+					cquery.getAnswerVariables(), store.getUtils());
 
 			// translate tupleQuery into closableIterator<Substitution>
 			return new ConverterCloseableIterator<TupleQueryResult, Substitution>(iterator, convertIt);
@@ -225,27 +228,26 @@ public class SPARQLHomomorphism extends AbstractHomomorphism<ConjunctiveQuery, R
 	}
 
 	@Override
-	public CloseableIterator<Substitution> execute(ConjunctiveQuery q, RDF4jStore a, Substitution s)
-			throws HomomorphismException {
+	public CloseableIterator<Substitution> execute(Query q, RDF4jStore a, Substitution s) throws HomomorphismException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public boolean exist(ConjunctiveQuery q, RDF4jStore a, RulesCompilation compilation) throws HomomorphismException {
+	public boolean exist(Query q, RDF4jStore a, RulesCompilation compilation) throws HomomorphismException {
 		throw new NotImplementedException("Not yet implemented method");
 	}
 
 	@Override
-	public boolean exist(ConjunctiveQuery q, RDF4jStore a, RulesCompilation compilation, Substitution s)
+	public boolean exist(Query q, RDF4jStore a, RulesCompilation compilation, Substitution s)
 			throws HomomorphismException {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public CloseableIterator<Substitution> execute(ConjunctiveQuery q, RDF4jStore a, RulesCompilation compilation,
-			Substitution s) throws HomomorphismException {
+	public CloseableIterator<Substitution> execute(Query q, RDF4jStore a, RulesCompilation compilation, Substitution s)
+			throws HomomorphismException {
 		// TODO Auto-generated method stub
 		return null;
 	}
