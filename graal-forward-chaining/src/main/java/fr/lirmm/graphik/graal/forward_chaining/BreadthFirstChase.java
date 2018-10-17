@@ -53,9 +53,9 @@ import java.util.TreeMap;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.forward_chaining.AbstractChase;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
@@ -121,7 +121,7 @@ public class BreadthFirstChase extends AbstractChase<Rule, AtomSet> {
 		this(rules.iterator(), atomSet, ruleApplier);
 	}
 
-	public BreadthFirstChase(Iterable<Rule> rules, AtomSet atomSet, Homomorphism<ConjunctiveQuery, AtomSet> solver) {
+	public BreadthFirstChase(Iterable<Rule> rules, AtomSet atomSet, Homomorphism<Query, AtomSet> solver) {
 		this(rules, atomSet, new DefaultRuleApplier<AtomSet>(solver));
 	}
 
@@ -130,7 +130,7 @@ public class BreadthFirstChase extends AbstractChase<Rule, AtomSet> {
 
 	}
 
-	public BreadthFirstChase(Iterable<Rule> rules, AtomSet atomSet, Homomorphism<ConjunctiveQuery, AtomSet> solver,
+	public BreadthFirstChase(Iterable<Rule> rules, AtomSet atomSet, Homomorphism<Query, AtomSet> solver,
 	    ChaseHaltingCondition haltingCondition) {
 		this(rules, atomSet, new DefaultRuleApplier<AtomSet>(solver, haltingCondition));
 	}

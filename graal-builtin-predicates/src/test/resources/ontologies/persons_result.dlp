@@ -1,0 +1,17 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#>
+
+@facts
+owl:type(alice,person).
+owl:type(bob,person).
+
+person(alice).
+person(bob).
+
+human(alice).
+human(bob).
+
+diff(alice,bob).
+diff(bob,alice).
+
+eq(alice,alice).
+eq(bob,bob).

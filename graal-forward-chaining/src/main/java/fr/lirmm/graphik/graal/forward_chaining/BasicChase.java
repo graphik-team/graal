@@ -48,7 +48,7 @@ package fr.lirmm.graphik.graal.forward_chaining;
 import java.util.Iterator;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.forward_chaining.AbstractDirectChase;
@@ -98,7 +98,7 @@ public class BasicChase<T extends AtomSet> extends AbstractDirectChase<Rule, T> 
 		this(rules.iterator(), atomSet, ruleApplier);
 	}
 
-	public BasicChase(Iterable<Rule> rules, T atomSet, Homomorphism<ConjunctiveQuery, ? super T> solver) {
+	public BasicChase(Iterable<Rule> rules, T atomSet, Homomorphism<Query, ? super T> solver) {
 		this(rules, atomSet, new DefaultRuleApplier<T>(solver));
 	}
 
@@ -107,7 +107,7 @@ public class BasicChase<T extends AtomSet> extends AbstractDirectChase<Rule, T> 
 
 	}
 
-	public BasicChase(Iterable<Rule> rules, T atomSet, Homomorphism<ConjunctiveQuery, ? super T> solver,
+	public BasicChase(Iterable<Rule> rules, T atomSet, Homomorphism<Query, ? super T> solver,
 	    ChaseHaltingCondition haltingCondition) {
 		this(rules, atomSet, new DefaultRuleApplier<T>(solver, haltingCondition));
 	}
