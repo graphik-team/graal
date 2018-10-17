@@ -1,0 +1,7 @@
+@facts
+
+isa(a,aclass).
+
+@rules
+
+isa(X,aaclass) :- isa(X,aclass).
