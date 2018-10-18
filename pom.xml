@@ -72,6 +72,8 @@ algorithms, structural analysis of decidability properties of a rule set, a text
 		<module>rdf4j-common</module>
 		<module>graal-test</module>
 		<module>graal-coverage</module>
+		<module>graal-builtin-predicates</module>
+		<module>graal-sparql-homomorphism</module>
 	</modules>
 
 	<dependencies>
