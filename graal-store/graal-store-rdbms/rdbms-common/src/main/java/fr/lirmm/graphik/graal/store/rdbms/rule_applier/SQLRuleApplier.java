@@ -50,7 +50,7 @@ import java.sql.Statement;
 import java.util.Iterator;
 
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.forward_chaining.DirectRuleApplier;
 import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplicationException;
@@ -78,7 +78,7 @@ public class SQLRuleApplier implements
 	/**
 	 * Construct a SQLRuleApplier with a DefaultRuleApplier as fallback.
 	 */
-	public SQLRuleApplier(Homomorphism<ConjunctiveQuery, ? super RdbmsStore> homomorphismSolver) {
+	public SQLRuleApplier(Homomorphism<Query, ? super RdbmsStore> homomorphismSolver) {
 		this.fallback = new DefaultRuleApplier<RdbmsStore>(homomorphismSolver);
 	}
 
