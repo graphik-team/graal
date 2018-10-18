@@ -159,7 +159,7 @@ public class AdHocRdbmsStore extends AbstractRdbmsStore {
 	private static final String TRUNCATE_TABLE = "TRUNCATE TABLE %s;";
 
 	private PreparedStatement          getPredicateTableStatement;
-	private PreparedStatement          insertPredicateStatement;
+	protected PreparedStatement          insertPredicateStatement;
 
 	private PreparedStatement          getTermStatement;
 
@@ -548,7 +548,7 @@ public class AdHocRdbmsStore extends AbstractRdbmsStore {
 	 * @param predicate
 	 * @throws SQLException
 	 */
-	private void insertPredicate(String tableName, Predicate predicate) throws SQLException {
+	protected void insertPredicate(String tableName, Predicate predicate) throws SQLException {
 		this.insertPredicateStatement.setString(1, predicate.getIdentifier().toString());
 		this.insertPredicateStatement.setInt(2, predicate.getArity());
 		this.insertPredicateStatement.setString(3, tableName);
