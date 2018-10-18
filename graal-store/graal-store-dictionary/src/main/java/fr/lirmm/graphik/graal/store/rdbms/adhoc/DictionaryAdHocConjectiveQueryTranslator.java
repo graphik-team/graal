@@ -15,36 +15,37 @@ import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Constant;
 import fr.lirmm.graphik.graal.api.core.Literal;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
-import fr.lirmm.graphik.graal.store.rdbms.adhoc.AdHocRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.AbstractRdbmsConjunctiveQueryTranslator;
 import fr.lirmm.graphik.graal.store.rdbms.adhoc.AdHocConjunctiveQueryTranslator;
+import fr.lirmm.graphik.graal.store.rdbms.adhoc.AdHocRdbmsStore;
 import fr.lirmm.graphik.graal.store.rdbms.util.DBColumn;
 import fr.lirmm.graphik.graal.store.rdbms.util.DBTable;
 import fr.lirmm.graphik.graal.store.rdbms.util.SQLQuery;
 import fr.lirmm.graphik.util.URIUtils;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
-import fr.lirmm.graphik.util.string.StringUtils;
 
 public class DictionaryAdHocConjectiveQueryTranslator extends AdHocConjunctiveQueryTranslator {
-	
+
 	protected DictionaryMapper dictionaryMapper;
 	protected AdHocRdbmsStore store;
-	
+
 	private final static String INTEGER_TYPE_NAME = "INT";
-	
+
 	public DictionaryAdHocConjectiveQueryTranslator(AdHocRdbmsStore store, DictionaryMapper mapper) {
 		super(store);
 		dictionaryMapper = mapper;
 		this.store = store;
 	}
-	
+
 	@Override
 	public String translateCreateTable(DBTable table) {
 		StringBuilder primaryKey = new StringBuilder("PRIMARY KEY (");
 		StringBuilder query = new StringBuilder("CREATE TABLE ");
-		query.append(StringUtils.escapeDoubleQuote(table.getName()));
+//		query.append(StringUtils.escapeDoubleQuote(table.getName()));
+		query.append(table.getName());
 		query.append(" (");
 
 		boolean first = true;
@@ -53,7 +54,7 @@ public class DictionaryAdHocConjectiveQueryTranslator extends AdHocConjunctiveQu
 				query.append(", ");
 				primaryKey.append(", ");
 			}
-			query.append(col.getName()).append(" "+INTEGER_TYPE_NAME);
+			query.append(col.getName()).append(" " + INTEGER_TYPE_NAME);
 			primaryKey.append(col.getName());
 			first = false;
 		}
@@ -63,8 +64,7 @@ public class DictionaryAdHocConjectiveQueryTranslator extends AdHocConjunctiveQu
 		query.append(");");
 		return query.toString();
 	}
-	
-	
+
 	@Override
 	public SQLQuery translateContainsQuery(Atom atom) throws AtomSetException {
 		DBTable table = this.store.getPredicateTable(atom.getPredicate());
@@ -81,55 +81,52 @@ public class DictionaryAdHocConjectiveQueryTranslator extends AdHocConjunctiveQu
 
 		term = terms.next(); // TODO: FIX THIS => if arity = 0 -> crash ?!
 		++termIndex;
-		
-		String termId = formatFromColumnType(null,term);
+
+		String termId = formatFromColumnType(null, term);
 		query.append("term").append(termIndex).append(" = ").append(termId);
 
 		while (terms.hasNext()) {
 			term = terms.next();
 			++termIndex;
-			termId = formatFromColumnType(null,term);
+			termId = formatFromColumnType(null, term);
 			query.append(" AND ").append(AbstractRdbmsConjunctiveQueryTranslator.PREFIX_TERM_FIELD).append(termIndex)
-			     .append(" = ")
-			     .append(termId);
+					.append(" = ").append(termId);
 		}
 		query.append(" LIMIT 1;");
 		return new SQLQuery(query.toString());
 	}
-	
+
 	@Override
 	public String formatFromColumnType(DBColumn col, Term term) throws AtomSetException {
-		if(term.isVariable()) {
-			if(term.toString().startsWith("EE")) {
+		if (term.isVariable()) {
+			if (term.toString().startsWith("EE")) {
 				return dictionaryMapper.mapExistentialVar(term).toString();
 			}
-			throw new DictionnaryMappingException("Error term"+term.toString()+" is a Literal");
+			throw new DictionnaryMappingException("Error term" + term.toString() + " is a Literal");
 		}
-		
-		if(term instanceof Literal) {
+
+		if (term instanceof Literal) {
 			Literal l = (Literal) term;
-			if(l.getValue() instanceof Integer) {
-				return ""+(Integer) l.getValue();
-			}
-			else {
-				if(l.getDatatype().equals(URIUtils.XSD_INTEGER)) {
-					return  ""+Integer.parseInt( (String) ((Literal) term).getValue());	
+			if (l.getValue() instanceof Integer) {
+				return "" + (Integer) l.getValue();
+			} else {
+				if (l.getDatatype().equals(URIUtils.XSD_INTEGER)) {
+					return "" + Integer.parseInt((String) ((Literal) term).getValue());
 				}
-				throw new DictionnaryMappingException("Error term value is not an integer"+term.toString());
+				throw new DictionnaryMappingException("Error term value is not an integer" + term.toString());
 			}
-			
-		}
-		else if(term instanceof Constant ) {
+
+		} else if (term instanceof Constant) {
 			Constant cons = (Constant) term;
-			if(cons.getIdentifier() instanceof Integer) {
-				return ""+(Integer) cons.getIdentifier();
+			if (cons.getIdentifier() instanceof Integer) {
+				return "" + (Integer) cons.getIdentifier();
 			}
 		}
-		throw new DictionnaryMappingException("Error term"+term.toString()+" is a Literal");
+		throw new DictionnaryMappingException("Error term" + term.toString() + " is a Literal");
 	}
-	
+
 	@Override
-	public SQLQuery translate(ConjunctiveQuery cquery) throws AtomSetException {
+	public SQLQuery translate(ConjunctiveQuery cquery, Substitution initialSubstitution) throws AtomSetException {
 		if (cquery.getAtomSet().isEmpty()) {
 			return SQLQuery.emptyInstance();
 		}
@@ -163,12 +160,11 @@ public class DictionaryAdHocConjectiveQueryTranslator extends AdHocConjunctiveQu
 
 				int position = 0;
 				for (Term term : atom.getTerms()) {
-					String thisTerm = currentAtom
-					                  + AbstractRdbmsConjunctiveQueryTranslator.PREFIX_TERM_FIELD
-					                  + position;
+					String thisTerm = currentAtom + AbstractRdbmsConjunctiveQueryTranslator.PREFIX_TERM_FIELD
+							+ position;
 //					System.out.println(term.getIdentifier().toString());
 					if (term.isConstant()) {
-						constants.add(thisTerm + " = " +formatFromColumnType(null,term));
+						constants.add(thisTerm + " = " + formatFromColumnType(null, term));
 					} else {
 						String termIdStr = term.getIdentifier().toString();
 						if (lastOccurrence.containsKey(termIdStr)) {
@@ -245,5 +241,5 @@ public class DictionaryAdHocConjectiveQueryTranslator extends AdHocConjunctiveQu
 			query.append(" WHERE ").append(where);
 		return new SQLQuery(query.toString());
 	}
-	
+
 }

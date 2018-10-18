@@ -43,13 +43,12 @@
 
 package org.graal.store.dictionary;
 
-
-
 import java.util.Map;
 import java.util.TreeMap;
 
 /**
  * DictionnaryMapper which use {@link TreeMap} as index
+ * 
  * @author renaud colin
  * @author mathieu dodard
  *
@@ -57,7 +56,7 @@ import java.util.TreeMap;
 public class TreeMapDictionaryMapper extends DictionaryMapper {
 
 	/*
-	 * Associate Short Integer id to term or predicate URI 
+	 * Associate Short Integer id to term or predicate URI
 	 */
 	protected Map<String, Integer> termIds;
 
@@ -77,20 +76,20 @@ public class TreeMapDictionaryMapper extends DictionaryMapper {
 	}
 
 	@Override
-	public  void buildDictionary() {
-		if(identifiers.isEmpty()) {
+	public void buildDictionary() {
+		if (identifiers.isEmpty()) {
 			return;
 		}
-		
+
 		int objIdx = 0;
-		
-		for(int i=0 ; i < identifiers.size() ; i++) {
-			termIds.put(identifiers.get(i), dataTypes.get(i)); 
+
+		for (int i = 0; i < identifiers.size(); i++) {
+			termIds.put(identifiers.get(i), dataTypes.get(i));
 		}
-		
+
 		identifiers.clear();
 		dataTypes.clear();
-		
+
 		for (String str : termIds.keySet()) {
 			identifiers.add(str);
 			dataTypes.add(termIds.get(str));
@@ -98,7 +97,4 @@ public class TreeMapDictionaryMapper extends DictionaryMapper {
 		}
 		existentialBeginIdx = termIds.size();
 	}
-
-
-
 }

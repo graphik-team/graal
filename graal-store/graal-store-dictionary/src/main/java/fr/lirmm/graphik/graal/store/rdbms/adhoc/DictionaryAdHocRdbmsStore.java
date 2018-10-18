@@ -54,13 +54,13 @@ public class DictionaryAdHocRdbmsStore extends AdHocRdbmsStore{
 		/**
 		 * Update predicate table creation with label as integer 
 		 */
-		createPredicateTableQuery = "CREATE TABLE "
-	            + PREDICATE_TABLE_NAME
-	            + "(predicate_label int,"
-	            + "predicate_arity int, "
-	            + "predicate_table_name varchar("
-	            + VARCHAR_SIZE
-	            + "), PRIMARY KEY (predicate_label, predicate_arity));";
+//		createPredicateTableQuery = "CREATE TABLE "
+//	            + PREDICATE_TABLE_NAME
+//	            + "(predicate_label int,"
+//	            + "predicate_arity int, "
+//	            + "predicate_table_name varchar("
+//	            + VARCHAR_SIZE
+//	            + "), PRIMARY KEY (predicate_label, predicate_arity));";
 	 
 	}
 	 
