@@ -50,20 +50,16 @@ import java.util.LinkedList;
 
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
-import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
-import fr.lirmm.graphik.graal.core.compilation.AbstractRulesCompilation;
 import fr.lirmm.graphik.graal.core.compilation.IDCompilation;
 import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
-import fr.lirmm.graphik.graal.forward_chaining.halting_condition.RestrictedChaseHaltingCondition;
-import fr.lirmm.graphik.graal.forward_chaining.rule_applier.AbstractRuleApplier;
-import fr.lirmm.graphik.graal.homomorphism.SmartHomomorphism;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
@@ -75,34 +71,48 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
  */
 public class DefaultRuleApplierWithCompilation<T extends AtomSet> extends AbstractRuleApplier<T> {
 
-	AbstractRulesCompilation compilation;
-	private HomomorphismWithCompilation solver;
-	private ChaseHaltingCondition haltingCondition;
+	private IDCompilation compilation;
 
 	// //////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// //////////////////////////////////////////////////////////////////////////
 
 	public DefaultRuleApplierWithCompilation(IDCompilation compilation) {
-		this(new SmartHomomorphism(true), new RestrictedChaseHaltingCondition(), compilation);
-	}
-
-	public DefaultRuleApplierWithCompilation(HomomorphismWithCompilation<? super ConjunctiveQuery, ? super T> h,
-			IDCompilation compilation) {
-		this(h, new RestrictedChaseHaltingCondition(), compilation);
-
-	}
-
-	public DefaultRuleApplierWithCompilation(HomomorphismWithCompilation<? super ConjunctiveQuery, ? super T> h,
-			ChaseHaltingCondition cond, IDCompilation compilation) {
+		super();
 		this.compilation = compilation;
-		this.solver = h;
-		this.haltingCondition = cond;
 	}
 
-	protected CloseableIterator<Substitution> executeQuery(ConjunctiveQuery query, T atomSet)
+	public DefaultRuleApplierWithCompilation(HomomorphismWithCompilation<? super Query, ? super T> h,
+			IDCompilation compilation) {
+		super(h);
+		this.compilation = compilation;
+	}
+
+	public DefaultRuleApplierWithCompilation(HomomorphismWithCompilation<? super Query, ? super T> h,
+			ChaseHaltingCondition cond, IDCompilation compilation) {
+		super(h, cond);
+	}
+
+	// //////////////////////////////////////////////////////////////////////////
+	//
+	// //////////////////////////////////////////////////////////////////////////
+
+	protected void setCompilation(IDCompilation compilation) {
+		this.compilation = compilation;
+	}
+
+	protected IDCompilation getCompilation() {
+		return compilation;
+	}
+
+	@Override
+	protected HomomorphismWithCompilation<? super Query, ? super T> getSolver() {
+		return (HomomorphismWithCompilation<? super Query, ? super T>) super.getSolver();
+	}
+
+	protected CloseableIterator<Substitution> executeQuery(Query query, T atomSet)
 			throws HomomorphismFactoryException, HomomorphismException {
-		return this.solver.execute(query, atomSet, this.compilation);
+		return getSolver().execute(query, atomSet, this.compilation);
 	}
 
 	@Override
@@ -110,5 +120,4 @@ public class DefaultRuleApplierWithCompilation<T extends AtomSet> extends Abstra
 		return DefaultConjunctiveQueryFactory.instance().create(rule.getBody(),
 				new LinkedList<Term>(rule.getFrontier()));
 	}
-
 }
