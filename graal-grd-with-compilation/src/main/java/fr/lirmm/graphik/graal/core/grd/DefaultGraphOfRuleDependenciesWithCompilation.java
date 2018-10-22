@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -32,10 +31,8 @@ import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.LabelRuleComparator;
 import fr.lirmm.graphik.graal.core.Substitutions;
-import fr.lirmm.graphik.graal.core.atomset.AtomSetUtils;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphStore;
 import fr.lirmm.graphik.graal.core.mapper.RDFTypeMapper;
-import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.unifier.DefaultUnifierAlgorithm;
 import fr.lirmm.graphik.graal.forward_chaining.BasicChase;
 import fr.lirmm.graphik.util.LinkedSet;
@@ -60,14 +57,12 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 public class DefaultGraphOfRuleDependenciesWithCompilation implements GraphOfRuleDependencies {
 
 	private ArrayList<Set<Substitution>> edgesValue;
-	private DependencyChecker[] checkerArray;
 	private boolean computingUnifiers;
 
 	// To handle the compilation
 	private RuleSet ruleSet;
 	private Map<Rule, Rule> ruleToHeadSaturatedRule;
 	private RulesCompilation compilation;
-	private boolean init = false;
 	private DirectedGraph<Rule, Integer> grd;
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -77,7 +72,7 @@ public class DefaultGraphOfRuleDependenciesWithCompilation implements GraphOfRul
 	public DefaultGraphOfRuleDependenciesWithCompilation(RuleSet rulesetToBeAnalyzed, RulesCompilation compilation)
 			throws ChaseException, IOException {
 
-		this.ruleSet = rulesetToBeAnalyzed;		
+		this.ruleSet = rulesetToBeAnalyzed;
 		this.compilation = compilation;
 
 		this.grd = new DefaultDirectedGraph<Rule, Integer>(Integer.class);
@@ -134,7 +129,7 @@ public class DefaultGraphOfRuleDependenciesWithCompilation implements GraphOfRul
 //		}
 //		return subGRD;
 //	}
-	
+
 	@Override
 	public DefaultGraphOfRuleDependencies getSubGraph(Iterable<Rule> ruleSet) {
 		DefaultGraphOfRuleDependencies subGRD = new DefaultGraphOfRuleDependencies(this.computingUnifiers);
@@ -194,12 +189,12 @@ public class DefaultGraphOfRuleDependenciesWithCompilation implements GraphOfRul
 		if (index != null) {
 			return this.getUnifiers(index);
 		} else {
-			return Collections.<Substitution> emptySet();
+			return Collections.<Substitution>emptySet();
 		}
 	}
 
 	public StronglyConnectedComponentsGraph<Rule> getStronglyConnectedComponentsGraph() {
-		return new<Integer> StronglyConnectedComponentsGraph<Rule>(this.grd);
+		return new <Integer>StronglyConnectedComponentsGraph<Rule>(this.grd);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -285,11 +280,12 @@ public class DefaultGraphOfRuleDependenciesWithCompilation implements GraphOfRul
 			marked.clear();
 			CloseableIteratorWithoutException<Atom> it = r1.getHead().iterator();
 			while (it.hasNext()) {
-				Atom a = it.next();
+				it.next();
+				
 				if (candidates != null) {
 					for (Rule r2 : candidates) {
 						if (marked.add(r2.getLabel())) {
-			
+
 							Set<Substitution> unifiers = computeDependency(r1, r2);
 							if (!unifiers.isEmpty()) {
 								this.setDependency(r1, unifiers, r2);
@@ -302,14 +298,13 @@ public class DefaultGraphOfRuleDependenciesWithCompilation implements GraphOfRul
 	}
 
 	/**
-	 * initialize the GRD computation saturates the rule head so as to
-	 * compensate the fact that compilable rules are handled differently
+	 * initialize the GRD computation saturates the rule head so as to compensate
+	 * the fact that compilable rules are handled differently
 	 * 
 	 * @throws ChaseException
 	 * @throws IOException
 	 */
 	private final void initAndSaturateHeads() throws ChaseException, IOException {
-		init = true;
 
 		ruleToHeadSaturatedRule = new HashMap<Rule, Rule>();
 
@@ -322,10 +317,9 @@ public class DefaultGraphOfRuleDependenciesWithCompilation implements GraphOfRul
 
 			InMemoryAtomSet headAtoms = new DefaultInMemoryGraphStore();
 
-
 			headAtoms.addAll(rule.getHead());
-		
-			BasicChase bchase = new BasicChase(this.compilation.getSaturation(), headAtoms);
+
+			BasicChase<InMemoryAtomSet> bchase = new BasicChase<>(this.compilation.getSaturation(), headAtoms);
 
 			bchase.execute();
 
@@ -339,22 +333,20 @@ public class DefaultGraphOfRuleDependenciesWithCompilation implements GraphOfRul
 	protected Set<Substitution> computeDependency(Rule r1, Rule r2) {
 
 		Rule saturatedR1 = this.ruleToHeadSaturatedRule.get(r1);
-		
-		
+
 		RDFTypeMapper rdfTypeMapper = new RDFTypeMapper();
-		
+
 		List<Rule> rulesToUnmap = new LinkedList<Rule>();
 		rulesToUnmap.add(saturatedR1);
 		rulesToUnmap.add(r2);
-		
-		List<Rule> rules = rulesToUnmap.stream()
-				.map(rule -> rdfTypeMapper.unmap(rule))
-				.collect(Collectors.toList());
+		List<Rule> rules = new ArrayList<>();
+
+		for (Rule r : rulesToUnmap)
+			rules.add(rdfTypeMapper.unmap(r));
 
 		saturatedR1 = rules.get(0);
 		r2 = rules.get(1);
-		
-		
+
 		Substitution s1 = DefaultUnifierAlgorithm.getSourceVariablesSubstitution();
 		Rule source = s1.createImageOf(saturatedR1);
 
@@ -362,9 +354,9 @@ public class DefaultGraphOfRuleDependenciesWithCompilation implements GraphOfRul
 		Rule target = s2.createImageOf(r2);
 
 		if (DefaultUnifierAlgorithm.instance().existPieceUnifier(source, target)) {
-			return Collections.<Substitution> singleton(Substitutions.emptySubstitution());
+			return Collections.<Substitution>singleton(Substitutions.emptySubstitution());
 		}
-		return Collections.<Substitution> emptySet();
+		return Collections.<Substitution>emptySet();
 	}
 
 }
