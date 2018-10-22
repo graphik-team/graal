@@ -74,6 +74,7 @@ algorithms, structural analysis of decidability properties of a rule set, a text
 		<module>graal-coverage</module>
 		<module>graal-builtin-predicates</module>
 		<module>graal-sparql-homomorphism</module>
+		<module>graal-grd-with-compilation</module>
 	</modules>
 
 	<dependencies>
