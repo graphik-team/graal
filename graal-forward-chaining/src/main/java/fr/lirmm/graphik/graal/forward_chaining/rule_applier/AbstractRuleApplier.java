@@ -65,7 +65,7 @@ import fr.lirmm.graphik.util.stream.IteratorException;
  */
 public abstract class AbstractRuleApplier<T extends AtomSet> implements RuleApplier<Rule, T> {
 
-	private ChaseHaltingCondition							  haltingCondition;
+	private ChaseHaltingCondition haltingCondition;
 	private Homomorphism<? super Query, ? super T> solver;
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -73,16 +73,16 @@ public abstract class AbstractRuleApplier<T extends AtomSet> implements RuleAppl
 	// //////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * Construct a DefaultRuleApplier with a
-	 * {@link RestrictedChaseHaltingCondition} and a {@link SmartHomomorphism}
+	 * Construct a DefaultRuleApplier with a {@link RestrictedChaseHaltingCondition}
+	 * and a {@link SmartHomomorphism}
 	 */
 	public AbstractRuleApplier() {
 		this(SmartHomomorphism.instance());
 	}
 
 	/**
-	 * Construct a DefaultRuleApplier with a
-	 * {@link RestrictedChaseHaltingCondition} and the given homomorphism solver.
+	 * Construct a DefaultRuleApplier with a {@link RestrictedChaseHaltingCondition}
+	 * and the given homomorphism solver.
 	 */
 	public AbstractRuleApplier(Homomorphism<? super Query, ? super T> homomorphismSolver) {
 		this(homomorphismSolver, new RestrictedChaseHaltingCondition());
@@ -98,14 +98,14 @@ public abstract class AbstractRuleApplier<T extends AtomSet> implements RuleAppl
 	}
 
 	/**
-	 * Construct a DefaultRuleApplier with the given HaltingCondition,
-	 * homomorphism solver and SymbolGenerator
+	 * Construct a DefaultRuleApplier with the given HaltingCondition, homomorphism
+	 * solver and SymbolGenerator
 	 * 
 	 * @param haltingCondition
 	 * @param homomorphismSolver
 	 */
 	public AbstractRuleApplier(Homomorphism<? super Query, ? super T> homomorphismSolver,
-	    ChaseHaltingCondition haltingCondition) {
+			ChaseHaltingCondition haltingCondition) {
 		this.haltingCondition = haltingCondition;
 		this.solver = homomorphismSolver;
 	}
@@ -113,7 +113,7 @@ public abstract class AbstractRuleApplier<T extends AtomSet> implements RuleAppl
 	// //////////////////////////////////////////////////////////////////////////
 	// METHODS
 	// //////////////////////////////////////////////////////////////////////////
-	
+
 	protected abstract Query generateQuery(Rule rule);
 
 	@Override
@@ -146,13 +146,13 @@ public abstract class AbstractRuleApplier<T extends AtomSet> implements RuleAppl
 	}
 
 	@Override
-	public CloseableIterator<Atom> delegatedApply(Rule rule, T atomSet) throws RuleApplicationException {		
+	public CloseableIterator<Atom> delegatedApply(Rule rule, T atomSet) throws RuleApplicationException {
 		return delegatedApply(rule, atomSet, atomSet);
 	}
 
 	@Override
 	public CloseableIterator<Atom> delegatedApply(Rule rule, T atomSetOnWichQuerying, T atomSetOnWichCheck)
-	    throws RuleApplicationException {		
+			throws RuleApplicationException {
 		Query query = this.generateQuery(rule);
 		CloseableIterator<Substitution> subIt;
 		try {
@@ -173,8 +173,12 @@ public abstract class AbstractRuleApplier<T extends AtomSet> implements RuleAppl
 		return this.haltingCondition;
 	}
 
+	protected Homomorphism<? super Query, ? super T> getSolver() {
+		return solver;
+	}
+
 	protected CloseableIterator<Substitution> executeQuery(Query query, T atomSet)
-	    throws HomomorphismFactoryException, HomomorphismException {
+			throws HomomorphismFactoryException, HomomorphismException {
 		return this.solver.execute(query, atomSet);
 	}
 

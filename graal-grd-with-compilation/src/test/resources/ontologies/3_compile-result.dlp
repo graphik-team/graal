@@ -1,0 +1,4 @@
+@facts
+
+start(a).
+rotate(a,a,Y), win(Y,a,Z0).

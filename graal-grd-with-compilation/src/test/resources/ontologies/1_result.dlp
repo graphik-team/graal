@@ -1,0 +1,7 @@
+@facts
+
+r(a,a).
+p(a).
+q(a).
+s(a).
+t(a,Z0).
