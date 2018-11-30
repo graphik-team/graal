@@ -83,13 +83,28 @@ public class RDF4jUtils {
 	// /////////////////////////////////////////////////////////////////////////
 
 	public Statement atomToStatement(Atom atom) throws WrongArityException, MalformedLangStringException {
-		if (atom.getPredicate().getArity() != 2) {
+		if (atom.getPredicate().getArity() > 2) {
 			throw new WrongArityException("Error on " + atom + ": arity " + atom.getPredicate().getArity()
 					+ " is not supported by this store. ");
 		}
-		IRI predicate = this.createURI(atom.getPredicate());
-		IRI term0 = this.createURI(atom.getTerm(0));
-		Value term1 = this.createValue(atom.getTerm(1));
+
+		IRI predicate;
+		IRI term0;
+		Value term1;
+
+		/*
+		 * Convert the unary statement to a binary statement.
+		 * For now the behavior is static and convert simply <a>(<b>) to rdf:type(<a>,<b>).
+		 */
+		if (atom.getPredicate().getArity() == 1) {
+			predicate = this.createURI(Prefix.RDF.getPrefix() + "type");
+			term0 = this.createURI(atom.getTerm(0));
+			term1 = this.createValue(DefaultTermFactory.instance().createConstant(atom.getPredicate().getIdentifier()));
+		} else {
+			predicate = this.createURI(atom.getPredicate());
+			term0 = this.createURI(atom.getTerm(0));
+			term1 = this.createValue(atom.getTerm(1));
+		}
 		return valueFactory.createStatement(term0, predicate, term1);
 	}
 
@@ -123,7 +138,7 @@ public class RDF4jUtils {
 	public IRI createURI(Predicate p) {
 		return createURI(urizer.input(p.getIdentifier().toString()));
 	}
-	
+
 	public URIzer getURIzer() {
 		return this.urizer;
 	}
@@ -168,5 +183,4 @@ public class RDF4jUtils {
 			return createURI(t);
 		}
 	}
-
 }
