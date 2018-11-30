@@ -51,22 +51,27 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.Collection;
+import java.util.Iterator;
 
 import fr.lirmm.graphik.graal.GraalConstant;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.UnionOfConjunctiveQueries;
 import fr.lirmm.graphik.graal.api.io.ConjunctiveQueryWriter;
 import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.URIzer;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
+import fr.lirmm.graphik.util.stream.IteratorException;
+import fr.lirmm.graphik.util.stream.Iterators;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-public class SparqlConjunctiveQueryWriter extends AbstractSparqlWriter implements
-		ConjunctiveQueryWriter {
+public class SparqlConjunctiveQueryWriter extends AbstractSparqlWriter implements ConjunctiveQueryWriter {
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
@@ -75,7 +80,7 @@ public class SparqlConjunctiveQueryWriter extends AbstractSparqlWriter implement
 	public SparqlConjunctiveQueryWriter(Writer out, URIzer urizer) {
 		super(out, urizer);
 	}
-	
+
 	public SparqlConjunctiveQueryWriter(Writer out) {
 		super(out, new URIzer(GraalConstant.INTERNAL_PREFIX));
 	}
@@ -99,7 +104,7 @@ public class SparqlConjunctiveQueryWriter extends AbstractSparqlWriter implement
 	// //////////////////////////////////////////////////////////////////////////
 	//
 	// //////////////////////////////////////////////////////////////////////////
-	
+
 	@Override
 	public SparqlConjunctiveQueryWriter write(Prefix prefix) throws IOException {
 		super.write(prefix);
@@ -107,31 +112,135 @@ public class SparqlConjunctiveQueryWriter extends AbstractSparqlWriter implement
 	}
 
 	@Override
-	public SparqlConjunctiveQueryWriter write(ConjunctiveQuery query)
-			throws IOException {
+	public SparqlConjunctiveQueryWriter write(ConjunctiveQuery query) throws IOException {
 
-		this.write("SELECT DISTINCT ");
-		for(Term t : query.getAnswerVariables()) {
-			this.write(t);
-			this.write(' ');
+		if (query.getAnswerVariables().isEmpty()) {
+
+			if (query.getAtomSet().isEmpty()) { // empty query
+				this.write("SELECT ?X \nWHERE {}\n");
+				return this;
+			}
+
+			this.write("ASK "); // ask query
+		} else {
+			this.write("SELECT DISTINCT ");
+
+			for (Term t : query.getAnswerVariables()) {
+				this.write(t);
+				this.write(' ');
+			}
+		}
+		this.write("\nWHERE\n{\n");
+		writeQuery(query);
+		this.write("\n}\n");
+
+		return this;
+	}
+
+	/*
+	 * @param ucq : the union of conjunctive query to test
+	 * 
+	 * @return true if all Conjunctive of ucq have the same Arity
+	 * false if ucq has no query
+	 * 
+	 */
+	public boolean checkAllSameArity(Collection<ConjunctiveQuery> queryList) throws IteratorException {
+
+		int arity = 0;
+		Iterator<ConjunctiveQuery> it = queryList.iterator();
+
+		if (it.hasNext()) {
+			arity = it.next().getAnswerVariables().size();
+		} else {
+			return false;
 		}
 
-		this.write("\nWHERE\n{\n");
+		while (it.hasNext()) {
+			int queryArity = it.next().getAnswerVariables().size();
+			if (queryArity != arity) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/*
+	 * @return a SparqlConjunctiveQueryWriter of a union of conjunctiveWriter
+	 * Write the SPARQL Query as : SELECT|ASK WHERE {} UNION {} UNION {}.
+	 * 
+	 * @param queryUnion : A iterator of conjunctiveQuery
+	 * 
+	 * @maxUnionNb :
+	 */
+	public SparqlConjunctiveQueryWriter write(UnionOfConjunctiveQueries ucq) {
+		try {
+			Collection<ConjunctiveQuery> queryList = Iterators.toList(ucq.iterator());
+
+			if (queryList.isEmpty()) {
+				return this;
+			}
+
+			if (!checkAllSameArity(queryList)) { // check if all query have the same arity
+				return this;
+			}
+
+			if (ucq.getAnswerVariables().isEmpty()) {
+				this.write("ASK "); // ask query
+			} else {
+				this.write("SELECT DISTINCT "); // select query
+
+				for (Term t : ucq.getAnswerVariables()) {
+					this.write(t);
+					this.write(' ');
+				}
+			}
+			this.write("\nWHERE\n{\n");
+
+			boolean firstClause = true;
+			ConjunctiveQuery query;
+			CloseableIterator<ConjunctiveQuery> it = ucq.iterator(); // write all query of ucq
+
+			while (it.hasNext()) {
+				query = it.next();
+
+				if (!query.getAtomSet().isEmpty()) {
+
+					if (!firstClause) {
+						this.write("UNION {\n");
+					} else {
+						this.write("{");
+						firstClause = false;
+					}
+					writeQuery(query);
+				}
+
+				this.write("\n}\n");
+			}
+			this.write("}");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return this;
+
+	}
+
+	/*
+	 * Write query to the the writer
+	 * 
+	 * @param query : the query to write
+	 */
+	private void writeQuery(ConjunctiveQuery query) throws IOException {
 		boolean isFirst = true;
 		CloseableIteratorWithoutException<Atom> it = query.getAtomSet().iterator();
 		while (it.hasNext()) {
 			Atom a = it.next();
-			if(!isFirst) {
+			if (!isFirst) {
 				this.write(" .\n");
 			} else {
 				isFirst = false;
 			}
 			this.writeAtom(a);
 		}
-		
-		this.write("\n}\n");
-
-		return this;
 	}
 
 	@Override
@@ -139,5 +248,4 @@ public class SparqlConjunctiveQueryWriter extends AbstractSparqlWriter implement
 		super.writeComment(comment);
 		return this;
 	}
-
 }
