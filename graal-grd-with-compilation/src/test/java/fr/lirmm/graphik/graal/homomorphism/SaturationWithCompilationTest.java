@@ -129,7 +129,6 @@ public class SaturationWithCompilationTest {
 				List<Rule> rules = new ArrayList<>();
 
 				try (DlgpParser it = new DlgpParser(file_ontology);) {
-//				builder.addAll();
 
 					while (it.hasNext()) {
 						Object o = it.next();
@@ -156,20 +155,14 @@ public class SaturationWithCompilationTest {
 				builder.addAll(new DlgpParser(file_result));
 				expectedFactBase = new LinkedListAtomSet(builder.build().getFacts());
 			}
-
 			BasicChase<? extends AtomSet> bf = new BasicChaseWithCompilation<AtomSet>(kb.getOntology(), kb.getFacts(),
 					idCompilation);
 
 			bf.execute();
-
 			saturatedFactBase = new LinkedListAtomSet(kb.getFacts());
 
-			PureHomomorphism pure = PureHomomorphism.instance();
-
-			assertTrue(
-					"Failed on set " + file_ontology + " expected result:\n" + expectedFactBase + "\nHave:\n"
-							+ saturatedFactBase,
-					pure.exist(saturatedFactBase, expectedFactBase) && pure.exist(expectedFactBase, saturatedFactBase));
+			assertTrue("Failed on set " + file_ontology + " expected result:\n" + expectedFactBase + "\nHave:\n"
+					+ saturatedFactBase, haveIsomorphism(expectedFactBase, saturatedFactBase));
 		}
 	}
 }
