@@ -58,8 +58,10 @@ import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Term.Type;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorAccumulator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
@@ -213,4 +215,18 @@ public abstract class AbstractInMemoryAtomSet extends AbstractAtomSet implements
 		}
 	}
 
+	@Override
+	public Atom[] toArray() {
+		CloseableIteratorAccumulator<Atom> accu = new CloseableIteratorAccumulator<>(iterator());
+		Atom[] ret;
+
+		try {
+			ret = accu.consumeAll().toArray();
+		} catch (IteratorException e) {
+			throw new Error("It should never happen.");
+		} finally {
+			accu.close();
+		}
+		return ret;
+	}
 }
