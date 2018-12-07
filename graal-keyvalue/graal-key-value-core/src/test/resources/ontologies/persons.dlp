@@ -1,0 +1,7 @@
+@rules
+<human.name>(Y) :- <human>(X).
+<human.boss>(X) :- <human.hasCorporation>(X).
+
+@facts
+<0.human>(alice).
+<0.human.hasCorporation>(X), <0.test>(X).
