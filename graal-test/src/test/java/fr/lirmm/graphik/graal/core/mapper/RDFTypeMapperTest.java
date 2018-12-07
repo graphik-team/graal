@@ -33,7 +33,7 @@ public class RDFTypeMapperTest {
                 Atom mappedAtom = rdfTypeMapper.map(atomToMap);
 
                 /* creation of the model atom */
-                Term termFromPredicate = DefaultTermFactory.instance().createVariable(atomToMap.getPredicate().getIdentifier());
+                Term termFromPredicate = DefaultTermFactory.instance().createConstant(atomToMap.getPredicate().getIdentifier());
                 Predicate rdfTypePredicate = new Predicate(URIUtils.RDF_TYPE, 2);
                 Atom modelAtom = new DefaultAtom(rdfTypePredicate, atomToMap.getTerm(0), termFromPredicate);
 
@@ -49,7 +49,7 @@ public class RDFTypeMapperTest {
                 Atom mappedAtom = rdfTypeMapper.map(atomToMap);
 
                 /* creation of the model atom */
-                Term termFromPredicate = DefaultTermFactory.instance().createVariable(atomToMap.getPredicate().getIdentifier());
+                Term termFromPredicate = DefaultTermFactory.instance().createConstant(atomToMap.getPredicate().getIdentifier());
                 Predicate rdfTypePredicate = new Predicate(URIUtils.RDF_TYPE, 2);
                 Atom modelAtom = new DefaultAtom(rdfTypePredicate, atomToMap.getTerm(0), termFromPredicate);
 
