@@ -65,6 +65,7 @@ import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.Substitutions;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
+import fr.lirmm.graphik.util.stream.CounterIterator;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -268,6 +269,20 @@ public abstract class AbstractAtomSet implements AtomSet {
 			throw new AtomSetException(e);
 		}
 		return true;
+	}
+
+	/**
+	 * This default implementation should be overriden, it is convenient for in
+	 * memory set, but will be inefficient in some case.
+	 * 
+	 * @see fr.lirmm.graphik.graal.api.core.AtomSet#size()
+	 */
+	@Override
+	public int size() throws AtomSetException {
+		CounterIterator<Atom> it = new CounterIterator<>(iterator());
+		int ret = it.getCptValue();
+		it.close();
+		return ret;
 	}
 
 	@Override
