@@ -316,7 +316,7 @@ public class ConjunctiveQuery2Test {
 	public void testWrongArityOnTripleStoreWithHomomorphism(Homomorphism<ConjunctiveQuery, AtomSet> h, AtomSet store) throws HomomorphismException, IteratorException, AtomSetException {
 		Assume.assumeTrue(store instanceof TripleStore);
 		store.add(DlgpParser.parseAtom("p(a,b)."));
-		ConjunctiveQuery query = DlgpParser.parseQuery("? :- p(X,Y), q(Y).");
+		ConjunctiveQuery query = DlgpParser.parseQuery("? :- p(X,Y), q(Y,Y,Y).");
 		boolean wrongArityExceptionFound = false;
 		try {
     		CloseableIterator<Substitution> execute = h.execute(query, store);
