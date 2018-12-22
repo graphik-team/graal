@@ -499,17 +499,17 @@ is logically interpreted as <!-- MATH
 <H3>An example which illustrates the use of IRIs and literals</H3>
  The three first facts have the same interpretation.
   <pre><code class="dlgp hljs">
-    @base <http://www.example.org/>
-    @prefix ex: <http://www.example.org/>
-    @prefix inria-team: <https://team.inria.fr/>
-    @prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+    @base &lt;http://www.example.org/&gt;
+    @prefix ex: &lt;http://www.example.org/&gt;
+    @prefix inria-team: &lt;https://team.inria.fr/&gt;
+    @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
     @facts
     % use of @base
-    [f 1] <Pred>(1.5).
+    [f 1] &lt;Pred&gt;(1.5).
     % use of @prefix
     [f 2] ex:Pred("1.5"^^xsd:decimal).
     % absolute IRIs
-    [f 3] <http://www.example.org/Pred>("1.5"^^<http://www.w3.org/2001/XMLSchema#decimal>).
+    [f 3] &lt;http://www.example.org/Pred&gt;("1.5"^^&lt;http://www.w3.org/2001/XMLSchema#decimal&gt;).
     % use of @base for the predicate and @prefix for the argument
     [f 4] team(inria-team:graphik).
   </code></pre>
