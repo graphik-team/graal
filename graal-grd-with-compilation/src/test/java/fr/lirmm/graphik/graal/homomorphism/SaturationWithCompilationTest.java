@@ -28,7 +28,6 @@ import fr.lirmm.graphik.graal.core.Rules;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.compilation.IDCompilation;
 import fr.lirmm.graphik.graal.forward_chaining.BasicChase;
-import fr.lirmm.graphik.graal.forward_chaining.BasicChaseWithCompilation;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.kb.KBBuilder;
 import fr.lirmm.graphik.graal.kb.KBBuilderException;
@@ -155,7 +154,7 @@ public class SaturationWithCompilationTest {
 				builder.addAll(new DlgpParser(file_result));
 				expectedFactBase = new LinkedListAtomSet(builder.build().getFacts());
 			}
-			BasicChase<? extends AtomSet> bf = new BasicChaseWithCompilation<AtomSet>(kb.getOntology(), kb.getFacts(),
+			BasicChase<? extends AtomSet> bf = new BasicChase<AtomSet>(kb.getOntology(), kb.getFacts(),
 					idCompilation);
 
 			bf.execute();

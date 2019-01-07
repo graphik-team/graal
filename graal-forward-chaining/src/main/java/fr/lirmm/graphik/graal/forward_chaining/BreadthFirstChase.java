@@ -62,10 +62,13 @@ import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
 import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphStore;
+import fr.lirmm.graphik.graal.core.compilation.IDCompilation;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByBodyPredicatesRuleSet;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
+import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplierWithCompilation;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.RestrictedChaseRuleApplier;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
@@ -127,12 +130,20 @@ public class BreadthFirstChase extends AbstractChase<Rule, AtomSet> {
 
 	public BreadthFirstChase(Iterable<Rule> rules, AtomSet atomSet, ChaseHaltingCondition haltingCondition) {
 		this(rules, atomSet, new DefaultRuleApplier<AtomSet>(haltingCondition));
-
 	}
 
 	public BreadthFirstChase(Iterable<Rule> rules, AtomSet atomSet, Homomorphism<Query, AtomSet> solver,
 	    ChaseHaltingCondition haltingCondition) {
 		this(rules, atomSet, new DefaultRuleApplier<AtomSet>(solver, haltingCondition));
+	}
+	
+	public BreadthFirstChase(Iterable<Rule> rules, AtomSet atomSet, IDCompilation compilation) {
+		this(rules, atomSet, new DefaultRuleApplierWithCompilation<AtomSet>(compilation));
+	}
+
+	public BreadthFirstChase(Iterable<Rule> rules, AtomSet atomSet, IDCompilation compilation,
+			HomomorphismWithCompilation<Query, AtomSet> h) {
+		this(rules, atomSet, new DefaultRuleApplierWithCompilation<AtomSet>(h, compilation));
 	}
 
 	private void init(Iterator<Rule> rules) {
