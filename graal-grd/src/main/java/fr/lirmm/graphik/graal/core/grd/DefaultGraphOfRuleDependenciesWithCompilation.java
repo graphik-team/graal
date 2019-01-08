@@ -33,6 +33,7 @@ import fr.lirmm.graphik.graal.core.LabelRuleComparator;
 import fr.lirmm.graphik.graal.core.Substitutions;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphStore;
 import fr.lirmm.graphik.graal.core.mapper.RDFTypeMapper;
+import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.unifier.DefaultUnifierAlgorithm;
 import fr.lirmm.graphik.graal.forward_chaining.BasicChase;
 import fr.lirmm.graphik.util.LinkedSet;
@@ -86,6 +87,16 @@ public class DefaultGraphOfRuleDependenciesWithCompilation implements GraphOfRul
 		initAndSaturateHeads();
 		this.computeDependencies();
 
+	}
+
+	public DefaultGraphOfRuleDependenciesWithCompilation(Iterator<Rule> rulesetToBeAnalyzed,
+			RulesCompilation compilation) throws ChaseException, IOException {
+		this(new LinkedListRuleSet(rulesetToBeAnalyzed), compilation);
+	}
+
+	public DefaultGraphOfRuleDependenciesWithCompilation(Iterable<Rule> rulesetToBeAnalyzed,
+			RulesCompilation compilation) throws ChaseException, IOException {
+		this(new LinkedListRuleSet(rulesetToBeAnalyzed), compilation);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
