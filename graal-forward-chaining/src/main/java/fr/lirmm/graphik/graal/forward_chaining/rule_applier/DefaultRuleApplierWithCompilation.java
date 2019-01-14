@@ -52,13 +52,13 @@ import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
-import fr.lirmm.graphik.graal.core.compilation.IDCompilation;
 import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
@@ -71,25 +71,25 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
  */
 public class DefaultRuleApplierWithCompilation<T extends AtomSet> extends AbstractRuleApplier<T> {
 
-	private IDCompilation compilation;
+	private RulesCompilation compilation;
 
 	// //////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// //////////////////////////////////////////////////////////////////////////
 
-	public DefaultRuleApplierWithCompilation(IDCompilation compilation) {
+	public DefaultRuleApplierWithCompilation(RulesCompilation compilation) {
 		super();
 		this.compilation = compilation;
 	}
 
 	public DefaultRuleApplierWithCompilation(HomomorphismWithCompilation<? super Query, ? super T> h,
-			IDCompilation compilation) {
+			RulesCompilation compilation) {
 		super(h);
 		this.compilation = compilation;
 	}
 
 	public DefaultRuleApplierWithCompilation(HomomorphismWithCompilation<? super Query, ? super T> h,
-			ChaseHaltingCondition cond, IDCompilation compilation) {
+			ChaseHaltingCondition cond, RulesCompilation compilation) {
 		super(h, cond);
 	}
 
@@ -97,11 +97,11 @@ public class DefaultRuleApplierWithCompilation<T extends AtomSet> extends Abstra
 	//
 	// //////////////////////////////////////////////////////////////////////////
 
-	protected void setCompilation(IDCompilation compilation) {
+	protected void setCompilation(RulesCompilation compilation) {
 		this.compilation = compilation;
 	}
 
-	protected IDCompilation getCompilation() {
+	protected RulesCompilation getCompilation() {
 		return compilation;
 	}
 
