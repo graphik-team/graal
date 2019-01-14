@@ -82,6 +82,10 @@ public class ChaseWithGRD<T extends AtomSet> extends AbstractChase<Rule, T> {
 
 	private GraphOfRuleDependencies grd;
 	private T atomSet;
+
+	/**
+	 * Queue of the rules to apply in the saturation process
+	 */
 	private Queue<Rule> queue = new LinkedList<Rule>();
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -124,45 +128,51 @@ public class ChaseWithGRD<T extends AtomSet> extends AbstractChase<Rule, T> {
 
 	@Override
 	public void next() throws ChaseException {
-
 		Queue<Rule> newQueue = new LinkedList<Rule>();
 		List<Atom> newAtomSet = new LinkedList<Atom>();
 
 		try {
-			while (!queue.isEmpty()) {
 
+			while (!queue.isEmpty()) {
 				Rule rule = queue.poll();
-				if (rule != null) {
+
+				if (rule == null)
+					continue;
+
 				CloseableIterator<Atom> it = this.getRuleApplier().delegatedApply(rule, this.atomSet);
-					if (it.hasNext()) {
+
+				// Nothing more to do for this iteration
+				if (!it.hasNext()) {
+					it.close();
+					continue;
+				}
+
+				// Add the generated atoms in the atom set
 				while (it.hasNext()) {
 					newAtomSet.add(it.next());
 				}
+
+				// Make the next queue to use
 				for (Rule triggeredRule : this.grd.getTriggeredRules(rule)) {
+
 					if (LOGGER.isDebugEnabled()) {
 						LOGGER.debug("-- -- Dependency: " + triggeredRule);
 					}
+
 					if (!newQueue.contains(triggeredRule)) {
 						newQueue.add(triggeredRule);
 					}
 				}
 			}
-					it.close();
-				}
-			}
-
 			queue = newQueue;
 			atomSet.addAll(new CloseableIteratorAdapter<Atom>(newAtomSet.iterator()));
-
 		} catch (Exception e) {
 			throw new ChaseException("An error occur pending saturation step.", e);
 		}
-
 	}
 
 	@Override
 	public boolean hasNext() {
 		return !queue.isEmpty();
 	}
-
 }
