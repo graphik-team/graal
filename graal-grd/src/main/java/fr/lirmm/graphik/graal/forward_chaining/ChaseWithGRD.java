@@ -45,6 +45,7 @@
 */
 package fr.lirmm.graphik.graal.forward_chaining;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -57,10 +58,13 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.forward_chaining.AbstractChase;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
 import fr.lirmm.graphik.graal.core.grd.DefaultGraphOfRuleDependencies;
+import fr.lirmm.graphik.graal.core.grd.DefaultGraphOfRuleDependenciesWithCompilation;
+import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplierWithCompilation;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.RestrictedChaseRuleApplier;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
@@ -88,6 +92,7 @@ public class ChaseWithGRD<T extends AtomSet> extends AbstractChase<Rule, T> {
 		super(ruleApplier);
 		this.grd = grd;
 		this.atomSet = atomSet;
+
 		for (Rule r : grd.getRules()) {
 			this.queue.add(r);
 		}
@@ -99,6 +104,18 @@ public class ChaseWithGRD<T extends AtomSet> extends AbstractChase<Rule, T> {
 
 	public ChaseWithGRD(Iterator<Rule> rules, T atomSet) {
 		this(new DefaultGraphOfRuleDependencies(rules), atomSet);
+	}
+
+	public ChaseWithGRD(Iterable<Rule> rules, T atomSet, RulesCompilation compilation)
+			throws ChaseException, IOException {
+		this(new DefaultGraphOfRuleDependenciesWithCompilation(rules, compilation), atomSet,
+				new DefaultRuleApplierWithCompilation<T>(compilation));
+	}
+
+	public ChaseWithGRD(Iterator<Rule> rules, T atomSet, RulesCompilation compilation)
+			throws ChaseException, IOException {
+		this(new DefaultGraphOfRuleDependenciesWithCompilation(rules, compilation), atomSet,
+				new DefaultRuleApplierWithCompilation<T>(compilation));
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -116,20 +133,20 @@ public class ChaseWithGRD<T extends AtomSet> extends AbstractChase<Rule, T> {
 
 				Rule rule = queue.poll();
 				if (rule != null) {
-					CloseableIterator<Atom> it = this.getRuleApplier().delegatedApply(rule, this.atomSet);
+				CloseableIterator<Atom> it = this.getRuleApplier().delegatedApply(rule, this.atomSet);
 					if (it.hasNext()) {
-						while(it.hasNext()) {
-							newAtomSet.add(it.next());
-						}
-						for (Rule triggeredRule : this.grd.getTriggeredRules(rule)) {
-							if (LOGGER.isDebugEnabled()) {
-								LOGGER.debug("-- -- Dependency: " + triggeredRule);
-							}
-							if (!newQueue.contains(triggeredRule)) {
-								newQueue.add(triggeredRule);
-							}
-						}
+				while (it.hasNext()) {
+					newAtomSet.add(it.next());
+				}
+				for (Rule triggeredRule : this.grd.getTriggeredRules(rule)) {
+					if (LOGGER.isDebugEnabled()) {
+						LOGGER.debug("-- -- Dependency: " + triggeredRule);
 					}
+					if (!newQueue.contains(triggeredRule)) {
+						newQueue.add(triggeredRule);
+					}
+				}
+			}
 					it.close();
 				}
 			}
