@@ -82,17 +82,33 @@ public final class UnifierUtils {
 
 	public static List<QueryUnifier> getSinglePieceUnifiersNAHR(ConjunctiveQuery q, Rule r,
 			RulesCompilation compilation) {
-		return getSinglePieceUnifiersNAHR(q, r, compilation, false);
+		return getSinglePieceUnifiersNAHR(q, r, compilation, -1);
+	}
+
+	public static List<QueryUnifier> getSinglePieceUnifiersNAHR(ConjunctiveQuery q, Rule r,
+			RulesCompilation compilation, boolean checkExists) {
+		return getSinglePieceUnifiersNAHR(q, r, compilation, checkExists ? 1 : -1);
 	}
 
 	/**
 	 * @see UnifierUtils#getSinglePieceUnifiersAHR(ConjunctiveQuery, AtomicHeadRule,
 	 *      RulesCompilation)
+	 * 
+	 * @param q
+	 * @param r
+	 * @param compilation
+	 * @param maxQueryUnifiers The maximum number of elements to in the return set.
+	 *                         If a negative value is provided, all the elements
+	 *                         will be computed.
 	 * @return
 	 */
 	public static List<QueryUnifier> getSinglePieceUnifiersNAHR(ConjunctiveQuery q, Rule r,
-			RulesCompilation compilation, boolean checkExists) {
+			RulesCompilation compilation, long maxQueryUnifiers) {
 		LinkedList<QueryUnifier> u = new LinkedList<QueryUnifier>();
+
+		if (maxQueryUnifiers == 0)
+			return u;
+
 		Rule ruleCopy = getSafeCopy(r);
 		HashMap<Atom, LinkedList<Partition<Term>>> possibleUnification = new HashMap<Atom, LinkedList<Partition<Term>>>();
 		// compute possible unification between atoms of Q and head(R)
@@ -126,6 +142,12 @@ public final class UnifierUtils {
 			}
 		}
 
+		/**
+		 * Number of element added in the current iteration
+		 */
+		long nbAdd = 0;
+		final boolean notCheckMax = maxQueryUnifiers < 0;
+
 		/*
 		 * Main algorithm
 		 */
@@ -139,36 +161,29 @@ public final class UnifierUtils {
 
 			Iterator<Partition<Term>> i = partitionList.iterator();
 
-			if (checkExists) {
+			while (i.hasNext()) {
+				Partition<Term> unif = i.next();
+				InMemoryAtomSet p = new LinkedListAtomSet();
+				p.add(a);
+
+				Collection<? extends QueryUnifier> queryUnifiers = extend(p, unif, possibleUnification, q, ruleCopy,
+						maxQueryUnifiers);
+				nbAdd = queryUnifiers.size();
+
+				u.addAll(queryUnifiers);
+				i.remove();
 
 				/*
-				 * (@author Olivier Rodriguez) This loop is a copy of the beelow loop but with
-				 * the existential check case. Copying the code is better to disable the
-				 * existential check when it is not needed. (A if structure in a loop is not
-				 * negligible.)
+				 * --> nbAdd check
 				 */
-				while (i.hasNext()) {
-					Partition<Term> unif = i.next();
-					InMemoryAtomSet p = new LinkedListAtomSet();
-					p.add(a);
-					u.addAll(extend(p, unif, possibleUnification, q, ruleCopy, checkExists));
-					i.remove();
+				if (notCheckMax || nbAdd == 0)
+					continue;
 
-					if (!u.isEmpty())
-						return u;
-				}
-			} else {
+				maxQueryUnifiers -= nbAdd;
 
-				/*
-				 * @see the description of the upper loop.
-				 */
-				while (i.hasNext()) {
-					Partition<Term> unif = i.next();
-					InMemoryAtomSet p = new LinkedListAtomSet();
-					p.add(a);
-					u.addAll(extend(p, unif, possibleUnification, q, ruleCopy, checkExists));
-					i.remove();
-				}
+				if (maxQueryUnifiers <= 0)
+					return u;
+				// <-- End of nbAdd check
 			}
 		}
 		return u;
@@ -281,14 +296,21 @@ public final class UnifierUtils {
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	private static Collection<? extends QueryUnifier> extend(InMemoryAtomSet p, Partition<Term> unif,
-			HashMap<Atom, LinkedList<Partition<Term>>> possibleUnification, ConjunctiveQuery q, Rule r) {
-		return extend(p, unif, possibleUnification, q, r, false);
-	}
-
+	/**
+	 * 
+	 * @param p
+	 * @param unif
+	 * @param possibleUnification
+	 * @param q
+	 * @param r
+	 * @param maxQueryUnifier     The maximum number of elements to be in the return
+	 *                            set. If a negative value is provided, all the
+	 *                            elements will be computed.
+	 * @return
+	 */
 	private static Collection<? extends QueryUnifier> extend(InMemoryAtomSet p, Partition<Term> unif,
 			HashMap<Atom, LinkedList<Partition<Term>>> possibleUnification, ConjunctiveQuery q, Rule r,
-			boolean checkExists) {
+			long maxQueryUnifiers) {
 		LinkedList<QueryUnifier> u = new LinkedList<QueryUnifier>();
 
 		// compute separating variable
@@ -309,25 +331,46 @@ public final class UnifierUtils {
 				pBar.removeAll(toRemove);
 				toRemove.clear();
 				CloseableIteratorWithoutException<Atom> ib = pBar.iterator();
+
 				while (ib.hasNext()) {
 					Atom b = ib.next();
+
 					if (b.getTerms().contains(t)) {
 						pExt.add(b);
 						toRemove.add(b);
 					}
 				}
 			}
+
+			/**
+			 * Number of element added in the current iteration
+			 */
+			long nbAdd = 0;
+			final boolean notCheckMax = maxQueryUnifiers < 0;
+
 			Partition<Term> part;
 
 			for (Partition<Term> uExt : preUnifier(pExt, r, possibleUnification)) {
 				part = unif.join(uExt);
 
 				if (part != null && TermPartitionUtils.isAdmissible(part, r)) {
-					u.addAll(extend(AtomSetUtils.union(p, pExt), part, possibleUnification, q, r));
-
-					if (checkExists)
-						break;
+					Collection<? extends QueryUnifier> queryUnifiers = extend(AtomSetUtils.union(p, pExt), part,
+							possibleUnification, q, r, maxQueryUnifiers);
+					nbAdd = queryUnifiers.size();
+					u.addAll(queryUnifiers);
 				}
+
+				/*
+				 * --> nbAdd check
+				 */
+				if (notCheckMax || nbAdd == 0)
+					continue;
+
+				maxQueryUnifiers -= nbAdd;
+
+				if (maxQueryUnifiers <= 0)
+					return u;
+				// <-- End of nbAdd check
 			}
 		}
 		return u;
