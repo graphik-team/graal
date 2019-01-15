@@ -124,5 +124,11 @@ public interface RulesCompilation extends Profilable {
 	 * @return an InMemoryAtomSet which is a subset of the specified one and which is equivalent to with respect to this rule compilation.
 	 */
 	InMemoryAtomSet getIrredondant(InMemoryAtomSet atomSet);
+	
+	/**
+	 * Returns true if this compilation object does not contain any information, false otherwise.
+	 * @return true if this compilation object does not contain any information, false otherwise.
+	 */
+	boolean isEmpty();
 
 }

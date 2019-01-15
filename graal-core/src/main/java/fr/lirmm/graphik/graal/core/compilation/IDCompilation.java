@@ -310,6 +310,11 @@ public class IDCompilation extends AbstractRulesCompilation {
 		}
 		return res;
 	}
+	
+	@Override
+	public boolean isEmpty() {
+		return this.conditions.isEmpty();
+	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS

@@ -192,7 +192,7 @@ public class SmartHomomorphism extends AbstractProfilable implements Homomorphis
 			LOGGER.debug("Execute query with compilation: {}", query);
 
 		// is there really a compilation?
-		if (compilation == null || compilation == NoCompilation.instance()) {
+		if (compilation == null || compilation.isEmpty()) {
 			return this.execute(query, atomSet);
 		}
 

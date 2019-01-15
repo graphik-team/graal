@@ -164,5 +164,10 @@ public class NoCompilation extends AbstractRulesCompilation {
 	public Collection<Predicate> getUnifiablePredicate(Predicate p) {
 		return Collections.singleton(p);
 	}
+	
+	@Override
+	public boolean isEmpty() {
+		return true;
+	}
 
 }
