@@ -42,6 +42,8 @@
  */
 package fr.lirmm.graphik.graal.io.sparql;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.io.IOException;
 import java.io.StringWriter;
 
@@ -51,9 +53,12 @@ import org.junit.Test;
 import com.hp.hpl.jena.query.QueryParseException;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
+import fr.lirmm.graphik.graal.api.core.Constant;
 import fr.lirmm.graphik.graal.api.core.Literal;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.core.factory.DefaultPredicateFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.URIUtils;
@@ -66,8 +71,10 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 public class SparqlRuleTest {
 
 	private static final String    PREFIX  = "http://www.lehigh.edu/~zhp2/2004/0401/univ-bench.owl#";
-	private static final Predicate A       = new Predicate(URIUtils.createURI(PREFIX + "A"), 1);
-	private static final Predicate B       = new Predicate(URIUtils.createURI(PREFIX + "B"), 1);
+	private static final Constant TOTO = DefaultTermFactory.instance()
+            .createConstant(URIUtils.createURI(PREFIX + "toto"));
+	private static final Constant TITI = DefaultTermFactory.instance()
+            .createConstant(URIUtils.createURI(PREFIX + "titi"));
 	private static final Predicate P       = new Predicate(URIUtils.createURI(PREFIX + "p"), 2);
 	private static final Predicate Q       = new Predicate(URIUtils.createURI(PREFIX + "q"), 2);
 
@@ -114,22 +121,30 @@ public class SparqlRuleTest {
 		               + ">"
 		               + "CONSTRUCT"
 		               + "{"
-		               + "  ?x rdf:type :B "
+		               + "  ?x rdf:type :titi "
 		               + "}"
 		               + "WHERE"
 		               + "{"
-		               + "	?x a :A  ."
+		               + "	?x a :toto  ."
 		               + "}";
 		Rule rule = new SparqlRuleParser(query).getRule();
 		CloseableIteratorWithoutException<Atom> it = rule.getBody().iterator();
+		Term var = null;
 		while (it.hasNext()) {
 			Atom a = it.next();
-			Assert.assertEquals(A, a.getPredicate());
+			Assert.assertEquals(DefaultPredicateFactory.instance().create(URIUtils.RDF_TYPE, 2), a.getPredicate());
+			Assert.assertTrue(a.getTerm(0).isVariable());
+			var = a.getTerm(0);
+			Assert.assertEquals(TOTO, a.getTerm(1));
+			
 		}
+		assertNotNull(var);
 		it = rule.getHead().iterator();
 		while (it.hasNext()) {
 			Atom a = it.next();
-			Assert.assertEquals(B, a.getPredicate());
+			Assert.assertEquals(DefaultPredicateFactory.instance().create(URIUtils.RDF_TYPE, 2), a.getPredicate());
+			Assert.assertEquals(var, a.getTerm(0));
+			Assert.assertEquals(TITI, a.getTerm(1));
 		}
 	}
 

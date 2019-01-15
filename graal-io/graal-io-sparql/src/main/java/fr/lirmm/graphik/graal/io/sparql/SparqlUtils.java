@@ -70,12 +70,8 @@ final class SparqlUtils {
 		Node subject = triple.getSubject();
 		Node object = triple.getObject();
 		Node predicate = triple.getPredicate();
-		if (predicate.getURI().equals(URIUtils.RDF_TYPE.toString())) {
-			return DefaultAtomFactory.instance().create(node2Predicate(object, 1), node2Term(subject));
-		} else {
-			return DefaultAtomFactory.instance().create(node2Predicate(predicate, 2), node2Term(subject),
+		return DefaultAtomFactory.instance().create(node2Predicate(predicate, 2), node2Term(subject),
 			    node2Term(object));
-		}
 	}
 
 	/**
