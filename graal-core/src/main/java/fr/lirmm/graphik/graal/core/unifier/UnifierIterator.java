@@ -71,17 +71,26 @@ class UnifierIterator extends AbstractCloseableIterator<Substitution>
 
 	private Rule source, target;
 	private DependencyChecker checkers[];
+	private long maxSubstitution;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
 	public UnifierIterator(Rule source, Rule target, DependencyChecker... checkers) {
+		this(source, target, -1, checkers);
+	}
+
+	public UnifierIterator(Rule source, Rule target, boolean checkExists, DependencyChecker... checkers) {
+		this(source, target, checkExists ? 1 : -1, checkers);
+	}
+
+	public UnifierIterator(Rule source, Rule target, long maxSubstitutions, DependencyChecker... checkers) {
 		this.source = source;
 		this.target = target;
 		this.checkers = checkers;
+		this.maxSubstitution = maxSubstitutions;
 	}
-
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
@@ -92,16 +101,16 @@ class UnifierIterator extends AbstractCloseableIterator<Substitution>
 
 	@Override
 	public boolean hasNext() {
-		if (this.unifiers == null) {
-			this.unifiers = new LinkedList<Substitution>(computePieceUnifiers(this.source, this.target));
+		if (unifiers == null) {
+			unifiers = new LinkedList<Substitution>(computePieceUnifiers(source, target, maxSubstitution));
 		}
-		return !this.unifiers.isEmpty();
+		return !unifiers.isEmpty();
 	}
 
 	@Override
 	public Substitution next() {
-		this.hasNext();
-		return this.unifiers.poll();
+		hasNext();
+		return unifiers.poll();
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -159,9 +168,9 @@ class UnifierIterator extends AbstractCloseableIterator<Substitution>
 	 * @param atomset
 	 * @param pieceElement
 	 * @param unifier
-	 * @param maxElement   The maximum number of elements to be in the
-	 *                     return set. If a negative value is provided, all the
-	 *                     elements will be computed.
+	 * @param maxSubstitutions The maximum number of elements to be in the return
+	 *                         set. If a negative value is provided, all the
+	 *                         elements will be computed.
 	 * @return
 	 */
 	private Collection<Substitution> extendUnifier(Rule rule, Queue<Atom> atomset, Atom pieceElement, Unifier unifier,
@@ -234,8 +243,8 @@ class UnifierIterator extends AbstractCloseableIterator<Substitution>
 			 * iteration. Be careful for the future evolutions of the source code.
 			 */
 			/*
-			 * In the following condition: "nbAdd == 0" is not necessary because the only case
-			 * where nbAdd == 0 is switched before this point
+			 * In the following condition: "nbAdd == 0" is not necessary because the only
+			 * case where nbAdd == 0 is switched before this point
 			 */
 			if (notCheckMax/* || nbAdd == 0 */)
 				continue;
