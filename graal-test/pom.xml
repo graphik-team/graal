@@ -56,6 +56,12 @@
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
+			<artifactId>graal-kb</artifactId>
+			<version>${project.parent.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>rdbms-common</artifactId>
 			<version>${project.parent.version}</version>
 			<scope>test</scope>

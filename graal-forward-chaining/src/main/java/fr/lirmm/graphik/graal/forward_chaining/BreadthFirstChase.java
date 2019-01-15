@@ -57,6 +57,7 @@ import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.forward_chaining.AbstractChase;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
@@ -65,7 +66,6 @@ import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphStore;
-import fr.lirmm.graphik.graal.core.compilation.IDCompilation;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByBodyPredicatesRuleSet;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplierWithCompilation;
@@ -137,11 +137,15 @@ public class BreadthFirstChase extends AbstractChase<Rule, AtomSet> {
 		this(rules, atomSet, new DefaultRuleApplier<AtomSet>(solver, haltingCondition));
 	}
 	
-	public BreadthFirstChase(Iterable<Rule> rules, AtomSet atomSet, IDCompilation compilation) {
+	public BreadthFirstChase(Iterable<Rule> rules, AtomSet atomSet, RulesCompilation compilation) {
 		this(rules, atomSet, new DefaultRuleApplierWithCompilation<AtomSet>(compilation));
 	}
 
-	public BreadthFirstChase(Iterable<Rule> rules, AtomSet atomSet, IDCompilation compilation,
+	public BreadthFirstChase(Iterator<Rule> rules, AtomSet atomSet, RulesCompilation compilation) {
+		this(rules, atomSet, new DefaultRuleApplierWithCompilation<AtomSet>(compilation));
+	}
+
+	public BreadthFirstChase(Iterable<Rule> rules, AtomSet atomSet, RulesCompilation compilation,
 			HomomorphismWithCompilation<Query, AtomSet> h) {
 		this(rules, atomSet, new DefaultRuleApplierWithCompilation<AtomSet>(h, compilation));
 	}

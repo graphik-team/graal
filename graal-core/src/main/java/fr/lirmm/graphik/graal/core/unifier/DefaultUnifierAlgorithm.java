@@ -108,7 +108,7 @@ public class DefaultUnifierAlgorithm implements UnifierAlgorithm {
 	 * {@link #getTargetVariablesSubstitution()} to obtain equivalent rules without conflict on variable names.
 	 */
 	public boolean existPieceUnifier(Rule rule, InMemoryAtomSet query, UnifierChecker... filters) {
-		 UnifierIterator it = new UnifierIterator(rule, new ConjunctiveQueryRuleAdapter(query), filters);
+		 UnifierIterator it = new UnifierIterator(rule, new ConjunctiveQueryRuleAdapter(query), true, filters);
 		 boolean res = it.hasNext();
 		 it.close();
 		 return res;
@@ -120,7 +120,7 @@ public class DefaultUnifierAlgorithm implements UnifierAlgorithm {
 	 * {@link #getTargetVariablesSubstitution()} to obtain equivalent rules without conflict on variable names.
 	 */
 	public boolean existPieceUnifier(Rule source, Rule target, DependencyChecker... filters) {
-		 UnifierIterator it = new UnifierIterator(source, target, filters);
+		 UnifierIterator it = new UnifierIterator(source, target, true, filters);
 		 boolean res = it.hasNext();
 		 it.close();
 		 return res;

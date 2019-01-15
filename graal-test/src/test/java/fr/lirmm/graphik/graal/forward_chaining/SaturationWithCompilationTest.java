@@ -1,4 +1,4 @@
-package fr.lirmm.graphik.graal.homomorphism;
+package fr.lirmm.graphik.graal.forward_chaining;
 
 import static org.junit.Assert.assertTrue;
 
@@ -28,6 +28,7 @@ import fr.lirmm.graphik.graal.core.Rules;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.compilation.IDCompilation;
 import fr.lirmm.graphik.graal.forward_chaining.BasicChase;
+import fr.lirmm.graphik.graal.homomorphism.PureHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.graal.kb.KBBuilder;
 import fr.lirmm.graphik.graal.kb.KBBuilderException;

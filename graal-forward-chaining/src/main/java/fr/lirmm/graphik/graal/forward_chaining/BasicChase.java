@@ -51,13 +51,13 @@ import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.forward_chaining.AbstractDirectChase;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
 import fr.lirmm.graphik.graal.api.forward_chaining.DirectRuleApplier;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
-import fr.lirmm.graphik.graal.core.compilation.IDCompilation;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplierWithCompilation;
@@ -115,11 +115,15 @@ public class BasicChase<T extends AtomSet> extends AbstractDirectChase<Rule, T> 
 		this(rules, atomSet, new DefaultRuleApplier<T>(solver, haltingCondition));
 	}
 	
-	public BasicChase(Iterable<Rule> rules, T atomSet, IDCompilation compilation) {
+	public BasicChase(Iterable<Rule> rules, T atomSet, RulesCompilation compilation) {
+		this(rules, atomSet, new DefaultRuleApplierWithCompilation<T>(compilation));
+	}
+	
+	public BasicChase(Iterator<Rule> rules, T atomSet, RulesCompilation compilation) {
 		this(rules, atomSet, new DefaultRuleApplierWithCompilation<T>(compilation));
 	}
 
-	public BasicChase(Iterable<Rule> rules, T atomSet, IDCompilation compilation,
+	public BasicChase(Iterable<Rule> rules, T atomSet, RulesCompilation compilation,
 			HomomorphismWithCompilation<? super Query, ? super T> h) {
 		this(rules, atomSet, new DefaultRuleApplierWithCompilation<T>(h, compilation));
 	}

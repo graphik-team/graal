@@ -39,11 +39,6 @@
 		</dependency>
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
-			<artifactId>graal-grd</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-homomorphism</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
