@@ -17,7 +17,7 @@ import fr.lirmm.graphik.graal.forward_chaining.ChaseWithGRD;
 import fr.lirmm.graphik.graal.homomorphism.PureHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 
-public class ChaseWithGRDAndUnifiersTest {
+public class ChaseWithGRDAndCompilationTest {
 
 	private void checkResult(InMemoryAtomSet result, InMemoryAtomSet expected)
 			throws AtomSetException, HomomorphismException {
