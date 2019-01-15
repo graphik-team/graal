@@ -45,6 +45,7 @@
  */
 package fr.lirmm.graphik.graal.homomorphism;
 
+
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
@@ -136,7 +137,7 @@ class UnionConjunctiveQueriesSubstitutionIterator extends AbstractProfilable imp
 					}
 
 				} catch (HomomorphismException e) {
-					return false;
+					throw new IteratorException("Exception during querying following subQuery: " + q, e);
 				}
 			}
 		}
