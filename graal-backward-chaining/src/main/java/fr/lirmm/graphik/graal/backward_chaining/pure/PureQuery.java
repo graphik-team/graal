@@ -40,9 +40,9 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
+/**
+* 
+*/
 package fr.lirmm.graphik.graal.backward_chaining.pure;
 
 import java.util.List;
@@ -52,12 +52,15 @@ import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Literal;
 import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.factory.DefaultAtomFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultSubstitutionFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.util.ShouldNeverHappenedError;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
@@ -97,38 +100,49 @@ class PureQuery extends DefaultConjunctiveQuery {
 	// /////////////////////////////////////////////////////////////////////////
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
-	
+
 	private static Predicate ansPredicate = new Predicate("__ans", 2);
+
 	public void removeAnswerPredicate() {
 		removeAnswerPredicate(this);
 	}
-	
-	public static void removeAnswerPredicate(ConjunctiveQuery query) {
-		Term[] ans = query.getAnswerVariables().toArray(new Term[query.getAnswerVariables().size()]) ;
+
+	public static Substitution removeAnswerPredicate(ConjunctiveQuery query) {
+		Term[] ans = query.getAnswerVariables().toArray(new Term[query.getAnswerVariables().size()]);
 		CloseableIteratorWithoutException<Atom> ita = query.getAtomSet().iterator();
 		InMemoryAtomSet toRemove = new LinkedListAtomSet();
-		InMemoryAtomSet toAdd = new LinkedListAtomSet();
+		Substitution partialSubstitution = DefaultSubstitutionFactory.instance().createSubstitution();
 
 		while (ita.hasNext()) {
 			Atom a = ita.next();
-			if (a.getPredicate().equals(ansPredicate)) {
-				Term ansTerm = ans[(Integer) ((Literal) a.getTerm(0)).getValue()];
-				if(!ansTerm.equals(a.getTerm(1))) {
-					toAdd.add(DefaultAtomFactory.instance().create(Predicate.EQUALITY, ansTerm, a.getTerm(1)));
+
+			if (!a.getPredicate().equals(ansPredicate))
+				continue;
+
+			Term ansTerm = ans[(Integer) ((Literal) a.getTerm(0)).getValue()];
+
+			if (!ansTerm.equals(a.getTerm(1))) {
+
+				if (ansTerm.isVariable()) {
+					boolean res = partialSubstitution.put((Variable) ansTerm, a.getTerm(1));
+
+					if (!res) {
+						throw new ShouldNeverHappenedError("An answer variable is already replaced...");
+					}
+				} else {
+					throw new Error("An constant in answer terms was replaced!");
 				}
-				toRemove.add(a);
 			}
+			toRemove.add(a);
 		}
 		query.getAtomSet().removeAll(toRemove);
-		query.getAtomSet().addAll(toAdd);
+		return partialSubstitution;
 	}
 
 	public void addAnswerPredicate() {
 		int i = -1;
-		for(Term t: getAnswerVariables()) {
-			this.getAtomSet().add(
-					new DefaultAtom(ansPredicate, DefaultTermFactory.instance()
-							.createLiteral(++i), t));
+		for (Term t : getAnswerVariables()) {
+			this.getAtomSet().add(new DefaultAtom(ansPredicate, DefaultTermFactory.instance().createLiteral(++i), t));
 		}
 	}
 }
