@@ -45,17 +45,21 @@ package fr.lirmm.graphik.graal.api.core;
 import java.util.List;
 
 import fr.lirmm.graphik.util.stream.CloseableIterable;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
-
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-public interface UnionOfConjunctiveQueries extends Query, CloseableIterable<ConjunctiveQuery> {
+public interface UnionOfConjunctiveQueries extends Query, CloseableIterable<EffectiveConjunctiveQuery> {
 
 	@Override
-	CloseableIterator<ConjunctiveQuery> iterator();
+	CloseableIteratorWithoutException<EffectiveConjunctiveQuery> iterator();
+
+	/**
+	 * @return All the conjunctive queries as a list.
+	 */
+	List<ConjunctiveQuery> getConjunctiveQueries();
 
 	/**
 	 * Get the answer variables
@@ -70,5 +74,19 @@ public interface UnionOfConjunctiveQueries extends Query, CloseableIterable<Conj
 	 * @return the label of this query
 	 */
 	String getLabel();
+
+	/**
+	 * Returns the number of queries.
+	 * 
+	 * @return the number of queries.
+	 */
+	int size();
+
+	/**
+	 * Returns true if there is no queries in this union, false otherwise.
+	 * 
+	 * @return true if there is no queries in this union, false otherwise.
+	 */
+	boolean isEmpty();
 
 }
