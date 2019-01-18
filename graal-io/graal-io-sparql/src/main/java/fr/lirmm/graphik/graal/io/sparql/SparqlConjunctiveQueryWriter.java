@@ -62,10 +62,8 @@ import fr.lirmm.graphik.graal.api.core.UnionOfConjunctiveQueries;
 import fr.lirmm.graphik.graal.api.io.ConjunctiveQueryWriter;
 import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.URIzer;
-import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 import fr.lirmm.graphik.util.stream.IteratorException;
-import fr.lirmm.graphik.util.stream.Iterators;
 
 /**
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
@@ -174,7 +172,7 @@ public class SparqlConjunctiveQueryWriter extends AbstractSparqlWriter implement
 	 */
 	public SparqlConjunctiveQueryWriter write(UnionOfConjunctiveQueries ucq) {
 		try {
-			Collection<ConjunctiveQuery> queryList = Iterators.toList(ucq.iterator());
+			Collection<ConjunctiveQuery> queryList =  ucq.getConjunctiveQueries();
 
 			if (queryList.isEmpty()) {
 				return this;
@@ -197,11 +195,8 @@ public class SparqlConjunctiveQueryWriter extends AbstractSparqlWriter implement
 			this.write("\nWHERE\n{\n");
 
 			boolean firstClause = true;
-			ConjunctiveQuery query;
-			CloseableIterator<ConjunctiveQuery> it = ucq.iterator(); // write all query of ucq
 
-			while (it.hasNext()) {
-				query = it.next();
+			for (ConjunctiveQuery query : queryList) {
 
 				if (!query.getAtomSet().isEmpty()) {
 
