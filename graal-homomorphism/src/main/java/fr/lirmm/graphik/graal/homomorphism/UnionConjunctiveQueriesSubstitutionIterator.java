@@ -45,9 +45,9 @@
  */
 package fr.lirmm.graphik.graal.homomorphism;
 
-
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.EffectiveConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.UnionOfConjunctiveQueries;
@@ -56,6 +56,7 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
 import fr.lirmm.graphik.graal.core.Substitutions;
 import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
+import fr.lirmm.graphik.graal.core.factory.DefaultSubstitutionFactory;
 import fr.lirmm.graphik.util.profiler.AbstractProfilable;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
@@ -64,18 +65,17 @@ import fr.lirmm.graphik.util.stream.IteratorException;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  *
  */
-class UnionConjunctiveQueriesSubstitutionIterator extends AbstractProfilable implements
-                                                                                   CloseableIterator<Substitution> {
-	
-	private AtomSet                                 atomSet;
-	private CloseableIterator<ConjunctiveQuery>     cqueryIterator;
-	private CloseableIterator<Substitution>         tmpIt;
-	private boolean                                 hasNextCallDone = false;
-	private Homomorphism<ConjunctiveQuery, AtomSet> homomorphism;
-	private RulesCompilation                        compilation;
-	private Substitution                            initialSubstitution;
+class UnionConjunctiveQueriesSubstitutionIterator extends AbstractProfilable implements CloseableIterator<Substitution> {
 
-	private int                                     i = 1;
+	private AtomSet atomSet;
+	private CloseableIterator<EffectiveConjunctiveQuery> cqueryIterator;
+	private CloseableIterator<Substitution> tmpIt;
+	private boolean hasNextCallDone = false;
+	private Homomorphism<ConjunctiveQuery, AtomSet> homomorphism;
+	private RulesCompilation compilation;
+	private Substitution initialSubstitution;
+
+	private int i = 1;
 
 	private boolean isBooleanQuery;
 
@@ -83,8 +83,7 @@ class UnionConjunctiveQueriesSubstitutionIterator extends AbstractProfilable imp
 		this(queries, atomSet, Substitutions.emptySubstitution(), null, null);
 	}
 
-	public UnionConjunctiveQueriesSubstitutionIterator(UnionOfConjunctiveQueries queries, AtomSet atomSet,
-	    Substitution s, Homomorphism<ConjunctiveQuery, AtomSet> homomorphism) {
+	public UnionConjunctiveQueriesSubstitutionIterator(UnionOfConjunctiveQueries queries, AtomSet atomSet, Substitution s, Homomorphism<ConjunctiveQuery, AtomSet> homomorphism) {
 		this.cqueryIterator = queries.iterator();
 		this.isBooleanQuery = queries.isBoolean();
 		this.atomSet = atomSet;
@@ -94,8 +93,7 @@ class UnionConjunctiveQueriesSubstitutionIterator extends AbstractProfilable imp
 		this.compilation = null;
 	}
 
-	public UnionConjunctiveQueriesSubstitutionIterator(UnionOfConjunctiveQueries queries, AtomSet atomSet,
-	    Substitution s, HomomorphismWithCompilation<ConjunctiveQuery, AtomSet> homomorphism, RulesCompilation rc) {
+	public UnionConjunctiveQueriesSubstitutionIterator(UnionOfConjunctiveQueries queries, AtomSet atomSet, Substitution s, HomomorphismWithCompilation<ConjunctiveQuery, AtomSet> homomorphism, RulesCompilation rc) {
 		this.cqueryIterator = queries.iterator();
 		this.isBooleanQuery = queries.isBoolean();
 		this.atomSet = atomSet;
@@ -107,37 +105,50 @@ class UnionConjunctiveQueriesSubstitutionIterator extends AbstractProfilable imp
 
 	@Override
 	public boolean hasNext() throws IteratorException {
+
 		if (!this.hasNextCallDone) {
 			this.hasNextCallDone = true;
-			
+
 			if (this.tmpIt != null && !this.tmpIt.hasNext()) {
 				this.tmpIt.close();
 				this.tmpIt = null;
 				this.getProfiler().stop("SubQuery" + i++);
 			}
+
 			while ((this.tmpIt == null || !this.tmpIt.hasNext()) && this.cqueryIterator.hasNext()) {
-				ConjunctiveQuery q = this.cqueryIterator.next();
+				EffectiveConjunctiveQuery ecq = this.cqueryIterator.next();
+				Substitution ecqSubstitution = ecq.getSubstitution();
+				ConjunctiveQuery ecqQuery = ecq.getQuery();
+				Substitution partialSubstitution = DefaultSubstitutionFactory.instance().createSubstitution(this.initialSubstitution);
+
+				if (ecqSubstitution != null) {
+					partialSubstitution.put(ecqSubstitution);
+				}
 				this.getProfiler().start("SubQuery" + i);
+
 				try {
-					if(this.homomorphism == null) {
-						this.tmpIt = SmartHomomorphism.instance().execute(q, this.atomSet, this.compilation, this.initialSubstitution);
+
+					if (this.homomorphism == null) {
+						this.tmpIt = SmartHomomorphism.instance().execute(ecqQuery, this.atomSet, this.compilation, partialSubstitution);
 					} else {
-						if(this.compilation != null && !(this.compilation instanceof NoCompilation)) {
-							if(this.homomorphism instanceof HomomorphismWithCompilation) {
-								this.tmpIt = ((HomomorphismWithCompilation<ConjunctiveQuery,AtomSet>) this.homomorphism).execute(q, this.atomSet, this.compilation, this.initialSubstitution);
+
+						if (this.compilation != null && !(this.compilation instanceof NoCompilation)) {
+
+							if (this.homomorphism instanceof HomomorphismWithCompilation) {
+								this.tmpIt = ((HomomorphismWithCompilation<ConjunctiveQuery, AtomSet>) this.homomorphism).execute(ecqQuery, this.atomSet, this.compilation, partialSubstitution);
 							} else {
 								throw new IteratorException("There is a compilation and selected homomorphism can't handle it : " + this.homomorphism.getClass());
 							}
 						} else {
-							this.tmpIt = this.homomorphism.execute(q, this.atomSet, this.initialSubstitution);
+							this.tmpIt = this.homomorphism.execute(ecqQuery, this.atomSet, partialSubstitution);
 						}
 					}
+
 					if (this.isBooleanQuery && this.tmpIt.hasNext()) {
 						this.cqueryIterator.close();
 					}
-
 				} catch (HomomorphismException e) {
-					throw new IteratorException("Exception during querying following subQuery: " + q, e);
+					throw new IteratorException("Exception during querying following subQuery: " + ecq, e);
 				}
 			}
 		}
@@ -153,7 +164,7 @@ class UnionConjunctiveQueriesSubstitutionIterator extends AbstractProfilable imp
 
 		return this.tmpIt.next();
 	}
-	
+
 	@Override
 	protected void finalize() throws Throwable {
 		this.close();
@@ -169,5 +180,4 @@ class UnionConjunctiveQueriesSubstitutionIterator extends AbstractProfilable imp
 			this.cqueryIterator.close();
 		}
 	}
-
 }
