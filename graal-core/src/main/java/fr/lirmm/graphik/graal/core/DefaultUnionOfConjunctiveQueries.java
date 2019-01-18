@@ -50,7 +50,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
-import fr.lirmm.graphik.graal.api.core.Query;
+import fr.lirmm.graphik.graal.api.core.EffectiveConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.UnionOfConjunctiveQueries;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -67,41 +67,35 @@ import fr.lirmm.graphik.util.stream.IteratorException;
 public class DefaultUnionOfConjunctiveQueries implements UnionOfConjunctiveQueries {
 
 	private String label = "";
-	private Collection<ConjunctiveQuery> queries;
+	private Collection<EffectiveConjunctiveQuery> queries;
 	private List<Term> ans;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public DefaultUnionOfConjunctiveQueries() {
-		this.queries = new LinkedList<ConjunctiveQuery>();
-		this.ans = new LinkedList<Term>();
-	}
-
-	public DefaultUnionOfConjunctiveQueries(List<Term> ans) {
-		this.ans = ans;
-		this.queries = new LinkedList<ConjunctiveQuery>();
-	}
-
 	public DefaultUnionOfConjunctiveQueries(List<Term> ans, Collection<ConjunctiveQuery> queries) {
 		this.ans = ans;
-		this.queries = queries;
+		this.queries = new LinkedList<EffectiveConjunctiveQuery>();
+
+		for (ConjunctiveQuery cq : queries)
+			this.queries.add(new DefaultEffectiveConjunctiveQuery(cq, null));
 	}
 
-	public DefaultUnionOfConjunctiveQueries(List<Term> ans,
-			CloseableIteratorWithoutException<ConjunctiveQuery> queries) {
+	public DefaultUnionOfConjunctiveQueries(List<Term> ans, CloseableIteratorWithoutException<EffectiveConjunctiveQuery> queries) {
 		this.ans = ans;
-		this.queries = new LinkedList<ConjunctiveQuery>();
+		this.queries = new LinkedList<EffectiveConjunctiveQuery>();
+
 		while (queries.hasNext()) {
 			this.queries.add(queries.next());
 		}
 		queries.close();
 	}
 
-	public DefaultUnionOfConjunctiveQueries(List<Term> ans, CloseableIterator<ConjunctiveQuery> queries) throws IteratorException {
+	public DefaultUnionOfConjunctiveQueries(List<Term> ans, CloseableIterator<EffectiveConjunctiveQuery> queries) throws IteratorException {
 		this.ans = ans;
-		this.queries = new LinkedList<ConjunctiveQuery>();
+		this.queries = new LinkedList<EffectiveConjunctiveQuery>();
+
 		while (queries.hasNext()) {
 			this.queries.add(queries.next());
 		}
@@ -110,9 +104,10 @@ public class DefaultUnionOfConjunctiveQueries implements UnionOfConjunctiveQueri
 
 	public DefaultUnionOfConjunctiveQueries(List<Term> ans, ConjunctiveQuery... queries) {
 		this.ans = ans;
-		this.queries = new LinkedList<ConjunctiveQuery>();
+		this.queries = new LinkedList<EffectiveConjunctiveQuery>();
+
 		for (ConjunctiveQuery cq : queries)
-			this.queries.add(cq);
+			this.queries.add(new DefaultEffectiveConjunctiveQuery(cq, null));
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -124,42 +119,34 @@ public class DefaultUnionOfConjunctiveQueries implements UnionOfConjunctiveQueri
 		return this.ans;
 	}
 
-	public void setAnswerVariables(List<Term> ans) {
-		this.ans = ans;
-	}
+	@Override
+	public List<ConjunctiveQuery> getConjunctiveQueries() {
+		List<ConjunctiveQuery> ret = new LinkedList<>();
 
-	public boolean add(ConjunctiveQuery cquery) {
-		return this.queries.add(cquery);
-	}
-
-	public boolean addAll(Collection<? extends ConjunctiveQuery> queries) {
-		return this.queries.addAll(queries);
-	}
-
-	public void clear() {
-		this.queries.clear();
+		for (EffectiveConjunctiveQuery item : queries) {
+			ret.add(item.getQuery());
+		}
+		return ret;
 	}
 
 	@Override
-	public CloseableIteratorWithoutException<ConjunctiveQuery> iterator() {
-		return new CloseableIteratorAdapter<ConjunctiveQuery>(this.queries.iterator());
+	public CloseableIteratorWithoutException<EffectiveConjunctiveQuery> iterator() {
+		return new CloseableIteratorAdapter<EffectiveConjunctiveQuery>(this.queries.iterator());
 	}
 
+	@Override
 	public boolean isEmpty() {
 		return this.queries.isEmpty();
 	}
 
-	public boolean remove(ConjunctiveQuery o) {
-		return this.queries.remove(o);
-	}
-
+	@Override
 	public int size() {
 		return this.queries.size();
 	}
 
 	@Override
 	public boolean isBoolean() {
-		return this.queries.isEmpty() || this.queries.iterator().next().isBoolean();
+		return this.ans.isEmpty();
 	}
 
 	public void setLabel(String label) {
@@ -184,8 +171,9 @@ public class DefaultUnionOfConjunctiveQueries implements UnionOfConjunctiveQueri
 
 	@Override
 	public void appendTo(StringBuilder sb) {
-		for (Query q : this.queries) {
-			sb.append(q);
+		for (EffectiveConjunctiveQuery q : this.queries) {
+			sb.append(q.getQuery());
+			sb.append(q.getSubstitution());
 			sb.append("\n| ");
 		}
 	}
