@@ -40,7 +40,7 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- package fr.lirmm.graphik.graal.backward_chaining.pure;
+package fr.lirmm.graphik.graal.backward_chaining.pure;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -66,31 +66,30 @@ import fr.lirmm.graphik.util.profiler.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
- * @author Mélanie KÖNIG Query Rewriting Engine that rewrites query using only
- *         most general single-piece unifiers not prunable
+ * Query Rewriting Engine that rewrites query using only
+ * most general single-piece unifiers not prunable
+ * 
+ * @author Mélanie KÖNIG
  */
 public abstract class AbstractRewritingOperator implements RewritingOperator, Profilable {
 
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(AbstractRewritingOperator.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRewritingOperator.class);
 
 	private Profiler profiler;
 
 	// attributs temporaires
 	public boolean atomic = false;
 
-
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE AND PROTECTED METHODS
 	// /////////////////////////////////////////////////////////////////////////
-	
-	protected List<QueryUnifier> getSinglePieceUnifiers(ConjunctiveQuery q,
-			Rule r, RulesCompilation compilation) {
+
+	protected List<QueryUnifier> getSinglePieceUnifiers(ConjunctiveQuery q, Rule r, RulesCompilation compilation) {
 		if (atomic)
 			if (!(compilation instanceof IDCompilation))
 				return UnifierUtils.getSinglePieceUnifiersAHR(q, (AtomicHeadRule) r, compilation);
 			else {
-				if(LOGGER.isWarnEnabled()) {
+				if (LOGGER.isWarnEnabled()) {
 					LOGGER.warn("IDCompilation is not compatible with atomic unification");
 				}
 				return UnifierUtils.getSinglePieceUnifiersNAHR(q, r, compilation);
@@ -100,13 +99,10 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 		}
 	}
 
-
-
-	protected Collection<Rule> getUnifiableRules(CloseableIteratorWithoutException<Predicate> preds,
-			IndexedByHeadPredicatesRuleSet ruleSet, RulesCompilation compilation) {
+	protected Collection<Rule> getUnifiableRules(CloseableIteratorWithoutException<Predicate> preds, IndexedByHeadPredicatesRuleSet ruleSet, RulesCompilation compilation) {
 		TreeSet<Rule> res = new TreeSet<Rule>(RuleOrder.instance());
 		TreeSet<Predicate> unifiablePreds = new TreeSet<Predicate>();
-		
+
 		while (preds.hasNext()) {
 			unifiablePreds.addAll(compilation.getUnifiablePredicate(preds.next()));
 		}
@@ -130,7 +126,7 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 	protected List<QueryUnifier> getSRUnifier(ConjunctiveQuery q, Rule r, RulesCompilation compilation) {
 
 		/** compute the simple unifiers **/
-		List<QueryUnifier> unifiers =  getSinglePieceUnifiers(q, r, compilation);
+		List<QueryUnifier> unifiers = getSinglePieceUnifiers(q, r, compilation);
 
 		/** compute the aggregated unifier by rule **/
 		if (!unifiers.isEmpty())
@@ -142,8 +138,7 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 	/**
 	 * Returns all the aggregated unifiers compute from the given unifiers
 	 */
-	protected LinkedList<QueryUnifier> getAggregatedUnifiers(
-			List<QueryUnifier> unifToAggregate) {
+	protected LinkedList<QueryUnifier> getAggregatedUnifiers(List<QueryUnifier> unifToAggregate) {
 		LinkedList<QueryUnifier> unifAggregated = new LinkedList<QueryUnifier>();
 		LinkedList<QueryUnifier> restOfUnifToAggregate = new LinkedList<QueryUnifier>(unifToAggregate);
 		Iterator<QueryUnifier> itr = unifToAggregate.iterator();
@@ -158,21 +153,22 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 		}
 		return unifAggregated;
 	}
-	
+
 	/**
 	 * Returns the list of all the aggregated unifiers that can be build from u
 	 * and others unifiers of l. recursive function
 	 * 
 	 * @param u
-	 *            the unifier whose we want aggregate with the unifiers of l
+	 *          the unifier whose we want aggregate with the unifiers of l
 	 * @param l
-	 *            list of unifiers
+	 *          list of unifiers
 	 * @return the list of all aggregated unifier build from u and unifiers of
 	 *         l
 	 */
-	@SuppressWarnings({ "unchecked" })
-	private LinkedList<QueryUnifier> aggregate(QueryUnifier u,
-			LinkedList<QueryUnifier> l) {
+	@SuppressWarnings({
+			"unchecked"
+	})
+	private LinkedList<QueryUnifier> aggregate(QueryUnifier u, LinkedList<QueryUnifier> l) {
 		LinkedList<QueryUnifier> lu = (LinkedList<QueryUnifier>) l.clone();
 		// if there is no more unifier to aggregate
 		if (lu.isEmpty()) {
@@ -200,7 +196,7 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 	// /////////////////////////////////////////////////////////////////////////
 	// GETTERS
 	// /////////////////////////////////////////////////////////////////////////
-	
+
 	@Override
 	public void setProfiler(Profiler profiler) {
 		this.profiler = profiler;
@@ -210,13 +206,13 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 	public Profiler getProfiler() {
 		return this.profiler;
 	}
-	
+
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE CLASSES
 	// /////////////////////////////////////////////////////////////////////////
-	
+
 	private static class RuleOrder implements Comparator<Rule> {
-		
+
 		private static RuleOrder instance;
 
 		private RuleOrder() {
@@ -228,7 +224,7 @@ public abstract class AbstractRewritingOperator implements RewritingOperator, Pr
 
 			return instance;
 		}
-		
+
 		@Override
 		public int compare(Rule o1, Rule o2) {
 			return o1.toString().compareTo(o2.toString());

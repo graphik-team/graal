@@ -136,12 +136,6 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 
-	private DefaultKnowledgeBase() {
-		this.ruleset = new DefaultOntology();
-		this.store = new DefaultInMemoryGraphStore();
-		this.queryLabeler = new DefaultQueryLabeler();
-		this.analysedRuleSet = new AnalyserRuleSet(this.ruleset);
-	}
 
 	/**
 	 * Constructs a DefaultKnowledgeBase with a

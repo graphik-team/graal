@@ -64,7 +64,6 @@ import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
-import fr.lirmm.graphik.graal.core.DefaultUnionOfConjunctiveQueries;
 import fr.lirmm.graphik.graal.core.Substitutions;
 import fr.lirmm.graphik.graal.homomorphism.AbstractHomomorphism;
 import fr.lirmm.graphik.graal.io.sparql.SparqlConjunctiveQueryWriter;
@@ -185,9 +184,8 @@ public class SPARQLHomomorphism extends AbstractHomomorphism<Query, RDF4jStore>
 //		SparqlQueryWriter writer = new SparqlQueryWriter(stringWriter);
 
 		{
-			DefaultUnionOfConjunctiveQueries ucq = new DefaultUnionOfConjunctiveQueries();
-			ucq.add(cquery);
-			ucq.setAnswerVariables(cquery.getAnswerVariables());
+//			DefaultUnionOfConjunctiveQueries ucq = new DefaultUnionOfConjunctiveQueries(cquery.getAnswerVariables(),
+//					cquery);
 //			CloseableIteratorWithoutException<Query> unfold = PureRewriter.unfold(ucq, compilation);
 //			DefaultUnionOfConjunctiveQueries queriesUnion = new DefaultUnionOfConjunctiveQueries(
 //					query.getAnswerVariables(), unfold);

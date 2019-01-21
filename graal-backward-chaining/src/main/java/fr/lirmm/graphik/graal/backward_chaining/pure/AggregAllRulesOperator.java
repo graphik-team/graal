@@ -56,12 +56,12 @@ import fr.lirmm.graphik.graal.core.unifier.UnifierUtils;
 
 /**
  * Rewriting operator ARAM
- * rewriting engine that rewrite query using
+ * Query rewriting engine that rewrite query using
  * aggregation all rule of most general single piece-unifiers, selecting
  * unifiers during the aggregation and using a marking system to avoid
  * redundant rewritings
  * 
- * @author Mélanie KÖNIG Query
+ * @author Mélanie KÖNIG
  */
 public class AggregAllRulesOperator extends BasicAggregAllRulesOperator {
 	

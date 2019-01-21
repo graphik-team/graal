@@ -168,6 +168,10 @@ class RewritinCloseableIterator implements CloseableIteratorWithoutException<Eff
 		this.rewrites = new CloseableIteratorAdapter<EffectiveConjunctiveQuery>(finalQueries.iterator());
 	}
 
+	/**
+	 * Note: Be careful, this method modify the $queries argument for speed purpose.
+	 * As this method is private and used
+	 */
 	private Iterable<EffectiveConjunctiveQuery> removeAnswerPredicate(Iterable<ConjunctiveQuery> queries) {
 		Collection<EffectiveConjunctiveQuery> c = new LinkedList<>();
 

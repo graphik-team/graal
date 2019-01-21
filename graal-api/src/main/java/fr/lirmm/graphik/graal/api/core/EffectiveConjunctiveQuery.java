@@ -6,5 +6,4 @@ package fr.lirmm.graphik.graal.api.core;
  * @author Olivier Rodriguez
  */
 public interface EffectiveConjunctiveQuery extends EffectiveQuery<ConjunctiveQuery, Substitution> {
-
 };
