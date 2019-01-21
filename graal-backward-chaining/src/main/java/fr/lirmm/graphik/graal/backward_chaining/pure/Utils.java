@@ -53,11 +53,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.commons.collections4.IteratorUtils;
+import org.apache.commons.collections4.iterators.IteratorIterable;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.EffectiveConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
@@ -65,6 +68,7 @@ import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.core.DefaultEffectiveConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
 import fr.lirmm.graphik.graal.core.Substitutions;
 import fr.lirmm.graphik.graal.core.TreeMapSubstitution;
@@ -74,8 +78,11 @@ import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
 import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 import fr.lirmm.graphik.graal.core.factory.DefaultSubstitutionFactory;
+import fr.lirmm.graphik.graal.core.stream.ConjunctiveQuery2EffCQJavaIterator;
+import fr.lirmm.graphik.graal.core.stream.EffCQ2ConjunctiveQueryJavaIterator;
 import fr.lirmm.graphik.graal.core.unifier.QueryUnifier;
 import fr.lirmm.graphik.graal.homomorphism.PureHomomorphism;
+import fr.lirmm.graphik.util.profiler.NoProfiler;
 import fr.lirmm.graphik.util.profiler.Profiler;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
@@ -85,9 +92,7 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
  */
 final class Utils {
 
-	private static DefaultVariableGenerator varGen = new DefaultVariableGenerator("X"
-	                                                                              + Integer.toString(
-	                                                                                  Utils.class.hashCode()));
+	private static DefaultVariableGenerator varGen = new DefaultVariableGenerator("X" + Integer.toString(Utils.class.hashCode()));
 
 	private Utils() {
 	}
@@ -96,56 +101,65 @@ final class Utils {
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public static Iterable<ConjunctiveQuery> unfold(Iterable<ConjunctiveQuery> pivotRewritingSet,
-	    RulesCompilation compilation, Profiler profiler) {
-		if (profiler != null) {
+	public static Collection<ConjunctiveQuery> unfoldQueries(Iterable<ConjunctiveQuery> queries, RulesCompilation compilation) {
+		return unfoldQueries(queries, compilation, NoProfiler.instance());
+	}
+
+	public static Collection<ConjunctiveQuery> unfoldQueries(Iterable<ConjunctiveQuery> queries, RulesCompilation compilation, Profiler profiler) {
+		Collection<EffectiveConjunctiveQuery> equeries = IteratorUtils.toList(new ConjunctiveQuery2EffCQJavaIterator(queries.iterator()));
+		return IteratorUtils.toList(new EffCQ2ConjunctiveQueryJavaIterator(unfold(equeries, compilation, profiler).iterator()));
+	}
+
+	public static Collection<EffectiveConjunctiveQuery> unfold(Iterable<EffectiveConjunctiveQuery> equeries, RulesCompilation compilation) {
+		return unfold(equeries, compilation, NoProfiler.instance());
+	}
+
+	public static Collection<EffectiveConjunctiveQuery> unfold(Iterable<EffectiveConjunctiveQuery> equeries, RulesCompilation compilation, Profiler profiler) {
+
+		if (profiler.isProfilingEnabled()) {
 			profiler.clear("Unfolding time");
 			profiler.start("Unfolding time");
 		}
-
-		Collection<ConjunctiveQuery> unfoldingRewritingSet = developpRewriting(pivotRewritingSet, compilation);
-
-		/** clean the rewrites to return **/
+		Collection<EffectiveConjunctiveQuery> unfoldingRewritingSet = developpRewriting(equeries, compilation);
 		Utils.computeCover(unfoldingRewritingSet);
 
-		if (profiler != null) {
+		if (profiler.isProfilingEnabled()) {
 			profiler.stop("Unfolding time");
 			profiler.put("Unfolded rewritings", unfoldingRewritingSet.size());
 		}
-
 		return unfoldingRewritingSet;
-
 	}
 
 	/**
 	 * Rewrite the fact q according to the unifier u.
 	 * 
 	 * @param q
-	 *            the fact to rewrite
+	 *          the fact to rewrite
 	 * @param u
-	 *            the unifier between q and r
+	 *          the unifier between q and r
 	 * @return the rewrite of q according to the unifier u.
 	 */
 	public static ConjunctiveQuery rewrite(ConjunctiveQuery q, QueryUnifier u) {
 		InMemoryAtomSet ajout = u.getImageOf(u.getRule().getBody());
 		InMemoryAtomSet restant = u.getImageOf(AtomSetUtils.minus(q.getAtomSet(), u.getPiece()));
-		ConjunctiveQuery rew = null;
-		if (ajout != null && restant != null) { // FIXME
-			InMemoryAtomSet res = AtomSetUtils.union(ajout, restant);
-			List<Term> ansVar = new LinkedList<Term>();
-			ansVar.addAll(q.getAnswerVariables());
-			rew = DefaultConjunctiveQueryFactory.instance().create(res, ansVar);
-		}
-		return rew;
+
+		// FIXME
+		if (ajout == null || restant == null)
+			return null;
+		
+		InMemoryAtomSet res = AtomSetUtils.union(ajout, restant);
+		List<Term> ansVar = new LinkedList<Term>();
+		ansVar.addAll(q.getAnswerVariables());
+		return DefaultConjunctiveQueryFactory.instance().create(res, ansVar);
 	}
 
 	/**
 	 * Rewrite the marked fact q according to the unifier u between
 	 * 
 	 * @param q
-	 *            the fact to rewrite must be a marked fact
+	 *          the fact to rewrite must be a marked fact
 	 * @param u
-	 *            the unifier between q and r
+	 *          the unifier between q and r
 	 * @return the rewrite of q according to the unifier u.
 	 */
 	public static MarkedQuery rewriteWithMark(ConjunctiveQuery q, QueryUnifier u) {
@@ -161,6 +175,7 @@ final class Utils {
 
 		ArrayList<Atom> markedAtoms = new ArrayList<Atom>();
 		CloseableIteratorWithoutException<Atom> it = ajout.iterator();
+
 		while (it.hasNext()) {
 			Atom a = it.next();
 			markedAtoms.add(a);
@@ -173,9 +188,9 @@ final class Utils {
 
 	public static Rule getSafeCopy(Rule rule) {
 		Substitution substitution = new TreeMapSubstitution();
-		for (Variable t : rule.getVariables()) {
+
+		for (Variable t : rule.getVariables())
 			substitution.put(t, varGen.getFreshSymbol());
-		}
 
 		InMemoryAtomSet body = rule.getBody();
 		InMemoryAtomSet head = rule.getHead();
@@ -191,18 +206,17 @@ final class Utils {
 
 	public static InMemoryAtomSet getSafeCopy(InMemoryAtomSet atomSet) {
 		Substitution substitution = new TreeMapSubstitution();
-		for (Variable t : atomSet.getVariables()) {
+
+		for (Variable t : atomSet.getVariables())
 			substitution.put(t, varGen.getFreshSymbol());
-		}
 
 		InMemoryAtomSet safe = new LinkedListAtomSet();
 		substitution.apply(atomSet, safe);
 		return safe;
 	}
 
-	
 	public static boolean testInclu = true;
-	
+
 	/**
 	 * Returns true if AtomSet h is more general than AtomSet f, and mark all
 	 * the atom of h if h is a marked fact; else return false
@@ -211,22 +225,18 @@ final class Utils {
 	 * @param f
 	 * @param compilation
 	 * @return true if AtomSet h is more general than AtomSet f, and mark all
-	 * the atom of h if h is a marked fact, false otherwise.
+	 *         the atom of h if h is a marked fact, false otherwise.
 	 */
 	public static boolean isMoreGeneralThan(InMemoryAtomSet h, InMemoryAtomSet f, RulesCompilation compilation) {
 
-		boolean moreGen = false;
-		if (testInclu && AtomSetUtils.contains(f, h)) {
-			moreGen = true;
-		} else {
-			try {
-				InMemoryAtomSet fCopy = Utils.getSafeCopy(f);
-				moreGen = PureHomomorphism.instance().exist(h, fCopy, compilation);
-			} catch (HomomorphismException e) {
-			}
-		}
+		if (testInclu && AtomSetUtils.contains(f, h))
+			return true;
 
-		return moreGen;
+		try {
+			return PureHomomorphism.instance().exist(h, Utils.getSafeCopy(f), compilation);
+		} catch (HomomorphismException e) {
+			return false;
+		}
 	}
 
 	public static boolean isMoreGeneralThan(InMemoryAtomSet h, InMemoryAtomSet f) {
@@ -242,7 +252,6 @@ final class Utils {
 	 * @return true, if r1 logically imply r2.
 	 */
 	public static boolean imply(Rule r1, Rule r2) {
-
 		Atom b1 = r1.getBody().iterator().next();
 		Atom b2 = r2.getBody().iterator().next();
 		Atom h1 = r1.getHead().iterator().next();
@@ -251,15 +260,19 @@ final class Utils {
 		if (b1.getPredicate().equals(b2.getPredicate()) && h1.getPredicate().equals(h2.getPredicate())) {
 			Map<Term, Term> s = new TreeMap<Term, Term>();
 			Term term;
+
 			for (int i = 0; i < b1.getPredicate().getArity(); i++) {
 				term = s.get(b1.getTerm(i));
+
 				if (term == null)
 					s.put(b1.getTerm(i), b2.getTerm(i));
 				else if (!term.equals(b2.getTerm(i)))
 					return false;
 			}
+
 			for (int i = 0; i < h1.getPredicate().getArity(); i++) {
 				term = s.get(h1.getTerm(i));
+
 				if (term == null)
 					s.put(h1.getTerm(i), h2.getTerm(i));
 				else if (!term.equals(h2.getTerm(i)))
@@ -267,31 +280,39 @@ final class Utils {
 			}
 			return true;
 		}
-
 		return false;
 	}
 
+	public static void computeQueriesCover(Iterable<ConjunctiveQuery> queries, RulesCompilation comp) {
+		computeCover(new IteratorIterable<EffectiveConjunctiveQuery>(new ConjunctiveQuery2EffCQJavaIterator(queries.iterator())), comp);
+	}
+
+	public static void computeQueriesCover(Iterable<ConjunctiveQuery> set) {
+		computeQueriesCover(set, NoCompilation.instance());
+	}
+
 	/**
-	 * Remove the fact that are not the most general (taking account of compiled
-	 * rules) in the given facts
+	 * Remove the fact that are not the most general (taking account of compiled rules) in the given facts
 	 * 
 	 * @param comp
 	 */
-	public static void computeCover(Iterable<ConjunctiveQuery> set, RulesCompilation comp) {
-		Iterator<ConjunctiveQuery> beg = set.iterator();
-		Iterator<ConjunctiveQuery> end;
+	public static void computeCover(Iterable<EffectiveConjunctiveQuery> queries, RulesCompilation comp) {
+		Iterator<EffectiveConjunctiveQuery> beg = queries.iterator();
+		Iterator<EffectiveConjunctiveQuery> end;
 		InMemoryAtomSet q;
 		InMemoryAtomSet o;
-		boolean finished;
+		// TODO: (Olivier) take account the Substitution ?
+
 		while (beg.hasNext()) {
-			q = beg.next().getAtomSet();
-			finished = false;
-			end = set.iterator();
-			while (!finished && end.hasNext()) {
-				o = end.next().getAtomSet();
+			q = beg.next().getQuery().getAtomSet();
+			end = queries.iterator();
+
+			while (end.hasNext()) {
+				o = end.next().getQuery().getAtomSet();
+
 				if (o != q && isMoreGeneralThan(o, q, comp)) {
-					finished = true;
 					beg.remove();
+					break;
 				}
 			}
 		}
@@ -303,7 +324,7 @@ final class Utils {
 	 * 
 	 * @param set
 	 */
-	public static void computeCover(Iterable<ConjunctiveQuery> set) {
+	public static void computeCover(Iterable<EffectiveConjunctiveQuery> set) {
 		computeCover(set, NoCompilation.instance());
 	}
 
@@ -318,36 +339,38 @@ final class Utils {
 	 * 
 	 * @return a Collection of unfolded rewritings.
 	 */
-	private static Collection<ConjunctiveQuery> developpRewriting(Iterable<ConjunctiveQuery> rewritingSet,
-	    RulesCompilation compilation) {
-		Collection<ConjunctiveQuery> unfoldingRewritingSet = new LinkedList<ConjunctiveQuery>();
-		LinkedList<Pair<InMemoryAtomSet, Substitution>> newQueriesBefore = new LinkedList<Pair<InMemoryAtomSet, Substitution>>();
-		LinkedList<Pair<InMemoryAtomSet, Substitution>> newQueriesAfter = new LinkedList<Pair<InMemoryAtomSet, Substitution>>();
+	private static Collection<EffectiveConjunctiveQuery> developpRewriting(Iterable<EffectiveConjunctiveQuery> rewritingSet, RulesCompilation compilation) {
+		Collection<EffectiveConjunctiveQuery> unfoldingRewritingSet = new LinkedList<>();
+		LinkedList<Pair<InMemoryAtomSet, Substitution>> newQueriesBefore = new LinkedList<>();
+		LinkedList<Pair<InMemoryAtomSet, Substitution>> newQueriesAfter = new LinkedList<>();
 		LinkedList<Pair<InMemoryAtomSet, Substitution>> newQueriesTmp;
 		Iterable<Pair<Atom, Substitution>> atomsRewritings;
 		InMemoryAtomSet copy;
 
 		// ConjunctiveQuery q;
 
-		for (ConjunctiveQuery originalQuery : rewritingSet) {
-			if(Thread.currentThread().isInterrupted()) {
+		for (EffectiveConjunctiveQuery ecq : rewritingSet) {
+			ConjunctiveQuery originalQuery = ecq.getQuery();
+
+			if (Thread.currentThread().isInterrupted()) {
 				break;
 			}
 			// q = query.getIrredondant(compilation);
 			// for all atom of the query we will build a list of all the
 			// rewriting
 			newQueriesBefore.clear();
-			newQueriesBefore.add(
-			    new ImmutablePair<InMemoryAtomSet, Substitution>(new LinkedListAtomSet(),
-			                                                     DefaultSubstitutionFactory.instance().createSubstitution()));
+			newQueriesBefore.add(new ImmutablePair<InMemoryAtomSet, Substitution>(new LinkedListAtomSet(), DefaultSubstitutionFactory.instance().createSubstitution()));
 
 			// we will build all the possible fact from the rewriting of the
 			// atoms
 			CloseableIteratorWithoutException<Atom> it = originalQuery.iterator();
+
 			while (!Thread.currentThread().isInterrupted() && it.hasNext()) {
 				Atom a = it.next();
 				atomsRewritings = compilation.getRewritingOf(a);
+
 				for (Pair<InMemoryAtomSet, Substitution> before : newQueriesBefore) {
+
 					// for each possible atom at the next position clone the
 					// query and add the atom
 					for (Pair<Atom, Substitution> rew : atomsRewritings) {//
@@ -366,20 +389,19 @@ final class Utils {
 				newQueriesAfter = newQueriesTmp;
 				newQueriesAfter.clear();
 			}
+
 			for (Pair<InMemoryAtomSet, Substitution> before : newQueriesBefore) {
-				if(Thread.currentThread().isInterrupted()) {
+
+				if (Thread.currentThread().isInterrupted()) {
 					break;
 				}
 				Substitution s = before.getRight();
 				InMemoryAtomSet atomset = before.getLeft();
 				atomset = s.createImageOf(atomset);
 				List<Term> ans = s.createImageOf(originalQuery.getAnswerVariables());
-				unfoldingRewritingSet.add(
-				    DefaultConjunctiveQueryFactory.instance().create(atomset, ans));
+				unfoldingRewritingSet.add(new DefaultEffectiveConjunctiveQuery(DefaultConjunctiveQueryFactory.instance().create(atomset, ans), ecq.getSubstitution()));
 			}
 		}
-
 		return unfoldingRewritingSet;
 	}
-
 }

@@ -42,9 +42,15 @@
  */
 package fr.lirmm.graphik.graal.backward_chaining.pure;
 
+import java.util.Collection;
+import java.util.LinkedList;
+
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.EffectiveConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
+import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.core.DefaultEffectiveConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.Rules;
 import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByHeadPredicatesRuleSet;
@@ -59,16 +65,16 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-class RewritinCloseableIterator implements CloseableIteratorWithoutException<ConjunctiveQuery>, Profilable {
+class RewritinCloseableIterator implements CloseableIteratorWithoutException<EffectiveConjunctiveQuery>, Profilable {
 
-	private PureQuery                   pquery;
-	private LinkedListRuleSet           ruleset;
-	private RulesCompilation            compilation;
-	private CloseableIteratorWithoutException<ConjunctiveQuery> rewrites = null;
+	private PureQuery pquery;
+	private LinkedListRuleSet ruleset;
+	private RulesCompilation compilation;
+	private CloseableIteratorWithoutException<EffectiveConjunctiveQuery> rewrites = null;
 
-	private boolean                     unfolding = true;
-	private RewritingOperator           operator;
-	private Profiler                    profiler  = NoProfiler.instance();
+	private boolean unfolding = true;
+	private RewritingOperator operator;
+	private Profiler profiler = NoProfiler.instance();
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -82,13 +88,11 @@ class RewritinCloseableIterator implements CloseableIteratorWithoutException<Con
 		this(unfolding, query, rules, NoCompilation.instance(), operator);
 	}
 
-	public RewritinCloseableIterator(boolean unfolding, ConjunctiveQuery query, Iterable<Rule> rules,
-	    RulesCompilation compilation) {
+	public RewritinCloseableIterator(boolean unfolding, ConjunctiveQuery query, Iterable<Rule> rules, RulesCompilation compilation) {
 		this(unfolding, query, rules, compilation, new AggregSingleRuleOperator());
 	}
 
-	public RewritinCloseableIterator(boolean unfolding, ConjunctiveQuery query, Iterable<Rule> rules,
-	    RulesCompilation compilation, RewritingOperator operator) {
+	public RewritinCloseableIterator(boolean unfolding, ConjunctiveQuery query, Iterable<Rule> rules, RulesCompilation compilation, RewritingOperator operator) {
 		this.unfolding = unfolding;
 		this.pquery = new PureQuery(query);
 		this.ruleset = new LinkedListRuleSet(Rules.computeSinglePiece(rules.iterator()));
@@ -113,13 +117,12 @@ class RewritinCloseableIterator implements CloseableIteratorWithoutException<Con
 	}
 
 	@Override
-	public ConjunctiveQuery next() {
+	public EffectiveConjunctiveQuery next() {
+
 		if (this.rewrites == null) {
 			this.compute();
 		}
-		ConjunctiveQuery query = this.rewrites.next();
-		PureQuery.removeAnswerPredicate(query);
-		return query;
+		return this.rewrites.next();
 	}
 
 	public boolean isUnfoldingEnable() {
@@ -159,11 +162,20 @@ class RewritinCloseableIterator implements CloseableIteratorWithoutException<Con
 		Iterable<ConjunctiveQuery> queries = algo.execute(pquery, indexedRuleSet, compilation);
 
 		if (this.unfolding) {
-			queries = Utils.unfold(queries, this.compilation, this.getProfiler());
+			queries = Utils.unfoldQueries(queries, this.compilation, this.getProfiler());
 		}
-
-		this.rewrites = new CloseableIteratorAdapter<ConjunctiveQuery>(queries.iterator());
+		Iterable<EffectiveConjunctiveQuery> finalQueries = removeAnswerPredicate(queries);
+		this.rewrites = new CloseableIteratorAdapter<EffectiveConjunctiveQuery>(finalQueries.iterator());
 	}
 
+	private Iterable<EffectiveConjunctiveQuery> removeAnswerPredicate(Iterable<ConjunctiveQuery> queries) {
+		Collection<EffectiveConjunctiveQuery> c = new LinkedList<>();
+
+		for (ConjunctiveQuery q : queries) {
+			Substitution partialSub = PureQuery.removeAnswerPredicate(q);
+			c.add(new DefaultEffectiveConjunctiveQuery(q, partialSub));
+		}
+		return c;
+	}
 
 }

@@ -50,7 +50,7 @@ import java.sql.ResultSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.EffectiveConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.UnionOfConjunctiveQueries;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
@@ -123,7 +123,7 @@ public final class SqlUCQHomomorphism extends AbstractHomomorphism<UnionOfConjun
 	private static SQLQuery preprocessing(UnionOfConjunctiveQueries queries, RdbmsStore store, Substitution s)
 	    throws HomomorphismException {
 		boolean emptyQuery = false;
-		CloseableIterator<ConjunctiveQuery> it = queries.iterator();
+		CloseableIterator<EffectiveConjunctiveQuery> it = queries.iterator();
 		StringBuilder ucq = new StringBuilder();
 		RdbmsConjunctiveQueryTranslator translator = store.getConjunctiveQueryTranslator();
 
@@ -132,7 +132,9 @@ public final class SqlUCQHomomorphism extends AbstractHomomorphism<UnionOfConjun
 				return SQLQuery.hasSchemaErrorInstance();
 
 			while (it.hasNext()) {
-				SQLQuery query = translator.translate(it.next(), s);
+				// FIXME manage the substitution part
+				EffectiveConjunctiveQuery current = it.next();
+				SQLQuery query = translator.translate(current.getQuery(), s);
 				if (!query.hasSchemaError()) {
 					if (ucq.length() > 0)
 						ucq.append("\nUNION\n");

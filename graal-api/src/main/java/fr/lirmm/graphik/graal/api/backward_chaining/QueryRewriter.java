@@ -46,6 +46,7 @@
 package fr.lirmm.graphik.graal.api.backward_chaining;
 
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.EffectiveConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.util.TimeoutException;
 import fr.lirmm.graphik.util.profiler.Profilable;
@@ -63,7 +64,7 @@ public interface QueryRewriter extends Profilable {
 	 * @param rules
 	 * @return an Iterator over the rewritings.
 	 */
-	CloseableIteratorWithoutException<ConjunctiveQuery> execute(ConjunctiveQuery query, Iterable<Rule> rules);
+	CloseableIteratorWithoutException<EffectiveConjunctiveQuery> execute(ConjunctiveQuery query, Iterable<Rule> rules);
 	
 	/**
 	 * Rewrite the specified query using the specified set of rules. If the method execution time exceed the specified timeout (in milliseconds) then 
@@ -71,6 +72,6 @@ public interface QueryRewriter extends Profilable {
 	 * @param rules
 	 * @return an Iterator over the rewritings.
 	 */
-	CloseableIteratorWithoutException<ConjunctiveQuery> execute(ConjunctiveQuery query, Iterable<Rule> rules, long timeout) throws TimeoutException;
+	CloseableIteratorWithoutException<EffectiveConjunctiveQuery> execute(ConjunctiveQuery query, Iterable<Rule> rules, long timeout) throws TimeoutException;
 
 }

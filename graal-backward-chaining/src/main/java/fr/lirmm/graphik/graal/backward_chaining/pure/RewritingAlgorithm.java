@@ -40,9 +40,9 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
+/**
+* 
+*/
 package fr.lirmm.graphik.graal.backward_chaining.pure;
 
 import java.util.Collection;
@@ -64,22 +64,22 @@ import fr.lirmm.graphik.util.profiler.Profiler;
 class RewritingAlgorithm implements Profilable {
 
 	private boolean verbose;
-	private Profiler          profiler;
-	
+	private Profiler profiler;
+
 	private RewritingOperator operator;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
-	
+
 	public RewritingAlgorithm(RewritingOperator operator) {
 		this.operator = operator;
 	}
-	
+
 	// /////////////////////////////////////////////////////////////////////////
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
-	
+
 	/**
 	 * Compute and returns all the most general rewrites of the object's query
 	 * 
@@ -89,18 +89,18 @@ class RewritingAlgorithm implements Profilable {
 	 * @author Mélanie KÖNIG
 	 */
 	public Collection<ConjunctiveQuery> execute(ConjunctiveQuery query, IndexedByHeadPredicatesRuleSet ruleSet, RulesCompilation compilation) {
-		if(this.verbose) {
+		if (this.verbose) {
 			this.profiler.trace(query.toString());
 			this.profiler.put("CONFIG", operator.getClass().getSimpleName());
 		}
 		LinkedList<ConjunctiveQuery> finalRewritingSet = new LinkedList<ConjunctiveQuery>();
 		Queue<ConjunctiveQuery> rewriteSetToExplore = new LinkedList<ConjunctiveQuery>();
 		Collection<ConjunctiveQuery> currentRewriteSet;
-		
+
 		int exploredRewrites = 0;
 		int generatedRewrites = 0;
 
-		if(this.verbose) {
+		if (this.verbose) {
 			this.profiler.clear("Rewriting time");
 			this.profiler.start("Rewriting time");
 		}
@@ -112,52 +112,50 @@ class RewritingAlgorithm implements Profilable {
 		rewriteSetToExplore.add(pquery);
 		finalRewritingSet.add(pquery);
 
-		ConjunctiveQuery q;
 		while (!Thread.currentThread().isInterrupted() && !rewriteSetToExplore.isEmpty()) {
 
 			/* take the first query to rewrite */
-			q = rewriteSetToExplore.poll();
+			ConjunctiveQuery q = rewriteSetToExplore.poll();
 			++exploredRewrites; // stats
 
 			/* compute all the rewrite from it */
 			currentRewriteSet = this.operator.getRewritesFrom(q, ruleSet, compilation);
-			generatedRewrites += currentRewriteSet.size(); // stats
+			final int size = currentRewriteSet.size();
+
+			if (size == 0)
+				continue;
+
+			generatedRewrites += size; // stats
 
 			/* keep only the most general among query just computed */
-			Utils.computeCover(currentRewriteSet, compilation);
+			Utils.computeQueriesCover(currentRewriteSet, compilation);
 
 			/*
 			 * keep only the query just computed that are more general than
 			 * query already compute
 			 */
-			selectMostGeneralFromRelativeTo(currentRewriteSet,
-					finalRewritingSet, compilation);
+			selectMostGeneralFromRelativeTo(currentRewriteSet, finalRewritingSet, compilation);
 
-			
 			// keep to explore only most general query
-			selectMostGeneralFromRelativeTo(rewriteSetToExplore,
-					currentRewriteSet, compilation);
+			selectMostGeneralFromRelativeTo(rewriteSetToExplore, currentRewriteSet, compilation);
 
 			// add to explore the query just computed that we keep
 			rewriteSetToExplore.addAll(currentRewriteSet);
 
-			
 			/*
 			 * keep in final rewrite set only query more general than query just
 			 * computed
 			 */
-			selectMostGeneralFromRelativeTo(finalRewritingSet,
-					currentRewriteSet, compilation);
-			
+			selectMostGeneralFromRelativeTo(finalRewritingSet, currentRewriteSet, compilation);
+
 			// add in final rewrite set the query just compute that we keep
 			finalRewritingSet.addAll(currentRewriteSet);
 
 		}
-
 		/* clean the rewrites to return */
-		Utils.computeCover(finalRewritingSet);
+		Utils.computeQueriesCover(finalRewritingSet);
 
-		if(this.verbose) {
+		if (this.verbose) {
 			this.profiler.stop("Rewriting time");
 			this.profiler.put("Generated rewritings", generatedRewrites);
 			this.profiler.put("Explored rewritings", exploredRewrites);
@@ -166,7 +164,7 @@ class RewritingAlgorithm implements Profilable {
 
 		return finalRewritingSet;
 	}
-	
+
 	/**
 	 * Remove from toSelect the Fact that are not more general than all the fact
 	 * of relativeTo
@@ -174,9 +172,7 @@ class RewritingAlgorithm implements Profilable {
 	 * @param toSelect
 	 * @param rewritingSet
 	 */
-	public void selectMostGeneralFromRelativeTo(
-			Collection<ConjunctiveQuery> toSelect,
-			Collection<ConjunctiveQuery> rewritingSet, RulesCompilation compilation) {
+	public void selectMostGeneralFromRelativeTo(Collection<ConjunctiveQuery> toSelect, Collection<ConjunctiveQuery> rewritingSet, RulesCompilation compilation) {
 		Iterator<? extends ConjunctiveQuery> i = toSelect.iterator();
 		while (i.hasNext()) {
 			InMemoryAtomSet f = i.next().getAtomSet();
@@ -184,7 +180,7 @@ class RewritingAlgorithm implements Profilable {
 				i.remove();
 		}
 	}
-	
+
 	/**
 	 * Returns true if rewriteSet contains a fact more general than f, else
 	 * returns false
@@ -194,18 +190,17 @@ class RewritingAlgorithm implements Profilable {
 	 * @param compilation
 	 * @return true if rewriteSet contains a fact more general than f, false otherwise.
 	 */
-	public boolean containMoreGeneral(InMemoryAtomSet f,
-			Collection<ConjunctiveQuery> rewriteSet, RulesCompilation compilation) {
-		for(ConjunctiveQuery q : rewriteSet) {
+	public boolean containMoreGeneral(InMemoryAtomSet f, Collection<ConjunctiveQuery> rewriteSet, RulesCompilation compilation) {
+		for (ConjunctiveQuery q : rewriteSet) {
 			InMemoryAtomSet a = q.getAtomSet();
 			if (Utils.isMoreGeneralThan(a, f, compilation))
 				return true;
 		}
 		return false;
 	}
-	
+
 	// /////////////////////////////////////////////////////////////////////////
-	// 
+	//
 	// /////////////////////////////////////////////////////////////////////////}
 
 	@Override
