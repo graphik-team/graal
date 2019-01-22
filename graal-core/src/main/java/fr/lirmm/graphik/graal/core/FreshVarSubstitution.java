@@ -45,8 +45,6 @@
  */
 package fr.lirmm.graphik.graal.core;
 
-import java.util.List;
-
 import fr.lirmm.graphik.graal.api.core.FreshVarMapper;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.Variable;

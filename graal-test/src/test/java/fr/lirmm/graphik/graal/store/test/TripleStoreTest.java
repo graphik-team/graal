@@ -46,8 +46,6 @@
 package fr.lirmm.graphik.graal.store.test;
 
 
-import static org.junit.Assert.fail;
-
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Test;

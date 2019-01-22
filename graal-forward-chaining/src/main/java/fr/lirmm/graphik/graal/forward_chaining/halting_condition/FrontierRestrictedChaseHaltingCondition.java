@@ -51,9 +51,6 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
@@ -80,8 +77,6 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
  *
  */
 public class FrontierRestrictedChaseHaltingCondition implements ChaseHaltingCondition {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(FrontierRestrictedChaseHaltingCondition.class);
 
 	private Map<Rule,Integer> ruleIndex = new TreeMap<Rule,Integer>();
 	private int _currentRuleIndex = 0;

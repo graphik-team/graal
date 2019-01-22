@@ -42,13 +42,9 @@
  */
 package fr.lirmm.graphik.graal.store.triplestore.rdf4j;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import org.eclipse.rdf4j.query.TupleQueryResult;
 
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
-import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}

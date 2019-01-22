@@ -57,7 +57,6 @@ import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.PreparedExistentialHomomorphism;
 import fr.lirmm.graphik.graal.core.HashMapSubstitution;
-import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.homomorphism.backjumping.BackJumping;
 import fr.lirmm.graphik.graal.homomorphism.bootstrapper.Bootstrapper;
 import fr.lirmm.graphik.graal.homomorphism.forward_checking.ForwardChecking;
