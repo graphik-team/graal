@@ -1,7 +1,6 @@
 package fr.lirmm.graphik.graal.core.grd;
 
 import java.io.IOException;
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -39,6 +38,7 @@ import fr.lirmm.graphik.graal.core.ruleset.IndexedByBodyPredicatesRuleSet;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.unifier.DefaultUnifierAlgorithm;
 import fr.lirmm.graphik.graal.core.unifier.QueryUnifier;
+import fr.lirmm.graphik.graal.core.unifier.RuleDependencyUtils;
 import fr.lirmm.graphik.graal.core.unifier.UnifierUtils;
 import fr.lirmm.graphik.graal.forward_chaining.BasicChase;
 import fr.lirmm.graphik.util.graph.scc.StronglyConnectedComponentsGraph;
@@ -77,10 +77,6 @@ public class DefaultGraphOfRuleDependencies implements GraphOfRuleDependencies {
 	// /////////////////////////////////////////////////////////////////////////
 
 	protected DefaultGraphOfRuleDependencies(RuleSet rules, RulesCompilation compilation, boolean withUnifiers, DependencyChecker checkers[]) {
-
-		if (checkers.length > 0 && !(compilation == null || compilation instanceof NoCompilation))
-			throw new InvalidParameterException("Compilation and checkers cannot be set at same time");
-
 		this.compilation = compilation;
 		this.checkers = checkers;
 		this.computingUnifiers = withUnifiers;
@@ -95,7 +91,7 @@ public class DefaultGraphOfRuleDependencies implements GraphOfRuleDependencies {
 			computeDependencies(checkers);
 		else {
 			initAndSaturateHeads(compilation);
-			computeDependencies(compilation);
+			computeDependencies(compilation, checkers);
 		}
 	}
 
@@ -178,7 +174,7 @@ public class DefaultGraphOfRuleDependencies implements GraphOfRuleDependencies {
 		if (checkers.length > 0)
 			return this.computeDependency(this.grd.getEdgeSource(e), this.grd.getEdgeTarget(e), checkers);
 
-		return this.computeDependency(this.grd.getEdgeSource(e), this.grd.getEdgeTarget(e), compilation);
+		return this.computeDependency(this.grd.getEdgeSource(e), this.grd.getEdgeTarget(e), compilation, checkers);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -313,12 +309,12 @@ public class DefaultGraphOfRuleDependencies implements GraphOfRuleDependencies {
 		}
 	}
 
-	protected void computeDependencies(RulesCompilation compilation) {
+	protected void computeDependencies(RulesCompilation compilation, DependencyChecker checkers[]) {
 
 		for (Rule r1 : grd.vertexSet()) {
 
 			for (Rule r2 : grd.vertexSet()) {
-				Set<Substitution> unifiers = computeDependency(r1, r2, compilation);
+				Set<Substitution> unifiers = computeDependency(r1, r2, compilation, checkers);
 
 				if (!unifiers.isEmpty()) {
 					addDependency(r1, unifiers, r2);
@@ -361,38 +357,58 @@ public class DefaultGraphOfRuleDependencies implements GraphOfRuleDependencies {
 		}
 	}
 
-	protected Set<Substitution> computeDependency(Rule ra, Rule rb, RulesCompilation compilation) {
-		final boolean EXISTS = true;
+	protected Set<Substitution> computeDependency(Rule ra, Rule rb, RulesCompilation compilation, DependencyChecker checkers[]) {
+		/*
+		 * We cannot do the existential check if checkers are present
+		 */
+		final boolean EXISTS = checkers.length == 0;
 		Rule saturateda = ruleToHeadSaturatedRule.get(ra);
 
 		List<QueryUnifier> unifiers = UnifierUtils.getSinglePieceUnifiersNAHR(DefaultConjunctiveQueryFactory.instance().create(rb.getBody()), saturateda, compilation, EXISTS);
+		Set<Substitution> ret = new HashSet<>();
 
-		if (!unifiers.isEmpty()) {
-			Substitution substitution = unifiers.get(0).getAssociatedSubstitution();
-			Set<Substitution> ret = new HashSet<>();
-			ret.add(substitution);
+		if (unifiers.isEmpty())
 			return ret;
+
+		// Nothing to check in the exist case
+		if (EXISTS)
+			ret.add(unifiers.get(0).getAssociatedSubstitution());
+		else {
+
+			for (QueryUnifier qunifier : unifiers) {
+				Substitution substitution = qunifier.getAssociatedSubstitution();
+
+				if (RuleDependencyUtils.validateUnifier(ra, rb, substitution, checkers)) {
+					ret.add(substitution);
+					break;
+				}
+			}
 		}
-		return Collections.<Substitution>emptySet();
+		return ret;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// DEPENDENCY CHECKERS
 	// /////////////////////////////////////////////////////////////////////////
 
-	protected Set<Substitution> computeDependency(Rule r1, Rule r2, DependencyChecker... checkers) {
+	protected Set<Substitution> computeDependency(Rule r1, Rule r2, DependencyChecker checkers[]) {
 		Substitution s1 = DefaultUnifierAlgorithm.getSourceVariablesSubstitution();
 		Rule source = s1.createImageOf(r1);
 
 		Substitution s2 = DefaultUnifierAlgorithm.getTargetVariablesSubstitution();
 		Rule target = s2.createImageOf(r2);
+		Set<Substitution> ret = null;
 
 		if (this.computingUnifiers) {
-			return Iterators.toSet(DefaultUnifierAlgorithm.instance().computePieceUnifier(source, target, checkers));
+			ret = Iterators.toSet(DefaultUnifierAlgorithm.instance().computePieceUnifier(source, target, checkers));
 		} else if (DefaultUnifierAlgorithm.instance().existPieceUnifier(source, target, checkers)) {
-			return Collections.<Substitution>singleton(Substitutions.emptySubstitution());
+			ret = Collections.<Substitution>singleton(Substitutions.emptySubstitution());
 		}
-		return Collections.<Substitution>emptySet();
+
+		if (ret == null)
+			return new HashSet<>();
+
+		return ret;
 	}
 
 	protected void computeDependencies(DependencyChecker... checkers) {
