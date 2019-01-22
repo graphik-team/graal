@@ -52,12 +52,12 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
  *
  */
 public interface UnifierAlgorithm {
-	
-	public CloseableIterator<Substitution> computePieceUnifier(Rule rule, InMemoryAtomSet query, UnifierChecker... filters);
-	
+
+	public CloseableIterator<Substitution> computePieceUnifier(Rule rule, InMemoryAtomSet query, DependencyChecker... filters);
+
 	public CloseableIterator<Substitution> computePieceUnifier(Rule rule, Rule target, DependencyChecker... filters);
 
-	public boolean existPieceUnifier(Rule rule, InMemoryAtomSet query, UnifierChecker... filters);
+	public boolean existPieceUnifier(Rule rule, InMemoryAtomSet query, DependencyChecker... filters);
 
 	public boolean existPieceUnifier(Rule source, Rule target, DependencyChecker... filters);
 }
