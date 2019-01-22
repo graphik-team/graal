@@ -47,7 +47,6 @@ import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.unifier.DependencyChecker;
 import fr.lirmm.graphik.graal.api.core.unifier.UnifierAlgorithm;
-import fr.lirmm.graphik.graal.api.core.unifier.UnifierChecker;
 import fr.lirmm.graphik.graal.core.ConjunctiveQueryRuleAdapter;
 import fr.lirmm.graphik.graal.core.VariablePrefixSubstitution;
 import fr.lirmm.graphik.graal.core.VariableRemovePrefixSubstitution;
@@ -89,7 +88,7 @@ public class DefaultUnifierAlgorithm implements UnifierAlgorithm {
 	 * The rule and the query must not contain variables with same names. You can use {@link #getSourceVariablesSubstitution()} and
 	 * {@link #getTargetVariablesSubstitution()} to obtain equivalent rule and query without conflict on variable names.
 	 */
-	public CloseableIteratorWithoutException<Substitution> computePieceUnifier(Rule rule, InMemoryAtomSet query, UnifierChecker... filters) {
+	public CloseableIteratorWithoutException<Substitution> computePieceUnifier(Rule rule, InMemoryAtomSet query, DependencyChecker... filters) {
 		return new UnifierIterator(rule, new ConjunctiveQueryRuleAdapter(query), filters);
 	}
 	
@@ -107,7 +106,7 @@ public class DefaultUnifierAlgorithm implements UnifierAlgorithm {
 	 * The rule and the query must not contain variables with same names. You can use {@link #getSourceVariablesSubstitution()} and
 	 * {@link #getTargetVariablesSubstitution()} to obtain equivalent rules without conflict on variable names.
 	 */
-	public boolean existPieceUnifier(Rule rule, InMemoryAtomSet query, UnifierChecker... filters) {
+	public boolean existPieceUnifier(Rule rule, InMemoryAtomSet query, DependencyChecker... filters) {
 		 UnifierIterator it = new UnifierIterator(rule, new ConjunctiveQueryRuleAdapter(query), true, filters);
 		 boolean res = it.hasNext();
 		 it.close();

@@ -63,7 +63,6 @@ import fr.lirmm.graphik.graal.api.forward_chaining.AbstractChase;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
 import fr.lirmm.graphik.graal.core.grd.DefaultGraphOfRuleDependencies;
-import fr.lirmm.graphik.graal.core.grd.DefaultGraphOfRuleDependenciesWithCompilation;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplierWithCompilation;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.RestrictedChaseRuleApplier;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -112,13 +111,13 @@ public class ChaseWithGRD<T extends AtomSet> extends AbstractChase<Rule, T> {
 
 	public ChaseWithGRD(Iterable<Rule> rules, T atomSet, RulesCompilation compilation)
 			throws ChaseException, IOException {
-		this(new DefaultGraphOfRuleDependenciesWithCompilation(rules, compilation), atomSet,
+		this(new DefaultGraphOfRuleDependencies(rules, compilation), atomSet,
 				new DefaultRuleApplierWithCompilation<T>(compilation));
 	}
 
 	public ChaseWithGRD(Iterator<Rule> rules, T atomSet, RulesCompilation compilation)
 			throws ChaseException, IOException {
-		this(new DefaultGraphOfRuleDependenciesWithCompilation(rules, compilation), atomSet,
+		this(new DefaultGraphOfRuleDependencies(rules, compilation), atomSet,
 				new DefaultRuleApplierWithCompilation<T>(compilation));
 	}
 
