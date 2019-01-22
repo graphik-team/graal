@@ -66,6 +66,7 @@ import fr.lirmm.graphik.util.stream.IteratorException;
  *
  */
 @RunWith(Theories.class)
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class HomomorphismTest {
 
 	@DataPoints

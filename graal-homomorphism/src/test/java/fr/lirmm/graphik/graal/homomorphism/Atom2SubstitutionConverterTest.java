@@ -171,7 +171,7 @@ public class Atom2SubstitutionConverterTest {
 			fail();
 		}
 		// then
-		Constant a = DefaultTermFactory.instance().createConstant("a");
+//		Constant a = DefaultTermFactory.instance().createConstant("a");
 		System.out.println(s);
 	}
 
