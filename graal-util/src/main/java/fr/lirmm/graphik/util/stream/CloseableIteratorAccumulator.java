@@ -18,8 +18,9 @@ public class CloseableIteratorAccumulator<E> extends AbstractCloseableIterator<E
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 
-	public CloseableIteratorAccumulator(CloseableIterator<E> it) {
+	public CloseableIteratorAccumulator(CloseableIterator<E> it) throws IteratorException {
 		this.it = it;
+		hasNext = it.hasNext();
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
