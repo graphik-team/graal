@@ -1,18 +1,14 @@
 package fr.lirmm.graphik.graal.core.grd;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jgrapht.DirectedGraph;
@@ -21,17 +17,13 @@ import org.jgrapht.graph.DefaultDirectedGraph;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.GraphOfRuleDependencies;
-import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.unifier.DependencyChecker;
-import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
-import fr.lirmm.graphik.graal.core.DefaultRule;
 import fr.lirmm.graphik.graal.core.LabelRuleComparator;
 import fr.lirmm.graphik.graal.core.Substitutions;
-import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphStore;
 import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
 import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByBodyPredicatesRuleSet;
@@ -40,7 +32,6 @@ import fr.lirmm.graphik.graal.core.unifier.DefaultUnifierAlgorithm;
 import fr.lirmm.graphik.graal.core.unifier.QueryUnifier;
 import fr.lirmm.graphik.graal.core.unifier.RuleDependencyUtils;
 import fr.lirmm.graphik.graal.core.unifier.UnifierUtils;
-import fr.lirmm.graphik.graal.forward_chaining.BasicChase;
 import fr.lirmm.graphik.util.graph.scc.StronglyConnectedComponentsGraph;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 import fr.lirmm.graphik.util.stream.Iterators;
@@ -66,7 +57,6 @@ public class DefaultGraphOfRuleDependencies implements GraphOfRuleDependencies {
 
 	private boolean computingUnifiers;
 
-	private Map<Rule, Rule> ruleToHeadSaturatedRule;
 	private DirectedGraph<Rule, Integer> grd;
 
 	private RulesCompilation compilation;
@@ -89,10 +79,8 @@ public class DefaultGraphOfRuleDependencies implements GraphOfRuleDependencies {
 
 		if (checkers.length > 0)
 			computeDependencies(checkers);
-		else {
-			initAndSaturateHeads(compilation);
+		else
 			computeDependencies(compilation, checkers);
-		}
 	}
 
 	// ===
@@ -310,11 +298,12 @@ public class DefaultGraphOfRuleDependencies implements GraphOfRuleDependencies {
 	}
 
 	protected void computeDependencies(RulesCompilation compilation, DependencyChecker checkers[]) {
+		final Set<Rule> rules = grd.vertexSet();
+		
+		for (Rule r1 : rules) {
 
-		for (Rule r1 : grd.vertexSet()) {
-
-			for (Rule r2 : grd.vertexSet()) {
-				Set<Substitution> unifiers = computeDependency(r1, r2, compilation, checkers);
+			for (Rule r2 : rules) {
+				final Set<Substitution> unifiers = computeDependency(r1, r2, compilation, checkers);
 
 				if (!unifiers.isEmpty()) {
 					addDependency(r1, unifiers, r2);
@@ -323,48 +312,13 @@ public class DefaultGraphOfRuleDependencies implements GraphOfRuleDependencies {
 		}
 	}
 
-	/**
-	 * initialize the GRD computation saturates the rule head so as to compensate
-	 * the fact that compilable rules are handled differently
-	 * 
-	 * @throws ChaseException
-	 * @throws IOException
-	 */
-	private final void initAndSaturateHeads(RulesCompilation compilation) {
-		ruleToHeadSaturatedRule = new HashMap<Rule, Rule>();
-
-		ArrayList<Rule> compilationSaturation = new ArrayList<>();
-		CollectionUtils.addAll(compilationSaturation, compilation.getSaturation());
-
-		for (Rule rule : getRules()) {
-			InMemoryAtomSet headAtoms = new DefaultInMemoryGraphStore();
-			headAtoms.addAll(rule.getHead());
-
-			BasicChase<InMemoryAtomSet> bchase = new BasicChase<>(compilationSaturation, headAtoms);
-
-			try {
-				bchase.execute();
-			} catch (ChaseException e) {
-				e.printStackTrace();
-				continue;
-			}
-
-			/*
-			 * We associate to the current rule a new one wich is $current.body ->
-			 * $headAtoms
-			 */
-			ruleToHeadSaturatedRule.put(rule, new DefaultRule(rule.getBody(), headAtoms));
-		}
-	}
-
 	protected Set<Substitution> computeDependency(Rule ra, Rule rb, RulesCompilation compilation, DependencyChecker checkers[]) {
 		/*
 		 * We cannot do the existential check if checkers are present
 		 */
 		final boolean EXISTS = checkers.length == 0;
-		Rule saturateda = ruleToHeadSaturatedRule.get(ra);
 
-		List<QueryUnifier> unifiers = UnifierUtils.getSinglePieceUnifiersNAHR(DefaultConjunctiveQueryFactory.instance().create(rb.getBody()), saturateda, compilation, EXISTS);
+		List<QueryUnifier> unifiers = UnifierUtils.getSinglePieceUnifiersNAHR(DefaultConjunctiveQueryFactory.instance().create(rb.getBody()), ra, compilation, EXISTS);
 		Set<Substitution> ret = new HashSet<>();
 
 		if (unifiers.isEmpty())
