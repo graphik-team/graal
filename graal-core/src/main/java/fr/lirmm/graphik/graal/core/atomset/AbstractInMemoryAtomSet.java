@@ -115,14 +115,14 @@ public abstract class AbstractInMemoryAtomSet extends AbstractAtomSet implements
 			throw new Error("It should never happen.");
 		}
 	}
-	
+
 	@Override
 	public CloseableIterator<Atom> match(Atom atom) throws AtomSetException {
 		try {
 			return super.match(atom);
-    	} catch (AtomSetException e) {
-    		throw new Error("It should never happen.");
-    	}
+		} catch (AtomSetException e) {
+			throw new Error("It should never happen.");
+		}
 	}
 
 	@Override
@@ -133,7 +133,7 @@ public abstract class AbstractInMemoryAtomSet extends AbstractAtomSet implements
 			throw new Error("It should never happen.");
 		}
 	}
-	
+
 	@Override
 	public Set<Variable> getVariables() {
 		try {
@@ -142,7 +142,7 @@ public abstract class AbstractInMemoryAtomSet extends AbstractAtomSet implements
 			throw new Error("It should never happen.");
 		}
 	}
-	
+
 	@Override
 	public Set<Constant> getConstants() {
 		try {
@@ -151,7 +151,7 @@ public abstract class AbstractInMemoryAtomSet extends AbstractAtomSet implements
 			throw new Error("It should never happen.");
 		}
 	}
-	
+
 	@Override
 	public Set<Literal> getLiterals() {
 		try {
@@ -170,18 +170,18 @@ public abstract class AbstractInMemoryAtomSet extends AbstractAtomSet implements
 			throw new Error("It should never happen.");
 		}
 	}
-	
+
 	@Override
 	public CloseableIteratorWithoutException<Variable> variablesIterator() {
 		return new CloseableIteratorAdapter<Variable>(this.getVariables().iterator());
 	}
-	
+
 	@Override
 	public CloseableIteratorWithoutException<Constant> constantsIterator() {
 		return new CloseableIteratorAdapter<Constant>(this.getConstants().iterator());
-		
+
 	}
-	
+
 	@Override
 	public CloseableIteratorWithoutException<Literal> literalsIterator() {
 		return new CloseableIteratorAdapter<Literal>(this.getLiterals().iterator());
@@ -217,7 +217,13 @@ public abstract class AbstractInMemoryAtomSet extends AbstractAtomSet implements
 
 	@Override
 	public Atom[] toArray() {
-		CloseableIteratorAccumulator<Atom> accu = new CloseableIteratorAccumulator<>(iterator());
+		CloseableIteratorAccumulator<Atom> accu;
+
+		try {
+			accu = new CloseableIteratorAccumulator<>(iterator());
+		} catch (IteratorException e1) {
+			throw new Error("It should never happen.");
+		}
 		Atom[] ret;
 
 		try {
