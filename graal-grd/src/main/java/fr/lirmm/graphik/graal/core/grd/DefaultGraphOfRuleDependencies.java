@@ -298,11 +298,12 @@ public class DefaultGraphOfRuleDependencies implements GraphOfRuleDependencies {
 	}
 
 	protected void computeDependencies(RulesCompilation compilation, DependencyChecker checkers[]) {
+		final Set<Rule> rules = grd.vertexSet();
 		
-		for (Rule r1 : grd.vertexSet()) {
+		for (Rule r1 : rules) {
 
-			for (Rule r2 : grd.vertexSet()) {
-				Set<Substitution> unifiers = computeDependency(r1, r2, compilation, checkers);
+			for (Rule r2 : rules) {
+				final Set<Substitution> unifiers = computeDependency(r1, r2, compilation, checkers);
 
 				if (!unifiers.isEmpty()) {
 					addDependency(r1, unifiers, r2);
