@@ -66,7 +66,7 @@ public class DefaultGraphOfRuleDependencies implements GraphOfRuleDependencies {
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
-	protected DefaultGraphOfRuleDependencies(RuleSet rules, RulesCompilation compilation, boolean withUnifiers, DependencyChecker checkers[]) {
+	public DefaultGraphOfRuleDependencies(RuleSet rules, RulesCompilation compilation, boolean withUnifiers, DependencyChecker checkers[]) {
 		this.compilation = compilation;
 		this.checkers = checkers;
 		this.computingUnifiers = withUnifiers;
@@ -77,7 +77,7 @@ public class DefaultGraphOfRuleDependencies implements GraphOfRuleDependencies {
 		for (Rule rule : rules)
 			addRuleToGRD(rule);
 
-		if (checkers.length > 0)
+		if (compilation == null || compilation == NoCompilation.instance())
 			computeDependencies(checkers);
 		else
 			computeDependencies(compilation, checkers);
@@ -342,7 +342,7 @@ public class DefaultGraphOfRuleDependencies implements GraphOfRuleDependencies {
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
-	// DEPENDENCY CHECKERS
+	// DEPENDENCY CHECKERS ONLY
 	// /////////////////////////////////////////////////////////////////////////
 
 	protected Set<Substitution> computeDependency(Rule r1, Rule r2, DependencyChecker checkers[]) {
