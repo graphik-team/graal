@@ -56,8 +56,10 @@ import fr.lirmm.graphik.graal.api.core.ImmutableRuleSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleLabeler;
 import fr.lirmm.graphik.graal.api.core.RuleSetException;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.unifier.DependencyChecker;
 import fr.lirmm.graphik.graal.core.DefaultRuleLabeler;
+import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
 import fr.lirmm.graphik.graal.core.grd.DefaultGraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.unifier.checker.AtomErasingChecker;
@@ -87,6 +89,8 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 	private boolean withUnifiers = false;
 	private RuleLabeler labeler = new DefaultRuleLabeler();
 	
+	private RulesCompilation                       compilation  = NoCompilation.instance();
+
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
@@ -125,7 +129,12 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 		setRuleLabels();
 		this.dependencyCheckerList = Arrays.asList(checkers);
 	}
-	
+
+	public AnalyserRuleSet(Iterator<Rule> rules, RulesCompilation compilation) {
+		this(rules);
+		this.compilation = compilation;
+	}
+
 	public AnalyserRuleSet(CloseableIterator<Rule> rules) throws RuleSetException {
 		this.ruleset = Collections.unmodifiableCollection(new LinkedListRuleSet(rules));
 		setRuleLabels();
@@ -264,9 +273,9 @@ public class AnalyserRuleSet implements ImmutableRuleSet {
 	public Iterator<Rule> iterator() {
 		return this.ruleset.iterator();
 	}
-	
+
 	private void computeGRD() {
-		this.grd = new DefaultGraphOfRuleDependencies(ruleset, this.withUnifiers, this.dependencyCheckerList.toArray(new DependencyChecker[this.dependencyCheckerList.size()]));
+		this.grd = new DefaultGraphOfRuleDependencies(new LinkedListRuleSet(ruleset), compilation, this.withUnifiers, this.dependencyCheckerList.toArray(new DependencyChecker[0]));
 	}
 
 	private void computeSCC() {
