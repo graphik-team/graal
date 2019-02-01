@@ -13,10 +13,6 @@
 	<name>fr.lirmm.graphik:graal-io-sparql</name>
 	<description>The graal-io-sparql provides a parser and a writer for sparql queries (core).</description>
 
-	<properties>
-		<jdk.version>1.7</jdk.version>
-	</properties>
-
 	<inceptionYear>2015</inceptionYear>
 
 	<developers>
