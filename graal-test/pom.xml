@@ -11,10 +11,6 @@
 	<name>fr.lirmm.graphik:graal-test</name>
 	<packaging>jar</packaging>
 
-	<properties>
-		<jdk.version>1.7</jdk.version>
-	</properties>
-
 	<developers>
 		<developer>
 			<name>Clément SIPIETER</name>

@@ -12,7 +12,6 @@
 	<packaging>jar</packaging>
 
 	<properties>
-		<jdk.version>1.6</jdk.version>
     
     <graal-api.directory>../graal-api/</graal-api.directory>
     <graal-grd.directory>../graal-grd/</graal-grd.directory>
