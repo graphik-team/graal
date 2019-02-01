@@ -117,16 +117,13 @@ public class ChaseWithGRD<T extends AtomSet> extends AbstractChase<Rule, T> {
 		this(new DefaultGraphOfRuleDependencies(rules), atomSet);
 	}
 
-	public ChaseWithGRD(Iterable<Rule> rules, T atomSet, RulesCompilation compilation)
-			throws ChaseException, IOException {
-		this(new DefaultGraphOfRuleDependencies(rules, compilation), atomSet,
-				new DefaultRuleApplierWithCompilation<T>(compilation));
+	public ChaseWithGRD(Iterable<Rule> rules, T atomSet, RulesCompilation compilation) throws ChaseException, IOException {
+		this(new DefaultGraphOfRuleDependencies(rules, compilation), atomSet, new DefaultRuleApplierWithCompilation<T>(compilation));
 	}
 
-	public ChaseWithGRD(Iterator<Rule> rules, T atomSet, RulesCompilation compilation)
-			throws ChaseException, IOException {
-		this(new DefaultGraphOfRuleDependencies(rules, compilation), atomSet,
-				new DefaultRuleApplierWithCompilation<T>(compilation));
+	public ChaseWithGRD(Iterator<Rule> rules, T atomSet, RulesCompilation compilation) throws ChaseException, IOException {
+		this(new DefaultGraphOfRuleDependencies(rules, compilation), atomSet, new DefaultRuleApplierWithCompilation<T>(compilation));
+	}
 
 	// /////////////////////////////////////////////////////////////////////////
 	// OPTIONS
@@ -149,8 +146,8 @@ public class ChaseWithGRD<T extends AtomSet> extends AbstractChase<Rule, T> {
 
 	@Override
 	public void next() throws ChaseException {
-		Queue<Rule> newQueue = new LinkedList<Rule>();
-		List<Atom> newAtomSet = new LinkedList<Atom>();
+		Queue<Rule> newQueue   = new LinkedList<Rule>();
+		List<Atom>  newAtomSet = new LinkedList<Atom>();
 
 		if (timeout_endTime == null)
 			timeout_endTime = Instant.now().plus(timeout_duration);
