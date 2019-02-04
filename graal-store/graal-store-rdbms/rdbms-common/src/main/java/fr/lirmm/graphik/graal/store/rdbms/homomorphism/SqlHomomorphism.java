@@ -53,6 +53,7 @@ import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
@@ -72,8 +73,8 @@ import fr.lirmm.graphik.util.stream.converter.ConverterCloseableIterator;
  * @author Clément Sipieter (INRIA) <clement@6pi.fr>
  * 
  */
-public final class SqlHomomorphism extends AbstractHomomorphism<ConjunctiveQuery, RdbmsStore>
-                                   implements Homomorphism<ConjunctiveQuery, RdbmsStore> {
+public final class SqlHomomorphism extends AbstractHomomorphism<Query, RdbmsStore>
+                                   implements Homomorphism<Query, RdbmsStore> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SqlHomomorphism.class);
 
@@ -94,12 +95,13 @@ public final class SqlHomomorphism extends AbstractHomomorphism<ConjunctiveQuery
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public CloseableIterator<Substitution> execute(ConjunctiveQuery query, RdbmsStore store, Substitution s)
+	public CloseableIterator<Substitution> execute(Query query, RdbmsStore store, Substitution s)
 	    throws HomomorphismException {
+		ConjunctiveQuery cquery = (ConjunctiveQuery) query;
 		SQLQuery sqlQuery;
 		// be aware to does not overwrite fixed variables (variable in s)
 		FreshVarSubstitution varMap = new FreshVarSubstitution(new DefaultVariableGenerator("VAR"),
-		                                                       CollectionUtils.removeAll(query.getAnswerVariables(),
+		                                                       CollectionUtils.removeAll(cquery.getAnswerVariables(),
 		                                                           s.getTerms()));
 		// prevent variable from initial substitution to be substitut by a fresh variable
 		for (Variable v : s.getTerms()) {
@@ -107,9 +109,9 @@ public final class SqlHomomorphism extends AbstractHomomorphism<ConjunctiveQuery
 		}
 
 		try {
-			sqlQuery = store.getConjunctiveQueryTranslator().translate(varMap.createImageOf(query), s);
+			sqlQuery = store.getConjunctiveQueryTranslator().translate(varMap.createImageOf(cquery), s);
 			if (LOGGER.isDebugEnabled())
-				LOGGER.debug("GENERATED SQL QUERY: \n" + query + "\n" + sqlQuery);
+				LOGGER.debug("GENERATED SQL QUERY: \n" + cquery + "\n" + sqlQuery);
 		} catch (AtomSetException e) {
 			throw new HomomorphismException("Error during query translation to SQL", e);
 		}
@@ -123,9 +125,9 @@ public final class SqlHomomorphism extends AbstractHomomorphism<ConjunctiveQuery
 				CloseableIterator<ResultSet> resultsIt = new ResultSetCloseableIterator(results);
 				return new ConverterCloseableIterator<ResultSet, Substitution>(resultsIt,
 				                                                               new ResultSet2SubstitutionConverter(store.getConjunctiveQueryTranslator(),
-				                                                                                                   query.getAnswerVariables(), varMap, s));
+				                                                                                                   cquery.getAnswerVariables(), varMap, s));
 			} catch (Exception e) {
-				throw new HomomorphismException("Error while evaluating the following query: [" + query + "] translated to SQL as: " + sqlQuery, e);
+				throw new HomomorphismException("Error while evaluating the following query: [" + cquery + "] translated to SQL as: " + sqlQuery, e);
 			}
 		}
 	}

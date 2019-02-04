@@ -1,0 +1,50 @@
+% This example is based on a simplified vertebrate phylogenetic nomenclature
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Concept Hierarchy
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+animal(X) :- vertebrate(X).
+
+vertebrate(X) :- osteichthyen(X).
+vertebrate(X) :- chondrichthyen(X).
+
+osteichthyen(X) :- mammal(X).
+osteichthyen(X) :- bird(X).
+osteichthyen(X) :- crocodylinae(X).
+osteichthyen(X) :- chelydridae(X).
+osteichthyen(X) :- squamata(X).
+osteichthyen(X) :- lissamphibia(X).
+osteichthyen(X) :- actinopterygii(X).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Rules
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+vertebrate(X) :- animal(X), has_part(X,Y), skeleton(Y).
+
+osteichthyen(X) :- animal(X), has_part(X, bone_skeleton).
+chondrichthyen(X) :- animal(X), has_part(X, cartilage_skeleton).
+
+mammal(X) :- vertebrate(X), has_part(X, hair).
+mammal(X) :- vertebrate(X), has_part(X, mammals).
+
+has_predator(X,cat) :- bird(X).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Facts
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+skeleton(bone_skeleton), 
+skeleton(cartilage_skeleton).
+
+animal(mouse).
+has_part(mouse, hair).
+has_part(mouse, bone_skeleton).
+
+osteichthyen(cat).
+has_part(cat, mammals).
+
+has_predator(mouse, cat).
+
+bird(robin).

@@ -108,6 +108,7 @@ public class IDCompilation extends AbstractRulesCompilation {
 			for (Map.Entry<Predicate, LinkedList<IDCondition>> map : e
 					.getValue().entrySet()) {
 				p = map.getKey();
+				// Is there exists a rule head for p
 				TreeMap<List<Integer>, InMemoryAtomSet> head = newMap
 						.get(p);
 				if (head == null) {
@@ -115,13 +116,14 @@ public class IDCompilation extends AbstractRulesCompilation {
 							new ListComparator<Integer>());
 					newMap.put(p, head);
 				}
+				// Adds new head parts
 				for (IDCondition conditionPQ : map.getValue()) {
 					InMemoryAtomSet atomSet = head.get(conditionPQ.getBody());
 					if (atomSet == null) {
 						atomSet = new LinkedListAtomSet();
 						head.put(conditionPQ.getBody(), atomSet);
 					}
-					atomSet.add(new DefaultAtom(q, conditionPQ.generateHead()));
+					atomSet.addAll(conditionPQ.generateRule(p, q).getHead());
 				}
 			}
 		}

@@ -40,7 +40,7 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- package fr.lirmm.graphik.graal.backward_chaining.pure;
+package fr.lirmm.graphik.graal.backward_chaining.pure;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -53,9 +53,9 @@ import fr.lirmm.graphik.graal.core.unifier.QueryUnifier;
 
 /**
  * Rewriting operator ARA
- * rewriting engine that rewrite query using
+ * Query rewriting engine that rewrite query using
  * aggregation all rule of most general single piece-unifiers
- *         
+ * 
  * @author Mélanie KÖNIG
  */
 public class BasicAggregAllRulesOperator extends AbstractRewritingOperator {
@@ -69,33 +69,26 @@ public class BasicAggregAllRulesOperator extends AbstractRewritingOperator {
 	 * receiving object.
 	 * 
 	 * @param q
-	 *            A fact
+	 *          A fact
 	 * @return the ArrayList that contains the rewrites compute from the given
 	 *         fact and the rule set of the receiving object.
 	 */
 	@Override
-	public Collection<ConjunctiveQuery>  getRewritesFrom(ConjunctiveQuery q, IndexedByHeadPredicatesRuleSet ruleSet, RulesCompilation compilation) {		
+	public Collection<ConjunctiveQuery> getRewritesFrom(ConjunctiveQuery q, IndexedByHeadPredicatesRuleSet ruleSet, RulesCompilation compilation) {
 		LinkedList<ConjunctiveQuery> currentRewrites = new LinkedList<ConjunctiveQuery>();
 		LinkedList<QueryUnifier> srUnifiers = new LinkedList<QueryUnifier>();
-		LinkedList<QueryUnifier> unifiers = new LinkedList<QueryUnifier>();
-		for (Rule r : getUnifiableRules(q.getAtomSet().predicatesIterator(),
-				ruleSet, compilation)) {
+
+		for (Rule r : getUnifiableRules(q.getAtomSet().predicatesIterator(), ruleSet, compilation)) {
 
 			/** compute the single rule unifiers **/
 			srUnifiers.addAll(getSRUnifier(q, r, compilation));
 		}
 
-
-		/** compute the aggregated unifier **/
-		unifiers = getAggregatedUnifiers(srUnifiers);
-
-		/** compute the rewrite from the unifier **/
-		for (QueryUnifier u : unifiers) {
+		/** compute the rewrite from the aggregated unifier **/
+		for (QueryUnifier u : getAggregatedUnifiers(srUnifiers)) {
 			ConjunctiveQuery a = Utils.rewrite(q, u);
 			currentRewrites.add(a);
 		}
-
 		return currentRewrites;
 	}
-
 }

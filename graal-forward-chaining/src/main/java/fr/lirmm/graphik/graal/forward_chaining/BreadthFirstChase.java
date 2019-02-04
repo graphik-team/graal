@@ -53,19 +53,22 @@ import java.util.TreeMap;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Predicate;
+import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.forward_chaining.AbstractChase;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
 import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
 import fr.lirmm.graphik.graal.api.homomorphism.Homomorphism;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismWithCompilation;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphStore;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByBodyPredicatesRuleSet;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
+import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplierWithCompilation;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.RestrictedChaseRuleApplier;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
@@ -121,18 +124,30 @@ public class BreadthFirstChase extends AbstractChase<Rule, AtomSet> {
 		this(rules.iterator(), atomSet, ruleApplier);
 	}
 
-	public BreadthFirstChase(Iterable<Rule> rules, AtomSet atomSet, Homomorphism<ConjunctiveQuery, AtomSet> solver) {
+	public BreadthFirstChase(Iterable<Rule> rules, AtomSet atomSet, Homomorphism<Query, AtomSet> solver) {
 		this(rules, atomSet, new DefaultRuleApplier<AtomSet>(solver));
 	}
 
 	public BreadthFirstChase(Iterable<Rule> rules, AtomSet atomSet, ChaseHaltingCondition haltingCondition) {
 		this(rules, atomSet, new DefaultRuleApplier<AtomSet>(haltingCondition));
-
 	}
 
-	public BreadthFirstChase(Iterable<Rule> rules, AtomSet atomSet, Homomorphism<ConjunctiveQuery, AtomSet> solver,
+	public BreadthFirstChase(Iterable<Rule> rules, AtomSet atomSet, Homomorphism<Query, AtomSet> solver,
 	    ChaseHaltingCondition haltingCondition) {
 		this(rules, atomSet, new DefaultRuleApplier<AtomSet>(solver, haltingCondition));
+	}
+	
+	public BreadthFirstChase(Iterable<Rule> rules, AtomSet atomSet, RulesCompilation compilation) {
+		this(rules, atomSet, new DefaultRuleApplierWithCompilation<AtomSet>(compilation));
+	}
+
+	public BreadthFirstChase(Iterator<Rule> rules, AtomSet atomSet, RulesCompilation compilation) {
+		this(rules, atomSet, new DefaultRuleApplierWithCompilation<AtomSet>(compilation));
+	}
+
+	public BreadthFirstChase(Iterable<Rule> rules, AtomSet atomSet, RulesCompilation compilation,
+			HomomorphismWithCompilation<Query, AtomSet> h) {
+		this(rules, atomSet, new DefaultRuleApplierWithCompilation<AtomSet>(h, compilation));
 	}
 
 	private void init(Iterator<Rule> rules) {

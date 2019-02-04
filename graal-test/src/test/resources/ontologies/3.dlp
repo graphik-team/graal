@@ -1,0 +1,17 @@
+@rules
+
+win(Y,X,Z):-rotate(Y,X,X).            % non-compilable, et unification possible (après plusieurs applications de la règle suivante)
+rotate(X1,X2,X3):-rotate(X2,X3,X1).   % compilable
+rotate(X,X,Y):-start(X).              % compilable
+
+@facts
+
+start(a).
+
+%Dérivation (saturation) à partir de start(a) avec compilation
+
+%start(a) -> rotate(a,a,Y0) -> rotate(a,Y0,a) -> rotate(Y0,a,a) -> win(Y0,a,Z0)
+
+%Dérivation (saturation) à partir de start(a) sans compilation
+
+%start(a) -> win(Y0,a,Z0)

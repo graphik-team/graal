@@ -45,6 +45,10 @@
 */
 package fr.lirmm.graphik.graal.forward_chaining;
 
+import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.temporal.TemporalAmount;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -57,10 +61,12 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.forward_chaining.AbstractChase;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
 import fr.lirmm.graphik.graal.core.grd.DefaultGraphOfRuleDependencies;
+import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplierWithCompilation;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.RestrictedChaseRuleApplier;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
@@ -77,7 +83,15 @@ public class ChaseWithGRD<T extends AtomSet> extends AbstractChase<Rule, T> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ChaseWithGRD.class);
 
 	private GraphOfRuleDependencies grd;
-	private T atomSet;
+	private T                       atomSet;
+
+	private Instant        timeout_endTime;
+	private TemporalAmount timeout_duration;
+	private int            checkTimeoutEvery = 50000;
+
+	/**
+	 * Queue of the rules to apply in the saturation process
+	 */
 	private Queue<Rule> queue = new LinkedList<Rule>();
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -88,9 +102,11 @@ public class ChaseWithGRD<T extends AtomSet> extends AbstractChase<Rule, T> {
 		super(ruleApplier);
 		this.grd = grd;
 		this.atomSet = atomSet;
+
 		for (Rule r : grd.getRules()) {
 			this.queue.add(r);
 		}
+		setTimeout(Duration.ofMinutes(1));
 	}
 
 	public ChaseWithGRD(GraphOfRuleDependencies grd, T atomSet) {
@@ -101,51 +117,98 @@ public class ChaseWithGRD<T extends AtomSet> extends AbstractChase<Rule, T> {
 		this(new DefaultGraphOfRuleDependencies(rules), atomSet);
 	}
 
+	public ChaseWithGRD(Iterable<Rule> rules, T atomSet, RulesCompilation compilation) throws ChaseException, IOException {
+		this(new DefaultGraphOfRuleDependencies(rules, compilation), atomSet, new DefaultRuleApplierWithCompilation<T>(compilation));
+	}
+
+	public ChaseWithGRD(Iterator<Rule> rules, T atomSet, RulesCompilation compilation) throws ChaseException, IOException {
+		this(new DefaultGraphOfRuleDependencies(rules, compilation), atomSet, new DefaultRuleApplierWithCompilation<T>(compilation));
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// OPTIONS
+	// /////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * A number of iterations after which the timeout can be check.
+	 */
+	public void checkTimeoutEvery(int val) {
+		checkTimeoutEvery = val;
+	}
+
+	public void setTimeout(TemporalAmount duration) {
+		timeout_duration = duration;
+	}
+
 	// /////////////////////////////////////////////////////////////////////////
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
 	public void next() throws ChaseException {
+		Queue<Rule> newQueue   = new LinkedList<Rule>();
+		List<Atom>  newAtomSet = new LinkedList<Atom>();
 
-		Queue<Rule> newQueue = new LinkedList<Rule>();
-		List<Atom> newAtomSet = new LinkedList<Atom>();
+		if (timeout_endTime == null)
+			timeout_endTime = Instant.now().plus(timeout_duration);
 
 		try {
-			while (!queue.isEmpty()) {
 
+			while (!queue.isEmpty()) {
 				Rule rule = queue.poll();
-				if (rule != null) {
-					CloseableIterator<Atom> it = this.getRuleApplier().delegatedApply(rule, this.atomSet);
-					if (it.hasNext()) {
-						while(it.hasNext()) {
-							newAtomSet.add(it.next());
-						}
-						for (Rule triggeredRule : this.grd.getTriggeredRules(rule)) {
-							if (LOGGER.isDebugEnabled()) {
-								LOGGER.debug("-- -- Dependency: " + triggeredRule);
-							}
-							if (!newQueue.contains(triggeredRule)) {
-								newQueue.add(triggeredRule);
-							}
-						}
-					}
+
+				if (rule == null)
+					continue;
+
+				CloseableIterator<Atom> it = this.getRuleApplier().delegatedApply(rule, this.atomSet);
+
+				// Nothing more to do for this iteration
+				if (!it.hasNext()) {
 					it.close();
+					continue;
+				}
+				long timeout_cnt = checkTimeoutEvery;
+
+				// Add the generated atoms in the atom set
+				while (it.hasNext()) {
+					newAtomSet.add(it.next());
+
+					// Check the timeout
+					if (--timeout_cnt == 0) {
+
+						if (Instant.now().isAfter(timeout_endTime))
+							throw new ChaseException("Timeout; allowed time: " + timeout_duration);
+
+						timeout_cnt = checkTimeoutEvery;
+					}
+				}
+				it.close();
+
+				// Make the next queue to use
+				for (Rule triggeredRule : this.grd.getTriggeredRules(rule)) {
+
+					if (LOGGER.isDebugEnabled()) {
+						LOGGER.debug("-- -- Dependency: " + triggeredRule);
+					}
+
+					if (!newQueue.contains(triggeredRule)) {
+						newQueue.add(triggeredRule);
+					}
 				}
 			}
-
 			queue = newQueue;
 			atomSet.addAll(new CloseableIteratorAdapter<Atom>(newAtomSet.iterator()));
-
 		} catch (Exception e) {
 			throw new ChaseException("An error occur pending saturation step.", e);
 		}
 
+		// End of the process: reset the timeout
+		if (!hasNext())
+			timeout_endTime = null;
 	}
 
 	@Override
 	public boolean hasNext() {
 		return !queue.isEmpty();
 	}
-
 }

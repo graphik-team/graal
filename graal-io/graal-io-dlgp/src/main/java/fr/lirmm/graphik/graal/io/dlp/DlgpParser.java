@@ -59,16 +59,25 @@ import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.EffectiveConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.NegativeConstraint;
+import fr.lirmm.graphik.graal.api.core.Predicate;
 import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.graal.api.core.Term;
+import fr.lirmm.graphik.graal.api.core.Variable;
 import fr.lirmm.graphik.graal.api.core.VariableGenerator;
 import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.api.io.Parser;
+import fr.lirmm.graphik.graal.core.DefaultEffectiveConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.DefaultVariableGenerator;
+import fr.lirmm.graphik.graal.core.HashMapSubstitution;
 import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.ArrayBlockingStream;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 import fr.lirmm.graphik.util.stream.InMemoryStream;
 import fr.lirmm.graphik.util.stream.QueueStream;
 
@@ -156,10 +165,10 @@ public final class DlgpParser extends AbstractCloseableIterator<Object> implemen
 	public Object next() throws ParseException {
 		Object val = buffer.next();
 		if (val instanceof Throwable) {
-			if(val instanceof ParseException) {
+			if (val instanceof ParseException) {
 				throw (ParseException) val;
 			}
-			throw new ParseException("An error occured while parsing.", (Throwable)val);
+			throw new ParseException("An error occured while parsing.", (Throwable) val);
 		}
 		return val;
 	}
@@ -184,6 +193,33 @@ public final class DlgpParser extends AbstractCloseableIterator<Object> implemen
 	// /////////////////////////////////////////////////////////////////////////
 	// STATIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
+
+	public static EffectiveConjunctiveQuery parseEffectiveQuery(String s) throws ParseException {
+		try {
+			ConjunctiveQuery baseQuery = (ConjunctiveQuery) parse(s);
+			InMemoryAtomSet atomSet = baseQuery.getAtomSet();
+			CloseableIteratorWithoutException<Atom> atomsIterator = atomSet.iterator();
+			Substitution substitution = new HashMapSubstitution();
+
+			while (atomsIterator.hasNext()) {
+				Atom atom = atomsIterator.next();
+
+				if (atom.getPredicate().equals(Predicate.EQUALITY)) {
+					Term a = atom.getTerm(0);
+					Term b = atom.getTerm(1);
+
+					if (!(a instanceof Variable))
+						throw new DlgpParseException("Equality predicate exception : the first term MUST be a variable");
+
+					atomSet.remove(atom);
+					substitution.put((Variable) a, b);
+				}
+			}
+			return new DefaultEffectiveConjunctiveQuery(baseQuery, substitution);
+		} catch (ClassCastException e) {
+			throw new DlgpParseException("Wrong object type.", e);
+		}
+	}
 
 	public static ConjunctiveQuery parseQuery(String s) throws ParseException {
 		try {
@@ -216,7 +252,7 @@ public final class DlgpParser extends AbstractCloseableIterator<Object> implemen
 			throw new DlgpParseException("Wrong object type.", e);
 		}
 	}
-	
+
 	public static CloseableIterator<Atom> parseAtomSet(String s) throws ParseException {
 		InMemoryStream<Object> stream = new QueueStream<Object>();
 		Producer p = new Producer(new StringReader(s), stream);
@@ -228,11 +264,11 @@ public final class DlgpParser extends AbstractCloseableIterator<Object> implemen
 
 		return new AtomCloseableIteratorWrapperHandlingParseException(stream);
 	}
-	
+
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE
 	// /////////////////////////////////////////////////////////////////////////
-	
+
 	private static Object parse(String s) throws ParseException {
 		InMemoryStream<Object> stream = new QueueStream<Object>();
 		Producer p = new Producer(new StringReader(s), stream);
@@ -245,17 +281,17 @@ public final class DlgpParser extends AbstractCloseableIterator<Object> implemen
 		if (!stream.hasNext()) {
 			throw new DlgpParseException("No statement found.");
 		}
-		
+
 		Object o = null;
 		do {
 			o = stream.next();
-		} while(o instanceof Directive || o instanceof Prefix);
-		
-		if(stream.hasNext()) {
+		} while (o instanceof Directive || o instanceof Prefix);
+
+		if (stream.hasNext()) {
 			throw new DlgpParseException("Too much statements.");
 		}
 		stream.close();
-		if(o instanceof ParseException) {
+		if (o instanceof ParseException) {
 			throw (ParseException) o;
 		}
 		return o;

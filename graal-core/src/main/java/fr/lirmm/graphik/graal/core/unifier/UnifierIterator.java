@@ -43,6 +43,7 @@
 package fr.lirmm.graphik.graal.core.unifier;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -63,24 +64,32 @@ import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
  * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>}
  *
  */
-class UnifierIterator extends AbstractCloseableIterator<Substitution>
-		implements CloseableIteratorWithoutException<Substitution> {
-	
+class UnifierIterator extends AbstractCloseableIterator<Substitution> implements CloseableIteratorWithoutException<Substitution> {
+
 	Queue<Substitution> unifiers = null;
-	
+
 	private Rule source, target;
 	private DependencyChecker checkers[];
+	private long maxSubstitution;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
-	
+
 	public UnifierIterator(Rule source, Rule target, DependencyChecker... checkers) {
+		this(source, target, -1, checkers);
+	}
+
+	public UnifierIterator(Rule source, Rule target, boolean checkExists, DependencyChecker... checkers) {
+		this(source, target, checkExists ? 1 : -1, checkers);
+	}
+
+	public UnifierIterator(Rule source, Rule target, long maxSubstitutions, DependencyChecker... checkers) {
 		this.source = source;
 		this.target = target;
 		this.checkers = checkers;
+		this.maxSubstitution = maxSubstitutions;
 	}
-
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
@@ -91,119 +100,202 @@ class UnifierIterator extends AbstractCloseableIterator<Substitution>
 
 	@Override
 	public boolean hasNext() {
-		if(this.unifiers == null) {
-			this.unifiers = new LinkedList<Substitution>(computePieceUnifiers(this.source, this.target));
+
+		if (unifiers == null) {
+			unifiers = new LinkedList<Substitution>(computePieceUnifiers(source, target, maxSubstitution));
 		}
-		return !this.unifiers.isEmpty();
+		return !unifiers.isEmpty();
 	}
 
 	@Override
 	public Substitution next() {
-		this.hasNext();
-		return this.unifiers.poll();
+		hasNext();
+		return unifiers.poll();
 	}
-	
+
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
 	public Set<Substitution> computePieceUnifiers(Rule source, Rule target) {
+		return computePieceUnifiers(source, target, -1);
+	}
+
+	public Set<Substitution> computePieceUnifiers(Rule source, Rule target, boolean exists) {
+		return computePieceUnifiers(source, target, exists ? 1 : -1);
+	}
+
+	public Set<Substitution> computePieceUnifiers(Rule source, Rule target, long maxSubstitutions) {
 		Set<Substitution> unifiers = new LinkedSet<Substitution>();
 		Queue<Atom> atomQueue = new LinkedList<Atom>();
 		CloseableIteratorWithoutException<Atom> it = target.getBody().iterator();
+
 		while (it.hasNext()) {
 			Atom a = it.next();
 			atomQueue.add(a);
 		}
 
+		/**
+		 * Number of element added on the current iteration
+		 */
+		long nbAdd = 0;
 		it = target.getBody().iterator();
+
 		while (it.hasNext()) {
 			Atom a = it.next();
 			Queue<Atom> tmp = new LinkedList<Atom>(atomQueue);
-			unifiers.addAll(extendUnifier(source, tmp, a, new Unifier()));
+			Collection<Substitution> substitutions = extendUnifier(source, tmp, a, new Unifier(), maxSubstitutions);
+			nbAdd = substitutions.size();
+			unifiers.addAll(substitutions);
+
+			// nbAdd check
+			if (nbAdd > 0 && maxSubstitutions > 0) {
+				maxSubstitutions -= nbAdd;
+
+				if (maxSubstitutions < 0)
+					maxSubstitutions = 0;
+
+				if (maxSubstitutions == 0)
+					break;
+			}
 		}
 		return unifiers;
 	}
 
-	private Collection<Substitution> extendUnifier(Rule rule, Queue<Atom> atomset, Atom pieceElement,
-			Unifier unifier) {
+	/**
+	 * 
+	 * @param rule
+	 * @param atomset
+	 * @param pieceElement
+	 * @param unifier
+	 * @param maxSubstitutions The maximum number of elements to be in the return
+	 *                         set. If a negative value is provided, all the
+	 *                         elements will be computed.
+	 * @return
+	 */
+	private Collection<Substitution> extendUnifier(Rule rule, Queue<Atom> atomset, Atom pieceElement, Unifier unifier, long maxSubstitutions) {
 		atomset.remove(pieceElement);
 		unifier.queryPiece.add(pieceElement);
-		
+
+		if (maxSubstitutions == 0)
+			return Collections.emptySet();
+
 		Collection<Substitution> unifierCollection = new LinkedList<Substitution>();
 		Set<Variable> frontierVars = rule.getFrontier();
 		Set<Variable> existentialVars = rule.getExistentials();
 
 		CloseableIteratorWithoutException<Atom> it = rule.getHead().iterator();
+
+		/**
+		 * Number of element added in the current iteration
+		 */
+		long nbAdd = 0;
+		final boolean notCheckMax = maxSubstitutions < 0;
+
 		while (it.hasNext()) {
 			Atom atom = it.next();
 			Substitution u = unifier(unifier.s, pieceElement, atom, frontierVars, existentialVars);
-			if (u != null) {
-				unifier = new Unifier(unifier);
-				unifier.ruleHeadPiece.add(atom);
-				unifier.s = u;
-				
-				// look if there exist other element for the current piece
-				Atom nextPieceElement = getNextPieceElementIfExist(u, atomset, existentialVars);
-				if (nextPieceElement == null) {
-					boolean check = true;
-					for(DependencyChecker c : this.checkers) {
-						check &= c.isValidDependency(this.source, this.target, unifier.s);
-					}
-					if(check) {
-						unifierCollection.add(unifier.s);
-					}
-				} else {
-					unifierCollection
-							.addAll(extendUnifier(rule, new LinkedList<Atom>(atomset), nextPieceElement, unifier));
+
+			if (u == null)
+				continue;
+
+			unifier = new Unifier(unifier);
+			unifier.ruleHeadPiece.add(atom);
+			unifier.s = u;
+
+			// look if there exist other element for the current piece
+			Atom nextPieceElement = getNextPieceElementIfExist(u, atomset, existentialVars);
+
+			if (nextPieceElement == null) {
+
+				if (RuleDependencyUtils.validateUnifier(source, target, unifier.s, checkers)) {
+					unifierCollection.add(unifier.s);
+					nbAdd = 1;
 				}
+				// Nothing append; so we can pass the nbAdd check at the end of the loop
+				else {
+					// Think to uncomment in an evolution of code without 'continue'
+					// nbAdd = 0;
+					continue;
+				}
+
+			} else {
+				Collection<Substitution> substitutions = extendUnifier(rule, new LinkedList<Atom>(atomset), nextPieceElement, unifier, maxSubstitutions);
+				nbAdd = substitutions.size();
+
+				if (nbAdd == 0)
+					continue;
+
+				unifierCollection.addAll(substitutions);
 			}
+
+			/*
+			 * --> nbAdd check
+			 * 
+			 * At this point nbAdd MUST have a correct value according to the current
+			 * iteration. Be careful for the future evolutions of the source code.
+			 */
+			/*
+			 * In the following condition: "nbAdd == 0" is not necessary because the only
+			 * case where nbAdd == 0 is switched before this point
+			 */
+			if (notCheckMax/* || nbAdd == 0 */)
+				continue;
+
+			maxSubstitutions -= nbAdd;
+
+			if (maxSubstitutions <= 0)
+				return unifierCollection;
+
+			// <-- End of nbAdd check
 		}
 		return unifierCollection;
 	}
-	
+
 	private static Atom getNextPieceElementIfExist(Substitution u, Queue<Atom> atomset, Set<Variable> glueVars) {
 		Iterator<Atom> it = atomset.iterator();
 		while (it.hasNext()) {
 			Atom a = it.next();
 
 			for (Term t1 : a) {
+
 				for (Term t2 : glueVars) {
-					if (u.createImageOf(t2).equals(u.createImageOf(t1))) {
+
+					if (u.createImageOf(t2).equals(u.createImageOf(t1)))
 						return a;
-					}
 				}
 			}
 		}
 		return null;
 	}
 
-	private static Substitution unifier(Substitution baseUnifier, Atom a1, Atom a2, Set<Variable> frontierVars,
-			Set<Variable> existentialVars) {
-		if (a1.getPredicate().equals(a2.getPredicate())) {
-			boolean error = false;
-			Substitution u = DefaultSubstitutionFactory.instance().createSubstitution();
-			u.put(baseUnifier);
+	private static Substitution unifier(Substitution baseUnifier, Atom a1, Atom a2, Set<Variable> frontierVars, Set<Variable> existentialVars) {
 
-			for (int i = 0; i < a1.getPredicate().getArity(); ++i) {
-				Term t1 = a1.getTerm(i);
-				Term t2 = a2.getTerm(i);
-				error = error || !compose(u, frontierVars, existentialVars, t1, t2);
-			}
+		if (!a1.getPredicate().equals(a2.getPredicate()))
+			return null;
 
-			if (!error)
-				return u;
+		boolean error = false;
+		Substitution u = DefaultSubstitutionFactory.instance().createSubstitution();
+		u.put(baseUnifier);
+
+		for (int i = 0; i < a1.getPredicate().getArity(); ++i) {
+			Term t1 = a1.getTerm(i);
+			Term t2 = a2.getTerm(i);
+			error = error || !compose(u, frontierVars, existentialVars, t1, t2);
 		}
 
-		return null;
+		if (error)
+			return null;
+
+		return u;
 	}
 
-	private static boolean compose(Substitution u, Set<Variable> frontierVars, Set<Variable> existentials, Term term,
-			Term substitut) {
+	private static boolean compose(Substitution u, Set<Variable> frontierVars, Set<Variable> existentials, Term term, Term substitut) {
 		Term termSubstitut = u.createImageOf(term);
 		Term substitutSubstitut = u.createImageOf(substitut);
 
 		if (!termSubstitut.equals(substitutSubstitut)) {
+
 			if (termSubstitut.isConstant() || existentials.contains(termSubstitut)) {
 				Term tmp = termSubstitut;
 				termSubstitut = substitutSubstitut;
@@ -211,33 +303,34 @@ class UnifierIterator extends AbstractCloseableIterator<Substitution>
 			}
 
 			for (Term t : u.getTerms()) {
+
 				if (termSubstitut.equals(u.createImageOf(t))) {
-					if (!put(u, frontierVars, existentials, t, substitutSubstitut)) {
+
+					if (!put(u, frontierVars, existentials, t, substitutSubstitut))
 						return false;
-					}
 				}
 			}
 
-			if (!put(u, frontierVars, existentials, termSubstitut, substitutSubstitut)) {
+			if (!put(u, frontierVars, existentials, termSubstitut, substitutSubstitut))
 				return false;
-			}
 		}
 		return true;
 	}
 
-	private static boolean put(Substitution u, Set<Variable> frontierVars, Set<Variable> existentials, Term term,
-			Term substitut) {
+	private static boolean put(Substitution u, Set<Variable> frontierVars, Set<Variable> existentials, Term term, Term substitut) {
+
 		if (!term.equals(substitut)) {
+
 			// two (constant | existentials vars)
 			if (term.isConstant() || existentials.contains(term)) {
 				return false;
-				// fr -> existential vars
-			} else if (frontierVars.contains(term) && existentials.contains(substitut)) {
+			}
+			// fr -> existential vars
+			else if (frontierVars.contains(term) && existentials.contains(substitut)) {
 				return false;
 			}
 			u.put((Variable) term, substitut);
 		}
 		return true;
 	}
-
 }

@@ -46,8 +46,6 @@
 package fr.lirmm.graphik.graal.store.test;
 
 
-import static org.junit.Assert.fail;
-
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Test;
@@ -187,56 +185,56 @@ public class TripleStoreTest {
 	@Test(expected = WrongArityException.class)
 	public void testContains(AtomSet store) throws ParseException, AtomSetException {
 		Assume.assumeTrue(store instanceof TripleStore);
-		store.contains(DlgpParser.parseAtom("p(a)."));
+		store.contains(DlgpParser.parseAtom("p(a,b,c)."));
 	}
 
 	@Theory
 	@Test(expected = WrongArityException.class)
 	public void testAddAllCloseableIterator(AtomSet store) throws AtomSetException {
 		Assume.assumeTrue(store instanceof TripleStore);
-		store.addAll(new AtomFilterIterator(new DlgpParser("q(a,b). p(a). q(b,c).")));
+		store.addAll(new AtomFilterIterator(new DlgpParser("q(a,b). p(a,b,c). q(b,c).")));
 	}
 
 	@Theory
 	@Test(expected = WrongArityException.class)
 	public void testRemoveAllCloseableIteratorOfQextendsAtom(AtomSet store) throws AtomSetException {
 		Assume.assumeTrue(store instanceof TripleStore);
-		store.removeAll(new AtomFilterIterator(new DlgpParser("q(a,b). p(a). q(b,c).")));
+		store.removeAll(new AtomFilterIterator(new DlgpParser("q(a,b). p(a,b,c). q(b,c).")));
 	}
 
 	@Theory
 	@Test(expected = WrongArityException.class)
 	public void testAdd(AtomSet store) throws ParseException, AtomSetException {
 		Assume.assumeTrue(store instanceof TripleStore);
-		store.add(DlgpParser.parseAtom("p(a)."));
+		store.add(DlgpParser.parseAtom("p(a,b,c)."));
 	}
 
 	@Theory
 	@Test(expected = WrongArityException.class)
 	public void testRemove(AtomSet store) throws ParseException, AtomSetException {
 		Assume.assumeTrue(store instanceof TripleStore);
-		store.remove(DlgpParser.parseAtom("p(a)."));
+		store.remove(DlgpParser.parseAtom("p(a,b,c)."));
 	}
 
 	@Theory
 	@Test(expected = WrongArityException.class)
 	public void testMatch(AtomSet store) throws ParseException, AtomSetException {
 		Assume.assumeTrue(store instanceof TripleStore);
-		store.match(DlgpParser.parseAtom("p(X)."));
+		store.match(DlgpParser.parseAtom("p(X,Y,Z)."));
 	}
 	
 	@Theory
 	@Test(expected = WrongArityException.class)
 	public void testAtomsByPredicate(AtomSet store) throws ParseException, AtomSetException {
 		Assume.assumeTrue(store instanceof TripleStore);
-		store.atomsByPredicate(new Predicate("p", 1));
+		store.atomsByPredicate(new Predicate("p", 3));
 	}
 
 	@Theory
 	@Test(expected = WrongArityException.class)
 	public void testTermsByPredicatePosition(AtomSet store) throws ParseException, AtomSetException {
 		Assume.assumeTrue(store instanceof TripleStore);
-		store.termsByPredicatePosition(new Predicate("p",1), 1);
+		store.termsByPredicatePosition(new Predicate("p",3), 1);
 	}
 
 }

@@ -1,0 +1,7 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#>
+
+@facts
+
+<0.human>(alice).
+<0.human.name>(X).
+<0.human.boss>(X), <0.human.hasCorporation>(X), <0.test>(X).

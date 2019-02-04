@@ -1,0 +1,15 @@
+@rules
+
+t(X,Z):-q(X).         %non compilable
+q(X),s(X):-p(X).      %compilable : il ne faut pas se faire piéger par la tête non-atomique
+p(X):-r(X,Z).         %compilable
+
+@facts
+
+r(a,a).
+
+%Dérivation (saturation) à partir de r(a,a) sans compilation
+%r(a,a) -> p(a) -> q(a),s(a) -> t(a,Z0)
+
+%Dérivation (saturation) à partir de r(a,a) avec compilation
+%r(a,a) -> t(a,Z0)

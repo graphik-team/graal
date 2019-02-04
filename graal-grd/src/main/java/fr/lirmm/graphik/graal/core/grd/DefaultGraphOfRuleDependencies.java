@@ -1,48 +1,3 @@
-/*
- * Copyright (C) Inria Sophia Antipolis - Méditerranée / LIRMM
- * (Université de Montpellier & CNRS) (2014 - 2017)
- *
- * Contributors :
- *
- * Clément SIPIETER <clement.sipieter@inria.fr>
- * Mélanie KÖNIG
- * Swan ROCHER
- * Jean-François BAGET
- * Michel LECLÈRE
- * Marie-Laure MUGNIER <mugnier@lirmm.fr>
- *
- *
- * This file is part of Graal <https://graphik-team.github.io/graal/>.
- *
- * This software is governed by the CeCILL  license under French law and
- * abiding by the rules of distribution of free software.  You can  use,
- * modify and/ or redistribute the software under the terms of the CeCILL
- * license as circulated by CEA, CNRS and INRIA at the following URL
- * "http://www.cecill.info".
- *
- * As a counterpart to the access to the source code and  rights to copy,
- * modify and redistribute granted by the license, users are provided only
- * with a limited warranty  and the software's author,  the holder of the
- * economic rights,  and the successive licensors  have only  limited
- * liability.
- *
- * In this respect, the user's attention is drawn to the risks associated
- * with loading,  using,  modifying and/or developing or reproducing the
- * software by the user in light of its specific status of free software,
- * that may mean  that it is complicated to manipulate,  and  that  also
- * therefore means  that it is reserved for developers  and  experienced
- * professionals having in-depth computer knowledge. Users are therefore
- * encouraged to load and test the software's suitability as regards their
- * requirements in conditions enabling the security of their systems and/or
- * data to be ensured and,  more generally, to use and operate it in the
- * same conditions as regards security.
- *
- * The fact that you are presently reading this means that you have had
- * knowledge of the CeCILL license and that you accept its terms.
- */
- /**
- * 
- */
 package fr.lirmm.graphik.graal.core.grd;
 
 import java.util.ArrayList;
@@ -50,6 +5,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -62,73 +18,125 @@ import org.jgrapht.graph.DefaultDirectedGraph;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.RuleSet;
+import fr.lirmm.graphik.graal.api.core.RulesCompilation;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.unifier.DependencyChecker;
 import fr.lirmm.graphik.graal.core.LabelRuleComparator;
 import fr.lirmm.graphik.graal.core.Substitutions;
+import fr.lirmm.graphik.graal.core.compilation.NoCompilation;
+import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.ruleset.IndexedByBodyPredicatesRuleSet;
+import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.core.unifier.DefaultUnifierAlgorithm;
-import fr.lirmm.graphik.util.LinkedSet;
+import fr.lirmm.graphik.graal.core.unifier.QueryUnifier;
+import fr.lirmm.graphik.graal.core.unifier.RuleDependencyUtils;
+import fr.lirmm.graphik.graal.core.unifier.UnifierUtils;
 import fr.lirmm.graphik.util.graph.scc.StronglyConnectedComponentsGraph;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 import fr.lirmm.graphik.util.stream.Iterators;
 
 /**
- * The graph of rule dependencies (GRD) is a directed graph built from a rule
- * set as follows: there is a vertex for each rule in the set and there is an
- * edge from a rule R1 to a rule R2 if R1 may lead to trigger R2, i.e., R2
- * depends on R1. R2 depends on R1 if and only if there is piece-unifier (for
- * this notion, see f.i. this paper (TODO)) between the body of R2 and the head
- * of R1.
+ * This class computes the GRD of a rule set when a compilation is used for
+ * saturating the data. The class shall be implemented as a subclass of
+ * DefaultGraphOfRuleDependency, but some issues with dependency checking led to
+ * the current implementation. In particular, the fact that all pairs of rules
+ * are candidate for a dependency when a compilation is available.
  * 
- * @author Clément Sipieter (INRIA) {@literal <clement@6pi.fr>} <br/>
- *         Swan Rocher {@literal <swan.rocher@lirmm.fr>}
+ * In the resulting GRD, the compilation has been used to reestablish the
+ * indirect dependencies between rules. Say for instance that R1-->R2-->R3-->R4
+ * but R2 and R3 are compiled and thus removed from the ruleset. This class
+ * makes sure that the indirect dependency R1-->R4 is present in the GRD.
+ * 
+ * @author federico
+ * @author Olivier Rodriguez
  * 
  */
 public class DefaultGraphOfRuleDependencies implements GraphOfRuleDependencies {
-
-	private DirectedGraph<Rule, Integer> graph;
 	private ArrayList<Set<Substitution>> edgesValue;
-	private DependencyChecker[] checkerArray;
+
 	private boolean computingUnifiers;
+
+	private DirectedGraph<Rule, Integer> grd;
+
+	private RulesCompilation compilation;
+	private DependencyChecker[] checkers;
 
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 
-	public DefaultGraphOfRuleDependencies(Iterable<Rule> rules, boolean withUnifiers, DependencyChecker... checkers) {
-		this(rules.iterator(), withUnifiers, checkers);
-	}
-	
-	public DefaultGraphOfRuleDependencies(Iterator<Rule> rules, boolean withUnifiers, DependencyChecker... checkers) {
-		this.graph = new DefaultDirectedGraph<Rule, Integer>(Integer.class);
-		this.edgesValue = new ArrayList<Set<Substitution>>();
+	public DefaultGraphOfRuleDependencies(RuleSet rules, RulesCompilation compilation, boolean withUnifiers, DependencyChecker checkers[]) {
+		this.compilation = compilation;
+		this.checkers = checkers;
 		this.computingUnifiers = withUnifiers;
 
-		while(rules.hasNext()) {
-			this.addRule(rules.next());
-		}
+		this.grd = new DefaultDirectedGraph<Rule, Integer>(Integer.class);
+		this.edgesValue = new ArrayList<Set<Substitution>>();
 
-		this.checkerArray = checkers;
-		this.computeDependencies(checkers);
+		for (Rule rule : rules)
+			addRuleToGRD(rule);
+
+		if (compilation == null || compilation == NoCompilation.instance())
+			computeDependencies(checkers);
+		else
+			computeDependencies(compilation, checkers);
+	}
+
+	// ===
+
+	public DefaultGraphOfRuleDependencies(RuleSet rules, RulesCompilation compilation, boolean withUnifiers) {
+		this(rules, compilation, withUnifiers, new DependencyChecker[0]);
+	}
+
+	public DefaultGraphOfRuleDependencies(Iterator<Rule> rules, RulesCompilation compilation, boolean withUnifiers) {
+		this(new LinkedListRuleSet(rules), compilation, withUnifiers);
+	}
+
+	public DefaultGraphOfRuleDependencies(Iterable<Rule> rules, RulesCompilation compilation, boolean withUnifiers) {
+		this(new LinkedListRuleSet(rules), compilation, withUnifiers);
+	}
+
+	// ===
+
+	public DefaultGraphOfRuleDependencies(RuleSet rules, RulesCompilation compilation) {
+		this(rules, compilation, false);
+	}
+
+	public DefaultGraphOfRuleDependencies(Iterator<Rule> rules, RulesCompilation compilation) {
+		this(new LinkedListRuleSet(rules), compilation);
+	}
+
+	public DefaultGraphOfRuleDependencies(Iterable<Rule> rules, RulesCompilation compilation) {
+		this(new LinkedListRuleSet(rules), compilation);
+	}
+
+	// ===
+
+	public DefaultGraphOfRuleDependencies(RuleSet rules, boolean withUnifiers, DependencyChecker... checkers) {
+		this(rules, NoCompilation.instance(), withUnifiers, checkers);
+	}
+
+	public DefaultGraphOfRuleDependencies(Iterator<Rule> rules, boolean withUnifiers, DependencyChecker... checkers) {
+		this(new LinkedListRuleSet(rules), withUnifiers, checkers);
+	}
+
+	public DefaultGraphOfRuleDependencies(Iterable<Rule> rules, boolean withUnifiers, DependencyChecker... checkers) {
+		this(new LinkedListRuleSet(rules), withUnifiers, checkers);
+	}
+
+	// ===
+
+	public DefaultGraphOfRuleDependencies(RuleSet rules, DependencyChecker... checkers) {
+		this(rules, NoCompilation.instance(), false, checkers);
+	}
+
+	public DefaultGraphOfRuleDependencies(Iterator<Rule> rules, DependencyChecker... checkers) {
+		this(new LinkedListRuleSet(rules), checkers);
 	}
 
 	public DefaultGraphOfRuleDependencies(Iterable<Rule> rules, DependencyChecker... checkers) {
-		this(rules.iterator(),false,checkers);
-	}
-
-	public DefaultGraphOfRuleDependencies(Iterable<Rule> rules) {
-		this(rules,false);
-	}
-	
-	public DefaultGraphOfRuleDependencies(Iterator<Rule> rules) {
-		this(rules,false);
-	}
-
-	protected DefaultGraphOfRuleDependencies(boolean wu) {
-		this.graph = new DefaultDirectedGraph<Rule, Integer>(Integer.class);
-		this.edgesValue = new ArrayList<Set<Substitution>>();
-		this.computingUnifiers = wu;
+		this(new LinkedListRuleSet(rules), checkers);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -137,57 +145,57 @@ public class DefaultGraphOfRuleDependencies implements GraphOfRuleDependencies {
 
 	@Override
 	public boolean hasCircuit() {
-		CycleDetector<Rule,Integer> cycle = new CycleDetector<Rule,Integer>(this.graph);
-		return cycle.detectCycles();
+		return new CycleDetector<Rule, Integer>(this.grd).detectCycles();
 	}
 
+	/**
+	 * Get the Unifiers of the edge $e
+	 * 
+	 * @param e The reference edge
+	 * @return
+	 */
 	public Set<Substitution> getUnifiers(Integer e) {
-		if(this.computingUnifiers) {
+
+		if (this.computingUnifiers)
 			return Collections.unmodifiableSet(this.edgesValue.get(e));
-		} else {
-			return this.computeDependency(this.graph.getEdgeSource(e), this.graph.getEdgeTarget(e), this.checkerArray);
-		}
+
+		if (checkers.length > 0)
+			return this.computeDependency(this.grd.getEdgeSource(e), this.grd.getEdgeTarget(e), checkers);
+
+		return this.computeDependency(this.grd.getEdgeSource(e), this.grd.getEdgeTarget(e), compilation, checkers);
 	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// OVERRIDE METHODS
+	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public DefaultGraphOfRuleDependencies getSubGraph(Iterable<Rule> ruleSet) {
-		DefaultGraphOfRuleDependencies subGRD = new DefaultGraphOfRuleDependencies(this.computingUnifiers);
-		subGRD.addRuleSet(ruleSet);
-		for (Rule src : ruleSet) {
-			for (Rule target : ruleSet) {
-				Integer e = this.graph.getEdge(src, target);
-				if (e != null) { // there is an edge
-					for (Substitution s : this.edgesValue.get(e)) {
-						subGRD.addDependency(src, s, target);
-					}
-				}
-			}
-		}
-		return subGRD;
+	public DefaultGraphOfRuleDependencies getSubGraph(Iterable<Rule> rules) {
+		return new DefaultGraphOfRuleDependencies(new LinkedListRuleSet(rules), this.compilation, this.computingUnifiers, this.checkers);
 	}
 
 	@Override
 	public Iterable<Rule> getRules() {
-		return this.graph.vertexSet();
+		return this.grd.vertexSet();
 	}
 
-	public Iterable<Integer> getOutgoingEdgesOf(Rule src) {
-		return this.graph.outgoingEdgesOf(src);
-	}
-	
 	@Override
 	public Set<Rule> getTriggeredRules(Rule src) {
 		Set<Rule> set = new HashSet<Rule>();
-		for(Integer i : this.graph.outgoingEdgesOf(src)) {
-			set.add(this.graph.getEdgeTarget(i));
+
+		for (Integer i : this.grd.outgoingEdgesOf(src)) {
+			set.add(this.grd.getEdgeTarget(i));
 		}
 		return set;
 	}
-	
-	public Set<Pair<Rule,Substitution>> getTriggeredRulesWithUnifiers(Rule src) {
-		Set<Pair<Rule,Substitution>> set = new HashSet<Pair<Rule,Substitution>>();
-		for(Integer i : this.graph.outgoingEdgesOf(src)) {
-			Rule target = this.graph.getEdgeTarget(i);
+
+	@Override
+	public Set<Pair<Rule, Substitution>> getTriggeredRulesWithUnifiers(Rule src) {
+		Set<Pair<Rule, Substitution>> set = new HashSet<Pair<Rule, Substitution>>();
+
+		for (Integer i : this.grd.outgoingEdgesOf(src)) {
+			Rule target = this.grd.getEdgeTarget(i);
+
 			for (Substitution u : this.getUnifiers(i)) {
 				Pair<Rule, Substitution> p = new ImmutablePair<Rule, Substitution>(target, u);
 				set.add(p);
@@ -196,22 +204,17 @@ public class DefaultGraphOfRuleDependencies implements GraphOfRuleDependencies {
 		return set;
 	}
 
-
-	public Rule getEdgeTarget(Integer i) {
-		return this.graph.getEdgeTarget(i);
-	}
-
 	@Override
 	public boolean existUnifier(Rule src, Rule dest) {
-		Integer index = this.graph.getEdge(src, dest);
-		return index != null;
+		return grd.getEdge(src, dest) != null;
 	}
-	
+
 	@Override
 	public Set<Substitution> getUnifiers(Rule src, Rule dest) {
-		Integer index = this.graph.getEdge(src, dest);
-		if(index != null) {
-			return this.getUnifiers(index);
+		Integer index = grd.getEdge(src, dest);
+
+		if (index != null) {
+			return getUnifiers(index);
 		} else {
 			return Collections.<Substitution>emptySet();
 		}
@@ -219,28 +222,29 @@ public class DefaultGraphOfRuleDependencies implements GraphOfRuleDependencies {
 
 	@Override
 	public StronglyConnectedComponentsGraph<Rule> getStronglyConnectedComponentsGraph() {
-		return new<Integer> StronglyConnectedComponentsGraph<Rule>(this.graph);
+		return new <Integer>StronglyConnectedComponentsGraph<Rule>(grd);
 	}
-
-	// /////////////////////////////////////////////////////////////////////////
-	// OVERRIDE METHODS
 
 	@Override
 	public String toString() {
 		StringBuilder s = new StringBuilder();
 		TreeSet<Rule> rules = new TreeSet<Rule>(new LabelRuleComparator());
-		for (Rule r : this.graph.vertexSet()) {
+
+		for (Rule r : grd.vertexSet()) {
 			rules.add(r);
 		}
+
 		for (Rule src : rules) {
-			for (Integer e : this.graph.outgoingEdgesOf(src)) {
-				Rule dest = this.graph.getEdgeTarget(e);
+
+			for (Integer e : grd.outgoingEdgesOf(src)) {
+				Rule dest = grd.getEdgeTarget(e);
 
 				s.append(src.getLabel());
 				s.append(" -");
-				if(this.computingUnifiers) {
-					for (Substitution sub : this.edgesValue.get(this.graph.getEdge(
-							src, dest))) {
+
+				if (this.computingUnifiers) {
+
+					for (Substitution sub : edgesValue.get(grd.getEdge(src, dest))) {
 						s.append(sub);
 					}
 				}
@@ -257,87 +261,141 @@ public class DefaultGraphOfRuleDependencies implements GraphOfRuleDependencies {
 	// PROTECTED METHODS
 	// /////////////////////////////////////////////////////////////////////////
 
-	protected void addDependency(Rule src, Substitution sub, Rule dest) {
-		Integer edgeIndex = this.graph.getEdge(src, dest);
-		Set<Substitution> edge = null;
-		if (edgeIndex != null) {
-			edge = this.edgesValue.get(edgeIndex);
-		} else {
-			edgeIndex = this.edgesValue.size();
-			edge = new LinkedSet<Substitution>();
-			this.edgesValue.add(edgeIndex, edge);
-			this.graph.addEdge(src, dest, edgeIndex);
-		}
-		edge.add(sub);
-	}
+	protected void addDependency(Rule src, Set<Substitution> subs, Rule dest) {
+		Integer edgeIndex = grd.getEdge(src, dest);
 
-	protected void setDependency(Rule src, Set<Substitution> subs, Rule dest) {
-		Integer edgeIndex = this.graph.getEdge(src, dest);
 		if (edgeIndex == null) {
-			edgeIndex = this.edgesValue.size();
-			this.edgesValue.add(edgeIndex, subs);
-			this.graph.addEdge(src, dest, edgeIndex);
+			edgeIndex = edgesValue.size();
+			edgesValue.add(edgeIndex, subs);
+			grd.addEdge(src, dest, edgeIndex);
 		} else {
-			this.edgesValue.set(edgeIndex, subs);
+			edgesValue.get(edgeIndex).addAll(subs);
 		}
-	}
-	
-	protected Set<Substitution> computeDependency(Rule r1, Rule r2, DependencyChecker... checkers) {
-		Substitution s1 = DefaultUnifierAlgorithm.getSourceVariablesSubstitution();
-		Rule source = s1.createImageOf(r1);
-		
-		Substitution s2 = DefaultUnifierAlgorithm.getTargetVariablesSubstitution();
-		Rule target = s2.createImageOf(r2);
-		
-		if (this.computingUnifiers) {
-			return Iterators.toSet(DefaultUnifierAlgorithm.instance().computePieceUnifier(source,target,checkers));
-		}
-		else if(DefaultUnifierAlgorithm.instance().existPieceUnifier(source,target,checkers)) {
-			return Collections.<Substitution>singleton(Substitutions.emptySubstitution());
-		}
-		return Collections.<Substitution>emptySet();
 	}
 
+	protected void addDependency(Rule src, Substitution sub, Rule dest) {
+		Set<Substitution> set = new HashSet<>();
+		set.add(sub);
+		addDependency(src, set, dest);
+	}
 
 	private static final String PREFIX = "R" + new Date().hashCode() + "-";
-	private static int ruleIndex = -1;
-	protected void addRule(Rule r) {
-		if(r.getLabel().isEmpty()) {
-			r.setLabel(PREFIX + ++ruleIndex);
+	private static int ruleIndex = 0;
+
+	protected void addRuleToGRD(Rule r) {
+
+		if (r.getLabel().isEmpty()) {
+			r.setLabel(PREFIX + ruleIndex++);
 		}
-		this.graph.addVertex(r);
+		this.grd.addVertex(r);
 	}
 
-	protected void addRuleSet(Iterable<Rule> ruleSet) {
-		for (Rule r : ruleSet) {
-			this.addRule(r);
+	protected void addRulesToGRD(Iterable<Rule> rules) {
+
+		for (Rule r : rules) {
+			this.addRuleToGRD(r);
 		}
 	}
 
-	protected void computeDependencies(DependencyChecker... checkers) {
-		// preprocess
-		IndexedByBodyPredicatesRuleSet index = new IndexedByBodyPredicatesRuleSet(this.graph.vertexSet());
+	protected void computeDependencies(RulesCompilation compilation, DependencyChecker checkers[]) {
+		final Set<Rule> rules = grd.vertexSet();
+		
+		for (Rule r1 : rules) {
 
-		Iterable<Rule> candidates = null;
-		Set<String> marked = new TreeSet<String>();
-		for (Rule r1 : this.graph.vertexSet()) {
-			marked.clear();
-			CloseableIteratorWithoutException<Atom> it = r1.getHead().iterator();
-			while (it.hasNext()) {
-				Atom a = it.next();
-				candidates = index.getRulesByBodyPredicate(a.getPredicate());
-				if (candidates != null) {
-					for (Rule r2 : candidates) {
-						if (marked.add(r2.getLabel())) {
-							Set<Substitution> unifiers = computeDependency(r1,r2, checkers);
-							if (!unifiers.isEmpty()) {
-								this.setDependency(r1, unifiers, r2);
-							}
-						}
-					}
+			for (Rule r2 : rules) {
+				final Set<Substitution> unifiers = computeDependency(r1, r2, compilation, checkers);
+
+				if (!unifiers.isEmpty()) {
+					addDependency(r1, unifiers, r2);
 				}
 			}
 		}
 	}
 
+	protected Set<Substitution> computeDependency(Rule ra, Rule rb, RulesCompilation compilation, DependencyChecker checkers[]) {
+		/*
+		 * We cannot do the existential check if checkers are present
+		 */
+		final boolean EXISTS = checkers.length == 0;
+
+		List<QueryUnifier> unifiers = UnifierUtils.getSinglePieceUnifiersNAHR(DefaultConjunctiveQueryFactory.instance().create(rb.getBody()), ra, compilation, EXISTS);
+		Set<Substitution> ret = new HashSet<>();
+
+		if (unifiers.isEmpty())
+			return ret;
+
+		// Nothing to check in the exist case
+		if (EXISTS)
+			ret.add(unifiers.get(0).getAssociatedSubstitution());
+		else {
+
+			for (QueryUnifier qunifier : unifiers) {
+				Substitution substitution = qunifier.getAssociatedSubstitution();
+
+				if (RuleDependencyUtils.validateUnifier(ra, rb, substitution, checkers)) {
+					ret.add(substitution);
+					break;
+				}
+			}
+		}
+		return ret;
+	}
+
+	// /////////////////////////////////////////////////////////////////////////
+	// DEPENDENCY CHECKERS ONLY
+	// /////////////////////////////////////////////////////////////////////////
+
+	protected Set<Substitution> computeDependency(Rule r1, Rule r2, DependencyChecker checkers[]) {
+		Substitution s1 = DefaultUnifierAlgorithm.getSourceVariablesSubstitution();
+		Rule source = s1.createImageOf(r1);
+
+		Substitution s2 = DefaultUnifierAlgorithm.getTargetVariablesSubstitution();
+		Rule target = s2.createImageOf(r2);
+		Set<Substitution> ret = null;
+
+		if (this.computingUnifiers) {
+			ret = Iterators.toSet(DefaultUnifierAlgorithm.instance().computePieceUnifier(source, target, checkers));
+		} else if (DefaultUnifierAlgorithm.instance().existPieceUnifier(source, target, checkers)) {
+			ret = Collections.<Substitution>singleton(Substitutions.emptySubstitution());
+		}
+
+		if (ret == null)
+			return new HashSet<>();
+
+		return ret;
+	}
+
+	protected void computeDependencies(DependencyChecker... checkers) {
+		// preprocess
+		IndexedByBodyPredicatesRuleSet index = new IndexedByBodyPredicatesRuleSet(this.grd.vertexSet());
+
+		Set<String> marked = new TreeSet<String>();
+
+		for (Rule r1 : this.grd.vertexSet()) {
+			marked.clear();
+			CloseableIteratorWithoutException<Atom> headAtomsIterator = r1.getHead().iterator();
+
+			while (headAtomsIterator.hasNext()) {
+				Atom a = headAtomsIterator.next();
+				Iterable<Rule> candidates = index.getRulesByBodyPredicate(a.getPredicate());
+
+				if (candidates == null)
+					continue;
+
+				for (Rule r2 : candidates) {
+
+					// Candidate already checked
+					if (!marked.add(r2.getLabel()))
+						continue;
+
+					Set<Substitution> unifiers = computeDependency(r1, r2, checkers);
+
+					if (unifiers.isEmpty())
+						continue;
+
+					addDependency(r1, unifiers, r2);
+				}
+			}
+		}
+	}
 }

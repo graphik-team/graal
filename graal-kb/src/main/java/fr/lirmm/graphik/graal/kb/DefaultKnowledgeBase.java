@@ -59,6 +59,7 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.EffectiveConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.GraphOfRuleDependencies;
 import fr.lirmm.graphik.graal.api.core.Ontology;
 import fr.lirmm.graphik.graal.api.core.Query;
@@ -135,12 +136,6 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 	// CONSTRUCTOR
 	// /////////////////////////////////////////////////////////////////////////
 
-	private DefaultKnowledgeBase() {
-		this.ruleset = new DefaultOntology();
-		this.store = new DefaultInMemoryGraphStore();
-		this.queryLabeler = new DefaultQueryLabeler();
-		this.analysedRuleSet = new AnalyserRuleSet(this.ruleset);
-	}
 
 	/**
 	 * Constructs a DefaultKnowledgeBase with a
@@ -294,8 +289,7 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 					RuleSet fusRuleSet = this.getFUSRuleSet();
 
 					PureRewriter pure = new PureRewriter(false);
-					CloseableIteratorWithoutException<ConjunctiveQuery> it = pure.execute(cq, fusRuleSet,
-							this.ruleCompilation);
+					CloseableIteratorWithoutException<EffectiveConjunctiveQuery> it = pure.execute(cq, fusRuleSet, this.ruleCompilation);
 					UnionOfConjunctiveQueries ucq = new DefaultUnionOfConjunctiveQueries(cq.getAnswerVariables(), it);
 
 					CloseableIterator<Substitution> resultIt = null;
@@ -360,7 +354,7 @@ public class DefaultKnowledgeBase extends AbstractProfilable implements Knowledg
 					RuleSet fusRuleSet = this.getFUSRuleSet();
 
 					PureRewriter pure = new PureRewriter(false);
-					CloseableIteratorWithoutException<ConjunctiveQuery> it = pure.execute(cq, fusRuleSet,
+					CloseableIteratorWithoutException<EffectiveConjunctiveQuery> it = pure.execute(cq, fusRuleSet,
 							this.ruleCompilation, remainingTime);
 					UnionOfConjunctiveQueries ucq = new DefaultUnionOfConjunctiveQueries(cq.getAnswerVariables(), it);
 

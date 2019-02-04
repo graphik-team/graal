@@ -1,0 +1,19 @@
+@rules
+
+t(X,Z):-q(X,X).         %non compilable, et unification impossible
+q(X,X):-p(X,X).         %compilable, et unification du body impossible avec la tête de la règle suivante
+p(Y,X):-r(X).           %non compilable
+r(X):-s(X).             %compilable
+
+
+@facts
+
+s(a).
+
+%Dérivation (saturation) à partir de s(a) sans compilation
+
+%s(a) -> r(a) -> p(Y0,a) -> (fin : impossible d'appliquer q(X,X):-p(X,X))
+
+%Dérivation (saturation) à partir de s(a) avec compilation
+
+%s(a) -> p(Y0,a) -> (fin : impossible d'appliquer q(X,X):-p(X,X))

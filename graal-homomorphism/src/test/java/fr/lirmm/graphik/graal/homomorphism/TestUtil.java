@@ -84,7 +84,7 @@ final class TestUtil {
 
 	}
 
-	@SuppressWarnings({ "rawtypes", "deprecation" })
+	@SuppressWarnings({ "rawtypes" })
 	public static Homomorphism[] getHomomorphisms() {
 
 		BCC bcc = new BCC();

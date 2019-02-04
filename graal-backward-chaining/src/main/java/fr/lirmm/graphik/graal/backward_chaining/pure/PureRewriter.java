@@ -47,6 +47,7 @@ package fr.lirmm.graphik.graal.backward_chaining.pure;
 
 import fr.lirmm.graphik.graal.api.backward_chaining.QueryRewriterWithCompilation;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.EffectiveConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.RuleSet;
 import fr.lirmm.graphik.graal.api.core.RulesCompilation;
@@ -54,7 +55,6 @@ import fr.lirmm.graphik.graal.api.util.TimeoutException;
 import fr.lirmm.graphik.graal.core.compilation.IDCompilation;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.util.profiler.AbstractProfilable;
-import fr.lirmm.graphik.util.profiler.NoProfiler;
 import fr.lirmm.graphik.util.stream.CloseableIterable;
 import fr.lirmm.graphik.util.stream.CloseableIteratorAdapter;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
@@ -95,43 +95,40 @@ public class PureRewriter extends AbstractProfilable implements QueryRewriterWit
 	// /////////////////////////////////////////////////////////////////////////
 
 	@Override
-	public CloseableIteratorWithoutException<ConjunctiveQuery> execute(ConjunctiveQuery query, Iterable<Rule> rules) {
+	public CloseableIteratorWithoutException<EffectiveConjunctiveQuery> execute(ConjunctiveQuery query, Iterable<Rule> rules) {
 		RuleSet newRulSet = new LinkedListRuleSet(rules);
 		RulesCompilation compilation = new IDCompilation();
 		compilation.compile(newRulSet.iterator());
-		RewritinCloseableIterator it = new RewritinCloseableIterator(true, query, newRulSet, compilation,
-				this.operator);
+		RewritinCloseableIterator it = new RewritinCloseableIterator(true, query, newRulSet, compilation, this.operator);
 		it.setProfiler(this.getProfiler());
 		return it;
 	}
 
 	@Override
-	public CloseableIteratorWithoutException<ConjunctiveQuery> execute(ConjunctiveQuery query, Iterable<Rule> rules, long timeout) throws TimeoutException {
+	public CloseableIteratorWithoutException<EffectiveConjunctiveQuery> execute(ConjunctiveQuery query, Iterable<Rule> rules, long timeout) throws TimeoutException {
 		return this.execute(query, rules, null, timeout);
 	}
 
 	@Override
-	public CloseableIteratorWithoutException<ConjunctiveQuery> execute(ConjunctiveQuery query, Iterable<Rule> rules,
-			RulesCompilation compilation) {
-		RewritinCloseableIterator it = new RewritinCloseableIterator(this.unfolding, query, rules, compilation,
-				this.operator);
+	public CloseableIteratorWithoutException<EffectiveConjunctiveQuery> execute(ConjunctiveQuery query, Iterable<Rule> rules, RulesCompilation compilation) {
+		RewritinCloseableIterator it = new RewritinCloseableIterator(this.unfolding, query, rules, compilation, this.operator);
 		it.setProfiler(this.getProfiler());
 		return it;
 	}
 
 	@Override
-	public CloseableIteratorWithoutException<ConjunctiveQuery> execute(ConjunctiveQuery query, Iterable<Rule> rules, RulesCompilation compilation, long timeout) throws TimeoutException {
+	public CloseableIteratorWithoutException<EffectiveConjunctiveQuery> execute(ConjunctiveQuery query, Iterable<Rule> rules, RulesCompilation compilation, long timeout) throws TimeoutException {
 		Executor exec = new Executor(this, query, rules, compilation);
-		
+
 		Thread thread = new Thread(exec);
 		thread.start();
-		
+
 		try {
 			thread.join(timeout);
 		} catch (InterruptedException e) {
 			throw new Error("The rewriting was interrupted", e);
 		}
-		
+
 		if (thread.isAlive()) {
 			thread.interrupt();
 			try {
@@ -144,10 +141,8 @@ public class PureRewriter extends AbstractProfilable implements QueryRewriterWit
 		return exec.getResult();
 	}
 
-	public static CloseableIteratorWithoutException<ConjunctiveQuery> unfold(
-			CloseableIterable<ConjunctiveQuery> pivotRewritingSet, RulesCompilation compilation) {
-		return new CloseableIteratorAdapter<ConjunctiveQuery>(
-				Utils.unfold(new IterableAdapter<ConjunctiveQuery>(pivotRewritingSet), compilation, NoProfiler.instance()).iterator());
+	public static CloseableIteratorWithoutException<EffectiveConjunctiveQuery> unfold(CloseableIterable<EffectiveConjunctiveQuery> pivotRewritingSet, RulesCompilation compilation) {
+		return new CloseableIteratorAdapter<EffectiveConjunctiveQuery>(Utils.unfold(new IterableAdapter<>(pivotRewritingSet), compilation).iterator());
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
@@ -160,7 +155,7 @@ public class PureRewriter extends AbstractProfilable implements QueryRewriterWit
 		private RulesCompilation comp;
 		private Iterable<Rule> rules;
 		private ConjunctiveQuery query;
-		private CloseableIteratorWithoutException<ConjunctiveQuery> res;
+		private CloseableIteratorWithoutException<EffectiveConjunctiveQuery> res;
 
 		public Executor(PureRewriter rew, ConjunctiveQuery query, Iterable<Rule> rules, RulesCompilation compilation) {
 			this.rew = rew;
@@ -171,16 +166,16 @@ public class PureRewriter extends AbstractProfilable implements QueryRewriterWit
 
 		@Override
 		public void run() {
-			if(comp != null)
+			if (comp != null)
 				res = this.rew.execute(query, rules, comp);
 			else
 				res = this.rew.execute(query, rules);
 		}
-		
-		public CloseableIteratorWithoutException<ConjunctiveQuery> getResult() {
+
+		public CloseableIteratorWithoutException<EffectiveConjunctiveQuery> getResult() {
 			return this.res;
 		}
-		
+
 	}
 
 }

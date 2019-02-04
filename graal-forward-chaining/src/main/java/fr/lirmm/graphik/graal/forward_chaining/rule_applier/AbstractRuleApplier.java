@@ -45,7 +45,7 @@ package fr.lirmm.graphik.graal.forward_chaining.rule_applier;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
-import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
+import fr.lirmm.graphik.graal.api.core.Query;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
@@ -65,26 +65,26 @@ import fr.lirmm.graphik.util.stream.IteratorException;
  */
 public abstract class AbstractRuleApplier<T extends AtomSet> implements RuleApplier<Rule, T> {
 
-	private ChaseHaltingCondition							  haltingCondition;
-	private Homomorphism<? super ConjunctiveQuery, ? super T> solver;
+	private ChaseHaltingCondition haltingCondition;
+	private Homomorphism<? super Query, ? super T> solver;
 
 	// //////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	// //////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * Construct a DefaultRuleApplier with a
-	 * {@link RestrictedChaseHaltingCondition} and a {@link SmartHomomorphism}
+	 * Construct a DefaultRuleApplier with a {@link RestrictedChaseHaltingCondition}
+	 * and a {@link SmartHomomorphism}
 	 */
 	public AbstractRuleApplier() {
 		this(SmartHomomorphism.instance());
 	}
 
 	/**
-	 * Construct a DefaultRuleApplier with a
-	 * {@link RestrictedChaseHaltingCondition} and the given homomorphism solver.
+	 * Construct a DefaultRuleApplier with a {@link RestrictedChaseHaltingCondition}
+	 * and the given homomorphism solver.
 	 */
-	public AbstractRuleApplier(Homomorphism<? super ConjunctiveQuery, ? super T> homomorphismSolver) {
+	public AbstractRuleApplier(Homomorphism<? super Query, ? super T> homomorphismSolver) {
 		this(homomorphismSolver, new RestrictedChaseHaltingCondition());
 	}
 
@@ -98,14 +98,14 @@ public abstract class AbstractRuleApplier<T extends AtomSet> implements RuleAppl
 	}
 
 	/**
-	 * Construct a DefaultRuleApplier with the given HaltingCondition,
-	 * homomorphism solver and SymbolGenerator
+	 * Construct a DefaultRuleApplier with the given HaltingCondition, homomorphism
+	 * solver and SymbolGenerator
 	 * 
 	 * @param haltingCondition
 	 * @param homomorphismSolver
 	 */
-	public AbstractRuleApplier(Homomorphism<? super ConjunctiveQuery, ? super T> homomorphismSolver,
-	    ChaseHaltingCondition haltingCondition) {
+	public AbstractRuleApplier(Homomorphism<? super Query, ? super T> homomorphismSolver,
+			ChaseHaltingCondition haltingCondition) {
 		this.haltingCondition = haltingCondition;
 		this.solver = homomorphismSolver;
 	}
@@ -113,13 +113,13 @@ public abstract class AbstractRuleApplier<T extends AtomSet> implements RuleAppl
 	// //////////////////////////////////////////////////////////////////////////
 	// METHODS
 	// //////////////////////////////////////////////////////////////////////////
-	
-	protected abstract ConjunctiveQuery generateQuery(Rule rule);
+
+	protected abstract Query generateQuery(Rule rule);
 
 	@Override
 	public boolean apply(Rule rule, T atomSet) throws RuleApplicationException {
 		boolean isChanged = false;
-		ConjunctiveQuery query = this.generateQuery(rule);
+		Query query = this.generateQuery(rule);
 
 		try {
 			CloseableIterator<Substitution> subIt = this.executeQuery(query, atomSet);
@@ -146,14 +146,14 @@ public abstract class AbstractRuleApplier<T extends AtomSet> implements RuleAppl
 	}
 
 	@Override
-	public CloseableIterator<Atom> delegatedApply(Rule rule, T atomSet) throws RuleApplicationException {		
+	public CloseableIterator<Atom> delegatedApply(Rule rule, T atomSet) throws RuleApplicationException {
 		return delegatedApply(rule, atomSet, atomSet);
 	}
 
 	@Override
 	public CloseableIterator<Atom> delegatedApply(Rule rule, T atomSetOnWichQuerying, T atomSetOnWichCheck)
-	    throws RuleApplicationException {		
-		ConjunctiveQuery query = this.generateQuery(rule);
+			throws RuleApplicationException {
+		Query query = this.generateQuery(rule);
 		CloseableIterator<Substitution> subIt;
 		try {
 			subIt = this.executeQuery(query, atomSetOnWichQuerying);
@@ -173,8 +173,12 @@ public abstract class AbstractRuleApplier<T extends AtomSet> implements RuleAppl
 		return this.haltingCondition;
 	}
 
-	protected CloseableIterator<Substitution> executeQuery(ConjunctiveQuery query, T atomSet)
-	    throws HomomorphismFactoryException, HomomorphismException {
+	protected Homomorphism<? super Query, ? super T> getSolver() {
+		return solver;
+	}
+
+	protected CloseableIterator<Substitution> executeQuery(Query query, T atomSet)
+			throws HomomorphismFactoryException, HomomorphismException {
 		return this.solver.execute(query, atomSet);
 	}
 

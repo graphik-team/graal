@@ -125,6 +125,8 @@ public interface InMemoryAtomSet extends AtomSet, CloseableIterableWithoutExcept
 	@Override
 	void clear();
 
+	Atom[] toArray();
+
 	boolean removeAll(CloseableIteratorWithoutException<? extends Atom> atoms);
 	
 	boolean removeAll(InMemoryAtomSet atoms);

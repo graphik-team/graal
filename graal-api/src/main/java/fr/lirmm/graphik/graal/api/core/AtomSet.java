@@ -234,6 +234,12 @@ public interface AtomSet extends CloseableIterable<Atom> {
 	boolean isSubSetOf(AtomSet atomset) throws AtomSetException;
 
 	/**
+	 * @return The number of Atoms in the set.
+	 * @throws AtomSetException
+	 */
+	int size() throws AtomSetException;
+
+	/**
 	 * 
 	 * @return true if this atom set is empty, false otherwise.
 	 */

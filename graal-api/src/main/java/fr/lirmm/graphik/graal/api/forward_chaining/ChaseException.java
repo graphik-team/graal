@@ -53,6 +53,10 @@ public class ChaseException extends Exception {
 
 	private static final long serialVersionUID = -8123025266971025431L;
 
+	public ChaseException(String message) {
+		super(message);
+	}
+
 	/**
 	 * @param message
 	 * @param e

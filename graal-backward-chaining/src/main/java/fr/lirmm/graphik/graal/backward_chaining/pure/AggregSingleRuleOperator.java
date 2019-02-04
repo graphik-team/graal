@@ -40,9 +40,9 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
- /**
- * 
- */
+/**
+* 
+*/
 package fr.lirmm.graphik.graal.backward_chaining.pure;
 
 import java.util.Collection;
@@ -62,18 +62,17 @@ import fr.lirmm.graphik.graal.core.unifier.QueryUnifier;
  * @author Mélanie KÖNIG
  */
 public class AggregSingleRuleOperator extends AbstractRewritingOperator {
-	
 
 	// /////////////////////////////////////////////////////////////////////////
 	// METHODS
 	// /////////////////////////////////////////////////////////////////////////
-	
+
 	/**
 	 * Returns the rewrites compute from the given fact and the rule set of the
 	 * receiving object.
 	 * 
 	 * @param q
-	 *            A fact
+	 *          A fact
 	 * @return the ArrayList that contains the rewrites compute from the given
 	 *         fact and the rule set of the receiving object.
 	 */
@@ -81,21 +80,19 @@ public class AggregSingleRuleOperator extends AbstractRewritingOperator {
 	public Collection<ConjunctiveQuery> getRewritesFrom(ConjunctiveQuery q, IndexedByHeadPredicatesRuleSet ruleSet, RulesCompilation compilation) {
 		LinkedList<ConjunctiveQuery> rewriteSet = new LinkedList<ConjunctiveQuery>();
 		Collection<QueryUnifier> unifiers = new LinkedList<QueryUnifier>();
-		for (Rule r : getUnifiableRules(q.getAtomSet().predicatesIterator(),
-				ruleSet, compilation)) {
+
+		for (Rule r : getUnifiableRules(q.getAtomSet().predicatesIterator(), ruleSet, compilation)) {
 			unifiers.addAll(getSRUnifier(q, r, compilation));
 		}
 
 		/** compute the rewrite from the unifier **/
-		ConjunctiveQuery a;
 		for (QueryUnifier u : unifiers) {
-			a = Utils.rewrite(q, u);
-			if(a != null) {
+			ConjunctiveQuery a = Utils.rewrite(q, u);
+
+			if (a != null) {
 				rewriteSet.add(a);
 			}
 		}
-
 		return rewriteSet;
 	}
-	
 }

@@ -43,7 +43,6 @@
 package fr.lirmm.graphik.graal.homomorphism;
 
 import org.junit.Assert;
-import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
@@ -67,6 +66,7 @@ import fr.lirmm.graphik.util.stream.IteratorException;
  *
  */
 @RunWith(Theories.class)
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class HomomorphismTest {
 
 	@DataPoints

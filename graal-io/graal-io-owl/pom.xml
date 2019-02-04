@@ -13,10 +13,6 @@
 	<name>fr.lirmm.graphik:graal-io-owl</name>
 	<description>The graal-io-owl module provides a parser from OWL2.</description>
 
-	<properties>
-		<jdk.version>1.7</jdk.version>
-	</properties>
-
 	<inceptionYear>2015</inceptionYear>
 
 	<developers>
@@ -60,18 +56,4 @@
 		</dependency>
 	</dependencies>
 	
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
-				<configuration>
-					<source>${jdk.version}</source>
-					<target>${jdk.version}</target>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-
 </project>

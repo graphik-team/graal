@@ -62,6 +62,7 @@ import org.eclipse.rdf4j.repository.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.lirmm.graphik.graal.GraalConstant;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
@@ -77,7 +78,6 @@ import fr.lirmm.graphik.graal.core.DefaultConstantGenerator;
 import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.store.AbstractTripleStore;
 import fr.lirmm.graphik.graal.io.sparql.SparqlConjunctiveQueryWriter;
-import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
@@ -112,8 +112,8 @@ public class RDF4jStore extends AbstractTripleStore {
 			this.connection = repo.getConnection();
 		} catch (RepositoryException e) {
 			throw new AtomSetException("Error while creating SailStore", e);
-		}		
-		this.utils = new RDF4jUtils(new Prefix("rdf4j", "file://rdf4j/"),repo.getValueFactory());
+		}
+		this.utils = new RDF4jUtils(GraalConstant.INTERNAL_PREFIX, repo.getValueFactory());
 	}
 
 	@Override
@@ -245,7 +245,7 @@ public class RDF4jStore extends AbstractTripleStore {
 		} catch (IOException e1) {
 			throw new AtomSetException("Error while converting to SPARQL " + atom, e1);
 		}
-		TupleQuery sparqlQuery = this.connection.prepareTupleQuery(s.toString());
+		TupleQuery sparqlQuery = this.connection.prepareTupleQuery(QueryLanguage.SPARQL, s.toString());
 		TupleQueryResult result = sparqlQuery.evaluate();
 		return new TupleQueryResultAtomIterator(result, atom, utils);
 	}
@@ -265,23 +265,23 @@ public class RDF4jStore extends AbstractTripleStore {
 
 	@Override
 	public CloseableIterator<Term> termsByPredicatePosition(Predicate p, int position) throws AtomSetException {
-		if(p.getArity() != 2) {
-			throw new WrongArityException("Error on " + p + ": arity " + p.getArity()
-				+ " is not supported by this store. ");
+		if (p.getArity() > 2) {
+			throw new WrongArityException(
+					"Error on " + p + ": arity " + p.getArity() + " is not supported by this store. ");
 		}
 		TupleQuery query = null;
 		TupleQueryResult results = null;
 		try {
-			if (position == 0) {
+
+			if (p.getArity() == 1) {
 				query = this.connection.prepareTupleQuery(QueryLanguage.SPARQL,
- "SELECT DISTINCT ?x WHERE { ?x <"
-				                                                                + utils.createURI(p)
-				                                                                + "> ?y }");
+						"SELECT DISTINCT ?x WHERE { ?x a <" + utils.createURI(p) + "> }");
+			} else if (position == 0) {
+				query = this.connection.prepareTupleQuery(QueryLanguage.SPARQL,
+						"SELECT DISTINCT ?x WHERE { ?x <" + utils.createURI(p) + "> ?y }");
 			} else if (position == 1) {
 				query = this.connection.prepareTupleQuery(QueryLanguage.SPARQL,
- "SELECT DISTINCT ?x WHERE { ?y <"
-				                                                                + utils.createURI(p)
-				                                                                + "> ?x }");
+						"SELECT DISTINCT ?x WHERE { ?y <" + utils.createURI(p) + "> ?x }");
 			} else {
 				throw new WrongArityException("Position should be 0 for subject or 1 for object.");
 			}
@@ -419,5 +419,11 @@ public class RDF4jStore extends AbstractTripleStore {
 		return null;
 	}
 
+	public RepositoryConnection getConnection() {
+		return connection;
+	}
 
+	public RDF4jUtils getUtils() {
+		return utils;
+	}
 }

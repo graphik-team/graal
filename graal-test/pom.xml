@@ -11,10 +11,6 @@
 	<name>fr.lirmm.graphik:graal-test</name>
 	<packaging>jar</packaging>
 
-	<properties>
-		<jdk.version>1.7</jdk.version>
-	</properties>
-
 	<developers>
 		<developer>
 			<name>Clément SIPIETER</name>
@@ -51,6 +47,12 @@
 		<dependency>
 			<groupId>fr.lirmm.graphik</groupId>
 			<artifactId>graal-homomorphism</artifactId>
+			<version>${project.parent.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>fr.lirmm.graphik</groupId>
+			<artifactId>graal-kb</artifactId>
 			<version>${project.parent.version}</version>
 			<scope>test</scope>
 		</dependency>

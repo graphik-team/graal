@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>fr.lirmm.graphik</groupId>
@@ -50,7 +52,7 @@ algorithms, structural analysis of decidability properties of a rule set, a text
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jdk.version>1.7</jdk.version>
+		<jdk.version>1.8</jdk.version>
 		<jgrapht.version>0.9.0</jgrapht.version>
 		<commons-lang3.version>3.5</commons-lang3.version>
 		<commons-collections4.version>4.1</commons-collections4.version>
@@ -72,6 +74,9 @@ algorithms, structural analysis of decidability properties of a rule set, a text
 		<module>rdf4j-common</module>
 		<module>graal-test</module>
 		<module>graal-coverage</module>
+		<module>graal-builtin-predicates</module>
+		<module>graal-sparql-homomorphism</module>
+		<module>graal-keyvalue</module>
 	</modules>
 
 	<dependencies>
@@ -84,7 +89,7 @@ algorithms, structural analysis of decidability properties of a rule set, a text
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.11</version>
+			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -122,7 +127,16 @@ algorithms, structural analysis of decidability properties of a rule set, a text
 	</profiles>
 
 	<build>
+
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.0.0-M3</version>
+				<configuration>
+					<argLine>-Xmx4G</argLine>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
