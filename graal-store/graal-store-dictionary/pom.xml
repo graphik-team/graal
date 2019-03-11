@@ -10,7 +10,7 @@
 		<version>1.3.2-SNAPSHOT</version>
 	</parent>
 	<artifactId>graal-store-dictionary</artifactId>
-	<name>graal-store-dictionary</name>
+	<name>fr.lirmm.graphik:graal-store-dictionary</name>
 	<url>http://maven.apache.org</url>
 
 	<dependencies>
