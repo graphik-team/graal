@@ -1,5 +1,6 @@
 package fr.lirmm.graphik.graal.stratneg;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CheckReturnValue;
@@ -40,6 +41,6 @@ public class RuleApplierWithNegation<T extends AtomSet> extends AbstractRuleAppl
         "rule is not an instance of RuleWithNegation");
 
     return new ConjunctiveQueryWithNegation(rule.getBody(),
-        ((RuleWithNegation) rule).negativeBody(), new LinkedList<>(rule.getFrontier()));
+        ((RuleWithNegation) rule).negativeBody(), new ArrayList<>(rule.getFrontier()));
   }
 }

@@ -2,6 +2,7 @@ package fr.lirmm.graphik.graal.stratneg;
 
 import java.util.ArrayList;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
 import com.google.errorprone.annotations.CheckReturnValue;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
@@ -69,11 +70,11 @@ public class HomomorphismWithNegation extends AbstractProfilable
         }
       }
     } catch (HomomorphismException e) {
-      e.printStackTrace();
+      Throwables.getRootCause(e).printStackTrace();
     } catch (IteratorException e) {
-      e.printStackTrace();
+      Throwables.getRootCause(e).printStackTrace();
     } catch (AtomSetException e) {
-      e.printStackTrace();
+      Throwables.getRootCause(e).printStackTrace();
     }
     return false;
   }
@@ -105,11 +106,11 @@ public class HomomorphismWithNegation extends AbstractProfilable
         }
       }
     } catch (HomomorphismException e) {
-      e.printStackTrace();
+      Throwables.getRootCause(e).printStackTrace();
     } catch (IteratorException e) {
-      e.printStackTrace();
+      Throwables.getRootCause(e).printStackTrace();
     } catch (AtomSetException e) {
-      e.printStackTrace();
+      Throwables.getRootCause(e).printStackTrace();
     }
     return new CloseableIteratorAdapter<>(list.iterator());
   }

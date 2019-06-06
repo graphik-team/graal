@@ -1,11 +1,13 @@
 package fr.lirmm.graphik.graal.stratneg;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CheckReturnValue;
 import com.google.errorprone.annotations.Var;
+
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Query;
@@ -26,12 +28,12 @@ public class ConjunctiveQueryWithNegation extends DefaultConjunctiveQuery
 
   public ConjunctiveQueryWithNegation() {
     this("", DefaultAtomSetFactory.instance().create(), DefaultAtomSetFactory.instance().create(),
-        new LinkedList<>());
+        new ArrayList<>());
   }
 
   public ConjunctiveQueryWithNegation(InMemoryAtomSet positiveAtomSet,
       InMemoryAtomSet negativeAtomSet) {
-    this("", positiveAtomSet, negativeAtomSet, new LinkedList<>(positiveAtomSet.getVariables()));
+    this("", positiveAtomSet, negativeAtomSet, new ArrayList<>(positiveAtomSet.getVariables()));
   }
 
   public ConjunctiveQueryWithNegation(InMemoryAtomSet positiveAtomSet,
@@ -59,7 +61,7 @@ public class ConjunctiveQueryWithNegation extends DefaultConjunctiveQuery
 
     positiveAtomSet_ = DefaultAtomSetFactory.instance().create(query.positiveAtomSet());
     negativeAtomSet_ = DefaultAtomSetFactory.instance().create(query.negativeAtomSet());
-    responseVariables_ = new LinkedList<>(query.getAnswerVariables());
+    responseVariables_ = new ArrayList<>(query.getAnswerVariables());
     label_ = query.getLabel();
   }
 
