@@ -68,7 +68,7 @@ public class App {
     }
 
     if (options.print_scc) {
-      System.out.println(Utils.getSccText(grd.stronglyConnectedComponentsGraph()));
+      System.out.println(Utils.getSccText(grd.getStronglyConnectedComponentsGraph()));
     }
 
     System.out.print("===== ANALYSIS : ");
