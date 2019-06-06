@@ -52,7 +52,7 @@ public class LabeledGraphOfRuleDependencies implements GraphOfRuleDependencies {
 
     computeDependencies();
     hasCircuit();
-    scc_ = stronglyConnectedComponentsGraph();
+    scc_ = getStronglyConnectedComponentsGraph();
   }
 
   static private Iterable<Rule> readRules(File file) {
@@ -137,7 +137,7 @@ public class LabeledGraphOfRuleDependencies implements GraphOfRuleDependencies {
   }
 
   @Override
-  public StronglyConnectedComponentsGraph<Rule> stronglyConnectedComponentsGraph() {
+  public StronglyConnectedComponentsGraph<Rule> getStronglyConnectedComponentsGraph() {
     if (!computeScc_) {
       scc_ = new StronglyConnectedComponentsGraph<>(graph_);
       computeScc_ = true;
