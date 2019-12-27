@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="graal-io-rdf" />
+        <module name="graal-store-neo4j" />
+        <module name="graal-rules-analyser" />
+        <module name="graal-sparql-homomorphism" />
+        <module name="rdbms-test" />
+        <module name="rdbms-common" />
+        <module name="graal-io-owl" />
+        <module name="graal-keyvalue-core" />
+        <module name="graal-io-dlgp" />
+        <module name="graal-builtin-predicates" />
+        <module name="rdbms-natural" />
+        <module name="graal-store-dictionary" />
+        <module name="graal-test" />
+        <module name="graal-io-ruleml" />
+        <module name="graal-stratified-negation" />
+        <module name="graal-grd" />
+        <module name="graal-homomorphism" />
+        <module name="rdf4j-common" />
+        <module name="rdbms-adhoc" />
+        <module name="graal-core" />
+        <module name="graal-util" />
+        <module name="graal-coverage" />
+        <module name="graal-backward-chaining" />
+        <module name="graal-store-rdf4j" />
+        <module name="graal-forward-chaining" />
+        <module name="graal-io-sparql" />
+        <module name="graal-api" />
+        <module name="graal-kb" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="graal" target="1.8" />
+      <module name="graal-api" target="1.8" />
+      <module name="graal-backward-chaining" target="1.8" />
+      <module name="graal-builtin-predicates" target="1.8" />
+      <module name="graal-core" target="1.8" />
+      <module name="graal-coverage" target="1.8" />
+      <module name="graal-forward-chaining" target="1.8" />
+      <module name="graal-grd" target="1.8" />
+      <module name="graal-homomorphism" target="1.8" />
+      <module name="graal-io" target="1.8" />
+      <module name="graal-io-dlgp" target="1.8" />
+      <module name="graal-io-owl" target="1.8" />
+      <module name="graal-io-rdf" target="1.8" />
+      <module name="graal-io-ruleml" target="1.8" />
+      <module name="graal-io-sparql" target="1.8" />
+      <module name="graal-kb" target="1.8" />
+      <module name="graal-keyvalue" target="1.8" />
+      <module name="graal-keyvalue-core" target="1.8" />
+      <module name="graal-rules-analyser" target="1.8" />
+      <module name="graal-sparql-homomorphism" target="1.8" />
+      <module name="graal-store" target="1.8" />
+      <module name="graal-store-dictionary" target="1.8" />
+      <module name="graal-store-neo4j" target="1.8" />
+      <module name="graal-store-rdbms" target="1.8" />
+      <module name="graal-store-rdf4j" target="1.8" />
+      <module name="graal-stratified-negation" target="8" />
+      <module name="graal-test" target="1.8" />
+      <module name="graal-util" target="1.8" />
+      <module name="rdbms-adhoc" target="1.8" />
+      <module name="rdbms-common" target="1.8" />
+      <module name="rdbms-natural" target="1.8" />
+      <module name="rdbms-test" target="1.8" />
+      <module name="rdf4j-common" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

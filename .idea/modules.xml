@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/graal.iml" filepath="$PROJECT_DIR$/graal.iml" />
+      <module fileurl="file://$PROJECT_DIR$/graal-api/graal-api.iml" filepath="$PROJECT_DIR$/graal-api/graal-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/graal-backward-chaining/graal-backward-chaining.iml" filepath="$PROJECT_DIR$/graal-backward-chaining/graal-backward-chaining.iml" />
+      <module fileurl="file://$PROJECT_DIR$/graal-builtin-predicates/graal-builtin-predicates.iml" filepath="$PROJECT_DIR$/graal-builtin-predicates/graal-builtin-predicates.iml" />
+      <module fileurl="file://$PROJECT_DIR$/graal-core/graal-core.iml" filepath="$PROJECT_DIR$/graal-core/graal-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/graal-coverage/graal-coverage.iml" filepath="$PROJECT_DIR$/graal-coverage/graal-coverage.iml" />
+      <module fileurl="file://$PROJECT_DIR$/graal-forward-chaining/graal-forward-chaining.iml" filepath="$PROJECT_DIR$/graal-forward-chaining/graal-forward-chaining.iml" />
+      <module fileurl="file://$PROJECT_DIR$/graal-grd/graal-grd.iml" filepath="$PROJECT_DIR$/graal-grd/graal-grd.iml" />
+      <module fileurl="file://$PROJECT_DIR$/graal-homomorphism/graal-homomorphism.iml" filepath="$PROJECT_DIR$/graal-homomorphism/graal-homomorphism.iml" />
+      <module fileurl="file://$PROJECT_DIR$/graal-io/graal-io.iml" filepath="$PROJECT_DIR$/graal-io/graal-io.iml" />
+      <module fileurl="file://$PROJECT_DIR$/graal-io/graal-io-dlgp/graal-io-dlgp.iml" filepath="$PROJECT_DIR$/graal-io/graal-io-dlgp/graal-io-dlgp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/graal-io/graal-io-owl/graal-io-owl.iml" filepath="$PROJECT_DIR$/graal-io/graal-io-owl/graal-io-owl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/graal-io/graal-io-rdf/graal-io-rdf.iml" filepath="$PROJECT_DIR$/graal-io/graal-io-rdf/graal-io-rdf.iml" />
+      <module fileurl="file://$PROJECT_DIR$/graal-io/graal-io-ruleml/graal-io-ruleml.iml" filepath="$PROJECT_DIR$/graal-io/graal-io-ruleml/graal-io-ruleml.iml" />
+      <module fileurl="file://$PROJECT_DIR$/graal-io/graal-io-sparql/graal-io-sparql.iml" filepath="$PROJECT_DIR$/graal-io/graal-io-sparql/graal-io-sparql.iml" />
+      <module fileurl="file://$PROJECT_DIR$/graal-kb/graal-kb.iml" filepath="$PROJECT_DIR$/graal-kb/graal-kb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/graal-keyvalue/graal-keyvalue.iml" filepath="$PROJECT_DIR$/graal-keyvalue/graal-keyvalue.iml" />
+      <module fileurl="file://$PROJECT_DIR$/graal-keyvalue/graal-key-value-core/graal-keyvalue-core.iml" filepath="$PROJECT_DIR$/graal-keyvalue/graal-key-value-core/graal-keyvalue-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/graal-rules-analyser/graal-rules-analyser.iml" filepath="$PROJECT_DIR$/graal-rules-analyser/graal-rules-analyser.iml" />
+      <module fileurl="file://$PROJECT_DIR$/graal-sparql-homomorphism/graal-sparql-homomorphism.iml" filepath="$PROJECT_DIR$/graal-sparql-homomorphism/graal-sparql-homomorphism.iml" />
+      <module fileurl="file://$PROJECT_DIR$/graal-store/graal-store.iml" filepath="$PROJECT_DIR$/graal-store/graal-store.iml" />
+      <module fileurl="file://$PROJECT_DIR$/graal-store/graal-store-dictionary/graal-store-dictionary.iml" filepath="$PROJECT_DIR$/graal-store/graal-store-dictionary/graal-store-dictionary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/graal-store/graal-store-neo4j/graal-store-neo4j.iml" filepath="$PROJECT_DIR$/graal-store/graal-store-neo4j/graal-store-neo4j.iml" />
+      <module fileurl="file://$PROJECT_DIR$/graal-store/graal-store-rdbms/graal-store-rdbms.iml" filepath="$PROJECT_DIR$/graal-store/graal-store-rdbms/graal-store-rdbms.iml" />
+      <module fileurl="file://$PROJECT_DIR$/graal-store/graal-store-rdf4j/graal-store-rdf4j.iml" filepath="$PROJECT_DIR$/graal-store/graal-store-rdf4j/graal-store-rdf4j.iml" />
+      <module fileurl="file://$PROJECT_DIR$/graal-stratified-negation/graal-stratified-negation.iml" filepath="$PROJECT_DIR$/graal-stratified-negation/graal-stratified-negation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/graal-test/graal-test.iml" filepath="$PROJECT_DIR$/graal-test/graal-test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/graal-util/graal-util.iml" filepath="$PROJECT_DIR$/graal-util/graal-util.iml" />
+      <module fileurl="file://$PROJECT_DIR$/graal-store/graal-store-rdbms/rdbms-adhoc/rdbms-adhoc.iml" filepath="$PROJECT_DIR$/graal-store/graal-store-rdbms/rdbms-adhoc/rdbms-adhoc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/graal-store/graal-store-rdbms/rdbms-common/rdbms-common.iml" filepath="$PROJECT_DIR$/graal-store/graal-store-rdbms/rdbms-common/rdbms-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/graal-store/graal-store-rdbms/rdbms-natural/rdbms-natural.iml" filepath="$PROJECT_DIR$/graal-store/graal-store-rdbms/rdbms-natural/rdbms-natural.iml" />
+      <module fileurl="file://$PROJECT_DIR$/graal-store/graal-store-rdbms/rdbms-test/rdbms-test.iml" filepath="$PROJECT_DIR$/graal-store/graal-store-rdbms/rdbms-test/rdbms-test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rdf4j-common/rdf4j-common.iml" filepath="$PROJECT_DIR$/rdf4j-common/rdf4j-common.iml" />
+    </modules>
+  </component>
+</project>

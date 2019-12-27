@@ -67,6 +67,7 @@ algorithms, structural analysis of decidability properties of a rule set, a text
 		<module>graal-io</module>
 		<module>graal-kb</module>
 		<module>graal-forward-chaining</module>
+		<module>graal-stratified-negation</module>
 		<module>graal-store</module>
 		<module>graal-backward-chaining</module>
 		<module>graal-rules-analyser</module>
@@ -77,7 +78,7 @@ algorithms, structural analysis of decidability properties of a rule set, a text
 		<module>graal-builtin-predicates</module>
 		<module>graal-sparql-homomorphism</module>
 		<module>graal-keyvalue</module>
-		<module>graal-stratified-negation</module>
+
 	</modules>
 
 	<dependencies>

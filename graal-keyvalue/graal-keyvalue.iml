@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8">
+    <output url="file://$MODULE_DIR$/target/classes" />
+    <output-test url="file://$MODULE_DIR$/target/test-classes" />
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/target" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: org.jgrapht:jgrapht-core:0.9.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: fr.lirmm.graphik:dlgp2-parser:2.1.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.apache.commons:commons-collections4:4.1" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.7" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.3" level="project" />
+    <orderEntry type="module" module-name="graal-api" />
+    <orderEntry type="module" module-name="graal-core" />
+    <orderEntry type="module" module-name="graal-util" />
+    <orderEntry type="library" name="Maven: org.jgrapht:jgrapht-core:0.9.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.8.1" level="project" />
+    <orderEntry type="module" module-name="graal-io-dlgp" scope="TEST" />
+    <orderEntry type="library" scope="TEST" name="Maven: fr.lirmm.graphik:dlgp2-parser:2.1.1" level="project" />
+    <orderEntry type="module" module-name="graal-kb" scope="TEST" />
+    <orderEntry type="module" module-name="graal-forward-chaining" scope="TEST" />
+    <orderEntry type="module" module-name="graal-backward-chaining" scope="TEST" />
+    <orderEntry type="module" module-name="graal-homomorphism" scope="TEST" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.apache.commons:commons-collections4:4.1" level="project" />
+    <orderEntry type="module" module-name="graal-rules-analyser" scope="TEST" />
+    <orderEntry type="module" module-name="graal-grd" scope="TEST" />
+    <orderEntry type="library" scope="TEST" name="Maven: commons-io:commons-io:2.6" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.7" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.12" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.3" level="project" />
+  </component>
+</module>

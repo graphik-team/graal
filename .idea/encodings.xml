@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-api" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-backward-chaining" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-backward-chaining/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-builtin-predicates" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-builtin-predicates/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-core" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-core/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-coverage" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-forward-chaining" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-forward-chaining/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-grd" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-grd/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-homomorphism" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-homomorphism/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-io" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-io/graal-io-dlgp" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-io/graal-io-dlgp/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-io/graal-io-owl" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-io/graal-io-owl/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-io/graal-io-rdf" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-io/graal-io-rdf/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-io/graal-io-ruleml" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-io/graal-io-ruleml/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-io/graal-io-sparql" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-io/graal-io-sparql/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-kb" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-kb/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-keyvalue" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-keyvalue/graal-key-value-core" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-keyvalue/graal-key-value-core/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-rules-analyser" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-rules-analyser/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-sparql-homomorphism" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-sparql-homomorphism/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-store" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-store/graal-store-dictionary" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-store/graal-store-dictionary/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-store/graal-store-neo4j" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-store/graal-store-neo4j/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-store/graal-store-rdbms" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-store/graal-store-rdbms/rdbms-adhoc" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-store/graal-store-rdbms/rdbms-adhoc/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-store/graal-store-rdbms/rdbms-common" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-store/graal-store-rdbms/rdbms-common/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-store/graal-store-rdbms/rdbms-natural" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-store/graal-store-rdbms/rdbms-natural/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-store/graal-store-rdbms/rdbms-test" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-store/graal-store-rdf4j" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-store/graal-store-rdf4j/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-stratified-negation" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-stratified-negation/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-test" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-util" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/graal-util/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/rdf4j-common" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/rdf4j-common/src/main/java" charset="UTF-8" />
+  </component>
+</project>
